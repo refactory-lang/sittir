@@ -36,6 +36,7 @@ import {
 	resolveSingleFieldFactorySlot,
 	resolveFieldStorageInfo,
 	bareValueSlot,
+	holdsOwnKind,
 	lexedContentSlot,
 	fieldResolverName,
 	needsNonEmptyHoist,
@@ -436,9 +437,11 @@ function emitBranchFrom(
 		if (canDirectFactoryCall) {
 			const interiorSole = interiorSlotGuards(node.kind, node).some((guard) => guard.slot === soleField.name);
 			const isNodeTest = interiorSole ? 'isNode(input)' : `isNodeOfKind(input, ${kindDiscriminantCheck(node.kind, kindEntries, nodeMap)})`;
-			lines.push(
-				`  if (${inputOptional ? 'input !== undefined && ' : ''}${isNodeTest}) return input as unknown as ${spelledType ?? returnType};`
-			);
+			if (!holdsOwnKind(node, nodeMap)) {
+				lines.push(
+					`  if (${inputOptional ? 'input !== undefined && ' : ''}${isNodeTest}) return input as unknown as ${spelledType ?? returnType};`
+				);
+			}
 		} else {
 			const bareKind =
 				bareInterior !== undefined
@@ -590,7 +593,7 @@ function emitRestParamFromResolver(
 	const freshVar = unwrapConfigKey === undefined ? 'input' : '_elems';
 	const signature = `export function ${fn}(...input: ${inputType}): ${returnType} {`;
 	const head = withEmptyOverload(nodeMap, kind, `export function ${fn}`, [signature], signature.replace(/ \{$/, ';'));
-	if (!hasNumericDiscriminant) {
+	if (!hasNumericDiscriminant || holdsOwnKind(nodeMap.nodes.get(kind), nodeMap)) {
 		return [
 			...head,
 			...unwrap,
@@ -672,11 +675,15 @@ function emitSingularChildrenFrom(
 		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
 	return [
 		`export function ${fn}(input?: ${resolvesLooseInput(slot, nodeMap) ? looseElementType(elementType, slot, nodeMap) : elementType}${inputWiden !== undefined ? ` | ${inputWiden}` : ''} | ${tName}): ${factoryReturnTypeExpr(factory)} {`,
-		`  if (isNodeOfKind(input, ${typeCheck})) {`,
-		`    const data = input;`,
-		`    const child = ${storageAccess};`,
-		`    return ${factory}(child as Parameters<typeof ${factory}>[0]);`,
-		`  }`,
+		...(holdsOwnKind(nodeMap.nodes.get(kind), nodeMap)
+			? []
+			: [
+					`  if (isNodeOfKind(input, ${typeCheck})) {`,
+					`    const data = input;`,
+					`    const child = ${storageAccess};`,
+					`    return ${factory}(child as Parameters<typeof ${factory}>[0]);`,
+					`  }`
+				]),
 		`  return ${factory}(${
 			resolvesLooseInput(slot, nodeMap)
 				? resolveFieldCall('input', slot, false, nodeMap, intern, false, elementType, kindEntries)
@@ -1810,6 +1817,7 @@ function emitResolverHelpers(
 	lines.push('function _resolveBooleanKeyword<T>(v: _LooseFieldInput): T {');
 	lines.push('  if (v === undefined || v === null) return v as T;');
 	lines.push('  if (v === true || v === false) return v as T;');
+	lines.push('  if (typeof v === "string") return true as T;');
 	lines.push('  if (isNode(v)) return v as T;');
 	lines.push('  if (Array.isArray(v)) return v as T;');
 	lines.push('  return v as T;');

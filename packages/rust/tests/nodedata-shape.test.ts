@@ -10,9 +10,8 @@
  * `it.fails` cases: the freeze contract and $with non-enumerability are
  * not yet wired into generated factory output (the one-time scaffolding
  * helpers for them were deleted as dead code — zero callers; the wiring,
- * when it lands, is emitted per-kind). Non-enumerable accessors shipped
- * separately via `withAccessors` (packages/common/src/utils.ts), wired
- * into the factories emitter's accessor-emission sites. The remaining
+ * when it lands, is emitted per-kind). Accessors are members of the node
+ * literal the emitters write. The remaining
  * `it.fails` cases assert the target contract and are expected to fail
  * until the wiring lands; `it.fails` flags loudly (test failure) if one
  * unexpectedly starts passing, which is the signal that its slice has
@@ -66,8 +65,10 @@ describe('ADR-0018 Phase 2 factory shape — branch node', () => {
 		expect((rec['_name'] as { $text?: string }).$text).toBe('my_fn');
 	});
 
-	it('FR-002: accessor function is non-enumerable', () => {
-		expect(isNonEnumerable(node, 'name')).toBe(true);
+	it('FR-002: accessor function is an enumerable own member of the node', () => {
+		const descriptor = Object.getOwnPropertyDescriptor(node, 'name');
+		expect(descriptor?.enumerable).toBe(true);
+		expect(typeof descriptor?.value).toBe('function');
 	});
 
 	it('FR-002: accessor function returns the stored value', () => {
@@ -78,10 +79,11 @@ describe('ADR-0018 Phase 2 factory shape — branch node', () => {
 		expect(value.$text).toBe('my_fn');
 	});
 
-	it('SC-004: Object.keys() returns only $-metadata and _-storage keys (no accessor names)', () => {
+	it('SC-004: Object.keys() lists the $-metadata, the _-storage and the readers of the node', () => {
 		const keys = Object.keys(node);
-		// No accessor names in enumerable keys
-		expect(keys.filter((k) => !k.startsWith('$') && !k.startsWith('_'))).toEqual([]);
+		// A reader is an enumerable member; every key is a member or data
+		expect(keys).toContain('name');
+		expect(keys).toEqual(expect.arrayContaining(['$render', '$toEdit', '$replace', '$trivia', '$with']));
 		// $type and $source are present
 		expect(keys).toContain('$type');
 		expect(keys).toContain('$source');

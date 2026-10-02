@@ -1746,6 +1746,10 @@ The rows and summary for one grammar's whole corpus. Entries that parse with err
 
 Each kind's `fullForm` from the node model: the literal delimiters around its one text content.
 
+### `packages/tools/src/validate/common.ts::LoadedNodeModel.oneSurfaceKinds`
+
+The kinds the node model stamps `oneSurface`: one builder, no `.strict` or `.coerce` member. The factory-source printer spells their call as the bare path.
+
 ### `packages/tools/src/validate/common.ts::LoadedNodeModel.root`
 
 The grammar's root kind as the node model records it; `undefined` when no model is loaded.

@@ -3,26 +3,43 @@
 import type * as T from '../types-internal.js';
 import { Delimiter } from '@sittir/common/utils';
 import { TSKindId } from '../types.js';
-import type { AdmitBound, NonEmptyArray, WidenNumeric } from '@sittir/types';
+import type { AdmitBound, StringIndexRange, NonEmptyArray, WidenNumeric } from '@sittir/types';
 import {
-	withAccessors,
+	currentHandle,
+	listSlotWith,
+	LIST_ITEMS,
+	LIST_READ,
+	LIST_METHODS,
+	listIterator,
+	listItems,
+	ownerView,
+	ownerElements,
+	listOption,
+	readStubLength,
+	unreadableStubItems,
+	seatWith,
+	groupField,
+	STORED_SLOT_READERS,
+	storedElements,
+	defineListIndices,
+	elementsWith,
+	rebuilt,
+	renderText,
+	toEditAt,
+	triviaSide,
+	triviaInner,
 	describeValue,
 	restItems,
 	isNodeOfKind,
 	admitAliasContent,
 	coerceBooleanKeywordStorage,
-	coerceKindEnumStorage,
-	coerceMixedEnumStorage,
+	kindIdStorage,
 	numberText,
 	orDefault,
 	rejectBareText,
 	rejectKeywordText,
-	withElementsSeat,
-	withGroupSeat,
-	withListSlots,
-	withListView
+	unaffixed
 } from '@sittir/common/utils';
-import { withMethods } from '../utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
 	if (arr.length === 0) {
@@ -74,30 +91,36 @@ export function buildSourceFile(config?: Partial<T.SourceFile.Config>): T.Source
 export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}): T.SourceFile.Bound {
 	const _shebang = rejectBareText(config.shebang, 'SourceFile.shebang', 'a built Shebang');
 	const _statements = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.SourceFile['_statements']>>(config.statements ?? [], []),
+		kindIdStorage<NonNullable<T.SourceFile['_statements']>>(config.statements ?? []),
 		'SourceFile.statements',
 		'a built Statement'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.SourceFile as const,
-				$source: 2 as const,
-				$named: true as const,
-				_shebang,
-				_statements,
-				$with: {
-					shebang: (value?: T.Shebang) => buildSourceFile({ ...config, shebang: value }),
-					statements: (...values: NonNullable<NonNullable<T.SourceFile.Config>['statements']>[number][]) =>
-						buildSourceFile({ ...config, statements: restItems('statements', values) })
-				}
-			},
-			{
-				shebang: () => _shebang,
-				statements: () => _statements
-			}
-		)
-	) as unknown as T.SourceFile.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.SourceFile as const,
+		$source: 2 as const,
+		$named: true as const,
+		_shebang,
+		_statements,
+		$with: {
+			shebang: (value?: T.Shebang) => rebuilt(node, handle, () => buildSourceFile({ ...config, shebang: value })),
+			statements: (...values: NonNullable<NonNullable<T.SourceFile.Config>['statements']>[number][]) =>
+				rebuilt(node, handle, () => buildSourceFile({ ...config, statements: restItems('statements', values) }))
+		},
+		shebang: () => _shebang,
+		statements: () => _statements,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.SourceFile.Bound;
 }
 
 export const buildEmptyStatement: TSKindId.EmptyStatement = TSKindId.EmptyStatement;
@@ -124,101 +147,105 @@ export function buildExpressionStatement(
 		'ExpressionStatement.content',
 		'a built ExpressionStatementWithSemi / UnsafeBlock / AsyncBlock / GenBlock / TryBlock / Block / IfExpression / MatchExpression / WhileExpression / LoopExpression / ForExpression / ConstBlock'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExpressionStatement as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (
-						value:
-							| T.ExpressionStatementWithSemi
-							| T.UnsafeBlock
-							| T.AsyncBlock
-							| T.GenBlock
-							| T.TryBlock
-							| T.Block
-							| T.IfExpression
-							| T.MatchExpression
-							| T.WhileExpression
-							| T.LoopExpression
-							| T.ForExpression
-							| T.ConstBlock
-					) => buildExpressionStatement(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		)
-	) as unknown as T.ExpressionStatement.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ExpressionStatement as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		$with: {
+			content: (
+				value:
+					| T.ExpressionStatementWithSemi
+					| T.UnsafeBlock
+					| T.AsyncBlock
+					| T.GenBlock
+					| T.TryBlock
+					| T.Block
+					| T.IfExpression
+					| T.MatchExpression
+					| T.WhileExpression
+					| T.LoopExpression
+					| T.ForExpression
+					| T.ConstBlock
+			) => rebuilt(node, handle, () => buildExpressionStatement(value))
+		},
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ExpressionStatement.Bound;
 }
 
 export function buildMacroRule(config: T.MacroRule.Config): T.MacroRule.Bound {
 	const _left = rejectBareText(config.left, 'MacroRule.left', 'a built TokenTreePattern');
 	const _right = rejectBareText(config.right, 'MacroRule.right', 'a built TokenTree');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.MacroRule as const,
-				$source: 2 as const,
-				$named: true as const,
-				_left,
-				_right,
-				$with: {
-					left: (value: T.TokenTreePattern) => buildMacroRule({ ...config, left: value }),
-					right: (value: T.TokenTree) => buildMacroRule({ ...config, right: value })
-				}
-			},
-			{
-				left: () => _left,
-				right: () => _right
-			}
-		)
-	) as unknown as T.MacroRule.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MacroRule as const,
+		$source: 2 as const,
+		$named: true as const,
+		_left,
+		_right,
+		$with: {
+			left: (value: T.TokenTreePattern) => rebuilt(node, handle, () => buildMacroRule({ ...config, left: value })),
+			right: (value: T.TokenTree) => rebuilt(node, handle, () => buildMacroRule({ ...config, right: value }))
+		},
+		left: () => _left,
+		right: () => _right,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MacroRule.Bound;
 }
 
 export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config): T.TokenBindingPattern.Bound {
 	const _name = rejectBareText(config.name, 'TokenBindingPattern.name', 'a built Metavariable');
-	const _type = coerceKindEnumStorage<NonNullable<T.TokenBindingPattern['_type']>>(config.type, [
-		['block', TSKindId.BlockKeyword] as const,
-		['expr', TSKindId.ExprKeyword] as const,
-		['expr_2021', TSKindId.Expr2021Keyword] as const,
-		['ident', TSKindId.IdentKeyword] as const,
-		['item', TSKindId.ItemKeyword] as const,
-		['lifetime', TSKindId.LifetimeKeyword] as const,
-		['literal', TSKindId.LiteralKeyword] as const,
-		['meta', TSKindId.MetaKeyword] as const,
-		['pat', TSKindId.PatKeyword] as const,
-		['pat_param', TSKindId.PatParamKeyword] as const,
-		['path', TSKindId.PathKeyword] as const,
-		['stmt', TSKindId.StmtKeyword] as const,
-		['tt', TSKindId.TtKeyword] as const,
-		['ty', TSKindId.TyKeyword] as const,
-		['vis', TSKindId.VisKeyword] as const
-	]);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TokenBindingPattern as const,
-				$source: 2 as const,
-				$named: true as const,
-				_name,
-				_type,
-				$with: {
-					name: (value: T.Metavariable) => buildTokenBindingPattern({ ...config, name: value }),
-					type: (value: NonNullable<T.TokenBindingPattern.Config>['type']) =>
-						buildTokenBindingPattern({ ...config, type: value })
-				}
-			},
-			{
-				name: () => _name,
-				type: () => _type
-			}
-		)
-	) as unknown as T.TokenBindingPattern.Bound;
+	const _type = rejectBareText(
+		kindIdStorage<NonNullable<T.TokenBindingPattern['_type']>>(config.type),
+		'TokenBindingPattern.type',
+		'a kind id'
+	);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TokenBindingPattern as const,
+		$source: 2 as const,
+		$named: true as const,
+		_name,
+		_type,
+		$with: {
+			name: (value: T.Metavariable) =>
+				rebuilt(node, handle, () => buildTokenBindingPattern({ ...config, name: value })),
+			type: (value: NonNullable<T.TokenBindingPattern.Config>['type']) =>
+				rebuilt(node, handle, () => buildTokenBindingPattern({ ...config, type: value }))
+		},
+		name: () => _name,
+		type: () => _type,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TokenBindingPattern.Bound;
 }
 
 export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Config): T.TokenRepetitionPattern.Bound {
@@ -232,43 +259,51 @@ export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Con
 		'TokenRepetitionPattern.separator',
 		'buildTokenRepetitionPatternText(…)'
 	);
-	const _operator = coerceKindEnumStorage<NonNullable<T.TokenRepetitionPattern['_operator']>>(config.operator, [
-		['+', TSKindId.Plus] as const,
-		['*', TSKindId.Star] as const,
-		['?', TSKindId.Qmark] as const
-	]);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TokenRepetitionPattern as const,
-				$source: 2 as const,
-				$named: true as const,
-				_token_patterns,
-				_separator,
-				_operator,
-				$with: {
-					tokenPatterns: (
-						...values: (
-							| T.TokenTreePattern
-							| T.TokenRepetitionPattern
-							| T.TokenBindingPattern
-							| T.Metavariable
-							| T.NonSpecialToken
-						)[]
-					) => buildTokenRepetitionPattern({ ...config, tokenPatterns: restItems('tokenPatterns', values) }),
-					separator: (value?: T.TokenRepetitionPatternText) =>
-						buildTokenRepetitionPattern({ ...config, separator: value }),
-					operator: (value: NonNullable<T.TokenRepetitionPattern.Config>['operator']) =>
-						buildTokenRepetitionPattern({ ...config, operator: value })
-				}
-			},
-			{
-				tokenPatterns: () => _token_patterns,
-				separator: () => _separator,
-				operator: () => _operator
-			}
-		)
-	) as unknown as T.TokenRepetitionPattern.Bound;
+	const _operator = rejectBareText(
+		kindIdStorage<NonNullable<T.TokenRepetitionPattern['_operator']>>(config.operator),
+		'TokenRepetitionPattern.operator',
+		'a kind id'
+	);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TokenRepetitionPattern as const,
+		$source: 2 as const,
+		$named: true as const,
+		_token_patterns,
+		_separator,
+		_operator,
+		$with: {
+			tokenPatterns: (
+				...values: (
+					| T.TokenTreePattern
+					| T.TokenRepetitionPattern
+					| T.TokenBindingPattern
+					| T.Metavariable
+					| T.NonSpecialToken
+				)[]
+			) =>
+				rebuilt(node, handle, () =>
+					buildTokenRepetitionPattern({ ...config, tokenPatterns: restItems('tokenPatterns', values) })
+				),
+			separator: (value?: T.TokenRepetitionPatternText) =>
+				rebuilt(node, handle, () => buildTokenRepetitionPattern({ ...config, separator: value })),
+			operator: (value: NonNullable<T.TokenRepetitionPattern.Config>['operator']) =>
+				rebuilt(node, handle, () => buildTokenRepetitionPattern({ ...config, operator: value }))
+		},
+		tokenPatterns: () => _token_patterns,
+		separator: () => _separator,
+		operator: () => _operator,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TokenRepetitionPattern.Bound;
 }
 
 export function buildTokenRepetition(config: T.TokenRepetition.Config): T.TokenRepetition.Bound {
@@ -282,35 +317,41 @@ export function buildTokenRepetition(config: T.TokenRepetition.Config): T.TokenR
 		'TokenRepetition.separator',
 		'buildTokenRepetitionPatternText(…)'
 	);
-	const _operator = coerceKindEnumStorage<NonNullable<T.TokenRepetition['_operator']>>(config.operator, [
-		['+', TSKindId.Plus] as const,
-		['*', TSKindId.Star] as const,
-		['?', TSKindId.Qmark] as const
-	]);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TokenRepetition as const,
-				$source: 2 as const,
-				$named: true as const,
-				_tokens,
-				_separator,
-				_operator,
-				$with: {
-					tokens: (...values: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]) =>
-						buildTokenRepetition({ ...config, tokens: restItems('tokens', values) }),
-					separator: (value?: T.TokenRepetitionPatternText) => buildTokenRepetition({ ...config, separator: value }),
-					operator: (value: NonNullable<T.TokenRepetition.Config>['operator']) =>
-						buildTokenRepetition({ ...config, operator: value })
-				}
-			},
-			{
-				tokens: () => _tokens,
-				separator: () => _separator,
-				operator: () => _operator
-			}
-		)
-	) as unknown as T.TokenRepetition.Bound;
+	const _operator = rejectBareText(
+		kindIdStorage<NonNullable<T.TokenRepetition['_operator']>>(config.operator),
+		'TokenRepetition.operator',
+		'a kind id'
+	);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TokenRepetition as const,
+		$source: 2 as const,
+		$named: true as const,
+		_tokens,
+		_separator,
+		_operator,
+		$with: {
+			tokens: (...values: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]) =>
+				rebuilt(node, handle, () => buildTokenRepetition({ ...config, tokens: restItems('tokens', values) })),
+			separator: (value?: T.TokenRepetitionPatternText) =>
+				rebuilt(node, handle, () => buildTokenRepetition({ ...config, separator: value })),
+			operator: (value: NonNullable<T.TokenRepetition.Config>['operator']) =>
+				rebuilt(node, handle, () => buildTokenRepetition({ ...config, operator: value }))
+		},
+		tokens: () => _tokens,
+		separator: () => _separator,
+		operator: () => _operator,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TokenRepetition.Bound;
 }
 
 export function buildNonSpecialToken(
@@ -416,102 +457,7 @@ export function buildNonSpecialToken(
 ): T.NonSpecialToken.Bound {
 	const _content = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.NonSpecialToken['_content']>>(value, [
-				['mut', TSKindId.MutableSpecifier] as const,
-				['self', TSKindId.Self] as const,
-				['super', TSKindId.Super] as const,
-				['crate', TSKindId.Crate] as const,
-				['u8', TSKindId.U8Keyword] as const,
-				['i8', TSKindId.I8Keyword] as const,
-				['u16', TSKindId.U16Keyword] as const,
-				['i16', TSKindId.I16Keyword] as const,
-				['u32', TSKindId.U32Keyword] as const,
-				['i32', TSKindId.I32Keyword] as const,
-				['u64', TSKindId.U64Keyword] as const,
-				['i64', TSKindId.I64Keyword] as const,
-				['u128', TSKindId.U128Keyword] as const,
-				['i128', TSKindId.I128Keyword] as const,
-				['isize', TSKindId.IsizeKeyword] as const,
-				['usize', TSKindId.UsizeKeyword] as const,
-				['f32', TSKindId.F32Keyword] as const,
-				['f64', TSKindId.F64Keyword] as const,
-				['bool', TSKindId.BoolKeyword] as const,
-				['str', TSKindId.StrKeyword] as const,
-				['char', TSKindId.CharKeyword] as const,
-				['+', TSKindId.Plus] as const,
-				['-', TSKindId.Dash] as const,
-				['*', TSKindId.Star] as const,
-				['/', TSKindId.Slash] as const,
-				['%', TSKindId.Percent] as const,
-				['^', TSKindId.Caret] as const,
-				['!', TSKindId.Bang] as const,
-				['&', TSKindId.Amp] as const,
-				['|', TSKindId.Pipe] as const,
-				['&&', TSKindId.AmpAmp] as const,
-				['||', TSKindId.PipePipe] as const,
-				['<<', TSKindId.LtLt] as const,
-				['>>', TSKindId.GtGt] as const,
-				['+=', TSKindId.PlusEq] as const,
-				['-=', TSKindId.DashEq] as const,
-				['*=', TSKindId.StarEq] as const,
-				['/=', TSKindId.SlashEq] as const,
-				['%=', TSKindId.PercentEq] as const,
-				['^=', TSKindId.CaretEq] as const,
-				['&=', TSKindId.AmpEq] as const,
-				['|=', TSKindId.PipeEq] as const,
-				['<<=', TSKindId.LtLtEq] as const,
-				['>>=', TSKindId.GtGtEq] as const,
-				['=', TSKindId.Eq] as const,
-				['==', TSKindId.EqEq] as const,
-				['!=', TSKindId.BangEq] as const,
-				['>', TSKindId.Gt] as const,
-				['<', TSKindId.Lt] as const,
-				['>=', TSKindId.GtEq] as const,
-				['<=', TSKindId.LtEq] as const,
-				['@', TSKindId.At] as const,
-				['_', TSKindId.Underscore] as const,
-				['.', TSKindId.Dot] as const,
-				['..', TSKindId.DotDot] as const,
-				['...', TSKindId.DotDotDot] as const,
-				['..=', TSKindId.DotDotEq] as const,
-				[',', TSKindId.Comma] as const,
-				[';', TSKindId.Semi] as const,
-				[':', TSKindId.Colon] as const,
-				['::', TSKindId.ColonColon] as const,
-				['->', TSKindId.DashGt] as const,
-				['=>', TSKindId.EqGt] as const,
-				['#', TSKindId.Pound] as const,
-				['?', TSKindId.Qmark] as const,
-				["'", TSKindId.Squote] as const,
-				['as', TSKindId.AsKeyword] as const,
-				['async', TSKindId.AsyncKeyword] as const,
-				['await', TSKindId.AwaitKeyword] as const,
-				['break', TSKindId.BreakKeyword] as const,
-				['const', TSKindId.ConstKeyword] as const,
-				['continue', TSKindId.ContinueKeyword] as const,
-				['default', TSKindId.DefaultKeyword] as const,
-				['enum', TSKindId.EnumKeyword] as const,
-				['fn', TSKindId.FnKeyword] as const,
-				['for', TSKindId.ForKeyword] as const,
-				['gen', TSKindId.GenKeyword] as const,
-				['if', TSKindId.IfKeyword] as const,
-				['impl', TSKindId.ImplKeyword] as const,
-				['let', TSKindId.LetKeyword] as const,
-				['loop', TSKindId.LoopKeyword] as const,
-				['match', TSKindId.MatchKeyword] as const,
-				['mod', TSKindId.ModKeyword] as const,
-				['pub', TSKindId.PubKeyword] as const,
-				['return', TSKindId.ReturnKeyword] as const,
-				['static', TSKindId.StaticKeyword] as const,
-				['struct', TSKindId.StructKeyword] as const,
-				['trait', TSKindId.TraitKeyword] as const,
-				['type', TSKindId.TypeKeyword] as const,
-				['union', TSKindId.UnionKeyword] as const,
-				['unsafe', TSKindId.UnsafeKeyword] as const,
-				['use', TSKindId.UseKeyword] as const,
-				['where', TSKindId.WhereKeyword] as const,
-				['while', TSKindId.WhileKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.NonSpecialToken['_content']>>(value),
 			'NonSpecialToken.content',
 			'buildIdentifier(…)'
 		),
@@ -570,121 +516,126 @@ export function buildNonSpecialToken(
 			'while'
 		]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.NonSpecialToken as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (
-						value: NonNullable<
-							| T.Literal
-							| T.Identifier
-							| TSKindId.MutableSpecifier
-							| TSKindId.Self
-							| TSKindId.Super
-							| TSKindId.Crate
-							| TSKindId.U8Keyword
-							| TSKindId.I8Keyword
-							| TSKindId.U16Keyword
-							| TSKindId.I16Keyword
-							| TSKindId.U32Keyword
-							| TSKindId.I32Keyword
-							| TSKindId.U64Keyword
-							| TSKindId.I64Keyword
-							| TSKindId.U128Keyword
-							| TSKindId.I128Keyword
-							| TSKindId.IsizeKeyword
-							| TSKindId.UsizeKeyword
-							| TSKindId.F32Keyword
-							| TSKindId.F64Keyword
-							| TSKindId.BoolKeyword
-							| TSKindId.StrKeyword
-							| TSKindId.CharKeyword
-							| TSKindId.Plus
-							| TSKindId.Dash
-							| TSKindId.Star
-							| TSKindId.Slash
-							| TSKindId.Percent
-							| TSKindId.Caret
-							| TSKindId.Bang
-							| TSKindId.Amp
-							| TSKindId.Pipe
-							| TSKindId.AmpAmp
-							| TSKindId.PipePipe
-							| TSKindId.LtLt
-							| TSKindId.GtGt
-							| TSKindId.PlusEq
-							| TSKindId.DashEq
-							| TSKindId.StarEq
-							| TSKindId.SlashEq
-							| TSKindId.PercentEq
-							| TSKindId.CaretEq
-							| TSKindId.AmpEq
-							| TSKindId.PipeEq
-							| TSKindId.LtLtEq
-							| TSKindId.GtGtEq
-							| TSKindId.Eq
-							| TSKindId.EqEq
-							| TSKindId.BangEq
-							| TSKindId.Gt
-							| TSKindId.Lt
-							| TSKindId.GtEq
-							| TSKindId.LtEq
-							| TSKindId.At
-							| TSKindId.Underscore
-							| TSKindId.Dot
-							| TSKindId.DotDot
-							| TSKindId.DotDotDot
-							| TSKindId.DotDotEq
-							| TSKindId.Comma
-							| TSKindId.Semi
-							| TSKindId.Colon
-							| TSKindId.ColonColon
-							| TSKindId.DashGt
-							| TSKindId.EqGt
-							| TSKindId.Pound
-							| TSKindId.Qmark
-							| TSKindId.Squote
-							| TSKindId.AsKeyword
-							| TSKindId.AsyncKeyword
-							| TSKindId.AwaitKeyword
-							| TSKindId.BreakKeyword
-							| TSKindId.ConstKeyword
-							| TSKindId.ContinueKeyword
-							| TSKindId.DefaultKeyword
-							| TSKindId.EnumKeyword
-							| TSKindId.FnKeyword
-							| TSKindId.ForKeyword
-							| TSKindId.GenKeyword
-							| TSKindId.IfKeyword
-							| TSKindId.ImplKeyword
-							| TSKindId.LetKeyword
-							| TSKindId.LoopKeyword
-							| TSKindId.MatchKeyword
-							| TSKindId.ModKeyword
-							| TSKindId.PubKeyword
-							| TSKindId.ReturnKeyword
-							| TSKindId.StaticKeyword
-							| TSKindId.StructKeyword
-							| TSKindId.TraitKeyword
-							| TSKindId.TypeKeyword
-							| TSKindId.UnionKeyword
-							| TSKindId.UnsafeKeyword
-							| TSKindId.UseKeyword
-							| TSKindId.WhereKeyword
-							| TSKindId.WhileKeyword
-						>
-					) => buildNonSpecialToken(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		)
-	) as unknown as T.NonSpecialToken.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.NonSpecialToken as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		$with: {
+			content: (
+				value: NonNullable<
+					| T.Literal
+					| T.Identifier
+					| TSKindId.MutableSpecifier
+					| TSKindId.Self
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Plus
+					| TSKindId.Dash
+					| TSKindId.Star
+					| TSKindId.Slash
+					| TSKindId.Percent
+					| TSKindId.Caret
+					| TSKindId.Bang
+					| TSKindId.Amp
+					| TSKindId.Pipe
+					| TSKindId.AmpAmp
+					| TSKindId.PipePipe
+					| TSKindId.LtLt
+					| TSKindId.GtGt
+					| TSKindId.PlusEq
+					| TSKindId.DashEq
+					| TSKindId.StarEq
+					| TSKindId.SlashEq
+					| TSKindId.PercentEq
+					| TSKindId.CaretEq
+					| TSKindId.AmpEq
+					| TSKindId.PipeEq
+					| TSKindId.LtLtEq
+					| TSKindId.GtGtEq
+					| TSKindId.Eq
+					| TSKindId.EqEq
+					| TSKindId.BangEq
+					| TSKindId.Gt
+					| TSKindId.Lt
+					| TSKindId.GtEq
+					| TSKindId.LtEq
+					| TSKindId.At
+					| TSKindId.Underscore
+					| TSKindId.Dot
+					| TSKindId.DotDot
+					| TSKindId.DotDotDot
+					| TSKindId.DotDotEq
+					| TSKindId.Comma
+					| TSKindId.Semi
+					| TSKindId.Colon
+					| TSKindId.ColonColon
+					| TSKindId.DashGt
+					| TSKindId.EqGt
+					| TSKindId.Pound
+					| TSKindId.Qmark
+					| TSKindId.Squote
+					| TSKindId.AsKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.BreakKeyword
+					| TSKindId.ConstKeyword
+					| TSKindId.ContinueKeyword
+					| TSKindId.DefaultKeyword
+					| TSKindId.EnumKeyword
+					| TSKindId.FnKeyword
+					| TSKindId.ForKeyword
+					| TSKindId.GenKeyword
+					| TSKindId.IfKeyword
+					| TSKindId.ImplKeyword
+					| TSKindId.LetKeyword
+					| TSKindId.LoopKeyword
+					| TSKindId.MatchKeyword
+					| TSKindId.ModKeyword
+					| TSKindId.PubKeyword
+					| TSKindId.ReturnKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.StructKeyword
+					| TSKindId.TraitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.UnsafeKeyword
+					| TSKindId.UseKeyword
+					| TSKindId.WhereKeyword
+					| TSKindId.WhileKeyword
+				>
+			) => rebuilt(node, handle, () => buildNonSpecialToken(value))
+		},
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.NonSpecialToken.Bound;
 }
 
 export function buildAttributeItem(
@@ -706,22 +657,27 @@ export function buildAttributeItem(...args: unknown[]) {
 }
 function _buildAttributeItem(value: AdmitBound<T.Attribute, T.AdmittedNodes>): T.AttributeItem.Bound {
 	const _attribute = rejectBareText(value, 'AttributeItem.attribute', 'a built Attribute');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.AttributeItem as const,
-				$source: 2 as const,
-				$named: true as const,
-				_attribute,
-				$with: {
-					attribute: (value: T.Attribute) => _buildAttributeItem(value)
-				}
-			},
-			{
-				attribute: () => _attribute
-			}
-		)
-	) as unknown as T.AttributeItem.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.AttributeItem as const,
+		$source: 2 as const,
+		$named: true as const,
+		_attribute,
+		$with: {
+			attribute: (value: T.Attribute) => rebuilt(node, handle, () => _buildAttributeItem(value))
+		},
+		attribute: () => _attribute,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AttributeItem.Bound;
 }
 
 export function buildInnerAttributeItem(
@@ -743,52 +699,33 @@ export function buildInnerAttributeItem(...args: unknown[]) {
 }
 function _buildInnerAttributeItem(value: AdmitBound<T.Attribute, T.AdmittedNodes>): T.InnerAttributeItem.Bound {
 	const _attribute = rejectBareText(value, 'InnerAttributeItem.attribute', 'a built Attribute');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.InnerAttributeItem as const,
-				$source: 2 as const,
-				$named: true as const,
-				_attribute,
-				$with: {
-					attribute: (value: T.Attribute) => _buildInnerAttributeItem(value)
-				}
-			},
-			{
-				attribute: () => _attribute
-			}
-		)
-	) as unknown as T.InnerAttributeItem.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.InnerAttributeItem as const,
+		$source: 2 as const,
+		$named: true as const,
+		_attribute,
+		$with: {
+			attribute: (value: T.Attribute) => rebuilt(node, handle, () => _buildInnerAttributeItem(value))
+		},
+		attribute: () => _attribute,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.InnerAttributeItem.Bound;
 }
 
 export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 	const _path = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.Attribute['_path']>>(config.path, [
-				['self', TSKindId.Self] as const,
-				['u8', TSKindId.U8Keyword] as const,
-				['i8', TSKindId.I8Keyword] as const,
-				['u16', TSKindId.U16Keyword] as const,
-				['i16', TSKindId.I16Keyword] as const,
-				['u32', TSKindId.U32Keyword] as const,
-				['i32', TSKindId.I32Keyword] as const,
-				['u64', TSKindId.U64Keyword] as const,
-				['i64', TSKindId.I64Keyword] as const,
-				['u128', TSKindId.U128Keyword] as const,
-				['i128', TSKindId.I128Keyword] as const,
-				['isize', TSKindId.IsizeKeyword] as const,
-				['usize', TSKindId.UsizeKeyword] as const,
-				['f32', TSKindId.F32Keyword] as const,
-				['f64', TSKindId.F64Keyword] as const,
-				['bool', TSKindId.BoolKeyword] as const,
-				['str', TSKindId.StrKeyword] as const,
-				['char', TSKindId.CharKeyword] as const,
-				['super', TSKindId.Super] as const,
-				['crate', TSKindId.Crate] as const,
-				['default', TSKindId.DefaultKeyword] as const,
-				['union', TSKindId.UnionKeyword] as const,
-				['gen', TSKindId.GenKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.Attribute['_path']>>(config.path),
 			'Attribute.path',
 			'buildIdentifier(…)'
 		),
@@ -821,25 +758,31 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 		]
 	);
 	const _input = rejectBareText(config.input, 'Attribute.input', 'a built AttributeInput');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.Attribute as const,
-				$source: 2 as const,
-				$named: true as const,
-				_path,
-				_input,
-				$with: {
-					path: (value: NonNullable<T.Attribute.Config>['path']) => buildAttribute({ ...config, path: value }),
-					input: (value?: T.AttributeInput) => buildAttribute({ ...config, input: value })
-				}
-			},
-			{
-				path: () => _path,
-				input: () => _input
-			}
-		)
-	) as unknown as T.Attribute.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.Attribute as const,
+		$source: 2 as const,
+		$named: true as const,
+		_path,
+		_input,
+		$with: {
+			path: (value: NonNullable<T.Attribute.Config>['path']) =>
+				rebuilt(node, handle, () => buildAttribute({ ...config, path: value })),
+			input: (value?: T.AttributeInput) => rebuilt(node, handle, () => buildAttribute({ ...config, input: value }))
+		},
+		path: () => _path,
+		input: () => _input,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Attribute.Bound;
 }
 
 export function buildDeclarationList(): T.EmptyDeclarationList;
@@ -850,22 +793,29 @@ export function buildDeclarationList(
 	...children: AdmitBound<T.DeclarationStatement[], T.AdmittedNodes>
 ): T.DeclarationList.Bound {
 	const _declarations = rejectBareText(children, 'DeclarationList.declarations', 'a built DeclarationStatement');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.DeclarationList as const,
-				$source: 2 as const,
-				$named: true as const,
-				_declarations,
-				$with: {
-					declarations: (...vs: T.DeclarationStatement[]) => buildDeclarationList(...restItems('declarations', vs))
-				}
-			},
-			{
-				declarations: () => _declarations
-			}
-		)
-	) as unknown as T.DeclarationList.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.DeclarationList as const,
+		$source: 2 as const,
+		$named: true as const,
+		_declarations,
+		$with: {
+			declarations: (...vs: T.DeclarationStatement[]) =>
+				rebuilt(node, handle, () => buildDeclarationList(...restItems('declarations', vs)))
+		},
+		declarations: () => _declarations,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.DeclarationList.Bound;
 }
 
 export function buildUnionItem(config: T.UnionItem.Config): T.UnionItem.Bound {
@@ -885,54 +835,72 @@ export function buildUnionItem(config: T.UnionItem.Config): T.UnionItem.Bound {
 		'UnionItem.body',
 		'a built FieldDeclarationList'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.UnionItem as const,
-					$source: 2 as const,
-					$named: true as const,
-					_visibility_modifier,
-					_name,
-					_type_parameters,
-					_where_clause,
-					_body,
-					$with: {
-						visibilityModifier: (value?: T.VisibilityModifier) =>
-							buildUnionItem({ ...config, visibilityModifier: value }),
-						name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) => buildUnionItem({ ...config, name: value }),
-						typeParameters: (value?: T.TypeParameters) => buildUnionItem({ ...config, typeParameters: value }),
-						whereClause: (value?: T.WhereClause) => buildUnionItem({ ...config, whereClause: value }),
-						body: (value: T.FieldDeclarationList) => buildUnionItem({ ...config, body: value })
-					}
-				},
-				{
-					visibilityModifier: () => _visibility_modifier,
-					name: () => _name,
-					typeParameters: () => _type_parameters,
-					whereClause: () => _where_clause,
-					body: () => _body
-				}
-			),
-			[
-				{
-					slot: 'typeParameters',
-					kind: TSKindId.TypeParameters as const,
-					optional: true,
-					make: buildTypeParameters,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
-				},
-				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
-				{
-					slot: 'body',
-					kind: TSKindId.FieldDeclarationList as const,
-					optional: false,
-					make: buildFieldDeclarationList,
-					element: { keys: ['attributeItem', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
-				}
-			]
-		)
-	) as unknown as T.UnionItem.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.UnionItem as const,
+		$source: 2 as const,
+		$named: true as const,
+		_visibility_modifier,
+		_name,
+		_type_parameters,
+		_where_clause,
+		_body,
+		$with: {
+			visibilityModifier: (value?: T.VisibilityModifier) =>
+				rebuilt(node, handle, () => buildUnionItem({ ...config, visibilityModifier: value })),
+			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildUnionItem({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeParameters as const,
+							optional: true,
+							make: buildTypeParameters,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+						},
+						(value?: T.TypeParameters) => buildUnionItem({ ...config, typeParameters: value })
+					)
+				),
+			whereClause: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
+						(value?: T.WhereClause) => buildUnionItem({ ...config, whereClause: value })
+					)
+				),
+			body: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.FieldDeclarationList as const,
+							optional: false,
+							make: buildFieldDeclarationList,
+							element: { keys: ['attributeItem', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
+						},
+						(value: T.FieldDeclarationList) => buildUnionItem({ ...config, body: value })
+					)
+				)
+		},
+		visibilityModifier: () => _visibility_modifier,
+		name: () => _name,
+		typeParameters: () => _type_parameters,
+		whereClause: () => _where_clause,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.UnionItem.Bound;
 }
 
 export function buildEnumItem(config: T.EnumItem.Config): T.EnumItem.Bound {
@@ -952,54 +920,72 @@ export function buildEnumItem(config: T.EnumItem.Config): T.EnumItem.Bound {
 		'EnumItem.body',
 		'a built EnumVariantList'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.EnumItem as const,
-					$source: 2 as const,
-					$named: true as const,
-					_visibility_modifier,
-					_name,
-					_type_parameters,
-					_where_clause,
-					_body,
-					$with: {
-						visibilityModifier: (value?: T.VisibilityModifier) =>
-							buildEnumItem({ ...config, visibilityModifier: value }),
-						name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) => buildEnumItem({ ...config, name: value }),
-						typeParameters: (value?: T.TypeParameters) => buildEnumItem({ ...config, typeParameters: value }),
-						whereClause: (value?: T.WhereClause) => buildEnumItem({ ...config, whereClause: value }),
-						body: (value: T.EnumVariantList) => buildEnumItem({ ...config, body: value })
-					}
-				},
-				{
-					visibilityModifier: () => _visibility_modifier,
-					name: () => _name,
-					typeParameters: () => _type_parameters,
-					whereClause: () => _where_clause,
-					body: () => _body
-				}
-			),
-			[
-				{
-					slot: 'typeParameters',
-					kind: TSKindId.TypeParameters as const,
-					optional: true,
-					make: buildTypeParameters,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
-				},
-				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
-				{
-					slot: 'body',
-					kind: TSKindId.EnumVariantList as const,
-					optional: false,
-					make: buildEnumVariantList,
-					element: { keys: ['attributeItem', 'enumVariant'], make: buildAttributedEnumVariant }
-				}
-			]
-		)
-	) as unknown as T.EnumItem.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.EnumItem as const,
+		$source: 2 as const,
+		$named: true as const,
+		_visibility_modifier,
+		_name,
+		_type_parameters,
+		_where_clause,
+		_body,
+		$with: {
+			visibilityModifier: (value?: T.VisibilityModifier) =>
+				rebuilt(node, handle, () => buildEnumItem({ ...config, visibilityModifier: value })),
+			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildEnumItem({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeParameters as const,
+							optional: true,
+							make: buildTypeParameters,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+						},
+						(value?: T.TypeParameters) => buildEnumItem({ ...config, typeParameters: value })
+					)
+				),
+			whereClause: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
+						(value?: T.WhereClause) => buildEnumItem({ ...config, whereClause: value })
+					)
+				),
+			body: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.EnumVariantList as const,
+							optional: false,
+							make: buildEnumVariantList,
+							element: { keys: ['attributeItem', 'enumVariant'], make: buildAttributedEnumVariant }
+						},
+						(value: T.EnumVariantList) => buildEnumItem({ ...config, body: value })
+					)
+				)
+		},
+		visibilityModifier: () => _visibility_modifier,
+		name: () => _name,
+		typeParameters: () => _type_parameters,
+		whereClause: () => _where_clause,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.EnumItem.Bound;
 }
 
 export function buildEnumVariantList(): T.EmptyEnumVariantList;
@@ -1036,42 +1022,61 @@ function _buildEnumVariantList(
 		'EnumVariantList.enumVariantListElements',
 		'a built EnumVariantListElements'
 	);
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.EnumVariantList as const,
-						$source: 2 as const,
-						$named: true as const,
-						_enum_variant_list_elements,
-						$with: {
-							enumVariantListElements: (value?: T.EnumVariantListElements) => _buildEnumVariantList(value)
-						}
-					},
-					{
-						enumVariantListElements: () => _enum_variant_list_elements
-					}
-				),
-				[
-					{
-						slot: 'enumVariantListElements',
-						kind: TSKindId.EnumVariantListElements as const,
-						optional: true,
-						make: buildEnumVariantListElements,
-						element: { keys: ['attributeItem', 'enumVariant'], make: buildAttributedEnumVariant }
-					}
-				]
-			),
-			{
-				list: { accessor: 'enumVariantListElements', storage: '_enum_variant_list_elements' },
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
-				wrapper: { kind: TSKindId.AttributedEnumVariant, content: 'enumVariant', decorations: ['_attribute_item'] }
-			}
-		)
-	) as unknown as T.EnumVariantList.Bound;
+	const listView = ownerView(_enum_variant_list_elements, '_element');
+	const listedItems =
+		listView.stored === undefined
+			? undefined
+			: listItems(ownerElements(listView.list, 'elements'), {
+					kind: TSKindId.AttributedEnumVariant,
+					content: 'enumVariant',
+					decorations: ['_attribute_item']
+				});
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.EnumVariantList as const,
+		$source: 2 as const,
+		$named: true as const,
+		_enum_variant_list_elements,
+		$with: {
+			enumVariantListElements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.EnumVariantListElements as const,
+							optional: true,
+							make: buildEnumVariantListElements,
+							element: { keys: ['attributeItem', 'enumVariant'], make: buildAttributedEnumVariant }
+						},
+						(value?: T.EnumVariantListElements) => _buildEnumVariantList(value)
+					)
+				)
+		},
+		enumVariantListElements: () => _enum_variant_list_elements,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_enum_variant_list_elements') : undefined,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.Trailing),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_enum_variant_list_elements');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.EnumVariantList.Bound;
 }
 
 export function buildEnumVariant(config: T.EnumVariant.Config): T.EnumVariant.Bound {
@@ -1087,37 +1092,43 @@ export function buildEnumVariant(config: T.EnumVariant.Config): T.EnumVariant.Bo
 		'a built FieldDeclarationList / OrderedFieldDeclarationList'
 	);
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.EnumVariant['_value']>>(config.value, []),
+		kindIdStorage<NonNullable<T.EnumVariant['_value']>>(config.value),
 		'EnumVariant.value',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.EnumVariant as const,
-				$source: 2 as const,
-				$named: true as const,
-				_visibility_modifier,
-				_name,
-				_body,
-				_value,
-				$with: {
-					visibilityModifier: (value?: T.VisibilityModifier) =>
-						buildEnumVariant({ ...config, visibilityModifier: value }),
-					name: (value: T.Identifier) => buildEnumVariant({ ...config, name: value }),
-					body: (value?: T.FieldDeclarationList | T.OrderedFieldDeclarationList) =>
-						buildEnumVariant({ ...config, body: value }),
-					value: (value?: NonNullable<T.EnumVariant.Config>['value']) => buildEnumVariant({ ...config, value: value })
-				}
-			},
-			{
-				visibilityModifier: () => _visibility_modifier,
-				name: () => _name,
-				body: () => _body,
-				value: () => _value
-			}
-		)
-	) as unknown as T.EnumVariant.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.EnumVariant as const,
+		$source: 2 as const,
+		$named: true as const,
+		_visibility_modifier,
+		_name,
+		_body,
+		_value,
+		$with: {
+			visibilityModifier: (value?: T.VisibilityModifier) =>
+				rebuilt(node, handle, () => buildEnumVariant({ ...config, visibilityModifier: value })),
+			name: (value: T.Identifier) => rebuilt(node, handle, () => buildEnumVariant({ ...config, name: value })),
+			body: (value?: T.FieldDeclarationList | T.OrderedFieldDeclarationList) =>
+				rebuilt(node, handle, () => buildEnumVariant({ ...config, body: value })),
+			value: (value?: NonNullable<T.EnumVariant.Config>['value']) =>
+				rebuilt(node, handle, () => buildEnumVariant({ ...config, value: value }))
+		},
+		visibilityModifier: () => _visibility_modifier,
+		name: () => _name,
+		body: () => _body,
+		value: () => _value,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.EnumVariant.Bound;
 }
 
 export function buildFieldDeclarationList(): T.EmptyFieldDeclarationList;
@@ -1154,47 +1165,61 @@ function _buildFieldDeclarationList(
 		'FieldDeclarationList.fieldDeclarationListElements',
 		'a built FieldDeclarationListElements'
 	);
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.FieldDeclarationList as const,
-						$source: 2 as const,
-						$named: true as const,
-						_field_declaration_list_elements,
-						$with: {
-							fieldDeclarationListElements: (value?: T.FieldDeclarationListElements) =>
-								_buildFieldDeclarationList(value)
-						}
-					},
-					{
-						fieldDeclarationListElements: () => _field_declaration_list_elements
-					}
-				),
-				[
-					{
-						slot: 'fieldDeclarationListElements',
-						kind: TSKindId.FieldDeclarationListElements as const,
-						optional: true,
-						make: buildFieldDeclarationListElements,
-						element: { keys: ['attributeItem', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
-					}
-				]
-			),
-			{
-				list: { accessor: 'fieldDeclarationListElements', storage: '_field_declaration_list_elements' },
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
-				wrapper: {
+	const listView = ownerView(_field_declaration_list_elements, '_element');
+	const listedItems =
+		listView.stored === undefined
+			? undefined
+			: listItems(ownerElements(listView.list, 'elements'), {
 					kind: TSKindId.AttributedFieldDeclaration,
 					content: 'fieldDeclaration',
 					decorations: ['_attribute_item']
-				}
-			}
-		)
-	) as unknown as T.FieldDeclarationList.Bound;
+				});
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FieldDeclarationList as const,
+		$source: 2 as const,
+		$named: true as const,
+		_field_declaration_list_elements,
+		$with: {
+			fieldDeclarationListElements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.FieldDeclarationListElements as const,
+							optional: true,
+							make: buildFieldDeclarationListElements,
+							element: { keys: ['attributeItem', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
+						},
+						(value?: T.FieldDeclarationListElements) => _buildFieldDeclarationList(value)
+					)
+				)
+		},
+		fieldDeclarationListElements: () => _field_declaration_list_elements,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_field_declaration_list_elements') : undefined,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.Trailing),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_field_declaration_list_elements');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.FieldDeclarationList.Bound;
 }
 
 export function buildFieldDeclaration(config: T.FieldDeclaration.Config): T.FieldDeclaration.Bound {
@@ -1209,37 +1234,42 @@ export function buildFieldDeclaration(config: T.FieldDeclaration.Config): T.Fiel
 	);
 	const _type = admitAliasContent<NonNullable<T.FieldDeclaration['_type']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.FieldDeclaration['_type']>>(config.type, []),
+			kindIdStorage<NonNullable<T.FieldDeclaration['_type']>>(config.type),
 			'FieldDeclaration.type',
 			'a built Type'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.FieldDeclaration as const,
-				$source: 2 as const,
-				$named: true as const,
-				_visibility_modifier,
-				_name,
-				_type,
-				$with: {
-					visibilityModifier: (value?: T.VisibilityModifier) =>
-						buildFieldDeclaration({ ...config, visibilityModifier: value }),
-					name: (value: T.FieldIdentifier | T.FieldIdentifier.Types) =>
-						buildFieldDeclaration({ ...config, name: value }),
-					type: (value: NonNullable<T.FieldDeclaration.Config>['type']) =>
-						buildFieldDeclaration({ ...config, type: value })
-				}
-			},
-			{
-				visibilityModifier: () => _visibility_modifier,
-				name: () => _name,
-				type: () => _type
-			}
-		)
-	) as unknown as T.FieldDeclaration.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FieldDeclaration as const,
+		$source: 2 as const,
+		$named: true as const,
+		_visibility_modifier,
+		_name,
+		_type,
+		$with: {
+			visibilityModifier: (value?: T.VisibilityModifier) =>
+				rebuilt(node, handle, () => buildFieldDeclaration({ ...config, visibilityModifier: value })),
+			name: (value: T.FieldIdentifier | T.FieldIdentifier.Types) =>
+				rebuilt(node, handle, () => buildFieldDeclaration({ ...config, name: value })),
+			type: (value: NonNullable<T.FieldDeclaration.Config>['type']) =>
+				rebuilt(node, handle, () => buildFieldDeclaration({ ...config, type: value }))
+		},
+		visibilityModifier: () => _visibility_modifier,
+		name: () => _name,
+		type: () => _type,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FieldDeclaration.Bound;
 }
 
 export function buildOrderedFieldDeclarationList(): T.EmptyOrderedFieldDeclarationList;
@@ -1278,46 +1308,61 @@ function _buildOrderedFieldDeclarationList(
 		'OrderedFieldDeclarationList.attributes',
 		'a built OrderedFieldDeclarationListElements'
 	);
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.OrderedFieldDeclarationList as const,
-						$source: 2 as const,
-						$named: true as const,
-						_attributes,
-						$with: {
-							attributes: (value?: T.OrderedFieldDeclarationListElements) => _buildOrderedFieldDeclarationList(value)
-						}
-					},
-					{
-						attributes: () => _attributes
-					}
-				),
-				[
-					{
-						slot: 'attributes',
-						kind: TSKindId.OrderedFieldDeclarationListElements as const,
-						optional: true,
-						make: buildOrderedFieldDeclarationListElements,
-						element: { keys: ['attributeItem', 'visibilityModifier', 'type'], make: buildAttributedOrderedField }
-					}
-				]
-			),
-			{
-				list: { accessor: 'attributes', storage: '_attributes' },
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				wrapper: {
+	const listView = ownerView(_attributes, '_element');
+	const listedItems =
+		listView.stored === undefined
+			? undefined
+			: listItems(ownerElements(listView.list, 'elements'), {
 					kind: TSKindId.AttributedOrderedField,
 					content: 'type',
 					decorations: ['_attribute_item', '_visibility_modifier']
-				}
-			}
-		)
-	) as unknown as T.OrderedFieldDeclarationList.Bound;
+				});
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.OrderedFieldDeclarationList as const,
+		$source: 2 as const,
+		$named: true as const,
+		_attributes,
+		$with: {
+			attributes: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.OrderedFieldDeclarationListElements as const,
+							optional: true,
+							make: buildOrderedFieldDeclarationListElements,
+							element: { keys: ['attributeItem', 'visibilityModifier', 'type'], make: buildAttributedOrderedField }
+						},
+						(value?: T.OrderedFieldDeclarationListElements) => _buildOrderedFieldDeclarationList(value)
+					)
+				)
+		},
+		attributes: () => _attributes,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_attributes') : undefined,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_attributes');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.OrderedFieldDeclarationList.Bound;
 }
 
 export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Config): T.ExternCrateDeclaration.Bound {
@@ -1328,29 +1373,36 @@ export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Con
 	);
 	const _name = rejectBareText(config.name, 'ExternCrateDeclaration.name', 'buildIdentifier(…)');
 	const _alias = rejectBareText(config.alias, 'ExternCrateDeclaration.alias', 'buildIdentifier(…)');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExternCrateDeclaration as const,
-				$source: 2 as const,
-				$named: true as const,
-				_visibility_modifier,
-				_name,
-				_alias,
-				$with: {
-					visibilityModifier: (value?: T.VisibilityModifier) =>
-						buildExternCrateDeclaration({ ...config, visibilityModifier: value }),
-					name: (value: T.Identifier) => buildExternCrateDeclaration({ ...config, name: value }),
-					alias: (value?: T.Identifier) => buildExternCrateDeclaration({ ...config, alias: value })
-				}
-			},
-			{
-				visibilityModifier: () => _visibility_modifier,
-				name: () => _name,
-				alias: () => _alias
-			}
-		)
-	) as unknown as T.ExternCrateDeclaration.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ExternCrateDeclaration as const,
+		$source: 2 as const,
+		$named: true as const,
+		_visibility_modifier,
+		_name,
+		_alias,
+		$with: {
+			visibilityModifier: (value?: T.VisibilityModifier) =>
+				rebuilt(node, handle, () => buildExternCrateDeclaration({ ...config, visibilityModifier: value })),
+			name: (value: T.Identifier) =>
+				rebuilt(node, handle, () => buildExternCrateDeclaration({ ...config, name: value })),
+			alias: (value?: T.Identifier) =>
+				rebuilt(node, handle, () => buildExternCrateDeclaration({ ...config, alias: value }))
+		},
+		visibilityModifier: () => _visibility_modifier,
+		name: () => _name,
+		alias: () => _alias,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ExternCrateDeclaration.Bound;
 }
 
 export function buildConstItem(config: T.ConstItem.Config): T.ConstItem.Bound {
@@ -1361,44 +1413,47 @@ export function buildConstItem(config: T.ConstItem.Config): T.ConstItem.Bound {
 	);
 	const _name = rejectBareText(config.name, 'ConstItem.name', 'buildIdentifier(…)');
 	const _type = admitAliasContent<NonNullable<T.ConstItem['_type']>>(
-		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.ConstItem['_type']>>(config.type, []),
-			'ConstItem.type',
-			'a built Type'
-		),
+		rejectBareText(kindIdStorage<NonNullable<T.ConstItem['_type']>>(config.type), 'ConstItem.type', 'a built Type'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ConstItem['_value']>>(config.value, []),
+		kindIdStorage<NonNullable<T.ConstItem['_value']>>(config.value),
 		'ConstItem.value',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ConstItem as const,
-				$source: 2 as const,
-				$named: true as const,
-				_visibility_modifier,
-				_name,
-				_type,
-				_value,
-				$with: {
-					visibilityModifier: (value?: T.VisibilityModifier) =>
-						buildConstItem({ ...config, visibilityModifier: value }),
-					name: (value: T.Identifier) => buildConstItem({ ...config, name: value }),
-					type: (value: NonNullable<T.ConstItem.Config>['type']) => buildConstItem({ ...config, type: value }),
-					value: (value?: NonNullable<T.ConstItem.Config>['value']) => buildConstItem({ ...config, value: value })
-				}
-			},
-			{
-				visibilityModifier: () => _visibility_modifier,
-				name: () => _name,
-				type: () => _type,
-				value: () => _value
-			}
-		)
-	) as unknown as T.ConstItem.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ConstItem as const,
+		$source: 2 as const,
+		$named: true as const,
+		_visibility_modifier,
+		_name,
+		_type,
+		_value,
+		$with: {
+			visibilityModifier: (value?: T.VisibilityModifier) =>
+				rebuilt(node, handle, () => buildConstItem({ ...config, visibilityModifier: value })),
+			name: (value: T.Identifier) => rebuilt(node, handle, () => buildConstItem({ ...config, name: value })),
+			type: (value: NonNullable<T.ConstItem.Config>['type']) =>
+				rebuilt(node, handle, () => buildConstItem({ ...config, type: value })),
+			value: (value?: NonNullable<T.ConstItem.Config>['value']) =>
+				rebuilt(node, handle, () => buildConstItem({ ...config, value: value }))
+		},
+		visibilityModifier: () => _visibility_modifier,
+		name: () => _name,
+		type: () => _type,
+		value: () => _value,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ConstItem.Bound;
 }
 
 export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Bound {
@@ -1407,56 +1462,63 @@ export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Bound
 		'StaticItem.visibilityModifier',
 		'a built VisibilityModifier'
 	);
-	const _ref_marker = coerceBooleanKeywordStorage(config.refMarker);
-	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
+	const _ref_marker = coerceBooleanKeywordStorage(
+		rejectBareText(config.refMarker, 'StaticItem.refMarker', 'a boolean')
+	);
+	const _mutable_specifier = coerceBooleanKeywordStorage(
+		rejectBareText(config.mutableSpecifier, 'StaticItem.mutableSpecifier', 'a boolean')
+	);
 	const _name = rejectBareText(config.name, 'StaticItem.name', 'buildIdentifier(…)');
 	const _type = admitAliasContent<NonNullable<T.StaticItem['_type']>>(
-		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.StaticItem['_type']>>(config.type, []),
-			'StaticItem.type',
-			'a built Type'
-		),
+		rejectBareText(kindIdStorage<NonNullable<T.StaticItem['_type']>>(config.type), 'StaticItem.type', 'a built Type'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.StaticItem['_value']>>(config.value, []),
+		kindIdStorage<NonNullable<T.StaticItem['_value']>>(config.value),
 		'StaticItem.value',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.StaticItem as const,
-				$source: 2 as const,
-				$named: true as const,
-				_visibility_modifier,
-				_ref_marker,
-				_mutable_specifier,
-				_name,
-				_type,
-				_value,
-				$with: {
-					visibilityModifier: (value?: T.VisibilityModifier) =>
-						buildStaticItem({ ...config, visibilityModifier: value }),
-					refMarker: (value?: NonNullable<T.StaticItem.Config>['refMarker']) =>
-						buildStaticItem({ ...config, refMarker: value }),
-					mutableSpecifier: (value?: NonNullable<T.StaticItem.Config>['mutableSpecifier']) =>
-						buildStaticItem({ ...config, mutableSpecifier: value }),
-					name: (value: T.Identifier) => buildStaticItem({ ...config, name: value }),
-					type: (value: NonNullable<T.StaticItem.Config>['type']) => buildStaticItem({ ...config, type: value }),
-					value: (value?: NonNullable<T.StaticItem.Config>['value']) => buildStaticItem({ ...config, value: value })
-				}
-			},
-			{
-				visibilityModifier: () => _visibility_modifier,
-				refMarker: () => _ref_marker,
-				mutableSpecifier: () => _mutable_specifier,
-				name: () => _name,
-				type: () => _type,
-				value: () => _value
-			}
-		)
-	) as unknown as T.StaticItem.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.StaticItem as const,
+		$source: 2 as const,
+		$named: true as const,
+		_visibility_modifier,
+		_ref_marker,
+		_mutable_specifier,
+		_name,
+		_type,
+		_value,
+		$with: {
+			visibilityModifier: (value?: T.VisibilityModifier) =>
+				rebuilt(node, handle, () => buildStaticItem({ ...config, visibilityModifier: value })),
+			refMarker: (value?: NonNullable<T.StaticItem.Config>['refMarker']) =>
+				rebuilt(node, handle, () => buildStaticItem({ ...config, refMarker: value })),
+			mutableSpecifier: (value?: NonNullable<T.StaticItem.Config>['mutableSpecifier']) =>
+				rebuilt(node, handle, () => buildStaticItem({ ...config, mutableSpecifier: value })),
+			name: (value: T.Identifier) => rebuilt(node, handle, () => buildStaticItem({ ...config, name: value })),
+			type: (value: NonNullable<T.StaticItem.Config>['type']) =>
+				rebuilt(node, handle, () => buildStaticItem({ ...config, type: value })),
+			value: (value?: NonNullable<T.StaticItem.Config>['value']) =>
+				rebuilt(node, handle, () => buildStaticItem({ ...config, value: value }))
+		},
+		visibilityModifier: () => _visibility_modifier,
+		refMarker: () => _ref_marker,
+		mutableSpecifier: () => _mutable_specifier,
+		name: () => _name,
+		type: () => _type,
+		value: () => _value,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.StaticItem.Bound;
 }
 
 export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Bound {
@@ -1472,11 +1534,7 @@ export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Bound {
 	const _type_parameters = rejectBareText(config.typeParameters, 'TypeItem.typeParameters', 'a built TypeParameters');
 	const _where_clause = rejectBareText(config.whereClause, 'TypeItem.whereClause', 'a built WhereClause');
 	const _type = admitAliasContent<NonNullable<T.TypeItem['_type']>>(
-		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.TypeItem['_type']>>(config.type, []),
-			'TypeItem.type',
-			'a built Type'
-		),
+		rejectBareText(kindIdStorage<NonNullable<T.TypeItem['_type']>>(config.type), 'TypeItem.type', 'a built Type'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _trailing_where_clause = rejectBareText(
@@ -1484,51 +1542,71 @@ export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Bound {
 		'TypeItem.trailingWhereClause',
 		'a built WhereClause'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.TypeItem as const,
-					$source: 2 as const,
-					$named: true as const,
-					_visibility_modifier,
-					_name,
-					_type_parameters,
-					_where_clause,
-					_type,
-					_trailing_where_clause,
-					$with: {
-						visibilityModifier: (value?: T.VisibilityModifier) =>
-							buildTypeItem({ ...config, visibilityModifier: value }),
-						name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) => buildTypeItem({ ...config, name: value }),
-						typeParameters: (value?: T.TypeParameters) => buildTypeItem({ ...config, typeParameters: value }),
-						whereClause: (value?: T.WhereClause) => buildTypeItem({ ...config, whereClause: value }),
-						type: (value: NonNullable<T.TypeItem.Config>['type']) => buildTypeItem({ ...config, type: value }),
-						trailingWhereClause: (value?: T.WhereClause) => buildTypeItem({ ...config, trailingWhereClause: value })
-					}
-				},
-				{
-					visibilityModifier: () => _visibility_modifier,
-					name: () => _name,
-					typeParameters: () => _type_parameters,
-					whereClause: () => _where_clause,
-					type: () => _type,
-					trailingWhereClause: () => _trailing_where_clause
-				}
-			),
-			[
-				{
-					slot: 'typeParameters',
-					kind: TSKindId.TypeParameters as const,
-					optional: true,
-					make: buildTypeParameters,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
-				},
-				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
-				{ slot: 'trailingWhereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause }
-			]
-		)
-	) as unknown as T.TypeItem.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeItem as const,
+		$source: 2 as const,
+		$named: true as const,
+		_visibility_modifier,
+		_name,
+		_type_parameters,
+		_where_clause,
+		_type,
+		_trailing_where_clause,
+		$with: {
+			visibilityModifier: (value?: T.VisibilityModifier) =>
+				rebuilt(node, handle, () => buildTypeItem({ ...config, visibilityModifier: value })),
+			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildTypeItem({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeParameters as const,
+							optional: true,
+							make: buildTypeParameters,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+						},
+						(value?: T.TypeParameters) => buildTypeItem({ ...config, typeParameters: value })
+					)
+				),
+			whereClause: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
+						(value?: T.WhereClause) => buildTypeItem({ ...config, whereClause: value })
+					)
+				),
+			type: (value: NonNullable<T.TypeItem.Config>['type']) =>
+				rebuilt(node, handle, () => buildTypeItem({ ...config, type: value })),
+			trailingWhereClause: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
+						(value?: T.WhereClause) => buildTypeItem({ ...config, trailingWhereClause: value })
+					)
+				)
+		},
+		visibilityModifier: () => _visibility_modifier,
+		name: () => _name,
+		typeParameters: () => _type_parameters,
+		whereClause: () => _where_clause,
+		type: () => _type,
+		trailingWhereClause: () => _trailing_where_clause,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TypeItem.Bound;
 }
 
 export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem.Bound {
@@ -1555,7 +1633,7 @@ export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem
 	);
 	const _return_type = admitAliasContent<NonNullable<T.FunctionItem['_return_type']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.FunctionItem['_return_type']>>(config.returnType, []),
+			kindIdStorage<NonNullable<T.FunctionItem['_return_type']>>(config.returnType),
 			'FunctionItem.returnType',
 			'a built Type'
 		),
@@ -1567,65 +1645,83 @@ export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem
 		'FunctionItem.body',
 		'a built Block'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.FunctionItem as const,
-					$source: 2 as const,
-					$named: true as const,
-					_visibility_modifier,
-					_function_modifiers,
-					_name,
-					_type_parameters,
-					_parameters,
-					_return_type,
-					_where_clause,
-					_body,
-					$with: {
-						visibilityModifier: (value?: T.VisibilityModifier) =>
-							buildFunctionItem({ ...config, visibilityModifier: value }),
-						functionModifiers: (value?: T.FunctionModifiers) =>
-							buildFunctionItem({ ...config, functionModifiers: value }),
-						name: (value: T.Identifier | T.Metavariable) => buildFunctionItem({ ...config, name: value }),
-						typeParameters: (value?: T.TypeParameters) => buildFunctionItem({ ...config, typeParameters: value }),
-						parameters: (value: T.Parameters) => buildFunctionItem({ ...config, parameters: value }),
-						returnType: (value?: NonNullable<T.FunctionItem.Config>['returnType']) =>
-							buildFunctionItem({ ...config, returnType: value }),
-						whereClause: (value?: T.WhereClause) => buildFunctionItem({ ...config, whereClause: value }),
-						body: (value: T.Block) => buildFunctionItem({ ...config, body: value })
-					}
-				},
-				{
-					visibilityModifier: () => _visibility_modifier,
-					functionModifiers: () => _function_modifiers,
-					name: () => _name,
-					typeParameters: () => _type_parameters,
-					parameters: () => _parameters,
-					returnType: () => _return_type,
-					whereClause: () => _where_clause,
-					body: () => _body
-				}
-			),
-			[
-				{
-					slot: 'typeParameters',
-					kind: TSKindId.TypeParameters as const,
-					optional: true,
-					make: buildTypeParameters,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
-				},
-				{
-					slot: 'parameters',
-					kind: TSKindId.Parameters as const,
-					optional: false,
-					make: buildParameters,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
-				},
-				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause }
-			]
-		)
-	) as unknown as T.FunctionItem.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FunctionItem as const,
+		$source: 2 as const,
+		$named: true as const,
+		_visibility_modifier,
+		_function_modifiers,
+		_name,
+		_type_parameters,
+		_parameters,
+		_return_type,
+		_where_clause,
+		_body,
+		$with: {
+			visibilityModifier: (value?: T.VisibilityModifier) =>
+				rebuilt(node, handle, () => buildFunctionItem({ ...config, visibilityModifier: value })),
+			functionModifiers: (value?: T.FunctionModifiers) =>
+				rebuilt(node, handle, () => buildFunctionItem({ ...config, functionModifiers: value })),
+			name: (value: T.Identifier | T.Metavariable) =>
+				rebuilt(node, handle, () => buildFunctionItem({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeParameters as const,
+							optional: true,
+							make: buildTypeParameters,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+						},
+						(value?: T.TypeParameters) => buildFunctionItem({ ...config, typeParameters: value })
+					)
+				),
+			parameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.Parameters as const,
+							optional: false,
+							make: buildParameters,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+						},
+						(value: T.Parameters) => buildFunctionItem({ ...config, parameters: value })
+					)
+				),
+			returnType: (value?: NonNullable<T.FunctionItem.Config>['returnType']) =>
+				rebuilt(node, handle, () => buildFunctionItem({ ...config, returnType: value })),
+			whereClause: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
+						(value?: T.WhereClause) => buildFunctionItem({ ...config, whereClause: value })
+					)
+				),
+			body: (value: T.Block) => rebuilt(node, handle, () => buildFunctionItem({ ...config, body: value }))
+		},
+		visibilityModifier: () => _visibility_modifier,
+		functionModifiers: () => _function_modifiers,
+		name: () => _name,
+		typeParameters: () => _type_parameters,
+		parameters: () => _parameters,
+		returnType: () => _return_type,
+		whereClause: () => _where_clause,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FunctionItem.Bound;
 }
 
 export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Config): T.FunctionSignatureItem.Bound {
@@ -1652,70 +1748,87 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 	);
 	const _return_type = admitAliasContent<NonNullable<T.FunctionSignatureItem['_return_type']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.FunctionSignatureItem['_return_type']>>(config.returnType, []),
+			kindIdStorage<NonNullable<T.FunctionSignatureItem['_return_type']>>(config.returnType),
 			'FunctionSignatureItem.returnType',
 			'a built Type'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _where_clause = rejectBareText(config.whereClause, 'FunctionSignatureItem.whereClause', 'a built WhereClause');
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.FunctionSignatureItem as const,
-					$source: 2 as const,
-					$named: true as const,
-					_visibility_modifier,
-					_function_modifiers,
-					_name,
-					_type_parameters,
-					_parameters,
-					_return_type,
-					_where_clause,
-					$with: {
-						visibilityModifier: (value?: T.VisibilityModifier) =>
-							buildFunctionSignatureItem({ ...config, visibilityModifier: value }),
-						functionModifiers: (value?: T.FunctionModifiers) =>
-							buildFunctionSignatureItem({ ...config, functionModifiers: value }),
-						name: (value: T.Identifier | T.Metavariable) => buildFunctionSignatureItem({ ...config, name: value }),
-						typeParameters: (value?: T.TypeParameters) =>
-							buildFunctionSignatureItem({ ...config, typeParameters: value }),
-						parameters: (value: T.Parameters) => buildFunctionSignatureItem({ ...config, parameters: value }),
-						returnType: (value?: NonNullable<T.FunctionSignatureItem.Config>['returnType']) =>
-							buildFunctionSignatureItem({ ...config, returnType: value }),
-						whereClause: (value?: T.WhereClause) => buildFunctionSignatureItem({ ...config, whereClause: value })
-					}
-				},
-				{
-					visibilityModifier: () => _visibility_modifier,
-					functionModifiers: () => _function_modifiers,
-					name: () => _name,
-					typeParameters: () => _type_parameters,
-					parameters: () => _parameters,
-					returnType: () => _return_type,
-					whereClause: () => _where_clause
-				}
-			),
-			[
-				{
-					slot: 'typeParameters',
-					kind: TSKindId.TypeParameters as const,
-					optional: true,
-					make: buildTypeParameters,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
-				},
-				{
-					slot: 'parameters',
-					kind: TSKindId.Parameters as const,
-					optional: false,
-					make: buildParameters,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
-				},
-				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause }
-			]
-		)
-	) as unknown as T.FunctionSignatureItem.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FunctionSignatureItem as const,
+		$source: 2 as const,
+		$named: true as const,
+		_visibility_modifier,
+		_function_modifiers,
+		_name,
+		_type_parameters,
+		_parameters,
+		_return_type,
+		_where_clause,
+		$with: {
+			visibilityModifier: (value?: T.VisibilityModifier) =>
+				rebuilt(node, handle, () => buildFunctionSignatureItem({ ...config, visibilityModifier: value })),
+			functionModifiers: (value?: T.FunctionModifiers) =>
+				rebuilt(node, handle, () => buildFunctionSignatureItem({ ...config, functionModifiers: value })),
+			name: (value: T.Identifier | T.Metavariable) =>
+				rebuilt(node, handle, () => buildFunctionSignatureItem({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeParameters as const,
+							optional: true,
+							make: buildTypeParameters,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+						},
+						(value?: T.TypeParameters) => buildFunctionSignatureItem({ ...config, typeParameters: value })
+					)
+				),
+			parameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.Parameters as const,
+							optional: false,
+							make: buildParameters,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+						},
+						(value: T.Parameters) => buildFunctionSignatureItem({ ...config, parameters: value })
+					)
+				),
+			returnType: (value?: NonNullable<T.FunctionSignatureItem.Config>['returnType']) =>
+				rebuilt(node, handle, () => buildFunctionSignatureItem({ ...config, returnType: value })),
+			whereClause: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
+						(value?: T.WhereClause) => buildFunctionSignatureItem({ ...config, whereClause: value })
+					)
+				)
+		},
+		visibilityModifier: () => _visibility_modifier,
+		functionModifiers: () => _function_modifiers,
+		name: () => _name,
+		typeParameters: () => _type_parameters,
+		parameters: () => _parameters,
+		returnType: () => _return_type,
+		whereClause: () => _where_clause,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FunctionSignatureItem.Bound;
 }
 
 export function buildFunctionModifiers(
@@ -1732,30 +1845,35 @@ export function buildFunctionModifiers(
 ): T.FunctionModifiers.Bound {
 	_assertNonEmpty(children, 'function_modifiers.children');
 	const _modifier = rejectBareText(children, 'FunctionModifiers.modifier', 'a built ExternModifier');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.FunctionModifiers as const,
-				$source: 2 as const,
-				$named: true as const,
-				_modifier,
-				$with: {
-					modifiers: (
-						...vs: (
-							| TSKindId.AsyncKeyword
-							| TSKindId.DefaultKeyword
-							| TSKindId.ConstKeyword
-							| TSKindId.UnsafeKeyword
-							| T.ExternModifier
-						)[]
-					) => buildFunctionModifiers(...restItems('modifiers', vs))
-				}
-			},
-			{
-				modifiers: () => _modifier
-			}
-		)
-	) as unknown as T.FunctionModifiers.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FunctionModifiers as const,
+		$source: 2 as const,
+		$named: true as const,
+		_modifier,
+		$with: {
+			modifiers: (
+				...vs: (
+					| TSKindId.AsyncKeyword
+					| TSKindId.DefaultKeyword
+					| TSKindId.ConstKeyword
+					| TSKindId.UnsafeKeyword
+					| T.ExternModifier
+				)[]
+			) => rebuilt(node, handle, () => buildFunctionModifiers(...restItems('modifiers', vs)))
+		},
+		modifiers: () => _modifier,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FunctionModifiers.Bound;
 }
 
 export function buildWhereClause(
@@ -1783,90 +1901,86 @@ export function buildWhereClause(...args: unknown[]) {
 }
 function _buildWhereClause(value?: AdmitBound<T.WherePredicates, T.AdmittedNodes>): T.WhereClause.Bound {
 	const _where_predicates = rejectBareText(value, 'WhereClause.wherePredicates', 'a built WherePredicates');
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.WhereClause as const,
-						$source: 2 as const,
-						$named: true as const,
-						_where_predicates,
-						$with: {
-							wherePredicates: (value?: T.WherePredicates) => _buildWhereClause(value)
-						}
-					},
-					{
-						wherePredicates: () => _where_predicates
-					}
-				),
-				[
-					{
-						slot: 'wherePredicates',
-						kind: TSKindId.WherePredicates as const,
-						optional: true,
-						make: buildWherePredicates
-					}
-				]
-			),
-			{
-				list: { accessor: 'wherePredicates', storage: '_where_predicates' },
-				elements: 'wherePredicates',
-				count: '_where_predicate',
-				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
-		)
-	) as unknown as T.WhereClause.Bound;
+	const listView = ownerView(_where_predicates, '_where_predicate');
+	const listedItems =
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'wherePredicates'), undefined);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.WhereClause as const,
+		$source: 2 as const,
+		$named: true as const,
+		_where_predicates,
+		$with: {
+			wherePredicates: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.WherePredicates as const, optional: true, make: buildWherePredicates },
+						(value?: T.WherePredicates) => _buildWhereClause(value)
+					)
+				)
+		},
+		wherePredicates: () => _where_predicates,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_where_predicates') : undefined,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_where_predicates');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.WhereClause.Bound;
 }
 
 export function buildWherePredicate(config: T.WherePredicate.Config): T.WherePredicate.Bound {
 	const _left = admitAliasContent<NonNullable<T.WherePredicate['_left']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.WherePredicate['_left']>>(config.left, [
-				['u8', TSKindId.U8Keyword] as const,
-				['i8', TSKindId.I8Keyword] as const,
-				['u16', TSKindId.U16Keyword] as const,
-				['i16', TSKindId.I16Keyword] as const,
-				['u32', TSKindId.U32Keyword] as const,
-				['i32', TSKindId.I32Keyword] as const,
-				['u64', TSKindId.U64Keyword] as const,
-				['i64', TSKindId.I64Keyword] as const,
-				['u128', TSKindId.U128Keyword] as const,
-				['i128', TSKindId.I128Keyword] as const,
-				['isize', TSKindId.IsizeKeyword] as const,
-				['usize', TSKindId.UsizeKeyword] as const,
-				['f32', TSKindId.F32Keyword] as const,
-				['f64', TSKindId.F64Keyword] as const,
-				['bool', TSKindId.BoolKeyword] as const,
-				['str', TSKindId.StrKeyword] as const,
-				['char', TSKindId.CharKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.WherePredicate['_left']>>(config.left),
 			'WherePredicate.left',
 			'a built Lifetime / TypeIdentifier / ScopedTypeIdentifier / GenericType / ReferenceType / PointerType / TupleType / ArrayType / HigherRankedTraitBound'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _bounds = rejectBareText(config.bounds, 'WherePredicate.bounds', 'a built TraitBounds');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.WherePredicate as const,
-				$source: 2 as const,
-				$named: true as const,
-				_left,
-				_bounds,
-				$with: {
-					left: (value: NonNullable<T.WherePredicate.Config>['left']) =>
-						buildWherePredicate({ ...config, left: value }),
-					bounds: (value: T.TraitBounds) => buildWherePredicate({ ...config, bounds: value })
-				}
-			},
-			{
-				left: () => _left,
-				bounds: () => _bounds
-			}
-		)
-	) as unknown as T.WherePredicate.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.WherePredicate as const,
+		$source: 2 as const,
+		$named: true as const,
+		_left,
+		_bounds,
+		$with: {
+			left: (value: NonNullable<T.WherePredicate.Config>['left']) =>
+				rebuilt(node, handle, () => buildWherePredicate({ ...config, left: value })),
+			bounds: (value: T.TraitBounds) => rebuilt(node, handle, () => buildWherePredicate({ ...config, bounds: value }))
+		},
+		left: () => _left,
+		bounds: () => _bounds,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.WherePredicate.Bound;
 }
 
 export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Bound {
@@ -1875,7 +1989,9 @@ export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Bound {
 		'TraitItem.visibilityModifier',
 		'a built VisibilityModifier'
 	);
-	const _unsafe_marker = coerceBooleanKeywordStorage(config.unsafeMarker);
+	const _unsafe_marker = coerceBooleanKeywordStorage(
+		rejectBareText(config.unsafeMarker, 'TraitItem.unsafeMarker', 'a boolean')
+	);
 	const _name = admitAliasContent<NonNullable<T.TraitItem['_name']>>(
 		rejectBareText(config.name, 'TraitItem.name', 'a built TypeIdentifier'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -1888,54 +2004,67 @@ export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Bound {
 		'TraitItem.body',
 		'a built DeclarationList'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.TraitItem as const,
-					$source: 2 as const,
-					$named: true as const,
-					_visibility_modifier,
-					_unsafe_marker,
-					_name,
-					_type_parameters,
-					_bounds,
-					_where_clause,
-					_body,
-					$with: {
-						visibilityModifier: (value?: T.VisibilityModifier) =>
-							buildTraitItem({ ...config, visibilityModifier: value }),
-						unsafeMarker: (value?: NonNullable<T.TraitItem.Config>['unsafeMarker']) =>
-							buildTraitItem({ ...config, unsafeMarker: value }),
-						name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) => buildTraitItem({ ...config, name: value }),
-						typeParameters: (value?: T.TypeParameters) => buildTraitItem({ ...config, typeParameters: value }),
-						bounds: (value?: T.TraitBounds) => buildTraitItem({ ...config, bounds: value }),
-						whereClause: (value?: T.WhereClause) => buildTraitItem({ ...config, whereClause: value }),
-						body: (value: T.DeclarationList) => buildTraitItem({ ...config, body: value })
-					}
-				},
-				{
-					visibilityModifier: () => _visibility_modifier,
-					unsafeMarker: () => _unsafe_marker,
-					name: () => _name,
-					typeParameters: () => _type_parameters,
-					bounds: () => _bounds,
-					whereClause: () => _where_clause,
-					body: () => _body
-				}
-			),
-			[
-				{
-					slot: 'typeParameters',
-					kind: TSKindId.TypeParameters as const,
-					optional: true,
-					make: buildTypeParameters,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
-				},
-				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause }
-			]
-		)
-	) as unknown as T.TraitItem.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TraitItem as const,
+		$source: 2 as const,
+		$named: true as const,
+		_visibility_modifier,
+		_unsafe_marker,
+		_name,
+		_type_parameters,
+		_bounds,
+		_where_clause,
+		_body,
+		$with: {
+			visibilityModifier: (value?: T.VisibilityModifier) =>
+				rebuilt(node, handle, () => buildTraitItem({ ...config, visibilityModifier: value })),
+			unsafeMarker: (value?: NonNullable<T.TraitItem.Config>['unsafeMarker']) =>
+				rebuilt(node, handle, () => buildTraitItem({ ...config, unsafeMarker: value })),
+			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildTraitItem({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeParameters as const,
+							optional: true,
+							make: buildTypeParameters,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+						},
+						(value?: T.TypeParameters) => buildTraitItem({ ...config, typeParameters: value })
+					)
+				),
+			bounds: (value?: T.TraitBounds) => rebuilt(node, handle, () => buildTraitItem({ ...config, bounds: value })),
+			whereClause: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
+						(value?: T.WhereClause) => buildTraitItem({ ...config, whereClause: value })
+					)
+				),
+			body: (value: T.DeclarationList) => rebuilt(node, handle, () => buildTraitItem({ ...config, body: value }))
+		},
+		visibilityModifier: () => _visibility_modifier,
+		unsafeMarker: () => _unsafe_marker,
+		name: () => _name,
+		typeParameters: () => _type_parameters,
+		bounds: () => _bounds,
+		whereClause: () => _where_clause,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TraitItem.Bound;
 }
 
 export function buildAssociatedType(config: T.AssociatedType.Config): T.AssociatedType.Bound {
@@ -1950,43 +2079,56 @@ export function buildAssociatedType(config: T.AssociatedType.Config): T.Associat
 	);
 	const _bounds = rejectBareText(config.bounds, 'AssociatedType.bounds', 'a built TraitBounds');
 	const _where_clause = rejectBareText(config.whereClause, 'AssociatedType.whereClause', 'a built WhereClause');
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.AssociatedType as const,
-					$source: 2 as const,
-					$named: true as const,
-					_name,
-					_type_parameters,
-					_bounds,
-					_where_clause,
-					$with: {
-						name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) => buildAssociatedType({ ...config, name: value }),
-						typeParameters: (value?: T.TypeParameters) => buildAssociatedType({ ...config, typeParameters: value }),
-						bounds: (value?: T.TraitBounds) => buildAssociatedType({ ...config, bounds: value }),
-						whereClause: (value?: T.WhereClause) => buildAssociatedType({ ...config, whereClause: value })
-					}
-				},
-				{
-					name: () => _name,
-					typeParameters: () => _type_parameters,
-					bounds: () => _bounds,
-					whereClause: () => _where_clause
-				}
-			),
-			[
-				{
-					slot: 'typeParameters',
-					kind: TSKindId.TypeParameters as const,
-					optional: true,
-					make: buildTypeParameters,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
-				},
-				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause }
-			]
-		)
-	) as unknown as T.AssociatedType.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.AssociatedType as const,
+		$source: 2 as const,
+		$named: true as const,
+		_name,
+		_type_parameters,
+		_bounds,
+		_where_clause,
+		$with: {
+			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildAssociatedType({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeParameters as const,
+							optional: true,
+							make: buildTypeParameters,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+						},
+						(value?: T.TypeParameters) => buildAssociatedType({ ...config, typeParameters: value })
+					)
+				),
+			bounds: (value?: T.TraitBounds) => rebuilt(node, handle, () => buildAssociatedType({ ...config, bounds: value })),
+			whereClause: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
+						(value?: T.WhereClause) => buildAssociatedType({ ...config, whereClause: value })
+					)
+				)
+		},
+		name: () => _name,
+		typeParameters: () => _type_parameters,
+		bounds: () => _bounds,
+		whereClause: () => _where_clause,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AssociatedType.Bound;
 }
 
 export function buildTraitBounds(
@@ -2000,23 +2142,28 @@ export function buildTraitBounds(
 		rejectBareText(children, 'TraitBounds.bounds', 'a built Type / Lifetime / HigherRankedTraitBound'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TraitBounds as const,
-				$source: 2 as const,
-				$named: true as const,
-				_bounds,
-				$with: {
-					bounds: (...vs: ((T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types)[]) =>
-						buildTraitBounds(...restItems('bounds', vs))
-				}
-			},
-			{
-				bounds: () => _bounds
-			}
-		)
-	) as unknown as T.TraitBounds.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TraitBounds as const,
+		$source: 2 as const,
+		$named: true as const,
+		_bounds,
+		$with: {
+			bounds: (...vs: ((T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types)[]) =>
+				rebuilt(node, handle, () => buildTraitBounds(...restItems('bounds', vs)))
+		},
+		bounds: () => _bounds,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TraitBounds.Bound;
 }
 
 export function buildHigherRankedTraitBound(config: T.HigherRankedTraitBound.Config): T.HigherRankedTraitBound.Bound {
@@ -2027,44 +2174,49 @@ export function buildHigherRankedTraitBound(config: T.HigherRankedTraitBound.Con
 	);
 	const _type = admitAliasContent<NonNullable<T.HigherRankedTraitBound['_type']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.HigherRankedTraitBound['_type']>>(config.type, []),
+			kindIdStorage<NonNullable<T.HigherRankedTraitBound['_type']>>(config.type),
 			'HigherRankedTraitBound.type',
 			'a built Type'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.HigherRankedTraitBound as const,
-					$source: 2 as const,
-					$named: true as const,
-					_type_parameters,
-					_type,
-					$with: {
-						typeParameters: (value: T.TypeParameters) =>
-							buildHigherRankedTraitBound({ ...config, typeParameters: value }),
-						type: (value: NonNullable<T.HigherRankedTraitBound.Config>['type']) =>
-							buildHigherRankedTraitBound({ ...config, type: value })
-					}
-				},
-				{
-					typeParameters: () => _type_parameters,
-					type: () => _type
-				}
-			),
-			[
-				{
-					slot: 'typeParameters',
-					kind: TSKindId.TypeParameters as const,
-					optional: false,
-					make: buildTypeParameters,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
-				}
-			]
-		)
-	) as unknown as T.HigherRankedTraitBound.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.HigherRankedTraitBound as const,
+		$source: 2 as const,
+		$named: true as const,
+		_type_parameters,
+		_type,
+		$with: {
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeParameters as const,
+							optional: false,
+							make: buildTypeParameters,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+						},
+						(value: T.TypeParameters) => buildHigherRankedTraitBound({ ...config, typeParameters: value })
+					)
+				),
+			type: (value: NonNullable<T.HigherRankedTraitBound.Config>['type']) =>
+				rebuilt(node, handle, () => buildHigherRankedTraitBound({ ...config, type: value }))
+		},
+		typeParameters: () => _type_parameters,
+		type: () => _type,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.HigherRankedTraitBound.Bound;
 }
 
 export function buildRemovedTraitBound(
@@ -2072,28 +2224,34 @@ export function buildRemovedTraitBound(
 ): T.RemovedTraitBound.Bound {
 	const _type = admitAliasContent<NonNullable<T.RemovedTraitBound['_type']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.RemovedTraitBound['_type']>>(value, []),
+			kindIdStorage<NonNullable<T.RemovedTraitBound['_type']>>(value),
 			'RemovedTraitBound.type',
 			'a built Type'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.RemovedTraitBound as const,
-				$source: 2 as const,
-				$named: true as const,
-				_type,
-				$with: {
-					type: (value: NonNullable<T.Type | T.TypeIdentifier.Types>) => buildRemovedTraitBound(value)
-				}
-			},
-			{
-				type: () => _type
-			}
-		)
-	) as unknown as T.RemovedTraitBound.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.RemovedTraitBound as const,
+		$source: 2 as const,
+		$named: true as const,
+		_type,
+		$with: {
+			type: (value: NonNullable<T.Type | T.TypeIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildRemovedTraitBound(value))
+		},
+		type: () => _type,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RemovedTraitBound.Bound;
 }
 
 export function buildTypeParameters(
@@ -2137,83 +2295,106 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 		'TypeParameters.typeParametersElements',
 		'a built TypeParametersElements'
 	);
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.TypeParameters as const,
-						$source: 2 as const,
-						$named: true as const,
-						_type_parameters_elements,
-						$with: {
-							typeParametersElements: (value: T.TypeParametersElements) => _buildTypeParameters(value)
-						}
-					},
-					{
-						typeParametersElements: () => _type_parameters_elements
-					}
-				),
-				[
-					{
-						slot: 'typeParametersElements',
-						kind: TSKindId.TypeParametersElements as const,
-						optional: false,
-						make: buildTypeParametersElements,
-						element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
-					}
-				]
-			),
-			{
-				list: { accessor: 'typeParametersElements', storage: '_type_parameters_elements' },
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['_attribute_item'] }
-			}
-		)
-	) as unknown as T.TypeParameters.Bound;
+	const listView = ownerView(_type_parameters_elements, '_element');
+	const listedItems =
+		listView.stored === undefined
+			? undefined
+			: listItems(ownerElements(listView.list, 'elements'), {
+					kind: TSKindId.AttributedTypeParameter,
+					content: 'content',
+					decorations: ['_attribute_item']
+				});
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeParameters as const,
+		$source: 2 as const,
+		$named: true as const,
+		_type_parameters_elements,
+		$with: {
+			typeParametersElements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeParametersElements as const,
+							optional: false,
+							make: buildTypeParametersElements,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+						},
+						(value: T.TypeParametersElements) => _buildTypeParameters(value)
+					)
+				)
+		},
+		typeParametersElements: () => _type_parameters_elements,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_type_parameters_elements') : undefined,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_type_parameters_elements');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.TypeParameters.Bound;
 }
 
 export function buildConstParameter(config: T.ConstParameter.Config): T.ConstParameter.Bound {
 	const _name = rejectBareText(config.name, 'ConstParameter.name', 'buildIdentifier(…)');
 	const _type = admitAliasContent<NonNullable<T.ConstParameter['_type']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.ConstParameter['_type']>>(config.type, []),
+			kindIdStorage<NonNullable<T.ConstParameter['_type']>>(config.type),
 			'ConstParameter.type',
 			'a built Type'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ConstParameter['_value']>>(config.value, []),
+		kindIdStorage<NonNullable<T.ConstParameter['_value']>>(config.value),
 		'ConstParameter.value',
 		'buildIdentifier(…)'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ConstParameter as const,
-				$source: 2 as const,
-				$named: true as const,
-				_name,
-				_type,
-				_value,
-				$with: {
-					name: (value: T.Identifier) => buildConstParameter({ ...config, name: value }),
-					type: (value: NonNullable<T.ConstParameter.Config>['type']) =>
-						buildConstParameter({ ...config, type: value }),
-					value: (value?: NonNullable<T.ConstParameter.Config>['value']) =>
-						buildConstParameter({ ...config, value: value })
-				}
-			},
-			{
-				name: () => _name,
-				type: () => _type,
-				value: () => _value
-			}
-		)
-	) as unknown as T.ConstParameter.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ConstParameter as const,
+		$source: 2 as const,
+		$named: true as const,
+		_name,
+		_type,
+		_value,
+		$with: {
+			name: (value: T.Identifier) => rebuilt(node, handle, () => buildConstParameter({ ...config, name: value })),
+			type: (value: NonNullable<T.ConstParameter.Config>['type']) =>
+				rebuilt(node, handle, () => buildConstParameter({ ...config, type: value })),
+			value: (value?: NonNullable<T.ConstParameter.Config>['value']) =>
+				rebuilt(node, handle, () => buildConstParameter({ ...config, value: value }))
+		},
+		name: () => _name,
+		type: () => _type,
+		value: () => _value,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ConstParameter.Bound;
 }
 
 export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParameter.Bound {
@@ -2224,114 +2405,134 @@ export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParame
 	const _bounds = rejectBareText(config.bounds, 'TypeParameter.bounds', 'a built TraitBounds');
 	const _default_type = admitAliasContent<NonNullable<T.TypeParameter['_default_type']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.TypeParameter['_default_type']>>(config.defaultType, []),
+			kindIdStorage<NonNullable<T.TypeParameter['_default_type']>>(config.defaultType),
 			'TypeParameter.defaultType',
 			'a built Type'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TypeParameter as const,
-				$source: 2 as const,
-				$named: true as const,
-				_name,
-				_bounds,
-				_default_type,
-				$with: {
-					name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) => buildTypeParameter({ ...config, name: value }),
-					bounds: (value?: T.TraitBounds) => buildTypeParameter({ ...config, bounds: value }),
-					defaultType: (value?: NonNullable<T.TypeParameter.Config>['defaultType']) =>
-						buildTypeParameter({ ...config, defaultType: value })
-				}
-			},
-			{
-				name: () => _name,
-				bounds: () => _bounds,
-				defaultType: () => _default_type
-			}
-		)
-	) as unknown as T.TypeParameter.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeParameter as const,
+		$source: 2 as const,
+		$named: true as const,
+		_name,
+		_bounds,
+		_default_type,
+		$with: {
+			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildTypeParameter({ ...config, name: value })),
+			bounds: (value?: T.TraitBounds) => rebuilt(node, handle, () => buildTypeParameter({ ...config, bounds: value })),
+			defaultType: (value?: NonNullable<T.TypeParameter.Config>['defaultType']) =>
+				rebuilt(node, handle, () => buildTypeParameter({ ...config, defaultType: value }))
+		},
+		name: () => _name,
+		bounds: () => _bounds,
+		defaultType: () => _default_type,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TypeParameter.Bound;
 }
 
 export function buildLifetimeParameter(config: T.LifetimeParameter.Config): T.LifetimeParameter.Bound {
 	const _name = rejectBareText(config.name, 'LifetimeParameter.name', 'a built Lifetime');
 	const _bounds = rejectBareText(config.bounds, 'LifetimeParameter.bounds', 'a built TraitBounds');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.LifetimeParameter as const,
-				$source: 2 as const,
-				$named: true as const,
-				_name,
-				_bounds,
-				$with: {
-					name: (value: T.Lifetime) => buildLifetimeParameter({ ...config, name: value }),
-					bounds: (value?: T.TraitBounds) => buildLifetimeParameter({ ...config, bounds: value })
-				}
-			},
-			{
-				name: () => _name,
-				bounds: () => _bounds
-			}
-		)
-	) as unknown as T.LifetimeParameter.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.LifetimeParameter as const,
+		$source: 2 as const,
+		$named: true as const,
+		_name,
+		_bounds,
+		$with: {
+			name: (value: T.Lifetime) => rebuilt(node, handle, () => buildLifetimeParameter({ ...config, name: value })),
+			bounds: (value?: T.TraitBounds) =>
+				rebuilt(node, handle, () => buildLifetimeParameter({ ...config, bounds: value }))
+		},
+		name: () => _name,
+		bounds: () => _bounds,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LifetimeParameter.Bound;
 }
 
 export function buildLetDeclaration(config: T.LetDeclaration.Config): T.LetDeclaration.Bound {
-	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
+	const _mutable_specifier = coerceBooleanKeywordStorage(
+		rejectBareText(config.mutableSpecifier, 'LetDeclaration.mutableSpecifier', 'a boolean')
+	);
 	const _pattern = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.LetDeclaration['_pattern']>>(config.pattern, []),
+		kindIdStorage<NonNullable<T.LetDeclaration['_pattern']>>(config.pattern),
 		'LetDeclaration.pattern',
 		'a built Pattern'
 	);
 	const _type = admitAliasContent<NonNullable<T.LetDeclaration['_type']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.LetDeclaration['_type']>>(config.type, []),
+			kindIdStorage<NonNullable<T.LetDeclaration['_type']>>(config.type),
 			'LetDeclaration.type',
 			'a built Type'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.LetDeclaration['_value']>>(config.value, []),
+		kindIdStorage<NonNullable<T.LetDeclaration['_value']>>(config.value),
 		'LetDeclaration.value',
 		'a built Expression'
 	);
 	const _alternative = rejectBareText(config.alternative, 'LetDeclaration.alternative', 'a built Block');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.LetDeclaration as const,
-				$source: 2 as const,
-				$named: true as const,
-				_mutable_specifier,
-				_pattern,
-				_type,
-				_value,
-				_alternative,
-				$with: {
-					mutableSpecifier: (value?: NonNullable<T.LetDeclaration.Config>['mutableSpecifier']) =>
-						buildLetDeclaration({ ...config, mutableSpecifier: value }),
-					pattern: (value: NonNullable<T.LetDeclaration.Config>['pattern']) =>
-						buildLetDeclaration({ ...config, pattern: value }),
-					type: (value?: NonNullable<T.LetDeclaration.Config>['type']) =>
-						buildLetDeclaration({ ...config, type: value }),
-					value: (value?: NonNullable<T.LetDeclaration.Config>['value']) =>
-						buildLetDeclaration({ ...config, value: value }),
-					alternative: (value?: T.Block) => buildLetDeclaration({ ...config, alternative: value })
-				}
-			},
-			{
-				mutableSpecifier: () => _mutable_specifier,
-				pattern: () => _pattern,
-				type: () => _type,
-				value: () => _value,
-				alternative: () => _alternative
-			}
-		)
-	) as unknown as T.LetDeclaration.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.LetDeclaration as const,
+		$source: 2 as const,
+		$named: true as const,
+		_mutable_specifier,
+		_pattern,
+		_type,
+		_value,
+		_alternative,
+		$with: {
+			mutableSpecifier: (value?: NonNullable<T.LetDeclaration.Config>['mutableSpecifier']) =>
+				rebuilt(node, handle, () => buildLetDeclaration({ ...config, mutableSpecifier: value })),
+			pattern: (value: NonNullable<T.LetDeclaration.Config>['pattern']) =>
+				rebuilt(node, handle, () => buildLetDeclaration({ ...config, pattern: value })),
+			type: (value?: NonNullable<T.LetDeclaration.Config>['type']) =>
+				rebuilt(node, handle, () => buildLetDeclaration({ ...config, type: value })),
+			value: (value?: NonNullable<T.LetDeclaration.Config>['value']) =>
+				rebuilt(node, handle, () => buildLetDeclaration({ ...config, value: value })),
+			alternative: (value?: T.Block) =>
+				rebuilt(node, handle, () => buildLetDeclaration({ ...config, alternative: value }))
+		},
+		mutableSpecifier: () => _mutable_specifier,
+		pattern: () => _pattern,
+		type: () => _type,
+		value: () => _value,
+		alternative: () => _alternative,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LetDeclaration.Bound;
 }
 
 export function buildUseDeclaration(config: T.UseDeclaration.Config): T.UseDeclaration.Bound {
@@ -2342,31 +2543,7 @@ export function buildUseDeclaration(config: T.UseDeclaration.Config): T.UseDecla
 	);
 	const _argument = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.UseDeclaration['_argument']>>(config.argument, [
-				['self', TSKindId.Self] as const,
-				['u8', TSKindId.U8Keyword] as const,
-				['i8', TSKindId.I8Keyword] as const,
-				['u16', TSKindId.U16Keyword] as const,
-				['i16', TSKindId.I16Keyword] as const,
-				['u32', TSKindId.U32Keyword] as const,
-				['i32', TSKindId.I32Keyword] as const,
-				['u64', TSKindId.U64Keyword] as const,
-				['i64', TSKindId.I64Keyword] as const,
-				['u128', TSKindId.U128Keyword] as const,
-				['i128', TSKindId.I128Keyword] as const,
-				['isize', TSKindId.IsizeKeyword] as const,
-				['usize', TSKindId.UsizeKeyword] as const,
-				['f32', TSKindId.F32Keyword] as const,
-				['f64', TSKindId.F64Keyword] as const,
-				['bool', TSKindId.BoolKeyword] as const,
-				['str', TSKindId.StrKeyword] as const,
-				['char', TSKindId.CharKeyword] as const,
-				['super', TSKindId.Super] as const,
-				['crate', TSKindId.Crate] as const,
-				['default', TSKindId.DefaultKeyword] as const,
-				['union', TSKindId.UnionKeyword] as const,
-				['gen', TSKindId.GenKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.UseDeclaration['_argument']>>(config.argument),
 			'UseDeclaration.argument',
 			'buildIdentifier(…)'
 		),
@@ -2398,57 +2575,38 @@ export function buildUseDeclaration(config: T.UseDeclaration.Config): T.UseDecla
 			'gen'
 		]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.UseDeclaration as const,
-				$source: 2 as const,
-				$named: true as const,
-				_visibility_modifier,
-				_argument,
-				$with: {
-					visibilityModifier: (value?: T.VisibilityModifier) =>
-						buildUseDeclaration({ ...config, visibilityModifier: value }),
-					argument: (value: NonNullable<T.UseDeclaration.Config>['argument']) =>
-						buildUseDeclaration({ ...config, argument: value })
-				}
-			},
-			{
-				visibilityModifier: () => _visibility_modifier,
-				argument: () => _argument
-			}
-		)
-	) as unknown as T.UseDeclaration.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.UseDeclaration as const,
+		$source: 2 as const,
+		$named: true as const,
+		_visibility_modifier,
+		_argument,
+		$with: {
+			visibilityModifier: (value?: T.VisibilityModifier) =>
+				rebuilt(node, handle, () => buildUseDeclaration({ ...config, visibilityModifier: value })),
+			argument: (value: NonNullable<T.UseDeclaration.Config>['argument']) =>
+				rebuilt(node, handle, () => buildUseDeclaration({ ...config, argument: value }))
+		},
+		visibilityModifier: () => _visibility_modifier,
+		argument: () => _argument,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.UseDeclaration.Bound;
 }
 
 export function buildScopedUseList(config: Partial<T.ScopedUseList.Config> = {}): T.ScopedUseList.Bound {
 	const _path = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.ScopedUseList['_path']>>(config.path, [
-				['self', TSKindId.Self] as const,
-				['u8', TSKindId.U8Keyword] as const,
-				['i8', TSKindId.I8Keyword] as const,
-				['u16', TSKindId.U16Keyword] as const,
-				['i16', TSKindId.I16Keyword] as const,
-				['u32', TSKindId.U32Keyword] as const,
-				['i32', TSKindId.I32Keyword] as const,
-				['u64', TSKindId.U64Keyword] as const,
-				['i64', TSKindId.I64Keyword] as const,
-				['u128', TSKindId.U128Keyword] as const,
-				['i128', TSKindId.I128Keyword] as const,
-				['isize', TSKindId.IsizeKeyword] as const,
-				['usize', TSKindId.UsizeKeyword] as const,
-				['f32', TSKindId.F32Keyword] as const,
-				['f64', TSKindId.F64Keyword] as const,
-				['bool', TSKindId.BoolKeyword] as const,
-				['str', TSKindId.StrKeyword] as const,
-				['char', TSKindId.CharKeyword] as const,
-				['super', TSKindId.Super] as const,
-				['crate', TSKindId.Crate] as const,
-				['default', TSKindId.DefaultKeyword] as const,
-				['union', TSKindId.UnionKeyword] as const,
-				['gen', TSKindId.GenKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.ScopedUseList['_path']>>(config.path),
 			'ScopedUseList.path',
 			'buildIdentifier(…)'
 		),
@@ -2485,29 +2643,38 @@ export function buildScopedUseList(config: Partial<T.ScopedUseList.Config> = {})
 		'ScopedUseList.list',
 		'a built UseList'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.ScopedUseList as const,
-					$source: 2 as const,
-					$named: true as const,
-					_path,
-					_list,
-					$with: {
-						path: (value?: NonNullable<T.ScopedUseList.Config>['path']) =>
-							buildScopedUseList({ ...config, path: value }),
-						list: (value: T.UseList) => buildScopedUseList({ ...config, list: value })
-					}
-				},
-				{
-					path: () => _path,
-					list: () => _list
-				}
-			),
-			[{ slot: 'list', kind: TSKindId.UseList as const, optional: false, make: buildUseList }]
-		)
-	) as unknown as T.ScopedUseList.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ScopedUseList as const,
+		$source: 2 as const,
+		$named: true as const,
+		_path,
+		_list,
+		$with: {
+			path: (value?: NonNullable<T.ScopedUseList.Config>['path']) =>
+				rebuilt(node, handle, () => buildScopedUseList({ ...config, path: value })),
+			list: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.UseList as const, optional: false, make: buildUseList },
+						(value: T.UseList) => buildScopedUseList({ ...config, list: value })
+					)
+				)
+		},
+		path: () => _path,
+		list: () => _list,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ScopedUseList.Bound;
 }
 
 export function buildUseList(): T.EmptyUseList;
@@ -2602,63 +2769,56 @@ export function buildUseList(...args: unknown[]) {
 }
 function _buildUseList(value?: AdmitBound<T.UseClauses, T.AdmittedNodes>): T.UseList.Bound {
 	const _use_clauses = rejectBareText(value, 'UseList.useClauses', 'a built UseClauses');
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.UseList as const,
-						$source: 2 as const,
-						$named: true as const,
-						_use_clauses,
-						$with: {
-							useClauses: (value?: T.UseClauses) => _buildUseList(value)
-						}
-					},
-					{
-						useClauses: () => _use_clauses
-					}
-				),
-				[{ slot: 'useClauses', kind: TSKindId.UseClauses as const, optional: true, make: buildUseClauses }]
-			),
-			{
-				list: { accessor: 'useClauses', storage: '_use_clauses' },
-				elements: 'useClauses',
-				count: '_use_clause',
-				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
-		)
-	) as unknown as T.UseList.Bound;
+	const listView = ownerView(_use_clauses, '_use_clause');
+	const listedItems =
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'useClauses'), undefined);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.UseList as const,
+		$source: 2 as const,
+		$named: true as const,
+		_use_clauses,
+		$with: {
+			useClauses: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.UseClauses as const, optional: true, make: buildUseClauses },
+						(value?: T.UseClauses) => _buildUseList(value)
+					)
+				)
+		},
+		useClauses: () => _use_clauses,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_use_clauses') : undefined,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_use_clauses');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.UseList.Bound;
 }
 
 export function buildUseAsClause(config: T.UseAsClause.Config): T.UseAsClause.Bound {
 	const _path = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.UseAsClause['_path']>>(config.path, [
-				['self', TSKindId.Self] as const,
-				['u8', TSKindId.U8Keyword] as const,
-				['i8', TSKindId.I8Keyword] as const,
-				['u16', TSKindId.U16Keyword] as const,
-				['i16', TSKindId.I16Keyword] as const,
-				['u32', TSKindId.U32Keyword] as const,
-				['i32', TSKindId.I32Keyword] as const,
-				['u64', TSKindId.U64Keyword] as const,
-				['i64', TSKindId.I64Keyword] as const,
-				['u128', TSKindId.U128Keyword] as const,
-				['i128', TSKindId.I128Keyword] as const,
-				['isize', TSKindId.IsizeKeyword] as const,
-				['usize', TSKindId.UsizeKeyword] as const,
-				['f32', TSKindId.F32Keyword] as const,
-				['f64', TSKindId.F64Keyword] as const,
-				['bool', TSKindId.BoolKeyword] as const,
-				['str', TSKindId.StrKeyword] as const,
-				['char', TSKindId.CharKeyword] as const,
-				['super', TSKindId.Super] as const,
-				['crate', TSKindId.Crate] as const,
-				['default', TSKindId.DefaultKeyword] as const,
-				['union', TSKindId.UnionKeyword] as const,
-				['gen', TSKindId.GenKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.UseAsClause['_path']>>(config.path),
 			'UseAsClause.path',
 			'buildIdentifier(…)'
 		),
@@ -2691,25 +2851,31 @@ export function buildUseAsClause(config: T.UseAsClause.Config): T.UseAsClause.Bo
 		]
 	);
 	const _alias = rejectBareText(config.alias, 'UseAsClause.alias', 'buildIdentifier(…)');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.UseAsClause as const,
-				$source: 2 as const,
-				$named: true as const,
-				_path,
-				_alias,
-				$with: {
-					path: (value: NonNullable<T.UseAsClause.Config>['path']) => buildUseAsClause({ ...config, path: value }),
-					alias: (value: T.Identifier) => buildUseAsClause({ ...config, alias: value })
-				}
-			},
-			{
-				path: () => _path,
-				alias: () => _alias
-			}
-		)
-	) as unknown as T.UseAsClause.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.UseAsClause as const,
+		$source: 2 as const,
+		$named: true as const,
+		_path,
+		_alias,
+		$with: {
+			path: (value: NonNullable<T.UseAsClause.Config>['path']) =>
+				rebuilt(node, handle, () => buildUseAsClause({ ...config, path: value })),
+			alias: (value: T.Identifier) => rebuilt(node, handle, () => buildUseAsClause({ ...config, alias: value }))
+		},
+		path: () => _path,
+		alias: () => _alias,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.UseAsClause.Bound;
 }
 
 export function buildUseWildcard(
@@ -2761,22 +2927,27 @@ export function buildUseWildcard(...args: unknown[]) {
 }
 function _buildUseWildcard(value?: AdmitBound<T.UseWildcardGroup, T.AdmittedNodes>): T.UseWildcard.Bound {
 	const _use_wildcard_group = rejectBareText(value, 'UseWildcard.useWildcardGroup', 'a built UseWildcardGroup');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.UseWildcard as const,
-				$source: 2 as const,
-				$named: true as const,
-				_use_wildcard_group,
-				$with: {
-					useWildcardGroup: (value?: T.UseWildcardGroup) => _buildUseWildcard(value)
-				}
-			},
-			{
-				useWildcardGroup: () => _use_wildcard_group
-			}
-		)
-	) as unknown as T.UseWildcard.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.UseWildcard as const,
+		$source: 2 as const,
+		$named: true as const,
+		_use_wildcard_group,
+		$with: {
+			useWildcardGroup: (value?: T.UseWildcardGroup) => rebuilt(node, handle, () => _buildUseWildcard(value))
+		},
+		useWildcardGroup: () => _use_wildcard_group,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.UseWildcard.Bound;
 }
 
 export function buildParameters(): T.EmptyParameters;
@@ -2827,142 +2998,182 @@ export function buildParameters(...args: unknown[]) {
 }
 function _buildParameters(value?: AdmitBound<T.ParametersElements, T.AdmittedNodes>): T.Parameters.Bound {
 	const _parameters_elements = rejectBareText(value, 'Parameters.parametersElements', 'a built ParametersElements');
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.Parameters as const,
-						$source: 2 as const,
-						$named: true as const,
-						_parameters_elements,
-						$with: {
-							parametersElements: (value?: T.ParametersElements) => _buildParameters(value)
-						}
-					},
-					{
-						parametersElements: () => _parameters_elements
-					}
-				),
-				[
-					{
-						slot: 'parametersElements',
-						kind: TSKindId.ParametersElements as const,
-						optional: true,
-						make: buildParametersElements,
-						element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
-					}
-				]
-			),
-			{
-				list: { accessor: 'parametersElements', storage: '_parameters_elements' },
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				wrapper: { kind: TSKindId.AttributedParameter, content: 'content', decorations: ['_attribute_item'] }
-			}
-		)
-	) as unknown as T.Parameters.Bound;
+	const listView = ownerView(_parameters_elements, '_element');
+	const listedItems =
+		listView.stored === undefined
+			? undefined
+			: listItems(ownerElements(listView.list, 'elements'), {
+					kind: TSKindId.AttributedParameter,
+					content: 'content',
+					decorations: ['_attribute_item']
+				});
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.Parameters as const,
+		$source: 2 as const,
+		$named: true as const,
+		_parameters_elements,
+		$with: {
+			parametersElements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.ParametersElements as const,
+							optional: true,
+							make: buildParametersElements,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+						},
+						(value?: T.ParametersElements) => _buildParameters(value)
+					)
+				)
+		},
+		parametersElements: () => _parameters_elements,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_parameters_elements') : undefined,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_parameters_elements');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.Parameters.Bound;
 }
 
 export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {}): T.SelfParameter.Bound {
-	const _reference = coerceBooleanKeywordStorage(config.reference);
+	const _reference = coerceBooleanKeywordStorage(
+		rejectBareText(config.reference, 'SelfParameter.reference', 'a boolean')
+	);
 	const _lifetime = rejectBareText(config.lifetime, 'SelfParameter.lifetime', 'a built Lifetime');
-	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.SelfParameter as const,
-				$source: 2 as const,
-				$named: true as const,
-				_reference,
-				_lifetime,
-				_mutable_specifier,
-				$with: {
-					reference: (value?: NonNullable<T.SelfParameter.Config>['reference']) =>
-						buildSelfParameter({ ...config, reference: value }),
-					lifetime: (value?: T.Lifetime) => buildSelfParameter({ ...config, lifetime: value }),
-					mutableSpecifier: (value?: NonNullable<T.SelfParameter.Config>['mutableSpecifier']) =>
-						buildSelfParameter({ ...config, mutableSpecifier: value })
-				}
-			},
-			{
-				reference: () => _reference,
-				lifetime: () => _lifetime,
-				mutableSpecifier: () => _mutable_specifier
-			}
-		)
-	) as unknown as T.SelfParameter.Bound;
+	const _mutable_specifier = coerceBooleanKeywordStorage(
+		rejectBareText(config.mutableSpecifier, 'SelfParameter.mutableSpecifier', 'a boolean')
+	);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.SelfParameter as const,
+		$source: 2 as const,
+		$named: true as const,
+		_reference,
+		_lifetime,
+		_mutable_specifier,
+		$with: {
+			reference: (value?: NonNullable<T.SelfParameter.Config>['reference']) =>
+				rebuilt(node, handle, () => buildSelfParameter({ ...config, reference: value })),
+			lifetime: (value?: T.Lifetime) => rebuilt(node, handle, () => buildSelfParameter({ ...config, lifetime: value })),
+			mutableSpecifier: (value?: NonNullable<T.SelfParameter.Config>['mutableSpecifier']) =>
+				rebuilt(node, handle, () => buildSelfParameter({ ...config, mutableSpecifier: value }))
+		},
+		reference: () => _reference,
+		lifetime: () => _lifetime,
+		mutableSpecifier: () => _mutable_specifier,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.SelfParameter.Bound;
 }
 
 export function buildVariadicParameter(config: Partial<T.VariadicParameter.Config> = {}): T.VariadicParameter.Bound {
-	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
+	const _mutable_specifier = coerceBooleanKeywordStorage(
+		rejectBareText(config.mutableSpecifier, 'VariadicParameter.mutableSpecifier', 'a boolean')
+	);
 	const _pattern = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.VariadicParameter['_pattern']>>(config.pattern, []),
+		kindIdStorage<NonNullable<T.VariadicParameter['_pattern']>>(config.pattern),
 		'VariadicParameter.pattern',
 		'a built Pattern'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.VariadicParameter as const,
-				$source: 2 as const,
-				$named: true as const,
-				_mutable_specifier,
-				_pattern,
-				$with: {
-					mutableSpecifier: (value?: NonNullable<T.VariadicParameter.Config>['mutableSpecifier']) =>
-						buildVariadicParameter({ ...config, mutableSpecifier: value }),
-					pattern: (value?: NonNullable<T.VariadicParameter.Config>['pattern']) =>
-						buildVariadicParameter({ ...config, pattern: value })
-				}
-			},
-			{
-				mutableSpecifier: () => _mutable_specifier,
-				pattern: () => _pattern
-			}
-		)
-	) as unknown as T.VariadicParameter.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.VariadicParameter as const,
+		$source: 2 as const,
+		$named: true as const,
+		_mutable_specifier,
+		_pattern,
+		$with: {
+			mutableSpecifier: (value?: NonNullable<T.VariadicParameter.Config>['mutableSpecifier']) =>
+				rebuilt(node, handle, () => buildVariadicParameter({ ...config, mutableSpecifier: value })),
+			pattern: (value?: NonNullable<T.VariadicParameter.Config>['pattern']) =>
+				rebuilt(node, handle, () => buildVariadicParameter({ ...config, pattern: value }))
+		},
+		mutableSpecifier: () => _mutable_specifier,
+		pattern: () => _pattern,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.VariadicParameter.Bound;
 }
 
 export function buildParameter(config: T.Parameter.Config): T.Parameter.Bound {
-	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
+	const _mutable_specifier = coerceBooleanKeywordStorage(
+		rejectBareText(config.mutableSpecifier, 'Parameter.mutableSpecifier', 'a boolean')
+	);
 	const _name = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.Parameter['_name']>>(config.name, [['self', TSKindId.Self] as const]),
+		kindIdStorage<NonNullable<T.Parameter['_name']>>(config.name),
 		'Parameter.name',
 		'a built Pattern'
 	);
 	const _type = admitAliasContent<NonNullable<T.Parameter['_type']>>(
-		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.Parameter['_type']>>(config.type, []),
-			'Parameter.type',
-			'a built Type'
-		),
+		rejectBareText(kindIdStorage<NonNullable<T.Parameter['_type']>>(config.type), 'Parameter.type', 'a built Type'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.Parameter as const,
-				$source: 2 as const,
-				$named: true as const,
-				_mutable_specifier,
-				_name,
-				_type,
-				$with: {
-					mutableSpecifier: (value?: NonNullable<T.Parameter.Config>['mutableSpecifier']) =>
-						buildParameter({ ...config, mutableSpecifier: value }),
-					name: (value: NonNullable<T.Parameter.Config>['name']) => buildParameter({ ...config, name: value }),
-					type: (value: NonNullable<T.Parameter.Config>['type']) => buildParameter({ ...config, type: value })
-				}
-			},
-			{
-				mutableSpecifier: () => _mutable_specifier,
-				name: () => _name,
-				type: () => _type
-			}
-		)
-	) as unknown as T.Parameter.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.Parameter as const,
+		$source: 2 as const,
+		$named: true as const,
+		_mutable_specifier,
+		_name,
+		_type,
+		$with: {
+			mutableSpecifier: (value?: NonNullable<T.Parameter.Config>['mutableSpecifier']) =>
+				rebuilt(node, handle, () => buildParameter({ ...config, mutableSpecifier: value })),
+			name: (value: NonNullable<T.Parameter.Config>['name']) =>
+				rebuilt(node, handle, () => buildParameter({ ...config, name: value })),
+			type: (value: NonNullable<T.Parameter.Config>['type']) =>
+				rebuilt(node, handle, () => buildParameter({ ...config, type: value }))
+		},
+		mutableSpecifier: () => _mutable_specifier,
+		name: () => _name,
+		type: () => _type,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Parameter.Bound;
 }
 
 export function buildExternModifier(
@@ -2984,48 +3195,59 @@ export function buildExternModifier(...args: unknown[]) {
 }
 function _buildExternModifier(value?: AdmitBound<T.StringLiteral, T.AdmittedNodes>): T.ExternModifier.Bound {
 	const _abi = rejectBareText(value, 'ExternModifier.abi', 'a built StringLiteral');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExternModifier as const,
-				$source: 2 as const,
-				$named: true as const,
-				_abi,
-				$with: {
-					abi: (value?: T.StringLiteral) => _buildExternModifier(value)
-				}
-			},
-			{
-				abi: () => _abi
-			}
-		)
-	) as unknown as T.ExternModifier.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ExternModifier as const,
+		$source: 2 as const,
+		$named: true as const,
+		_abi,
+		$with: {
+			abi: (value?: T.StringLiteral) => rebuilt(node, handle, () => _buildExternModifier(value))
+		},
+		abi: () => _abi,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ExternModifier.Bound;
 }
 
 export function buildVisibilityModifier(
 	value: AdmitBound<TSKindId.Crate | T.VisibilityModifierPub, T.AdmittedNodes>
 ): T.VisibilityModifier.Bound {
 	const _content = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.VisibilityModifier['_content']>>(value, [['crate', TSKindId.Crate] as const]),
+		kindIdStorage<NonNullable<T.VisibilityModifier['_content']>>(value),
 		'VisibilityModifier.content',
 		'a built VisibilityModifierPub'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.VisibilityModifier as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: NonNullable<TSKindId.Crate | T.VisibilityModifierPub>) => buildVisibilityModifier(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		)
-	) as unknown as T.VisibilityModifier.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.VisibilityModifier as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		$with: {
+			content: (value: NonNullable<TSKindId.Crate | T.VisibilityModifierPub>) =>
+				rebuilt(node, handle, () => buildVisibilityModifier(value))
+		},
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.VisibilityModifier.Bound;
 }
 
 export function buildBracketedType(
@@ -3033,34 +3255,40 @@ export function buildBracketedType(
 ): T.BracketedType.Bound {
 	const _type = admitAliasContent<NonNullable<T.BracketedType['_type']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.BracketedType['_type']>>(value, []),
+			kindIdStorage<NonNullable<T.BracketedType['_type']>>(value),
 			'BracketedType.type',
 			'a built Type / QualifiedType'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.BracketedType as const,
-				$source: 2 as const,
-				$named: true as const,
-				_type,
-				$with: {
-					type: (value: NonNullable<(T.Type | T.QualifiedType) | T.TypeIdentifier.Types>) => buildBracketedType(value)
-				}
-			},
-			{
-				type: () => _type
-			}
-		)
-	) as unknown as T.BracketedType.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.BracketedType as const,
+		$source: 2 as const,
+		$named: true as const,
+		_type,
+		$with: {
+			type: (value: NonNullable<(T.Type | T.QualifiedType) | T.TypeIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildBracketedType(value))
+		},
+		type: () => _type,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.BracketedType.Bound;
 }
 
 export function buildQualifiedType(config: T.QualifiedType.Config): T.QualifiedType.Bound {
 	const _type = admitAliasContent<NonNullable<T.QualifiedType['_type']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.QualifiedType['_type']>>(config.type, []),
+			kindIdStorage<NonNullable<T.QualifiedType['_type']>>(config.type),
 			'QualifiedType.type',
 			'a built Type'
 		),
@@ -3068,32 +3296,38 @@ export function buildQualifiedType(config: T.QualifiedType.Config): T.QualifiedT
 	);
 	const _alias = admitAliasContent<NonNullable<T.QualifiedType['_alias']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.QualifiedType['_alias']>>(config.alias, []),
+			kindIdStorage<NonNullable<T.QualifiedType['_alias']>>(config.alias),
 			'QualifiedType.alias',
 			'a built Type'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.QualifiedType as const,
-				$source: 2 as const,
-				$named: true as const,
-				_type,
-				_alias,
-				$with: {
-					type: (value: NonNullable<T.QualifiedType.Config>['type']) => buildQualifiedType({ ...config, type: value }),
-					alias: (value: NonNullable<T.QualifiedType.Config>['alias']) =>
-						buildQualifiedType({ ...config, alias: value })
-				}
-			},
-			{
-				type: () => _type,
-				alias: () => _alias
-			}
-		)
-	) as unknown as T.QualifiedType.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.QualifiedType as const,
+		$source: 2 as const,
+		$named: true as const,
+		_type,
+		_alias,
+		$with: {
+			type: (value: NonNullable<T.QualifiedType.Config>['type']) =>
+				rebuilt(node, handle, () => buildQualifiedType({ ...config, type: value })),
+			alias: (value: NonNullable<T.QualifiedType.Config>['alias']) =>
+				rebuilt(node, handle, () => buildQualifiedType({ ...config, alias: value }))
+		},
+		type: () => _type,
+		alias: () => _alias,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.QualifiedType.Bound;
 }
 
 export function buildLifetime(value: AdmitBound<T.Identifier, T.AdmittedNodes>): ReturnType<typeof _buildLifetime>;
@@ -3113,57 +3347,69 @@ export function buildLifetime(...args: unknown[]) {
 }
 function _buildLifetime(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T.Lifetime.Bound {
 	const _name = rejectBareText(value, 'Lifetime.name', 'buildIdentifier(…)');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.Lifetime as const,
-				$source: 2 as const,
-				$named: true as const,
-				_name,
-				$with: {
-					name: (value: T.Identifier) => _buildLifetime(value)
-				}
-			},
-			{
-				name: () => _name
-			}
-		)
-	) as unknown as T.Lifetime.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.Lifetime as const,
+		$source: 2 as const,
+		$named: true as const,
+		_name,
+		$with: {
+			name: (value: T.Identifier) => rebuilt(node, handle, () => _buildLifetime(value))
+		},
+		name: () => _name,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Lifetime.Bound;
 }
 
 export function buildArrayType(config: T.ArrayType.Config): T.ArrayType.Bound {
 	const _element = admitAliasContent<NonNullable<T.ArrayType['_element']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.ArrayType['_element']>>(config.element, []),
+			kindIdStorage<NonNullable<T.ArrayType['_element']>>(config.element),
 			'ArrayType.element',
 			'a built Type'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _length = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ArrayType['_length']>>(config.length, []),
+		kindIdStorage<NonNullable<T.ArrayType['_length']>>(config.length),
 		'ArrayType.length',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ArrayType as const,
-				$source: 2 as const,
-				$named: true as const,
-				_element,
-				_length,
-				$with: {
-					element: (value: NonNullable<T.ArrayType.Config>['element']) => buildArrayType({ ...config, element: value }),
-					length: (value?: NonNullable<T.ArrayType.Config>['length']) => buildArrayType({ ...config, length: value })
-				}
-			},
-			{
-				element: () => _element,
-				length: () => _length
-			}
-		)
-	) as unknown as T.ArrayType.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ArrayType as const,
+		$source: 2 as const,
+		$named: true as const,
+		_element,
+		_length,
+		$with: {
+			element: (value: NonNullable<T.ArrayType.Config>['element']) =>
+				rebuilt(node, handle, () => buildArrayType({ ...config, element: value })),
+			length: (value?: NonNullable<T.ArrayType.Config>['length']) =>
+				rebuilt(node, handle, () => buildArrayType({ ...config, length: value }))
+		},
+		element: () => _element,
+		length: () => _length,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ArrayType.Bound;
 }
 
 export function buildForLifetimes(
@@ -3191,33 +3437,49 @@ export function buildForLifetimes(...args: unknown[]) {
 }
 function _buildForLifetimes(value: AdmitBound<T.Lifetimes, T.AdmittedNodes>): T.ForLifetimes.Bound {
 	const _lifetimes = rejectBareText(value, 'ForLifetimes.lifetimes', 'a built Lifetimes');
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.ForLifetimes as const,
-						$source: 2 as const,
-						$named: true as const,
-						_lifetimes,
-						$with: {
-							lifetimes: (value: T.Lifetimes) => _buildForLifetimes(value)
-						}
-					},
-					{
-						lifetimes: () => _lifetimes
-					}
-				),
-				[{ slot: 'lifetimes', kind: TSKindId.Lifetimes as const, optional: false, make: buildLifetimes }]
-			),
-			{
-				list: { accessor: 'lifetimes', storage: '_lifetimes' },
-				elements: 'lifetimes',
-				count: '_lifetime',
-				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
-		)
-	) as unknown as T.ForLifetimes.Bound;
+	const listView = ownerView(_lifetimes, '_lifetime');
+	const listedItems =
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'lifetimes'), undefined);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ForLifetimes as const,
+		$source: 2 as const,
+		$named: true as const,
+		_lifetimes,
+		$with: {
+			lifetimes: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.Lifetimes as const, optional: false, make: buildLifetimes },
+						(value: T.Lifetimes) => _buildForLifetimes(value)
+					)
+				)
+		},
+		lifetimes: () => _lifetimes,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_lifetimes') : undefined,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_lifetimes');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.ForLifetimes.Bound;
 }
 
 export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType.Bound {
@@ -3234,51 +3496,63 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 	);
 	const _return_type = admitAliasContent<NonNullable<T.FunctionType['_return_type']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.FunctionType['_return_type']>>(config.returnType, []),
+			kindIdStorage<NonNullable<T.FunctionType['_return_type']>>(config.returnType),
 			'FunctionType.returnType',
 			'a built Type'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.FunctionType as const,
-					$source: 2 as const,
-					$named: true as const,
-					_for_lifetimes,
-					_content,
-					_parameters,
-					_return_type,
-					$with: {
-						forLifetimes: (value?: T.ForLifetimes) => buildFunctionType({ ...config, forLifetimes: value }),
-						content: (value: T.FunctionTypeTraitForm | T.FunctionTypeFnForm) =>
-							buildFunctionType({ ...config, content: value }),
-						parameters: (value: T.Parameters) => buildFunctionType({ ...config, parameters: value }),
-						returnType: (value?: NonNullable<T.FunctionType.Config>['returnType']) =>
-							buildFunctionType({ ...config, returnType: value })
-					}
-				},
-				{
-					forLifetimes: () => _for_lifetimes,
-					content: () => _content,
-					parameters: () => _parameters,
-					returnType: () => _return_type
-				}
-			),
-			[
-				{ slot: 'forLifetimes', kind: TSKindId.ForLifetimes as const, optional: true, make: buildForLifetimes },
-				{
-					slot: 'parameters',
-					kind: TSKindId.Parameters as const,
-					optional: false,
-					make: buildParameters,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
-				}
-			]
-		)
-	) as unknown as T.FunctionType.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FunctionType as const,
+		$source: 2 as const,
+		$named: true as const,
+		_for_lifetimes,
+		_content,
+		_parameters,
+		_return_type,
+		$with: {
+			forLifetimes: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.ForLifetimes as const, optional: true, make: buildForLifetimes },
+						(value?: T.ForLifetimes) => buildFunctionType({ ...config, forLifetimes: value })
+					)
+				),
+			content: (value: T.FunctionTypeTraitForm | T.FunctionTypeFnForm) =>
+				rebuilt(node, handle, () => buildFunctionType({ ...config, content: value })),
+			parameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.Parameters as const,
+							optional: false,
+							make: buildParameters,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+						},
+						(value: T.Parameters) => buildFunctionType({ ...config, parameters: value })
+					)
+				),
+			returnType: (value?: NonNullable<T.FunctionType.Config>['returnType']) =>
+				rebuilt(node, handle, () => buildFunctionType({ ...config, returnType: value }))
+		},
+		forLifetimes: () => _for_lifetimes,
+		content: () => _content,
+		parameters: () => _parameters,
+		returnType: () => _return_type,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FunctionType.Bound;
 }
 
 export function buildTupleType(
@@ -3306,40 +3580,49 @@ export function buildTupleType(...args: unknown[]) {
 }
 function _buildTupleType(value: AdmitBound<T.TupleTypeElements, T.AdmittedNodes>): T.TupleType.Bound {
 	const _tuple_type_elements = rejectBareText(value, 'TupleType.tupleTypeElements', 'a built TupleTypeElements');
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.TupleType as const,
-						$source: 2 as const,
-						$named: true as const,
-						_tuple_type_elements,
-						$with: {
-							tupleTypeElements: (value: T.TupleTypeElements) => _buildTupleType(value)
-						}
-					},
-					{
-						tupleTypeElements: () => _tuple_type_elements
-					}
-				),
-				[
-					{
-						slot: 'tupleTypeElements',
-						kind: TSKindId.TupleTypeElements as const,
-						optional: false,
-						make: buildTupleTypeElements
-					}
-				]
-			),
-			{
-				list: { accessor: 'tupleTypeElements', storage: '_tuple_type_elements' },
-				elements: 'types',
-				count: '_type',
-				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
-		)
-	) as unknown as T.TupleType.Bound;
+	const listView = ownerView(_tuple_type_elements, '_type');
+	const listedItems =
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'types'), undefined);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TupleType as const,
+		$source: 2 as const,
+		$named: true as const,
+		_tuple_type_elements,
+		$with: {
+			tupleTypeElements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TupleTypeElements as const, optional: false, make: buildTupleTypeElements },
+						(value: T.TupleTypeElements) => _buildTupleType(value)
+					)
+				)
+		},
+		tupleTypeElements: () => _tuple_type_elements,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_tuple_type_elements') : undefined,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_tuple_type_elements');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.TupleType.Bound;
 }
 
 export const buildUnitType: TSKindId.UnitType = TSKindId.UnitType;
@@ -3351,83 +3634,92 @@ export function buildGenericFunction(config: T.GenericFunction.Config): T.Generi
 		'GenericFunction.typeArguments',
 		'a built TypeArguments'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.GenericFunction as const,
-					$source: 2 as const,
-					$named: true as const,
-					_function,
-					_type_arguments,
-					$with: {
-						function: (value: T.Identifier | T.ScopedIdentifier | T.FieldExpression) =>
-							buildGenericFunction({ ...config, function: value }),
-						typeArguments: (value: T.TypeArguments) => buildGenericFunction({ ...config, typeArguments: value })
-					}
-				},
-				{
-					function: () => _function,
-					typeArguments: () => _type_arguments
-				}
-			),
-			[
-				{
-					slot: 'typeArguments',
-					kind: TSKindId.TypeArguments as const,
-					optional: false,
-					make: buildTypeArguments,
-					element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
-				}
-			]
-		)
-	) as unknown as T.GenericFunction.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.GenericFunction as const,
+		$source: 2 as const,
+		$named: true as const,
+		_function,
+		_type_arguments,
+		$with: {
+			function: (value: T.Identifier | T.ScopedIdentifier | T.FieldExpression) =>
+				rebuilt(node, handle, () => buildGenericFunction({ ...config, function: value })),
+			typeArguments: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeArguments as const,
+							optional: false,
+							make: buildTypeArguments,
+							element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
+						},
+						(value: T.TypeArguments) => buildGenericFunction({ ...config, typeArguments: value })
+					)
+				)
+		},
+		function: () => _function,
+		typeArguments: () => _type_arguments,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.GenericFunction.Bound;
 }
 
 export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bound {
 	const _type = admitAliasContent<NonNullable<T.GenericType['_type']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.GenericType['_type']>>(config.type, [
-				['default', TSKindId.DefaultKeyword] as const,
-				['union', TSKindId.UnionKeyword] as const,
-				['gen', TSKindId.GenKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.GenericType['_type']>>(config.type),
 			'GenericType.type',
 			'a built TypeIdentifier / ScopedTypeIdentifier'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _type_arguments = rejectBareText(config.typeArguments, 'GenericType.typeArguments', 'a built TypeArguments');
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.GenericType as const,
-					$source: 2 as const,
-					$named: true as const,
-					_type,
-					_type_arguments,
-					$with: {
-						type: (value: NonNullable<T.GenericType.Config>['type']) => buildGenericType({ ...config, type: value }),
-						typeArguments: (value: T.TypeArguments) => buildGenericType({ ...config, typeArguments: value })
-					}
-				},
-				{
-					type: () => _type,
-					typeArguments: () => _type_arguments
-				}
-			),
-			[
-				{
-					slot: 'typeArguments',
-					kind: TSKindId.TypeArguments as const,
-					optional: false,
-					make: buildTypeArguments,
-					element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
-				}
-			]
-		)
-	) as unknown as T.GenericType.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.GenericType as const,
+		$source: 2 as const,
+		$named: true as const,
+		_type,
+		_type_arguments,
+		$with: {
+			type: (value: NonNullable<T.GenericType.Config>['type']) =>
+				rebuilt(node, handle, () => buildGenericType({ ...config, type: value })),
+			typeArguments: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeArguments as const,
+							optional: false,
+							make: buildTypeArguments,
+							element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
+						},
+						(value: T.TypeArguments) => buildGenericType({ ...config, typeArguments: value })
+					)
+				)
+		},
+		type: () => _type,
+		typeArguments: () => _type_arguments,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.GenericType.Bound;
 }
 
 export function buildGenericTypeWithTurbofish(
@@ -3442,44 +3734,49 @@ export function buildGenericTypeWithTurbofish(
 		'GenericTypeWithTurbofish.typeArguments',
 		'a built TypeArguments'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.GenericTypeWithTurbofish as const,
-					$source: 2 as const,
-					$named: true as const,
-					_type,
-					_type_arguments,
-					$with: {
-						type: (value: T.TypeIdentifier | T.ScopedIdentifier | T.TypeIdentifier.Types) =>
-							buildGenericTypeWithTurbofish({ ...config, type: value }),
-						typeArguments: (value: T.TypeArguments) =>
-							buildGenericTypeWithTurbofish({ ...config, typeArguments: value })
-					}
-				},
-				{
-					type: () => _type,
-					typeArguments: () => _type_arguments
-				}
-			),
-			[
-				{
-					slot: 'typeArguments',
-					kind: TSKindId.TypeArguments as const,
-					optional: false,
-					make: buildTypeArguments,
-					element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
-				}
-			]
-		)
-	) as unknown as T.GenericTypeWithTurbofish.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.GenericTypeWithTurbofish as const,
+		$source: 2 as const,
+		$named: true as const,
+		_type,
+		_type_arguments,
+		$with: {
+			type: (value: T.TypeIdentifier | T.ScopedIdentifier | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildGenericTypeWithTurbofish({ ...config, type: value })),
+			typeArguments: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeArguments as const,
+							optional: false,
+							make: buildTypeArguments,
+							element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
+						},
+						(value: T.TypeArguments) => buildGenericTypeWithTurbofish({ ...config, typeArguments: value })
+					)
+				)
+		},
+		type: () => _type,
+		typeArguments: () => _type_arguments,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.GenericTypeWithTurbofish.Bound;
 }
 
 export function buildBoundedType(config: T.BoundedType.Config): T.BoundedType.Bound {
 	const _left = admitAliasContent<NonNullable<T.BoundedType['_left']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.BoundedType['_left']>>(config.left, []),
+			kindIdStorage<NonNullable<T.BoundedType['_left']>>(config.left),
 			'BoundedType.left',
 			'a built Lifetime / Type / UseBounds'
 		),
@@ -3487,31 +3784,38 @@ export function buildBoundedType(config: T.BoundedType.Config): T.BoundedType.Bo
 	);
 	const _right = admitAliasContent<NonNullable<T.BoundedType['_right']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.BoundedType['_right']>>(config.right, []),
+			kindIdStorage<NonNullable<T.BoundedType['_right']>>(config.right),
 			'BoundedType.right',
 			'a built Lifetime / Type / UseBounds'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.BoundedType as const,
-				$source: 2 as const,
-				$named: true as const,
-				_left,
-				_right,
-				$with: {
-					left: (value: NonNullable<T.BoundedType.Config>['left']) => buildBoundedType({ ...config, left: value }),
-					right: (value: NonNullable<T.BoundedType.Config>['right']) => buildBoundedType({ ...config, right: value })
-				}
-			},
-			{
-				left: () => _left,
-				right: () => _right
-			}
-		)
-	) as unknown as T.BoundedType.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.BoundedType as const,
+		$source: 2 as const,
+		$named: true as const,
+		_left,
+		_right,
+		$with: {
+			left: (value: NonNullable<T.BoundedType.Config>['left']) =>
+				rebuilt(node, handle, () => buildBoundedType({ ...config, left: value })),
+			right: (value: NonNullable<T.BoundedType.Config>['right']) =>
+				rebuilt(node, handle, () => buildBoundedType({ ...config, right: value }))
+		},
+		left: () => _left,
+		right: () => _right,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.BoundedType.Bound;
 }
 
 export function buildUseBounds(): T.EmptyUseBounds;
@@ -3540,33 +3844,50 @@ export function buildUseBounds(...args: unknown[]) {
 }
 function _buildUseBounds(value?: AdmitBound<T.UseBoundsElements, T.AdmittedNodes>): T.UseBounds.Bound {
 	const _bounds = rejectBareText(value, 'UseBounds.bounds', 'a built UseBoundsElements');
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.UseBounds as const,
-						$source: 2 as const,
-						$named: true as const,
-						_bounds,
-						$with: {
-							bounds: (value?: T.UseBoundsElements) => _buildUseBounds(value)
-						}
-					},
-					{
-						bounds: () => _bounds
-					}
-				),
-				[{ slot: 'bounds', kind: TSKindId.UseBoundsElements as const, optional: true, make: buildUseBoundsElements }]
-			),
-			{
-				list: { accessor: 'bounds', storage: '_bounds' },
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
-		)
-	) as unknown as T.UseBounds.Bound;
+	const listView = ownerView(_bounds, '_element');
+	const listedItems =
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'elements'), undefined);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.UseBounds as const,
+		$source: 2 as const,
+		$named: true as const,
+		_bounds,
+		$with: {
+			bounds: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.UseBoundsElements as const, optional: true, make: buildUseBoundsElements },
+						(value?: T.UseBoundsElements) => _buildUseBounds(value)
+					)
+				)
+		},
+		bounds: () => _bounds,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_bounds') : undefined,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_bounds');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.UseBounds.Bound;
 }
 
 export function buildTypeArguments(
@@ -3610,42 +3931,60 @@ function _buildTypeArguments(value: AdmitBound<T.TypeArgumentsElements, T.Admitt
 		'TypeArguments.typeArgumentsElements',
 		'a built TypeArgumentsElements'
 	);
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.TypeArguments as const,
-						$source: 2 as const,
-						$named: true as const,
-						_type_arguments_elements,
-						$with: {
-							typeArgumentsElements: (value: T.TypeArgumentsElements) => _buildTypeArguments(value)
-						}
-					},
-					{
-						typeArgumentsElements: () => _type_arguments_elements
-					}
-				),
-				[
-					{
-						slot: 'typeArgumentsElements',
-						kind: TSKindId.TypeArgumentsElements as const,
-						optional: false,
-						make: buildTypeArgumentsElements,
-						element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
-					}
-				]
-			),
-			{
-				list: { accessor: 'typeArgumentsElements', storage: '_type_arguments_elements' },
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				wrapper: { kind: TSKindId.TypeArgument, content: 'content', decorations: ['_trait_bounds'] }
-			}
-		)
-	) as unknown as T.TypeArguments.Bound;
+	const listView = ownerView(_type_arguments_elements, '_element');
+	const listedItems =
+		listView.stored === undefined
+			? undefined
+			: listItems(ownerElements(listView.list, 'elements'), {
+					kind: TSKindId.TypeArgument,
+					content: 'content',
+					decorations: ['_trait_bounds']
+				});
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeArguments as const,
+		$source: 2 as const,
+		$named: true as const,
+		_type_arguments_elements,
+		$with: {
+			typeArgumentsElements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeArgumentsElements as const,
+							optional: false,
+							make: buildTypeArgumentsElements,
+							element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
+						},
+						(value: T.TypeArgumentsElements) => _buildTypeArguments(value)
+					)
+				)
+		},
+		typeArgumentsElements: () => _type_arguments_elements,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_type_arguments_elements') : undefined,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_type_arguments_elements');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.TypeArguments.Bound;
 }
 
 export function buildTypeBinding(config: T.TypeBinding.Config): T.TypeBinding.Bound {
@@ -3655,82 +3994,94 @@ export function buildTypeBinding(config: T.TypeBinding.Config): T.TypeBinding.Bo
 	);
 	const _type_arguments = rejectBareText(config.typeArguments, 'TypeBinding.typeArguments', 'a built TypeArguments');
 	const _type = admitAliasContent<NonNullable<T.TypeBinding['_type']>>(
-		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.TypeBinding['_type']>>(config.type, []),
-			'TypeBinding.type',
-			'a built Type'
-		),
+		rejectBareText(kindIdStorage<NonNullable<T.TypeBinding['_type']>>(config.type), 'TypeBinding.type', 'a built Type'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.TypeBinding as const,
-					$source: 2 as const,
-					$named: true as const,
-					_name,
-					_type_arguments,
-					_type,
-					$with: {
-						name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) => buildTypeBinding({ ...config, name: value }),
-						typeArguments: (value?: T.TypeArguments) => buildTypeBinding({ ...config, typeArguments: value }),
-						type: (value: NonNullable<T.TypeBinding.Config>['type']) => buildTypeBinding({ ...config, type: value })
-					}
-				},
-				{
-					name: () => _name,
-					typeArguments: () => _type_arguments,
-					type: () => _type
-				}
-			),
-			[
-				{
-					slot: 'typeArguments',
-					kind: TSKindId.TypeArguments as const,
-					optional: true,
-					make: buildTypeArguments,
-					element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
-				}
-			]
-		)
-	) as unknown as T.TypeBinding.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeBinding as const,
+		$source: 2 as const,
+		$named: true as const,
+		_name,
+		_type_arguments,
+		_type,
+		$with: {
+			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildTypeBinding({ ...config, name: value })),
+			typeArguments: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeArguments as const,
+							optional: true,
+							make: buildTypeArguments,
+							element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
+						},
+						(value?: T.TypeArguments) => buildTypeBinding({ ...config, typeArguments: value })
+					)
+				),
+			type: (value: NonNullable<T.TypeBinding.Config>['type']) =>
+				rebuilt(node, handle, () => buildTypeBinding({ ...config, type: value }))
+		},
+		name: () => _name,
+		typeArguments: () => _type_arguments,
+		type: () => _type,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TypeBinding.Bound;
 }
 
 export function buildReferenceType(config: T.ReferenceType.Config): T.ReferenceType.Bound {
 	const _lifetime = rejectBareText(config.lifetime, 'ReferenceType.lifetime', 'a built Lifetime');
-	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
+	const _mutable_specifier = coerceBooleanKeywordStorage(
+		rejectBareText(config.mutableSpecifier, 'ReferenceType.mutableSpecifier', 'a boolean')
+	);
 	const _type = admitAliasContent<NonNullable<T.ReferenceType['_type']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.ReferenceType['_type']>>(config.type, []),
+			kindIdStorage<NonNullable<T.ReferenceType['_type']>>(config.type),
 			'ReferenceType.type',
 			'a built Type'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ReferenceType as const,
-				$source: 2 as const,
-				$named: true as const,
-				_lifetime,
-				_mutable_specifier,
-				_type,
-				$with: {
-					lifetime: (value?: T.Lifetime) => buildReferenceType({ ...config, lifetime: value }),
-					mutableSpecifier: (value?: NonNullable<T.ReferenceType.Config>['mutableSpecifier']) =>
-						buildReferenceType({ ...config, mutableSpecifier: value }),
-					type: (value: NonNullable<T.ReferenceType.Config>['type']) => buildReferenceType({ ...config, type: value })
-				}
-			},
-			{
-				lifetime: () => _lifetime,
-				mutableSpecifier: () => _mutable_specifier,
-				type: () => _type
-			}
-		)
-	) as unknown as T.ReferenceType.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ReferenceType as const,
+		$source: 2 as const,
+		$named: true as const,
+		_lifetime,
+		_mutable_specifier,
+		_type,
+		$with: {
+			lifetime: (value?: T.Lifetime) => rebuilt(node, handle, () => buildReferenceType({ ...config, lifetime: value })),
+			mutableSpecifier: (value?: NonNullable<T.ReferenceType.Config>['mutableSpecifier']) =>
+				rebuilt(node, handle, () => buildReferenceType({ ...config, mutableSpecifier: value })),
+			type: (value: NonNullable<T.ReferenceType.Config>['type']) =>
+				rebuilt(node, handle, () => buildReferenceType({ ...config, type: value }))
+		},
+		lifetime: () => _lifetime,
+		mutableSpecifier: () => _mutable_specifier,
+		type: () => _type,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ReferenceType.Bound;
 }
 
 export const buildNeverType: TSKindId.NeverType = TSKindId.NeverType;
@@ -3749,46 +4100,52 @@ export function buildAbstractType(config: T.AbstractType.Config): T.AbstractType
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.AbstractType as const,
-					$source: 2 as const,
-					$named: true as const,
-					_type_parameters,
-					_trait,
-					$with: {
-						typeParameters: (value?: T.TypeParameters) => buildAbstractType({ ...config, typeParameters: value }),
-						trait: (
-							value:
-								| T.TypeIdentifier
-								| T.ScopedTypeIdentifier
-								| T.RemovedTraitBound
-								| T.GenericType
-								| T.FunctionType
-								| T.TupleType
-								| T.BoundedType
-								| T.TypeIdentifier.Types
-						) => buildAbstractType({ ...config, trait: value })
-					}
-				},
-				{
-					typeParameters: () => _type_parameters,
-					trait: () => _trait
-				}
-			),
-			[
-				{
-					slot: 'typeParameters',
-					kind: TSKindId.TypeParameters as const,
-					optional: true,
-					make: buildTypeParameters,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
-				}
-			]
-		)
-	) as unknown as T.AbstractType.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.AbstractType as const,
+		$source: 2 as const,
+		$named: true as const,
+		_type_parameters,
+		_trait,
+		$with: {
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeParameters as const,
+							optional: true,
+							make: buildTypeParameters,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+						},
+						(value?: T.TypeParameters) => buildAbstractType({ ...config, typeParameters: value })
+					)
+				),
+			trait: (
+				value:
+					| T.TypeIdentifier
+					| T.ScopedTypeIdentifier
+					| T.RemovedTraitBound
+					| T.GenericType
+					| T.FunctionType
+					| T.TupleType
+					| T.BoundedType
+					| T.TypeIdentifier.Types
+			) => rebuilt(node, handle, () => buildAbstractType({ ...config, trait: value }))
+		},
+		typeParameters: () => _type_parameters,
+		trait: () => _trait,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AbstractType.Bound;
 }
 
 export function buildDynamicType(
@@ -3813,33 +4170,38 @@ export function buildDynamicType(
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.DynamicType as const,
-				$source: 2 as const,
-				$named: true as const,
-				_trait,
-				$with: {
-					trait: (
-						value:
-							| (
-									| T.HigherRankedTraitBound
-									| T.TypeIdentifier
-									| T.ScopedTypeIdentifier
-									| T.GenericType
-									| T.FunctionType
-									| T.TupleType
-							  )
-							| T.TypeIdentifier.Types
-					) => buildDynamicType(value)
-				}
-			},
-			{
-				trait: () => _trait
-			}
-		)
-	) as unknown as T.DynamicType.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.DynamicType as const,
+		$source: 2 as const,
+		$named: true as const,
+		_trait,
+		$with: {
+			trait: (
+				value:
+					| (
+							| T.HigherRankedTraitBound
+							| T.TypeIdentifier
+							| T.ScopedTypeIdentifier
+							| T.GenericType
+							| T.FunctionType
+							| T.TupleType
+					  )
+					| T.TypeIdentifier.Types
+			) => rebuilt(node, handle, () => buildDynamicType(value))
+		},
+		trait: () => _trait,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.DynamicType.Bound;
 }
 
 export const buildMutableSpecifier: TSKindId.MutableSpecifier = TSKindId.MutableSpecifier;
@@ -3847,11 +4209,7 @@ export const buildMutableSpecifier: TSKindId.MutableSpecifier = TSKindId.Mutable
 export function buildMacroInvocation(config: T.MacroInvocation.Config): T.MacroInvocation.Bound {
 	const _macro = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.MacroInvocation['_macro']>>(config.macro, [
-				['default', TSKindId.DefaultKeyword] as const,
-				['union', TSKindId.UnionKeyword] as const,
-				['gen', TSKindId.GenKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.MacroInvocation['_macro']>>(config.macro),
 			'MacroInvocation.macro',
 			'buildIdentifier(…)'
 		),
@@ -3860,56 +4218,38 @@ export function buildMacroInvocation(config: T.MacroInvocation.Config): T.MacroI
 		['default', 'union', 'gen']
 	);
 	const _arguments = rejectBareText(config.arguments, 'MacroInvocation.arguments', 'a built DelimTokenTree');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.MacroInvocation as const,
-				$source: 2 as const,
-				$named: true as const,
-				_macro,
-				_arguments,
-				$with: {
-					macro: (value: NonNullable<T.MacroInvocation.Config>['macro']) =>
-						buildMacroInvocation({ ...config, macro: value }),
-					arguments: (value: T.DelimTokenTree) => buildMacroInvocation({ ...config, arguments: value })
-				}
-			},
-			{
-				macro: () => _macro,
-				arguments: () => _arguments
-			}
-		)
-	) as unknown as T.MacroInvocation.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MacroInvocation as const,
+		$source: 2 as const,
+		$named: true as const,
+		_macro,
+		_arguments,
+		$with: {
+			macro: (value: NonNullable<T.MacroInvocation.Config>['macro']) =>
+				rebuilt(node, handle, () => buildMacroInvocation({ ...config, macro: value })),
+			arguments: (value: T.DelimTokenTree) =>
+				rebuilt(node, handle, () => buildMacroInvocation({ ...config, arguments: value }))
+		},
+		macro: () => _macro,
+		arguments: () => _arguments,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MacroInvocation.Bound;
 }
 
 export function buildScopedIdentifier(config: T.ScopedIdentifier.Config): T.ScopedIdentifier.Bound {
 	const _path = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.ScopedIdentifier['_path']>>(config.path, [
-				['self', TSKindId.Self] as const,
-				['u8', TSKindId.U8Keyword] as const,
-				['i8', TSKindId.I8Keyword] as const,
-				['u16', TSKindId.U16Keyword] as const,
-				['i16', TSKindId.I16Keyword] as const,
-				['u32', TSKindId.U32Keyword] as const,
-				['i32', TSKindId.I32Keyword] as const,
-				['u64', TSKindId.U64Keyword] as const,
-				['i64', TSKindId.I64Keyword] as const,
-				['u128', TSKindId.U128Keyword] as const,
-				['i128', TSKindId.I128Keyword] as const,
-				['isize', TSKindId.IsizeKeyword] as const,
-				['usize', TSKindId.UsizeKeyword] as const,
-				['f32', TSKindId.F32Keyword] as const,
-				['f64', TSKindId.F64Keyword] as const,
-				['bool', TSKindId.BoolKeyword] as const,
-				['str', TSKindId.StrKeyword] as const,
-				['char', TSKindId.CharKeyword] as const,
-				['super', TSKindId.Super] as const,
-				['crate', TSKindId.Crate] as const,
-				['default', TSKindId.DefaultKeyword] as const,
-				['union', TSKindId.UnionKeyword] as const,
-				['gen', TSKindId.GenKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.ScopedIdentifier['_path']>>(config.path),
 			'ScopedIdentifier.path',
 			'buildIdentifier(…)'
 		),
@@ -3943,9 +4283,7 @@ export function buildScopedIdentifier(config: T.ScopedIdentifier.Config): T.Scop
 	);
 	const _name = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.ScopedIdentifier['_name']>>(config.name, [
-				['super', TSKindId.Super] as const
-			]),
+			kindIdStorage<NonNullable<T.ScopedIdentifier['_name']>>(config.name),
 			'ScopedIdentifier.name',
 			'buildIdentifier(…)'
 		),
@@ -3953,27 +4291,32 @@ export function buildScopedIdentifier(config: T.ScopedIdentifier.Config): T.Scop
 		TSKindId.Identifier,
 		['super']
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ScopedIdentifier as const,
-				$source: 2 as const,
-				$named: true as const,
-				_path,
-				_name,
-				$with: {
-					path: (value?: NonNullable<T.ScopedIdentifier.Config>['path']) =>
-						buildScopedIdentifier({ ...config, path: value }),
-					name: (value: NonNullable<T.ScopedIdentifier.Config>['name']) =>
-						buildScopedIdentifier({ ...config, name: value })
-				}
-			},
-			{
-				path: () => _path,
-				name: () => _name
-			}
-		)
-	) as unknown as T.ScopedIdentifier.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ScopedIdentifier as const,
+		$source: 2 as const,
+		$named: true as const,
+		_path,
+		_name,
+		$with: {
+			path: (value?: NonNullable<T.ScopedIdentifier.Config>['path']) =>
+				rebuilt(node, handle, () => buildScopedIdentifier({ ...config, path: value })),
+			name: (value: NonNullable<T.ScopedIdentifier.Config>['name']) =>
+				rebuilt(node, handle, () => buildScopedIdentifier({ ...config, name: value }))
+		},
+		path: () => _path,
+		name: () => _name,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ScopedIdentifier.Bound;
 }
 
 export function buildScopedTypeIdentifierInExpressionPosition(
@@ -3981,31 +4324,7 @@ export function buildScopedTypeIdentifierInExpressionPosition(
 ): T.ScopedTypeIdentifierInExpressionPosition.Bound {
 	const _path = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_path']>>(config.path, [
-				['self', TSKindId.Self] as const,
-				['u8', TSKindId.U8Keyword] as const,
-				['i8', TSKindId.I8Keyword] as const,
-				['u16', TSKindId.U16Keyword] as const,
-				['i16', TSKindId.I16Keyword] as const,
-				['u32', TSKindId.U32Keyword] as const,
-				['i32', TSKindId.I32Keyword] as const,
-				['u64', TSKindId.U64Keyword] as const,
-				['i64', TSKindId.I64Keyword] as const,
-				['u128', TSKindId.U128Keyword] as const,
-				['i128', TSKindId.I128Keyword] as const,
-				['isize', TSKindId.IsizeKeyword] as const,
-				['usize', TSKindId.UsizeKeyword] as const,
-				['f32', TSKindId.F32Keyword] as const,
-				['f64', TSKindId.F64Keyword] as const,
-				['bool', TSKindId.BoolKeyword] as const,
-				['str', TSKindId.StrKeyword] as const,
-				['char', TSKindId.CharKeyword] as const,
-				['super', TSKindId.Super] as const,
-				['crate', TSKindId.Crate] as const,
-				['default', TSKindId.DefaultKeyword] as const,
-				['union', TSKindId.UnionKeyword] as const,
-				['gen', TSKindId.GenKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_path']>>(config.path),
 			'ScopedTypeIdentifierInExpressionPosition.path',
 			'buildIdentifier(…)'
 		),
@@ -4041,57 +4360,38 @@ export function buildScopedTypeIdentifierInExpressionPosition(
 		rejectBareText(config.name, 'ScopedTypeIdentifierInExpressionPosition.name', 'a built TypeIdentifier'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ScopedTypeIdentifierInExpressionPosition as const,
-				$source: 2 as const,
-				$named: true as const,
-				_path,
-				_name,
-				$with: {
-					path: (value?: NonNullable<T.ScopedTypeIdentifierInExpressionPosition.Config>['path']) =>
-						buildScopedTypeIdentifierInExpressionPosition({ ...config, path: value }),
-					name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
-						buildScopedTypeIdentifierInExpressionPosition({ ...config, name: value })
-				}
-			},
-			{
-				path: () => _path,
-				name: () => _name
-			}
-		)
-	) as unknown as T.ScopedTypeIdentifierInExpressionPosition.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ScopedTypeIdentifierInExpressionPosition as const,
+		$source: 2 as const,
+		$named: true as const,
+		_path,
+		_name,
+		$with: {
+			path: (value?: NonNullable<T.ScopedTypeIdentifierInExpressionPosition.Config>['path']) =>
+				rebuilt(node, handle, () => buildScopedTypeIdentifierInExpressionPosition({ ...config, path: value })),
+			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildScopedTypeIdentifierInExpressionPosition({ ...config, name: value }))
+		},
+		path: () => _path,
+		name: () => _name,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ScopedTypeIdentifierInExpressionPosition.Bound;
 }
 
 export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config): T.ScopedTypeIdentifier.Bound {
 	const _path = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.ScopedTypeIdentifier['_path']>>(config.path, [
-				['self', TSKindId.Self] as const,
-				['u8', TSKindId.U8Keyword] as const,
-				['i8', TSKindId.I8Keyword] as const,
-				['u16', TSKindId.U16Keyword] as const,
-				['i16', TSKindId.I16Keyword] as const,
-				['u32', TSKindId.U32Keyword] as const,
-				['i32', TSKindId.I32Keyword] as const,
-				['u64', TSKindId.U64Keyword] as const,
-				['i64', TSKindId.I64Keyword] as const,
-				['u128', TSKindId.U128Keyword] as const,
-				['i128', TSKindId.I128Keyword] as const,
-				['isize', TSKindId.IsizeKeyword] as const,
-				['usize', TSKindId.UsizeKeyword] as const,
-				['f32', TSKindId.F32Keyword] as const,
-				['f64', TSKindId.F64Keyword] as const,
-				['bool', TSKindId.BoolKeyword] as const,
-				['str', TSKindId.StrKeyword] as const,
-				['char', TSKindId.CharKeyword] as const,
-				['super', TSKindId.Super] as const,
-				['crate', TSKindId.Crate] as const,
-				['default', TSKindId.DefaultKeyword] as const,
-				['union', TSKindId.UnionKeyword] as const,
-				['gen', TSKindId.GenKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.ScopedTypeIdentifier['_path']>>(config.path),
 			'ScopedTypeIdentifier.path',
 			'buildIdentifier(…)'
 		),
@@ -4127,341 +4427,341 @@ export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config)
 		rejectBareText(config.name, 'ScopedTypeIdentifier.name', 'a built TypeIdentifier'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ScopedTypeIdentifier as const,
-				$source: 2 as const,
-				$named: true as const,
-				_path,
-				_name,
-				$with: {
-					path: (value?: NonNullable<T.ScopedTypeIdentifier.Config>['path']) =>
-						buildScopedTypeIdentifier({ ...config, path: value }),
-					name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
-						buildScopedTypeIdentifier({ ...config, name: value })
-				}
-			},
-			{
-				path: () => _path,
-				name: () => _name
-			}
-		)
-	) as unknown as T.ScopedTypeIdentifier.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ScopedTypeIdentifier as const,
+		$source: 2 as const,
+		$named: true as const,
+		_path,
+		_name,
+		$with: {
+			path: (value?: NonNullable<T.ScopedTypeIdentifier.Config>['path']) =>
+				rebuilt(node, handle, () => buildScopedTypeIdentifier({ ...config, path: value })),
+			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildScopedTypeIdentifier({ ...config, name: value }))
+		},
+		path: () => _path,
+		name: () => _name,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ScopedTypeIdentifier.Bound;
 }
 
 export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryExpression.Bound {
-	const _operator = coerceKindEnumStorage<NonNullable<T.UnaryExpression['_operator']>>(config.operator, [
-		['-', TSKindId.Dash] as const,
-		['*', TSKindId.Star] as const,
-		['!', TSKindId.Bang] as const
-	]);
+	const _operator = rejectBareText(
+		kindIdStorage<NonNullable<T.UnaryExpression['_operator']>>(config.operator),
+		'UnaryExpression.operator',
+		'a kind id'
+	);
 	const _operand = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.UnaryExpression['_operand']>>(config.operand, []),
+		kindIdStorage<NonNullable<T.UnaryExpression['_operand']>>(config.operand),
 		'UnaryExpression.operand',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.UnaryExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_operator,
-				_operand,
-				$with: {
-					operator: (value: NonNullable<T.UnaryExpression.Config>['operator']) =>
-						buildUnaryExpression({ ...config, operator: value }),
-					operand: (value: NonNullable<T.UnaryExpression.Config>['operand']) =>
-						buildUnaryExpression({ ...config, operand: value })
-				}
-			},
-			{
-				operator: () => _operator,
-				operand: () => _operand
-			}
-		)
-	) as unknown as T.UnaryExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.UnaryExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_operator,
+		_operand,
+		$with: {
+			operator: (value: NonNullable<T.UnaryExpression.Config>['operator']) =>
+				rebuilt(node, handle, () => buildUnaryExpression({ ...config, operator: value })),
+			operand: (value: NonNullable<T.UnaryExpression.Config>['operand']) =>
+				rebuilt(node, handle, () => buildUnaryExpression({ ...config, operand: value }))
+		},
+		operator: () => _operator,
+		operand: () => _operand,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.UnaryExpression.Bound;
 }
 
 export function buildTryExpression(value: AdmitBound<T.Expression, T.AdmittedNodes>): T.TryExpression.Bound {
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.TryExpression['_value']>>(value, []),
+		kindIdStorage<NonNullable<T.TryExpression['_value']>>(value),
 		'TryExpression.value',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TryExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_value,
-				$with: {
-					value: (value: NonNullable<T.Expression>) => buildTryExpression(value)
-				}
-			},
-			{
-				value: () => _value
-			}
-		)
-	) as unknown as T.TryExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TryExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_value,
+		$with: {
+			value: (value: NonNullable<T.Expression>) => rebuilt(node, handle, () => buildTryExpression(value))
+		},
+		value: () => _value,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TryExpression.Bound;
 }
 
 export function buildBinaryExpression(config: T.BinaryExpression.Config): T.BinaryExpression.Bound {
 	const _left = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.BinaryExpression['_left']>>(config.left, []),
+		kindIdStorage<NonNullable<T.BinaryExpression['_left']>>(config.left),
 		'BinaryExpression.left',
 		'a built Expression'
 	);
-	const _operator = coerceKindEnumStorage<NonNullable<T.BinaryExpression['_operator']>>(config.operator, [
-		['&&', TSKindId.AmpAmp] as const,
-		['||', TSKindId.PipePipe] as const,
-		['&', TSKindId.Amp] as const,
-		['|', TSKindId.Pipe] as const,
-		['^', TSKindId.Caret] as const,
-		['==', TSKindId.EqEq] as const,
-		['!=', TSKindId.BangEq] as const,
-		['<', TSKindId.Lt] as const,
-		['<=', TSKindId.LtEq] as const,
-		['>', TSKindId.Gt] as const,
-		['>=', TSKindId.GtEq] as const,
-		['<<', TSKindId.LtLt] as const,
-		['>>', TSKindId.GtGt] as const,
-		['+', TSKindId.Plus] as const,
-		['-', TSKindId.Dash] as const,
-		['*', TSKindId.Star] as const,
-		['/', TSKindId.Slash] as const,
-		['%', TSKindId.Percent] as const
-	]);
+	const _operator = rejectBareText(
+		kindIdStorage<NonNullable<T.BinaryExpression['_operator']>>(config.operator),
+		'BinaryExpression.operator',
+		'a kind id'
+	);
 	const _right = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.BinaryExpression['_right']>>(config.right, []),
+		kindIdStorage<NonNullable<T.BinaryExpression['_right']>>(config.right),
 		'BinaryExpression.right',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.BinaryExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_left,
-				_operator,
-				_right,
-				$with: {
-					left: (value: NonNullable<T.BinaryExpression.Config>['left']) =>
-						buildBinaryExpression({ ...config, left: value }),
-					operator: (value: NonNullable<T.BinaryExpression.Config>['operator']) =>
-						buildBinaryExpression({ ...config, operator: value }),
-					right: (value: NonNullable<T.BinaryExpression.Config>['right']) =>
-						buildBinaryExpression({ ...config, right: value })
-				}
-			},
-			{
-				left: () => _left,
-				operator: () => _operator,
-				right: () => _right
-			}
-		)
-	) as unknown as T.BinaryExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.BinaryExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_left,
+		_operator,
+		_right,
+		$with: {
+			left: (value: NonNullable<T.BinaryExpression.Config>['left']) =>
+				rebuilt(node, handle, () => buildBinaryExpression({ ...config, left: value })),
+			operator: (value: NonNullable<T.BinaryExpression.Config>['operator']) =>
+				rebuilt(node, handle, () => buildBinaryExpression({ ...config, operator: value })),
+			right: (value: NonNullable<T.BinaryExpression.Config>['right']) =>
+				rebuilt(node, handle, () => buildBinaryExpression({ ...config, right: value }))
+		},
+		left: () => _left,
+		operator: () => _operator,
+		right: () => _right,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.BinaryExpression.Bound;
 }
 
 export function buildAssignmentExpression(config: T.AssignmentExpression.Config): T.AssignmentExpression.Bound {
 	const _left = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.AssignmentExpression['_left']>>(config.left, []),
+		kindIdStorage<NonNullable<T.AssignmentExpression['_left']>>(config.left),
 		'AssignmentExpression.left',
 		'a built Expression'
 	);
 	const _right = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.AssignmentExpression['_right']>>(config.right, []),
+		kindIdStorage<NonNullable<T.AssignmentExpression['_right']>>(config.right),
 		'AssignmentExpression.right',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.AssignmentExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_left,
-				_right,
-				$with: {
-					left: (value: NonNullable<T.AssignmentExpression.Config>['left']) =>
-						buildAssignmentExpression({ ...config, left: value }),
-					right: (value: NonNullable<T.AssignmentExpression.Config>['right']) =>
-						buildAssignmentExpression({ ...config, right: value })
-				}
-			},
-			{
-				left: () => _left,
-				right: () => _right
-			}
-		)
-	) as unknown as T.AssignmentExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.AssignmentExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_left,
+		_right,
+		$with: {
+			left: (value: NonNullable<T.AssignmentExpression.Config>['left']) =>
+				rebuilt(node, handle, () => buildAssignmentExpression({ ...config, left: value })),
+			right: (value: NonNullable<T.AssignmentExpression.Config>['right']) =>
+				rebuilt(node, handle, () => buildAssignmentExpression({ ...config, right: value }))
+		},
+		left: () => _left,
+		right: () => _right,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AssignmentExpression.Bound;
 }
 
 export function buildCompoundAssignmentExpr(config: T.CompoundAssignmentExpr.Config): T.CompoundAssignmentExpr.Bound {
 	const _left = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.CompoundAssignmentExpr['_left']>>(config.left, []),
+		kindIdStorage<NonNullable<T.CompoundAssignmentExpr['_left']>>(config.left),
 		'CompoundAssignmentExpr.left',
 		'a built Expression'
 	);
-	const _operator = coerceKindEnumStorage<NonNullable<T.CompoundAssignmentExpr['_operator']>>(config.operator, [
-		['+=', TSKindId.PlusEq] as const,
-		['-=', TSKindId.DashEq] as const,
-		['*=', TSKindId.StarEq] as const,
-		['/=', TSKindId.SlashEq] as const,
-		['%=', TSKindId.PercentEq] as const,
-		['&=', TSKindId.AmpEq] as const,
-		['|=', TSKindId.PipeEq] as const,
-		['^=', TSKindId.CaretEq] as const,
-		['<<=', TSKindId.LtLtEq] as const,
-		['>>=', TSKindId.GtGtEq] as const
-	]);
+	const _operator = rejectBareText(
+		kindIdStorage<NonNullable<T.CompoundAssignmentExpr['_operator']>>(config.operator),
+		'CompoundAssignmentExpr.operator',
+		'a kind id'
+	);
 	const _right = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.CompoundAssignmentExpr['_right']>>(config.right, []),
+		kindIdStorage<NonNullable<T.CompoundAssignmentExpr['_right']>>(config.right),
 		'CompoundAssignmentExpr.right',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.CompoundAssignmentExpr as const,
-				$source: 2 as const,
-				$named: true as const,
-				_left,
-				_operator,
-				_right,
-				$with: {
-					left: (value: NonNullable<T.CompoundAssignmentExpr.Config>['left']) =>
-						buildCompoundAssignmentExpr({ ...config, left: value }),
-					operator: (value: NonNullable<T.CompoundAssignmentExpr.Config>['operator']) =>
-						buildCompoundAssignmentExpr({ ...config, operator: value }),
-					right: (value: NonNullable<T.CompoundAssignmentExpr.Config>['right']) =>
-						buildCompoundAssignmentExpr({ ...config, right: value })
-				}
-			},
-			{
-				left: () => _left,
-				operator: () => _operator,
-				right: () => _right
-			}
-		)
-	) as unknown as T.CompoundAssignmentExpr.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.CompoundAssignmentExpr as const,
+		$source: 2 as const,
+		$named: true as const,
+		_left,
+		_operator,
+		_right,
+		$with: {
+			left: (value: NonNullable<T.CompoundAssignmentExpr.Config>['left']) =>
+				rebuilt(node, handle, () => buildCompoundAssignmentExpr({ ...config, left: value })),
+			operator: (value: NonNullable<T.CompoundAssignmentExpr.Config>['operator']) =>
+				rebuilt(node, handle, () => buildCompoundAssignmentExpr({ ...config, operator: value })),
+			right: (value: NonNullable<T.CompoundAssignmentExpr.Config>['right']) =>
+				rebuilt(node, handle, () => buildCompoundAssignmentExpr({ ...config, right: value }))
+		},
+		left: () => _left,
+		operator: () => _operator,
+		right: () => _right,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CompoundAssignmentExpr.Bound;
 }
 
 export function buildTypeCastExpression(config: T.TypeCastExpression.Config): T.TypeCastExpression.Bound {
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.TypeCastExpression['_value']>>(config.value, []),
+		kindIdStorage<NonNullable<T.TypeCastExpression['_value']>>(config.value),
 		'TypeCastExpression.value',
 		'a built Expression'
 	);
 	const _type = admitAliasContent<NonNullable<T.TypeCastExpression['_type']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.TypeCastExpression['_type']>>(config.type, []),
+			kindIdStorage<NonNullable<T.TypeCastExpression['_type']>>(config.type),
 			'TypeCastExpression.type',
 			'a built Type'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TypeCastExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_value,
-				_type,
-				$with: {
-					value: (value: NonNullable<T.TypeCastExpression.Config>['value']) =>
-						buildTypeCastExpression({ ...config, value: value }),
-					type: (value: NonNullable<T.TypeCastExpression.Config>['type']) =>
-						buildTypeCastExpression({ ...config, type: value })
-				}
-			},
-			{
-				value: () => _value,
-				type: () => _type
-			}
-		)
-	) as unknown as T.TypeCastExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeCastExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_value,
+		_type,
+		$with: {
+			value: (value: NonNullable<T.TypeCastExpression.Config>['value']) =>
+				rebuilt(node, handle, () => buildTypeCastExpression({ ...config, value: value })),
+			type: (value: NonNullable<T.TypeCastExpression.Config>['type']) =>
+				rebuilt(node, handle, () => buildTypeCastExpression({ ...config, type: value }))
+		},
+		value: () => _value,
+		type: () => _type,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TypeCastExpression.Bound;
 }
 
 export function buildReturnExpression(value?: AdmitBound<T.Expression, T.AdmittedNodes>): T.ReturnExpression.Bound {
 	const _expression = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ReturnExpression['_expression']>>(value, []),
+		kindIdStorage<NonNullable<T.ReturnExpression['_expression']>>(value),
 		'ReturnExpression.expression',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ReturnExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_expression,
-				$with: {
-					expression: (value?: NonNullable<T.Expression>) => buildReturnExpression(value)
-				}
-			},
-			{
-				expression: () => _expression
-			}
-		)
-	) as unknown as T.ReturnExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ReturnExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_expression,
+		$with: {
+			expression: (value?: NonNullable<T.Expression>) => rebuilt(node, handle, () => buildReturnExpression(value))
+		},
+		expression: () => _expression,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ReturnExpression.Bound;
 }
 
 export function buildYieldExpression(value?: AdmitBound<T.Expression, T.AdmittedNodes>): T.YieldExpression.Bound {
 	const _expression = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.YieldExpression['_expression']>>(value, []),
+		kindIdStorage<NonNullable<T.YieldExpression['_expression']>>(value),
 		'YieldExpression.expression',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.YieldExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_expression,
-				$with: {
-					expression: (value?: NonNullable<T.Expression>) => buildYieldExpression(value)
-				}
-			},
-			{
-				expression: () => _expression
-			}
-		)
-	) as unknown as T.YieldExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.YieldExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_expression,
+		$with: {
+			expression: (value?: NonNullable<T.Expression>) => rebuilt(node, handle, () => buildYieldExpression(value))
+		},
+		expression: () => _expression,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.YieldExpression.Bound;
 }
 
 export function buildCallExpression(config: T.CallExpression.Config): T.CallExpression.Bound {
 	const _function = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.CallExpression['_function']>>(config.function, [
-				['u8', TSKindId.U8Keyword] as const,
-				['i8', TSKindId.I8Keyword] as const,
-				['u16', TSKindId.U16Keyword] as const,
-				['i16', TSKindId.I16Keyword] as const,
-				['u32', TSKindId.U32Keyword] as const,
-				['i32', TSKindId.I32Keyword] as const,
-				['u64', TSKindId.U64Keyword] as const,
-				['i64', TSKindId.I64Keyword] as const,
-				['u128', TSKindId.U128Keyword] as const,
-				['i128', TSKindId.I128Keyword] as const,
-				['isize', TSKindId.IsizeKeyword] as const,
-				['usize', TSKindId.UsizeKeyword] as const,
-				['f32', TSKindId.F32Keyword] as const,
-				['f64', TSKindId.F64Keyword] as const,
-				['bool', TSKindId.BoolKeyword] as const,
-				['str', TSKindId.StrKeyword] as const,
-				['char', TSKindId.CharKeyword] as const,
-				['default', TSKindId.DefaultKeyword] as const,
-				['union', TSKindId.UnionKeyword] as const,
-				['gen', TSKindId.GenKeyword] as const,
-				['self', TSKindId.Self] as const,
-				['()', TSKindId.UnitExpression] as const
-			]),
+			kindIdStorage<NonNullable<T.CallExpression['_function']>>(config.function),
 			'CallExpression.function',
 			'buildIdentifier(…)'
 		),
@@ -4496,37 +4796,43 @@ export function buildCallExpression(config: T.CallExpression.Config): T.CallExpr
 		'CallExpression.arguments',
 		'a built Arguments'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.CallExpression as const,
-					$source: 2 as const,
-					$named: true as const,
-					_function,
-					_arguments,
-					$with: {
-						function: (value: NonNullable<T.CallExpression.Config>['function']) =>
-							buildCallExpression({ ...config, function: value }),
-						arguments: (value: T.Arguments) => buildCallExpression({ ...config, arguments: value })
-					}
-				},
-				{
-					function: () => _function,
-					arguments: () => _arguments
-				}
-			),
-			[
-				{
-					slot: 'arguments',
-					kind: TSKindId.Arguments as const,
-					optional: false,
-					make: buildArguments,
-					element: { keys: ['attributeItem', 'expression'], make: buildAttributedArgument }
-				}
-			]
-		)
-	) as unknown as T.CallExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.CallExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_function,
+		_arguments,
+		$with: {
+			function: (value: NonNullable<T.CallExpression.Config>['function']) =>
+				rebuilt(node, handle, () => buildCallExpression({ ...config, function: value })),
+			arguments: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.Arguments as const,
+							optional: false,
+							make: buildArguments,
+							element: { keys: ['attributeItem', 'expression'], make: buildAttributedArgument }
+						},
+						(value: T.Arguments) => buildCallExpression({ ...config, arguments: value })
+					)
+				)
+		},
+		function: () => _function,
+		arguments: () => _arguments,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CallExpression.Bound;
 }
 
 export function buildArguments(): T.EmptyArguments;
@@ -4555,68 +4861,92 @@ export function buildArguments(...args: unknown[]) {
 }
 function _buildArguments(value?: AdmitBound<T.ArgumentsElements, T.AdmittedNodes>): T.Arguments.Bound {
 	const _arguments_elements = rejectBareText(value, 'Arguments.argumentsElements', 'a built ArgumentsElements');
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.Arguments as const,
-						$source: 2 as const,
-						$named: true as const,
-						_arguments_elements,
-						$with: {
-							argumentsElements: (value?: T.ArgumentsElements) => _buildArguments(value)
-						}
-					},
-					{
-						argumentsElements: () => _arguments_elements
-					}
-				),
-				[
-					{
-						slot: 'argumentsElements',
-						kind: TSKindId.ArgumentsElements as const,
-						optional: true,
-						make: buildArgumentsElements,
-						element: { keys: ['attributeItem', 'expression'], make: buildAttributedArgument }
-					}
-				]
-			),
-			{
-				list: { accessor: 'argumentsElements', storage: '_arguments_elements' },
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				wrapper: { kind: TSKindId.AttributedArgument, content: 'expression', decorations: ['_attribute_item'] }
-			}
-		)
-	) as unknown as T.Arguments.Bound;
+	const listView = ownerView(_arguments_elements, '_element');
+	const listedItems =
+		listView.stored === undefined
+			? undefined
+			: listItems(ownerElements(listView.list, 'elements'), {
+					kind: TSKindId.AttributedArgument,
+					content: 'expression',
+					decorations: ['_attribute_item']
+				});
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.Arguments as const,
+		$source: 2 as const,
+		$named: true as const,
+		_arguments_elements,
+		$with: {
+			argumentsElements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.ArgumentsElements as const,
+							optional: true,
+							make: buildArgumentsElements,
+							element: { keys: ['attributeItem', 'expression'], make: buildAttributedArgument }
+						},
+						(value?: T.ArgumentsElements) => _buildArguments(value)
+					)
+				)
+		},
+		argumentsElements: () => _arguments_elements,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_arguments_elements') : undefined,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_arguments_elements');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.Arguments.Bound;
 }
 
 export function buildParenthesizedExpression(
 	value: AdmitBound<T.Expression, T.AdmittedNodes>
 ): T.ParenthesizedExpression.Bound {
 	const _expression = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ParenthesizedExpression['_expression']>>(value, []),
+		kindIdStorage<NonNullable<T.ParenthesizedExpression['_expression']>>(value),
 		'ParenthesizedExpression.expression',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ParenthesizedExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_expression,
-				$with: {
-					expression: (value: NonNullable<T.Expression>) => buildParenthesizedExpression(value)
-				}
-			},
-			{
-				expression: () => _expression
-			}
-		)
-	) as unknown as T.ParenthesizedExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ParenthesizedExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_expression,
+		$with: {
+			expression: (value: NonNullable<T.Expression>) => rebuilt(node, handle, () => buildParenthesizedExpression(value))
+		},
+		expression: () => _expression,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ParenthesizedExpression.Bound;
 }
 
 export function buildTupleExpression(config: T.TupleExpression.Config): T.TupleExpression.Bound {
@@ -4626,37 +4956,38 @@ export function buildTupleExpression(config: T.TupleExpression.Config): T.TupleE
 		'TupleExpression.tupleExpressionElements',
 		'a built TupleExpressionElements'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.TupleExpression as const,
-					$source: 2 as const,
-					$named: true as const,
-					_attributes,
-					_tuple_expression_elements,
-					$with: {
-						attributes: (...values: T.AttributeItem[]) =>
-							buildTupleExpression({ ...config, attributes: restItems('attributes', values) }),
-						tupleExpressionElements: (value: T.TupleExpressionElements) =>
-							buildTupleExpression({ ...config, tupleExpressionElements: value })
-					}
-				},
-				{
-					attributes: () => _attributes,
-					tupleExpressionElements: () => _tuple_expression_elements
-				}
-			),
-			[
-				{
-					slot: 'tupleExpressionElements',
-					kind: TSKindId.TupleExpressionElements as const,
-					optional: false,
-					make: buildTupleExpressionElements
-				}
-			]
-		)
-	) as unknown as T.TupleExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TupleExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_attributes,
+		_tuple_expression_elements,
+		$with: {
+			attributes: (...values: T.AttributeItem[]) =>
+				rebuilt(node, handle, () => buildTupleExpression({ ...config, attributes: restItems('attributes', values) })),
+			tupleExpressionElements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TupleExpressionElements as const, optional: false, make: buildTupleExpressionElements },
+						(value: T.TupleExpressionElements) => buildTupleExpression({ ...config, tupleExpressionElements: value })
+					)
+				)
+		},
+		attributes: () => _attributes,
+		tupleExpressionElements: () => _tuple_expression_elements,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TupleExpression.Bound;
 }
 
 export const buildUnitExpression: TSKindId.UnitExpression = TSKindId.UnitExpression;
@@ -4675,34 +5006,43 @@ export function buildStructExpression(config: T.StructExpression.Config): T.Stru
 		'StructExpression.body',
 		'a built FieldInitializerList'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.StructExpression as const,
-					$source: 2 as const,
-					$named: true as const,
-					_name,
-					_body,
-					$with: {
-						name: (
-							value:
-								| T.TypeIdentifier
-								| T.ScopedTypeIdentifierInExpressionPosition
-								| T.GenericTypeWithTurbofish
-								| T.TypeIdentifier.Types
-						) => buildStructExpression({ ...config, name: value }),
-						body: (value: T.FieldInitializerList) => buildStructExpression({ ...config, body: value })
-					}
-				},
-				{
-					name: () => _name,
-					body: () => _body
-				}
-			),
-			[{ slot: 'body', kind: TSKindId.FieldInitializerList as const, optional: false, make: buildFieldInitializerList }]
-		)
-	) as unknown as T.StructExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.StructExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_name,
+		_body,
+		$with: {
+			name: (
+				value:
+					| T.TypeIdentifier
+					| T.ScopedTypeIdentifierInExpressionPosition
+					| T.GenericTypeWithTurbofish
+					| T.TypeIdentifier.Types
+			) => rebuilt(node, handle, () => buildStructExpression({ ...config, name: value })),
+			body: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.FieldInitializerList as const, optional: false, make: buildFieldInitializerList },
+						(value: T.FieldInitializerList) => buildStructExpression({ ...config, body: value })
+					)
+				)
+		},
+		name: () => _name,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.StructExpression.Bound;
 }
 
 export function buildFieldInitializerList(): T.EmptyFieldInitializerList;
@@ -4743,40 +5083,54 @@ function _buildFieldInitializerList(
 		'FieldInitializerList.initializers',
 		'a built FieldInitializerListElements'
 	);
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.FieldInitializerList as const,
-						$source: 2 as const,
-						$named: true as const,
-						_initializers,
-						$with: {
-							initializers: (value?: T.FieldInitializerListElements) => _buildFieldInitializerList(value)
-						}
-					},
-					{
-						initializers: () => _initializers
-					}
-				),
-				[
-					{
-						slot: 'initializers',
-						kind: TSKindId.FieldInitializerListElements as const,
-						optional: true,
-						make: buildFieldInitializerListElements
-					}
-				]
-			),
-			{
-				list: { accessor: 'initializers', storage: '_initializers' },
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
-		)
-	) as unknown as T.FieldInitializerList.Bound;
+	const listView = ownerView(_initializers, '_element');
+	const listedItems =
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'elements'), undefined);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FieldInitializerList as const,
+		$source: 2 as const,
+		$named: true as const,
+		_initializers,
+		$with: {
+			initializers: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.FieldInitializerListElements as const,
+							optional: true,
+							make: buildFieldInitializerListElements
+						},
+						(value?: T.FieldInitializerListElements) => _buildFieldInitializerList(value)
+					)
+				)
+		},
+		initializers: () => _initializers,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_initializers') : undefined,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_initializers');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.FieldInitializerList.Bound;
 }
 
 export function buildShorthandFieldInitializer(
@@ -4788,26 +5142,34 @@ export function buildShorthandFieldInitializer(
 		'a built AttributeItem'
 	);
 	const _name = rejectBareText(config.name, 'ShorthandFieldInitializer.name', 'buildIdentifier(…)');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ShorthandFieldInitializer as const,
-				$source: 2 as const,
-				$named: true as const,
-				_attributes,
-				_name,
-				$with: {
-					attributes: (...values: T.AttributeItem[]) =>
-						buildShorthandFieldInitializer({ ...config, attributes: restItems('attributes', values) }),
-					name: (value: T.Identifier) => buildShorthandFieldInitializer({ ...config, name: value })
-				}
-			},
-			{
-				attributes: () => _attributes,
-				name: () => _name
-			}
-		)
-	) as unknown as T.ShorthandFieldInitializer.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ShorthandFieldInitializer as const,
+		$source: 2 as const,
+		$named: true as const,
+		_attributes,
+		_name,
+		$with: {
+			attributes: (...values: T.AttributeItem[]) =>
+				rebuilt(node, handle, () =>
+					buildShorthandFieldInitializer({ ...config, attributes: restItems('attributes', values) })
+				),
+			name: (value: T.Identifier) =>
+				rebuilt(node, handle, () => buildShorthandFieldInitializer({ ...config, name: value }))
+		},
+		attributes: () => _attributes,
+		name: () => _name,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ShorthandFieldInitializer.Bound;
 }
 
 export function buildFieldInitializer(config: T.FieldInitializer.Config): T.FieldInitializer.Bound {
@@ -4821,66 +5183,78 @@ export function buildFieldInitializer(config: T.FieldInitializer.Config): T.Fiel
 		[[[1], (v: unknown) => buildFieldIdentifier(v as never)]]
 	);
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.FieldInitializer['_value']>>(config.value, []),
+		kindIdStorage<NonNullable<T.FieldInitializer['_value']>>(config.value),
 		'FieldInitializer.value',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.FieldInitializer as const,
-				$source: 2 as const,
-				$named: true as const,
-				_attribute_item,
-				_field,
-				_value,
-				$with: {
-					attributeItems: (...values: T.AttributeItem[]) =>
-						buildFieldInitializer({ ...config, attributeItem: restItems('attributeItems', values) }),
-					field: (value: T.FieldIdentifier | T.IntegerLiteral | T.FieldIdentifier.Types) =>
-						buildFieldInitializer({ ...config, field: value }),
-					value: (value: NonNullable<T.FieldInitializer.Config>['value']) =>
-						buildFieldInitializer({ ...config, value: value })
-				}
-			},
-			{
-				attributeItems: () => _attribute_item,
-				field: () => _field,
-				value: () => _value
-			}
-		)
-	) as unknown as T.FieldInitializer.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FieldInitializer as const,
+		$source: 2 as const,
+		$named: true as const,
+		_attribute_item,
+		_field,
+		_value,
+		$with: {
+			attributeItems: (...values: T.AttributeItem[]) =>
+				rebuilt(node, handle, () =>
+					buildFieldInitializer({ ...config, attributeItem: restItems('attributeItems', values) })
+				),
+			field: (value: T.FieldIdentifier | T.IntegerLiteral | T.FieldIdentifier.Types) =>
+				rebuilt(node, handle, () => buildFieldInitializer({ ...config, field: value })),
+			value: (value: NonNullable<T.FieldInitializer.Config>['value']) =>
+				rebuilt(node, handle, () => buildFieldInitializer({ ...config, value: value }))
+		},
+		attributeItems: () => _attribute_item,
+		field: () => _field,
+		value: () => _value,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FieldInitializer.Bound;
 }
 
 export function buildBaseFieldInitializer(
 	value: AdmitBound<T.Expression, T.AdmittedNodes>
 ): T.BaseFieldInitializer.Bound {
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.BaseFieldInitializer['_value']>>(value, []),
+		kindIdStorage<NonNullable<T.BaseFieldInitializer['_value']>>(value),
 		'BaseFieldInitializer.value',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.BaseFieldInitializer as const,
-				$source: 2 as const,
-				$named: true as const,
-				_value,
-				$with: {
-					value: (value: NonNullable<T.Expression>) => buildBaseFieldInitializer(value)
-				}
-			},
-			{
-				value: () => _value
-			}
-		)
-	) as unknown as T.BaseFieldInitializer.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.BaseFieldInitializer as const,
+		$source: 2 as const,
+		$named: true as const,
+		_value,
+		$with: {
+			value: (value: NonNullable<T.Expression>) => rebuilt(node, handle, () => buildBaseFieldInitializer(value))
+		},
+		value: () => _value,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.BaseFieldInitializer.Bound;
 }
 
 export function buildIfExpression(config: T.IfExpression.Config): T.IfExpression.Bound {
 	const _condition = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.IfExpression['_condition']>>(config.condition, []),
+		kindIdStorage<NonNullable<T.IfExpression['_condition']>>(config.condition),
 		'IfExpression.condition',
 		'a built Expression / LetCondition / LetChain'
 	);
@@ -4890,120 +5264,144 @@ export function buildIfExpression(config: T.IfExpression.Config): T.IfExpression
 		'a built Block'
 	);
 	const _alternative = rejectBareText(config.alternative, 'IfExpression.alternative', 'a built ElseClause');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.IfExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_condition,
-				_consequence,
-				_alternative,
-				$with: {
-					condition: (value: NonNullable<T.IfExpression.Config>['condition']) =>
-						buildIfExpression({ ...config, condition: value }),
-					consequence: (value: T.Block) => buildIfExpression({ ...config, consequence: value }),
-					alternative: (value?: T.ElseClause) => buildIfExpression({ ...config, alternative: value })
-				}
-			},
-			{
-				condition: () => _condition,
-				consequence: () => _consequence,
-				alternative: () => _alternative
-			}
-		)
-	) as unknown as T.IfExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.IfExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_condition,
+		_consequence,
+		_alternative,
+		$with: {
+			condition: (value: NonNullable<T.IfExpression.Config>['condition']) =>
+				rebuilt(node, handle, () => buildIfExpression({ ...config, condition: value })),
+			consequence: (value: T.Block) =>
+				rebuilt(node, handle, () => buildIfExpression({ ...config, consequence: value })),
+			alternative: (value?: T.ElseClause) =>
+				rebuilt(node, handle, () => buildIfExpression({ ...config, alternative: value }))
+		},
+		condition: () => _condition,
+		consequence: () => _consequence,
+		alternative: () => _alternative,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.IfExpression.Bound;
 }
 
 export function buildLetCondition(config: T.LetCondition.Config): T.LetCondition.Bound {
 	const _pattern = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.LetCondition['_pattern']>>(config.pattern, []),
+		kindIdStorage<NonNullable<T.LetCondition['_pattern']>>(config.pattern),
 		'LetCondition.pattern',
 		'a built Pattern'
 	);
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.LetCondition['_value']>>(config.value, []),
+		kindIdStorage<NonNullable<T.LetCondition['_value']>>(config.value),
 		'LetCondition.value',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.LetCondition as const,
-				$source: 2 as const,
-				$named: true as const,
-				_pattern,
-				_value,
-				$with: {
-					pattern: (value: NonNullable<T.LetCondition.Config>['pattern']) =>
-						buildLetCondition({ ...config, pattern: value }),
-					value: (value: NonNullable<T.LetCondition.Config>['value']) => buildLetCondition({ ...config, value: value })
-				}
-			},
-			{
-				pattern: () => _pattern,
-				value: () => _value
-			}
-		)
-	) as unknown as T.LetCondition.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.LetCondition as const,
+		$source: 2 as const,
+		$named: true as const,
+		_pattern,
+		_value,
+		$with: {
+			pattern: (value: NonNullable<T.LetCondition.Config>['pattern']) =>
+				rebuilt(node, handle, () => buildLetCondition({ ...config, pattern: value })),
+			value: (value: NonNullable<T.LetCondition.Config>['value']) =>
+				rebuilt(node, handle, () => buildLetCondition({ ...config, value: value }))
+		},
+		pattern: () => _pattern,
+		value: () => _value,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LetCondition.Bound;
 }
 
 export function buildLetChain(config: T.LetChain.Config): T.LetChain.Bound {
 	const _left = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.LetChain['_left']>>(config.left, []),
+		kindIdStorage<NonNullable<T.LetChain['_left']>>(config.left),
 		'LetChain.left',
 		'a built LetChain / LetCondition / Expression'
 	);
 	const _right = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.LetChain['_right']>>(config.right ?? [], []),
+		kindIdStorage<NonNullable<T.LetChain['_right']>>(config.right ?? []),
 		'LetChain.right',
 		'a built LetCondition / Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.LetChain as const,
-				$source: 2 as const,
-				$named: true as const,
-				_left,
-				_right,
-				$with: {
-					left: (value: NonNullable<T.LetChain.Config>['left']) => buildLetChain({ ...config, left: value }),
-					rights: (...values: NonNullable<NonNullable<T.LetChain.Config>['right']>[number][]) =>
-						buildLetChain({ ...config, right: restItems('rights', values) })
-				}
-			},
-			{
-				left: () => _left,
-				rights: () => _right
-			}
-		)
-	) as unknown as T.LetChain.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.LetChain as const,
+		$source: 2 as const,
+		$named: true as const,
+		_left,
+		_right,
+		$with: {
+			left: (value: NonNullable<T.LetChain.Config>['left']) =>
+				rebuilt(node, handle, () => buildLetChain({ ...config, left: value })),
+			rights: (...values: NonNullable<NonNullable<T.LetChain.Config>['right']>[number][]) =>
+				rebuilt(node, handle, () => buildLetChain({ ...config, right: restItems('rights', values) }))
+		},
+		left: () => _left,
+		rights: () => _right,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LetChain.Bound;
 }
 
 export function buildElseClause(value: AdmitBound<T.Block | T.IfExpression, T.AdmittedNodes>): T.ElseClause.Bound {
 	const _body = rejectBareText(value, 'ElseClause.body', 'a built Block / IfExpression');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ElseClause as const,
-				$source: 2 as const,
-				$named: true as const,
-				_body,
-				$with: {
-					body: (value: T.Block | T.IfExpression) => buildElseClause(value)
-				}
-			},
-			{
-				body: () => _body
-			}
-		)
-	) as unknown as T.ElseClause.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ElseClause as const,
+		$source: 2 as const,
+		$named: true as const,
+		_body,
+		$with: {
+			body: (value: T.Block | T.IfExpression) => rebuilt(node, handle, () => buildElseClause(value))
+		},
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ElseClause.Bound;
 }
 
 export function buildMatchExpression(config: T.MatchExpression.Config): T.MatchExpression.Bound {
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.MatchExpression['_value']>>(config.value, []),
+		kindIdStorage<NonNullable<T.MatchExpression['_value']>>(config.value),
 		'MatchExpression.value',
 		'a built Expression'
 	);
@@ -5012,60 +5410,103 @@ export function buildMatchExpression(config: T.MatchExpression.Config): T.MatchE
 		'MatchExpression.body',
 		'a built MatchBlock'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.MatchExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_value,
-				_body,
-				$with: {
-					value: (value: NonNullable<T.MatchExpression.Config>['value']) =>
-						buildMatchExpression({ ...config, value: value }),
-					body: (value: T.MatchBlock) => buildMatchExpression({ ...config, body: value })
-				}
-			},
-			{
-				value: () => _value,
-				body: () => _body
-			}
-		)
-	) as unknown as T.MatchExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MatchExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_value,
+		_body,
+		$with: {
+			value: (value: NonNullable<T.MatchExpression.Config>['value']) =>
+				rebuilt(node, handle, () => buildMatchExpression({ ...config, value: value })),
+			body: (value: T.MatchBlock) => rebuilt(node, handle, () => buildMatchExpression({ ...config, body: value }))
+		},
+		value: () => _value,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MatchExpression.Bound;
 }
 
 export function buildMatchBlock(): T.EmptyMatchBlock;
 export function buildMatchBlock(value?: AdmitBound<T.MatchBlockArms, T.AdmittedNodes>): T.MatchBlock.Bound;
 export function buildMatchBlock(value?: AdmitBound<T.MatchBlockArms, T.AdmittedNodes>): T.MatchBlock.Bound {
 	const _match_block_arms = rejectBareText(value, 'MatchBlock.matchBlockArms', 'a built MatchBlockArms');
-	return withMethods(
-		withGroupSeat(
-			withAccessors(
-				{
-					$type: TSKindId.MatchBlock as const,
-					$source: 2 as const,
-					$named: true as const,
-					_match_block_arms,
-					$with: {
-						matchBlockArms: (value?: T.MatchBlockArms) => buildMatchBlock(value)
-					}
-				},
-				{
-					matchBlockArms: () => _match_block_arms
-				}
-			),
-			{
-				slot: 'matchBlockArms',
-				stored: '_match_block_arms',
-				kind: TSKindId.MatchBlockArms as const,
-				make: buildMatchBlockArms,
-				keys: [
-					{ name: 'matchArms', rest: true },
-					{ name: 'lastArm', rest: false, required: true }
-				]
-			}
-		)
-	) as unknown as T.MatchBlock.Bound;
+	const readGroup_matchBlockArms = () => _match_block_arms;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MatchBlock as const,
+		$source: 2 as const,
+		$named: true as const,
+		_match_block_arms,
+		$with: {
+			matchBlockArms: (value?: T.MatchBlockArms) => rebuilt(node, handle, () => buildMatchBlock(value)),
+			matchArms: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'matchBlockArms',
+							stored: '_match_block_arms',
+							kind: TSKindId.MatchBlockArms as const,
+							make: buildMatchBlockArms,
+							keys: [
+								{ name: 'matchArms', rest: true },
+								{ name: 'lastArm', rest: false, required: true }
+							]
+						},
+						'matchArms',
+						args,
+						(value?: T.MatchBlockArms) => buildMatchBlock(value),
+						() => readGroup_matchBlockArms.call(node)
+					)
+				),
+			lastArm: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'matchBlockArms',
+							stored: '_match_block_arms',
+							kind: TSKindId.MatchBlockArms as const,
+							make: buildMatchBlockArms,
+							keys: [
+								{ name: 'matchArms', rest: true },
+								{ name: 'lastArm', rest: false, required: true }
+							]
+						},
+						'lastArm',
+						args,
+						(value?: T.MatchBlockArms) => buildMatchBlock(value),
+						() => readGroup_matchBlockArms.call(node)
+					)
+				)
+		},
+		matchBlockArms: () => _match_block_arms,
+		matchArms:
+			_match_block_arms === undefined ? undefined : () => groupField(readGroup_matchBlockArms.call(node), 'matchArms'),
+		lastArm:
+			_match_block_arms === undefined ? undefined : () => groupField(readGroup_matchBlockArms.call(node), 'lastArm'),
+		[STORED_SLOT_READERS]: { matchBlockArms: readGroup_matchBlockArms },
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MatchBlock.Bound;
 }
 
 export function buildLastMatchArm(config: T.LastMatchArm.Config): T.LastMatchArm.Bound {
@@ -5076,91 +5517,129 @@ export function buildLastMatchArm(config: T.LastMatchArm.Config): T.LastMatchArm
 	);
 	const _pattern = rejectBareText(config.pattern, 'LastMatchArm.pattern', 'a built MatchPattern');
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.LastMatchArm['_value']>>(config.value, []),
+		kindIdStorage<NonNullable<T.LastMatchArm['_value']>>(config.value),
 		'LastMatchArm.value',
 		'a built Expression'
 	);
-	const _comma = coerceBooleanKeywordStorage(config.comma);
-	return withMethods(
-		withGroupSeat(
-			withAccessors(
-				{
-					$type: TSKindId.LastMatchArm as const,
-					$source: 2 as const,
-					$named: true as const,
-					_attributes,
-					_pattern,
-					_value,
-					_comma,
-					$with: {
-						attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
-							buildLastMatchArm({ ...config, attributes: restItems('attributes', values) }),
-						pattern: (value: T.MatchPattern) => buildLastMatchArm({ ...config, pattern: value }),
-						value: (value: NonNullable<T.LastMatchArm.Config>['value']) =>
-							buildLastMatchArm({ ...config, value: value }),
-						comma: (value?: NonNullable<T.LastMatchArm.Config>['comma']) =>
-							buildLastMatchArm({ ...config, comma: value })
-					}
-				},
-				{
-					attributes: () => _attributes,
-					pattern: () => _pattern,
-					value: () => _value,
-					comma: () => _comma
-				}
-			),
-			{
-				slot: 'pattern',
-				stored: '_pattern',
-				kind: TSKindId.MatchPattern as const,
-				make: buildMatchPattern,
-				keys: [
-					{ name: 'pattern', rest: false, required: true },
-					{ name: 'condition', rest: false }
-				]
-			}
-		)
-	) as unknown as T.LastMatchArm.Bound;
+	const _comma = coerceBooleanKeywordStorage(rejectBareText(config.comma, 'LastMatchArm.comma', 'a boolean'));
+	const readGroup_pattern = () => _pattern;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.LastMatchArm as const,
+		$source: 2 as const,
+		$named: true as const,
+		_attributes,
+		_pattern,
+		_value,
+		_comma,
+		$with: {
+			attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
+				rebuilt(node, handle, () => buildLastMatchArm({ ...config, attributes: restItems('attributes', values) })),
+			value: (value: NonNullable<T.LastMatchArm.Config>['value']) =>
+				rebuilt(node, handle, () => buildLastMatchArm({ ...config, value: value })),
+			comma: (value?: NonNullable<T.LastMatchArm.Config>['comma']) =>
+				rebuilt(node, handle, () => buildLastMatchArm({ ...config, comma: value })),
+			pattern: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'pattern',
+							stored: '_pattern',
+							kind: TSKindId.MatchPattern as const,
+							make: buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'pattern',
+						args,
+						(value: T.MatchPattern) => buildLastMatchArm({ ...config, pattern: value }),
+						() => readGroup_pattern.call(node)
+					)
+				),
+			condition: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'pattern',
+							stored: '_pattern',
+							kind: TSKindId.MatchPattern as const,
+							make: buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'condition',
+						args,
+						(value: T.MatchPattern) => buildLastMatchArm({ ...config, pattern: value }),
+						() => readGroup_pattern.call(node)
+					)
+				)
+		},
+		attributes: () => _attributes,
+		value: () => _value,
+		comma: () => _comma,
+		pattern: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'pattern'),
+		condition: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'condition'),
+		[STORED_SLOT_READERS]: { pattern: readGroup_pattern },
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LastMatchArm.Bound;
 }
 
 export function buildMatchPattern(config: T.MatchPattern.Config): T.MatchPattern.Bound {
 	const _pattern = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.MatchPattern['_pattern']>>(config.pattern, []),
+		kindIdStorage<NonNullable<T.MatchPattern['_pattern']>>(config.pattern),
 		'MatchPattern.pattern',
 		'a built Pattern'
 	);
 	const _condition = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.MatchPattern['_condition']>>(config.condition, []),
+		kindIdStorage<NonNullable<T.MatchPattern['_condition']>>(config.condition),
 		'MatchPattern.condition',
 		'a built Expression / LetCondition / LetChain'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.MatchPattern as const,
-				$source: 2 as const,
-				$named: true as const,
-				_pattern,
-				_condition,
-				$with: {
-					pattern: (value: NonNullable<T.MatchPattern.Config>['pattern']) =>
-						buildMatchPattern({ ...config, pattern: value }),
-					condition: (value?: NonNullable<T.MatchPattern.Config>['condition']) =>
-						buildMatchPattern({ ...config, condition: value })
-				}
-			},
-			{
-				pattern: () => _pattern,
-				condition: () => _condition
-			}
-		)
-	) as unknown as T.MatchPattern.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MatchPattern as const,
+		$source: 2 as const,
+		$named: true as const,
+		_pattern,
+		_condition,
+		$with: {
+			pattern: (value: NonNullable<T.MatchPattern.Config>['pattern']) =>
+				rebuilt(node, handle, () => buildMatchPattern({ ...config, pattern: value })),
+			condition: (value?: NonNullable<T.MatchPattern.Config>['condition']) =>
+				rebuilt(node, handle, () => buildMatchPattern({ ...config, condition: value }))
+		},
+		pattern: () => _pattern,
+		condition: () => _condition,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MatchPattern.Bound;
 }
 
 export function buildWhileExpression(config: T.WhileExpression.Config): T.WhileExpression.Bound {
 	const _label = rejectBareText(config.label, 'WhileExpression.label', 'a built Label');
 	const _condition = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.WhileExpression['_condition']>>(config.condition, []),
+		kindIdStorage<NonNullable<T.WhileExpression['_condition']>>(config.condition),
 		'WhileExpression.condition',
 		'a built Expression / LetCondition / LetChain'
 	);
@@ -5169,29 +5648,34 @@ export function buildWhileExpression(config: T.WhileExpression.Config): T.WhileE
 		'WhileExpression.body',
 		'a built Block'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.WhileExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_label,
-				_condition,
-				_body,
-				$with: {
-					label: (value?: T.Label) => buildWhileExpression({ ...config, label: value }),
-					condition: (value: NonNullable<T.WhileExpression.Config>['condition']) =>
-						buildWhileExpression({ ...config, condition: value }),
-					body: (value: T.Block) => buildWhileExpression({ ...config, body: value })
-				}
-			},
-			{
-				label: () => _label,
-				condition: () => _condition,
-				body: () => _body
-			}
-		)
-	) as unknown as T.WhileExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.WhileExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_label,
+		_condition,
+		_body,
+		$with: {
+			label: (value?: T.Label) => rebuilt(node, handle, () => buildWhileExpression({ ...config, label: value })),
+			condition: (value: NonNullable<T.WhileExpression.Config>['condition']) =>
+				rebuilt(node, handle, () => buildWhileExpression({ ...config, condition: value })),
+			body: (value: T.Block) => rebuilt(node, handle, () => buildWhileExpression({ ...config, body: value }))
+		},
+		label: () => _label,
+		condition: () => _condition,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.WhileExpression.Bound;
 }
 
 export function buildLoopExpression(config: Partial<T.LoopExpression.Config> = {}): T.LoopExpression.Bound {
@@ -5201,36 +5685,41 @@ export function buildLoopExpression(config: Partial<T.LoopExpression.Config> = {
 		'LoopExpression.body',
 		'a built Block'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.LoopExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_label,
-				_body,
-				$with: {
-					label: (value?: T.Label) => buildLoopExpression({ ...config, label: value }),
-					body: (value: T.Block) => buildLoopExpression({ ...config, body: value })
-				}
-			},
-			{
-				label: () => _label,
-				body: () => _body
-			}
-		)
-	) as unknown as T.LoopExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.LoopExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_label,
+		_body,
+		$with: {
+			label: (value?: T.Label) => rebuilt(node, handle, () => buildLoopExpression({ ...config, label: value })),
+			body: (value: T.Block) => rebuilt(node, handle, () => buildLoopExpression({ ...config, body: value }))
+		},
+		label: () => _label,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LoopExpression.Bound;
 }
 
 export function buildForExpression(config: T.ForExpression.Config): T.ForExpression.Bound {
 	const _label = rejectBareText(config.label, 'ForExpression.label', 'a built Label');
 	const _pattern = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ForExpression['_pattern']>>(config.pattern, []),
+		kindIdStorage<NonNullable<T.ForExpression['_pattern']>>(config.pattern),
 		'ForExpression.pattern',
 		'a built Pattern'
 	);
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ForExpression['_value']>>(config.value, []),
+		kindIdStorage<NonNullable<T.ForExpression['_value']>>(config.value),
 		'ForExpression.value',
 		'a built Expression'
 	);
@@ -5239,33 +5728,38 @@ export function buildForExpression(config: T.ForExpression.Config): T.ForExpress
 		'ForExpression.body',
 		'a built Block'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ForExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_label,
-				_pattern,
-				_value,
-				_body,
-				$with: {
-					label: (value?: T.Label) => buildForExpression({ ...config, label: value }),
-					pattern: (value: NonNullable<T.ForExpression.Config>['pattern']) =>
-						buildForExpression({ ...config, pattern: value }),
-					value: (value: NonNullable<T.ForExpression.Config>['value']) =>
-						buildForExpression({ ...config, value: value }),
-					body: (value: T.Block) => buildForExpression({ ...config, body: value })
-				}
-			},
-			{
-				label: () => _label,
-				pattern: () => _pattern,
-				value: () => _value,
-				body: () => _body
-			}
-		)
-	) as unknown as T.ForExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ForExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_label,
+		_pattern,
+		_value,
+		_body,
+		$with: {
+			label: (value?: T.Label) => rebuilt(node, handle, () => buildForExpression({ ...config, label: value })),
+			pattern: (value: NonNullable<T.ForExpression.Config>['pattern']) =>
+				rebuilt(node, handle, () => buildForExpression({ ...config, pattern: value })),
+			value: (value: NonNullable<T.ForExpression.Config>['value']) =>
+				rebuilt(node, handle, () => buildForExpression({ ...config, value: value })),
+			body: (value: T.Block) => rebuilt(node, handle, () => buildForExpression({ ...config, body: value }))
+		},
+		label: () => _label,
+		pattern: () => _pattern,
+		value: () => _value,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ForExpression.Bound;
 }
 
 export function buildConstBlock(value: AdmitBound<T.Block, T.AdmittedNodes>): ReturnType<typeof _buildConstBlock>;
@@ -5288,22 +5782,27 @@ export function buildConstBlock(...args: unknown[]) {
 }
 function _buildConstBlock(value: AdmitBound<T.Block, T.AdmittedNodes>): T.ConstBlock.Bound {
 	const _body = rejectBareText(value, 'ConstBlock.body', 'a built Block');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ConstBlock as const,
-				$source: 2 as const,
-				$named: true as const,
-				_body,
-				$with: {
-					body: (value: T.Block) => _buildConstBlock(value)
-				}
-			},
-			{
-				body: () => _body
-			}
-		)
-	) as unknown as T.ConstBlock.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ConstBlock as const,
+		$source: 2 as const,
+		$named: true as const,
+		_body,
+		$with: {
+			body: (value: T.Block) => rebuilt(node, handle, () => _buildConstBlock(value))
+		},
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ConstBlock.Bound;
 }
 
 export function buildClosureParameters(): T.EmptyClosureParameters;
@@ -5314,22 +5813,29 @@ export function buildClosureParameters(
 	...children: AdmitBound<(T.Pattern | T.Parameter)[], T.AdmittedNodes>
 ): T.ClosureParameters.Bound {
 	const _parameters = rejectBareText(children, 'ClosureParameters.parameters', 'a built Pattern / Parameter');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ClosureParameters as const,
-				$source: 2 as const,
-				$named: true as const,
-				_parameters,
-				$with: {
-					parameters: (...vs: (T.Pattern | T.Parameter)[]) => buildClosureParameters(...restItems('parameters', vs))
-				}
-			},
-			{
-				parameters: () => _parameters
-			}
-		)
-	) as unknown as T.ClosureParameters.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ClosureParameters as const,
+		$source: 2 as const,
+		$named: true as const,
+		_parameters,
+		$with: {
+			parameters: (...vs: (T.Pattern | T.Parameter)[]) =>
+				rebuilt(node, handle, () => buildClosureParameters(...restItems('parameters', vs)))
+		},
+		parameters: () => _parameters,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ClosureParameters.Bound;
 }
 
 export function buildLabel(value: AdmitBound<T.Identifier, T.AdmittedNodes>): ReturnType<typeof _buildLabel>;
@@ -5349,51 +5855,61 @@ export function buildLabel(...args: unknown[]) {
 }
 function _buildLabel(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T.Label.Bound {
 	const _name = rejectBareText(value, 'Label.name', 'buildIdentifier(…)');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.Label as const,
-				$source: 2 as const,
-				$named: true as const,
-				_name,
-				$with: {
-					name: (value: T.Identifier) => _buildLabel(value)
-				}
-			},
-			{
-				name: () => _name
-			}
-		)
-	) as unknown as T.Label.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.Label as const,
+		$source: 2 as const,
+		$named: true as const,
+		_name,
+		$with: {
+			name: (value: T.Identifier) => rebuilt(node, handle, () => _buildLabel(value))
+		},
+		name: () => _name,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Label.Bound;
 }
 
 export function buildBreakExpression(config: Partial<T.BreakExpression.Config> = {}): T.BreakExpression.Bound {
 	const _label = rejectBareText(config.label, 'BreakExpression.label', 'a built Label');
 	const _expression = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.BreakExpression['_expression']>>(config.expression, []),
+		kindIdStorage<NonNullable<T.BreakExpression['_expression']>>(config.expression),
 		'BreakExpression.expression',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.BreakExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_label,
-				_expression,
-				$with: {
-					label: (value?: T.Label) => buildBreakExpression({ ...config, label: value }),
-					expression: (value?: NonNullable<T.BreakExpression.Config>['expression']) =>
-						buildBreakExpression({ ...config, expression: value })
-				}
-			},
-			{
-				label: () => _label,
-				expression: () => _expression
-			}
-		)
-	) as unknown as T.BreakExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.BreakExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_label,
+		_expression,
+		$with: {
+			label: (value?: T.Label) => rebuilt(node, handle, () => buildBreakExpression({ ...config, label: value })),
+			expression: (value?: NonNullable<T.BreakExpression.Config>['expression']) =>
+				rebuilt(node, handle, () => buildBreakExpression({ ...config, expression: value }))
+		},
+		label: () => _label,
+		expression: () => _expression,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.BreakExpression.Bound;
 }
 
 export function buildContinueExpression(
@@ -5415,85 +5931,100 @@ export function buildContinueExpression(...args: unknown[]) {
 }
 function _buildContinueExpression(value?: AdmitBound<T.Label, T.AdmittedNodes>): T.ContinueExpression.Bound {
 	const _label = rejectBareText(value, 'ContinueExpression.label', 'a built Label');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ContinueExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_label,
-				$with: {
-					label: (value?: T.Label) => _buildContinueExpression(value)
-				}
-			},
-			{
-				label: () => _label
-			}
-		)
-	) as unknown as T.ContinueExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ContinueExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_label,
+		$with: {
+			label: (value?: T.Label) => rebuilt(node, handle, () => _buildContinueExpression(value))
+		},
+		label: () => _label,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ContinueExpression.Bound;
 }
 
 export function buildIndexExpression(config: T.IndexExpression.Config): T.IndexExpression.Bound {
 	const _object = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.IndexExpression['_object']>>(config.object, []),
+		kindIdStorage<NonNullable<T.IndexExpression['_object']>>(config.object),
 		'IndexExpression.object',
 		'a built Expression'
 	);
 	const _index = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.IndexExpression['_index']>>(config.index, []),
+		kindIdStorage<NonNullable<T.IndexExpression['_index']>>(config.index),
 		'IndexExpression.index',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.IndexExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_object,
-				_index,
-				$with: {
-					object: (value: NonNullable<T.IndexExpression.Config>['object']) =>
-						buildIndexExpression({ ...config, object: value }),
-					index: (value: NonNullable<T.IndexExpression.Config>['index']) =>
-						buildIndexExpression({ ...config, index: value })
-				}
-			},
-			{
-				object: () => _object,
-				index: () => _index
-			}
-		)
-	) as unknown as T.IndexExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.IndexExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_object,
+		_index,
+		$with: {
+			object: (value: NonNullable<T.IndexExpression.Config>['object']) =>
+				rebuilt(node, handle, () => buildIndexExpression({ ...config, object: value })),
+			index: (value: NonNullable<T.IndexExpression.Config>['index']) =>
+				rebuilt(node, handle, () => buildIndexExpression({ ...config, index: value }))
+		},
+		object: () => _object,
+		index: () => _index,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.IndexExpression.Bound;
 }
 
 export function buildAwaitExpression(value: AdmitBound<T.Expression, T.AdmittedNodes>): T.AwaitExpression.Bound {
 	const _expression = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.AwaitExpression['_expression']>>(value, []),
+		kindIdStorage<NonNullable<T.AwaitExpression['_expression']>>(value),
 		'AwaitExpression.expression',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.AwaitExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_expression,
-				$with: {
-					expression: (value: NonNullable<T.Expression>) => buildAwaitExpression(value)
-				}
-			},
-			{
-				expression: () => _expression
-			}
-		)
-	) as unknown as T.AwaitExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.AwaitExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_expression,
+		$with: {
+			expression: (value: NonNullable<T.Expression>) => rebuilt(node, handle, () => buildAwaitExpression(value))
+		},
+		expression: () => _expression,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AwaitExpression.Bound;
 }
 
 export function buildFieldExpression(config: T.FieldExpression.Config): T.FieldExpression.Bound {
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.FieldExpression['_value']>>(config.value, []),
+		kindIdStorage<NonNullable<T.FieldExpression['_value']>>(config.value),
 		'FieldExpression.value',
 		'a built Expression'
 	);
@@ -5501,27 +6032,32 @@ export function buildFieldExpression(config: T.FieldExpression.Config): T.FieldE
 		rejectBareText(config.field, 'FieldExpression.field', 'a built FieldIdentifier / IntegerLiteral'),
 		[[[1], (v: unknown) => buildFieldIdentifier(v as never)]]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.FieldExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_value,
-				_field,
-				$with: {
-					value: (value: NonNullable<T.FieldExpression.Config>['value']) =>
-						buildFieldExpression({ ...config, value: value }),
-					field: (value: T.FieldIdentifier | T.IntegerLiteral | T.FieldIdentifier.Types) =>
-						buildFieldExpression({ ...config, field: value })
-				}
-			},
-			{
-				value: () => _value,
-				field: () => _field
-			}
-		)
-	) as unknown as T.FieldExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FieldExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_value,
+		_field,
+		$with: {
+			value: (value: NonNullable<T.FieldExpression.Config>['value']) =>
+				rebuilt(node, handle, () => buildFieldExpression({ ...config, value: value })),
+			field: (value: T.FieldIdentifier | T.IntegerLiteral | T.FieldIdentifier.Types) =>
+				rebuilt(node, handle, () => buildFieldExpression({ ...config, field: value }))
+		},
+		value: () => _value,
+		field: () => _field,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FieldExpression.Bound;
 }
 
 export function buildUnsafeBlock(value: AdmitBound<T.Block, T.AdmittedNodes>): ReturnType<typeof _buildUnsafeBlock>;
@@ -5544,80 +6080,99 @@ export function buildUnsafeBlock(...args: unknown[]) {
 }
 function _buildUnsafeBlock(value: AdmitBound<T.Block, T.AdmittedNodes>): T.UnsafeBlock.Bound {
 	const _body = rejectBareText(value, 'UnsafeBlock.body', 'a built Block');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.UnsafeBlock as const,
-				$source: 2 as const,
-				$named: true as const,
-				_body,
-				$with: {
-					body: (value: T.Block) => _buildUnsafeBlock(value)
-				}
-			},
-			{
-				body: () => _body
-			}
-		)
-	) as unknown as T.UnsafeBlock.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.UnsafeBlock as const,
+		$source: 2 as const,
+		$named: true as const,
+		_body,
+		$with: {
+			body: (value: T.Block) => rebuilt(node, handle, () => _buildUnsafeBlock(value))
+		},
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.UnsafeBlock.Bound;
 }
 
 export function buildAsyncBlock(config: Partial<T.AsyncBlock.Config> = {}): T.AsyncBlock.Bound {
-	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
+	const _move_marker = coerceBooleanKeywordStorage(
+		rejectBareText(config.moveMarker, 'AsyncBlock.moveMarker', 'a boolean')
+	);
 	const _body = rejectBareText(
 		orDefault(config.body, () => buildBlock()),
 		'AsyncBlock.body',
 		'a built Block'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.AsyncBlock as const,
-				$source: 2 as const,
-				$named: true as const,
-				_move_marker,
-				_body,
-				$with: {
-					moveMarker: (value?: NonNullable<T.AsyncBlock.Config>['moveMarker']) =>
-						buildAsyncBlock({ ...config, moveMarker: value }),
-					body: (value: T.Block) => buildAsyncBlock({ ...config, body: value })
-				}
-			},
-			{
-				moveMarker: () => _move_marker,
-				body: () => _body
-			}
-		)
-	) as unknown as T.AsyncBlock.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.AsyncBlock as const,
+		$source: 2 as const,
+		$named: true as const,
+		_move_marker,
+		_body,
+		$with: {
+			moveMarker: (value?: NonNullable<T.AsyncBlock.Config>['moveMarker']) =>
+				rebuilt(node, handle, () => buildAsyncBlock({ ...config, moveMarker: value })),
+			body: (value: T.Block) => rebuilt(node, handle, () => buildAsyncBlock({ ...config, body: value }))
+		},
+		moveMarker: () => _move_marker,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AsyncBlock.Bound;
 }
 
 export function buildGenBlock(config: Partial<T.GenBlock.Config> = {}): T.GenBlock.Bound {
-	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
+	const _move_marker = coerceBooleanKeywordStorage(
+		rejectBareText(config.moveMarker, 'GenBlock.moveMarker', 'a boolean')
+	);
 	const _body = rejectBareText(
 		orDefault(config.body, () => buildBlock()),
 		'GenBlock.body',
 		'a built Block'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.GenBlock as const,
-				$source: 2 as const,
-				$named: true as const,
-				_move_marker,
-				_body,
-				$with: {
-					moveMarker: (value?: NonNullable<T.GenBlock.Config>['moveMarker']) =>
-						buildGenBlock({ ...config, moveMarker: value }),
-					body: (value: T.Block) => buildGenBlock({ ...config, body: value })
-				}
-			},
-			{
-				moveMarker: () => _move_marker,
-				body: () => _body
-			}
-		)
-	) as unknown as T.GenBlock.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.GenBlock as const,
+		$source: 2 as const,
+		$named: true as const,
+		_move_marker,
+		_body,
+		$with: {
+			moveMarker: (value?: NonNullable<T.GenBlock.Config>['moveMarker']) =>
+				rebuilt(node, handle, () => buildGenBlock({ ...config, moveMarker: value })),
+			body: (value: T.Block) => rebuilt(node, handle, () => buildGenBlock({ ...config, body: value }))
+		},
+		moveMarker: () => _move_marker,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.GenBlock.Bound;
 }
 
 export function buildTryBlock(value: AdmitBound<T.Block, T.AdmittedNodes>): ReturnType<typeof _buildTryBlock>;
@@ -5640,22 +6195,27 @@ export function buildTryBlock(...args: unknown[]) {
 }
 function _buildTryBlock(value: AdmitBound<T.Block, T.AdmittedNodes>): T.TryBlock.Bound {
 	const _body = rejectBareText(value, 'TryBlock.body', 'a built Block');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TryBlock as const,
-				$source: 2 as const,
-				$named: true as const,
-				_body,
-				$with: {
-					body: (value: T.Block) => _buildTryBlock(value)
-				}
-			},
-			{
-				body: () => _body
-			}
-		)
-	) as unknown as T.TryBlock.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TryBlock as const,
+		$source: 2 as const,
+		$named: true as const,
+		_body,
+		$with: {
+			body: (value: T.Block) => rebuilt(node, handle, () => _buildTryBlock(value))
+		},
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TryBlock.Bound;
 }
 
 export function buildBlock(): T.EmptyBlock;
@@ -5663,74 +6223,87 @@ export function buildBlock(config?: Partial<T.Block.Config>): T.Block.Bound;
 export function buildBlock(config: Partial<T.Block.Config> = {}): T.Block.Bound {
 	const _label = rejectBareText(config.label, 'Block.label', 'a built Label');
 	const _statements = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.Block['_statements']>>(config.statements ?? [], []),
+		kindIdStorage<NonNullable<T.Block['_statements']>>(config.statements ?? []),
 		'Block.statements',
 		'a built Statement'
 	);
 	const _trailing_expression = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.Block['_trailing_expression']>>(config.trailingExpression, []),
+		kindIdStorage<NonNullable<T.Block['_trailing_expression']>>(config.trailingExpression),
 		'Block.trailingExpression',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.Block as const,
-				$source: 2 as const,
-				$named: true as const,
-				_label,
-				_statements,
-				_trailing_expression,
-				$with: {
-					label: (value?: T.Label) => buildBlock({ ...config, label: value }),
-					statements: (...values: NonNullable<NonNullable<T.Block.Config>['statements']>[number][]) =>
-						buildBlock({ ...config, statements: restItems('statements', values) }),
-					trailingExpression: (value?: NonNullable<T.Block.Config>['trailingExpression']) =>
-						buildBlock({ ...config, trailingExpression: value })
-				}
-			},
-			{
-				label: () => _label,
-				statements: () => _statements,
-				trailingExpression: () => _trailing_expression
-			}
-		)
-	) as unknown as T.Block.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.Block as const,
+		$source: 2 as const,
+		$named: true as const,
+		_label,
+		_statements,
+		_trailing_expression,
+		$with: {
+			label: (value?: T.Label) => rebuilt(node, handle, () => buildBlock({ ...config, label: value })),
+			statements: (...values: NonNullable<NonNullable<T.Block.Config>['statements']>[number][]) =>
+				rebuilt(node, handle, () => buildBlock({ ...config, statements: restItems('statements', values) })),
+			trailingExpression: (value?: NonNullable<T.Block.Config>['trailingExpression']) =>
+				rebuilt(node, handle, () => buildBlock({ ...config, trailingExpression: value }))
+		},
+		label: () => _label,
+		statements: () => _statements,
+		trailingExpression: () => _trailing_expression,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Block.Bound;
 }
 
 export function buildGenericPattern(config: T.GenericPattern.Config): T.GenericPattern.Bound {
 	const _name = rejectBareText(config.name, 'GenericPattern.name', 'buildIdentifier(…)');
 	const _type_arguments = rejectBareText(config.typeArguments, 'GenericPattern.typeArguments', 'a built TypeArguments');
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.GenericPattern as const,
-					$source: 2 as const,
-					$named: true as const,
-					_name,
-					_type_arguments,
-					$with: {
-						name: (value: T.Identifier | T.ScopedIdentifier) => buildGenericPattern({ ...config, name: value }),
-						typeArguments: (value: T.TypeArguments) => buildGenericPattern({ ...config, typeArguments: value })
-					}
-				},
-				{
-					name: () => _name,
-					typeArguments: () => _type_arguments
-				}
-			),
-			[
-				{
-					slot: 'typeArguments',
-					kind: TSKindId.TypeArguments as const,
-					optional: false,
-					make: buildTypeArguments,
-					element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
-				}
-			]
-		)
-	) as unknown as T.GenericPattern.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.GenericPattern as const,
+		$source: 2 as const,
+		$named: true as const,
+		_name,
+		_type_arguments,
+		$with: {
+			name: (value: T.Identifier | T.ScopedIdentifier) =>
+				rebuilt(node, handle, () => buildGenericPattern({ ...config, name: value })),
+			typeArguments: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeArguments as const,
+							optional: false,
+							make: buildTypeArguments,
+							element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
+						},
+						(value: T.TypeArguments) => buildGenericPattern({ ...config, typeArguments: value })
+					)
+				)
+		},
+		name: () => _name,
+		typeArguments: () => _type_arguments,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.GenericPattern.Bound;
 }
 
 export function buildTuplePattern(): T.EmptyTuplePattern;
@@ -5761,40 +6334,50 @@ export function buildTuplePattern(...args: unknown[]) {
 }
 function _buildTuplePattern(value?: AdmitBound<T.TuplePatternElements, T.AdmittedNodes>): T.TuplePattern.Bound {
 	const _elements = rejectBareText(value, 'TuplePattern.elements', 'a built TuplePatternElements');
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.TuplePattern as const,
-						$source: 2 as const,
-						$named: true as const,
-						_elements,
-						$with: {
-							elements: (value?: T.TuplePatternElements) => _buildTuplePattern(value)
-						}
-					},
-					{
-						elements: () => _elements
-					}
-				),
-				[
-					{
-						slot: 'elements',
-						kind: TSKindId.TuplePatternElements as const,
-						optional: true,
-						make: buildTuplePatternElements
-					}
-				]
-			),
-			{
-				list: { accessor: 'elements', storage: '_elements' },
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
-		)
-	) as unknown as T.TuplePattern.Bound;
+	const listView = ownerView(_elements, '_element');
+	const listedItems =
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'elements'), undefined);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TuplePattern as const,
+		$source: 2 as const,
+		$named: true as const,
+		_elements,
+		$with: {
+			elements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TuplePatternElements as const, optional: true, make: buildTuplePatternElements },
+						(value?: T.TuplePatternElements) => _buildTuplePattern(value)
+					)
+				)
+		},
+		elements: () => _elements,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_elements') : undefined,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_elements');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.TuplePattern.Bound;
 }
 
 export function buildSlicePattern(): T.EmptySlicePattern;
@@ -5823,61 +6406,87 @@ export function buildSlicePattern(...args: unknown[]) {
 }
 function _buildSlicePattern(value?: AdmitBound<T.Patterns, T.AdmittedNodes>): T.SlicePattern.Bound {
 	const _patterns = rejectBareText(value, 'SlicePattern.patterns', 'a built Patterns');
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.SlicePattern as const,
-						$source: 2 as const,
-						$named: true as const,
-						_patterns,
-						$with: {
-							patterns: (value?: T.Patterns) => _buildSlicePattern(value)
-						}
-					},
-					{
-						patterns: () => _patterns
-					}
-				),
-				[{ slot: 'patterns', kind: TSKindId.Patterns as const, optional: true, make: buildPatterns }]
-			),
-			{
-				list: { accessor: 'patterns', storage: '_patterns' },
-				elements: 'patterns',
-				count: '_pattern',
-				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
-		)
-	) as unknown as T.SlicePattern.Bound;
+	const listView = ownerView(_patterns, '_pattern');
+	const listedItems =
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'patterns'), undefined);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.SlicePattern as const,
+		$source: 2 as const,
+		$named: true as const,
+		_patterns,
+		$with: {
+			patterns: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.Patterns as const, optional: true, make: buildPatterns },
+						(value?: T.Patterns) => _buildSlicePattern(value)
+					)
+				)
+		},
+		patterns: () => _patterns,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_patterns') : undefined,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_patterns');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.SlicePattern.Bound;
 }
 
 export function buildTupleStructPattern(config: T.TupleStructPattern.Config): T.TupleStructPattern.Bound {
 	const _type = rejectBareText(config.type, 'TupleStructPattern.type', 'buildIdentifier(…)');
 	const _patterns = rejectBareText(config.patterns, 'TupleStructPattern.patterns', 'a built Patterns');
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.TupleStructPattern as const,
-					$source: 2 as const,
-					$named: true as const,
-					_type,
-					_patterns,
-					$with: {
-						type: (value: T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish) =>
-							buildTupleStructPattern({ ...config, type: value }),
-						patterns: (value?: T.Patterns) => buildTupleStructPattern({ ...config, patterns: value })
-					}
-				},
-				{
-					type: () => _type,
-					patterns: () => _patterns
-				}
-			),
-			[{ slot: 'patterns', kind: TSKindId.Patterns as const, optional: true, make: buildPatterns }]
-		)
-	) as unknown as T.TupleStructPattern.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TupleStructPattern as const,
+		$source: 2 as const,
+		$named: true as const,
+		_type,
+		_patterns,
+		$with: {
+			type: (value: T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish) =>
+				rebuilt(node, handle, () => buildTupleStructPattern({ ...config, type: value })),
+			patterns: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.Patterns as const, optional: true, make: buildPatterns },
+						(value?: T.Patterns) => buildTupleStructPattern({ ...config, patterns: value })
+					)
+				)
+		},
+		type: () => _type,
+		patterns: () => _patterns,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TupleStructPattern.Bound;
 }
 
 export function buildStructPattern(config: T.StructPattern.Config): T.StructPattern.Bound {
@@ -5886,192 +6495,227 @@ export function buildStructPattern(config: T.StructPattern.Config): T.StructPatt
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _fields = rejectBareText(config.fields, 'StructPattern.fields', 'a built StructPatternElements');
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.StructPattern as const,
-					$source: 2 as const,
-					$named: true as const,
-					_type,
-					_fields,
-					$with: {
-						type: (value: T.TypeIdentifier | T.ScopedTypeIdentifier | T.TypeIdentifier.Types) =>
-							buildStructPattern({ ...config, type: value }),
-						fields: (value?: T.StructPatternElements) => buildStructPattern({ ...config, fields: value })
-					}
-				},
-				{
-					type: () => _type,
-					fields: () => _fields
-				}
-			),
-			[
-				{
-					slot: 'fields',
-					kind: TSKindId.StructPatternElements as const,
-					optional: true,
-					make: buildStructPatternElements
-				}
-			]
-		)
-	) as unknown as T.StructPattern.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.StructPattern as const,
+		$source: 2 as const,
+		$named: true as const,
+		_type,
+		_fields,
+		$with: {
+			type: (value: T.TypeIdentifier | T.ScopedTypeIdentifier | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildStructPattern({ ...config, type: value })),
+			fields: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.StructPatternElements as const, optional: true, make: buildStructPatternElements },
+						(value?: T.StructPatternElements) => buildStructPattern({ ...config, fields: value })
+					)
+				)
+		},
+		type: () => _type,
+		fields: () => _fields,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.StructPattern.Bound;
 }
 
 export const buildRemainingFieldPattern: TSKindId.RemainingFieldPattern = TSKindId.RemainingFieldPattern;
 
 export function buildMutPattern(value: AdmitBound<T.Pattern, T.AdmittedNodes>): T.MutPattern.Bound {
 	const _pattern = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.MutPattern['_pattern']>>(value, []),
+		kindIdStorage<NonNullable<T.MutPattern['_pattern']>>(value),
 		'MutPattern.pattern',
 		'a built Pattern'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.MutPattern as const,
-				$source: 2 as const,
-				$named: true as const,
-				_pattern,
-				$with: {
-					pattern: (value: NonNullable<T.Pattern>) => buildMutPattern(value)
-				}
-			},
-			{
-				pattern: () => _pattern
-			}
-		)
-	) as unknown as T.MutPattern.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MutPattern as const,
+		$source: 2 as const,
+		$named: true as const,
+		_pattern,
+		$with: {
+			pattern: (value: NonNullable<T.Pattern>) => rebuilt(node, handle, () => buildMutPattern(value))
+		},
+		pattern: () => _pattern,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MutPattern.Bound;
 }
 
 export function buildRefPattern(value: AdmitBound<T.Pattern, T.AdmittedNodes>): T.RefPattern.Bound {
 	const _pattern = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.RefPattern['_pattern']>>(value, []),
+		kindIdStorage<NonNullable<T.RefPattern['_pattern']>>(value),
 		'RefPattern.pattern',
 		'a built Pattern'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.RefPattern as const,
-				$source: 2 as const,
-				$named: true as const,
-				_pattern,
-				$with: {
-					pattern: (value: NonNullable<T.Pattern>) => buildRefPattern(value)
-				}
-			},
-			{
-				pattern: () => _pattern
-			}
-		)
-	) as unknown as T.RefPattern.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.RefPattern as const,
+		$source: 2 as const,
+		$named: true as const,
+		_pattern,
+		$with: {
+			pattern: (value: NonNullable<T.Pattern>) => rebuilt(node, handle, () => buildRefPattern(value))
+		},
+		pattern: () => _pattern,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RefPattern.Bound;
 }
 
 export function buildCapturedPattern(config: T.CapturedPattern.Config): T.CapturedPattern.Bound {
 	const _name = rejectBareText(config.name, 'CapturedPattern.name', 'buildIdentifier(…)');
 	const _pattern = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.CapturedPattern['_pattern']>>(config.pattern, []),
+		kindIdStorage<NonNullable<T.CapturedPattern['_pattern']>>(config.pattern),
 		'CapturedPattern.pattern',
 		'a built Pattern'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.CapturedPattern as const,
-				$source: 2 as const,
-				$named: true as const,
-				_name,
-				_pattern,
-				$with: {
-					name: (value: T.Identifier) => buildCapturedPattern({ ...config, name: value }),
-					pattern: (value: NonNullable<T.CapturedPattern.Config>['pattern']) =>
-						buildCapturedPattern({ ...config, pattern: value })
-				}
-			},
-			{
-				name: () => _name,
-				pattern: () => _pattern
-			}
-		)
-	) as unknown as T.CapturedPattern.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.CapturedPattern as const,
+		$source: 2 as const,
+		$named: true as const,
+		_name,
+		_pattern,
+		$with: {
+			name: (value: T.Identifier) => rebuilt(node, handle, () => buildCapturedPattern({ ...config, name: value })),
+			pattern: (value: NonNullable<T.CapturedPattern.Config>['pattern']) =>
+				rebuilt(node, handle, () => buildCapturedPattern({ ...config, pattern: value }))
+		},
+		name: () => _name,
+		pattern: () => _pattern,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CapturedPattern.Bound;
 }
 
 export function buildReferencePattern(config: T.ReferencePattern.Config): T.ReferencePattern.Bound {
-	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
+	const _mutable_specifier = coerceBooleanKeywordStorage(
+		rejectBareText(config.mutableSpecifier, 'ReferencePattern.mutableSpecifier', 'a boolean')
+	);
 	const _pattern = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ReferencePattern['_pattern']>>(config.pattern, []),
+		kindIdStorage<NonNullable<T.ReferencePattern['_pattern']>>(config.pattern),
 		'ReferencePattern.pattern',
 		'a built Pattern'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ReferencePattern as const,
-				$source: 2 as const,
-				$named: true as const,
-				_mutable_specifier,
-				_pattern,
-				$with: {
-					mutableSpecifier: (value?: NonNullable<T.ReferencePattern.Config>['mutableSpecifier']) =>
-						buildReferencePattern({ ...config, mutableSpecifier: value }),
-					pattern: (value: NonNullable<T.ReferencePattern.Config>['pattern']) =>
-						buildReferencePattern({ ...config, pattern: value })
-				}
-			},
-			{
-				mutableSpecifier: () => _mutable_specifier,
-				pattern: () => _pattern
-			}
-		)
-	) as unknown as T.ReferencePattern.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ReferencePattern as const,
+		$source: 2 as const,
+		$named: true as const,
+		_mutable_specifier,
+		_pattern,
+		$with: {
+			mutableSpecifier: (value?: NonNullable<T.ReferencePattern.Config>['mutableSpecifier']) =>
+				rebuilt(node, handle, () => buildReferencePattern({ ...config, mutableSpecifier: value })),
+			pattern: (value: NonNullable<T.ReferencePattern.Config>['pattern']) =>
+				rebuilt(node, handle, () => buildReferencePattern({ ...config, pattern: value }))
+		},
+		mutableSpecifier: () => _mutable_specifier,
+		pattern: () => _pattern,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ReferencePattern.Bound;
 }
 
 export function buildNegativeLiteral(
 	value: AdmitBound<T.IntegerLiteral | T.FloatLiteral, T.AdmittedNodes>
 ): T.NegativeLiteral.Bound {
 	const _value = rejectBareText(value, 'NegativeLiteral.value', 'buildFloatLiteral(…)');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.NegativeLiteral as const,
-				$source: 2 as const,
-				$named: true as const,
-				_value,
-				$with: {
-					value: (value: T.IntegerLiteral | T.FloatLiteral) => buildNegativeLiteral(value)
-				}
-			},
-			{
-				value: () => _value
-			}
-		)
-	) as unknown as T.NegativeLiteral.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.NegativeLiteral as const,
+		$source: 2 as const,
+		$named: true as const,
+		_value,
+		$with: {
+			value: (value: T.IntegerLiteral | T.FloatLiteral) => rebuilt(node, handle, () => buildNegativeLiteral(value))
+		},
+		value: () => _value,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.NegativeLiteral.Bound;
 }
 
 export function buildStringLiteral(config: T.StringLiteral.Config): T.StringLiteral.Bound {
 	const _string_open = rejectBareText(config.stringOpen, 'StringLiteral.stringOpen', 'buildStringOpen(…)');
 	const _elements = rejectBareText(config.elements ?? [], 'StringLiteral.elements', 'buildStringContent(…)');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.StringLiteral as const,
-				$source: 2 as const,
-				$named: true as const,
-				_string_open,
-				_elements,
-				$with: {
-					stringOpen: (value: T.StringOpen) => buildStringLiteral({ ...config, stringOpen: value }),
-					elements: (...values: (T.EscapeSequence | T.StringContent)[]) =>
-						buildStringLiteral({ ...config, elements: restItems('elements', values) })
-				}
-			},
-			{
-				stringOpen: () => _string_open,
-				elements: () => _elements
-			}
-		)
-	) as unknown as T.StringLiteral.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.StringLiteral as const,
+		$source: 2 as const,
+		$named: true as const,
+		_string_open,
+		_elements,
+		$with: {
+			stringOpen: (value: T.StringOpen) =>
+				rebuilt(node, handle, () => buildStringLiteral({ ...config, stringOpen: value })),
+			elements: (...values: (T.EscapeSequence | T.StringContent)[]) =>
+				rebuilt(node, handle, () => buildStringLiteral({ ...config, elements: restItems('elements', values) }))
+		},
+		stringOpen: () => _string_open,
+		elements: () => _elements,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.StringLiteral.Bound;
 }
 
 export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawStringLiteral.Bound {
@@ -6090,31 +6734,36 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 		'RawStringLiteral.rawStringLiteralEnd',
 		'buildRawStringLiteralEnd(…)'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.RawStringLiteral as const,
-				$source: 2 as const,
-				$named: true as const,
-				_raw_string_literal_start,
-				_string_content,
-				_raw_string_literal_end,
-				$with: {
-					rawStringLiteralStart: (value: T.RawStringLiteralStart) =>
-						buildRawStringLiteral({ ...config, rawStringLiteralStart: value }),
-					stringContent: (value: T.RawStringLiteralContent) =>
-						buildRawStringLiteral({ ...config, stringContent: value }),
-					rawStringLiteralEnd: (value: T.RawStringLiteralEnd) =>
-						buildRawStringLiteral({ ...config, rawStringLiteralEnd: value })
-				}
-			},
-			{
-				rawStringLiteralStart: () => _raw_string_literal_start,
-				stringContent: () => _string_content,
-				rawStringLiteralEnd: () => _raw_string_literal_end
-			}
-		)
-	) as unknown as T.RawStringLiteral.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.RawStringLiteral as const,
+		$source: 2 as const,
+		$named: true as const,
+		_raw_string_literal_start,
+		_string_content,
+		_raw_string_literal_end,
+		$with: {
+			rawStringLiteralStart: (value: T.RawStringLiteralStart) =>
+				rebuilt(node, handle, () => buildRawStringLiteral({ ...config, rawStringLiteralStart: value })),
+			stringContent: (value: T.RawStringLiteralContent) =>
+				rebuilt(node, handle, () => buildRawStringLiteral({ ...config, stringContent: value })),
+			rawStringLiteralEnd: (value: T.RawStringLiteralEnd) =>
+				rebuilt(node, handle, () => buildRawStringLiteral({ ...config, rawStringLiteralEnd: value }))
+		},
+		rawStringLiteralStart: () => _raw_string_literal_start,
+		stringContent: () => _string_content,
+		rawStringLiteralEnd: () => _raw_string_literal_end,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RawStringLiteral.Bound;
 }
 
 export function buildLineComment(
@@ -6128,24 +6777,29 @@ export function buildLineComment(
 		'LineComment.content',
 		'buildLineCommentExtraSlashes(…) / buildLineCommentRegular(…)'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.LineComment as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (
-						value: T.LineCommentExtraSlashes | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentRegular
-					) => buildLineComment(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		)
-	) as unknown as T.LineComment.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.LineComment as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		$with: {
+			content: (
+				value: T.LineCommentExtraSlashes | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentRegular
+			) => rebuilt(node, handle, () => buildLineComment(value))
+		},
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LineComment.Bound;
 }
 
 export const buildInnerLineDocCommentMarker: TSKindId.InnerLineDocCommentMarker = TSKindId.InnerLineDocCommentMarker;
@@ -6156,57 +6810,81 @@ export function buildBlockComment(
 	value?: AdmitBound<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentRegular, T.AdmittedNodes>
 ): T.BlockComment.Bound {
 	const _content = rejectBareText(value, 'BlockComment.content', 'buildBlockCommentRegular(…)');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.BlockComment as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentRegular) =>
-						buildBlockComment(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		)
-	) as unknown as T.BlockComment.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.BlockComment as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		$with: {
+			content: (value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentRegular) =>
+				rebuilt(node, handle, () => buildBlockComment(value))
+		},
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.BlockComment.Bound;
 }
 
 export function buildIdentifier(text: string): T.Identifier.Bound {
 	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
 	if (!_leafRe_buildIdentifier.test(text))
 		throw new Error(`identifier: text does not match pattern: ${describeValue(text)}`);
-	return withMethods({
+	const handle = currentHandle();
+	const node = {
 		$type: TSKindId.Identifier as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text
-	});
+		$text: text,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Identifier.Bound;
 }
 
-export function buildShebang(value: AdmitBound<string, T.AdmittedNodes>): T.Shebang.Bound {
+export function buildShebang(content: string, affix?: true): T.Shebang.Bound;
+export function buildShebang(text: `#!${string}\n`, affix: false): T.Shebang.Bound;
+export function buildShebang(input: string, affix: boolean = true): T.Shebang.Bound {
+	const value = affix ? input : unaffixed(String(input), '#!', '\n', 'shebang');
 	const _content = value;
 	if (!_slotRe_buildShebang_content.test(_content))
 		throw new Error(`shebang.content: text does not match pattern: ${describeValue(_content)}`);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.Shebang as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: string) => buildShebang(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		)
-	) as unknown as T.Shebang.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.Shebang as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		$with: {
+			content: (value: string) => rebuilt(node, handle, () => buildShebang(value))
+		},
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Shebang.Bound;
 }
 
 export const buildSelf: TSKindId.Self = TSKindId.Self;
@@ -6215,26 +6893,34 @@ export const buildSuper: TSKindId.Super = TSKindId.Super;
 
 export const buildCrate: TSKindId.Crate = TSKindId.Crate;
 
-export function buildMetavariable(value: AdmitBound<string, T.AdmittedNodes>): T.Metavariable.Bound {
+export function buildMetavariable(content: string, affix?: true): T.Metavariable.Bound;
+export function buildMetavariable(text: `$${string}`, affix: false): T.Metavariable.Bound;
+export function buildMetavariable(input: string, affix: boolean = true): T.Metavariable.Bound {
+	const value = affix ? input : unaffixed(String(input), '$', '', 'metavariable');
 	const _name = value;
 	if (!_slotRe_buildMetavariable_name.test(_name))
 		throw new Error(`metavariable.name: text does not match pattern: ${describeValue(_name)}`);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.Metavariable as const,
-				$source: 2 as const,
-				$named: true as const,
-				_name,
-				$with: {
-					name: (value: string) => buildMetavariable(value)
-				}
-			},
-			{
-				name: () => _name
-			}
-		)
-	) as unknown as T.Metavariable.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.Metavariable as const,
+		$source: 2 as const,
+		$named: true as const,
+		_name,
+		$with: {
+			name: (value: string) => rebuilt(node, handle, () => buildMetavariable(value))
+		},
+		name: () => _name,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Metavariable.Bound;
 }
 
 export function buildMacroRules(
@@ -6266,29 +6952,41 @@ function _buildMacroRules(
 	_assertNonEmpty(elements, 'macro_rules.elements');
 	const _macro_rule = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.MacroRules as const,
-					$source: 2 as const,
-					$named: true as const,
-					_macro_rule,
-					_delimiter,
-					$with: {
-						macroRules: (...vs: NonEmptyArray<AdmitBound<T.MacroRule, T.AdmittedNodes>>) =>
-							buildMacroRules(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildMacroRules({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					macroRules: () => _macro_rule
-				}
-			),
-			{ elements: 'macroRules', count: '_macro_rule', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.MacroRules.Bound;
+	const listedStored = storedElements(_macro_rule);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MacroRules as const,
+		$source: 2 as const,
+		$named: true as const,
+		_macro_rule,
+		_delimiter,
+		$with: {
+			macroRules: (...vs: NonEmptyArray<AdmitBound<T.MacroRule, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildMacroRules(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildMacroRules({ ...options, delimiter: v }, ...elements))
+		},
+		macroRules: () => _macro_rule,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.MacroRules.Bound;
 }
 
 export function buildEnumVariantListElements(
@@ -6332,37 +7030,53 @@ function _buildEnumVariantListElements(
 	_assertNonEmpty(_mapped, 'enum_variant_list_elements.elements');
 	const _element = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.Trailing;
-	return withMethods(
-		withListView(
-			withElementsSeat(
-				withAccessors(
-					{
-						$type: TSKindId.EnumVariantListElements as const,
-						$source: 2 as const,
-						$named: true as const,
-						_element,
-						_delimiter,
-						$with: {
-							elements: (...vs: NonEmptyArray<AdmitBound<T.AttributedEnumVariant | T.EnumVariant, T.AdmittedNodes>>) =>
-								buildEnumVariantListElements(options, ...vs),
-							delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-								buildEnumVariantListElements({ ...options, delimiter: v }, ...elements)
-						}
-					},
-					{
-						elements: () => _element
-					}
+	const listedStored = storedElements(_element);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.EnumVariantListElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_element,
+		_delimiter,
+		$with: {
+			elements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'elements', keys: ['attributeItem', 'enumVariant'], make: buildAttributedEnumVariant },
+						(...vs: NonEmptyArray<AdmitBound<T.AttributedEnumVariant | T.EnumVariant, T.AdmittedNodes>>) =>
+							buildEnumVariantListElements(options, ...vs)
+					)
 				),
-				{ slot: 'elements', keys: ['attributeItem', 'enumVariant'], make: buildAttributedEnumVariant }
-			),
-			{
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
-				wrapper: { kind: TSKindId.AttributedEnumVariant, content: 'enumVariant', decorations: ['_attribute_item'] }
-			}
-		)
-	) as unknown as T.EnumVariantListElements.Bound;
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildEnumVariantListElements({ ...options, delimiter: v }, ...elements))
+		},
+		elements: () => _element,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(listedStored, {
+				kind: TSKindId.AttributedEnumVariant,
+				content: 'enumVariant',
+				decorations: ['_attribute_item']
+			}),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.Trailing,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.EnumVariantListElements.Bound;
 }
 
 export function buildFieldDeclarationListElements(
@@ -6406,42 +7120,53 @@ function _buildFieldDeclarationListElements(
 	_assertNonEmpty(_mapped, 'field_declaration_list_elements.elements');
 	const _element = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.Trailing;
-	return withMethods(
-		withListView(
-			withElementsSeat(
-				withAccessors(
-					{
-						$type: TSKindId.FieldDeclarationListElements as const,
-						$source: 2 as const,
-						$named: true as const,
-						_element,
-						_delimiter,
-						$with: {
-							elements: (
-								...vs: NonEmptyArray<AdmitBound<T.AttributedFieldDeclaration | T.FieldDeclaration, T.AdmittedNodes>>
-							) => buildFieldDeclarationListElements(options, ...vs),
-							delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-								buildFieldDeclarationListElements({ ...options, delimiter: v }, ...elements)
-						}
-					},
-					{
-						elements: () => _element
-					}
+	const listedStored = storedElements(_element);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FieldDeclarationListElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_element,
+		_delimiter,
+		$with: {
+			elements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'elements', keys: ['attributeItem', 'fieldDeclaration'], make: buildAttributedFieldDeclaration },
+						(...vs: NonEmptyArray<AdmitBound<T.AttributedFieldDeclaration | T.FieldDeclaration, T.AdmittedNodes>>) =>
+							buildFieldDeclarationListElements(options, ...vs)
+					)
 				),
-				{ slot: 'elements', keys: ['attributeItem', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
-			),
-			{
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
-				wrapper: {
-					kind: TSKindId.AttributedFieldDeclaration,
-					content: 'fieldDeclaration',
-					decorations: ['_attribute_item']
-				}
-			}
-		)
-	) as unknown as T.FieldDeclarationListElements.Bound;
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildFieldDeclarationListElements({ ...options, delimiter: v }, ...elements))
+		},
+		elements: () => _element,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(listedStored, {
+				kind: TSKindId.AttributedFieldDeclaration,
+				content: 'fieldDeclaration',
+				decorations: ['_attribute_item']
+			}),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.Trailing,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.FieldDeclarationListElements.Bound;
 }
 
 export function buildOrderedFieldDeclarationListElements(
@@ -6485,44 +7210,60 @@ function _buildOrderedFieldDeclarationListElements(
 	_assertNonEmpty(_mapped, 'ordered_field_declaration_list_elements.elements');
 	const _element = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withElementsSeat(
-				withAccessors(
-					{
-						$type: TSKindId.OrderedFieldDeclarationListElements as const,
-						$source: 2 as const,
-						$named: true as const,
-						_element,
-						_delimiter,
-						$with: {
-							elements: (
-								...vs: NonEmptyArray<
-									AdmitBound<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
-								>
-							) => buildOrderedFieldDeclarationListElements(options, ...vs),
-							delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-								buildOrderedFieldDeclarationListElements({ ...options, delimiter: v }, ...elements)
-						}
-					},
-					{
-						elements: () => _element
-					}
+	const listedStored = storedElements(_element);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.OrderedFieldDeclarationListElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_element,
+		_delimiter,
+		$with: {
+			elements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{
+							slot: 'elements',
+							keys: ['attributeItem', 'visibilityModifier', 'type'],
+							make: buildAttributedOrderedField
+						},
+						(
+							...vs: NonEmptyArray<
+								AdmitBound<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
+							>
+						) => buildOrderedFieldDeclarationListElements(options, ...vs)
+					)
 				),
-				{ slot: 'elements', keys: ['attributeItem', 'visibilityModifier', 'type'], make: buildAttributedOrderedField }
-			),
-			{
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				wrapper: {
-					kind: TSKindId.AttributedOrderedField,
-					content: 'type',
-					decorations: ['_attribute_item', '_visibility_modifier']
-				}
-			}
-		)
-	) as unknown as T.OrderedFieldDeclarationListElements.Bound;
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildOrderedFieldDeclarationListElements({ ...options, delimiter: v }, ...elements))
+		},
+		elements: () => _element,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(listedStored, {
+				kind: TSKindId.AttributedOrderedField,
+				content: 'type',
+				decorations: ['_attribute_item', '_visibility_modifier']
+			}),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.OrderedFieldDeclarationListElements.Bound;
 }
 
 export function buildWherePredicates(
@@ -6554,33 +7295,41 @@ function _buildWherePredicates(
 	_assertNonEmpty(elements, 'where_predicates.elements');
 	const _where_predicate = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.WherePredicates as const,
-					$source: 2 as const,
-					$named: true as const,
-					_where_predicate,
-					_delimiter,
-					$with: {
-						wherePredicates: (...vs: NonEmptyArray<AdmitBound<T.WherePredicate, T.AdmittedNodes>>) =>
-							buildWherePredicates(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildWherePredicates({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					wherePredicates: () => _where_predicate
-				}
-			),
-			{
-				elements: 'wherePredicates',
-				count: '_where_predicate',
-				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
-		)
-	) as unknown as T.WherePredicates.Bound;
+	const listedStored = storedElements(_where_predicate);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.WherePredicates as const,
+		$source: 2 as const,
+		$named: true as const,
+		_where_predicate,
+		_delimiter,
+		$with: {
+			wherePredicates: (...vs: NonEmptyArray<AdmitBound<T.WherePredicate, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildWherePredicates(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildWherePredicates({ ...options, delimiter: v }, ...elements))
+		},
+		wherePredicates: () => _where_predicate,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.WherePredicates.Bound;
 }
 
 export function buildTypeParametersElements(
@@ -6645,47 +7394,59 @@ function _buildTypeParametersElements(
 	_assertNonEmpty(_mapped, 'type_parameters_elements.elements');
 	const _element = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withElementsSeat(
-				withAccessors(
-					{
-						$type: TSKindId.TypeParametersElements as const,
-						$source: 2 as const,
-						$named: true as const,
-						_element,
-						_delimiter,
-						$with: {
-							elements: (
-								...vs: NonEmptyArray<
-									AdmitBound<
-										| T.AttributedTypeParameter
-										| T.Metavariable
-										| T.TypeParameter
-										| T.LifetimeParameter
-										| T.ConstParameter,
-										T.AdmittedNodes
-									>
+	const listedStored = storedElements(_element);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeParametersElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_element,
+		_delimiter,
+		$with: {
+			elements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'elements', keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter },
+						(
+							...vs: NonEmptyArray<
+								AdmitBound<
+									T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+									T.AdmittedNodes
 								>
-							) => buildTypeParametersElements(options, ...vs),
-							delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-								buildTypeParametersElements({ ...options, delimiter: v }, ...elements)
-						}
-					},
-					{
-						elements: () => _element
-					}
+							>
+						) => buildTypeParametersElements(options, ...vs)
+					)
 				),
-				{ slot: 'elements', keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
-			),
-			{
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['_attribute_item'] }
-			}
-		)
-	) as unknown as T.TypeParametersElements.Bound;
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildTypeParametersElements({ ...options, delimiter: v }, ...elements))
+		},
+		elements: () => _element,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(listedStored, {
+				kind: TSKindId.AttributedTypeParameter,
+				content: 'content',
+				decorations: ['_attribute_item']
+			}),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.TypeParametersElements.Bound;
 }
 
 export function buildUseClauses(
@@ -6886,64 +7647,76 @@ function _buildUseClauses(
 	_assertNonEmpty(elements, 'use_clauses.elements');
 	const _use_clause = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.UseClauses as const,
-					$source: 2 as const,
-					$named: true as const,
-					_use_clause,
-					_delimiter,
-					$with: {
-						useClauses: (
-							...vs: NonEmptyArray<
-								AdmitBound<
-									| TSKindId.Self
-									| TSKindId.U8Keyword
-									| TSKindId.I8Keyword
-									| TSKindId.U16Keyword
-									| TSKindId.I16Keyword
-									| TSKindId.U32Keyword
-									| TSKindId.I32Keyword
-									| TSKindId.U64Keyword
-									| TSKindId.I64Keyword
-									| TSKindId.U128Keyword
-									| TSKindId.I128Keyword
-									| TSKindId.IsizeKeyword
-									| TSKindId.UsizeKeyword
-									| TSKindId.F32Keyword
-									| TSKindId.F64Keyword
-									| TSKindId.BoolKeyword
-									| TSKindId.StrKeyword
-									| TSKindId.CharKeyword
-									| T.Metavariable
-									| TSKindId.Super
-									| TSKindId.Crate
-									| T.Identifier
-									| T.ScopedIdentifier
-									| TSKindId.DefaultKeyword
-									| TSKindId.UnionKeyword
-									| TSKindId.GenKeyword
-									| T.UseAsClause
-									| T.UseList
-									| T.ScopedUseList
-									| T.UseWildcard,
-									T.AdmittedNodes
-								>
-							>
-						) => buildUseClauses(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildUseClauses({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					useClauses: () => _use_clause
-				}
-			),
-			{ elements: 'useClauses', count: '_use_clause', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.UseClauses.Bound;
+	const listedStored = storedElements(_use_clause);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.UseClauses as const,
+		$source: 2 as const,
+		$named: true as const,
+		_use_clause,
+		_delimiter,
+		$with: {
+			useClauses: (
+				...vs: NonEmptyArray<
+					AdmitBound<
+						| TSKindId.Self
+						| TSKindId.U8Keyword
+						| TSKindId.I8Keyword
+						| TSKindId.U16Keyword
+						| TSKindId.I16Keyword
+						| TSKindId.U32Keyword
+						| TSKindId.I32Keyword
+						| TSKindId.U64Keyword
+						| TSKindId.I64Keyword
+						| TSKindId.U128Keyword
+						| TSKindId.I128Keyword
+						| TSKindId.IsizeKeyword
+						| TSKindId.UsizeKeyword
+						| TSKindId.F32Keyword
+						| TSKindId.F64Keyword
+						| TSKindId.BoolKeyword
+						| TSKindId.StrKeyword
+						| TSKindId.CharKeyword
+						| T.Metavariable
+						| TSKindId.Super
+						| TSKindId.Crate
+						| T.Identifier
+						| T.ScopedIdentifier
+						| TSKindId.DefaultKeyword
+						| TSKindId.UnionKeyword
+						| TSKindId.GenKeyword
+						| T.UseAsClause
+						| T.UseList
+						| T.ScopedUseList
+						| T.UseWildcard,
+						T.AdmittedNodes
+					>
+				>
+			) => rebuilt(node, handle, () => buildUseClauses(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildUseClauses({ ...options, delimiter: v }, ...elements))
+		},
+		useClauses: () => _use_clause,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.UseClauses.Bound;
 }
 
 export function buildParametersElements(
@@ -7038,49 +7811,65 @@ function _buildParametersElements(
 	_assertNonEmpty(_mapped, 'parameters_elements.elements');
 	const _element = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withElementsSeat(
-				withAccessors(
-					{
-						$type: TSKindId.ParametersElements as const,
-						$source: 2 as const,
-						$named: true as const,
-						_element,
-						_delimiter,
-						$with: {
-							elements: (
-								...vs: NonEmptyArray<
-									AdmitBound<
-										| T.AttributedParameter
-										| T.Parameter
-										| T.SelfParameter
-										| T.VariadicParameter
-										| TSKindId.Underscore
-										| T.Type
-										| T.TypeIdentifier.Types,
-										T.AdmittedNodes
-									>
+	const listedStored = storedElements(_element);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ParametersElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_element,
+		_delimiter,
+		$with: {
+			elements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'elements', keys: ['attributeItem', 'content'], make: buildAttributedParameter },
+						(
+							...vs: NonEmptyArray<
+								AdmitBound<
+									| T.AttributedParameter
+									| T.Parameter
+									| T.SelfParameter
+									| T.VariadicParameter
+									| TSKindId.Underscore
+									| T.Type
+									| T.TypeIdentifier.Types,
+									T.AdmittedNodes
 								>
-							) => buildParametersElements(options, ...vs),
-							delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-								buildParametersElements({ ...options, delimiter: v }, ...elements)
-						}
-					},
-					{
-						elements: () => _element
-					}
+							>
+						) => buildParametersElements(options, ...vs)
+					)
 				),
-				{ slot: 'elements', keys: ['attributeItem', 'content'], make: buildAttributedParameter }
-			),
-			{
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				wrapper: { kind: TSKindId.AttributedParameter, content: 'content', decorations: ['_attribute_item'] }
-			}
-		)
-	) as unknown as T.ParametersElements.Bound;
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildParametersElements({ ...options, delimiter: v }, ...elements))
+		},
+		elements: () => _element,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(listedStored, {
+				kind: TSKindId.AttributedParameter,
+				content: 'content',
+				decorations: ['_attribute_item']
+			}),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.ParametersElements.Bound;
 }
 
 export function buildLifetimes(
@@ -7112,29 +7901,41 @@ function _buildLifetimes(
 	_assertNonEmpty(elements, 'lifetimes.elements');
 	const _lifetime = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.Lifetimes as const,
-					$source: 2 as const,
-					$named: true as const,
-					_lifetime,
-					_delimiter,
-					$with: {
-						lifetimes: (...vs: NonEmptyArray<AdmitBound<T.Lifetime, T.AdmittedNodes>>) =>
-							buildLifetimes(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildLifetimes({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					lifetimes: () => _lifetime
-				}
-			),
-			{ elements: 'lifetimes', count: '_lifetime', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.Lifetimes.Bound;
+	const listedStored = storedElements(_lifetime);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.Lifetimes as const,
+		$source: 2 as const,
+		$named: true as const,
+		_lifetime,
+		_delimiter,
+		$with: {
+			lifetimes: (...vs: NonEmptyArray<AdmitBound<T.Lifetime, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildLifetimes(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildLifetimes({ ...options, delimiter: v }, ...elements))
+		},
+		lifetimes: () => _lifetime,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.Lifetimes.Bound;
 }
 
 export function buildUseBoundsElements(
@@ -7171,30 +7972,42 @@ function _buildUseBoundsElements(
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.UseBoundsElements as const,
-					$source: 2 as const,
-					$named: true as const,
-					_element,
-					_delimiter,
-					$with: {
-						elements: (
-							...vs: NonEmptyArray<AdmitBound<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>>
-						) => buildUseBoundsElements(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildUseBoundsElements({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					elements: () => _element
-				}
-			),
-			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.UseBoundsElements.Bound;
+	const listedStored = storedElements(_element);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.UseBoundsElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_element,
+		_delimiter,
+		$with: {
+			elements: (
+				...vs: NonEmptyArray<AdmitBound<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>>
+			) => rebuilt(node, handle, () => buildUseBoundsElements(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildUseBoundsElements({ ...options, delimiter: v }, ...elements))
+		},
+		elements: () => _element,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.UseBoundsElements.Bound;
 }
 
 export function buildTypeArgumentsElements(
@@ -7257,43 +8070,55 @@ function _buildTypeArgumentsElements(
 	_assertNonEmpty(_mapped, 'type_arguments_elements.elements');
 	const _element = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withElementsSeat(
-				withAccessors(
-					{
-						$type: TSKindId.TypeArgumentsElements as const,
-						$source: 2 as const,
-						$named: true as const,
-						_element,
-						_delimiter,
-						$with: {
-							elements: (
-								...vs: NonEmptyArray<
-									AdmitBound<
-										T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
-										T.AdmittedNodes
-									>
+	const listedStored = storedElements(_element);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeArgumentsElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_element,
+		_delimiter,
+		$with: {
+			elements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'elements', keys: ['content', 'traitBounds'], make: buildTypeArgument },
+						(
+							...vs: NonEmptyArray<
+								AdmitBound<
+									T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
+									T.AdmittedNodes
 								>
-							) => buildTypeArgumentsElements(options, ...vs),
-							delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-								buildTypeArgumentsElements({ ...options, delimiter: v }, ...elements)
-						}
-					},
-					{
-						elements: () => _element
-					}
+							>
+						) => buildTypeArgumentsElements(options, ...vs)
+					)
 				),
-				{ slot: 'elements', keys: ['content', 'traitBounds'], make: buildTypeArgument }
-			),
-			{
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				wrapper: { kind: TSKindId.TypeArgument, content: 'content', decorations: ['_trait_bounds'] }
-			}
-		)
-	) as unknown as T.TypeArgumentsElements.Bound;
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildTypeArgumentsElements({ ...options, delimiter: v }, ...elements))
+		},
+		elements: () => _element,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(listedStored, { kind: TSKindId.TypeArgument, content: 'content', decorations: ['_trait_bounds'] }),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.TypeArgumentsElements.Bound;
 }
 
 export function buildArgumentsElements(
@@ -7337,37 +8162,53 @@ function _buildArgumentsElements(
 	_assertNonEmpty(_mapped, 'arguments_elements.elements');
 	const _element = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withElementsSeat(
-				withAccessors(
-					{
-						$type: TSKindId.ArgumentsElements as const,
-						$source: 2 as const,
-						$named: true as const,
-						_element,
-						_delimiter,
-						$with: {
-							elements: (...vs: NonEmptyArray<AdmitBound<T.AttributedArgument | T.Expression, T.AdmittedNodes>>) =>
-								buildArgumentsElements(options, ...vs),
-							delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-								buildArgumentsElements({ ...options, delimiter: v }, ...elements)
-						}
-					},
-					{
-						elements: () => _element
-					}
+	const listedStored = storedElements(_element);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ArgumentsElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_element,
+		_delimiter,
+		$with: {
+			elements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'elements', keys: ['attributeItem', 'expression'], make: buildAttributedArgument },
+						(...vs: NonEmptyArray<AdmitBound<T.AttributedArgument | T.Expression, T.AdmittedNodes>>) =>
+							buildArgumentsElements(options, ...vs)
+					)
 				),
-				{ slot: 'elements', keys: ['attributeItem', 'expression'], make: buildAttributedArgument }
-			),
-			{
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				wrapper: { kind: TSKindId.AttributedArgument, content: 'expression', decorations: ['_attribute_item'] }
-			}
-		)
-	) as unknown as T.ArgumentsElements.Bound;
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildArgumentsElements({ ...options, delimiter: v }, ...elements))
+		},
+		elements: () => _element,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(listedStored, {
+				kind: TSKindId.AttributedArgument,
+				content: 'expression',
+				decorations: ['_attribute_item']
+			}),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.ArgumentsElements.Bound;
 }
 
 export function buildFieldInitializerListElements(
@@ -7408,32 +8249,44 @@ function _buildFieldInitializerListElements(
 	_assertNonEmpty(elements, 'field_initializer_list_elements.elements');
 	const _element = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.FieldInitializerListElements as const,
-					$source: 2 as const,
-					$named: true as const,
-					_element,
-					_delimiter,
-					$with: {
-						elements: (
-							...vs: NonEmptyArray<
-								AdmitBound<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer, T.AdmittedNodes>
-							>
-						) => buildFieldInitializerListElements(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildFieldInitializerListElements({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					elements: () => _element
-				}
-			),
-			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.FieldInitializerListElements.Bound;
+	const listedStored = storedElements(_element);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FieldInitializerListElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_element,
+		_delimiter,
+		$with: {
+			elements: (
+				...vs: NonEmptyArray<
+					AdmitBound<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer, T.AdmittedNodes>
+				>
+			) => rebuilt(node, handle, () => buildFieldInitializerListElements(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildFieldInitializerListElements({ ...options, delimiter: v }, ...elements))
+		},
+		elements: () => _element,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.FieldInitializerListElements.Bound;
 }
 
 export function buildTuplePatternElements(
@@ -7468,29 +8321,41 @@ function _buildTuplePatternElements(
 	_assertNonEmpty(elements, 'tuple_pattern_elements.elements');
 	const _element = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.TuplePatternElements as const,
-					$source: 2 as const,
-					$named: true as const,
-					_element,
-					_delimiter,
-					$with: {
-						elements: (...vs: NonEmptyArray<AdmitBound<T.Pattern | T.ClosureExpression, T.AdmittedNodes>>) =>
-							buildTuplePatternElements(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildTuplePatternElements({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					elements: () => _element
-				}
-			),
-			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.TuplePatternElements.Bound;
+	const listedStored = storedElements(_element);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TuplePatternElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_element,
+		_delimiter,
+		$with: {
+			elements: (...vs: NonEmptyArray<AdmitBound<T.Pattern | T.ClosureExpression, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildTuplePatternElements(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildTuplePatternElements({ ...options, delimiter: v }, ...elements))
+		},
+		elements: () => _element,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.TuplePatternElements.Bound;
 }
 
 export function buildPatterns(
@@ -7522,28 +8387,41 @@ function _buildPatterns(
 	_assertNonEmpty(elements, 'patterns.elements');
 	const _pattern = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.Patterns as const,
-					$source: 2 as const,
-					$named: true as const,
-					_pattern,
-					_delimiter,
-					$with: {
-						patterns: (...vs: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>) => buildPatterns(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildPatterns({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					patterns: () => _pattern
-				}
-			),
-			{ elements: 'patterns', count: '_pattern', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.Patterns.Bound;
+	const listedStored = storedElements(_pattern);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.Patterns as const,
+		$source: 2 as const,
+		$named: true as const,
+		_pattern,
+		_delimiter,
+		$with: {
+			patterns: (...vs: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildPatterns(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildPatterns({ ...options, delimiter: v }, ...elements))
+		},
+		patterns: () => _pattern,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.Patterns.Bound;
 }
 
 export function buildStructPatternElements(
@@ -7578,30 +8456,41 @@ function _buildStructPatternElements(
 	_assertNonEmpty(elements, 'struct_pattern_elements.elements');
 	const _element = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.StructPatternElements as const,
-					$source: 2 as const,
-					$named: true as const,
-					_element,
-					_delimiter,
-					$with: {
-						elements: (
-							...vs: NonEmptyArray<AdmitBound<T.FieldPattern | TSKindId.RemainingFieldPattern, T.AdmittedNodes>>
-						) => buildStructPatternElements(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildStructPatternElements({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					elements: () => _element
-				}
-			),
-			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.StructPatternElements.Bound;
+	const listedStored = storedElements(_element);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.StructPatternElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_element,
+		_delimiter,
+		$with: {
+			elements: (...vs: NonEmptyArray<AdmitBound<T.FieldPattern | TSKindId.RemainingFieldPattern, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildStructPatternElements(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildStructPatternElements({ ...options, delimiter: v }, ...elements))
+		},
+		elements: () => _element,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.StructPatternElements.Bound;
 }
 
 export function buildUseWildcardGroup(
@@ -7637,31 +8526,7 @@ export function buildUseWildcardGroup(
 ): T.UseWildcardGroup.Bound {
 	const _path = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.UseWildcardGroup['_path']>>(value, [
-				['self', TSKindId.Self] as const,
-				['u8', TSKindId.U8Keyword] as const,
-				['i8', TSKindId.I8Keyword] as const,
-				['u16', TSKindId.U16Keyword] as const,
-				['i16', TSKindId.I16Keyword] as const,
-				['u32', TSKindId.U32Keyword] as const,
-				['i32', TSKindId.I32Keyword] as const,
-				['u64', TSKindId.U64Keyword] as const,
-				['i64', TSKindId.I64Keyword] as const,
-				['u128', TSKindId.U128Keyword] as const,
-				['i128', TSKindId.I128Keyword] as const,
-				['isize', TSKindId.IsizeKeyword] as const,
-				['usize', TSKindId.UsizeKeyword] as const,
-				['f32', TSKindId.F32Keyword] as const,
-				['f64', TSKindId.F64Keyword] as const,
-				['bool', TSKindId.BoolKeyword] as const,
-				['str', TSKindId.StrKeyword] as const,
-				['char', TSKindId.CharKeyword] as const,
-				['super', TSKindId.Super] as const,
-				['crate', TSKindId.Crate] as const,
-				['default', TSKindId.DefaultKeyword] as const,
-				['union', TSKindId.UnionKeyword] as const,
-				['gen', TSKindId.GenKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.UseWildcardGroup['_path']>>(value),
 			'UseWildcardGroup.path',
 			'buildIdentifier(…)'
 		),
@@ -7693,75 +8558,102 @@ export function buildUseWildcardGroup(
 			'gen'
 		]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.UseWildcardGroup as const,
-				$source: 2 as const,
-				$named: true as const,
-				_path,
-				$with: {
-					path: (
-						value?: NonNullable<
-							| TSKindId.Self
-							| TSKindId.U8Keyword
-							| TSKindId.I8Keyword
-							| TSKindId.U16Keyword
-							| TSKindId.I16Keyword
-							| TSKindId.U32Keyword
-							| TSKindId.I32Keyword
-							| TSKindId.U64Keyword
-							| TSKindId.I64Keyword
-							| TSKindId.U128Keyword
-							| TSKindId.I128Keyword
-							| TSKindId.IsizeKeyword
-							| TSKindId.UsizeKeyword
-							| TSKindId.F32Keyword
-							| TSKindId.F64Keyword
-							| TSKindId.BoolKeyword
-							| TSKindId.StrKeyword
-							| TSKindId.CharKeyword
-							| T.Metavariable
-							| TSKindId.Super
-							| TSKindId.Crate
-							| T.Identifier
-							| T.ScopedIdentifier
-							| TSKindId.DefaultKeyword
-							| TSKindId.UnionKeyword
-							| TSKindId.GenKeyword
-						>
-					) => buildUseWildcardGroup(value)
-				}
-			},
-			{
-				path: () => _path
-			}
-		)
-	) as unknown as T.UseWildcardGroup.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.UseWildcardGroup as const,
+		$source: 2 as const,
+		$named: true as const,
+		_path,
+		$with: {
+			path: (
+				value?: NonNullable<
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| T.Metavariable
+					| TSKindId.Super
+					| TSKindId.Crate
+					| T.Identifier
+					| T.ScopedIdentifier
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
+				>
+			) => rebuilt(node, handle, () => buildUseWildcardGroup(value))
+		},
+		path: () => _path,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.UseWildcardGroup.Bound;
 }
 
 export function buildTokenRepetitionPatternText(text: string): T.TokenRepetitionPatternText.Bound {
 	if (text.length === 0) throw new Error(`token_repetition_pattern_text: text must be non-empty`);
 	if (!_leafRe_buildTokenRepetitionPatternText.test(text))
 		throw new Error(`token_repetition_pattern_text: text does not match pattern: ${describeValue(text)}`);
-	return withMethods({
+	const handle = currentHandle();
+	const node = {
 		$type: TSKindId.TokenRepetitionPatternText as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text
-	});
+		$text: text,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TokenRepetitionPatternText.Bound;
 }
 
 export function buildStringOpen(text: string): T.StringOpen.Bound {
 	if (text.length === 0) throw new Error(`string_open: text must be non-empty`);
 	if (!_leafRe_buildStringOpen.test(text))
 		throw new Error(`string_open: text does not match pattern: ${describeValue(text)}`);
-	return withMethods({
+	const handle = currentHandle();
+	const node = {
 		$type: TSKindId.StringOpen as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text
-	});
+		$text: text,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.StringOpen.Bound;
 }
 
 export function buildTupleTypeElements(
@@ -7798,29 +8690,41 @@ function _buildTupleTypeElements(
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.TupleTypeElements as const,
-					$source: 2 as const,
-					$named: true as const,
-					_type,
-					_delimiter,
-					$with: {
-						types: (...vs: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>) =>
-							buildTupleTypeElements(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildTupleTypeElements({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					types: () => _type
-				}
-			),
-			{ elements: 'types', count: '_type', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.TupleTypeElements.Bound;
+	const listedStored = storedElements(_type);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TupleTypeElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_type,
+		_delimiter,
+		$with: {
+			types: (...vs: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildTupleTypeElements(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildTupleTypeElements({ ...options, delimiter: v }, ...elements))
+		},
+		types: () => _type,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.TupleTypeElements.Bound;
 }
 
 export function buildTupleExpressionElements(
@@ -7852,29 +8756,41 @@ function _buildTupleExpressionElements(
 	_assertNonEmpty(elements, 'tuple_expression_elements.elements');
 	const _element = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.TupleExpressionElements as const,
-					$source: 2 as const,
-					$named: true as const,
-					_element,
-					_delimiter,
-					$with: {
-						elements: (...vs: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>) =>
-							buildTupleExpressionElements(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildTupleExpressionElements({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					elements: () => _element
-				}
-			),
-			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.TupleExpressionElements.Bound;
+	const listedStored = storedElements(_element);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TupleExpressionElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_element,
+		_delimiter,
+		$with: {
+			elements: (...vs: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildTupleExpressionElements(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildTupleExpressionElements({ ...options, delimiter: v }, ...elements))
+		},
+		elements: () => _element,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.TupleExpressionElements.Bound;
 }
 
 export function buildIntegerLiteralDecimal(
@@ -7886,41 +8802,47 @@ export function buildIntegerLiteralDecimal(
 	const _suffix = config.suffix;
 	if (_suffix !== undefined && !_slotRe_buildIntegerLiteralDecimal_suffix.test(_suffix))
 		throw new Error(`integer_literal_decimal.suffix: text does not match pattern: ${describeValue(_suffix)}`);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.IntegerLiteralDecimal as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				_suffix,
-				$with: {
-					content: (value: string | number | bigint) => buildIntegerLiteralDecimal({ ...config, content: value }),
-					suffix: (
-						value?:
-							| 'u8'
-							| 'i8'
-							| 'u16'
-							| 'i16'
-							| 'u32'
-							| 'i32'
-							| 'u64'
-							| 'i64'
-							| 'u128'
-							| 'i128'
-							| 'isize'
-							| 'usize'
-							| 'f32'
-							| 'f64'
-					) => buildIntegerLiteralDecimal({ ...config, suffix: value })
-				}
-			},
-			{
-				content: () => _content,
-				suffix: () => _suffix
-			}
-		)
-	) as unknown as T.IntegerLiteralDecimal.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.IntegerLiteralDecimal as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		_suffix,
+		$with: {
+			content: (value: string | number | bigint) =>
+				rebuilt(node, handle, () => buildIntegerLiteralDecimal({ ...config, content: value })),
+			suffix: (
+				value?:
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+			) => rebuilt(node, handle, () => buildIntegerLiteralDecimal({ ...config, suffix: value }))
+		},
+		content: () => _content,
+		suffix: () => _suffix,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.IntegerLiteralDecimal.Bound;
 }
 
 export function buildIntegerLiteralHex(
@@ -7932,41 +8854,47 @@ export function buildIntegerLiteralHex(
 	const _suffix = config.suffix;
 	if (_suffix !== undefined && !_slotRe_buildIntegerLiteralHex_suffix.test(_suffix))
 		throw new Error(`integer_literal_hex.suffix: text does not match pattern: ${describeValue(_suffix)}`);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.IntegerLiteralHex as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				_suffix,
-				$with: {
-					content: (value: string | number | bigint) => buildIntegerLiteralHex({ ...config, content: value }),
-					suffix: (
-						value?:
-							| 'u8'
-							| 'i8'
-							| 'u16'
-							| 'i16'
-							| 'u32'
-							| 'i32'
-							| 'u64'
-							| 'i64'
-							| 'u128'
-							| 'i128'
-							| 'isize'
-							| 'usize'
-							| 'f32'
-							| 'f64'
-					) => buildIntegerLiteralHex({ ...config, suffix: value })
-				}
-			},
-			{
-				content: () => _content,
-				suffix: () => _suffix
-			}
-		)
-	) as unknown as T.IntegerLiteralHex.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.IntegerLiteralHex as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		_suffix,
+		$with: {
+			content: (value: string | number | bigint) =>
+				rebuilt(node, handle, () => buildIntegerLiteralHex({ ...config, content: value })),
+			suffix: (
+				value?:
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+			) => rebuilt(node, handle, () => buildIntegerLiteralHex({ ...config, suffix: value }))
+		},
+		content: () => _content,
+		suffix: () => _suffix,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.IntegerLiteralHex.Bound;
 }
 
 export function buildIntegerLiteralBinary(
@@ -7978,41 +8906,47 @@ export function buildIntegerLiteralBinary(
 	const _suffix = config.suffix;
 	if (_suffix !== undefined && !_slotRe_buildIntegerLiteralBinary_suffix.test(_suffix))
 		throw new Error(`integer_literal_binary.suffix: text does not match pattern: ${describeValue(_suffix)}`);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.IntegerLiteralBinary as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				_suffix,
-				$with: {
-					content: (value: string | number | bigint) => buildIntegerLiteralBinary({ ...config, content: value }),
-					suffix: (
-						value?:
-							| 'u8'
-							| 'i8'
-							| 'u16'
-							| 'i16'
-							| 'u32'
-							| 'i32'
-							| 'u64'
-							| 'i64'
-							| 'u128'
-							| 'i128'
-							| 'isize'
-							| 'usize'
-							| 'f32'
-							| 'f64'
-					) => buildIntegerLiteralBinary({ ...config, suffix: value })
-				}
-			},
-			{
-				content: () => _content,
-				suffix: () => _suffix
-			}
-		)
-	) as unknown as T.IntegerLiteralBinary.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.IntegerLiteralBinary as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		_suffix,
+		$with: {
+			content: (value: string | number | bigint) =>
+				rebuilt(node, handle, () => buildIntegerLiteralBinary({ ...config, content: value })),
+			suffix: (
+				value?:
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+			) => rebuilt(node, handle, () => buildIntegerLiteralBinary({ ...config, suffix: value }))
+		},
+		content: () => _content,
+		suffix: () => _suffix,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.IntegerLiteralBinary.Bound;
 }
 
 export function buildIntegerLiteralOctal(
@@ -8024,289 +8958,372 @@ export function buildIntegerLiteralOctal(
 	const _suffix = config.suffix;
 	if (_suffix !== undefined && !_slotRe_buildIntegerLiteralOctal_suffix.test(_suffix))
 		throw new Error(`integer_literal_octal.suffix: text does not match pattern: ${describeValue(_suffix)}`);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.IntegerLiteralOctal as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				_suffix,
-				$with: {
-					content: (value: string | number | bigint) => buildIntegerLiteralOctal({ ...config, content: value }),
-					suffix: (
-						value?:
-							| 'u8'
-							| 'i8'
-							| 'u16'
-							| 'i16'
-							| 'u32'
-							| 'i32'
-							| 'u64'
-							| 'i64'
-							| 'u128'
-							| 'i128'
-							| 'isize'
-							| 'usize'
-							| 'f32'
-							| 'f64'
-					) => buildIntegerLiteralOctal({ ...config, suffix: value })
-				}
-			},
-			{
-				content: () => _content,
-				suffix: () => _suffix
-			}
-		)
-	) as unknown as T.IntegerLiteralOctal.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.IntegerLiteralOctal as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		_suffix,
+		$with: {
+			content: (value: string | number | bigint) =>
+				rebuilt(node, handle, () => buildIntegerLiteralOctal({ ...config, content: value })),
+			suffix: (
+				value?:
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+			) => rebuilt(node, handle, () => buildIntegerLiteralOctal({ ...config, suffix: value }))
+		},
+		content: () => _content,
+		suffix: () => _suffix,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.IntegerLiteralOctal.Bound;
 }
 
 export function buildCharLiteralPlain(config: T.CharLiteralPlain.Config): T.CharLiteralPlain.Bound {
-	const _b = coerceBooleanKeywordStorage(config.b);
+	const _b = coerceBooleanKeywordStorage(rejectBareText(config.b, 'CharLiteralPlain.b', 'a boolean'));
 	const _content = config.content;
 	if (!_slotRe_buildCharLiteralPlain_content.test(_content))
 		throw new Error(`char_literal_plain.content: text does not match pattern: ${describeValue(_content)}`);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.CharLiteralPlain as const,
-				$source: 2 as const,
-				$named: true as const,
-				_b,
-				_content,
-				$with: {
-					b: (value?: NonNullable<T.CharLiteralPlain.Config>['b']) => buildCharLiteralPlain({ ...config, b: value }),
-					content: (value: string) => buildCharLiteralPlain({ ...config, content: value })
-				}
-			},
-			{
-				b: () => _b,
-				content: () => _content
-			}
-		)
-	) as unknown as T.CharLiteralPlain.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.CharLiteralPlain as const,
+		$source: 2 as const,
+		$named: true as const,
+		_b,
+		_content,
+		$with: {
+			b: (value?: NonNullable<T.CharLiteralPlain.Config>['b']) =>
+				rebuilt(node, handle, () => buildCharLiteralPlain({ ...config, b: value })),
+			content: (value: string) => rebuilt(node, handle, () => buildCharLiteralPlain({ ...config, content: value }))
+		},
+		b: () => _b,
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CharLiteralPlain.Bound;
 }
 
 export function buildCharLiteralEmpty(text: string): T.CharLiteralEmpty.Bound {
 	if (text.length === 0) throw new Error(`char_literal_empty: text must be non-empty`);
 	if (!_leafRe_buildCharLiteralEmpty.test(text))
 		throw new Error(`char_literal_empty: text does not match pattern: ${describeValue(text)}`);
-	return withMethods({
+	const handle = currentHandle();
+	const node = {
 		$type: TSKindId.CharLiteralEmpty as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text
-	});
+		$text: text,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CharLiteralEmpty.Bound;
 }
 
 export function buildCharLiteralEscapedSimple(
 	config: T.CharLiteralEscapedSimple.Config
 ): T.CharLiteralEscapedSimple.Bound {
-	const _b = coerceBooleanKeywordStorage(config.b);
+	const _b = coerceBooleanKeywordStorage(rejectBareText(config.b, 'CharLiteralEscapedSimple.b', 'a boolean'));
 	const _content = config.content;
 	if (!_slotRe_buildCharLiteralEscapedSimple_content.test(_content))
 		throw new Error(`char_literal_escaped_simple.content: text does not match pattern: ${describeValue(_content)}`);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.CharLiteralEscapedSimple as const,
-				$source: 2 as const,
-				$named: true as const,
-				_b,
-				_content,
-				$with: {
-					b: (value?: NonNullable<T.CharLiteralEscapedSimple.Config>['b']) =>
-						buildCharLiteralEscapedSimple({ ...config, b: value }),
-					content: (value: string) => buildCharLiteralEscapedSimple({ ...config, content: value })
-				}
-			},
-			{
-				b: () => _b,
-				content: () => _content
-			}
-		)
-	) as unknown as T.CharLiteralEscapedSimple.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.CharLiteralEscapedSimple as const,
+		$source: 2 as const,
+		$named: true as const,
+		_b,
+		_content,
+		$with: {
+			b: (value?: NonNullable<T.CharLiteralEscapedSimple.Config>['b']) =>
+				rebuilt(node, handle, () => buildCharLiteralEscapedSimple({ ...config, b: value })),
+			content: (value: string) =>
+				rebuilt(node, handle, () => buildCharLiteralEscapedSimple({ ...config, content: value }))
+		},
+		b: () => _b,
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CharLiteralEscapedSimple.Bound;
 }
 
 export function buildCharLiteralEscapedUnicodeFixed(
 	config: T.CharLiteralEscapedUnicodeFixed.Config
 ): T.CharLiteralEscapedUnicodeFixed.Bound {
-	const _b = coerceBooleanKeywordStorage(config.b);
+	const _b = coerceBooleanKeywordStorage(rejectBareText(config.b, 'CharLiteralEscapedUnicodeFixed.b', 'a boolean'));
 	const _content = config.content;
 	if (!_slotRe_buildCharLiteralEscapedUnicodeFixed_content.test(_content))
 		throw new Error(
 			`char_literal_escaped_unicode_fixed.content: text does not match pattern: ${describeValue(_content)}`
 		);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.CharLiteralEscapedUnicodeFixed as const,
-				$source: 2 as const,
-				$named: true as const,
-				_b,
-				_content,
-				$with: {
-					b: (value?: NonNullable<T.CharLiteralEscapedUnicodeFixed.Config>['b']) =>
-						buildCharLiteralEscapedUnicodeFixed({ ...config, b: value }),
-					content: (value: string) => buildCharLiteralEscapedUnicodeFixed({ ...config, content: value })
-				}
-			},
-			{
-				b: () => _b,
-				content: () => _content
-			}
-		)
-	) as unknown as T.CharLiteralEscapedUnicodeFixed.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.CharLiteralEscapedUnicodeFixed as const,
+		$source: 2 as const,
+		$named: true as const,
+		_b,
+		_content,
+		$with: {
+			b: (value?: NonNullable<T.CharLiteralEscapedUnicodeFixed.Config>['b']) =>
+				rebuilt(node, handle, () => buildCharLiteralEscapedUnicodeFixed({ ...config, b: value })),
+			content: (value: string) =>
+				rebuilt(node, handle, () => buildCharLiteralEscapedUnicodeFixed({ ...config, content: value }))
+		},
+		b: () => _b,
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CharLiteralEscapedUnicodeFixed.Bound;
 }
 
 export function buildCharLiteralEscapedUnicodeBraced(
 	config: T.CharLiteralEscapedUnicodeBraced.Config
 ): T.CharLiteralEscapedUnicodeBraced.Bound {
-	const _b = coerceBooleanKeywordStorage(config.b);
+	const _b = coerceBooleanKeywordStorage(rejectBareText(config.b, 'CharLiteralEscapedUnicodeBraced.b', 'a boolean'));
 	const _content = config.content;
 	if (!_slotRe_buildCharLiteralEscapedUnicodeBraced_content.test(_content))
 		throw new Error(
 			`char_literal_escaped_unicode_braced.content: text does not match pattern: ${describeValue(_content)}`
 		);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.CharLiteralEscapedUnicodeBraced as const,
-				$source: 2 as const,
-				$named: true as const,
-				_b,
-				_content,
-				$with: {
-					b: (value?: NonNullable<T.CharLiteralEscapedUnicodeBraced.Config>['b']) =>
-						buildCharLiteralEscapedUnicodeBraced({ ...config, b: value }),
-					content: (value: string) => buildCharLiteralEscapedUnicodeBraced({ ...config, content: value })
-				}
-			},
-			{
-				b: () => _b,
-				content: () => _content
-			}
-		)
-	) as unknown as T.CharLiteralEscapedUnicodeBraced.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.CharLiteralEscapedUnicodeBraced as const,
+		$source: 2 as const,
+		$named: true as const,
+		_b,
+		_content,
+		$with: {
+			b: (value?: NonNullable<T.CharLiteralEscapedUnicodeBraced.Config>['b']) =>
+				rebuilt(node, handle, () => buildCharLiteralEscapedUnicodeBraced({ ...config, b: value })),
+			content: (value: string) =>
+				rebuilt(node, handle, () => buildCharLiteralEscapedUnicodeBraced({ ...config, content: value }))
+		},
+		b: () => _b,
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CharLiteralEscapedUnicodeBraced.Bound;
 }
 
 export function buildCharLiteralEscapedHex(config: T.CharLiteralEscapedHex.Config): T.CharLiteralEscapedHex.Bound {
-	const _b = coerceBooleanKeywordStorage(config.b);
+	const _b = coerceBooleanKeywordStorage(rejectBareText(config.b, 'CharLiteralEscapedHex.b', 'a boolean'));
 	const _content = config.content;
 	if (!_slotRe_buildCharLiteralEscapedHex_content.test(_content))
 		throw new Error(`char_literal_escaped_hex.content: text does not match pattern: ${describeValue(_content)}`);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.CharLiteralEscapedHex as const,
-				$source: 2 as const,
-				$named: true as const,
-				_b,
-				_content,
-				$with: {
-					b: (value?: NonNullable<T.CharLiteralEscapedHex.Config>['b']) =>
-						buildCharLiteralEscapedHex({ ...config, b: value }),
-					content: (value: string) => buildCharLiteralEscapedHex({ ...config, content: value })
-				}
-			},
-			{
-				b: () => _b,
-				content: () => _content
-			}
-		)
-	) as unknown as T.CharLiteralEscapedHex.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.CharLiteralEscapedHex as const,
+		$source: 2 as const,
+		$named: true as const,
+		_b,
+		_content,
+		$with: {
+			b: (value?: NonNullable<T.CharLiteralEscapedHex.Config>['b']) =>
+				rebuilt(node, handle, () => buildCharLiteralEscapedHex({ ...config, b: value })),
+			content: (value: string) => rebuilt(node, handle, () => buildCharLiteralEscapedHex({ ...config, content: value }))
+		},
+		b: () => _b,
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CharLiteralEscapedHex.Bound;
 }
 
-export function buildEscapeSequenceSimple(value: AdmitBound<string, T.AdmittedNodes>): T.EscapeSequenceSimple.Bound {
+export function buildEscapeSequenceSimple(content: string, affix?: true): T.EscapeSequenceSimple.Bound;
+export function buildEscapeSequenceSimple(text: `\\${string}`, affix: false): T.EscapeSequenceSimple.Bound;
+export function buildEscapeSequenceSimple(input: string, affix: boolean = true): T.EscapeSequenceSimple.Bound {
+	const value = affix ? input : unaffixed(String(input), '\\', '', 'escape_sequence_simple');
 	const _content = value;
 	if (!_slotRe_buildEscapeSequenceSimple_content.test(_content))
 		throw new Error(`escape_sequence_simple.content: text does not match pattern: ${describeValue(_content)}`);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.EscapeSequenceSimple as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: string) => buildEscapeSequenceSimple(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		)
-	) as unknown as T.EscapeSequenceSimple.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.EscapeSequenceSimple as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		$with: {
+			content: (value: string) => rebuilt(node, handle, () => buildEscapeSequenceSimple(value))
+		},
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.EscapeSequenceSimple.Bound;
 }
 
+export function buildEscapeSequenceUnicodeFixed(content: string, affix?: true): T.EscapeSequenceUnicodeFixed.Bound;
+export function buildEscapeSequenceUnicodeFixed(text: `\\${string}`, affix: false): T.EscapeSequenceUnicodeFixed.Bound;
 export function buildEscapeSequenceUnicodeFixed(
-	value: AdmitBound<string, T.AdmittedNodes>
+	input: string,
+	affix: boolean = true
 ): T.EscapeSequenceUnicodeFixed.Bound {
+	const value = affix ? input : unaffixed(String(input), '\\', '', 'escape_sequence_unicode_fixed');
 	const _content = value;
 	if (!_slotRe_buildEscapeSequenceUnicodeFixed_content.test(_content))
 		throw new Error(`escape_sequence_unicode_fixed.content: text does not match pattern: ${describeValue(_content)}`);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.EscapeSequenceUnicodeFixed as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: string) => buildEscapeSequenceUnicodeFixed(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		)
-	) as unknown as T.EscapeSequenceUnicodeFixed.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.EscapeSequenceUnicodeFixed as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		$with: {
+			content: (value: string) => rebuilt(node, handle, () => buildEscapeSequenceUnicodeFixed(value))
+		},
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.EscapeSequenceUnicodeFixed.Bound;
 }
 
+export function buildEscapeSequenceUnicodeBraced(content: string, affix?: true): T.EscapeSequenceUnicodeBraced.Bound;
 export function buildEscapeSequenceUnicodeBraced(
-	value: AdmitBound<string, T.AdmittedNodes>
+	text: `\\${string}`,
+	affix: false
+): T.EscapeSequenceUnicodeBraced.Bound;
+export function buildEscapeSequenceUnicodeBraced(
+	input: string,
+	affix: boolean = true
 ): T.EscapeSequenceUnicodeBraced.Bound {
+	const value = affix ? input : unaffixed(String(input), '\\', '', 'escape_sequence_unicode_braced');
 	const _content = value;
 	if (!_slotRe_buildEscapeSequenceUnicodeBraced_content.test(_content))
 		throw new Error(`escape_sequence_unicode_braced.content: text does not match pattern: ${describeValue(_content)}`);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.EscapeSequenceUnicodeBraced as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: string) => buildEscapeSequenceUnicodeBraced(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		)
-	) as unknown as T.EscapeSequenceUnicodeBraced.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.EscapeSequenceUnicodeBraced as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		$with: {
+			content: (value: string) => rebuilt(node, handle, () => buildEscapeSequenceUnicodeBraced(value))
+		},
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.EscapeSequenceUnicodeBraced.Bound;
 }
 
-export function buildEscapeSequenceHex(value: AdmitBound<string, T.AdmittedNodes>): T.EscapeSequenceHex.Bound {
+export function buildEscapeSequenceHex(content: string, affix?: true): T.EscapeSequenceHex.Bound;
+export function buildEscapeSequenceHex(text: `\\${string}`, affix: false): T.EscapeSequenceHex.Bound;
+export function buildEscapeSequenceHex(input: string, affix: boolean = true): T.EscapeSequenceHex.Bound {
+	const value = affix ? input : unaffixed(String(input), '\\', '', 'escape_sequence_hex');
 	const _content = value;
 	if (!_slotRe_buildEscapeSequenceHex_content.test(_content))
 		throw new Error(`escape_sequence_hex.content: text does not match pattern: ${describeValue(_content)}`);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.EscapeSequenceHex as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: string) => buildEscapeSequenceHex(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		)
-	) as unknown as T.EscapeSequenceHex.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.EscapeSequenceHex as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		$with: {
+			content: (value: string) => rebuilt(node, handle, () => buildEscapeSequenceHex(value))
+		},
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.EscapeSequenceHex.Bound;
 }
 
 export function buildArrayExpressionSemi(config: T.ArrayExpressionSemi.Config): T.ArrayExpressionSemi.Bound {
@@ -8316,40 +9333,47 @@ export function buildArrayExpressionSemi(config: T.ArrayExpressionSemi.Config): 
 		'a built AttributeItem'
 	);
 	const _element = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ArrayExpressionSemi['_element']>>(config.element, []),
+		kindIdStorage<NonNullable<T.ArrayExpressionSemi['_element']>>(config.element),
 		'ArrayExpressionSemi.element',
 		'a built Expression'
 	);
 	const _length = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ArrayExpressionSemi['_length']>>(config.length, []),
+		kindIdStorage<NonNullable<T.ArrayExpressionSemi['_length']>>(config.length),
 		'ArrayExpressionSemi.length',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ArrayExpressionSemi as const,
-				$source: 2 as const,
-				$named: true as const,
-				_attributes,
-				_element,
-				_length,
-				$with: {
-					attributes: (...values: T.AttributeItem[]) =>
-						buildArrayExpressionSemi({ ...config, attributes: restItems('attributes', values) }),
-					element: (value: NonNullable<T.ArrayExpressionSemi.Config>['element']) =>
-						buildArrayExpressionSemi({ ...config, element: value }),
-					length: (value: NonNullable<T.ArrayExpressionSemi.Config>['length']) =>
-						buildArrayExpressionSemi({ ...config, length: value })
-				}
-			},
-			{
-				attributes: () => _attributes,
-				element: () => _element,
-				length: () => _length
-			}
-		)
-	) as unknown as T.ArrayExpressionSemi.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ArrayExpressionSemi as const,
+		$source: 2 as const,
+		$named: true as const,
+		_attributes,
+		_element,
+		_length,
+		$with: {
+			attributes: (...values: T.AttributeItem[]) =>
+				rebuilt(node, handle, () =>
+					buildArrayExpressionSemi({ ...config, attributes: restItems('attributes', values) })
+				),
+			element: (value: NonNullable<T.ArrayExpressionSemi.Config>['element']) =>
+				rebuilt(node, handle, () => buildArrayExpressionSemi({ ...config, element: value })),
+			length: (value: NonNullable<T.ArrayExpressionSemi.Config>['length']) =>
+				rebuilt(node, handle, () => buildArrayExpressionSemi({ ...config, length: value }))
+		},
+		attributes: () => _attributes,
+		element: () => _element,
+		length: () => _length,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ArrayExpressionSemi.Bound;
 }
 
 export function buildArrayExpressionList(): T.EmptyArrayExpressionList;
@@ -8367,75 +9391,95 @@ export function buildArrayExpressionList(
 		'ArrayExpressionList.argumentsElements',
 		'a built ArgumentsElements'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.ArrayExpressionList as const,
-					$source: 2 as const,
-					$named: true as const,
-					_attributes,
-					_arguments_elements,
-					$with: {
-						attributes: (...values: T.AttributeItem[]) =>
-							buildArrayExpressionList({ ...config, attributes: restItems('attributes', values) }),
-						argumentsElements: (value?: T.ArgumentsElements) =>
-							buildArrayExpressionList({ ...config, argumentsElements: value })
-					}
-				},
-				{
-					attributes: () => _attributes,
-					argumentsElements: () => _arguments_elements
-				}
-			),
-			[
-				{
-					slot: 'argumentsElements',
-					kind: TSKindId.ArgumentsElements as const,
-					optional: true,
-					make: buildArgumentsElements,
-					element: { keys: ['attributeItem', 'expression'], make: buildAttributedArgument }
-				}
-			]
-		)
-	) as unknown as T.ArrayExpressionList.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ArrayExpressionList as const,
+		$source: 2 as const,
+		$named: true as const,
+		_attributes,
+		_arguments_elements,
+		$with: {
+			attributes: (...values: T.AttributeItem[]) =>
+				rebuilt(node, handle, () =>
+					buildArrayExpressionList({ ...config, attributes: restItems('attributes', values) })
+				),
+			argumentsElements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.ArgumentsElements as const,
+							optional: true,
+							make: buildArgumentsElements,
+							element: { keys: ['attributeItem', 'expression'], make: buildAttributedArgument }
+						},
+						(value?: T.ArgumentsElements) => buildArrayExpressionList({ ...config, argumentsElements: value })
+					)
+				)
+		},
+		attributes: () => _attributes,
+		argumentsElements: () => _arguments_elements,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ArrayExpressionList.Bound;
 }
 
 export function buildAttributeInput(config: Partial<T.AttributeInput.Config> = {}): T.AttributeInput.Bound {
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.AttributeInput['_value']>>(config.value, []),
+		kindIdStorage<NonNullable<T.AttributeInput['_value']>>(config.value),
 		'AttributeInput.value',
 		'a built Expression'
 	);
 	const _arguments = rejectBareText(config.arguments, 'AttributeInput.arguments', 'a built DelimTokenTree');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.AttributeInput as const,
-				$source: 2 as const,
-				$named: true as const,
-				_value,
-				_arguments,
-				$with: {
-					value: (value?: NonNullable<T.AttributeInput.Config>['value']) =>
-						buildAttributeInput({ ...config, value: value }),
-					arguments: (value?: T.DelimTokenTree) => buildAttributeInput({ ...config, arguments: value })
-				}
-			},
-			{
-				value: () => _value,
-				arguments: () => _arguments
-			}
-		)
-	) as unknown as T.AttributeInput.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.AttributeInput as const,
+		$source: 2 as const,
+		$named: true as const,
+		_value,
+		_arguments,
+		$with: {
+			value: (value?: NonNullable<T.AttributeInput.Config>['value']) =>
+				rebuilt(node, handle, () => buildAttributeInput({ ...config, value: value })),
+			arguments: (value?: T.DelimTokenTree) =>
+				rebuilt(node, handle, () => buildAttributeInput({ ...config, arguments: value }))
+		},
+		value: () => _value,
+		arguments: () => _arguments,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AttributeInput.Bound;
 }
 
 export function buildClosureExpressionBlock(
 	config: Partial<T.ClosureExpressionBlock.Config> = {}
 ): T.ClosureExpressionBlock.Bound {
-	const _static_marker = coerceBooleanKeywordStorage(config.staticMarker);
-	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
-	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
+	const _static_marker = coerceBooleanKeywordStorage(
+		rejectBareText(config.staticMarker, 'ClosureExpressionBlock.staticMarker', 'a boolean')
+	);
+	const _async_marker = coerceBooleanKeywordStorage(
+		rejectBareText(config.asyncMarker, 'ClosureExpressionBlock.asyncMarker', 'a boolean')
+	);
+	const _move_marker = coerceBooleanKeywordStorage(
+		rejectBareText(config.moveMarker, 'ClosureExpressionBlock.moveMarker', 'a boolean')
+	);
 	const _parameters = rejectBareText(
 		orDefault(config.parameters, () => buildClosureParameters()),
 		'ClosureExpressionBlock.parameters',
@@ -8443,7 +9487,7 @@ export function buildClosureExpressionBlock(
 	);
 	const _return_type = admitAliasContent<NonNullable<T.ClosureExpressionBlock['_return_type']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.ClosureExpressionBlock['_return_type']>>(config.returnType, []),
+			kindIdStorage<NonNullable<T.ClosureExpressionBlock['_return_type']>>(config.returnType),
 			'ClosureExpressionBlock.returnType',
 			'a built Type'
 		),
@@ -8454,195 +9498,231 @@ export function buildClosureExpressionBlock(
 		'ClosureExpressionBlock.body',
 		'a built Block'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ClosureExpressionBlock as const,
-				$source: 2 as const,
-				$named: true as const,
-				_static_marker,
-				_async_marker,
-				_move_marker,
-				_parameters,
-				_return_type,
-				_body,
-				$with: {
-					staticMarker: (value?: NonNullable<T.ClosureExpressionBlock.Config>['staticMarker']) =>
-						buildClosureExpressionBlock({ ...config, staticMarker: value }),
-					asyncMarker: (value?: NonNullable<T.ClosureExpressionBlock.Config>['asyncMarker']) =>
-						buildClosureExpressionBlock({ ...config, asyncMarker: value }),
-					moveMarker: (value?: NonNullable<T.ClosureExpressionBlock.Config>['moveMarker']) =>
-						buildClosureExpressionBlock({ ...config, moveMarker: value }),
-					parameters: (value: T.ClosureParameters) => buildClosureExpressionBlock({ ...config, parameters: value }),
-					returnType: (value?: NonNullable<T.ClosureExpressionBlock.Config>['returnType']) =>
-						buildClosureExpressionBlock({ ...config, returnType: value }),
-					body: (value: T.Block) => buildClosureExpressionBlock({ ...config, body: value })
-				}
-			},
-			{
-				staticMarker: () => _static_marker,
-				asyncMarker: () => _async_marker,
-				moveMarker: () => _move_marker,
-				parameters: () => _parameters,
-				returnType: () => _return_type,
-				body: () => _body
-			}
-		)
-	) as unknown as T.ClosureExpressionBlock.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ClosureExpressionBlock as const,
+		$source: 2 as const,
+		$named: true as const,
+		_static_marker,
+		_async_marker,
+		_move_marker,
+		_parameters,
+		_return_type,
+		_body,
+		$with: {
+			staticMarker: (value?: NonNullable<T.ClosureExpressionBlock.Config>['staticMarker']) =>
+				rebuilt(node, handle, () => buildClosureExpressionBlock({ ...config, staticMarker: value })),
+			asyncMarker: (value?: NonNullable<T.ClosureExpressionBlock.Config>['asyncMarker']) =>
+				rebuilt(node, handle, () => buildClosureExpressionBlock({ ...config, asyncMarker: value })),
+			moveMarker: (value?: NonNullable<T.ClosureExpressionBlock.Config>['moveMarker']) =>
+				rebuilt(node, handle, () => buildClosureExpressionBlock({ ...config, moveMarker: value })),
+			parameters: (value: T.ClosureParameters) =>
+				rebuilt(node, handle, () => buildClosureExpressionBlock({ ...config, parameters: value })),
+			returnType: (value?: NonNullable<T.ClosureExpressionBlock.Config>['returnType']) =>
+				rebuilt(node, handle, () => buildClosureExpressionBlock({ ...config, returnType: value })),
+			body: (value: T.Block) => rebuilt(node, handle, () => buildClosureExpressionBlock({ ...config, body: value }))
+		},
+		staticMarker: () => _static_marker,
+		asyncMarker: () => _async_marker,
+		moveMarker: () => _move_marker,
+		parameters: () => _parameters,
+		returnType: () => _return_type,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ClosureExpressionBlock.Bound;
 }
 
 export function buildClosureExpressionExpr(config: T.ClosureExpressionExpr.Config): T.ClosureExpressionExpr.Bound {
-	const _static_marker = coerceBooleanKeywordStorage(config.staticMarker);
-	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
-	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
+	const _static_marker = coerceBooleanKeywordStorage(
+		rejectBareText(config.staticMarker, 'ClosureExpressionExpr.staticMarker', 'a boolean')
+	);
+	const _async_marker = coerceBooleanKeywordStorage(
+		rejectBareText(config.asyncMarker, 'ClosureExpressionExpr.asyncMarker', 'a boolean')
+	);
+	const _move_marker = coerceBooleanKeywordStorage(
+		rejectBareText(config.moveMarker, 'ClosureExpressionExpr.moveMarker', 'a boolean')
+	);
 	const _parameters = rejectBareText(
 		orDefault(config.parameters, () => buildClosureParameters()),
 		'ClosureExpressionExpr.parameters',
 		'a built ClosureParameters'
 	);
 	const _body = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ClosureExpressionExpr['_body']>>(config.body, [
-			['_', TSKindId.Underscore] as const
-		]),
+		kindIdStorage<NonNullable<T.ClosureExpressionExpr['_body']>>(config.body),
 		'ClosureExpressionExpr.body',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ClosureExpressionExpr as const,
-				$source: 2 as const,
-				$named: true as const,
-				_static_marker,
-				_async_marker,
-				_move_marker,
-				_parameters,
-				_body,
-				$with: {
-					staticMarker: (value?: NonNullable<T.ClosureExpressionExpr.Config>['staticMarker']) =>
-						buildClosureExpressionExpr({ ...config, staticMarker: value }),
-					asyncMarker: (value?: NonNullable<T.ClosureExpressionExpr.Config>['asyncMarker']) =>
-						buildClosureExpressionExpr({ ...config, asyncMarker: value }),
-					moveMarker: (value?: NonNullable<T.ClosureExpressionExpr.Config>['moveMarker']) =>
-						buildClosureExpressionExpr({ ...config, moveMarker: value }),
-					parameters: (value: T.ClosureParameters) => buildClosureExpressionExpr({ ...config, parameters: value }),
-					body: (value: NonNullable<T.ClosureExpressionExpr.Config>['body']) =>
-						buildClosureExpressionExpr({ ...config, body: value })
-				}
-			},
-			{
-				staticMarker: () => _static_marker,
-				asyncMarker: () => _async_marker,
-				moveMarker: () => _move_marker,
-				parameters: () => _parameters,
-				body: () => _body
-			}
-		)
-	) as unknown as T.ClosureExpressionExpr.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ClosureExpressionExpr as const,
+		$source: 2 as const,
+		$named: true as const,
+		_static_marker,
+		_async_marker,
+		_move_marker,
+		_parameters,
+		_body,
+		$with: {
+			staticMarker: (value?: NonNullable<T.ClosureExpressionExpr.Config>['staticMarker']) =>
+				rebuilt(node, handle, () => buildClosureExpressionExpr({ ...config, staticMarker: value })),
+			asyncMarker: (value?: NonNullable<T.ClosureExpressionExpr.Config>['asyncMarker']) =>
+				rebuilt(node, handle, () => buildClosureExpressionExpr({ ...config, asyncMarker: value })),
+			moveMarker: (value?: NonNullable<T.ClosureExpressionExpr.Config>['moveMarker']) =>
+				rebuilt(node, handle, () => buildClosureExpressionExpr({ ...config, moveMarker: value })),
+			parameters: (value: T.ClosureParameters) =>
+				rebuilt(node, handle, () => buildClosureExpressionExpr({ ...config, parameters: value })),
+			body: (value: NonNullable<T.ClosureExpressionExpr.Config>['body']) =>
+				rebuilt(node, handle, () => buildClosureExpressionExpr({ ...config, body: value }))
+		},
+		staticMarker: () => _static_marker,
+		asyncMarker: () => _async_marker,
+		moveMarker: () => _move_marker,
+		parameters: () => _parameters,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ClosureExpressionExpr.Bound;
 }
 
 export function buildReferenceExpressionRawConst(
 	value: AdmitBound<T.Expression, T.AdmittedNodes>
 ): T.ReferenceExpressionRawConst.Bound {
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ReferenceExpressionRawConst['_value']>>(value, []),
+		kindIdStorage<NonNullable<T.ReferenceExpressionRawConst['_value']>>(value),
 		'ReferenceExpressionRawConst.value',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ReferenceExpressionRawConst as const,
-				$source: 2 as const,
-				$named: true as const,
-				_value,
-				$with: {
-					value: (value: NonNullable<T.Expression>) => buildReferenceExpressionRawConst(value)
-				}
-			},
-			{
-				value: () => _value
-			}
-		)
-	) as unknown as T.ReferenceExpressionRawConst.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ReferenceExpressionRawConst as const,
+		$source: 2 as const,
+		$named: true as const,
+		_value,
+		$with: {
+			value: (value: NonNullable<T.Expression>) => rebuilt(node, handle, () => buildReferenceExpressionRawConst(value))
+		},
+		value: () => _value,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ReferenceExpressionRawConst.Bound;
 }
 
 export function buildReferenceExpressionRawMut(
 	value: AdmitBound<T.Expression, T.AdmittedNodes>
 ): T.ReferenceExpressionRawMut.Bound {
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ReferenceExpressionRawMut['_value']>>(value, []),
+		kindIdStorage<NonNullable<T.ReferenceExpressionRawMut['_value']>>(value),
 		'ReferenceExpressionRawMut.value',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ReferenceExpressionRawMut as const,
-				$source: 2 as const,
-				$named: true as const,
-				_value,
-				$with: {
-					value: (value: NonNullable<T.Expression>) => buildReferenceExpressionRawMut(value)
-				}
-			},
-			{
-				value: () => _value
-			}
-		)
-	) as unknown as T.ReferenceExpressionRawMut.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ReferenceExpressionRawMut as const,
+		$source: 2 as const,
+		$named: true as const,
+		_value,
+		$with: {
+			value: (value: NonNullable<T.Expression>) => rebuilt(node, handle, () => buildReferenceExpressionRawMut(value))
+		},
+		value: () => _value,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ReferenceExpressionRawMut.Bound;
 }
 
 export function buildReferenceExpressionMut(
 	value: AdmitBound<T.Expression, T.AdmittedNodes>
 ): T.ReferenceExpressionMut.Bound {
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ReferenceExpressionMut['_value']>>(value, []),
+		kindIdStorage<NonNullable<T.ReferenceExpressionMut['_value']>>(value),
 		'ReferenceExpressionMut.value',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ReferenceExpressionMut as const,
-				$source: 2 as const,
-				$named: true as const,
-				_value,
-				$with: {
-					value: (value: NonNullable<T.Expression>) => buildReferenceExpressionMut(value)
-				}
-			},
-			{
-				value: () => _value
-			}
-		)
-	) as unknown as T.ReferenceExpressionMut.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ReferenceExpressionMut as const,
+		$source: 2 as const,
+		$named: true as const,
+		_value,
+		$with: {
+			value: (value: NonNullable<T.Expression>) => rebuilt(node, handle, () => buildReferenceExpressionMut(value))
+		},
+		value: () => _value,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ReferenceExpressionMut.Bound;
 }
 
 export function buildReferenceExpressionBare(
 	value: AdmitBound<T.Expression, T.AdmittedNodes>
 ): T.ReferenceExpressionBare.Bound {
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ReferenceExpressionBare['_value']>>(value, []),
+		kindIdStorage<NonNullable<T.ReferenceExpressionBare['_value']>>(value),
 		'ReferenceExpressionBare.value',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ReferenceExpressionBare as const,
-				$source: 2 as const,
-				$named: true as const,
-				_value,
-				$with: {
-					value: (value: NonNullable<T.Expression>) => buildReferenceExpressionBare(value)
-				}
-			},
-			{
-				value: () => _value
-			}
-		)
-	) as unknown as T.ReferenceExpressionBare.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ReferenceExpressionBare as const,
+		$source: 2 as const,
+		$named: true as const,
+		_value,
+		$with: {
+			value: (value: NonNullable<T.Expression>) => rebuilt(node, handle, () => buildReferenceExpressionBare(value))
+		},
+		value: () => _value,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ReferenceExpressionBare.Bound;
 }
 
 export function buildImplItemPositiveClause(
@@ -8659,23 +9739,28 @@ export function buildImplItemPositiveClause(
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ImplItemPositiveClause as const,
-				$source: 2 as const,
-				$named: true as const,
-				_trait,
-				$with: {
-					trait: (value: (T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types) =>
-						buildImplItemPositiveClause(value)
-				}
-			},
-			{
-				trait: () => _trait
-			}
-		)
-	) as unknown as T.ImplItemPositiveClause.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ImplItemPositiveClause as const,
+		$source: 2 as const,
+		$named: true as const,
+		_trait,
+		$with: {
+			trait: (value: (T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildImplItemPositiveClause(value))
+		},
+		trait: () => _trait,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ImplItemPositiveClause.Bound;
 }
 
 export function buildImplItemNegativeClause(
@@ -8692,27 +9777,34 @@ export function buildImplItemNegativeClause(
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ImplItemNegativeClause as const,
-				$source: 2 as const,
-				$named: true as const,
-				_trait,
-				$with: {
-					trait: (value: (T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types) =>
-						buildImplItemNegativeClause(value)
-				}
-			},
-			{
-				trait: () => _trait
-			}
-		)
-	) as unknown as T.ImplItemNegativeClause.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ImplItemNegativeClause as const,
+		$source: 2 as const,
+		$named: true as const,
+		_trait,
+		$with: {
+			trait: (value: (T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildImplItemNegativeClause(value))
+		},
+		trait: () => _trait,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ImplItemNegativeClause.Bound;
 }
 
 export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody.Bound {
-	const _unsafe_marker = coerceBooleanKeywordStorage(config.unsafeMarker);
+	const _unsafe_marker = coerceBooleanKeywordStorage(
+		rejectBareText(config.unsafeMarker, 'ImplItemBody.unsafeMarker', 'a boolean')
+	);
 	const _type_parameters = rejectBareText(
 		config.typeParameters,
 		'ImplItemBody.typeParameters',
@@ -8725,7 +9817,7 @@ export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody
 	);
 	const _type = admitAliasContent<NonNullable<T.ImplItemBody['_type']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.ImplItemBody['_type']>>(config.type, []),
+			kindIdStorage<NonNullable<T.ImplItemBody['_type']>>(config.type),
 			'ImplItemBody.type',
 			'a built Type'
 		),
@@ -8737,55 +9829,71 @@ export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody
 		'ImplItemBody.declarationList',
 		'a built DeclarationList'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.ImplItemBody as const,
-					$source: 2 as const,
-					$named: true as const,
-					_unsafe_marker,
-					_type_parameters,
-					_trait_clause,
-					_type,
-					_where_clause,
-					_declaration_list,
-					$with: {
-						unsafeMarker: (value?: NonNullable<T.ImplItemBody.Config>['unsafeMarker']) =>
-							buildImplItemBody({ ...config, unsafeMarker: value }),
-						typeParameters: (value?: T.TypeParameters) => buildImplItemBody({ ...config, typeParameters: value }),
-						traitClause: (value?: T.ImplItemPositiveClause | T.ImplItemNegativeClause) =>
-							buildImplItemBody({ ...config, traitClause: value }),
-						type: (value: NonNullable<T.ImplItemBody.Config>['type']) => buildImplItemBody({ ...config, type: value }),
-						whereClause: (value?: T.WhereClause) => buildImplItemBody({ ...config, whereClause: value }),
-						declarationList: (value: T.DeclarationList) => buildImplItemBody({ ...config, declarationList: value })
-					}
-				},
-				{
-					unsafeMarker: () => _unsafe_marker,
-					typeParameters: () => _type_parameters,
-					traitClause: () => _trait_clause,
-					type: () => _type,
-					whereClause: () => _where_clause,
-					declarationList: () => _declaration_list
-				}
-			),
-			[
-				{
-					slot: 'typeParameters',
-					kind: TSKindId.TypeParameters as const,
-					optional: true,
-					make: buildTypeParameters,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
-				},
-				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause }
-			]
-		)
-	) as unknown as T.ImplItemBody.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ImplItemBody as const,
+		$source: 2 as const,
+		$named: true as const,
+		_unsafe_marker,
+		_type_parameters,
+		_trait_clause,
+		_type,
+		_where_clause,
+		_declaration_list,
+		$with: {
+			unsafeMarker: (value?: NonNullable<T.ImplItemBody.Config>['unsafeMarker']) =>
+				rebuilt(node, handle, () => buildImplItemBody({ ...config, unsafeMarker: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeParameters as const,
+							optional: true,
+							make: buildTypeParameters,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+						},
+						(value?: T.TypeParameters) => buildImplItemBody({ ...config, typeParameters: value })
+					)
+				),
+			traitClause: (value?: T.ImplItemPositiveClause | T.ImplItemNegativeClause) =>
+				rebuilt(node, handle, () => buildImplItemBody({ ...config, traitClause: value })),
+			type: (value: NonNullable<T.ImplItemBody.Config>['type']) =>
+				rebuilt(node, handle, () => buildImplItemBody({ ...config, type: value })),
+			whereClause: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
+						(value?: T.WhereClause) => buildImplItemBody({ ...config, whereClause: value })
+					)
+				),
+			declarationList: (value: T.DeclarationList) =>
+				rebuilt(node, handle, () => buildImplItemBody({ ...config, declarationList: value }))
+		},
+		unsafeMarker: () => _unsafe_marker,
+		typeParameters: () => _type_parameters,
+		traitClause: () => _trait_clause,
+		type: () => _type,
+		whereClause: () => _where_clause,
+		declarationList: () => _declaration_list,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ImplItemBody.Bound;
 }
 
 export function buildImplItemSemi(config: T.ImplItemSemi.Config): T.ImplItemSemi.Bound {
-	const _unsafe_marker = coerceBooleanKeywordStorage(config.unsafeMarker);
+	const _unsafe_marker = coerceBooleanKeywordStorage(
+		rejectBareText(config.unsafeMarker, 'ImplItemSemi.unsafeMarker', 'a boolean')
+	);
 	const _type_parameters = rejectBareText(
 		config.typeParameters,
 		'ImplItemSemi.typeParameters',
@@ -8798,55 +9906,68 @@ export function buildImplItemSemi(config: T.ImplItemSemi.Config): T.ImplItemSemi
 	);
 	const _type = admitAliasContent<NonNullable<T.ImplItemSemi['_type']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.ImplItemSemi['_type']>>(config.type, []),
+			kindIdStorage<NonNullable<T.ImplItemSemi['_type']>>(config.type),
 			'ImplItemSemi.type',
 			'a built Type'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _where_clause = rejectBareText(config.whereClause, 'ImplItemSemi.whereClause', 'a built WhereClause');
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.ImplItemSemi as const,
-					$source: 2 as const,
-					$named: true as const,
-					_unsafe_marker,
-					_type_parameters,
-					_trait_clause,
-					_type,
-					_where_clause,
-					$with: {
-						unsafeMarker: (value?: NonNullable<T.ImplItemSemi.Config>['unsafeMarker']) =>
-							buildImplItemSemi({ ...config, unsafeMarker: value }),
-						typeParameters: (value?: T.TypeParameters) => buildImplItemSemi({ ...config, typeParameters: value }),
-						traitClause: (value?: T.ImplItemPositiveClause | T.ImplItemNegativeClause) =>
-							buildImplItemSemi({ ...config, traitClause: value }),
-						type: (value: NonNullable<T.ImplItemSemi.Config>['type']) => buildImplItemSemi({ ...config, type: value }),
-						whereClause: (value?: T.WhereClause) => buildImplItemSemi({ ...config, whereClause: value })
-					}
-				},
-				{
-					unsafeMarker: () => _unsafe_marker,
-					typeParameters: () => _type_parameters,
-					traitClause: () => _trait_clause,
-					type: () => _type,
-					whereClause: () => _where_clause
-				}
-			),
-			[
-				{
-					slot: 'typeParameters',
-					kind: TSKindId.TypeParameters as const,
-					optional: true,
-					make: buildTypeParameters,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
-				},
-				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause }
-			]
-		)
-	) as unknown as T.ImplItemSemi.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ImplItemSemi as const,
+		$source: 2 as const,
+		$named: true as const,
+		_unsafe_marker,
+		_type_parameters,
+		_trait_clause,
+		_type,
+		_where_clause,
+		$with: {
+			unsafeMarker: (value?: NonNullable<T.ImplItemSemi.Config>['unsafeMarker']) =>
+				rebuilt(node, handle, () => buildImplItemSemi({ ...config, unsafeMarker: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeParameters as const,
+							optional: true,
+							make: buildTypeParameters,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+						},
+						(value?: T.TypeParameters) => buildImplItemSemi({ ...config, typeParameters: value })
+					)
+				),
+			traitClause: (value?: T.ImplItemPositiveClause | T.ImplItemNegativeClause) =>
+				rebuilt(node, handle, () => buildImplItemSemi({ ...config, traitClause: value })),
+			type: (value: NonNullable<T.ImplItemSemi.Config>['type']) =>
+				rebuilt(node, handle, () => buildImplItemSemi({ ...config, type: value })),
+			whereClause: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
+						(value?: T.WhereClause) => buildImplItemSemi({ ...config, whereClause: value })
+					)
+				)
+		},
+		unsafeMarker: () => _unsafe_marker,
+		typeParameters: () => _type_parameters,
+		traitClause: () => _trait_clause,
+		type: () => _type,
+		whereClause: () => _where_clause,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ImplItemSemi.Bound;
 }
 
 export function buildVisibilityModifierPubScopeInPath(
@@ -8882,31 +10003,7 @@ export function buildVisibilityModifierPubScopeInPath(
 ): T.VisibilityModifierPubScopeInPath.Bound {
 	const _path = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.VisibilityModifierPubScopeInPath['_path']>>(value, [
-				['self', TSKindId.Self] as const,
-				['u8', TSKindId.U8Keyword] as const,
-				['i8', TSKindId.I8Keyword] as const,
-				['u16', TSKindId.U16Keyword] as const,
-				['i16', TSKindId.I16Keyword] as const,
-				['u32', TSKindId.U32Keyword] as const,
-				['i32', TSKindId.I32Keyword] as const,
-				['u64', TSKindId.U64Keyword] as const,
-				['i64', TSKindId.I64Keyword] as const,
-				['u128', TSKindId.U128Keyword] as const,
-				['i128', TSKindId.I128Keyword] as const,
-				['isize', TSKindId.IsizeKeyword] as const,
-				['usize', TSKindId.UsizeKeyword] as const,
-				['f32', TSKindId.F32Keyword] as const,
-				['f64', TSKindId.F64Keyword] as const,
-				['bool', TSKindId.BoolKeyword] as const,
-				['str', TSKindId.StrKeyword] as const,
-				['char', TSKindId.CharKeyword] as const,
-				['super', TSKindId.Super] as const,
-				['crate', TSKindId.Crate] as const,
-				['default', TSKindId.DefaultKeyword] as const,
-				['union', TSKindId.UnionKeyword] as const,
-				['gen', TSKindId.GenKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.VisibilityModifierPubScopeInPath['_path']>>(value),
 			'VisibilityModifierPubScopeInPath.path',
 			'buildIdentifier(…)'
 		),
@@ -8938,51 +10035,56 @@ export function buildVisibilityModifierPubScopeInPath(
 			'gen'
 		]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.VisibilityModifierPubScopeInPath as const,
-				$source: 2 as const,
-				$named: true as const,
-				_path,
-				$with: {
-					path: (
-						value: NonNullable<
-							| TSKindId.Self
-							| TSKindId.U8Keyword
-							| TSKindId.I8Keyword
-							| TSKindId.U16Keyword
-							| TSKindId.I16Keyword
-							| TSKindId.U32Keyword
-							| TSKindId.I32Keyword
-							| TSKindId.U64Keyword
-							| TSKindId.I64Keyword
-							| TSKindId.U128Keyword
-							| TSKindId.I128Keyword
-							| TSKindId.IsizeKeyword
-							| TSKindId.UsizeKeyword
-							| TSKindId.F32Keyword
-							| TSKindId.F64Keyword
-							| TSKindId.BoolKeyword
-							| TSKindId.StrKeyword
-							| TSKindId.CharKeyword
-							| T.Metavariable
-							| TSKindId.Super
-							| TSKindId.Crate
-							| T.Identifier
-							| T.ScopedIdentifier
-							| TSKindId.DefaultKeyword
-							| TSKindId.UnionKeyword
-							| TSKindId.GenKeyword
-						>
-					) => buildVisibilityModifierPubScopeInPath(value)
-				}
-			},
-			{
-				path: () => _path
-			}
-		)
-	) as unknown as T.VisibilityModifierPubScopeInPath.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.VisibilityModifierPubScopeInPath as const,
+		$source: 2 as const,
+		$named: true as const,
+		_path,
+		$with: {
+			path: (
+				value: NonNullable<
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| T.Metavariable
+					| TSKindId.Super
+					| TSKindId.Crate
+					| T.Identifier
+					| T.ScopedIdentifier
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
+				>
+			) => rebuilt(node, handle, () => buildVisibilityModifierPubScopeInPath(value))
+		},
+		path: () => _path,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.VisibilityModifierPubScopeInPath.Bound;
 }
 
 export function buildVisibilityModifierPubScope(
@@ -8992,32 +10094,33 @@ export function buildVisibilityModifierPubScope(
 	>
 ): T.VisibilityModifierPubScope.Bound {
 	const _content = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.VisibilityModifierPubScope['_content']>>(value, [
-			['self', TSKindId.Self] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const
-		]),
+		kindIdStorage<NonNullable<T.VisibilityModifierPubScope['_content']>>(value),
 		'VisibilityModifierPubScope.content',
 		'a built VisibilityModifierPubScopeInPath'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.VisibilityModifierPubScope as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (
-						value: NonNullable<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
-					) => buildVisibilityModifierPubScope(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		)
-	) as unknown as T.VisibilityModifierPubScope.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.VisibilityModifierPubScope as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		$with: {
+			content: (
+				value: NonNullable<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
+			) => rebuilt(node, handle, () => buildVisibilityModifierPubScope(value))
+		},
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.VisibilityModifierPubScope.Bound;
 }
 
 export function buildVisibilityModifierPub(
@@ -9052,22 +10155,28 @@ function _buildVisibilityModifierPub(
 		'VisibilityModifierPub.visibilityModifierPubScope',
 		'a built VisibilityModifierPubScope'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.VisibilityModifierPub as const,
-				$source: 2 as const,
-				$named: true as const,
-				_visibility_modifier_pub_scope,
-				$with: {
-					visibilityModifierPubScope: (value?: T.VisibilityModifierPubScope) => _buildVisibilityModifierPub(value)
-				}
-			},
-			{
-				visibilityModifierPubScope: () => _visibility_modifier_pub_scope
-			}
-		)
-	) as unknown as T.VisibilityModifierPub.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.VisibilityModifierPub as const,
+		$source: 2 as const,
+		$named: true as const,
+		_visibility_modifier_pub_scope,
+		$with: {
+			visibilityModifierPubScope: (value?: T.VisibilityModifierPubScope) =>
+				rebuilt(node, handle, () => _buildVisibilityModifierPub(value))
+		},
+		visibilityModifierPubScope: () => _visibility_modifier_pub_scope,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.VisibilityModifierPub.Bound;
 }
 
 export function buildFunctionTypeTraitForm(
@@ -9077,23 +10186,28 @@ export function buildFunctionTypeTraitForm(
 		rejectBareText(value, 'FunctionTypeTraitForm.trait', 'a built TypeIdentifier / ScopedTypeIdentifier'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.FunctionTypeTraitForm as const,
-				$source: 2 as const,
-				$named: true as const,
-				_trait,
-				$with: {
-					trait: (value: (T.TypeIdentifier | T.ScopedTypeIdentifier) | T.TypeIdentifier.Types) =>
-						buildFunctionTypeTraitForm(value)
-				}
-			},
-			{
-				trait: () => _trait
-			}
-		)
-	) as unknown as T.FunctionTypeTraitForm.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FunctionTypeTraitForm as const,
+		$source: 2 as const,
+		$named: true as const,
+		_trait,
+		$with: {
+			trait: (value: (T.TypeIdentifier | T.ScopedTypeIdentifier) | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildFunctionTypeTraitForm(value))
+		},
+		trait: () => _trait,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FunctionTypeTraitForm.Bound;
 }
 
 export function buildFunctionTypeFnForm(
@@ -9134,22 +10248,27 @@ function _buildFunctionTypeFnForm(
 		'FunctionTypeFnForm.functionModifiers',
 		'a built FunctionModifiers'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.FunctionTypeFnForm as const,
-				$source: 2 as const,
-				$named: true as const,
-				_function_modifiers,
-				$with: {
-					functionModifiers: (value?: T.FunctionModifiers) => _buildFunctionTypeFnForm(value)
-				}
-			},
-			{
-				functionModifiers: () => _function_modifiers
-			}
-		)
-	) as unknown as T.FunctionTypeFnForm.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FunctionTypeFnForm as const,
+		$source: 2 as const,
+		$named: true as const,
+		_function_modifiers,
+		$with: {
+			functionModifiers: (value?: T.FunctionModifiers) => rebuilt(node, handle, () => _buildFunctionTypeFnForm(value))
+		},
+		functionModifiers: () => _function_modifiers,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FunctionTypeFnForm.Bound;
 }
 
 export function buildModItemExternal(config: T.ModItemExternal.Config): T.ModItemExternal.Bound {
@@ -9159,26 +10278,31 @@ export function buildModItemExternal(config: T.ModItemExternal.Config): T.ModIte
 		'a built VisibilityModifier'
 	);
 	const _name = rejectBareText(config.name, 'ModItemExternal.name', 'buildIdentifier(…)');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ModItemExternal as const,
-				$source: 2 as const,
-				$named: true as const,
-				_visibility_modifier,
-				_name,
-				$with: {
-					visibilityModifier: (value?: T.VisibilityModifier) =>
-						buildModItemExternal({ ...config, visibilityModifier: value }),
-					name: (value: T.Identifier) => buildModItemExternal({ ...config, name: value })
-				}
-			},
-			{
-				visibilityModifier: () => _visibility_modifier,
-				name: () => _name
-			}
-		)
-	) as unknown as T.ModItemExternal.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ModItemExternal as const,
+		$source: 2 as const,
+		$named: true as const,
+		_visibility_modifier,
+		_name,
+		$with: {
+			visibilityModifier: (value?: T.VisibilityModifier) =>
+				rebuilt(node, handle, () => buildModItemExternal({ ...config, visibilityModifier: value })),
+			name: (value: T.Identifier) => rebuilt(node, handle, () => buildModItemExternal({ ...config, name: value }))
+		},
+		visibilityModifier: () => _visibility_modifier,
+		name: () => _name,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ModItemExternal.Bound;
 }
 
 export function buildModItemInline(config: T.ModItemInline.Config): T.ModItemInline.Bound {
@@ -9193,87 +10317,102 @@ export function buildModItemInline(config: T.ModItemInline.Config): T.ModItemInl
 		'ModItemInline.body',
 		'a built DeclarationList'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ModItemInline as const,
-				$source: 2 as const,
-				$named: true as const,
-				_visibility_modifier,
-				_name,
-				_body,
-				$with: {
-					visibilityModifier: (value?: T.VisibilityModifier) =>
-						buildModItemInline({ ...config, visibilityModifier: value }),
-					name: (value: T.Identifier) => buildModItemInline({ ...config, name: value }),
-					body: (value: T.DeclarationList) => buildModItemInline({ ...config, body: value })
-				}
-			},
-			{
-				visibilityModifier: () => _visibility_modifier,
-				name: () => _name,
-				body: () => _body
-			}
-		)
-	) as unknown as T.ModItemInline.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ModItemInline as const,
+		$source: 2 as const,
+		$named: true as const,
+		_visibility_modifier,
+		_name,
+		_body,
+		$with: {
+			visibilityModifier: (value?: T.VisibilityModifier) =>
+				rebuilt(node, handle, () => buildModItemInline({ ...config, visibilityModifier: value })),
+			name: (value: T.Identifier) => rebuilt(node, handle, () => buildModItemInline({ ...config, name: value })),
+			body: (value: T.DeclarationList) => rebuilt(node, handle, () => buildModItemInline({ ...config, body: value }))
+		},
+		visibilityModifier: () => _visibility_modifier,
+		name: () => _name,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ModItemInline.Bound;
 }
 
 export function buildOrPatternBinary(config: T.OrPatternBinary.Config): T.OrPatternBinary.Bound {
 	const _left = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.OrPatternBinary['_left']>>(config.left, []),
+		kindIdStorage<NonNullable<T.OrPatternBinary['_left']>>(config.left),
 		'OrPatternBinary.left',
 		'a built Pattern'
 	);
 	const _right = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.OrPatternBinary['_right']>>(config.right, []),
+		kindIdStorage<NonNullable<T.OrPatternBinary['_right']>>(config.right),
 		'OrPatternBinary.right',
 		'a built Pattern'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.OrPatternBinary as const,
-				$source: 2 as const,
-				$named: true as const,
-				_left,
-				_right,
-				$with: {
-					left: (value: NonNullable<T.OrPatternBinary.Config>['left']) =>
-						buildOrPatternBinary({ ...config, left: value }),
-					right: (value: NonNullable<T.OrPatternBinary.Config>['right']) =>
-						buildOrPatternBinary({ ...config, right: value })
-				}
-			},
-			{
-				left: () => _left,
-				right: () => _right
-			}
-		)
-	) as unknown as T.OrPatternBinary.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.OrPatternBinary as const,
+		$source: 2 as const,
+		$named: true as const,
+		_left,
+		_right,
+		$with: {
+			left: (value: NonNullable<T.OrPatternBinary.Config>['left']) =>
+				rebuilt(node, handle, () => buildOrPatternBinary({ ...config, left: value })),
+			right: (value: NonNullable<T.OrPatternBinary.Config>['right']) =>
+				rebuilt(node, handle, () => buildOrPatternBinary({ ...config, right: value }))
+		},
+		left: () => _left,
+		right: () => _right,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.OrPatternBinary.Bound;
 }
 
 export function buildOrPatternPrefix(value: AdmitBound<T.Pattern, T.AdmittedNodes>): T.OrPatternPrefix.Bound {
 	const _right = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.OrPatternPrefix['_right']>>(value, []),
+		kindIdStorage<NonNullable<T.OrPatternPrefix['_right']>>(value),
 		'OrPatternPrefix.right',
 		'a built Pattern'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.OrPatternPrefix as const,
-				$source: 2 as const,
-				$named: true as const,
-				_right,
-				$with: {
-					right: (value: NonNullable<T.Pattern>) => buildOrPatternPrefix(value)
-				}
-			},
-			{
-				right: () => _right
-			}
-		)
-	) as unknown as T.OrPatternPrefix.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.OrPatternPrefix as const,
+		$source: 2 as const,
+		$named: true as const,
+		_right,
+		$with: {
+			right: (value: NonNullable<T.Pattern>) => rebuilt(node, handle, () => buildOrPatternPrefix(value))
+		},
+		right: () => _right,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.OrPatternPrefix.Bound;
 }
 
 export function buildPointerTypeConst(
@@ -9281,203 +10420,241 @@ export function buildPointerTypeConst(
 ): T.PointerTypeConst.Bound {
 	const _type = admitAliasContent<NonNullable<T.PointerTypeConst['_type']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.PointerTypeConst['_type']>>(value, []),
+			kindIdStorage<NonNullable<T.PointerTypeConst['_type']>>(value),
 			'PointerTypeConst.type',
 			'a built Type'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.PointerTypeConst as const,
-				$source: 2 as const,
-				$named: true as const,
-				_type,
-				$with: {
-					type: (value: NonNullable<T.Type | T.TypeIdentifier.Types>) => buildPointerTypeConst(value)
-				}
-			},
-			{
-				type: () => _type
-			}
-		)
-	) as unknown as T.PointerTypeConst.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.PointerTypeConst as const,
+		$source: 2 as const,
+		$named: true as const,
+		_type,
+		$with: {
+			type: (value: NonNullable<T.Type | T.TypeIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildPointerTypeConst(value))
+		},
+		type: () => _type,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.PointerTypeConst.Bound;
 }
 
 export function buildPointerTypeMut(
 	value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
 ): T.PointerTypeMut.Bound {
 	const _type = admitAliasContent<NonNullable<T.PointerTypeMut['_type']>>(
-		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.PointerTypeMut['_type']>>(value, []),
-			'PointerTypeMut.type',
-			'a built Type'
-		),
+		rejectBareText(kindIdStorage<NonNullable<T.PointerTypeMut['_type']>>(value), 'PointerTypeMut.type', 'a built Type'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.PointerTypeMut as const,
-				$source: 2 as const,
-				$named: true as const,
-				_type,
-				$with: {
-					type: (value: NonNullable<T.Type | T.TypeIdentifier.Types>) => buildPointerTypeMut(value)
-				}
-			},
-			{
-				type: () => _type
-			}
-		)
-	) as unknown as T.PointerTypeMut.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.PointerTypeMut as const,
+		$source: 2 as const,
+		$named: true as const,
+		_type,
+		$with: {
+			type: (value: NonNullable<T.Type | T.TypeIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildPointerTypeMut(value))
+		},
+		type: () => _type,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.PointerTypeMut.Bound;
 }
 
 export function buildRangeExpressionBinary(config: T.RangeExpressionBinary.Config): T.RangeExpressionBinary.Bound {
 	const _start = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.RangeExpressionBinary['_start']>>(config.start, []),
+		kindIdStorage<NonNullable<T.RangeExpressionBinary['_start']>>(config.start),
 		'RangeExpressionBinary.start',
 		'a built Expression'
 	);
-	const _operator = coerceKindEnumStorage<NonNullable<T.RangeExpressionBinary['_operator']>>(config.operator, [
-		['..', TSKindId.DotDot] as const,
-		['...', TSKindId.DotDotDot] as const,
-		['..=', TSKindId.DotDotEq] as const
-	]);
+	const _operator = rejectBareText(
+		kindIdStorage<NonNullable<T.RangeExpressionBinary['_operator']>>(config.operator),
+		'RangeExpressionBinary.operator',
+		'a kind id'
+	);
 	const _end = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.RangeExpressionBinary['_end']>>(config.end, []),
+		kindIdStorage<NonNullable<T.RangeExpressionBinary['_end']>>(config.end),
 		'RangeExpressionBinary.end',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.RangeExpressionBinary as const,
-				$source: 2 as const,
-				$named: true as const,
-				_start,
-				_operator,
-				_end,
-				$with: {
-					start: (value: NonNullable<T.RangeExpressionBinary.Config>['start']) =>
-						buildRangeExpressionBinary({ ...config, start: value }),
-					operator: (value: NonNullable<T.RangeExpressionBinary.Config>['operator']) =>
-						buildRangeExpressionBinary({ ...config, operator: value }),
-					end: (value: NonNullable<T.RangeExpressionBinary.Config>['end']) =>
-						buildRangeExpressionBinary({ ...config, end: value })
-				}
-			},
-			{
-				start: () => _start,
-				operator: () => _operator,
-				end: () => _end
-			}
-		)
-	) as unknown as T.RangeExpressionBinary.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.RangeExpressionBinary as const,
+		$source: 2 as const,
+		$named: true as const,
+		_start,
+		_operator,
+		_end,
+		$with: {
+			start: (value: NonNullable<T.RangeExpressionBinary.Config>['start']) =>
+				rebuilt(node, handle, () => buildRangeExpressionBinary({ ...config, start: value })),
+			operator: (value: NonNullable<T.RangeExpressionBinary.Config>['operator']) =>
+				rebuilt(node, handle, () => buildRangeExpressionBinary({ ...config, operator: value })),
+			end: (value: NonNullable<T.RangeExpressionBinary.Config>['end']) =>
+				rebuilt(node, handle, () => buildRangeExpressionBinary({ ...config, end: value }))
+		},
+		start: () => _start,
+		operator: () => _operator,
+		end: () => _end,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RangeExpressionBinary.Bound;
 }
 
 export function buildRangeExpressionPostfix(
 	value: AdmitBound<T.Expression, T.AdmittedNodes>
 ): T.RangeExpressionPostfix.Bound {
 	const _start = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.RangeExpressionPostfix['_start']>>(value, []),
+		kindIdStorage<NonNullable<T.RangeExpressionPostfix['_start']>>(value),
 		'RangeExpressionPostfix.start',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.RangeExpressionPostfix as const,
-				$source: 2 as const,
-				$named: true as const,
-				_start,
-				$with: {
-					start: (value: NonNullable<T.Expression>) => buildRangeExpressionPostfix(value)
-				}
-			},
-			{
-				start: () => _start
-			}
-		)
-	) as unknown as T.RangeExpressionPostfix.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.RangeExpressionPostfix as const,
+		$source: 2 as const,
+		$named: true as const,
+		_start,
+		$with: {
+			start: (value: NonNullable<T.Expression>) => rebuilt(node, handle, () => buildRangeExpressionPostfix(value))
+		},
+		start: () => _start,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RangeExpressionPostfix.Bound;
 }
 
 export function buildRangeExpressionPrefix(
 	value: AdmitBound<T.Expression, T.AdmittedNodes>
 ): T.RangeExpressionPrefix.Bound {
 	const _end = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.RangeExpressionPrefix['_end']>>(value, []),
+		kindIdStorage<NonNullable<T.RangeExpressionPrefix['_end']>>(value),
 		'RangeExpressionPrefix.end',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.RangeExpressionPrefix as const,
-				$source: 2 as const,
-				$named: true as const,
-				_end,
-				$with: {
-					end: (value: NonNullable<T.Expression>) => buildRangeExpressionPrefix(value)
-				}
-			},
-			{
-				end: () => _end
-			}
-		)
-	) as unknown as T.RangeExpressionPrefix.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.RangeExpressionPrefix as const,
+		$source: 2 as const,
+		$named: true as const,
+		_end,
+		$with: {
+			end: (value: NonNullable<T.Expression>) => rebuilt(node, handle, () => buildRangeExpressionPrefix(value))
+		},
+		end: () => _end,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RangeExpressionPrefix.Bound;
 }
 
 export function buildRangeExpressionBare(
 	value?: AdmitBound<TSKindId.DotDot, T.AdmittedNodes>
 ): T.RangeExpressionBare.Bound {
-	const _range_expression_bare = coerceKindEnumStorage<NonNullable<T.RangeExpressionBare['_range_expression_bare']>>(
-		orDefault(value, () => TSKindId.DotDot as const),
-		[['..', TSKindId.DotDot] as const]
+	const _range_expression_bare = rejectBareText(
+		kindIdStorage<NonNullable<T.RangeExpressionBare['_range_expression_bare']>>(
+			orDefault(value, () => TSKindId.DotDot as const)
+		),
+		'RangeExpressionBare.rangeExpressionBare',
+		'a kind id'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.RangeExpressionBare as const,
-				$source: 2 as const,
-				$named: true as const,
-				_range_expression_bare,
-				$with: {
-					rangeExpressionBare: (value: NonNullable<TSKindId.DotDot>) => buildRangeExpressionBare(value)
-				}
-			},
-			{
-				rangeExpressionBare: () => _range_expression_bare
-			}
-		)
-	) as unknown as T.RangeExpressionBare.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.RangeExpressionBare as const,
+		$source: 2 as const,
+		$named: true as const,
+		_range_expression_bare,
+		$with: {
+			rangeExpressionBare: (value: NonNullable<TSKindId.DotDot>) =>
+				rebuilt(node, handle, () => buildRangeExpressionBare(value))
+		},
+		rangeExpressionBare: () => _range_expression_bare,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RangeExpressionBare.Bound;
 }
 
 export function buildExpressionStatementWithSemi(
 	value: AdmitBound<T.Expression, T.AdmittedNodes>
 ): T.ExpressionStatementWithSemi.Bound {
 	const _expression = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ExpressionStatementWithSemi['_expression']>>(value, []),
+		kindIdStorage<NonNullable<T.ExpressionStatementWithSemi['_expression']>>(value),
 		'ExpressionStatementWithSemi.expression',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExpressionStatementWithSemi as const,
-				$source: 2 as const,
-				$named: true as const,
-				_expression,
-				$with: {
-					expression: (value: NonNullable<T.Expression>) => buildExpressionStatementWithSemi(value)
-				}
-			},
-			{
-				expression: () => _expression
-			}
-		)
-	) as unknown as T.ExpressionStatementWithSemi.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ExpressionStatementWithSemi as const,
+		$source: 2 as const,
+		$named: true as const,
+		_expression,
+		$with: {
+			expression: (value: NonNullable<T.Expression>) =>
+				rebuilt(node, handle, () => buildExpressionStatementWithSemi(value))
+		},
+		expression: () => _expression,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ExpressionStatementWithSemi.Bound;
 }
 
 export function buildForeignModItemSemi(config: Partial<T.ForeignModItemSemi.Config> = {}): T.ForeignModItemSemi.Bound {
@@ -9491,26 +10668,32 @@ export function buildForeignModItemSemi(config: Partial<T.ForeignModItemSemi.Con
 		'ForeignModItemSemi.externModifier',
 		'a built ExternModifier'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ForeignModItemSemi as const,
-				$source: 2 as const,
-				$named: true as const,
-				_visibility_modifier,
-				_extern_modifier,
-				$with: {
-					visibilityModifier: (value?: T.VisibilityModifier) =>
-						buildForeignModItemSemi({ ...config, visibilityModifier: value }),
-					externModifier: (value: T.ExternModifier) => buildForeignModItemSemi({ ...config, externModifier: value })
-				}
-			},
-			{
-				visibilityModifier: () => _visibility_modifier,
-				externModifier: () => _extern_modifier
-			}
-		)
-	) as unknown as T.ForeignModItemSemi.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ForeignModItemSemi as const,
+		$source: 2 as const,
+		$named: true as const,
+		_visibility_modifier,
+		_extern_modifier,
+		$with: {
+			visibilityModifier: (value?: T.VisibilityModifier) =>
+				rebuilt(node, handle, () => buildForeignModItemSemi({ ...config, visibilityModifier: value })),
+			externModifier: (value: T.ExternModifier) =>
+				rebuilt(node, handle, () => buildForeignModItemSemi({ ...config, externModifier: value }))
+		},
+		visibilityModifier: () => _visibility_modifier,
+		externModifier: () => _extern_modifier,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ForeignModItemSemi.Bound;
 }
 
 export function buildForeignModItemBody(config: Partial<T.ForeignModItemBody.Config> = {}): T.ForeignModItemBody.Bound {
@@ -9529,29 +10712,36 @@ export function buildForeignModItemBody(config: Partial<T.ForeignModItemBody.Con
 		'ForeignModItemBody.body',
 		'a built DeclarationList'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ForeignModItemBody as const,
-				$source: 2 as const,
-				$named: true as const,
-				_visibility_modifier,
-				_extern_modifier,
-				_body,
-				$with: {
-					visibilityModifier: (value?: T.VisibilityModifier) =>
-						buildForeignModItemBody({ ...config, visibilityModifier: value }),
-					externModifier: (value: T.ExternModifier) => buildForeignModItemBody({ ...config, externModifier: value }),
-					body: (value: T.DeclarationList) => buildForeignModItemBody({ ...config, body: value })
-				}
-			},
-			{
-				visibilityModifier: () => _visibility_modifier,
-				externModifier: () => _extern_modifier,
-				body: () => _body
-			}
-		)
-	) as unknown as T.ForeignModItemBody.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ForeignModItemBody as const,
+		$source: 2 as const,
+		$named: true as const,
+		_visibility_modifier,
+		_extern_modifier,
+		_body,
+		$with: {
+			visibilityModifier: (value?: T.VisibilityModifier) =>
+				rebuilt(node, handle, () => buildForeignModItemBody({ ...config, visibilityModifier: value })),
+			externModifier: (value: T.ExternModifier) =>
+				rebuilt(node, handle, () => buildForeignModItemBody({ ...config, externModifier: value })),
+			body: (value: T.DeclarationList) =>
+				rebuilt(node, handle, () => buildForeignModItemBody({ ...config, body: value }))
+		},
+		visibilityModifier: () => _visibility_modifier,
+		externModifier: () => _extern_modifier,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ForeignModItemBody.Bound;
 }
 
 export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.MatchArmWithComma.Bound {
@@ -9562,46 +10752,79 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 	);
 	const _pattern = rejectBareText(config.pattern, 'MatchArmWithComma.pattern', 'a built MatchPattern');
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.MatchArmWithComma['_value']>>(config.value, []),
+		kindIdStorage<NonNullable<T.MatchArmWithComma['_value']>>(config.value),
 		'MatchArmWithComma.value',
 		'a built Expression'
 	);
-	return withMethods(
-		withGroupSeat(
-			withAccessors(
-				{
-					$type: TSKindId.MatchArmWithComma as const,
-					$source: 2 as const,
-					$named: true as const,
-					_attributes,
-					_pattern,
-					_value,
-					$with: {
-						attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
-							buildMatchArmWithComma({ ...config, attributes: restItems('attributes', values) }),
-						pattern: (value: T.MatchPattern) => buildMatchArmWithComma({ ...config, pattern: value }),
-						value: (value: NonNullable<T.MatchArmWithComma.Config>['value']) =>
-							buildMatchArmWithComma({ ...config, value: value })
-					}
-				},
-				{
-					attributes: () => _attributes,
-					pattern: () => _pattern,
-					value: () => _value
-				}
-			),
-			{
-				slot: 'pattern',
-				stored: '_pattern',
-				kind: TSKindId.MatchPattern as const,
-				make: buildMatchPattern,
-				keys: [
-					{ name: 'pattern', rest: false, required: true },
-					{ name: 'condition', rest: false }
-				]
-			}
-		)
-	) as unknown as T.MatchArmWithComma.Bound;
+	const readGroup_pattern = () => _pattern;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MatchArmWithComma as const,
+		$source: 2 as const,
+		$named: true as const,
+		_attributes,
+		_pattern,
+		_value,
+		$with: {
+			attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
+				rebuilt(node, handle, () => buildMatchArmWithComma({ ...config, attributes: restItems('attributes', values) })),
+			value: (value: NonNullable<T.MatchArmWithComma.Config>['value']) =>
+				rebuilt(node, handle, () => buildMatchArmWithComma({ ...config, value: value })),
+			pattern: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'pattern',
+							stored: '_pattern',
+							kind: TSKindId.MatchPattern as const,
+							make: buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'pattern',
+						args,
+						(value: T.MatchPattern) => buildMatchArmWithComma({ ...config, pattern: value }),
+						() => readGroup_pattern.call(node)
+					)
+				),
+			condition: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'pattern',
+							stored: '_pattern',
+							kind: TSKindId.MatchPattern as const,
+							make: buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'condition',
+						args,
+						(value: T.MatchPattern) => buildMatchArmWithComma({ ...config, pattern: value }),
+						() => readGroup_pattern.call(node)
+					)
+				)
+		},
+		attributes: () => _attributes,
+		value: () => _value,
+		pattern: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'pattern'),
+		condition: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'condition'),
+		[STORED_SLOT_READERS]: { pattern: readGroup_pattern },
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MatchArmWithComma.Bound;
 }
 
 export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): T.MatchArmBlockEnding.Bound {
@@ -9616,66 +10839,112 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 		'MatchArmBlockEnding.value',
 		'a built UnsafeBlock / AsyncBlock / GenBlock / TryBlock / Block / IfExpression / MatchExpression / WhileExpression / LoopExpression / ForExpression / ConstBlock'
 	);
-	return withMethods(
-		withGroupSeat(
-			withAccessors(
-				{
-					$type: TSKindId.MatchArmBlockEnding as const,
-					$source: 2 as const,
-					$named: true as const,
-					_attributes,
-					_pattern,
-					_value,
-					$with: {
-						attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
-							buildMatchArmBlockEnding({ ...config, attributes: restItems('attributes', values) }),
-						pattern: (value: T.MatchPattern) => buildMatchArmBlockEnding({ ...config, pattern: value }),
-						value: (
-							value:
-								| T.UnsafeBlock
-								| T.AsyncBlock
-								| T.GenBlock
-								| T.TryBlock
-								| T.Block
-								| T.IfExpression
-								| T.MatchExpression
-								| T.WhileExpression
-								| T.LoopExpression
-								| T.ForExpression
-								| T.ConstBlock
-						) => buildMatchArmBlockEnding({ ...config, value: value })
-					}
-				},
-				{
-					attributes: () => _attributes,
-					pattern: () => _pattern,
-					value: () => _value
-				}
-			),
-			{
-				slot: 'pattern',
-				stored: '_pattern',
-				kind: TSKindId.MatchPattern as const,
-				make: buildMatchPattern,
-				keys: [
-					{ name: 'pattern', rest: false, required: true },
-					{ name: 'condition', rest: false }
-				]
-			}
-		)
-	) as unknown as T.MatchArmBlockEnding.Bound;
+	const readGroup_pattern = () => _pattern;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MatchArmBlockEnding as const,
+		$source: 2 as const,
+		$named: true as const,
+		_attributes,
+		_pattern,
+		_value,
+		$with: {
+			attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
+				rebuilt(node, handle, () =>
+					buildMatchArmBlockEnding({ ...config, attributes: restItems('attributes', values) })
+				),
+			value: (
+				value:
+					| T.UnsafeBlock
+					| T.AsyncBlock
+					| T.GenBlock
+					| T.TryBlock
+					| T.Block
+					| T.IfExpression
+					| T.MatchExpression
+					| T.WhileExpression
+					| T.LoopExpression
+					| T.ForExpression
+					| T.ConstBlock
+			) => rebuilt(node, handle, () => buildMatchArmBlockEnding({ ...config, value: value })),
+			pattern: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'pattern',
+							stored: '_pattern',
+							kind: TSKindId.MatchPattern as const,
+							make: buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'pattern',
+						args,
+						(value: T.MatchPattern) => buildMatchArmBlockEnding({ ...config, pattern: value }),
+						() => readGroup_pattern.call(node)
+					)
+				),
+			condition: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'pattern',
+							stored: '_pattern',
+							kind: TSKindId.MatchPattern as const,
+							make: buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'condition',
+						args,
+						(value: T.MatchPattern) => buildMatchArmBlockEnding({ ...config, pattern: value }),
+						() => readGroup_pattern.call(node)
+					)
+				)
+		},
+		attributes: () => _attributes,
+		value: () => _value,
+		pattern: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'pattern'),
+		condition: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'condition'),
+		[STORED_SLOT_READERS]: { pattern: readGroup_pattern },
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MatchArmBlockEnding.Bound;
 }
 
 export function buildLineCommentExtraSlashes(text: string): T.LineCommentExtraSlashes.Bound {
 	if (text.length === 0) throw new Error(`line_comment_extra_slashes: text must be non-empty`);
 	if (!_leafRe_buildLineCommentExtraSlashes.test(text))
 		throw new Error(`line_comment_extra_slashes: text does not match pattern: ${describeValue(text)}`);
-	return withMethods({
+	const handle = currentHandle();
+	const node = {
 		$type: TSKindId.LineCommentExtraSlashes as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text
-	});
+		$text: text,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LineCommentExtraSlashes.Bound;
 }
 
 export function buildLineCommentDocOuter(
@@ -9697,22 +10966,27 @@ export function buildLineCommentDocOuter(...args: unknown[]) {
 }
 function _buildLineCommentDocOuter(value: AdmitBound<T.DocComment, T.AdmittedNodes>): T.LineCommentDocOuter.Bound {
 	const _doc = rejectBareText(value, 'LineCommentDocOuter.doc', 'buildDocComment(…)');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.LineCommentDocOuter as const,
-				$source: 2 as const,
-				$named: true as const,
-				_doc,
-				$with: {
-					doc: (value: T.DocComment) => _buildLineCommentDocOuter(value)
-				}
-			},
-			{
-				doc: () => _doc
-			}
-		)
-	) as unknown as T.LineCommentDocOuter.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.LineCommentDocOuter as const,
+		$source: 2 as const,
+		$named: true as const,
+		_doc,
+		$with: {
+			doc: (value: T.DocComment) => rebuilt(node, handle, () => _buildLineCommentDocOuter(value))
+		},
+		doc: () => _doc,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LineCommentDocOuter.Bound;
 }
 
 export function buildLineCommentDocInner(
@@ -9734,33 +11008,49 @@ export function buildLineCommentDocInner(...args: unknown[]) {
 }
 function _buildLineCommentDocInner(value: AdmitBound<T.DocComment, T.AdmittedNodes>): T.LineCommentDocInner.Bound {
 	const _doc = rejectBareText(value, 'LineCommentDocInner.doc', 'buildDocComment(…)');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.LineCommentDocInner as const,
-				$source: 2 as const,
-				$named: true as const,
-				_doc,
-				$with: {
-					doc: (value: T.DocComment) => _buildLineCommentDocInner(value)
-				}
-			},
-			{
-				doc: () => _doc
-			}
-		)
-	) as unknown as T.LineCommentDocInner.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.LineCommentDocInner as const,
+		$source: 2 as const,
+		$named: true as const,
+		_doc,
+		$with: {
+			doc: (value: T.DocComment) => rebuilt(node, handle, () => _buildLineCommentDocInner(value))
+		},
+		doc: () => _doc,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LineCommentDocInner.Bound;
 }
 
 export function buildLineCommentRegular(text: string): T.LineCommentRegular.Bound {
 	if (!_leafRe_buildLineCommentRegular.test(text))
 		throw new Error(`line_comment_regular: text does not match pattern: ${describeValue(text)}`);
-	return withMethods({
+	const handle = currentHandle();
+	const node = {
 		$type: TSKindId.LineCommentRegular as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text
-	});
+		$text: text,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LineCommentRegular.Bound;
 }
 
 export function buildBlockCommentDocOuter(
@@ -9786,22 +11076,27 @@ function _buildBlockCommentDocOuter(
 	value?: AdmitBound<T.BlockCommentContent, T.AdmittedNodes>
 ): T.BlockCommentDocOuter.Bound {
 	const _doc = rejectBareText(value, 'BlockCommentDocOuter.doc', 'buildBlockCommentContent(…)');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.BlockCommentDocOuter as const,
-				$source: 2 as const,
-				$named: true as const,
-				_doc,
-				$with: {
-					doc: (value?: T.BlockCommentContent) => _buildBlockCommentDocOuter(value)
-				}
-			},
-			{
-				doc: () => _doc
-			}
-		)
-	) as unknown as T.BlockCommentDocOuter.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.BlockCommentDocOuter as const,
+		$source: 2 as const,
+		$named: true as const,
+		_doc,
+		$with: {
+			doc: (value?: T.BlockCommentContent) => rebuilt(node, handle, () => _buildBlockCommentDocOuter(value))
+		},
+		doc: () => _doc,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.BlockCommentDocOuter.Bound;
 }
 
 export function buildBlockCommentDocInner(
@@ -9827,33 +11122,49 @@ function _buildBlockCommentDocInner(
 	value?: AdmitBound<T.BlockCommentContent, T.AdmittedNodes>
 ): T.BlockCommentDocInner.Bound {
 	const _doc = rejectBareText(value, 'BlockCommentDocInner.doc', 'buildBlockCommentContent(…)');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.BlockCommentDocInner as const,
-				$source: 2 as const,
-				$named: true as const,
-				_doc,
-				$with: {
-					doc: (value?: T.BlockCommentContent) => _buildBlockCommentDocInner(value)
-				}
-			},
-			{
-				doc: () => _doc
-			}
-		)
-	) as unknown as T.BlockCommentDocInner.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.BlockCommentDocInner as const,
+		$source: 2 as const,
+		$named: true as const,
+		_doc,
+		$with: {
+			doc: (value?: T.BlockCommentContent) => rebuilt(node, handle, () => _buildBlockCommentDocInner(value))
+		},
+		doc: () => _doc,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.BlockCommentDocInner.Bound;
 }
 
 export function buildBlockCommentRegular(text: string): T.BlockCommentRegular.Bound {
 	if (!_leafRe_buildBlockCommentRegular.test(text))
 		throw new Error(`block_comment_regular: text does not match pattern: ${describeValue(text)}`);
-	return withMethods({
+	const handle = currentHandle();
+	const node = {
 		$type: TSKindId.BlockCommentRegular as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text
-	});
+		$text: text,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.BlockCommentRegular.Bound;
 }
 
 export function buildTokenTreePatternParen(): T.EmptyTokenTreePatternParen;
@@ -9874,30 +11185,36 @@ export function buildTokenTreePatternParen(
 		'TokenTreePatternParen.tokenPatterns',
 		'a built TokenTreePattern / TokenRepetitionPattern / TokenBindingPattern / Metavariable / NonSpecialToken'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TokenTreePatternParen as const,
-				$source: 2 as const,
-				$named: true as const,
-				_token_patterns,
-				$with: {
-					tokenPatterns: (
-						...vs: (
-							| T.TokenTreePattern
-							| T.TokenRepetitionPattern
-							| T.TokenBindingPattern
-							| T.Metavariable
-							| T.NonSpecialToken
-						)[]
-					) => buildTokenTreePatternParen(...restItems('tokenPatterns', vs))
-				}
-			},
-			{
-				tokenPatterns: () => _token_patterns
-			}
-		)
-	) as unknown as T.TokenTreePatternParen.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TokenTreePatternParen as const,
+		$source: 2 as const,
+		$named: true as const,
+		_token_patterns,
+		$with: {
+			tokenPatterns: (
+				...vs: (
+					| T.TokenTreePattern
+					| T.TokenRepetitionPattern
+					| T.TokenBindingPattern
+					| T.Metavariable
+					| T.NonSpecialToken
+				)[]
+			) => rebuilt(node, handle, () => buildTokenTreePatternParen(...restItems('tokenPatterns', vs)))
+		},
+		tokenPatterns: () => _token_patterns,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TokenTreePatternParen.Bound;
 }
 
 export function buildTokenTreePatternBracket(): T.EmptyTokenTreePatternBracket;
@@ -9918,30 +11235,36 @@ export function buildTokenTreePatternBracket(
 		'TokenTreePatternBracket.tokenPatterns',
 		'a built TokenTreePattern / TokenRepetitionPattern / TokenBindingPattern / Metavariable / NonSpecialToken'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TokenTreePatternBracket as const,
-				$source: 2 as const,
-				$named: true as const,
-				_token_patterns,
-				$with: {
-					tokenPatterns: (
-						...vs: (
-							| T.TokenTreePattern
-							| T.TokenRepetitionPattern
-							| T.TokenBindingPattern
-							| T.Metavariable
-							| T.NonSpecialToken
-						)[]
-					) => buildTokenTreePatternBracket(...restItems('tokenPatterns', vs))
-				}
-			},
-			{
-				tokenPatterns: () => _token_patterns
-			}
-		)
-	) as unknown as T.TokenTreePatternBracket.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TokenTreePatternBracket as const,
+		$source: 2 as const,
+		$named: true as const,
+		_token_patterns,
+		$with: {
+			tokenPatterns: (
+				...vs: (
+					| T.TokenTreePattern
+					| T.TokenRepetitionPattern
+					| T.TokenBindingPattern
+					| T.Metavariable
+					| T.NonSpecialToken
+				)[]
+			) => rebuilt(node, handle, () => buildTokenTreePatternBracket(...restItems('tokenPatterns', vs)))
+		},
+		tokenPatterns: () => _token_patterns,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TokenTreePatternBracket.Bound;
 }
 
 export function buildTokenTreePatternBrace(): T.EmptyTokenTreePatternBrace;
@@ -9962,30 +11285,36 @@ export function buildTokenTreePatternBrace(
 		'TokenTreePatternBrace.tokenPatterns',
 		'a built TokenTreePattern / TokenRepetitionPattern / TokenBindingPattern / Metavariable / NonSpecialToken'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TokenTreePatternBrace as const,
-				$source: 2 as const,
-				$named: true as const,
-				_token_patterns,
-				$with: {
-					tokenPatterns: (
-						...vs: (
-							| T.TokenTreePattern
-							| T.TokenRepetitionPattern
-							| T.TokenBindingPattern
-							| T.Metavariable
-							| T.NonSpecialToken
-						)[]
-					) => buildTokenTreePatternBrace(...restItems('tokenPatterns', vs))
-				}
-			},
-			{
-				tokenPatterns: () => _token_patterns
-			}
-		)
-	) as unknown as T.TokenTreePatternBrace.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TokenTreePatternBrace as const,
+		$source: 2 as const,
+		$named: true as const,
+		_token_patterns,
+		$with: {
+			tokenPatterns: (
+				...vs: (
+					| T.TokenTreePattern
+					| T.TokenRepetitionPattern
+					| T.TokenBindingPattern
+					| T.Metavariable
+					| T.NonSpecialToken
+				)[]
+			) => rebuilt(node, handle, () => buildTokenTreePatternBrace(...restItems('tokenPatterns', vs)))
+		},
+		tokenPatterns: () => _token_patterns,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TokenTreePatternBrace.Bound;
 }
 
 export function buildTokenTreeParen(): T.EmptyTokenTreeParen;
@@ -10000,23 +11329,29 @@ export function buildTokenTreeParen(
 		'TokenTreeParen.tokens',
 		'a built TokenTree / TokenRepetition / Metavariable / NonSpecialToken'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TokenTreeParen as const,
-				$source: 2 as const,
-				$named: true as const,
-				_tokens,
-				$with: {
-					tokens: (...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]) =>
-						buildTokenTreeParen(...restItems('tokens', vs))
-				}
-			},
-			{
-				tokens: () => _tokens
-			}
-		)
-	) as unknown as T.TokenTreeParen.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TokenTreeParen as const,
+		$source: 2 as const,
+		$named: true as const,
+		_tokens,
+		$with: {
+			tokens: (...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]) =>
+				rebuilt(node, handle, () => buildTokenTreeParen(...restItems('tokens', vs)))
+		},
+		tokens: () => _tokens,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TokenTreeParen.Bound;
 }
 
 export function buildTokenTreeBracket(): T.EmptyTokenTreeBracket;
@@ -10031,23 +11366,29 @@ export function buildTokenTreeBracket(
 		'TokenTreeBracket.tokens',
 		'a built TokenTree / TokenRepetition / Metavariable / NonSpecialToken'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TokenTreeBracket as const,
-				$source: 2 as const,
-				$named: true as const,
-				_tokens,
-				$with: {
-					tokens: (...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]) =>
-						buildTokenTreeBracket(...restItems('tokens', vs))
-				}
-			},
-			{
-				tokens: () => _tokens
-			}
-		)
-	) as unknown as T.TokenTreeBracket.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TokenTreeBracket as const,
+		$source: 2 as const,
+		$named: true as const,
+		_tokens,
+		$with: {
+			tokens: (...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]) =>
+				rebuilt(node, handle, () => buildTokenTreeBracket(...restItems('tokens', vs)))
+		},
+		tokens: () => _tokens,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TokenTreeBracket.Bound;
 }
 
 export function buildTokenTreeBrace(): T.EmptyTokenTreeBrace;
@@ -10062,23 +11403,29 @@ export function buildTokenTreeBrace(
 		'TokenTreeBrace.tokens',
 		'a built TokenTree / TokenRepetition / Metavariable / NonSpecialToken'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TokenTreeBrace as const,
-				$source: 2 as const,
-				$named: true as const,
-				_tokens,
-				$with: {
-					tokens: (...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]) =>
-						buildTokenTreeBrace(...restItems('tokens', vs))
-				}
-			},
-			{
-				tokens: () => _tokens
-			}
-		)
-	) as unknown as T.TokenTreeBrace.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TokenTreeBrace as const,
+		$source: 2 as const,
+		$named: true as const,
+		_tokens,
+		$with: {
+			tokens: (...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]) =>
+				rebuilt(node, handle, () => buildTokenTreeBrace(...restItems('tokens', vs)))
+		},
+		tokens: () => _tokens,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TokenTreeBrace.Bound;
 }
 
 export function buildDelimTokenTreeParen(): T.EmptyDelimTokenTreeParen;
@@ -10093,23 +11440,29 @@ export function buildDelimTokenTreeParen(
 		'DelimTokenTreeParen.delimTokens',
 		'a built NonSpecialToken / DelimTokenTree'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.DelimTokenTreeParen as const,
-				$source: 2 as const,
-				$named: true as const,
-				_delim_tokens,
-				$with: {
-					delimTokens: (...vs: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]) =>
-						buildDelimTokenTreeParen(...restItems('delimTokens', vs))
-				}
-			},
-			{
-				delimTokens: () => _delim_tokens
-			}
-		)
-	) as unknown as T.DelimTokenTreeParen.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.DelimTokenTreeParen as const,
+		$source: 2 as const,
+		$named: true as const,
+		_delim_tokens,
+		$with: {
+			delimTokens: (...vs: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]) =>
+				rebuilt(node, handle, () => buildDelimTokenTreeParen(...restItems('delimTokens', vs)))
+		},
+		delimTokens: () => _delim_tokens,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.DelimTokenTreeParen.Bound;
 }
 
 export function buildDelimTokenTreeBracket(): T.EmptyDelimTokenTreeBracket;
@@ -10124,23 +11477,29 @@ export function buildDelimTokenTreeBracket(
 		'DelimTokenTreeBracket.delimTokens',
 		'a built NonSpecialToken / DelimTokenTree'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.DelimTokenTreeBracket as const,
-				$source: 2 as const,
-				$named: true as const,
-				_delim_tokens,
-				$with: {
-					delimTokens: (...vs: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]) =>
-						buildDelimTokenTreeBracket(...restItems('delimTokens', vs))
-				}
-			},
-			{
-				delimTokens: () => _delim_tokens
-			}
-		)
-	) as unknown as T.DelimTokenTreeBracket.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.DelimTokenTreeBracket as const,
+		$source: 2 as const,
+		$named: true as const,
+		_delim_tokens,
+		$with: {
+			delimTokens: (...vs: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]) =>
+				rebuilt(node, handle, () => buildDelimTokenTreeBracket(...restItems('delimTokens', vs)))
+		},
+		delimTokens: () => _delim_tokens,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.DelimTokenTreeBracket.Bound;
 }
 
 export function buildDelimTokenTreeBrace(): T.EmptyDelimTokenTreeBrace;
@@ -10155,110 +11514,130 @@ export function buildDelimTokenTreeBrace(
 		'DelimTokenTreeBrace.delimTokens',
 		'a built NonSpecialToken / DelimTokenTree'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.DelimTokenTreeBrace as const,
-				$source: 2 as const,
-				$named: true as const,
-				_delim_tokens,
-				$with: {
-					delimTokens: (...vs: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]) =>
-						buildDelimTokenTreeBrace(...restItems('delimTokens', vs))
-				}
-			},
-			{
-				delimTokens: () => _delim_tokens
-			}
-		)
-	) as unknown as T.DelimTokenTreeBrace.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.DelimTokenTreeBrace as const,
+		$source: 2 as const,
+		$named: true as const,
+		_delim_tokens,
+		$with: {
+			delimTokens: (...vs: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]) =>
+				rebuilt(node, handle, () => buildDelimTokenTreeBrace(...restItems('delimTokens', vs)))
+		},
+		delimTokens: () => _delim_tokens,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.DelimTokenTreeBrace.Bound;
 }
 
 export function buildFieldPatternShorthand(config: T.FieldPatternShorthand.Config): T.FieldPatternShorthand.Bound {
-	const _ref_marker = coerceBooleanKeywordStorage(config.refMarker);
-	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
+	const _ref_marker = coerceBooleanKeywordStorage(
+		rejectBareText(config.refMarker, 'FieldPatternShorthand.refMarker', 'a boolean')
+	);
+	const _mutable_specifier = coerceBooleanKeywordStorage(
+		rejectBareText(config.mutableSpecifier, 'FieldPatternShorthand.mutableSpecifier', 'a boolean')
+	);
 	const _name = admitAliasContent<NonNullable<T.FieldPatternShorthand['_name']>>(
 		rejectBareText(config.name, 'FieldPatternShorthand.name', 'a built ShorthandFieldIdentifier'),
 		[[[1], (v: unknown) => buildShorthandFieldIdentifier(v as never)]]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.FieldPatternShorthand as const,
-				$source: 2 as const,
-				$named: true as const,
-				_ref_marker,
-				_mutable_specifier,
-				_name,
-				$with: {
-					refMarker: (value?: NonNullable<T.FieldPatternShorthand.Config>['refMarker']) =>
-						buildFieldPatternShorthand({ ...config, refMarker: value }),
-					mutableSpecifier: (value?: NonNullable<T.FieldPatternShorthand.Config>['mutableSpecifier']) =>
-						buildFieldPatternShorthand({ ...config, mutableSpecifier: value }),
-					name: (value: T.ShorthandFieldIdentifier | T.ShorthandFieldIdentifier.Types) =>
-						buildFieldPatternShorthand({ ...config, name: value })
-				}
-			},
-			{
-				refMarker: () => _ref_marker,
-				mutableSpecifier: () => _mutable_specifier,
-				name: () => _name
-			}
-		)
-	) as unknown as T.FieldPatternShorthand.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FieldPatternShorthand as const,
+		$source: 2 as const,
+		$named: true as const,
+		_ref_marker,
+		_mutable_specifier,
+		_name,
+		$with: {
+			refMarker: (value?: NonNullable<T.FieldPatternShorthand.Config>['refMarker']) =>
+				rebuilt(node, handle, () => buildFieldPatternShorthand({ ...config, refMarker: value })),
+			mutableSpecifier: (value?: NonNullable<T.FieldPatternShorthand.Config>['mutableSpecifier']) =>
+				rebuilt(node, handle, () => buildFieldPatternShorthand({ ...config, mutableSpecifier: value })),
+			name: (value: T.ShorthandFieldIdentifier | T.ShorthandFieldIdentifier.Types) =>
+				rebuilt(node, handle, () => buildFieldPatternShorthand({ ...config, name: value }))
+		},
+		refMarker: () => _ref_marker,
+		mutableSpecifier: () => _mutable_specifier,
+		name: () => _name,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FieldPatternShorthand.Bound;
 }
 
 export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.FieldPatternNamed.Bound {
-	const _ref_marker = coerceBooleanKeywordStorage(config.refMarker);
-	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
+	const _ref_marker = coerceBooleanKeywordStorage(
+		rejectBareText(config.refMarker, 'FieldPatternNamed.refMarker', 'a boolean')
+	);
+	const _mutable_specifier = coerceBooleanKeywordStorage(
+		rejectBareText(config.mutableSpecifier, 'FieldPatternNamed.mutableSpecifier', 'a boolean')
+	);
 	const _name = admitAliasContent<NonNullable<T.FieldPatternNamed['_name']>>(
 		rejectBareText(config.name, 'FieldPatternNamed.name', 'a built FieldIdentifier'),
 		[[[1], (v: unknown) => buildFieldIdentifier(v as never)]]
 	);
 	const _pattern = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.FieldPatternNamed['_pattern']>>(config.pattern, []),
+		kindIdStorage<NonNullable<T.FieldPatternNamed['_pattern']>>(config.pattern),
 		'FieldPatternNamed.pattern',
 		'a built Pattern'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.FieldPatternNamed as const,
-				$source: 2 as const,
-				$named: true as const,
-				_ref_marker,
-				_mutable_specifier,
-				_name,
-				_pattern,
-				$with: {
-					refMarker: (value?: NonNullable<T.FieldPatternNamed.Config>['refMarker']) =>
-						buildFieldPatternNamed({ ...config, refMarker: value }),
-					mutableSpecifier: (value?: NonNullable<T.FieldPatternNamed.Config>['mutableSpecifier']) =>
-						buildFieldPatternNamed({ ...config, mutableSpecifier: value }),
-					name: (value: T.FieldIdentifier | T.FieldIdentifier.Types) =>
-						buildFieldPatternNamed({ ...config, name: value }),
-					pattern: (value: NonNullable<T.FieldPatternNamed.Config>['pattern']) =>
-						buildFieldPatternNamed({ ...config, pattern: value })
-				}
-			},
-			{
-				refMarker: () => _ref_marker,
-				mutableSpecifier: () => _mutable_specifier,
-				name: () => _name,
-				pattern: () => _pattern
-			}
-		)
-	) as unknown as T.FieldPatternNamed.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FieldPatternNamed as const,
+		$source: 2 as const,
+		$named: true as const,
+		_ref_marker,
+		_mutable_specifier,
+		_name,
+		_pattern,
+		$with: {
+			refMarker: (value?: NonNullable<T.FieldPatternNamed.Config>['refMarker']) =>
+				rebuilt(node, handle, () => buildFieldPatternNamed({ ...config, refMarker: value })),
+			mutableSpecifier: (value?: NonNullable<T.FieldPatternNamed.Config>['mutableSpecifier']) =>
+				rebuilt(node, handle, () => buildFieldPatternNamed({ ...config, mutableSpecifier: value })),
+			name: (value: T.FieldIdentifier | T.FieldIdentifier.Types) =>
+				rebuilt(node, handle, () => buildFieldPatternNamed({ ...config, name: value })),
+			pattern: (value: NonNullable<T.FieldPatternNamed.Config>['pattern']) =>
+				rebuilt(node, handle, () => buildFieldPatternNamed({ ...config, pattern: value }))
+		},
+		refMarker: () => _ref_marker,
+		mutableSpecifier: () => _mutable_specifier,
+		name: () => _name,
+		pattern: () => _pattern,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FieldPatternNamed.Bound;
 }
 
 export function buildMacroDefinitionParen(config: T.MacroDefinitionParen.Config): T.MacroDefinitionParen.Bound {
 	const _name = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.MacroDefinitionParen['_name']>>(config.name, [
-				['default', TSKindId.DefaultKeyword] as const,
-				['union', TSKindId.UnionKeyword] as const,
-				['gen', TSKindId.GenKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.MacroDefinitionParen['_name']>>(config.name),
 			'MacroDefinitionParen.name',
 			'buildIdentifier(…)'
 		),
@@ -10267,39 +11646,44 @@ export function buildMacroDefinitionParen(config: T.MacroDefinitionParen.Config)
 		['default', 'union', 'gen']
 	);
 	const _macro_rules = rejectBareText(config.macroRules, 'MacroDefinitionParen.macroRules', 'a built MacroRules');
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.MacroDefinitionParen as const,
-					$source: 2 as const,
-					$named: true as const,
-					_name,
-					_macro_rules,
-					$with: {
-						name: (value: NonNullable<T.MacroDefinitionParen.Config>['name']) =>
-							buildMacroDefinitionParen({ ...config, name: value }),
-						macroRules: (value?: T.MacroRules) => buildMacroDefinitionParen({ ...config, macroRules: value })
-					}
-				},
-				{
-					name: () => _name,
-					macroRules: () => _macro_rules
-				}
-			),
-			[{ slot: 'macroRules', kind: TSKindId.MacroRules as const, optional: true, make: buildMacroRules }]
-		)
-	) as unknown as T.MacroDefinitionParen.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MacroDefinitionParen as const,
+		$source: 2 as const,
+		$named: true as const,
+		_name,
+		_macro_rules,
+		$with: {
+			name: (value: NonNullable<T.MacroDefinitionParen.Config>['name']) =>
+				rebuilt(node, handle, () => buildMacroDefinitionParen({ ...config, name: value })),
+			macroRules: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.MacroRules as const, optional: true, make: buildMacroRules },
+						(value?: T.MacroRules) => buildMacroDefinitionParen({ ...config, macroRules: value })
+					)
+				)
+		},
+		name: () => _name,
+		macroRules: () => _macro_rules,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MacroDefinitionParen.Bound;
 }
 
 export function buildMacroDefinitionBracket(config: T.MacroDefinitionBracket.Config): T.MacroDefinitionBracket.Bound {
 	const _name = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.MacroDefinitionBracket['_name']>>(config.name, [
-				['default', TSKindId.DefaultKeyword] as const,
-				['union', TSKindId.UnionKeyword] as const,
-				['gen', TSKindId.GenKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.MacroDefinitionBracket['_name']>>(config.name),
 			'MacroDefinitionBracket.name',
 			'buildIdentifier(…)'
 		),
@@ -10308,39 +11692,44 @@ export function buildMacroDefinitionBracket(config: T.MacroDefinitionBracket.Con
 		['default', 'union', 'gen']
 	);
 	const _macro_rules = rejectBareText(config.macroRules, 'MacroDefinitionBracket.macroRules', 'a built MacroRules');
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.MacroDefinitionBracket as const,
-					$source: 2 as const,
-					$named: true as const,
-					_name,
-					_macro_rules,
-					$with: {
-						name: (value: NonNullable<T.MacroDefinitionBracket.Config>['name']) =>
-							buildMacroDefinitionBracket({ ...config, name: value }),
-						macroRules: (value?: T.MacroRules) => buildMacroDefinitionBracket({ ...config, macroRules: value })
-					}
-				},
-				{
-					name: () => _name,
-					macroRules: () => _macro_rules
-				}
-			),
-			[{ slot: 'macroRules', kind: TSKindId.MacroRules as const, optional: true, make: buildMacroRules }]
-		)
-	) as unknown as T.MacroDefinitionBracket.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MacroDefinitionBracket as const,
+		$source: 2 as const,
+		$named: true as const,
+		_name,
+		_macro_rules,
+		$with: {
+			name: (value: NonNullable<T.MacroDefinitionBracket.Config>['name']) =>
+				rebuilt(node, handle, () => buildMacroDefinitionBracket({ ...config, name: value })),
+			macroRules: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.MacroRules as const, optional: true, make: buildMacroRules },
+						(value?: T.MacroRules) => buildMacroDefinitionBracket({ ...config, macroRules: value })
+					)
+				)
+		},
+		name: () => _name,
+		macroRules: () => _macro_rules,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MacroDefinitionBracket.Bound;
 }
 
 export function buildMacroDefinitionBrace(config: T.MacroDefinitionBrace.Config): T.MacroDefinitionBrace.Bound {
 	const _name = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.MacroDefinitionBrace['_name']>>(config.name, [
-				['default', TSKindId.DefaultKeyword] as const,
-				['union', TSKindId.UnionKeyword] as const,
-				['gen', TSKindId.GenKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.MacroDefinitionBrace['_name']>>(config.name),
 			'MacroDefinitionBrace.name',
 			'buildIdentifier(…)'
 		),
@@ -10349,63 +11738,49 @@ export function buildMacroDefinitionBrace(config: T.MacroDefinitionBrace.Config)
 		['default', 'union', 'gen']
 	);
 	const _macro_rules = rejectBareText(config.macroRules, 'MacroDefinitionBrace.macroRules', 'a built MacroRules');
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.MacroDefinitionBrace as const,
-					$source: 2 as const,
-					$named: true as const,
-					_name,
-					_macro_rules,
-					$with: {
-						name: (value: NonNullable<T.MacroDefinitionBrace.Config>['name']) =>
-							buildMacroDefinitionBrace({ ...config, name: value }),
-						macroRules: (value?: T.MacroRules) => buildMacroDefinitionBrace({ ...config, macroRules: value })
-					}
-				},
-				{
-					name: () => _name,
-					macroRules: () => _macro_rules
-				}
-			),
-			[{ slot: 'macroRules', kind: TSKindId.MacroRules as const, optional: true, make: buildMacroRules }]
-		)
-	) as unknown as T.MacroDefinitionBrace.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MacroDefinitionBrace as const,
+		$source: 2 as const,
+		$named: true as const,
+		_name,
+		_macro_rules,
+		$with: {
+			name: (value: NonNullable<T.MacroDefinitionBrace.Config>['name']) =>
+				rebuilt(node, handle, () => buildMacroDefinitionBrace({ ...config, name: value })),
+			macroRules: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.MacroRules as const, optional: true, make: buildMacroRules },
+						(value?: T.MacroRules) => buildMacroDefinitionBrace({ ...config, macroRules: value })
+					)
+				)
+		},
+		name: () => _name,
+		macroRules: () => _macro_rules,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MacroDefinitionBrace.Bound;
 }
 
 export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.RangePatternPrefix.Bound {
-	const _content = coerceKindEnumStorage<NonNullable<T.RangePatternPrefix['_content']>>(config.content, [
-		['..=', TSKindId.DotDotEq] as const,
-		['..', TSKindId.DotDot] as const
-	]);
+	const _content = rejectBareText(
+		kindIdStorage<NonNullable<T.RangePatternPrefix['_content']>>(config.content),
+		'RangePatternPrefix.content',
+		'a kind id'
+	);
 	const _right = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.RangePatternPrefix['_right']>>(config.right, [
-				['self', TSKindId.Self] as const,
-				['u8', TSKindId.U8Keyword] as const,
-				['i8', TSKindId.I8Keyword] as const,
-				['u16', TSKindId.U16Keyword] as const,
-				['i16', TSKindId.I16Keyword] as const,
-				['u32', TSKindId.U32Keyword] as const,
-				['i32', TSKindId.I32Keyword] as const,
-				['u64', TSKindId.U64Keyword] as const,
-				['i64', TSKindId.I64Keyword] as const,
-				['u128', TSKindId.U128Keyword] as const,
-				['i128', TSKindId.I128Keyword] as const,
-				['isize', TSKindId.IsizeKeyword] as const,
-				['usize', TSKindId.UsizeKeyword] as const,
-				['f32', TSKindId.F32Keyword] as const,
-				['f64', TSKindId.F64Keyword] as const,
-				['bool', TSKindId.BoolKeyword] as const,
-				['str', TSKindId.StrKeyword] as const,
-				['char', TSKindId.CharKeyword] as const,
-				['super', TSKindId.Super] as const,
-				['crate', TSKindId.Crate] as const,
-				['default', TSKindId.DefaultKeyword] as const,
-				['union', TSKindId.UnionKeyword] as const,
-				['gen', TSKindId.GenKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.RangePatternPrefix['_right']>>(config.right),
 			'RangePatternPrefix.right',
 			'buildIdentifier(…)'
 		),
@@ -10437,64 +11812,45 @@ export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.
 			'gen'
 		]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.RangePatternPrefix as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				_right,
-				$with: {
-					content: (value: NonNullable<T.RangePatternPrefix.Config>['content']) =>
-						buildRangePatternPrefix({ ...config, content: value }),
-					right: (value: NonNullable<T.RangePatternPrefix.Config>['right']) =>
-						buildRangePatternPrefix({ ...config, right: value })
-				}
-			},
-			{
-				content: () => _content,
-				right: () => _right
-			}
-		)
-	) as unknown as T.RangePatternPrefix.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.RangePatternPrefix as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		_right,
+		$with: {
+			content: (value: NonNullable<T.RangePatternPrefix.Config>['content']) =>
+				rebuilt(node, handle, () => buildRangePatternPrefix({ ...config, content: value })),
+			right: (value: NonNullable<T.RangePatternPrefix.Config>['right']) =>
+				rebuilt(node, handle, () => buildRangePatternPrefix({ ...config, right: value }))
+		},
+		content: () => _content,
+		right: () => _right,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RangePatternPrefix.Bound;
 }
 
 export function buildRangePatternWithLeftWithRight(
 	config: T.RangePatternWithLeftWithRight.Config
 ): T.RangePatternWithLeftWithRight.Bound {
-	const _content = coerceKindEnumStorage<NonNullable<T.RangePatternWithLeftWithRight['_content']>>(config.content, [
-		['...', TSKindId.DotDotDot] as const,
-		['..=', TSKindId.DotDotEq] as const,
-		['..', TSKindId.DotDot] as const
-	]);
+	const _content = rejectBareText(
+		kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_content']>>(config.content),
+		'RangePatternWithLeftWithRight.content',
+		'a kind id'
+	);
 	const _right = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.RangePatternWithLeftWithRight['_right']>>(config.right, [
-				['self', TSKindId.Self] as const,
-				['u8', TSKindId.U8Keyword] as const,
-				['i8', TSKindId.I8Keyword] as const,
-				['u16', TSKindId.U16Keyword] as const,
-				['i16', TSKindId.I16Keyword] as const,
-				['u32', TSKindId.U32Keyword] as const,
-				['i32', TSKindId.I32Keyword] as const,
-				['u64', TSKindId.U64Keyword] as const,
-				['i64', TSKindId.I64Keyword] as const,
-				['u128', TSKindId.U128Keyword] as const,
-				['i128', TSKindId.I128Keyword] as const,
-				['isize', TSKindId.IsizeKeyword] as const,
-				['usize', TSKindId.UsizeKeyword] as const,
-				['f32', TSKindId.F32Keyword] as const,
-				['f64', TSKindId.F64Keyword] as const,
-				['bool', TSKindId.BoolKeyword] as const,
-				['str', TSKindId.StrKeyword] as const,
-				['char', TSKindId.CharKeyword] as const,
-				['super', TSKindId.Super] as const,
-				['crate', TSKindId.Crate] as const,
-				['default', TSKindId.DefaultKeyword] as const,
-				['union', TSKindId.UnionKeyword] as const,
-				['gen', TSKindId.GenKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_right']>>(config.right),
 			'RangePatternWithLeftWithRight.right',
 			'buildIdentifier(…)'
 		),
@@ -10526,27 +11882,32 @@ export function buildRangePatternWithLeftWithRight(
 			'gen'
 		]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.RangePatternWithLeftWithRight as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				_right,
-				$with: {
-					content: (value: NonNullable<T.RangePatternWithLeftWithRight.Config>['content']) =>
-						buildRangePatternWithLeftWithRight({ ...config, content: value }),
-					right: (value: NonNullable<T.RangePatternWithLeftWithRight.Config>['right']) =>
-						buildRangePatternWithLeftWithRight({ ...config, right: value })
-				}
-			},
-			{
-				content: () => _content,
-				right: () => _right
-			}
-		)
-	) as unknown as T.RangePatternWithLeftWithRight.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.RangePatternWithLeftWithRight as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		_right,
+		$with: {
+			content: (value: NonNullable<T.RangePatternWithLeftWithRight.Config>['content']) =>
+				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight({ ...config, content: value })),
+			right: (value: NonNullable<T.RangePatternWithLeftWithRight.Config>['right']) =>
+				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight({ ...config, right: value }))
+		},
+		content: () => _content,
+		right: () => _right,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RangePatternWithLeftWithRight.Bound;
 }
 
 export const buildRangePatternWithLeftBare: TSKindId.RangePatternWithLeftBare = TSKindId.RangePatternWithLeftBare;
@@ -10554,31 +11915,7 @@ export const buildRangePatternWithLeftBare: TSKindId.RangePatternWithLeftBare = 
 export function buildRangePatternWithLeft(config: T.RangePatternWithLeft.Config): T.RangePatternWithLeft.Bound {
 	const _left = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.RangePatternWithLeft['_left']>>(config.left, [
-				['self', TSKindId.Self] as const,
-				['u8', TSKindId.U8Keyword] as const,
-				['i8', TSKindId.I8Keyword] as const,
-				['u16', TSKindId.U16Keyword] as const,
-				['i16', TSKindId.I16Keyword] as const,
-				['u32', TSKindId.U32Keyword] as const,
-				['i32', TSKindId.I32Keyword] as const,
-				['u64', TSKindId.U64Keyword] as const,
-				['i64', TSKindId.I64Keyword] as const,
-				['u128', TSKindId.U128Keyword] as const,
-				['i128', TSKindId.I128Keyword] as const,
-				['isize', TSKindId.IsizeKeyword] as const,
-				['usize', TSKindId.UsizeKeyword] as const,
-				['f32', TSKindId.F32Keyword] as const,
-				['f64', TSKindId.F64Keyword] as const,
-				['bool', TSKindId.BoolKeyword] as const,
-				['str', TSKindId.StrKeyword] as const,
-				['char', TSKindId.CharKeyword] as const,
-				['super', TSKindId.Super] as const,
-				['crate', TSKindId.Crate] as const,
-				['default', TSKindId.DefaultKeyword] as const,
-				['union', TSKindId.UnionKeyword] as const,
-				['gen', TSKindId.GenKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.RangePatternWithLeft['_left']>>(config.left),
 			'RangePatternWithLeft.left',
 			'buildIdentifier(…)'
 		),
@@ -10611,33 +11948,36 @@ export function buildRangePatternWithLeft(config: T.RangePatternWithLeft.Config)
 		]
 	);
 	const _content = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.RangePatternWithLeft['_content']>>(config.content, [
-			['..', TSKindId.RangePatternWithLeftBare] as const
-		]),
+		kindIdStorage<NonNullable<T.RangePatternWithLeft['_content']>>(config.content),
 		'RangePatternWithLeft.content',
 		'a built RangePatternWithLeftWithRight'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.RangePatternWithLeft as const,
-				$source: 2 as const,
-				$named: true as const,
-				_left,
-				_content,
-				$with: {
-					left: (value: NonNullable<T.RangePatternWithLeft.Config>['left']) =>
-						buildRangePatternWithLeft({ ...config, left: value }),
-					content: (value: NonNullable<T.RangePatternWithLeft.Config>['content']) =>
-						buildRangePatternWithLeft({ ...config, content: value })
-				}
-			},
-			{
-				left: () => _left,
-				content: () => _content
-			}
-		)
-	) as unknown as T.RangePatternWithLeft.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.RangePatternWithLeft as const,
+		$source: 2 as const,
+		$named: true as const,
+		_left,
+		_content,
+		$with: {
+			left: (value: NonNullable<T.RangePatternWithLeft.Config>['left']) =>
+				rebuilt(node, handle, () => buildRangePatternWithLeft({ ...config, left: value })),
+			content: (value: NonNullable<T.RangePatternWithLeft.Config>['content']) =>
+				rebuilt(node, handle, () => buildRangePatternWithLeft({ ...config, content: value }))
+		},
+		left: () => _left,
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RangePatternWithLeft.Bound;
 }
 
 export function buildStructItemBrace(config: T.StructItemBrace.Config): T.StructItemBrace.Bound {
@@ -10661,55 +12001,72 @@ export function buildStructItemBrace(config: T.StructItemBrace.Config): T.Struct
 		'StructItemBrace.body',
 		'a built FieldDeclarationList'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.StructItemBrace as const,
-					$source: 2 as const,
-					$named: true as const,
-					_visibility_modifier,
-					_name,
-					_type_parameters,
-					_where_clause,
-					_body,
-					$with: {
-						visibilityModifier: (value?: T.VisibilityModifier) =>
-							buildStructItemBrace({ ...config, visibilityModifier: value }),
-						name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
-							buildStructItemBrace({ ...config, name: value }),
-						typeParameters: (value?: T.TypeParameters) => buildStructItemBrace({ ...config, typeParameters: value }),
-						whereClause: (value?: T.WhereClause) => buildStructItemBrace({ ...config, whereClause: value }),
-						body: (value: T.FieldDeclarationList) => buildStructItemBrace({ ...config, body: value })
-					}
-				},
-				{
-					visibilityModifier: () => _visibility_modifier,
-					name: () => _name,
-					typeParameters: () => _type_parameters,
-					whereClause: () => _where_clause,
-					body: () => _body
-				}
-			),
-			[
-				{
-					slot: 'typeParameters',
-					kind: TSKindId.TypeParameters as const,
-					optional: true,
-					make: buildTypeParameters,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
-				},
-				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
-				{
-					slot: 'body',
-					kind: TSKindId.FieldDeclarationList as const,
-					optional: false,
-					make: buildFieldDeclarationList,
-					element: { keys: ['attributeItem', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
-				}
-			]
-		)
-	) as unknown as T.StructItemBrace.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.StructItemBrace as const,
+		$source: 2 as const,
+		$named: true as const,
+		_visibility_modifier,
+		_name,
+		_type_parameters,
+		_where_clause,
+		_body,
+		$with: {
+			visibilityModifier: (value?: T.VisibilityModifier) =>
+				rebuilt(node, handle, () => buildStructItemBrace({ ...config, visibilityModifier: value })),
+			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildStructItemBrace({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeParameters as const,
+							optional: true,
+							make: buildTypeParameters,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+						},
+						(value?: T.TypeParameters) => buildStructItemBrace({ ...config, typeParameters: value })
+					)
+				),
+			whereClause: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
+						(value?: T.WhereClause) => buildStructItemBrace({ ...config, whereClause: value })
+					)
+				),
+			body: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.FieldDeclarationList as const,
+							optional: false,
+							make: buildFieldDeclarationList,
+							element: { keys: ['attributeItem', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
+						},
+						(value: T.FieldDeclarationList) => buildStructItemBrace({ ...config, body: value })
+					)
+				)
+		},
+		visibilityModifier: () => _visibility_modifier,
+		name: () => _name,
+		typeParameters: () => _type_parameters,
+		whereClause: () => _where_clause,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.StructItemBrace.Bound;
 }
 
 export function buildStructItemTuple(config: T.StructItemTuple.Config): T.StructItemTuple.Bound {
@@ -10733,55 +12090,72 @@ export function buildStructItemTuple(config: T.StructItemTuple.Config): T.Struct
 		'a built OrderedFieldDeclarationList'
 	);
 	const _where_clause = rejectBareText(config.whereClause, 'StructItemTuple.whereClause', 'a built WhereClause');
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.StructItemTuple as const,
-					$source: 2 as const,
-					$named: true as const,
-					_visibility_modifier,
-					_name,
-					_type_parameters,
-					_body,
-					_where_clause,
-					$with: {
-						visibilityModifier: (value?: T.VisibilityModifier) =>
-							buildStructItemTuple({ ...config, visibilityModifier: value }),
-						name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
-							buildStructItemTuple({ ...config, name: value }),
-						typeParameters: (value?: T.TypeParameters) => buildStructItemTuple({ ...config, typeParameters: value }),
-						body: (value: T.OrderedFieldDeclarationList) => buildStructItemTuple({ ...config, body: value }),
-						whereClause: (value?: T.WhereClause) => buildStructItemTuple({ ...config, whereClause: value })
-					}
-				},
-				{
-					visibilityModifier: () => _visibility_modifier,
-					name: () => _name,
-					typeParameters: () => _type_parameters,
-					body: () => _body,
-					whereClause: () => _where_clause
-				}
-			),
-			[
-				{
-					slot: 'typeParameters',
-					kind: TSKindId.TypeParameters as const,
-					optional: true,
-					make: buildTypeParameters,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
-				},
-				{
-					slot: 'body',
-					kind: TSKindId.OrderedFieldDeclarationList as const,
-					optional: false,
-					make: buildOrderedFieldDeclarationList,
-					element: { keys: ['attributeItem', 'visibilityModifier', 'type'], make: buildAttributedOrderedField }
-				},
-				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause }
-			]
-		)
-	) as unknown as T.StructItemTuple.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.StructItemTuple as const,
+		$source: 2 as const,
+		$named: true as const,
+		_visibility_modifier,
+		_name,
+		_type_parameters,
+		_body,
+		_where_clause,
+		$with: {
+			visibilityModifier: (value?: T.VisibilityModifier) =>
+				rebuilt(node, handle, () => buildStructItemTuple({ ...config, visibilityModifier: value })),
+			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildStructItemTuple({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeParameters as const,
+							optional: true,
+							make: buildTypeParameters,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+						},
+						(value?: T.TypeParameters) => buildStructItemTuple({ ...config, typeParameters: value })
+					)
+				),
+			body: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.OrderedFieldDeclarationList as const,
+							optional: false,
+							make: buildOrderedFieldDeclarationList,
+							element: { keys: ['attributeItem', 'visibilityModifier', 'type'], make: buildAttributedOrderedField }
+						},
+						(value: T.OrderedFieldDeclarationList) => buildStructItemTuple({ ...config, body: value })
+					)
+				),
+			whereClause: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
+						(value?: T.WhereClause) => buildStructItemTuple({ ...config, whereClause: value })
+					)
+				)
+		},
+		visibilityModifier: () => _visibility_modifier,
+		name: () => _name,
+		typeParameters: () => _type_parameters,
+		body: () => _body,
+		whereClause: () => _where_clause,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.StructItemTuple.Bound;
 }
 
 export function buildStructItemUnit(config: T.StructItemUnit.Config): T.StructItemUnit.Bound {
@@ -10799,40 +12173,47 @@ export function buildStructItemUnit(config: T.StructItemUnit.Config): T.StructIt
 		'StructItemUnit.typeParameters',
 		'a built TypeParameters'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.StructItemUnit as const,
-					$source: 2 as const,
-					$named: true as const,
-					_visibility_modifier,
-					_name,
-					_type_parameters,
-					$with: {
-						visibilityModifier: (value?: T.VisibilityModifier) =>
-							buildStructItemUnit({ ...config, visibilityModifier: value }),
-						name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) => buildStructItemUnit({ ...config, name: value }),
-						typeParameters: (value?: T.TypeParameters) => buildStructItemUnit({ ...config, typeParameters: value })
-					}
-				},
-				{
-					visibilityModifier: () => _visibility_modifier,
-					name: () => _name,
-					typeParameters: () => _type_parameters
-				}
-			),
-			[
-				{
-					slot: 'typeParameters',
-					kind: TSKindId.TypeParameters as const,
-					optional: true,
-					make: buildTypeParameters,
-					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
-				}
-			]
-		)
-	) as unknown as T.StructItemUnit.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.StructItemUnit as const,
+		$source: 2 as const,
+		$named: true as const,
+		_visibility_modifier,
+		_name,
+		_type_parameters,
+		$with: {
+			visibilityModifier: (value?: T.VisibilityModifier) =>
+				rebuilt(node, handle, () => buildStructItemUnit({ ...config, visibilityModifier: value })),
+			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildStructItemUnit({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeParameters as const,
+							optional: true,
+							make: buildTypeParameters,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+						},
+						(value?: T.TypeParameters) => buildStructItemUnit({ ...config, typeParameters: value })
+					)
+				)
+		},
+		visibilityModifier: () => _visibility_modifier,
+		name: () => _name,
+		typeParameters: () => _type_parameters,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.StructItemUnit.Bound;
 }
 
 export const buildWildcardPattern: TSKindId.WildcardPattern = TSKindId.WildcardPattern;
@@ -10850,27 +12231,34 @@ export function buildAttributedFieldDeclaration(
 		'AttributedFieldDeclaration.fieldDeclaration',
 		'a built FieldDeclaration'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.AttributedFieldDeclaration as const,
-				$source: 2 as const,
-				$named: true as const,
-				_attribute_item,
-				_field_declaration,
-				$with: {
-					attributeItems: (...values: T.AttributeItem[]) =>
-						buildAttributedFieldDeclaration({ ...config, attributeItem: restItems('attributeItems', values) }),
-					fieldDeclaration: (value: T.FieldDeclaration) =>
-						buildAttributedFieldDeclaration({ ...config, fieldDeclaration: value })
-				}
-			},
-			{
-				attributeItems: () => _attribute_item,
-				fieldDeclaration: () => _field_declaration
-			}
-		)
-	) as unknown as T.AttributedFieldDeclaration.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.AttributedFieldDeclaration as const,
+		$source: 2 as const,
+		$named: true as const,
+		_attribute_item,
+		_field_declaration,
+		$with: {
+			attributeItems: (...values: T.AttributeItem[]) =>
+				rebuilt(node, handle, () =>
+					buildAttributedFieldDeclaration({ ...config, attributeItem: restItems('attributeItems', values) })
+				),
+			fieldDeclaration: (value: T.FieldDeclaration) =>
+				rebuilt(node, handle, () => buildAttributedFieldDeclaration({ ...config, fieldDeclaration: value }))
+		},
+		attributeItems: () => _attribute_item,
+		fieldDeclaration: () => _field_declaration,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AttributedFieldDeclaration.Bound;
 }
 
 export function buildAttributedEnumVariant(config: T.AttributedEnumVariant.Config): T.AttributedEnumVariant.Bound {
@@ -10880,26 +12268,34 @@ export function buildAttributedEnumVariant(config: T.AttributedEnumVariant.Confi
 		'a built AttributeItem'
 	);
 	const _enum_variant = rejectBareText(config.enumVariant, 'AttributedEnumVariant.enumVariant', 'a built EnumVariant');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.AttributedEnumVariant as const,
-				$source: 2 as const,
-				$named: true as const,
-				_attribute_item,
-				_enum_variant,
-				$with: {
-					attributeItems: (...values: T.AttributeItem[]) =>
-						buildAttributedEnumVariant({ ...config, attributeItem: restItems('attributeItems', values) }),
-					enumVariant: (value: T.EnumVariant) => buildAttributedEnumVariant({ ...config, enumVariant: value })
-				}
-			},
-			{
-				attributeItems: () => _attribute_item,
-				enumVariant: () => _enum_variant
-			}
-		)
-	) as unknown as T.AttributedEnumVariant.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.AttributedEnumVariant as const,
+		$source: 2 as const,
+		$named: true as const,
+		_attribute_item,
+		_enum_variant,
+		$with: {
+			attributeItems: (...values: T.AttributeItem[]) =>
+				rebuilt(node, handle, () =>
+					buildAttributedEnumVariant({ ...config, attributeItem: restItems('attributeItems', values) })
+				),
+			enumVariant: (value: T.EnumVariant) =>
+				rebuilt(node, handle, () => buildAttributedEnumVariant({ ...config, enumVariant: value }))
+		},
+		attributeItems: () => _attribute_item,
+		enumVariant: () => _enum_variant,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AttributedEnumVariant.Bound;
 }
 
 export function buildAttributedParameter(config: T.AttributedParameter.Config): T.AttributedParameter.Bound {
@@ -10910,34 +12306,38 @@ export function buildAttributedParameter(config: T.AttributedParameter.Config): 
 	);
 	const _content = admitAliasContent<NonNullable<T.AttributedParameter['_content']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.AttributedParameter['_content']>>(config.content, [
-				['_', TSKindId.Underscore] as const
-			]),
+			kindIdStorage<NonNullable<T.AttributedParameter['_content']>>(config.content),
 			'AttributedParameter.content',
 			'a built Parameter / SelfParameter / VariadicParameter / Type'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.AttributedParameter as const,
-				$source: 2 as const,
-				$named: true as const,
-				_attribute_item,
-				_content,
-				$with: {
-					attributeItem: (value?: T.AttributeItem) => buildAttributedParameter({ ...config, attributeItem: value }),
-					content: (value: NonNullable<T.AttributedParameter.Config>['content']) =>
-						buildAttributedParameter({ ...config, content: value })
-				}
-			},
-			{
-				attributeItem: () => _attribute_item,
-				content: () => _content
-			}
-		)
-	) as unknown as T.AttributedParameter.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.AttributedParameter as const,
+		$source: 2 as const,
+		$named: true as const,
+		_attribute_item,
+		_content,
+		$with: {
+			attributeItem: (value?: T.AttributeItem) =>
+				rebuilt(node, handle, () => buildAttributedParameter({ ...config, attributeItem: value })),
+			content: (value: NonNullable<T.AttributedParameter.Config>['content']) =>
+				rebuilt(node, handle, () => buildAttributedParameter({ ...config, content: value }))
+		},
+		attributeItem: () => _attribute_item,
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AttributedParameter.Bound;
 }
 
 export function buildAttributedTypeParameter(
@@ -10953,27 +12353,34 @@ export function buildAttributedTypeParameter(
 		'AttributedTypeParameter.content',
 		'a built Metavariable / TypeParameter / LifetimeParameter / ConstParameter'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.AttributedTypeParameter as const,
-				$source: 2 as const,
-				$named: true as const,
-				_attribute_item,
-				_content,
-				$with: {
-					attributeItems: (...values: T.AttributeItem[]) =>
-						buildAttributedTypeParameter({ ...config, attributeItem: restItems('attributeItems', values) }),
-					content: (value: T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter) =>
-						buildAttributedTypeParameter({ ...config, content: value })
-				}
-			},
-			{
-				attributeItems: () => _attribute_item,
-				content: () => _content
-			}
-		)
-	) as unknown as T.AttributedTypeParameter.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.AttributedTypeParameter as const,
+		$source: 2 as const,
+		$named: true as const,
+		_attribute_item,
+		_content,
+		$with: {
+			attributeItems: (...values: T.AttributeItem[]) =>
+				rebuilt(node, handle, () =>
+					buildAttributedTypeParameter({ ...config, attributeItem: restItems('attributeItems', values) })
+				),
+			content: (value: T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter) =>
+				rebuilt(node, handle, () => buildAttributedTypeParameter({ ...config, content: value }))
+		},
+		attributeItems: () => _attribute_item,
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AttributedTypeParameter.Bound;
 }
 
 export function buildAttributedArgument(config: T.AttributedArgument.Config): T.AttributedArgument.Bound {
@@ -10983,31 +12390,38 @@ export function buildAttributedArgument(config: T.AttributedArgument.Config): T.
 		'a built AttributeItem'
 	);
 	const _expression = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.AttributedArgument['_expression']>>(config.expression, []),
+		kindIdStorage<NonNullable<T.AttributedArgument['_expression']>>(config.expression),
 		'AttributedArgument.expression',
 		'a built Expression'
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.AttributedArgument as const,
-				$source: 2 as const,
-				$named: true as const,
-				_attribute_item,
-				_expression,
-				$with: {
-					attributeItems: (...values: T.AttributeItem[]) =>
-						buildAttributedArgument({ ...config, attributeItem: restItems('attributeItems', values) }),
-					expression: (value: NonNullable<T.AttributedArgument.Config>['expression']) =>
-						buildAttributedArgument({ ...config, expression: value })
-				}
-			},
-			{
-				attributeItems: () => _attribute_item,
-				expression: () => _expression
-			}
-		)
-	) as unknown as T.AttributedArgument.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.AttributedArgument as const,
+		$source: 2 as const,
+		$named: true as const,
+		_attribute_item,
+		_expression,
+		$with: {
+			attributeItems: (...values: T.AttributeItem[]) =>
+				rebuilt(node, handle, () =>
+					buildAttributedArgument({ ...config, attributeItem: restItems('attributeItems', values) })
+				),
+			expression: (value: NonNullable<T.AttributedArgument.Config>['expression']) =>
+				rebuilt(node, handle, () => buildAttributedArgument({ ...config, expression: value }))
+		},
+		attributeItems: () => _attribute_item,
+		expression: () => _expression,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AttributedArgument.Bound;
 }
 
 export function buildAttributedOrderedField(config: T.AttributedOrderedField.Config): T.AttributedOrderedField.Bound {
@@ -11023,94 +12437,113 @@ export function buildAttributedOrderedField(config: T.AttributedOrderedField.Con
 	);
 	const _type = admitAliasContent<NonNullable<T.AttributedOrderedField['_type']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.AttributedOrderedField['_type']>>(config.type, []),
+			kindIdStorage<NonNullable<T.AttributedOrderedField['_type']>>(config.type),
 			'AttributedOrderedField.type',
 			'a built Type'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.AttributedOrderedField as const,
-				$source: 2 as const,
-				$named: true as const,
-				_attribute_item,
-				_visibility_modifier,
-				_type,
-				$with: {
-					attributeItems: (...values: T.AttributeItem[]) =>
-						buildAttributedOrderedField({ ...config, attributeItem: restItems('attributeItems', values) }),
-					visibilityModifier: (value?: T.VisibilityModifier) =>
-						buildAttributedOrderedField({ ...config, visibilityModifier: value }),
-					type: (value: NonNullable<T.AttributedOrderedField.Config>['type']) =>
-						buildAttributedOrderedField({ ...config, type: value })
-				}
-			},
-			{
-				attributeItems: () => _attribute_item,
-				visibilityModifier: () => _visibility_modifier,
-				type: () => _type
-			}
-		)
-	) as unknown as T.AttributedOrderedField.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.AttributedOrderedField as const,
+		$source: 2 as const,
+		$named: true as const,
+		_attribute_item,
+		_visibility_modifier,
+		_type,
+		$with: {
+			attributeItems: (...values: T.AttributeItem[]) =>
+				rebuilt(node, handle, () =>
+					buildAttributedOrderedField({ ...config, attributeItem: restItems('attributeItems', values) })
+				),
+			visibilityModifier: (value?: T.VisibilityModifier) =>
+				rebuilt(node, handle, () => buildAttributedOrderedField({ ...config, visibilityModifier: value })),
+			type: (value: NonNullable<T.AttributedOrderedField.Config>['type']) =>
+				rebuilt(node, handle, () => buildAttributedOrderedField({ ...config, type: value }))
+		},
+		attributeItems: () => _attribute_item,
+		visibilityModifier: () => _visibility_modifier,
+		type: () => _type,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AttributedOrderedField.Bound;
 }
 
 export function buildTypeArgument(config: T.TypeArgument.Config): T.TypeArgument.Bound {
 	const _content = admitAliasContent<NonNullable<T.TypeArgument['_content']>>(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.TypeArgument['_content']>>(config.content, []),
+			kindIdStorage<NonNullable<T.TypeArgument['_content']>>(config.content),
 			'TypeArgument.content',
 			'a built Type / TypeBinding / Lifetime / Literal / Block'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _trait_bounds = rejectBareText(config.traitBounds, 'TypeArgument.traitBounds', 'a built TraitBounds');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TypeArgument as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				_trait_bounds,
-				$with: {
-					content: (value: NonNullable<T.TypeArgument.Config>['content']) =>
-						buildTypeArgument({ ...config, content: value }),
-					traitBounds: (value?: T.TraitBounds) => buildTypeArgument({ ...config, traitBounds: value })
-				}
-			},
-			{
-				content: () => _content,
-				traitBounds: () => _trait_bounds
-			}
-		)
-	) as unknown as T.TypeArgument.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeArgument as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		_trait_bounds,
+		$with: {
+			content: (value: NonNullable<T.TypeArgument.Config>['content']) =>
+				rebuilt(node, handle, () => buildTypeArgument({ ...config, content: value })),
+			traitBounds: (value?: T.TraitBounds) =>
+				rebuilt(node, handle, () => buildTypeArgument({ ...config, traitBounds: value }))
+		},
+		content: () => _content,
+		traitBounds: () => _trait_bounds,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TypeArgument.Bound;
 }
 
 export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlockArms.Bound {
 	const _match_arm = rejectBareText(config.matchArm ?? [], 'MatchBlockArms.matchArm', 'a built MatchArm');
 	const _last_arm = rejectBareText(config.lastArm, 'MatchBlockArms.lastArm', 'a built LastMatchArm');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.MatchBlockArms as const,
-				$source: 2 as const,
-				$named: true as const,
-				_match_arm,
-				_last_arm,
-				$with: {
-					matchArms: (...values: T.MatchArm[]) =>
-						buildMatchBlockArms({ ...config, matchArm: restItems('matchArms', values) }),
-					lastArm: (value: T.LastMatchArm) => buildMatchBlockArms({ ...config, lastArm: value })
-				}
-			},
-			{
-				matchArms: () => _match_arm,
-				lastArm: () => _last_arm
-			}
-		)
-	) as unknown as T.MatchBlockArms.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MatchBlockArms as const,
+		$source: 2 as const,
+		$named: true as const,
+		_match_arm,
+		_last_arm,
+		$with: {
+			matchArms: (...values: T.MatchArm[]) =>
+				rebuilt(node, handle, () => buildMatchBlockArms({ ...config, matchArm: restItems('matchArms', values) })),
+			lastArm: (value: T.LastMatchArm) =>
+				rebuilt(node, handle, () => buildMatchBlockArms({ ...config, lastArm: value }))
+		},
+		matchArms: () => _match_arm,
+		lastArm: () => _last_arm,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MatchBlockArms.Bound;
 }
 
 export function buildFloatLiteral(text: string | number): T.FloatLiteral.Bound {
@@ -11118,35 +12551,68 @@ export function buildFloatLiteral(text: string | number): T.FloatLiteral.Bound {
 	if (text.length === 0) throw new Error(`float_literal: text must be non-empty`);
 	if (!_leafRe_buildFloatLiteral.test(text))
 		throw new Error(`float_literal: text does not match pattern: ${describeValue(text)}`);
-	return withMethods({
+	const handle = currentHandle();
+	const node = {
 		$type: TSKindId.FloatLiteral as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text
-	});
+		$text: text,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FloatLiteral.Bound;
 }
 
 export function buildStringContent(text: string): T.StringContent.Bound {
 	if (text.length === 0) throw new Error(`string_content: text must be non-empty`);
 	if (!_leafRe_buildStringContent.test(text))
 		throw new Error(`string_content: text does not match pattern: ${describeValue(text)}`);
-	return withMethods({
+	const handle = currentHandle();
+	const node = {
 		$type: TSKindId.StringContent as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text
-	});
+		$text: text,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.StringContent.Bound;
 }
 
 export function buildRawStringLiteralContent(text: string): T.RawStringLiteralContent.Bound {
 	if (!_leafRe_buildRawStringLiteralContent.test(text))
 		throw new Error(`raw_string_literal_content: text does not match pattern: ${describeValue(text)}`);
-	return withMethods({
+	const handle = currentHandle();
+	const node = {
 		$type: TSKindId.RawStringLiteralContent as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text
-	});
+		$text: text,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RawStringLiteralContent.Bound;
 }
 
 export const buildOuterDocCommentMarker: TSKindId.OuterDocCommentMarker = TSKindId.OuterDocCommentMarker;
@@ -11157,46 +12623,90 @@ export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStar
 	if (text.length === 0) throw new Error(`raw_string_literal_start: text must be non-empty`);
 	if (!_leafRe_buildRawStringLiteralStart.test(text))
 		throw new Error(`raw_string_literal_start: text does not match pattern: ${describeValue(text)}`);
-	return withMethods({
+	const handle = currentHandle();
+	const node = {
 		$type: TSKindId.RawStringLiteralStart as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text
-	});
+		$text: text,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RawStringLiteralStart.Bound;
 }
 
 export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Bound {
 	if (text.length === 0) throw new Error(`raw_string_literal_end: text must be non-empty`);
 	if (!_leafRe_buildRawStringLiteralEnd.test(text))
 		throw new Error(`raw_string_literal_end: text does not match pattern: ${describeValue(text)}`);
-	return withMethods({
+	const handle = currentHandle();
+	const node = {
 		$type: TSKindId.RawStringLiteralEnd as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text
-	});
+		$text: text,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RawStringLiteralEnd.Bound;
 }
 
 export function buildDocComment(text: string): T.DocComment.Bound {
 	if (!_leafRe_buildDocComment.test(text))
 		throw new Error(`doc_comment: text does not match pattern: ${describeValue(text)}`);
-	return withMethods({
+	const handle = currentHandle();
+	const node = {
 		$type: TSKindId.DocComment as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text
-	});
+		$text: text,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.DocComment.Bound;
 }
 
 export function buildBlockCommentContent(text: string): T.BlockCommentContent.Bound {
 	if (!_leafRe_buildBlockCommentContent.test(text))
 		throw new Error(`_block_comment_content: text does not match pattern: ${describeValue(text)}`);
-	return withMethods({
+	const handle = currentHandle();
+	const node = {
 		$type: TSKindId.BlockCommentContent as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text
-	});
+		$text: text,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.BlockCommentContent.Bound;
 }
 
 export const buildTight: TSKindId.Tight = TSKindId.Tight;
@@ -11217,74 +12727,100 @@ export const buildDedent: TSKindId.Dedent = TSKindId.Dedent;
 
 export function buildErrorSentinel(text: string): T.ErrorSentinel.Bound {
 	if (text.length === 0) throw new Error(`_error_sentinel: text must be non-empty`);
-	return withMethods({
+	const handle = currentHandle();
+	const node = {
 		$type: TSKindId.ErrorSentinel as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text
-	});
+		$text: text,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ErrorSentinel.Bound;
 }
 
 export function buildTypeIdentifier(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T.TypeIdentifier.Bound {
 	const _content = rejectBareText(value, 'TypeIdentifier.content', 'buildIdentifier(…)');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TypeIdentifier as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: T.Identifier) => buildTypeIdentifier(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		)
-	) as unknown as T.TypeIdentifier.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeIdentifier as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		$with: {
+			content: (value: T.Identifier) => rebuilt(node, handle, () => buildTypeIdentifier(value))
+		},
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TypeIdentifier.Bound;
 }
 
 export function buildFieldIdentifier(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T.FieldIdentifier.Bound {
 	const _content = rejectBareText(value, 'FieldIdentifier.content', 'buildIdentifier(…)');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.FieldIdentifier as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: T.Identifier) => buildFieldIdentifier(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		)
-	) as unknown as T.FieldIdentifier.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FieldIdentifier as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		$with: {
+			content: (value: T.Identifier) => rebuilt(node, handle, () => buildFieldIdentifier(value))
+		},
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FieldIdentifier.Bound;
 }
 
 export function buildShorthandFieldIdentifier(
 	value: AdmitBound<T.Identifier, T.AdmittedNodes>
 ): T.ShorthandFieldIdentifier.Bound {
 	const _content = rejectBareText(value, 'ShorthandFieldIdentifier.content', 'buildIdentifier(…)');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ShorthandFieldIdentifier as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: T.Identifier) => buildShorthandFieldIdentifier(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		)
-	) as unknown as T.ShorthandFieldIdentifier.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ShorthandFieldIdentifier as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		$with: {
+			content: (value: T.Identifier) => rebuilt(node, handle, () => buildShorthandFieldIdentifier(value))
+		},
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ShorthandFieldIdentifier.Bound;
 }
 
 export type FluentKindMap = {

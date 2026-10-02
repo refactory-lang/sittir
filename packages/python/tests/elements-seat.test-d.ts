@@ -15,7 +15,7 @@ function expectTrue<_T extends true>(): void {}
 const engine = await createEngine(python);
 
 export function comparatorsTakeConfigObjects(comparison: T.ComparisonOperator.Parsed): string {
-	const rebuilt = comparison.$with.comparators({ operators: '>', primaryExpression: engine.build.identifier('z') });
+	const rebuilt = comparison.$with.comparators({ operators: engine.kinds.Gt, primaryExpression: engine.build.identifier('z') });
 	return rebuilt.$render();
 }
 

@@ -24,7 +24,7 @@ import {
 	AssembledList
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
-import { flattenedVariantParents, variantRoutePaths } from './overlays/module.ts';
+import { flattenedVariantParents, hasOneSurface, variantRoutePaths } from './overlays/module.ts';
 import { resolveFieldStorageInfo, compareOrdinal } from './shared.ts';
 import { anchoredLeafRegexLiteral } from '../compiler/model/leaf-pattern.ts';
 import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
@@ -73,6 +73,7 @@ interface SerializedNodeBase {
 	annotations?: RuleAnnotations;
 	isParameterless?: boolean;
 	stampExpression?: string;
+	oneSurface?: true;
 	factoryShape?: FactoryShape;
 	forwardsTo?: string;
 	factoryFields?: string[];
@@ -167,6 +168,7 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 		const node = nodeMap.nodes.get(kind);
 		if (!node) continue;
 		const serialized = serializeNode(node, nodeMap, wires);
+		if (hasOneSurface(node)) serialized.oneSurface = true;
 		const factoryShape = factoryData.factoryShapes[kind];
 		if (factoryShape !== undefined) serialized.factoryShape = factoryShape;
 		const forwardsTo = factoryData.forwardsTo[kind];

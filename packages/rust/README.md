@@ -105,7 +105,7 @@ const fn = engine.build.statement.function({
 	body: engine.build.block()
 });
 
-fn.$trivia('// entry point').$render(); // "// entry point\nfn main() {}"
+fn.$trivia.leading('// entry point').$render(); // "// entry point\nfn main() {}"
 ```
 
 ## Render options

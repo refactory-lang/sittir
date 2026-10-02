@@ -75,6 +75,26 @@ export function spelledInterior(text: string, open: string, close: string, accep
 	return accepts !== undefined && !accepts.test(interior) && accepts.test(text) ? text : interior;
 }
 
+/**
+ * The interior of a token given in its full spelling. Unlike
+ * {@link spelledInterior} nothing is detected: the text must carry both
+ * delimiters, and the caller has said that it does.
+ *
+ * @param text - The token's full text.
+ * @param open - The fixed text the token starts with.
+ * @param close - The fixed text the token ends with.
+ * @param kind - The kind being built, named in the error.
+ * @returns The text between the delimiters.
+ * @throws When the text does not start with `open` and end with `close`.
+ */
+export function unaffixed(text: string, open: string, close: string, kind: string): string {
+	const interior = spelledForm(text, [open], [close])?.interior;
+	if (interior === undefined) {
+		throw new Error(`${kind}: text given with its affixes must be ${JSON.stringify(open)}…${JSON.stringify(close)}, got ${JSON.stringify(text)}`);
+	}
+	return interior;
+}
+
 export function refuseSiblingLead(interior: string, siblings: readonly (readonly [lead: RegExp, builder: string])[]): string {
 	for (const [lead, builder] of siblings) {
 		if (lead.test(interior)) {

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import python from '../src/index.ts';
+import { TSKindId } from '../src/types.ts';
 import { createEngine } from '@sittir/common';
 
 const py = await createEngine(python);
@@ -45,7 +46,7 @@ describe('an elements seat takes the group config objects its config surface tak
 		if (!py.is.comparisonOperator(comparison)) throw new Error('not a comparison');
 		return comparison;
 	};
-	const config = () => ({ operators: '>' as const, primaryExpression: py.build.identifier('z') });
+	const config = () => ({ operators: TSKindId.Gt as const, primaryExpression: py.build.identifier('z') });
 
 	it('builds a comparator from a config object through $with', () => {
 		const rebuilt = comparisonOf('a < b\n').$with.comparators(config());

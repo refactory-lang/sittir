@@ -44,7 +44,8 @@ import type {
 	Expression,
 	String,
 	Number,
-	Type
+	Type,
+	TSKindId
 } from './types.js';
 export type * from './types.js';
 
@@ -127,4 +128,119 @@ export namespace ImportIdentifier {
 
 export namespace TupleTypeMember {
 	export type Kind = '_tuple_type_member';
+}
+
+export interface SubBuilderRowKind {
+	'ambientDeclaration.module': TSKindId.AmbientDeclarationModule;
+	'callExpression.call': TSKindId.CallExpressionCall;
+	'callExpression.member': TSKindId.CallExpressionMember;
+	'callExpression.templateCall': TSKindId.CallExpressionTemplateCall;
+	'classBodyMember.declaration': TSKindId.ClassBodyMemberDeclaration;
+	'classBodyMember.empty': TSKindId.EmptyMember;
+	'classBodyMember.method': TSKindId.ClassBodyMemberMethod;
+	'classBodyMember.methodSig': TSKindId.ClassBodyMemberMethodSig;
+	'classBodyMember.staticBlock': TSKindId.ClassStaticBlock;
+	comment: TSKindId.CommentLine;
+	'comment.block': TSKindId.CommentBlock;
+	'comment.line': TSKindId.CommentLine;
+	'declaration.abstractClass': TSKindId.AbstractClassDeclaration;
+	'declaration.ambient': TSKindId.AmbientDeclaration;
+	'declaration.ambient.module': TSKindId.AmbientDeclarationModule;
+	'declaration.class': TSKindId.ClassDeclaration;
+	'declaration.enum': TSKindId.EnumDeclaration;
+	'declaration.function': TSKindId.FunctionDeclaration;
+	'declaration.functionSignature': TSKindId.FunctionSignature;
+	'declaration.generatorFunction': TSKindId.GeneratorFunctionDeclaration;
+	'declaration.importAlias': TSKindId.ImportAlias;
+	'declaration.interface': TSKindId.InterfaceDeclaration;
+	'declaration.internalModule': TSKindId.InternalModule;
+	'declaration.lexical': TSKindId.LexicalDeclaration;
+	'declaration.module': TSKindId.Module;
+	'declaration.typeAlias': TSKindId.TypeAliasDeclaration;
+	'declaration.variable': TSKindId.VariableDeclaration;
+	'enumBodyElement.assignment': TSKindId.EnumAssignment;
+	'enumBodyElement.name': TSKindId.EnumBodyElementName;
+	'exportStatement.default.declaration': TSKindId.ExportStatementDefaultDeclaration;
+	'exportStatement.default.from': TSKindId.ExportStatementDefaultFrom;
+	'exportStatement.equalsExport': TSKindId.ExportStatementEqualsExport;
+	'exportStatement.namespaceExport': TSKindId.ExportStatementNamespaceExport;
+	'exportStatement.typeExport': TSKindId.ExportStatementTypeExport;
+	'exportStatementDefault.declaration': TSKindId.ExportStatementDefaultDeclaration;
+	'exportStatementDefault.from': TSKindId.ExportStatementDefaultFrom;
+	'forHeader.letConstKind': TSKindId.ForHeaderLetConstKind;
+	'forHeader.lhs': TSKindId.ForHeaderLhs;
+	'forHeader.varKind': TSKindId.ForHeaderVarKind;
+	'importSpecifier.as': TSKindId.ImportSpecifierAs;
+	'importSpecifier.name': TSKindId.ImportSpecifierName;
+	'indexSignature.colon': TSKindId.IndexSignatureColon;
+	'indexSignature.mappedTypeClause': TSKindId.IndexSignatureMappedTypeClause;
+	'metaProperty.importMeta': TSKindId.MetaPropertyImportMeta;
+	'metaProperty.newTarget': TSKindId.MetaPropertyNewTarget;
+	number: TSKindId.NumberDecimal;
+	'number.bigint': TSKindId.NumberBigintDecimal;
+	'number.bigint.binary': TSKindId.NumberBigintBinary;
+	'number.bigint.decimal': TSKindId.NumberBigintDecimal;
+	'number.bigint.hex': TSKindId.NumberBigintHex;
+	'number.bigint.octal': TSKindId.NumberBigintOctal;
+	'number.binary': TSKindId.NumberBinary;
+	'number.decimal': TSKindId.NumberDecimal;
+	'number.floatLeadingPoint': TSKindId.NumberFloatLeadingPoint;
+	'number.floatPoint': TSKindId.NumberFloatPoint;
+	'number.floatScientific': TSKindId.NumberFloatScientific;
+	'number.hex': TSKindId.NumberHex;
+	'number.octal': TSKindId.NumberOctal;
+	numberBigint: TSKindId.NumberBigintDecimal;
+	'numberBigint.binary': TSKindId.NumberBigintBinary;
+	'numberBigint.decimal': TSKindId.NumberBigintDecimal;
+	'numberBigint.hex': TSKindId.NumberBigintHex;
+	'numberBigint.octal': TSKindId.NumberBigintOctal;
+	'parenthesizedExpression.sequence': TSKindId.ParenthesizedExpressionSequence;
+	'parenthesizedExpression.typed': TSKindId.ParenthesizedExpressionTyped;
+	'pattern.lhs': TSKindId.LhsExpression;
+	'pattern.rest': TSKindId.RestPattern;
+	'statement.block': TSKindId.StatementBlock;
+	'statement.break': TSKindId.BreakStatement;
+	'statement.continue': TSKindId.ContinueStatement;
+	'statement.debugger': TSKindId.DebuggerStatement;
+	'statement.declaration.abstractClass': TSKindId.AbstractClassDeclaration;
+	'statement.declaration.ambient': TSKindId.AmbientDeclaration;
+	'statement.declaration.ambient.module': TSKindId.AmbientDeclarationModule;
+	'statement.declaration.class': TSKindId.ClassDeclaration;
+	'statement.declaration.enum': TSKindId.EnumDeclaration;
+	'statement.declaration.function': TSKindId.FunctionDeclaration;
+	'statement.declaration.functionSignature': TSKindId.FunctionSignature;
+	'statement.declaration.generatorFunction': TSKindId.GeneratorFunctionDeclaration;
+	'statement.declaration.importAlias': TSKindId.ImportAlias;
+	'statement.declaration.interface': TSKindId.InterfaceDeclaration;
+	'statement.declaration.internalModule': TSKindId.InternalModule;
+	'statement.declaration.lexical': TSKindId.LexicalDeclaration;
+	'statement.declaration.module': TSKindId.Module;
+	'statement.declaration.typeAlias': TSKindId.TypeAliasDeclaration;
+	'statement.declaration.variable': TSKindId.VariableDeclaration;
+	'statement.do': TSKindId.DoStatement;
+	'statement.empty': TSKindId.EmptyStatement;
+	'statement.export.default.declaration': TSKindId.ExportStatementDefaultDeclaration;
+	'statement.export.default.from': TSKindId.ExportStatementDefaultFrom;
+	'statement.export.equalsExport': TSKindId.ExportStatementEqualsExport;
+	'statement.export.namespaceExport': TSKindId.ExportStatementNamespaceExport;
+	'statement.export.typeExport': TSKindId.ExportStatementTypeExport;
+	'statement.expression': TSKindId.ExpressionStatement;
+	'statement.for': TSKindId.ForStatement;
+	'statement.forIn': TSKindId.ForInStatement;
+	'statement.if': TSKindId.IfStatement;
+	'statement.import': TSKindId.ImportStatement;
+	'statement.labeled': TSKindId.LabeledStatement;
+	'statement.return': TSKindId.ReturnStatement;
+	'statement.switch': TSKindId.SwitchStatement;
+	'statement.throw': TSKindId.ThrowStatement;
+	'statement.try': TSKindId.TryStatement;
+	'statement.while': TSKindId.WhileStatement;
+	'statement.with': TSKindId.WithStatement;
+	'string.double': TSKindId.StringDouble;
+	'string.single': TSKindId.StringSingle;
+	updateExpression: TSKindId.UpdateExpressionPostfix;
+	'updateExpression.postfix': TSKindId.UpdateExpressionPostfix;
+	'updateExpression.prefix': TSKindId.UpdateExpressionPrefix;
+	'variableDeclarator.definite': TSKindId.VariableDeclaratorDefinite;
+	'variableDeclarator.plain': TSKindId.VariableDeclaratorPlain;
 }

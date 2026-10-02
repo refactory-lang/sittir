@@ -59,7 +59,7 @@ const fn = engine.build.functionDefinition({
 	body: engine.build.block()
 });
 
-fn.$trivia('# entry point').$render(); // "# entry point\ndef greet():"
+fn.$trivia.leading('# entry point').$render(); // "# entry point\ndef greet():"
 ```
 
 ## Guards

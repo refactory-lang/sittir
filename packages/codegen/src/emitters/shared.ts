@@ -4,6 +4,8 @@ import { SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
 import {
 	AssembledAlias,
+	concreteKindsOf,
+	type FullFormAffix,
 	isWordOrBuilderTextLeaf,
 	isBuilderTextLeaf,
 	isBuilderlessPunctuationLeaf,
@@ -144,6 +146,20 @@ export function slotKindNames(slot: { values: readonly NodeOrTerminal[] }): stri
 		out.push(name);
 	}
 	return out;
+}
+
+export function holdsOwnKind(node: AssembledNode | undefined, nodeMap: NodeMap): boolean {
+	if (!(node instanceof AbstractAssembledCompound)) return false;
+	const slot = node.soleSlot;
+	if (slot === undefined) return false;
+	const heldBy = (held: AssembledNonterminal): string[] => slotKindNames(held).flatMap((kind) => concreteKindsOf(kind, nodeMap));
+	const held = heldBy(slot);
+	if (held.includes(node.kind)) return true;
+	return held.some((kind) => {
+		const list = nodeMap.nodes.get(kind);
+		const element = list instanceof AssembledList ? list.soleSlot : undefined;
+		return element !== undefined && heldBy(element).includes(node.kind);
+	});
 }
 
 export function slotLiteralValues(slot: { values: readonly NodeOrTerminal[] }): string[] {
@@ -749,6 +765,32 @@ export function lexedContentSlot(node: AssembledNode): AssembledNonterminal | un
 	if (!(node instanceof AbstractAssembledCompound) || !node.lexedInterior) return undefined;
 	const text = node.slots.filter((slot) => slot.values.every(isPatternValue));
 	return text.length === 1 && isRequired(text[0]!) ? text[0] : undefined;
+}
+
+export interface OwnTextLeaf {
+	readonly slot: AssembledNonterminal;
+	readonly open: string;
+	readonly close: string;
+	readonly spelledType: string;
+}
+
+export function ownTextLeaf(node: AssembledNode | undefined): OwnTextLeaf | undefined {
+	if (node === undefined) return undefined;
+	const slot = lexedContentSlot(node);
+	if (slot === undefined || !(node instanceof AbstractAssembledCompound) || node.slots.length !== 1) return undefined;
+	const form = node.fullForm;
+	if (form === undefined) return undefined;
+	const fixed = (affix: FullFormAffix): string => {
+		const [text] = affix.texts;
+		if (text === undefined || affix.texts.length !== 1 || affix.slot !== undefined) {
+			throw new Error(`'${node.kind}' is a leaf whose affix is not one fixed text, so its spelled form has no type`);
+		}
+		return text;
+	};
+	const open = fixed(form.open);
+	const close = fixed(form.close);
+	const literal = (text: string): string => JSON.stringify(text).slice(1, -1).replace(/`/g, '\\`').replace(/\$\{/g, '\\${');
+	return { slot, open, close, spelledType: `\`${literal(open)}\${string}${literal(close)}\`` };
 }
 
 export function isAffixedLeaf(node: AssembledNode | undefined): boolean {

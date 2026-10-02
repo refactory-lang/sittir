@@ -2,13 +2,12 @@ import type {
 	AnyUntypedNode,
 	FlavorPair,
 	HoistArity,
-	NodeMethods,
 	GrammarTypeMap,
 	Hoisted,
 	MaxArity,
 	StrictFlavor
 } from '@sittir/types';
-import { isNode as isAnyNode, withMethods as withAnyMethods } from './utils.ts';
+import { isNode as isAnyNode } from './utils.ts';
 
 type NamespacePart<M extends GrammarTypeMap, K, P extends 'Node' | 'Loose'> = K extends keyof M['namespaces']
 	? M['namespaces'][K] extends { readonly [Q in P]: infer X }
@@ -21,15 +20,11 @@ export interface GrammarRuntime<M extends GrammarTypeMap> {
 		v: NamespacePart<M, K, 'Node'> | NamespacePart<M, K, 'Loose'>
 	): v is Extract<NamespacePart<M, K, 'Node'>, AnyUntypedNode>;
 	isNode(v: unknown): v is AnyUntypedNode;
-	withMethods<T extends AnyUntypedNode>(node: T): T & NodeMethods<M['trivia']>;
 }
 
 export function bindRuntime<M extends GrammarTypeMap>(): GrammarRuntime<M> {
 	return {
-		isNode: isAnyNode,
-		withMethods<T extends AnyUntypedNode>(node: T) {
-			return withAnyMethods(node) as unknown as T & NodeMethods<M['trivia']>;
-		}
+		isNode: isAnyNode
 	} as GrammarRuntime<M>;
 }
 
@@ -70,6 +65,17 @@ export function admitAliasContent<T = unknown>(value: unknown, aliases: readonly
 	if (id === undefined) return value as T;
 	const hit = aliases.find(([storage]) => storage.includes(id));
 	return (hit === undefined ? value : hit[1](value)) as T;
+}
+
+/**
+ * A strict slot's kind-id storage: absent stays absent, a kind id stays itself, and an array is
+ * read item by item with the absent ones dropped. Text is not read here; a string passes through
+ * unchanged for the slot's refusal.
+ */
+export function kindIdStorage<T = unknown>(value: unknown): T {
+	if (value === undefined || value === null) return undefined as T;
+	if (Array.isArray(value)) return value.map((item) => kindIdStorage(item)).filter((item) => item !== undefined) as T;
+	return value as T;
 }
 
 export function coerceMixedEnumStorage<T = unknown>(

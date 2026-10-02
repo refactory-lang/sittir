@@ -102,7 +102,7 @@ export const statement: {
 export const type: {
 	readonly abstract: typeof F.abstractType;
 	readonly reference: typeof F.referenceType;
-	readonly metavariable: typeof F.metavariable;
+	readonly metavariable: typeof F.buildMetavariable;
 	readonly pointer: typeof F.pointerType;
 	readonly generic: typeof F.genericType;
 	readonly scopedIdentifier: typeof F.scopedTypeIdentifier;
@@ -118,7 +118,7 @@ export const type: {
 } = {
 	abstract: F.abstractType,
 	reference: F.referenceType,
-	metavariable: F.metavariable,
+	metavariable: F.buildMetavariable,
 	pointer: F.pointerType,
 	generic: F.genericType,
 	scopedIdentifier: F.scopedTypeIdentifier,
@@ -157,7 +157,7 @@ export const expression: {
 	readonly break: typeof F.breakExpression;
 	readonly continue: typeof F.continueExpression;
 	readonly index: typeof F.indexExpression;
-	readonly metavariable: typeof F.metavariable;
+	readonly metavariable: typeof F.buildMetavariable;
 	readonly closure: typeof F.closureExpression;
 	readonly parenthesized: typeof F.parenthesizedExpression;
 	readonly struct: typeof F.structExpression;
@@ -197,7 +197,7 @@ export const expression: {
 	break: F.breakExpression,
 	continue: F.continueExpression,
 	index: F.indexExpression,
-	metavariable: F.metavariable,
+	metavariable: F.buildMetavariable,
 	closure: F.closureExpression,
 	parenthesized: F.parenthesizedExpression,
 	struct: F.structExpression,
@@ -432,8 +432,6 @@ export const ir: {
 	readonly rawStringLiteral: typeof F.rawStringLiteral;
 	readonly lineComment: typeof F.lineComment;
 	readonly blockComment: typeof F.blockComment;
-	readonly shebang: typeof F.shebang;
-	readonly metavariable: typeof F.metavariable;
 	readonly macroRules: typeof F.macroRules;
 	readonly enumVariantListElements: typeof F.enumVariantListElements;
 	readonly fieldDeclarationListElements: typeof F.fieldDeclarationListElements;
@@ -489,6 +487,8 @@ export const ir: {
 	readonly wildcardPattern: typeof F.buildWildcardPattern;
 	readonly outerDocCommentMarker: typeof F.buildOuterDocCommentMarker;
 	readonly innerDocCommentMarker: typeof F.buildInnerDocCommentMarker;
+	readonly shebang: typeof F.buildShebang;
+	readonly metavariable: typeof F.buildMetavariable;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly tokenRepetitionPatternText: typeof F.buildTokenRepetitionPatternText;
 	readonly stringOpen: typeof F.buildStringOpen;
@@ -638,8 +638,6 @@ export const ir: {
 	rawStringLiteral: F.rawStringLiteral,
 	lineComment: F.lineComment,
 	blockComment: F.blockComment,
-	shebang: F.shebang,
-	metavariable: F.metavariable,
 	macroRules: F.macroRules,
 	enumVariantListElements: F.enumVariantListElements,
 	fieldDeclarationListElements: F.fieldDeclarationListElements,
@@ -697,6 +695,10 @@ export const ir: {
 	wildcardPattern: F.buildWildcardPattern,
 	outerDocCommentMarker: F.buildOuterDocCommentMarker,
 	innerDocCommentMarker: F.buildInnerDocCommentMarker,
+
+	// Leaves whose one slot is their own text
+	shebang: F.buildShebang,
+	metavariable: F.buildMetavariable,
 
 	// Leaf node factories
 	identifier: F.buildIdentifier,

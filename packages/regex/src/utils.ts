@@ -15,4 +15,4 @@ export const triviaFacts = Object.freeze({
 	})
 } satisfies TriviaFacts);
 
-export const { isNode, withMethods } = bindRuntime<RegexTypeMap>();
+export const { isNode } = bindRuntime<RegexTypeMap>();

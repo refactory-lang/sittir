@@ -64,13 +64,15 @@ export interface Namespace {
 
 export type Statement = Interface | TypeAlias | Namespace;
 
-export interface Comment {
-	readonly block: boolean;
-	readonly text: string;
-}
+type LineCommentText = `//${string}`;
+type BlockCommentText = `/*${string}*/`;
 
-const lineComment = (text: string): Comment => ({ block: false, text });
-const blockComment = (text: string): Comment => ({ block: true, text });
+export type Comment =
+	| { readonly block: false; readonly text: LineCommentText }
+	| { readonly block: true; readonly text: BlockCommentText };
+
+const lineComment = (text: LineCommentText): Comment => ({ block: false, text });
+const blockComment = (text: BlockCommentText): Comment => ({ block: true, text });
 
 export interface VocabularyFile {
 	readonly name: string;
@@ -570,7 +572,7 @@ type Triviable<N> = {
 	readonly $trivia: { leading(...items: CommentNode[]): N; trailing(...items: CommentNode[]): N };
 };
 
-const commentIr = (c: Comment): CommentNode => (c.block ? ir.comment.block(c.text) : ir.comment.line(c.text));
+const commentIr = (c: Comment): CommentNode => (c.block ? ir.comment.block(c.text, false) : ir.comment.line(c.text, false));
 
 function withTrivia<N extends Triviable<N>>(node: N, leading: readonly Comment[], trailing: readonly Comment[]): N {
 	const led = leading.length > 0 ? node.$trivia.leading(...leading.map(commentIr)) : node;

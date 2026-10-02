@@ -58,7 +58,9 @@ and a config-shaped node's printed `config` object.
 
 The strict flavor is named (`.strict`); the loose flavor is the bundle's
 own call, and every mount and variant route is callable the same way, so
-nothing ever spells `.coerce`.
+nothing ever spells `.coerce`. A kind with one surface (`oneSurfaceKinds`, stamped
+on the node model) has no `.strict` member, so its call is the bare path on
+both flavors.
 
 ```text
 /** The strict flavor is named; the loose one is the bundle's own call. */

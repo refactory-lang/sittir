@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { compileGrammar } from '../../compiler/compile.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { grammarPackage } from '../../grammars.ts';
+import { AssembledList } from '../../compiler/model/node-map.ts';
 import { elementConfigsOf, groupSeatHints, listSlotHints } from '../factories.ts';
 
 const read = (grammar: string, file: string): string => readFileSync(`packages/${grammar}/src/${file}`, 'utf8');
@@ -72,7 +73,7 @@ describe('a group seat flattens exactly the group fields its config surface name
 			}
 			const hints = seated.flatMap(({ hints }) => hints);
 			for (const file of ['wrap.ts', 'factories/raw.ts']) {
-				expect([...read(grammar, file).matchAll(/withGroupSeat\(/g)]).toHaveLength(hints.length);
+				expect([...read(grammar, file).matchAll(/const readGroup_\w+ = /g)]).toHaveLength(hints.length);
 			}
 		});
 	}
@@ -92,8 +93,9 @@ describe('an elements seat sets the element config objects its config surface ta
 				const block = compact(types.slice(types.indexOf(`export interface ${node.typeName} {`), types.indexOf('\n}\n', types.indexOf(`export interface ${node.typeName} {`))));
 				expect(block, `${node.kind}.${fact.slot}`).toMatch(new RegExp(`readonly${fact.slot}:SlotHint<[\\s\\S]*?,(?:true|false),(?:true|false),T\\.${fact.group}\\.Config>;`));
 			}
-			expect([...read(grammar, 'factories/raw.ts').matchAll(/withElementsSeat\(/g)]).toHaveLength(seats.length);
-			expect([...read(grammar, 'wrap.ts').matchAll(/withElementsSeat\(/g)]).toHaveLength(seats.length);
+			const seatCalls = (file: string): number => [...read(grammar, file).matchAll(/\b(?:withElementsSeat|elementsWith)\(/g)].length;
+			expect(seatCalls('factories/raw.ts')).toBe(seats.length);
+			expect(seatCalls('wrap.ts')).toBe(seats.filter(({ node }) => !(node instanceof AssembledList)).length);
 		});
 
 		it(`${grammar}: every slot that holds a list carries its list's element config`, async () => {

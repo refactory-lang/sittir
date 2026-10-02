@@ -6,8 +6,11 @@
  * Every kind with a row and an `ir` key is compared. An entry that is a
  * constant (a kind with no content to supply) takes no call; its row is the
  * empty list. Kinds with a row and no `ir` key of their own are not
- * compared: they are reached through a parent's sub-builder or have no
- * public call.
+ * compared by `RowDiffersFromCall`: `SubBuilderDiffersFromRow` compares the
+ * ones reached through a parent's sub-builder, from the generated map of
+ * `ir` path to the kind whose row declares that entry. A path the map
+ * names that `ir` does not hold, or a kind it names that has no row, is a
+ * difference.
  *
  * The comparison is mutual assignability, with `any` refused first: an
  * entry or a row that is `any`, or that has an `any` parameter, is a
@@ -58,3 +61,21 @@ export type RowDiffersFromCall<Ir, IrKeyOf, NamespaceMap> = {
 			: IrKeyOf[Id]
 		: never;
 }[keyof IrKeyOf & keyof NamespaceMap];
+
+type At<Holder, Path extends string> = Path extends `${infer Head}.${infer Rest}`
+	? Head extends keyof Holder
+		? At<Holder[Head], Rest>
+		: never
+	: Path extends keyof Holder
+		? Holder[Path]
+		: never;
+
+type CallAt<Ir, Path extends string> = [At<Ir, Path>] extends [never] ? 'no entry' : CallOf<At<Ir, Path>>;
+
+type RowFor<NamespaceMap, Kind> = Kind extends keyof NamespaceMap ? RowOf<NamespaceMap[Kind]> : 'no row';
+
+export type SubBuilderDiffersFromRow<Ir, RowKindByPath, NamespaceMap> = {
+	[Path in keyof RowKindByPath & string]: SameArguments<CallAt<Ir, Path>, RowFor<NamespaceMap, RowKindByPath[Path]>> extends true
+		? never
+		: Path;
+}[keyof RowKindByPath & string];

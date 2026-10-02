@@ -5,7 +5,7 @@ import { createRenderHandle } from '../src/engine.ts';
 import { inTreeEngine } from '../src/engine-scope.ts';
 import { ERROR_KIND_ID } from '../src/error-kind.ts';
 import { Source } from '../src/source.ts';
-import { withMethods } from '../src/utils.ts';
+import { withMembers as withMethods } from './support/members.ts';
 import { triviaFacts } from './support/fake-engine.ts';
 
 interface Options {

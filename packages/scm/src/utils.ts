@@ -15,4 +15,4 @@ export const triviaFacts = Object.freeze({
 	})
 } satisfies TriviaFacts);
 
-export const { isNode, withMethods } = bindRuntime<ScmTypeMap>();
+export const { isNode } = bindRuntime<ScmTypeMap>();

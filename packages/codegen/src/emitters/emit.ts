@@ -181,7 +181,17 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const renderModule = renderModuleEmitterInst?.finalize(templates);
 
 	const wires = collectPolymorphWires(nodeMap, generatedIdTables);
-	const { types, internal: typesInternal } = emitTypesModules({ grammar, nodeMap, generatedIdTables, sites: sitePreferences, addresses: addressTables, triviaKinds, wires });
+	const polymorphsOverlay = emitPolymorphsOverlay({ nodeMap, generatedIdTables, wires });
+	const { types, internal: typesInternal } = emitTypesModules({
+		grammar,
+		nodeMap,
+		generatedIdTables,
+		sites: sitePreferences,
+		addresses: addressTables,
+		triviaKinds,
+		wires,
+		entryRows: polymorphsOverlay.entryRows
+	});
 	const consts = emitConsts({ grammar, nodeMap });
 	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables }) : renderOptionsModule({ indentChars: indentChars(nodeMap) });
 	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
@@ -191,7 +201,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 
 	const overlays: Record<OverlayName, string> = {
 		refines: emitRefinesOverlay({ nodeMap, generatedIdTables }),
-		polymorphs: emitPolymorphsOverlay({ nodeMap, generatedIdTables, wires }),
+		polymorphs: polymorphsOverlay.text,
 		supertypes: overlayFrame(overlayImportPath(2), []).join('\n')
 	};
 	const factoriesBundle = emitBundleModule({ nodeMap, generatedIdTables });

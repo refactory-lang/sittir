@@ -81,7 +81,7 @@ describe('the engine a node belongs to', () => {
 			parameters: engine.build.parameters(),
 			body: engine.build.block()
 		});
-		fn.$trivia('// x');
+		fn.$trivia.leading('// x');
 		expect(stampOf((fn.$trivia.leading() as unknown[])[0])).toBe(engine);
 	});
 

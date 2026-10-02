@@ -20,16 +20,16 @@ interface Required3 {
 }
 type RequiredConfig = ConfigOf<Required3>;
 
-export const requiredFull: RequiredConfig = { op: '+', flags: 'a', async: true };
+export const requiredFull: RequiredConfig = { op: 1, flags: 'a', async: true };
 
 // @ts-expect-error a required kind-enum key rejects undefined.
 export const requiredOpUndefined: RequiredConfig = { op: undefined, flags: 'a', async: true };
 
 // @ts-expect-error a required bitflag key rejects undefined.
-export const requiredFlagsUndefined: RequiredConfig = { op: '+', flags: undefined, async: true };
+export const requiredFlagsUndefined: RequiredConfig = { op: 1, flags: undefined, async: true };
 
 // @ts-expect-error a required boolean-keyword key rejects undefined.
-export const requiredAsyncUndefined: RequiredConfig = { op: '+', flags: 'a', async: undefined };
+export const requiredAsyncUndefined: RequiredConfig = { op: 1, flags: 'a', async: undefined };
 
 // @ts-expect-error a required kind-enum key cannot be omitted.
 export const requiredOpOmitted: RequiredConfig = { flags: 'a', async: true };
@@ -44,3 +44,9 @@ type OptionalConfig = ConfigOf<Optional3>;
 
 export const optionalOmitted: OptionalConfig = {};
 export const optionalUndefined: OptionalConfig = { op: undefined, flags: undefined, async: undefined };
+
+// @ts-expect-error a strict kind-enum slot takes kind ids, not the text of a kind.
+export const opTextRejected: RequiredConfig = { op: '+', flags: 'a', async: true };
+
+// @ts-expect-error a strict boolean-keyword slot takes a boolean, not the keyword's text.
+export const asyncTextRejected: RequiredConfig = { op: 1, flags: 'a', async: 'async' };

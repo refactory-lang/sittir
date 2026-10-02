@@ -224,7 +224,7 @@ Rendering is format-preserving by default. Only what you rebuild renders in
 the canonical spelling; anything you left alone comes back as its own bytes,
 comments and blank lines and indentation included.
 
-## 3. Attach comments with `.$trivia()`
+## 3. Attach comments with `.$trivia`
 
 ```ts
 import { createEngine } from '@sittir/common';
@@ -254,7 +254,7 @@ const fn = ir
 	.$trivia.trailing(ir.lineComment('// end main'));
 ```
 
-`$trivia.leading(...)` and `$trivia.trailing(...)` each take a spread and set one side, keeping the other, so they chain. `$trivia(...)` still takes rest arguments (leading) or one `{ leading, trailing }` object.
+`$trivia.leading(...)` and `$trivia.trailing(...)` each take a spread and set one side, keeping the other, so they chain. `$trivia` is its positions; the node itself is not callable.
 
 A node with nothing in it takes inner trivia, rendered where its children would go:
 
@@ -693,7 +693,7 @@ export function emitIsModule(grammar: GrammarModel): string {
 - [ ] `ir.*(...)` — string → leaf, single → array, array → wrapped, omitted → none
 - [ ] `is.*()` runtime type guards
 - [ ] `$render()` producing byte-identical round-trips
-- [ ] `.$trivia()` — leading/trailing comment attachment, typed per grammar
+- [ ] `.$trivia` — leading/trailing comment attachment, typed per grammar
 - [ ] `$with.field(v)` — immutable per-field updates, chaining works
 - [ ] `snippets.*.fill({}).read()` / `.render()` — pre-compiled templates
 - [ ] `snippets.*.from({})` — template fill with coercion
