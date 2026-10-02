@@ -3920,13 +3920,11 @@ export function resolveStaticItem_visibilityModifier(
 	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
 }
 
-export function resolveStaticItem_refMarker(value: T.StaticItem.LooseConfig['refMarker']): T.StaticItem['_ref_marker'] {
+export function resolveStaticItem_ref(value: T.StaticItem.LooseConfig['ref']): T.StaticItem['_ref'] {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveStaticItem_mutableSpecifier(
-	value: T.StaticItem.LooseConfig['mutableSpecifier']
-): T.StaticItem['_mutable_specifier'] {
+export function resolveStaticItem_mutable(value: T.StaticItem.LooseConfig['mutable']): T.StaticItem['_mutable'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -3952,8 +3950,8 @@ export function coerceToStaticItem(input: T.StaticItem.Loose): ReturnType<typeof
 	if (!_isLooseConfig<T.StaticItem.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildStaticItem>;
 	return F.buildStaticItem({
 		visibilityModifier: resolveStaticItem_visibilityModifier(input.visibilityModifier),
-		refMarker: resolveStaticItem_refMarker(input.refMarker),
-		mutableSpecifier: resolveStaticItem_mutableSpecifier(input.mutableSpecifier),
+		ref: resolveStaticItem_ref(input.ref),
+		mutable: resolveStaticItem_mutable(input.mutable),
 		name: _requireField('static_item', 'name', resolveStaticItem_name(input.name)),
 		type: _requireField('static_item', 'type', resolveStaticItem_type(input.type)),
 		value: resolveStaticItem_value(input.value)
@@ -4325,9 +4323,7 @@ export function resolveTraitItem_visibilityModifier(
 	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
 }
 
-export function resolveTraitItem_unsafeMarker(
-	value: T.TraitItem.LooseConfig['unsafeMarker']
-): T.TraitItem['_unsafe_marker'] {
+export function resolveTraitItem_unsafe(value: T.TraitItem.LooseConfig['unsafe']): T.TraitItem['_unsafe'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -4359,7 +4355,7 @@ export function coerceToTraitItem(input: T.TraitItem.Loose): ReturnType<typeof F
 	if (!_isLooseConfig<T.TraitItem.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildTraitItem>;
 	return F.buildTraitItem({
 		visibilityModifier: resolveTraitItem_visibilityModifier(input.visibilityModifier),
-		unsafeMarker: resolveTraitItem_unsafeMarker(input.unsafeMarker),
+		unsafe: resolveTraitItem_unsafe(input.unsafe),
 		name: _requireField('trait_item', 'name', resolveTraitItem_name(input.name)),
 		typeParameters: resolveTraitItem_typeParameters(input.typeParameters),
 		bounds: resolveTraitItem_bounds(input.bounds),
@@ -4601,9 +4597,9 @@ export function coerceToLifetimeParameter(
 	});
 }
 
-export function resolveLetDeclaration_mutableSpecifier(
-	value: T.LetDeclaration.LooseConfig['mutableSpecifier']
-): T.LetDeclaration['_mutable_specifier'] {
+export function resolveLetDeclaration_mutable(
+	value: T.LetDeclaration.LooseConfig['mutable']
+): T.LetDeclaration['_mutable'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -4640,7 +4636,7 @@ export function coerceToLetDeclaration(input: T.LetDeclaration.Loose): ReturnTyp
 	if (!_isLooseConfig<T.LetDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildLetDeclaration>;
 	return F.buildLetDeclaration({
-		mutableSpecifier: resolveLetDeclaration_mutableSpecifier(input.mutableSpecifier),
+		mutable: resolveLetDeclaration_mutable(input.mutable),
 		pattern: _requireField('let_declaration', 'pattern', resolveLetDeclaration_pattern(input.pattern)),
 		type: resolveLetDeclaration_type(input.type),
 		value: resolveLetDeclaration_value(input.value),
@@ -5040,9 +5036,9 @@ export function resolveSelfParameter_lifetime(
 	return _resolveOneBranch<T.Lifetime>(value, 'lifetime', undefined, true);
 }
 
-export function resolveSelfParameter_mutableSpecifier(
-	value: T.SelfParameter.LooseConfig['mutableSpecifier']
-): T.SelfParameter['_mutable_specifier'] {
+export function resolveSelfParameter_mutable(
+	value: T.SelfParameter.LooseConfig['mutable']
+): T.SelfParameter['_mutable'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -5052,13 +5048,13 @@ export function coerceToSelfParameter(input?: T.SelfParameter.Loose): ReturnType
 	return F.buildSelfParameter({
 		reference: resolveSelfParameter_reference(input?.reference),
 		lifetime: resolveSelfParameter_lifetime(input?.lifetime),
-		mutableSpecifier: resolveSelfParameter_mutableSpecifier(input?.mutableSpecifier)
+		mutable: resolveSelfParameter_mutable(input?.mutable)
 	});
 }
 
-export function resolveVariadicParameter_mutableSpecifier(
-	value: T.VariadicParameter.LooseConfig['mutableSpecifier']
-): T.VariadicParameter['_mutable_specifier'] {
+export function resolveVariadicParameter_mutable(
+	value: T.VariadicParameter.LooseConfig['mutable']
+): T.VariadicParameter['_mutable'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -5077,14 +5073,12 @@ export function coerceToVariadicParameter(
 	if (!_isLooseConfig<T.VariadicParameter.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildVariadicParameter>;
 	return F.buildVariadicParameter({
-		mutableSpecifier: resolveVariadicParameter_mutableSpecifier(input?.mutableSpecifier),
+		mutable: resolveVariadicParameter_mutable(input?.mutable),
 		pattern: resolveVariadicParameter_pattern(input?.pattern)
 	});
 }
 
-export function resolveParameter_mutableSpecifier(
-	value: T.Parameter.LooseConfig['mutableSpecifier']
-): T.Parameter['_mutable_specifier'] {
+export function resolveParameter_mutable(value: T.Parameter.LooseConfig['mutable']): T.Parameter['_mutable'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -5107,7 +5101,7 @@ export function resolveParameter_type(value: T.Parameter.LooseConfig['type']): T
 export function coerceToParameter(input: T.Parameter.Loose): ReturnType<typeof F.buildParameter> {
 	if (!_isLooseConfig<T.Parameter.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildParameter>;
 	return F.buildParameter({
-		mutableSpecifier: resolveParameter_mutableSpecifier(input.mutableSpecifier),
+		mutable: resolveParameter_mutable(input.mutable),
 		name: _requireField('parameter', 'name', resolveParameter_name(input.name)),
 		type: _requireField('parameter', 'type', resolveParameter_type(input.type))
 	});
@@ -5548,9 +5542,9 @@ export function resolveReferenceType_lifetime(
 	return _resolveOneBranch<T.Lifetime>(value, 'lifetime', undefined, true);
 }
 
-export function resolveReferenceType_mutableSpecifier(
-	value: T.ReferenceType.LooseConfig['mutableSpecifier']
-): T.ReferenceType['_mutable_specifier'] {
+export function resolveReferenceType_mutable(
+	value: T.ReferenceType.LooseConfig['mutable']
+): T.ReferenceType['_mutable'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -5566,7 +5560,7 @@ export function coerceToReferenceType(input: T.ReferenceType.Loose): ReturnType<
 		return input as unknown as ReturnType<typeof F.buildReferenceType>;
 	return F.buildReferenceType({
 		lifetime: resolveReferenceType_lifetime(input.lifetime),
-		mutableSpecifier: resolveReferenceType_mutableSpecifier(input.mutableSpecifier),
+		mutable: resolveReferenceType_mutable(input.mutable),
 		type: _requireField('reference_type', 'type', resolveReferenceType_type(input.type))
 	});
 }
@@ -7159,9 +7153,7 @@ export function coerceToUnsafeBlock(input?: T.UnsafeBlock.Loose): ReturnType<typ
 	);
 }
 
-export function resolveAsyncBlock_moveMarker(
-	value: T.AsyncBlock.LooseConfig['moveMarker']
-): T.AsyncBlock['_move_marker'] {
+export function resolveAsyncBlock_move(value: T.AsyncBlock.LooseConfig['move']): T.AsyncBlock['_move'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -7173,12 +7165,12 @@ export function coerceToAsyncBlock(input?: T.AsyncBlock.Loose): ReturnType<typeo
 	if (!_isLooseConfig<T.AsyncBlock.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildAsyncBlock>;
 	return F.buildAsyncBlock({
-		moveMarker: resolveAsyncBlock_moveMarker(input?.moveMarker),
+		move: resolveAsyncBlock_move(input?.move),
 		body: resolveAsyncBlock_body(input?.body) ?? F.buildBlock()
 	});
 }
 
-export function resolveGenBlock_moveMarker(value: T.GenBlock.LooseConfig['moveMarker']): T.GenBlock['_move_marker'] {
+export function resolveGenBlock_move(value: T.GenBlock.LooseConfig['move']): T.GenBlock['_move'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -7190,7 +7182,7 @@ export function coerceToGenBlock(input?: T.GenBlock.Loose): ReturnType<typeof F.
 	if (!_isLooseConfig<T.GenBlock.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildGenBlock>;
 	return F.buildGenBlock({
-		moveMarker: resolveGenBlock_moveMarker(input?.moveMarker),
+		move: resolveGenBlock_move(input?.move),
 		body: resolveGenBlock_body(input?.body) ?? F.buildBlock()
 	});
 }
@@ -7438,9 +7430,9 @@ export function coerceToCapturedPattern(input: T.CapturedPattern.Loose): ReturnT
 	});
 }
 
-export function resolveReferencePattern_mutableSpecifier(
-	value: T.ReferencePattern.LooseConfig['mutableSpecifier']
-): T.ReferencePattern['_mutable_specifier'] {
+export function resolveReferencePattern_mutable(
+	value: T.ReferencePattern.LooseConfig['mutable']
+): T.ReferencePattern['_mutable'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -7457,7 +7449,7 @@ export function coerceToReferencePattern(input: T.ReferencePattern.Loose): Retur
 	if (!_isLooseConfig<T.ReferencePattern.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildReferencePattern>;
 	return F.buildReferencePattern({
-		mutableSpecifier: resolveReferencePattern_mutableSpecifier(input.mutableSpecifier),
+		mutable: resolveReferencePattern_mutable(input.mutable),
 		pattern: _requireField('reference_pattern', 'pattern', resolveReferencePattern_pattern(input.pattern))
 	});
 }
@@ -9480,21 +9472,21 @@ export function coerceToAttributeInput(input?: T.AttributeInput.Loose): ReturnTy
 	});
 }
 
-export function resolveClosureExpressionBlock_staticMarker(
-	value: T.ClosureExpressionBlock.LooseConfig['staticMarker']
-): T.ClosureExpressionBlock['_static_marker'] {
+export function resolveClosureExpressionBlock_static(
+	value: T.ClosureExpressionBlock.LooseConfig['static']
+): T.ClosureExpressionBlock['_static'] {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveClosureExpressionBlock_asyncMarker(
-	value: T.ClosureExpressionBlock.LooseConfig['asyncMarker']
-): T.ClosureExpressionBlock['_async_marker'] {
+export function resolveClosureExpressionBlock_async(
+	value: T.ClosureExpressionBlock.LooseConfig['async']
+): T.ClosureExpressionBlock['_async'] {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveClosureExpressionBlock_moveMarker(
-	value: T.ClosureExpressionBlock.LooseConfig['moveMarker']
-): T.ClosureExpressionBlock['_move_marker'] {
+export function resolveClosureExpressionBlock_move(
+	value: T.ClosureExpressionBlock.LooseConfig['move']
+): T.ClosureExpressionBlock['_move'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -9525,30 +9517,30 @@ export function coerceToClosureExpressionBlock(
 	if (!_isLooseConfig<T.ClosureExpressionBlock.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildClosureExpressionBlock>;
 	return F.buildClosureExpressionBlock({
-		staticMarker: resolveClosureExpressionBlock_staticMarker(input?.staticMarker),
-		asyncMarker: resolveClosureExpressionBlock_asyncMarker(input?.asyncMarker),
-		moveMarker: resolveClosureExpressionBlock_moveMarker(input?.moveMarker),
+		static: resolveClosureExpressionBlock_static(input?.static),
+		async: resolveClosureExpressionBlock_async(input?.async),
+		move: resolveClosureExpressionBlock_move(input?.move),
 		parameters: resolveClosureExpressionBlock_parameters(input?.parameters) ?? F.buildClosureParameters(),
 		returnType: resolveClosureExpressionBlock_returnType(input?.returnType),
 		body: resolveClosureExpressionBlock_body(input?.body) ?? F.buildBlock()
 	});
 }
 
-export function resolveClosureExpressionExpr_staticMarker(
-	value: T.ClosureExpressionExpr.LooseConfig['staticMarker']
-): T.ClosureExpressionExpr['_static_marker'] {
+export function resolveClosureExpressionExpr_static(
+	value: T.ClosureExpressionExpr.LooseConfig['static']
+): T.ClosureExpressionExpr['_static'] {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveClosureExpressionExpr_asyncMarker(
-	value: T.ClosureExpressionExpr.LooseConfig['asyncMarker']
-): T.ClosureExpressionExpr['_async_marker'] {
+export function resolveClosureExpressionExpr_async(
+	value: T.ClosureExpressionExpr.LooseConfig['async']
+): T.ClosureExpressionExpr['_async'] {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveClosureExpressionExpr_moveMarker(
-	value: T.ClosureExpressionExpr.LooseConfig['moveMarker']
-): T.ClosureExpressionExpr['_move_marker'] {
+export function resolveClosureExpressionExpr_move(
+	value: T.ClosureExpressionExpr.LooseConfig['move']
+): T.ClosureExpressionExpr['_move'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -9575,9 +9567,9 @@ export function coerceToClosureExpressionExpr(
 	if (!_isLooseConfig<T.ClosureExpressionExpr.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildClosureExpressionExpr>;
 	return F.buildClosureExpressionExpr({
-		staticMarker: resolveClosureExpressionExpr_staticMarker(input.staticMarker),
-		asyncMarker: resolveClosureExpressionExpr_asyncMarker(input.asyncMarker),
-		moveMarker: resolveClosureExpressionExpr_moveMarker(input.moveMarker),
+		static: resolveClosureExpressionExpr_static(input.static),
+		async: resolveClosureExpressionExpr_async(input.async),
+		move: resolveClosureExpressionExpr_move(input.move),
 		parameters: resolveClosureExpressionExpr_parameters(input.parameters) ?? F.buildClosureParameters(),
 		body: _requireField('closure_expression_expr', 'body', resolveClosureExpressionExpr_body(input.body))
 	});
@@ -9759,9 +9751,7 @@ export function coerceToImplItemNegativeClause(
 	);
 }
 
-export function resolveImplItemBody_unsafeMarker(
-	value: T.ImplItemBody.LooseConfig['unsafeMarker']
-): T.ImplItemBody['_unsafe_marker'] {
+export function resolveImplItemBody_unsafe(value: T.ImplItemBody.LooseConfig['unsafe']): T.ImplItemBody['_unsafe'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -9805,7 +9795,7 @@ export function coerceToImplItemBody(input: T.ImplItemBody.Loose): ReturnType<ty
 	if (!_isLooseConfig<T.ImplItemBody.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildImplItemBody>;
 	return F.buildImplItemBody({
-		unsafeMarker: resolveImplItemBody_unsafeMarker(input.unsafeMarker),
+		unsafe: resolveImplItemBody_unsafe(input.unsafe),
 		typeParameters: resolveImplItemBody_typeParameters(input.typeParameters),
 		traitClause: resolveImplItemBody_traitClause(input.traitClause),
 		type: _requireField('impl_item_body', 'type', resolveImplItemBody_type(input.type)),
@@ -9814,9 +9804,7 @@ export function coerceToImplItemBody(input: T.ImplItemBody.Loose): ReturnType<ty
 	});
 }
 
-export function resolveImplItemSemi_unsafeMarker(
-	value: T.ImplItemSemi.LooseConfig['unsafeMarker']
-): T.ImplItemSemi['_unsafe_marker'] {
+export function resolveImplItemSemi_unsafe(value: T.ImplItemSemi.LooseConfig['unsafe']): T.ImplItemSemi['_unsafe'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -9854,7 +9842,7 @@ export function coerceToImplItemSemi(input: T.ImplItemSemi.Loose): ReturnType<ty
 	if (!_isLooseConfig<T.ImplItemSemi.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildImplItemSemi>;
 	return F.buildImplItemSemi({
-		unsafeMarker: resolveImplItemSemi_unsafeMarker(input.unsafeMarker),
+		unsafe: resolveImplItemSemi_unsafe(input.unsafe),
 		typeParameters: resolveImplItemSemi_typeParameters(input.typeParameters),
 		traitClause: resolveImplItemSemi_traitClause(input.traitClause),
 		type: _requireField('impl_item_semi', 'type', resolveImplItemSemi_type(input.type)),
@@ -10929,15 +10917,15 @@ export function coerceToDelimTokenTreeBrace(
 	);
 }
 
-export function resolveFieldPatternShorthand_refMarker(
-	value: T.FieldPatternShorthand.LooseConfig['refMarker']
-): T.FieldPatternShorthand['_ref_marker'] {
+export function resolveFieldPatternShorthand_ref(
+	value: T.FieldPatternShorthand.LooseConfig['ref']
+): T.FieldPatternShorthand['_ref'] {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveFieldPatternShorthand_mutableSpecifier(
-	value: T.FieldPatternShorthand.LooseConfig['mutableSpecifier']
-): T.FieldPatternShorthand['_mutable_specifier'] {
+export function resolveFieldPatternShorthand_mutable(
+	value: T.FieldPatternShorthand.LooseConfig['mutable']
+): T.FieldPatternShorthand['_mutable'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -10953,21 +10941,21 @@ export function coerceToFieldPatternShorthand(
 	if (!_isLooseConfig<T.FieldPatternShorthand.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFieldPatternShorthand>;
 	return F.buildFieldPatternShorthand({
-		refMarker: resolveFieldPatternShorthand_refMarker(input.refMarker),
-		mutableSpecifier: resolveFieldPatternShorthand_mutableSpecifier(input.mutableSpecifier),
+		ref: resolveFieldPatternShorthand_ref(input.ref),
+		mutable: resolveFieldPatternShorthand_mutable(input.mutable),
 		name: _requireField('field_pattern_shorthand', 'name', resolveFieldPatternShorthand_name(input.name))
 	});
 }
 
-export function resolveFieldPatternNamed_refMarker(
-	value: T.FieldPatternNamed.LooseConfig['refMarker']
-): T.FieldPatternNamed['_ref_marker'] {
+export function resolveFieldPatternNamed_ref(
+	value: T.FieldPatternNamed.LooseConfig['ref']
+): T.FieldPatternNamed['_ref'] {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveFieldPatternNamed_mutableSpecifier(
-	value: T.FieldPatternNamed.LooseConfig['mutableSpecifier']
-): T.FieldPatternNamed['_mutable_specifier'] {
+export function resolveFieldPatternNamed_mutable(
+	value: T.FieldPatternNamed.LooseConfig['mutable']
+): T.FieldPatternNamed['_mutable'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -10992,8 +10980,8 @@ export function coerceToFieldPatternNamed(
 	if (!_isLooseConfig<T.FieldPatternNamed.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFieldPatternNamed>;
 	return F.buildFieldPatternNamed({
-		refMarker: resolveFieldPatternNamed_refMarker(input.refMarker),
-		mutableSpecifier: resolveFieldPatternNamed_mutableSpecifier(input.mutableSpecifier),
+		ref: resolveFieldPatternNamed_ref(input.ref),
+		mutable: resolveFieldPatternNamed_mutable(input.mutable),
 		name: _requireField('field_pattern_named', 'name', resolveFieldPatternNamed_name(input.name)),
 		pattern: _requireField('field_pattern_named', 'pattern', resolveFieldPatternNamed_pattern(input.pattern))
 	});

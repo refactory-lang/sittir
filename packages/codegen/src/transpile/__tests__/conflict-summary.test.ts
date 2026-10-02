@@ -33,7 +33,7 @@ const report: ConflictReport = {
 	]
 };
 
-const consoleNoise = "transform: override field('async_marker') on 'for_in_clause' wraps an enrich-labeled FIELD — duplicate name ('async_marker').";
+const consoleNoise = "transform: override field('async') on 'for_in_clause' wraps an enrich-labeled FIELD — duplicate name ('async').";
 
 describe('parseGenerateOutcome', () => {
 	it('reads the conflict report that follows grammar console output on stderr', () => {

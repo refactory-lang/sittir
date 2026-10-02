@@ -5,7 +5,7 @@ import { createEngine } from '@sittir/common';
 const rs = await createEngine(rust);
 
 // A kind with one required forwarding slot (body: Block) beside optional
-// sibling slots (moveMarker) takes no argument on either surface.
+// sibling slots (move) takes no argument on either surface.
 // Construction only: $render() needs the native binding.
 describe('optional sibling + one required forwarding slot', () => {
 	it('constructs empty on the strict surface without throwing', () => {

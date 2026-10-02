@@ -3434,14 +3434,7 @@ export function wrapConstItem(data: T.ConstItem, tree: TreeHandle): T.ConstItem.
 }
 
 export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle): T.StaticItem.Parsed {
-	data = _keepModelledSlots(data, [
-		'_visibility_modifier',
-		'_ref_marker',
-		'_mutable_specifier',
-		'_name',
-		'_type',
-		'_value'
-	]);
+	data = _keepModelledSlots(data, ['_visibility_modifier', '_ref', '_mutable', '_name', '_type', '_value']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -3468,19 +3461,19 @@ export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle): T.StaticIt
 			}),
 			tree
 		),
-		_ref_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._ref_marker, 'ref_marker', false, data.$type, {
+		_ref: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._ref, 'ref', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'ref_marker',
+				slotName: 'ref',
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_mutable_specifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._mutable_specifier, 'mutable_specifier', false, data.$type, {
+		_mutable: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._mutable, 'mutable', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'mutable_specifier',
+				slotName: 'mutable',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -3544,11 +3537,11 @@ export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle): T.StaticIt
 		visibilityModifier() {
 			return hydrateChild<T.VisibilityModifier | undefined>(this._visibility_modifier, tree);
 		},
-		refMarker() {
-			return this._ref_marker;
+		ref() {
+			return this._ref;
 		},
-		mutableSpecifier() {
-			return this._mutable_specifier;
+		mutable() {
+			return this._mutable;
 		},
 		name() {
 			return hydrateChild<T.Identifier>(this._name, tree);
@@ -3562,10 +3555,10 @@ export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle): T.StaticIt
 		$with: {
 			visibilityModifier: (v: NonNullable<T.StaticItem['_visibility_modifier']>) =>
 				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _visibility_modifier: v }, tree)),
-			refMarker: (v: NonNullable<T.StaticItem['_ref_marker']>) =>
-				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _ref_marker: v }, tree)),
-			mutableSpecifier: (v: NonNullable<T.StaticItem['_mutable_specifier']>) =>
-				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _mutable_specifier: v }, tree)),
+			ref: (v: NonNullable<T.StaticItem['_ref']>) =>
+				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _ref: v }, tree)),
+			mutable: (v: NonNullable<T.StaticItem['_mutable']>) =>
+				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _mutable: v }, tree)),
 			name: (v: NonNullable<T.StaticItem['_name']>) =>
 				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _name: v }, tree)),
 			type: (v: NonNullable<T.StaticItem['_type']>) =>
@@ -4380,7 +4373,7 @@ export function wrapImplItem(
 export function wrapTraitItem(data: T.TraitItem, tree: TreeHandle): T.TraitItem.Parsed {
 	data = _keepModelledSlots(data, [
 		'_visibility_modifier',
-		'_unsafe_marker',
+		'_unsafe',
 		'_name',
 		'_type_parameters',
 		'_bounds',
@@ -4413,11 +4406,11 @@ export function wrapTraitItem(data: T.TraitItem, tree: TreeHandle): T.TraitItem.
 			}),
 			tree
 		),
-		_unsafe_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._unsafe_marker, 'unsafe_marker', false, data.$type, {
+		_unsafe: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._unsafe, 'unsafe', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'unsafe_marker',
+				slotName: 'unsafe',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -4470,8 +4463,8 @@ export function wrapTraitItem(data: T.TraitItem, tree: TreeHandle): T.TraitItem.
 		visibilityModifier() {
 			return hydrateChild<T.VisibilityModifier | undefined>(this._visibility_modifier, tree);
 		},
-		unsafeMarker() {
-			return this._unsafe_marker;
+		unsafe() {
+			return this._unsafe;
 		},
 		name() {
 			return hydrateChild<T.TypeIdentifier>(this._name, tree);
@@ -4491,8 +4484,8 @@ export function wrapTraitItem(data: T.TraitItem, tree: TreeHandle): T.TraitItem.
 		$with: {
 			visibilityModifier: (v: NonNullable<T.TraitItem['_visibility_modifier']>) =>
 				rebuilt(node, handle, () => wrapTraitItem({ ...$edited(data), _visibility_modifier: v }, tree)),
-			unsafeMarker: (v: NonNullable<T.TraitItem['_unsafe_marker']>) =>
-				rebuilt(node, handle, () => wrapTraitItem({ ...$edited(data), _unsafe_marker: v }, tree)),
+			unsafe: (v: NonNullable<T.TraitItem['_unsafe']>) =>
+				rebuilt(node, handle, () => wrapTraitItem({ ...$edited(data), _unsafe: v }, tree)),
 			name: (v: NonNullable<T.TraitItem['_name']>) =>
 				rebuilt(node, handle, () => wrapTraitItem({ ...$edited(data), _name: v }, tree)),
 			typeParameters: (...args: unknown[]) =>
@@ -5116,7 +5109,7 @@ export function wrapLifetimeParameter(data: T.LifetimeParameter, tree: TreeHandl
 }
 
 export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle): T.LetDeclaration.Parsed {
-	data = _keepModelledSlots(data, ['_mutable_specifier', '_pattern', '_type', '_value', '_alternative']);
+	data = _keepModelledSlots(data, ['_mutable', '_pattern', '_type', '_value', '_alternative']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -5134,11 +5127,11 @@ export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle): T.
 	const node = {
 		...data,
 		$type: TSKindId.LetDeclaration as const,
-		_mutable_specifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._mutable_specifier, 'mutable_specifier', false, data.$type, {
+		_mutable: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._mutable, 'mutable', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'mutable_specifier',
+				slotName: 'mutable',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -5213,8 +5206,8 @@ export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle): T.
 			tree
 		),
 
-		mutableSpecifier() {
-			return this._mutable_specifier;
+		mutable() {
+			return this._mutable;
 		},
 		pattern() {
 			return hydrateChild<T.Pattern>(this._pattern, tree);
@@ -5229,8 +5222,8 @@ export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle): T.
 			return hydrateChild<T.Block | undefined>(this._alternative, tree);
 		},
 		$with: {
-			mutableSpecifier: (v: NonNullable<T.LetDeclaration['_mutable_specifier']>) =>
-				rebuilt(node, handle, () => wrapLetDeclaration({ ...$edited(data), _mutable_specifier: v }, tree)),
+			mutable: (v: NonNullable<T.LetDeclaration['_mutable']>) =>
+				rebuilt(node, handle, () => wrapLetDeclaration({ ...$edited(data), _mutable: v }, tree)),
 			pattern: (v: NonNullable<T.LetDeclaration['_pattern']>) =>
 				rebuilt(node, handle, () => wrapLetDeclaration({ ...$edited(data), _pattern: v }, tree)),
 			type: (v: NonNullable<T.LetDeclaration['_type']>) =>
@@ -5873,7 +5866,7 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 }
 
 export function wrapSelfParameter(data: T.SelfParameter, tree: TreeHandle): T.SelfParameter.Parsed {
-	data = _keepModelledSlots(data, ['_reference', '_lifetime', '_mutable_specifier']);
+	data = _keepModelledSlots(data, ['_reference', '_lifetime', '_mutable']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -5908,11 +5901,11 @@ export function wrapSelfParameter(data: T.SelfParameter, tree: TreeHandle): T.Se
 			}),
 			tree
 		),
-		_mutable_specifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._mutable_specifier, 'mutable_specifier', false, data.$type, {
+		_mutable: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._mutable, 'mutable', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'mutable_specifier',
+				slotName: 'mutable',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -5923,16 +5916,16 @@ export function wrapSelfParameter(data: T.SelfParameter, tree: TreeHandle): T.Se
 		lifetime() {
 			return hydrateChild<T.Lifetime | undefined>(this._lifetime, tree);
 		},
-		mutableSpecifier() {
-			return this._mutable_specifier;
+		mutable() {
+			return this._mutable;
 		},
 		$with: {
 			reference: (v: NonNullable<T.SelfParameter['_reference']>) =>
 				rebuilt(node, handle, () => wrapSelfParameter({ ...$edited(data), _reference: v }, tree)),
 			lifetime: (v: NonNullable<T.SelfParameter['_lifetime']>) =>
 				rebuilt(node, handle, () => wrapSelfParameter({ ...$edited(data), _lifetime: v }, tree)),
-			mutableSpecifier: (v: NonNullable<T.SelfParameter['_mutable_specifier']>) =>
-				rebuilt(node, handle, () => wrapSelfParameter({ ...$edited(data), _mutable_specifier: v }, tree))
+			mutable: (v: NonNullable<T.SelfParameter['_mutable']>) =>
+				rebuilt(node, handle, () => wrapSelfParameter({ ...$edited(data), _mutable: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -5945,7 +5938,7 @@ export function wrapSelfParameter(data: T.SelfParameter, tree: TreeHandle): T.Se
 }
 
 export function wrapVariadicParameter(data: T.VariadicParameter, tree: TreeHandle): T.VariadicParameter.Parsed {
-	data = _keepModelledSlots(data, ['_mutable_specifier', '_pattern']);
+	data = _keepModelledSlots(data, ['_mutable', '_pattern']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -5963,11 +5956,11 @@ export function wrapVariadicParameter(data: T.VariadicParameter, tree: TreeHandl
 	const node = {
 		...data,
 		$type: TSKindId.VariadicParameter as const,
-		_mutable_specifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._mutable_specifier, 'mutable_specifier', false, data.$type, {
+		_mutable: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._mutable, 'mutable', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'mutable_specifier',
+				slotName: 'mutable',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -5986,15 +5979,15 @@ export function wrapVariadicParameter(data: T.VariadicParameter, tree: TreeHandl
 			tree
 		),
 
-		mutableSpecifier() {
-			return this._mutable_specifier;
+		mutable() {
+			return this._mutable;
 		},
 		pattern() {
 			return hydrateChild<T.Pattern | undefined>(this._pattern, tree);
 		},
 		$with: {
-			mutableSpecifier: (v: NonNullable<T.VariadicParameter['_mutable_specifier']>) =>
-				rebuilt(node, handle, () => wrapVariadicParameter({ ...$edited(data), _mutable_specifier: v }, tree)),
+			mutable: (v: NonNullable<T.VariadicParameter['_mutable']>) =>
+				rebuilt(node, handle, () => wrapVariadicParameter({ ...$edited(data), _mutable: v }, tree)),
 			pattern: (v: NonNullable<T.VariadicParameter['_pattern']>) =>
 				rebuilt(node, handle, () => wrapVariadicParameter({ ...$edited(data), _pattern: v }, tree))
 		},
@@ -6009,7 +6002,7 @@ export function wrapVariadicParameter(data: T.VariadicParameter, tree: TreeHandl
 }
 
 export function wrapParameter(data: T.Parameter, tree: TreeHandle): T.Parameter.Parsed {
-	data = _keepModelledSlots(data, ['_mutable_specifier', '_name', '_type']);
+	data = _keepModelledSlots(data, ['_mutable', '_name', '_type']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -6027,11 +6020,11 @@ export function wrapParameter(data: T.Parameter, tree: TreeHandle): T.Parameter.
 	const node = {
 		...data,
 		$type: TSKindId.Parameter as const,
-		_mutable_specifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._mutable_specifier, 'mutable_specifier', false, data.$type, {
+		_mutable: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._mutable, 'mutable', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'mutable_specifier',
+				slotName: 'mutable',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -6083,8 +6076,8 @@ export function wrapParameter(data: T.Parameter, tree: TreeHandle): T.Parameter.
 			tree
 		),
 
-		mutableSpecifier() {
-			return this._mutable_specifier;
+		mutable() {
+			return this._mutable;
 		},
 		name() {
 			return hydrateChild<T.Pattern | TSKindId.Self>(this._name, tree);
@@ -6093,8 +6086,8 @@ export function wrapParameter(data: T.Parameter, tree: TreeHandle): T.Parameter.
 			return hydrateChild<T.Type>(this._type, tree);
 		},
 		$with: {
-			mutableSpecifier: (v: NonNullable<T.Parameter['_mutable_specifier']>) =>
-				rebuilt(node, handle, () => wrapParameter({ ...$edited(data), _mutable_specifier: v }, tree)),
+			mutable: (v: NonNullable<T.Parameter['_mutable']>) =>
+				rebuilt(node, handle, () => wrapParameter({ ...$edited(data), _mutable: v }, tree)),
 			name: (v: NonNullable<T.Parameter['_name']>) =>
 				rebuilt(node, handle, () => wrapParameter({ ...$edited(data), _name: v }, tree)),
 			type: (v: NonNullable<T.Parameter['_type']>) =>
@@ -7271,7 +7264,7 @@ export function wrapTypeBinding(data: T.TypeBinding, tree: TreeHandle): T.TypeBi
 }
 
 export function wrapReferenceType(data: T.ReferenceType, tree: TreeHandle): T.ReferenceType.Parsed {
-	data = _keepModelledSlots(data, ['_lifetime', '_mutable_specifier', '_type']);
+	data = _keepModelledSlots(data, ['_lifetime', '_mutable', '_type']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -7298,11 +7291,11 @@ export function wrapReferenceType(data: T.ReferenceType, tree: TreeHandle): T.Re
 			}),
 			tree
 		),
-		_mutable_specifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._mutable_specifier, 'mutable_specifier', false, data.$type, {
+		_mutable: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._mutable, 'mutable', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'mutable_specifier',
+				slotName: 'mutable',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -7343,8 +7336,8 @@ export function wrapReferenceType(data: T.ReferenceType, tree: TreeHandle): T.Re
 		lifetime() {
 			return hydrateChild<T.Lifetime | undefined>(this._lifetime, tree);
 		},
-		mutableSpecifier() {
-			return this._mutable_specifier;
+		mutable() {
+			return this._mutable;
 		},
 		type() {
 			return hydrateChild<T.Type>(this._type, tree);
@@ -7352,8 +7345,8 @@ export function wrapReferenceType(data: T.ReferenceType, tree: TreeHandle): T.Re
 		$with: {
 			lifetime: (v: NonNullable<T.ReferenceType['_lifetime']>) =>
 				rebuilt(node, handle, () => wrapReferenceType({ ...$edited(data), _lifetime: v }, tree)),
-			mutableSpecifier: (v: NonNullable<T.ReferenceType['_mutable_specifier']>) =>
-				rebuilt(node, handle, () => wrapReferenceType({ ...$edited(data), _mutable_specifier: v }, tree)),
+			mutable: (v: NonNullable<T.ReferenceType['_mutable']>) =>
+				rebuilt(node, handle, () => wrapReferenceType({ ...$edited(data), _mutable: v }, tree)),
 			type: (v: NonNullable<T.ReferenceType['_type']>) =>
 				rebuilt(node, handle, () => wrapReferenceType({ ...$edited(data), _type: v }, tree))
 		},
@@ -11307,7 +11300,7 @@ export function wrapUnsafeBlock(data: T.UnsafeBlock, tree: TreeHandle): T.Unsafe
 }
 
 export function wrapAsyncBlock(data: T.AsyncBlock, tree: TreeHandle): T.AsyncBlock.Parsed {
-	data = _keepModelledSlots(data, ['_move_marker', '_body']);
+	data = _keepModelledSlots(data, ['_move', '_body']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -11325,11 +11318,11 @@ export function wrapAsyncBlock(data: T.AsyncBlock, tree: TreeHandle): T.AsyncBlo
 	const node = {
 		...data,
 		$type: TSKindId.AsyncBlock as const,
-		_move_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._move_marker, 'move_marker', false, data.$type, {
+		_move: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._move, 'move', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'move_marker',
+				slotName: 'move',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -11343,15 +11336,15 @@ export function wrapAsyncBlock(data: T.AsyncBlock, tree: TreeHandle): T.AsyncBlo
 			tree
 		),
 
-		moveMarker() {
-			return this._move_marker;
+		move() {
+			return this._move;
 		},
 		body() {
 			return hydrateChild<T.Block>(this._body, tree);
 		},
 		$with: {
-			moveMarker: (v: NonNullable<T.AsyncBlock['_move_marker']>) =>
-				rebuilt(node, handle, () => wrapAsyncBlock({ ...$edited(data), _move_marker: v }, tree)),
+			move: (v: NonNullable<T.AsyncBlock['_move']>) =>
+				rebuilt(node, handle, () => wrapAsyncBlock({ ...$edited(data), _move: v }, tree)),
 			body: (v: NonNullable<T.AsyncBlock['_body']>) =>
 				rebuilt(node, handle, () => wrapAsyncBlock({ ...$edited(data), _body: v }, tree))
 		},
@@ -11366,7 +11359,7 @@ export function wrapAsyncBlock(data: T.AsyncBlock, tree: TreeHandle): T.AsyncBlo
 }
 
 export function wrapGenBlock(data: T.GenBlock, tree: TreeHandle): T.GenBlock.Parsed {
-	data = _keepModelledSlots(data, ['_move_marker', '_body']);
+	data = _keepModelledSlots(data, ['_move', '_body']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -11384,11 +11377,11 @@ export function wrapGenBlock(data: T.GenBlock, tree: TreeHandle): T.GenBlock.Par
 	const node = {
 		...data,
 		$type: TSKindId.GenBlock as const,
-		_move_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._move_marker, 'move_marker', false, data.$type, {
+		_move: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._move, 'move', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'move_marker',
+				slotName: 'move',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -11402,15 +11395,15 @@ export function wrapGenBlock(data: T.GenBlock, tree: TreeHandle): T.GenBlock.Par
 			tree
 		),
 
-		moveMarker() {
-			return this._move_marker;
+		move() {
+			return this._move;
 		},
 		body() {
 			return hydrateChild<T.Block>(this._body, tree);
 		},
 		$with: {
-			moveMarker: (v: NonNullable<T.GenBlock['_move_marker']>) =>
-				rebuilt(node, handle, () => wrapGenBlock({ ...$edited(data), _move_marker: v }, tree)),
+			move: (v: NonNullable<T.GenBlock['_move']>) =>
+				rebuilt(node, handle, () => wrapGenBlock({ ...$edited(data), _move: v }, tree)),
 			body: (v: NonNullable<T.GenBlock['_body']>) =>
 				rebuilt(node, handle, () => wrapGenBlock({ ...$edited(data), _body: v }, tree))
 		},
@@ -12186,7 +12179,7 @@ export function wrapCapturedPattern(data: T.CapturedPattern, tree: TreeHandle): 
 }
 
 export function wrapReferencePattern(data: T.ReferencePattern, tree: TreeHandle): T.ReferencePattern.Parsed {
-	data = _keepModelledSlots(data, ['_mutable_specifier', '_pattern']);
+	data = _keepModelledSlots(data, ['_mutable', '_pattern']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -12204,11 +12197,11 @@ export function wrapReferencePattern(data: T.ReferencePattern, tree: TreeHandle)
 	const node = {
 		...data,
 		$type: TSKindId.ReferencePattern as const,
-		_mutable_specifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._mutable_specifier, 'mutable_specifier', false, data.$type, {
+		_mutable: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._mutable, 'mutable', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'mutable_specifier',
+				slotName: 'mutable',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -12227,15 +12220,15 @@ export function wrapReferencePattern(data: T.ReferencePattern, tree: TreeHandle)
 			tree
 		),
 
-		mutableSpecifier() {
-			return this._mutable_specifier;
+		mutable() {
+			return this._mutable;
 		},
 		pattern() {
 			return hydrateChild<T.Pattern>(this._pattern, tree);
 		},
 		$with: {
-			mutableSpecifier: (v: NonNullable<T.ReferencePattern['_mutable_specifier']>) =>
-				rebuilt(node, handle, () => wrapReferencePattern({ ...$edited(data), _mutable_specifier: v }, tree)),
+			mutable: (v: NonNullable<T.ReferencePattern['_mutable']>) =>
+				rebuilt(node, handle, () => wrapReferencePattern({ ...$edited(data), _mutable: v }, tree)),
 			pattern: (v: NonNullable<T.ReferencePattern['_pattern']>) =>
 				rebuilt(node, handle, () => wrapReferencePattern({ ...$edited(data), _pattern: v }, tree))
 		},
@@ -15033,14 +15026,7 @@ export function wrapClosureExpressionBlock(
 	data: T.ClosureExpressionBlock,
 	tree: TreeHandle
 ): T.ClosureExpressionBlock.Parsed {
-	data = _keepModelledSlots(data, [
-		'_static_marker',
-		'_async_marker',
-		'_move_marker',
-		'_parameters',
-		'_return_type',
-		'_body'
-	]);
+	data = _keepModelledSlots(data, ['_static', '_async', '_move', '_parameters', '_return_type', '_body']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -15058,27 +15044,27 @@ export function wrapClosureExpressionBlock(
 	const node = {
 		...data,
 		$type: TSKindId.ClosureExpressionBlock as const,
-		_static_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._static_marker, 'static_marker', false, data.$type, {
+		_static: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._static, 'static', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'static_marker',
+				slotName: 'static',
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_async_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._async_marker, 'async_marker', false, data.$type, {
+		_async: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._async, 'async', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'async_marker',
+				slotName: 'async',
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_move_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._move_marker, 'move_marker', false, data.$type, {
+		_move: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._move, 'move', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'move_marker',
+				slotName: 'move',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -15134,14 +15120,14 @@ export function wrapClosureExpressionBlock(
 			tree
 		),
 
-		staticMarker() {
-			return this._static_marker;
+		static() {
+			return this._static;
 		},
-		asyncMarker() {
-			return this._async_marker;
+		async() {
+			return this._async;
 		},
-		moveMarker() {
-			return this._move_marker;
+		move() {
+			return this._move;
 		},
 		parameters() {
 			return hydrateChild<T.ClosureParameters>(this._parameters, tree);
@@ -15153,12 +15139,12 @@ export function wrapClosureExpressionBlock(
 			return hydrateChild<T.Block>(this._body, tree);
 		},
 		$with: {
-			staticMarker: (v: NonNullable<T.ClosureExpressionBlock['_static_marker']>) =>
-				rebuilt(node, handle, () => wrapClosureExpressionBlock({ ...$edited(data), _static_marker: v }, tree)),
-			asyncMarker: (v: NonNullable<T.ClosureExpressionBlock['_async_marker']>) =>
-				rebuilt(node, handle, () => wrapClosureExpressionBlock({ ...$edited(data), _async_marker: v }, tree)),
-			moveMarker: (v: NonNullable<T.ClosureExpressionBlock['_move_marker']>) =>
-				rebuilt(node, handle, () => wrapClosureExpressionBlock({ ...$edited(data), _move_marker: v }, tree)),
+			static: (v: NonNullable<T.ClosureExpressionBlock['_static']>) =>
+				rebuilt(node, handle, () => wrapClosureExpressionBlock({ ...$edited(data), _static: v }, tree)),
+			async: (v: NonNullable<T.ClosureExpressionBlock['_async']>) =>
+				rebuilt(node, handle, () => wrapClosureExpressionBlock({ ...$edited(data), _async: v }, tree)),
+			move: (v: NonNullable<T.ClosureExpressionBlock['_move']>) =>
+				rebuilt(node, handle, () => wrapClosureExpressionBlock({ ...$edited(data), _move: v }, tree)),
 			parameters: (v: NonNullable<T.ClosureExpressionBlock['_parameters']>) =>
 				rebuilt(node, handle, () => wrapClosureExpressionBlock({ ...$edited(data), _parameters: v }, tree)),
 			returnType: (v: NonNullable<T.ClosureExpressionBlock['_return_type']>) =>
@@ -15180,7 +15166,7 @@ export function wrapClosureExpressionExpr(
 	data: T.ClosureExpressionExpr,
 	tree: TreeHandle
 ): T.ClosureExpressionExpr.Parsed {
-	data = _keepModelledSlots(data, ['_static_marker', '_async_marker', '_move_marker', '_parameters', '_body']);
+	data = _keepModelledSlots(data, ['_static', '_async', '_move', '_parameters', '_body']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -15198,27 +15184,27 @@ export function wrapClosureExpressionExpr(
 	const node = {
 		...data,
 		$type: TSKindId.ClosureExpressionExpr as const,
-		_static_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._static_marker, 'static_marker', false, data.$type, {
+		_static: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._static, 'static', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'static_marker',
+				slotName: 'static',
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_async_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._async_marker, 'async_marker', false, data.$type, {
+		_async: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._async, 'async', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'async_marker',
+				slotName: 'async',
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_move_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._move_marker, 'move_marker', false, data.$type, {
+		_move: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._move, 'move', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'move_marker',
+				slotName: 'move',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -15246,14 +15232,14 @@ export function wrapClosureExpressionExpr(
 			tree
 		),
 
-		staticMarker() {
-			return this._static_marker;
+		static() {
+			return this._static;
 		},
-		asyncMarker() {
-			return this._async_marker;
+		async() {
+			return this._async;
 		},
-		moveMarker() {
-			return this._move_marker;
+		move() {
+			return this._move;
 		},
 		parameters() {
 			return hydrateChild<T.ClosureParameters>(this._parameters, tree);
@@ -15262,12 +15248,12 @@ export function wrapClosureExpressionExpr(
 			return hydrateChild<T.Expression | TSKindId.Underscore>(this._body, tree);
 		},
 		$with: {
-			staticMarker: (v: NonNullable<T.ClosureExpressionExpr['_static_marker']>) =>
-				rebuilt(node, handle, () => wrapClosureExpressionExpr({ ...$edited(data), _static_marker: v }, tree)),
-			asyncMarker: (v: NonNullable<T.ClosureExpressionExpr['_async_marker']>) =>
-				rebuilt(node, handle, () => wrapClosureExpressionExpr({ ...$edited(data), _async_marker: v }, tree)),
-			moveMarker: (v: NonNullable<T.ClosureExpressionExpr['_move_marker']>) =>
-				rebuilt(node, handle, () => wrapClosureExpressionExpr({ ...$edited(data), _move_marker: v }, tree)),
+			static: (v: NonNullable<T.ClosureExpressionExpr['_static']>) =>
+				rebuilt(node, handle, () => wrapClosureExpressionExpr({ ...$edited(data), _static: v }, tree)),
+			async: (v: NonNullable<T.ClosureExpressionExpr['_async']>) =>
+				rebuilt(node, handle, () => wrapClosureExpressionExpr({ ...$edited(data), _async: v }, tree)),
+			move: (v: NonNullable<T.ClosureExpressionExpr['_move']>) =>
+				rebuilt(node, handle, () => wrapClosureExpressionExpr({ ...$edited(data), _move: v }, tree)),
 			parameters: (v: NonNullable<T.ClosureExpressionExpr['_parameters']>) =>
 				rebuilt(node, handle, () => wrapClosureExpressionExpr({ ...$edited(data), _parameters: v }, tree)),
 			body: (v: NonNullable<T.ClosureExpressionExpr['_body']>) =>
@@ -15521,7 +15507,7 @@ export function wrapImplItemNegativeClause(
 
 export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle): T.ImplItemBody.Parsed {
 	data = _keepModelledSlots(data, [
-		'_unsafe_marker',
+		'_unsafe',
 		'_type_parameters',
 		'_trait_clause',
 		'_type',
@@ -15545,11 +15531,11 @@ export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle): T.Impl
 	const node = {
 		...data,
 		$type: TSKindId.ImplItemBody as const,
-		_unsafe_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._unsafe_marker, 'unsafe_marker', false, data.$type, {
+		_unsafe: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._unsafe, 'unsafe', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'unsafe_marker',
+				slotName: 'unsafe',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -15623,8 +15609,8 @@ export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle): T.Impl
 			tree
 		),
 
-		unsafeMarker() {
-			return this._unsafe_marker;
+		unsafe() {
+			return this._unsafe;
 		},
 		typeParameters() {
 			return hydrateChild<T.TypeParameters | undefined>(this._type_parameters, tree);
@@ -15642,8 +15628,8 @@ export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle): T.Impl
 			return hydrateChild<T.DeclarationList>(this._declaration_list, tree);
 		},
 		$with: {
-			unsafeMarker: (v: NonNullable<T.ImplItemBody['_unsafe_marker']>) =>
-				rebuilt(node, handle, () => wrapImplItemBody({ ...$edited(data), _unsafe_marker: v }, tree)),
+			unsafe: (v: NonNullable<T.ImplItemBody['_unsafe']>) =>
+				rebuilt(node, handle, () => wrapImplItemBody({ ...$edited(data), _unsafe: v }, tree)),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -15685,7 +15671,7 @@ export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle): T.Impl
 }
 
 export function wrapImplItemSemi(data: T.ImplItemSemi, tree: TreeHandle): T.ImplItemSemi.Parsed {
-	data = _keepModelledSlots(data, ['_unsafe_marker', '_type_parameters', '_trait_clause', '_type', '_where_clause']);
+	data = _keepModelledSlots(data, ['_unsafe', '_type_parameters', '_trait_clause', '_type', '_where_clause']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -15703,11 +15689,11 @@ export function wrapImplItemSemi(data: T.ImplItemSemi, tree: TreeHandle): T.Impl
 	const node = {
 		...data,
 		$type: TSKindId.ImplItemSemi as const,
-		_unsafe_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._unsafe_marker, 'unsafe_marker', false, data.$type, {
+		_unsafe: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._unsafe, 'unsafe', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'unsafe_marker',
+				slotName: 'unsafe',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -15772,8 +15758,8 @@ export function wrapImplItemSemi(data: T.ImplItemSemi, tree: TreeHandle): T.Impl
 			tree
 		),
 
-		unsafeMarker() {
-			return this._unsafe_marker;
+		unsafe() {
+			return this._unsafe;
 		},
 		typeParameters() {
 			return hydrateChild<T.TypeParameters | undefined>(this._type_parameters, tree);
@@ -15788,8 +15774,8 @@ export function wrapImplItemSemi(data: T.ImplItemSemi, tree: TreeHandle): T.Impl
 			return hydrateChild<T.WhereClause | undefined>(this._where_clause, tree);
 		},
 		$with: {
-			unsafeMarker: (v: NonNullable<T.ImplItemSemi['_unsafe_marker']>) =>
-				rebuilt(node, handle, () => wrapImplItemSemi({ ...$edited(data), _unsafe_marker: v }, tree)),
+			unsafe: (v: NonNullable<T.ImplItemSemi['_unsafe']>) =>
+				rebuilt(node, handle, () => wrapImplItemSemi({ ...$edited(data), _unsafe: v }, tree)),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -17644,7 +17630,7 @@ export function wrapFieldPatternShorthand(
 	data: T.FieldPatternShorthand,
 	tree: TreeHandle
 ): T.FieldPatternShorthand.Parsed {
-	data = _keepModelledSlots(data, ['_ref_marker', '_mutable_specifier', '_name']);
+	data = _keepModelledSlots(data, ['_ref', '_mutable', '_name']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -17662,19 +17648,19 @@ export function wrapFieldPatternShorthand(
 	const node = {
 		...data,
 		$type: TSKindId.FieldPatternShorthand as const,
-		_ref_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._ref_marker, 'ref_marker', false, data.$type, {
+		_ref: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._ref, 'ref', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'ref_marker',
+				slotName: 'ref',
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_mutable_specifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._mutable_specifier, 'mutable_specifier', false, data.$type, {
+		_mutable: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._mutable, 'mutable', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'mutable_specifier',
+				slotName: 'mutable',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -17688,20 +17674,20 @@ export function wrapFieldPatternShorthand(
 			tree
 		),
 
-		refMarker() {
-			return this._ref_marker;
+		ref() {
+			return this._ref;
 		},
-		mutableSpecifier() {
-			return this._mutable_specifier;
+		mutable() {
+			return this._mutable;
 		},
 		name() {
 			return hydrateChild<T.ShorthandFieldIdentifier>(this._name, tree);
 		},
 		$with: {
-			refMarker: (v: NonNullable<T.FieldPatternShorthand['_ref_marker']>) =>
-				rebuilt(node, handle, () => wrapFieldPatternShorthand({ ...$edited(data), _ref_marker: v }, tree)),
-			mutableSpecifier: (v: NonNullable<T.FieldPatternShorthand['_mutable_specifier']>) =>
-				rebuilt(node, handle, () => wrapFieldPatternShorthand({ ...$edited(data), _mutable_specifier: v }, tree)),
+			ref: (v: NonNullable<T.FieldPatternShorthand['_ref']>) =>
+				rebuilt(node, handle, () => wrapFieldPatternShorthand({ ...$edited(data), _ref: v }, tree)),
+			mutable: (v: NonNullable<T.FieldPatternShorthand['_mutable']>) =>
+				rebuilt(node, handle, () => wrapFieldPatternShorthand({ ...$edited(data), _mutable: v }, tree)),
 			name: (v: NonNullable<T.FieldPatternShorthand['_name']>) =>
 				rebuilt(node, handle, () => wrapFieldPatternShorthand({ ...$edited(data), _name: v }, tree))
 		},
@@ -17716,7 +17702,7 @@ export function wrapFieldPatternShorthand(
 }
 
 export function wrapFieldPatternNamed(data: T.FieldPatternNamed, tree: TreeHandle): T.FieldPatternNamed.Parsed {
-	data = _keepModelledSlots(data, ['_ref_marker', '_mutable_specifier', '_name', '_pattern']);
+	data = _keepModelledSlots(data, ['_ref', '_mutable', '_name', '_pattern']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -17734,19 +17720,19 @@ export function wrapFieldPatternNamed(data: T.FieldPatternNamed, tree: TreeHandl
 	const node = {
 		...data,
 		$type: TSKindId.FieldPatternNamed as const,
-		_ref_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._ref_marker, 'ref_marker', false, data.$type, {
+		_ref: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._ref, 'ref', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'ref_marker',
+				slotName: 'ref',
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_mutable_specifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._mutable_specifier, 'mutable_specifier', false, data.$type, {
+		_mutable: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._mutable, 'mutable', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'mutable_specifier',
+				slotName: 'mutable',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -17774,11 +17760,11 @@ export function wrapFieldPatternNamed(data: T.FieldPatternNamed, tree: TreeHandl
 			tree
 		),
 
-		refMarker() {
-			return this._ref_marker;
+		ref() {
+			return this._ref;
 		},
-		mutableSpecifier() {
-			return this._mutable_specifier;
+		mutable() {
+			return this._mutable;
 		},
 		name() {
 			return hydrateChild<T.FieldIdentifier>(this._name, tree);
@@ -17787,10 +17773,10 @@ export function wrapFieldPatternNamed(data: T.FieldPatternNamed, tree: TreeHandl
 			return hydrateChild<T.Pattern>(this._pattern, tree);
 		},
 		$with: {
-			refMarker: (v: NonNullable<T.FieldPatternNamed['_ref_marker']>) =>
-				rebuilt(node, handle, () => wrapFieldPatternNamed({ ...$edited(data), _ref_marker: v }, tree)),
-			mutableSpecifier: (v: NonNullable<T.FieldPatternNamed['_mutable_specifier']>) =>
-				rebuilt(node, handle, () => wrapFieldPatternNamed({ ...$edited(data), _mutable_specifier: v }, tree)),
+			ref: (v: NonNullable<T.FieldPatternNamed['_ref']>) =>
+				rebuilt(node, handle, () => wrapFieldPatternNamed({ ...$edited(data), _ref: v }, tree)),
+			mutable: (v: NonNullable<T.FieldPatternNamed['_mutable']>) =>
+				rebuilt(node, handle, () => wrapFieldPatternNamed({ ...$edited(data), _mutable: v }, tree)),
 			name: (v: NonNullable<T.FieldPatternNamed['_name']>) =>
 				rebuilt(node, handle, () => wrapFieldPatternNamed({ ...$edited(data), _name: v }, tree)),
 			pattern: (v: NonNullable<T.FieldPatternNamed['_pattern']>) =>

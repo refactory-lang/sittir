@@ -231,7 +231,7 @@ one repeat, and the render keeps the comma after a single member.
 
 `for_statement`, `function_definition`, and `with_statement` also start with
 `optional('async')` at position 0, but their seqs are unwrapped, so enrich
-auto-promotes them as `field('async_marker', SYMBOL(_kw_async_marker))` and
+auto-promotes them as `field('async', SYMBOL(_kw_async))` and
 they need no entry in `transforms`.
 
 ### `splat_pattern` (`packages/python/grammar.sittir.ts:343`)

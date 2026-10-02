@@ -267,7 +267,7 @@ export namespace Pattern {
 		export interface Value<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Reference<G>>> {
 			// claimed by r
 			readonly kind: 'pattern.reference.value';
-			readonly mutableSpecifier?: boolean;
+			readonly mutable?: boolean;
 			readonly pattern: V.Unmapped<'rust:pattern'>;
 			// unmapped: <rust:pattern>
 		}

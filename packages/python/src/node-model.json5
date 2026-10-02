@@ -503,7 +503,7 @@
       }
     },
     "for_statement": {
-      "async_marker": {
+      "async": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -593,7 +593,7 @@
       }
     },
     "except_clause": {
-      "star_marker": {
+      "group": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -625,7 +625,7 @@
       }
     },
     "with_statement": {
-      "async_marker": {
+      "async": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -657,7 +657,7 @@
       }
     },
     "function_definition": {
-      "async_marker": {
+      "async": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1637,7 +1637,7 @@
       }
     },
     "for_in_clause": {
-      "async_marker": {
+      "async": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1747,7 +1747,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "eq_marker": {
+      "debug": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -7491,9 +7491,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "star_marker",
-          "propertyName": "starMarker",
-          "paramName": "starMarker",
+          "name": "group",
+          "propertyName": "group",
+          "paramName": "group",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -7557,7 +7557,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "star_marker",
+        "group",
         "exception",
         "suite"
       ]
@@ -8705,9 +8705,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "async_marker",
-          "propertyName": "asyncMarker",
-          "paramName": "asyncMarker",
+          "name": "async",
+          "propertyName": "async",
+          "paramName": "async",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8797,7 +8797,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "async_marker",
+        "async",
         "left",
         "right",
         "comma"
@@ -8823,9 +8823,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "async_marker",
-          "propertyName": "asyncMarker",
-          "paramName": "asyncMarker",
+          "name": "async",
+          "propertyName": "async",
+          "paramName": "async",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8937,7 +8937,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "async_marker",
+        "async",
         "left",
         "right",
         "body",
@@ -9054,9 +9054,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "async_marker",
-          "propertyName": "asyncMarker",
-          "paramName": "asyncMarker",
+          "name": "async",
+          "propertyName": "async",
+          "paramName": "async",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -9174,7 +9174,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "async_marker",
+        "async",
         "name",
         "type_parameters",
         "parameters",
@@ -10221,9 +10221,9 @@
           ]
         },
         {
-          "name": "eq_marker",
-          "propertyName": "eqMarker",
-          "paramName": "eqMarker",
+          "name": "debug",
+          "propertyName": "debug",
+          "paramName": "debug",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -10282,7 +10282,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "expression",
-        "eq_marker",
+        "debug",
         "type_conversion",
         "format_specifier"
       ]
@@ -16261,9 +16261,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "async_marker",
-          "propertyName": "asyncMarker",
-          "paramName": "asyncMarker",
+          "name": "async",
+          "propertyName": "async",
+          "paramName": "async",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -16321,7 +16321,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "async_marker",
+        "async",
         "with_clause",
         "body"
       ]

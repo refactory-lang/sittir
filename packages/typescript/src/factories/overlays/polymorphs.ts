@@ -2521,7 +2521,7 @@ const exportStatementDefaultDeclaration$function =
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
 			if (
-				key === 'asyncMarker' ||
+				key === 'async' ||
 				key === 'name' ||
 				key === 'typeParameters' ||
 				key === 'parameters' ||
@@ -2549,7 +2549,7 @@ const exportStatementDefaultDeclaration$generatorFunction =
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
 			if (
-				key === 'asyncMarker' ||
+				key === 'async' ||
 				key === 'name' ||
 				key === 'typeParameters' ||
 				key === 'parameters' ||
@@ -2632,7 +2632,7 @@ const exportStatementDefaultDeclaration$functionSignature =
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
 			if (
-				key === 'asyncMarker' ||
+				key === 'async' ||
 				key === 'name' ||
 				key === 'typeParameters' ||
 				key === 'parameters' ||
@@ -2732,7 +2732,7 @@ const exportStatementDefaultDeclaration$enum =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'constMarker' || key === 'name' || key === 'body') inner[key] = value;
+			if (key === 'const' || key === 'name' || key === 'body') inner[key] = value;
 			else rest[key] = value;
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
@@ -5626,7 +5626,7 @@ const parenthesizedExpressionTyped$assignment =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'usingMarker' || key === 'left' || key === 'right') inner[key] = value;
+			if (key === 'using' || key === 'left' || key === 'right') inner[key] = value;
 			else rest[key] = value;
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);

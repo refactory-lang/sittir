@@ -58,7 +58,7 @@ cascade. Entries whose mints were retired by the `isSupertypeLike` structural
 decline are dead — tree-sitter emits a non-fatal "inline rule not defined"
 warning for each, and they should be dropped on the next overrides sweep.
 
-`_kw_readonly_marker` and `_kw_async_marker` are NOT listed: `wire()`
+`_kw_readonly` and `_kw_async` are NOT listed: `wire()`
 auto-inlines them whenever field promotion synthesizes them, so only the
 polymorph helpers need to appear explicitly.
 
@@ -150,9 +150,9 @@ addresses the slot as `class_body/members:/separator`.
 upstream modifier positions (1 and 2) are permutation choices — every arm is
 an ordering of the same modifier set — so enrich declines the choice-arm mint
 (`isPermutationChoice`) instead of extracting per-arm kinds, and promotes the
-arms' keyword steps to shared `field('<kw>_marker', $._kw_*)` markers. The
-merged slots (`declare_marker`, `static_marker`, `readonly_marker`,
-`abstract_marker`, `accessor_marker`, plus the `accessibility_modifier` /
+arms' keyword steps to shared `field('<kw>', $._kw_*)` markers. The
+merged slots (`declare`, `static`, `readonly`,
+`abstract`, `accessor`, plus the `accessibility_modifier` /
 `override_modifier` node slots) land directly on the kind; the template emits
 them once each, in canonical flat order. The former per-arm kinds and their
 `inline:`/conflict machinery are gone — the class-member ambiguities against
@@ -230,11 +230,11 @@ them once each, in canonical flat order. The former per-arm kinds and their
 				//   optional($.override_modifier),          // pos 2
 				//   optional(choice('get','set','*')),     // pos 3  →  '3/0'  (accessor_kind, choice-of-strings)
 				//   field('name', $._property_name),        // pos 4
-				//   optional('?'),                          // pos 5  →  '5/0'  (optional_marker)
+				//   optional('?'),                          // pos 5  →  '5/0'  (optional)
 				//   $._call_signature)                      // pos 6
-				// Field-promotion wave 3 (016 task #25): symmetric to
+				// Symmetric to
 				// method_definition / method_signature for the trailing `?` plus
-				// the accessor keyword. NOTE: no readonly_marker — `'abstract'` is
+				// the accessor keyword. NOTE: no readonly — `'abstract'` is
 				// a required literal at pos 1, not optional.
 ```
 
@@ -390,29 +390,28 @@ them once each, in canonical flat order. The former per-arm kinds and their
 ```text
 				// method_definition: prec.left(seq(
 				//   optional($.accessibility_modifier),    // pos 0  (auto-promoted: accessibility_modifier by enrich)
-				//   optional('static'),                    // pos 1  →  'static_marker' (T048: was wrongly labeled
-				//                                          //         override_modifier; _kw_static_marker synthesized
-				//                                          //         here; add to inline: if parse drift emerges)
-				//   optional($.override_modifier),         // pos 2  (auto-promoted: override_modifier by enrich)
-				//   optional('readonly'),                  // pos 3  →  '3/0'  (readonly_marker)
-				//   optional('async'),                     // pos 4  →  '4/0'  (async_marker)
+				//   optional('static'),                    // pos 1  →  'static' (_kw_static synthesized here;
+				//                                          //         add to inline: if parse drift emerges)
+				//   optional($.override_modifier),         // pos 2  →  'override' (field patch; kind stays override_modifier)
+				//   optional('readonly'),                  // pos 3  →  '3/0'  (readonly)
+				//   optional('async'),                     // pos 4  →  '4/0'  (async)
 				//   optional(choice('get','set','*')),    // pos 5  →  '5/0'  (accessor_kind, choice-of-strings)
 				//   field('name', $._property_name),       // pos 6
-				//   optional('?'),                         // pos 7  →  '7/0'  (optional_marker)
+				//   optional('?'),                         // pos 7  →  '7/0'  (optional)
 				//   $._call_signature,                     // pos 8
 				//   field('body', $.statement_block)))    // pos 9
-				// Field-promotion wave 3 (016 task #25): label `async`, the
+				// Label `async`, the
 				// accessor `get`/`set`/`*`, and trailing `?` so render preserves
-				// `async get foo?(): T {}` shapes. Naming follows `<token>_marker`
-				// (016 task #30); enrich's CHOICE-form-of-optional path doesn't
+				// `async get foo?(): T {}` shapes. Naming follows `<token>`;
+				// enrich's CHOICE-form-of-optional path doesn't
 				// fire on tree-sitter-evaluated rules so these positions are
-				// hand-promoted. Wave-3 follow-up (016 task #28): `readonly_marker`
-				// was deferred in wave 3 because the synthesized
-				// `_kw_readonly_marker` hidden symbol's parse precedence diverges
+				// hand-promoted. `readonly`
+				// is promoted too, with one extra step: the synthesized
+				// `_kw_readonly` hidden symbol's parse precedence diverges
 				// from the bare `'readonly'` token in sibling rules — `class Foo
-				// { readonly bar?(): T {} }` regressed to ERROR (parser took
+				// { readonly bar?(): T {} }` would otherwise parse as ERROR (the parser takes
 				// `readonly` as the property identifier instead of the marker).
-				// Resolved by adding `_kw_readonly_marker` to the top-level
+				// Hence `_kw_readonly` is in the top-level
 				// `inline:` array (see above), which folds the hidden rule's body
 				// into every reference site at LR-table generation while preserving
 				// the FIELD wrapper for the parse tree.
@@ -423,19 +422,17 @@ them once each, in canonical flat order. The former per-arm kinds and their
 ```text
 				// method_signature: seq(
 				//   optional($.accessibility_modifier),    // pos 0  (auto-promoted: accessibility_modifier by enrich)
-				//   optional('static'),                    // pos 1  →  'static_marker' (T048: was wrongly labeled
-				//                                          //         override_modifier; pos 2 override_modifier
-				//                                          //         auto-promoted by enrich)
-				//   optional($.override_modifier),         // pos 2  (auto-promoted: override_modifier by enrich)
-				//   optional('readonly'),                  // pos 3  (auto-promoted: readonly_marker by enrich)
-				//   optional('async'),                     // pos 4  (auto-promoted: async_marker by enrich)
+				//   optional('static'),                    // pos 1  →  'static'
+				//   optional($.override_modifier),         // pos 2  →  'override' (field patch; kind stays override_modifier)
+				//   optional('readonly'),                  // pos 3  (auto-promoted: readonly by enrich)
+				//   optional('async'),                     // pos 4  (auto-promoted: async by enrich)
 				//   optional(choice('get','set','*')),    // pos 5  →  '5/0'  (accessor_kind, choice-of-strings)
 				//   field('name', $._property_name),       // pos 6
-				//   optional('?'),                         // pos 7  →  '7/0'  (optional_marker)
+				//   optional('?'),                         // pos 7  →  '7/0'  (optional)
 				//   $._call_signature)                     // pos 8
 				// Standalone `optional('readonly')` / `optional('async')` are
 				// auto-promoted by enrich. Kept entries: accessor_kind
-				// (choice-of-strings, enrich skips), optional_marker
+				// (choice-of-strings, enrich skips), optional
 				// (`?` not identifier-shaped).
 ```
 
@@ -462,16 +459,14 @@ them once each, in canonical flat order. The former per-arm kinds and their
 ```text
 				// property_signature: seq(
 				//   optional($.accessibility_modifier),  // pos 0  (auto-promoted: accessibility_modifier by enrich)
-				//   optional('static'),                   // pos 1  →  'static_marker' (T048: was wrongly labeled
-				//                                         //         override_modifier; pos 2 override_modifier
-				//                                         //         auto-promoted by enrich)
-				//   optional($.override_modifier),         // pos 2  (auto-promoted: override_modifier by enrich)
-				//   optional('readonly'),                  // pos 3  (auto-promoted: readonly_marker by enrich)
+				//   optional('static'),                   // pos 1  →  'static'
+				//   optional($.override_modifier),         // pos 2  →  'override' (field patch; kind stays override_modifier)
+				//   optional('readonly'),                  // pos 3  (auto-promoted: readonly by enrich)
 				//   field('name', $._property_name),       // pos 4
-				//   optional('?'),                         // pos 5  →  '5/0'  (optional_marker)
+				//   optional('?'),                         // pos 5  →  '5/0'  (optional)
 				//   field('type', optional($.type_annotation)))  // pos 6
 				// Standalone `optional('readonly')` is auto-promoted by enrich.
-				// Kept entries: optional_marker (`?` non-identifier).
+				// Kept entries: optional (`?` non-identifier).
 ```
 
 ### `satisfies_expression` (`packages/typescript/grammar.sittir.ts:716`)
@@ -561,18 +556,18 @@ choice(_semicolon, _function_signature_automatic_semicolon))`; position 4 is
 the terminator choice, fielded so the explicit `;` and the automatic semicolon
 land in one slot.
 
-### JS-inherited function family — `async_marker` promotion (`packages/typescript/grammar.sittir.ts`)
+### JS-inherited function family — `async` promotion (`packages/typescript/grammar.sittir.ts`)
 
 `function_expression`, `function_declaration`, `generator_function`, and
 `generator_function_declaration` all start with `optional('async')` at
-position 0, and each labels `0/0` as `async_marker` so render preserves
+position 0, and each labels `0/0` as `async` so render preserves
 `async function …` / `async function* …` shapes.
 
 They need hand-promotion because all four are wrapped in `prec(…)`, and
 enrich's optional-keyword pass doesn't descend through `prec`. `arrow_function`
 is a bare seq, so enrich auto-promotes it and needs no entry.
 
-The promotion only works because `_kw_async_marker` is inlined at every
+The promotion only works because `_kw_async` is inlined at every
 reference site (see `inline:`). Un-inlined, the synthesized hidden rule's
 `prec(-1)` body collides with `primary_expression` / `_property_name` on
 `{ async (` (method-shorthand vs async-function ambiguity) and with sibling
@@ -653,7 +648,7 @@ The same rule governs the other standalone optional-punct markers
 
 ```text
 				// constructor_type: prec.left(seq(
-				//   optional('abstract'),  // pos 0  →  '0/0'  (abstract_marker)
+				//   optional('abstract'),  // pos 0  →  '0/0'  (abstract)
 				//   'new', type_parameters?, parameters, '=>', type))
 				// prec.left wrapper hides the seq from enrich; hand-promoted here.
 ```
@@ -662,10 +657,10 @@ The same rule governs the other standalone optional-punct markers
 
 ```text
 				// enum_declaration: seq(
-				//   optional('const'),  // pos 0  →  '0/0'  (const_marker)
+				//   optional('const'),  // pos 0  →  '0/0'  (const)
 				//   'enum', name, body)
 				// Kept hand-promoted because the factoryRoundtrip AST match fails
-				// when only enrich auto-promotes (synthesized `_kw_const_marker`
+				// when only enrich auto-promotes (synthesized `_kw_const`
 				// content shape diverges).
 ```
 
@@ -688,7 +683,7 @@ The same rule governs the other standalone optional-punct markers
 
 ```text
 				// assignment_expression: prec.right('assign', seq(
-				//   optional('using'),  // pos 0  →  '0/0'  (using_marker)
+				//   optional('using'),  // pos 0  →  '0/0'  (using)
 				//   field('left', ...), '=', field('right', ...)))
 				// prec.right wrapper hides the seq from enrich; hand-promoted here.
 ```
@@ -724,35 +719,35 @@ The same rule governs the other standalone optional-punct markers
 				//   optional(choice(...)),                          // pos 1 (permutation: declare/accessibility orders)
 				//   choice(...),                                    // pos 2 (permutation: static/override/readonly/abstract/accessor stacks)
 				//   field('name', $._property_name),                // pos 3
-				//   optional(choice('?', '!')),                     // pos 4  →  '4/0'  (optionality_marker)
+				//   optional(choice('?', '!')),                     // pos 4  →  '4/0'  (optionality)
 				//   field('type', optional($.type_annotation)),    // pos 5
 				//   optional($._initializer))                       // pos 6
-				// `?`/`!` share one `optionality_marker` discriminator field —
+				// `?`/`!` share one `optionality` discriminator field —
 				// different semantics (`?` optional field, `!` definite
 				// assignment) but one slot; the literal value distinguishes.
 				//
 				// Positions 1 and 2 stay inline (permutation choices — no arm
 				// mint); the authored `accessibility_modifier` field on both
 				// pos-1 spellings makes the two exclusive occurrences merge
-				// into one slot, the same way the enrich-promoted `*_marker`
+				// into one slot, the same way the enrich-promoted keyword
 				// fields merge across the permutation arms. Without the shared
 				// name the two bare refs derive two positional slots that
 				// collide on the `accessibility_modifier` storage key.
 ```
 
-### `_type_query_subscript_expression` — deferred promotion (`packages/typescript/grammar.sittir.ts`)
+### `_type_query_subscript_expression` (`packages/typescript/grammar.sittir.ts`)
 
 Tree-sitter aliases this hidden rule to the public `subscript_expression` kind
 via `alias($._type_query_subscript_expression, $.subscript_expression)`, and
 the base JS `subscript_expression` already labels its `?.` with
 `optional(field('optional_chain', $.optional_chain))`.
 
-Adding `optional_chain_marker` on the hidden alias source would extend the
-merged kind's field set, but the merged template (emitted from the canonical
-`subscript_expression` rule) only references `optional_chain` — so the coverage
-validator flags the unreferenced `optional_chain_marker` field. Promoting at
-the alias source needs either coalescing both field names downstream, or
-overriding the canonical rule too.
+This rule's `?.` is a bare literal. It is aliased `optional_chain_marker` to
+give it a kind, and fielded `optional_chain` so its slot is `optionalChain`,
+the same as `subscript_expression`'s. The alias kind keeps its own name:
+`optional_chain` is already the kind of the canonical rule's `?.`. The alias
+and the field are two patch sets on the same position, because a position
+takes one patch per set.
 
 ### `parenthesized_expression` (`packages/typescript/grammar.sittir.ts:1001`)
 

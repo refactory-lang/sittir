@@ -253,7 +253,7 @@ export default sittirGrammar(base, {
 		},
 
 		except_clause: [
-			{ '1/0': field('star_marker') },
+			{ '1/0': field('group') },
 			{ '2/0/0': variant('as'), '2/0/1': variant('list') },
 			{ '2/0': variant('exception') },
 			{ 2: field('exception') }
@@ -264,7 +264,7 @@ export default sittirGrammar(base, {
 		},
 
 		for_in_clause: {
-			'0/0': field('async_marker'),
+			'0/0': field('async'),
 			'5/0': field('comma')
 		},
 
@@ -286,7 +286,7 @@ export default sittirGrammar(base, {
 		_parenthesized_import_list: { 1: alias('import_list') },
 
 		interpolation: {
-			'2/0': field('eq_marker')
+			'2/0': field('debug')
 		},
 
 		keyword_pattern: {

@@ -570,7 +570,7 @@ omission on both surfaces, because `argumentOptional` (node-map.ts) itself
 undercounted this shape: it only recognized "every slot optional" or
 "exactly one slot total," missing a node with an optional sibling slot
 alongside its one required forwarding slot (e.g. `async_block`'s optional
-`moveMarker` next to its required `body: Block`). Generalized
+`move` next to its required `body: Block`). Generalized
 `argumentOptional` to the correct rule — a required slot only blocks the
 no-argument call when it has no forwarding target of its own that is
 argument-optional; any number of additional slots is fine as long as they

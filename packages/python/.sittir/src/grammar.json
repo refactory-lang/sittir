@@ -1071,10 +1071,10 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "async_marker",
+              "name": "async",
               "content": {
                 "type": "SYMBOL",
-                "name": "_kw_async_marker"
+                "name": "_kw_async"
               },
               "metadata": {
                 "fieldSource": "enriched"
@@ -1269,7 +1269,7 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "star_marker",
+              "name": "group",
               "content": {
                 "type": "TOKEN",
                 "content": {
@@ -1358,10 +1358,10 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "async_marker",
+              "name": "async",
               "content": {
                 "type": "SYMBOL",
-                "name": "_kw_async_marker"
+                "name": "_kw_async"
               },
               "metadata": {
                 "fieldSource": "enriched"
@@ -1453,10 +1453,10 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "async_marker",
+              "name": "async",
               "content": {
                 "type": "SYMBOL",
-                "name": "_kw_async_marker"
+                "name": "_kw_async"
               },
               "metadata": {
                 "fieldSource": "enriched"
@@ -5286,10 +5286,10 @@
             "members": [
               {
                 "type": "FIELD",
-                "name": "async_marker",
+                "name": "async",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_kw_async_marker"
+                  "name": "_kw_async"
                 },
                 "metadata": {
                   "fieldSource": "override"
@@ -5561,10 +5561,10 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "eq_marker",
+              "name": "debug",
               "content": {
                 "type": "SYMBOL",
-                "name": "_kw_eq_marker"
+                "name": "_kw_debug"
               },
               "metadata": {
                 "fieldSource": "override"
@@ -6033,7 +6033,7 @@
       "type": "STRING",
       "value": "*"
     },
-    "_kw_async_marker": {
+    "_kw_async": {
       "type": "STRING",
       "value": "async"
     },
@@ -8155,7 +8155,7 @@
         "value": ","
       }
     },
-    "_kw_eq_marker": {
+    "_kw_debug": {
       "type": "STRING",
       "value": "="
     },
@@ -8731,10 +8731,10 @@
     "_raise_statement_optional1",
     "_function_definition_optional1",
     "_exec_statement_optional1",
-    "_kw_async_marker",
+    "_kw_async",
     "_augmented_assignment_operator",
     "_kw_comma",
-    "_kw_eq_marker"
+    "_kw_debug"
   ],
   "supertypes": [
     "_simple_statement",
