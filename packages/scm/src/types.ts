@@ -1808,7 +1808,9 @@ export namespace Parameters {
 	}
 	export type Loose = LooseFor<TSKindId.Parameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Parameters>;
-	export type BuildArgs = [...children: AdmitBound<(T.Capture | T.String | T.Identifier)[], T.AdmittedNodes>];
+	export type BuildArgs = [
+		...children: NonEmptyArray<AdmitBound<T.Capture | T.String | T.Identifier, T.AdmittedNodes>>
+	];
 	export type LooseArgs = [
 		...children: (
 			| T.Parameters.Loose

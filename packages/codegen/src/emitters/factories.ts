@@ -1048,15 +1048,25 @@ function resolveConfigFactorySurface(
 	if (spreadFacts) {
 		const elementType = constructionChildElementType({ children: [spreadFacts.slot] }, nodeMap, kindEntries);
 		if (spreadFacts.multiple) {
-			const param: FactoryParam = {
-				label: 'children',
-				optional: false,
-				rest: true,
-				strictType: `${elementType}[]`,
-				looseType: `${looseValueOf(elementType)}[]`,
-				rowLooseType: `(${[`T.${node.typeName}.Loose`, ...new Set([elementType, coercedChildElementType(spreadFacts.slot, nodeMap)].map(looseValueOf))].join(' | ')})[]`,
-				admitsNodes: true
-			};
+			const rowLooseElement = [`T.${node.typeName}.Loose`, ...new Set([elementType, coercedChildElementType(spreadFacts.slot, nodeMap)].map(looseValueOf))].join(' | ');
+			const param: FactoryParam = spreadFacts.nonEmpty
+				? {
+						label: 'children',
+						optional: false,
+						rest: true,
+						strictType: elementsTypeOf(true, admitNodes(elementType)),
+						looseType: elementsTypeOf(true, looseValueOf(elementType)),
+						rowLooseType: `(${rowLooseElement})[]`
+					}
+				: {
+						label: 'children',
+						optional: false,
+						rest: true,
+						strictType: `${elementType}[]`,
+						looseType: `${looseValueOf(elementType)}[]`,
+						rowLooseType: `(${rowLooseElement})[]`,
+						admitsNodes: true
+					};
 			return {
 				spreadFacts,
 				singleField,
@@ -1316,7 +1326,7 @@ function emitFieldCarryingFactory(
 		const elementType = surface.elementType!;
 		const setter = spreadFacts.slot.propertyName;
 		valueSourceFor = (f) => (f === spreadFacts.slot ? admittedSlotInput(f, 'children', nodeMap, kindEntries, node.typeName) : '');
-		setters = [{ name: setter, params: `...vs: ${elementType}[]`, body: `${fn}(...restItems(${JSON.stringify(setter)}, vs))` }];
+		setters = [{ name: setter, params: `...vs: ${elementsTypeOf(spreadFacts.nonEmpty, elementType)}`, body: `${fn}(...restItems(${JSON.stringify(setter)}, vs))` }];
 	} else if (singleField) {
 		const elemType = surface.directParamType!;
 		valueSourceFor = (f) =>

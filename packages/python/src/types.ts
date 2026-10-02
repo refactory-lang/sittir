@@ -10758,7 +10758,7 @@ export namespace AssertStatement {
 	}
 	export type Loose = LooseFor<TSKindId.AssertStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AssertStatement>;
-	export type BuildArgs = [...children: AdmitBound<T.Expression[], T.AdmittedNodes>];
+	export type BuildArgs = [...children: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>];
 	export type LooseArgs = [
 		...children: (
 			| T.AssertStatement.Loose
@@ -11172,7 +11172,7 @@ export namespace GlobalStatement {
 	}
 	export type Loose = LooseFor<TSKindId.GlobalStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.GlobalStatement>;
-	export type BuildArgs = [...children: AdmitBound<T.Identifier[], T.AdmittedNodes>];
+	export type BuildArgs = [...children: NonEmptyArray<AdmitBound<T.Identifier, T.AdmittedNodes>>];
 	export type LooseArgs = [
 		...children: (
 			| T.GlobalStatement.Loose
@@ -11194,7 +11194,7 @@ export namespace NonlocalStatement {
 	}
 	export type Loose = LooseFor<TSKindId.NonlocalStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NonlocalStatement>;
-	export type BuildArgs = [...children: AdmitBound<T.Identifier[], T.AdmittedNodes>];
+	export type BuildArgs = [...children: NonEmptyArray<AdmitBound<T.Identifier, T.AdmittedNodes>>];
 	export type LooseArgs = [
 		...children: (
 			| T.NonlocalStatement.Loose
@@ -11403,7 +11403,7 @@ export namespace DottedName {
 	}
 	export type Loose = LooseFor<TSKindId.DottedName>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DottedName>;
-	export type BuildArgs = [...children: AdmitBound<T.Identifier[], T.AdmittedNodes>];
+	export type BuildArgs = [...children: NonEmptyArray<AdmitBound<T.Identifier, T.AdmittedNodes>>];
 	export type LooseArgs = [
 		...children: (
 			| T.DottedName.Loose
@@ -11493,8 +11493,8 @@ export namespace UnionPattern {
 	export type Loose = LooseFor<TSKindId.UnionPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnionPattern>;
 	export type BuildArgs = [
-		...children: AdmitBound<
-			(
+		...children: NonEmptyArray<
+			AdmitBound<
 				| T.ClassPattern
 				| T.SplatPattern
 				| T.UnionPattern
@@ -11509,9 +11509,9 @@ export namespace UnionPattern {
 				| T.SimplePatternNegative
 				| T.ComplexPattern
 				| T.DottedName
-				| TSKindId.WildcardPattern
-			)[],
-			T.AdmittedNodes
+				| TSKindId.WildcardPattern,
+				T.AdmittedNodes
+			>
 		>
 	];
 	export type LooseArgs = [
@@ -12598,7 +12598,7 @@ export namespace ConcatenatedString {
 	}
 	export type Loose = LooseFor<TSKindId.ConcatenatedString>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConcatenatedString>;
-	export type BuildArgs = [...children: AdmitBound<T.String[], T.AdmittedNodes>];
+	export type BuildArgs = [...children: NonEmptyArray<AdmitBound<T.String, T.AdmittedNodes>>];
 	export type LooseArgs = [
 		...children: (T.ConcatenatedString.Loose | LooseValue<T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 	];
@@ -13732,7 +13732,7 @@ export namespace ExceptClauseExceptionList {
 	}
 	export type Loose = LooseFor<TSKindId.ExceptClauseExceptionList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExceptClauseExceptionList>;
-	export type BuildArgs = [...children: AdmitBound<T.Expression[], T.AdmittedNodes>];
+	export type BuildArgs = [...children: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>];
 	export type LooseArgs = [
 		...children: (
 			| T.ExceptClauseExceptionList.Loose

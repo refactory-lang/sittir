@@ -2,7 +2,7 @@
 
 import type * as T from '../types-internal.js';
 import { TSKindId } from '../types.js';
-import type { AdmitBound } from '@sittir/types';
+import type { AdmitBound, NonEmptyArray } from '@sittir/types';
 import {
 	currentHandle,
 	rebuilt,
@@ -66,7 +66,7 @@ export function buildPattern(value: AdmitBound<T.Alternation | T.Term, T.Admitte
 	return node as unknown as T.Pattern.Bound;
 }
 
-export function buildAlternation(...children: AdmitBound<T.Term[], T.AdmittedNodes>): T.Alternation.Bound {
+export function buildAlternation(...children: NonEmptyArray<AdmitBound<T.Term, T.AdmittedNodes>>): T.Alternation.Bound {
 	_assertNonEmpty(children, 'alternation.children');
 	const _terms = rejectBareText(children, 'Alternation.terms', 'a built Term');
 	const handle = currentHandle();
@@ -76,7 +76,7 @@ export function buildAlternation(...children: AdmitBound<T.Term[], T.AdmittedNod
 		$named: true as const,
 		_terms,
 		$with: {
-			terms: (...vs: T.Term[]) => rebuilt(node, handle, () => buildAlternation(...restItems('terms', vs)))
+			terms: (...vs: NonEmptyArray<T.Term>) => rebuilt(node, handle, () => buildAlternation(...restItems('terms', vs)))
 		},
 		terms: () => _terms,
 		$render: () => renderText(handle, node),
@@ -89,7 +89,7 @@ export function buildAlternation(...children: AdmitBound<T.Term[], T.AdmittedNod
 	return node as unknown as T.Alternation.Bound;
 }
 
-export function buildTerm(...children: AdmitBound<T.TermGroup[], T.AdmittedNodes>): T.Term.Bound {
+export function buildTerm(...children: NonEmptyArray<AdmitBound<T.TermGroup, T.AdmittedNodes>>): T.Term.Bound {
 	_assertNonEmpty(children, 'term.children');
 	const _term_group = rejectBareText(children, 'Term.termGroup', 'a built TermGroup');
 	const handle = currentHandle();
@@ -99,7 +99,8 @@ export function buildTerm(...children: AdmitBound<T.TermGroup[], T.AdmittedNodes
 		$named: true as const,
 		_term_group,
 		$with: {
-			termGroups: (...vs: T.TermGroup[]) => rebuilt(node, handle, () => buildTerm(...restItems('termGroups', vs)))
+			termGroups: (...vs: NonEmptyArray<T.TermGroup>) =>
+				rebuilt(node, handle, () => buildTerm(...restItems('termGroups', vs)))
 		},
 		termGroups: () => _term_group,
 		$render: () => renderText(handle, node),

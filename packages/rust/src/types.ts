@@ -20140,15 +20140,15 @@ export namespace FunctionModifiers {
 	export type Loose = LooseFor<TSKindId.FunctionModifiers>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FunctionModifiers>;
 	export type BuildArgs = [
-		...children: AdmitBound<
-			(
+		...children: NonEmptyArray<
+			AdmitBound<
 				| TSKindId.AsyncKeyword
 				| TSKindId.DefaultKeyword
 				| TSKindId.ConstKeyword
 				| TSKindId.UnsafeKeyword
-				| T.ExternModifier
-			)[],
-			T.AdmittedNodes
+				| T.ExternModifier,
+				T.AdmittedNodes
+			>
 		>
 	];
 	export type LooseArgs = [
@@ -20251,9 +20251,8 @@ export namespace TraitBounds {
 	export type Loose = LooseFor<TSKindId.TraitBounds>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TraitBounds>;
 	export type BuildArgs = [
-		...children: AdmitBound<
-			((T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types)[],
-			T.AdmittedNodes
+		...children: NonEmptyArray<
+			AdmitBound<(T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types, T.AdmittedNodes>
 		>
 	];
 	export type LooseArgs = [

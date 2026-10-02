@@ -2141,7 +2141,7 @@ export namespace Alternation {
 	}
 	export type Loose = LooseFor<TSKindId.Alternation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Alternation>;
-	export type BuildArgs = [...children: AdmitBound<T.Term[], T.AdmittedNodes>];
+	export type BuildArgs = [...children: NonEmptyArray<AdmitBound<T.Term, T.AdmittedNodes>>];
 	export type LooseArgs = [
 		...children: (T.Alternation.Loose | LooseValue<T.Term, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 	];
@@ -2159,7 +2159,7 @@ export namespace Term {
 	}
 	export type Loose = LooseFor<TSKindId.Term>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Term>;
-	export type BuildArgs = [...children: AdmitBound<T.TermGroup[], T.AdmittedNodes>];
+	export type BuildArgs = [...children: NonEmptyArray<AdmitBound<T.TermGroup, T.AdmittedNodes>>];
 	export type LooseArgs = [
 		...children: (T.Term.Loose | LooseValue<T.TermGroup, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 	];

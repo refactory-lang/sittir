@@ -249,7 +249,7 @@ export function buildStringContent(
 }
 
 export function buildParameters(
-	...children: AdmitBound<(T.Capture | T.String | T.Identifier)[], T.AdmittedNodes>
+	...children: NonEmptyArray<AdmitBound<T.Capture | T.String | T.Identifier, T.AdmittedNodes>>
 ): T.Parameters.Bound {
 	_assertNonEmpty(children, 'parameters.children');
 	const _elements = rejectBareText(children, 'Parameters.elements', 'buildIdentifier(…)');
@@ -260,7 +260,7 @@ export function buildParameters(
 		$named: true as const,
 		_elements,
 		$with: {
-			elements: (...vs: (T.Capture | T.String | T.Identifier)[]) =>
+			elements: (...vs: NonEmptyArray<T.Capture | T.String | T.Identifier>) =>
 				rebuilt(node, handle, () => buildParameters(...restItems('elements', vs)))
 		},
 		elements: () => _elements,

@@ -20250,7 +20250,7 @@ export namespace SequenceExpression {
 	}
 	export type Loose = LooseFor<TSKindId.SequenceExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SequenceExpression>;
-	export type BuildArgs = [...children: AdmitBound<T.Expression[], T.AdmittedNodes>];
+	export type BuildArgs = [...children: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>];
 	export type LooseArgs = [
 		...children: (
 			| T.SequenceExpression.Loose
@@ -20786,7 +20786,7 @@ export namespace ExtendsClause {
 	}
 	export type Loose = LooseFor<TSKindId.ExtendsClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExtendsClause>;
-	export type BuildArgs = [...children: AdmitBound<T.ExtendsClauseSingle[], T.AdmittedNodes>];
+	export type BuildArgs = [...children: NonEmptyArray<AdmitBound<T.ExtendsClauseSingle, T.AdmittedNodes>>];
 	export type LooseArgs = [
 		...children: (
 			| T.ExtendsClause.Loose
@@ -20823,7 +20823,7 @@ export namespace ImplementsClause {
 	}
 	export type Loose = LooseFor<TSKindId.ImplementsClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImplementsClause>;
-	export type BuildArgs = [...children: AdmitBound<(T.Type | T.TypeIdentifier.Types)[], T.AdmittedNodes>];
+	export type BuildArgs = [...children: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>];
 	export type LooseArgs = [
 		...children: (
 			| T.ImplementsClause.Loose
@@ -20964,9 +20964,8 @@ export namespace ExtendsTypeClause {
 	export type Loose = LooseFor<TSKindId.ExtendsTypeClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExtendsTypeClause>;
 	export type BuildArgs = [
-		...children: AdmitBound<
-			((T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types)[],
-			T.AdmittedNodes
+		...children: NonEmptyArray<
+			AdmitBound<(T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types, T.AdmittedNodes>
 		>
 	];
 	export type LooseArgs = [

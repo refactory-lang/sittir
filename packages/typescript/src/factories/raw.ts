@@ -3079,7 +3079,7 @@ export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryE
 }
 
 export function buildSequenceExpression(
-	...children: AdmitBound<T.Expression[], T.AdmittedNodes>
+	...children: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>
 ): T.SequenceExpression.Bound {
 	_assertNonEmpty(children, 'sequence_expression.children');
 	const _expression = rejectBareText(children, 'SequenceExpression.expression', 'a built Expression');
@@ -3090,7 +3090,7 @@ export function buildSequenceExpression(
 		$named: true as const,
 		_expression,
 		$with: {
-			expressions: (...vs: T.Expression[]) =>
+			expressions: (...vs: NonEmptyArray<T.Expression>) =>
 				rebuilt(node, handle, () => buildSequenceExpression(...restItems('expressions', vs)))
 		},
 		expressions: () => _expression,
@@ -4646,7 +4646,7 @@ export function buildImportRequireClause(config: T.ImportRequireClause.Config): 
 }
 
 export function buildExtendsClause(
-	...children: AdmitBound<T.ExtendsClauseSingle[], T.AdmittedNodes>
+	...children: NonEmptyArray<AdmitBound<T.ExtendsClauseSingle, T.AdmittedNodes>>
 ): T.ExtendsClause.Bound {
 	_assertNonEmpty(children, 'extends_clause.children');
 	const _extends_clause_single = rejectBareText(
@@ -4661,7 +4661,7 @@ export function buildExtendsClause(
 		$named: true as const,
 		_extends_clause_single,
 		$with: {
-			extendsClauseSingles: (...vs: T.ExtendsClauseSingle[]) =>
+			extendsClauseSingles: (...vs: NonEmptyArray<T.ExtendsClauseSingle>) =>
 				rebuilt(node, handle, () => buildExtendsClause(...restItems('extendsClauseSingles', vs)))
 		},
 		extendsClauseSingles: () => _extends_clause_single,
@@ -4718,7 +4718,7 @@ export function buildExtendsClauseSingle(config: T.ExtendsClauseSingle.Config): 
 }
 
 export function buildImplementsClause(
-	...children: AdmitBound<(T.Type | T.TypeIdentifier.Types)[], T.AdmittedNodes>
+	...children: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>
 ): T.ImplementsClause.Bound {
 	_assertNonEmpty(children, 'implements_clause.children');
 	const _type = admitAliasContent<NonNullable<T.ImplementsClause['_type']>>(
@@ -4732,7 +4732,7 @@ export function buildImplementsClause(
 		$named: true as const,
 		_type,
 		$with: {
-			types: (...vs: (T.Type | T.TypeIdentifier.Types)[]) =>
+			types: (...vs: NonEmptyArray<T.Type | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildImplementsClause(...restItems('types', vs)))
 		},
 		types: () => _type,
@@ -5018,9 +5018,8 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 }
 
 export function buildExtendsTypeClause(
-	...children: AdmitBound<
-		((T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types)[],
-		T.AdmittedNodes
+	...children: NonEmptyArray<
+		AdmitBound<(T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types, T.AdmittedNodes>
 	>
 ): T.ExtendsTypeClause.Bound {
 	_assertNonEmpty(children, 'extends_type_clause.children');
@@ -5035,8 +5034,9 @@ export function buildExtendsTypeClause(
 		$named: true as const,
 		_type,
 		$with: {
-			types: (...vs: ((T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types)[]) =>
-				rebuilt(node, handle, () => buildExtendsTypeClause(...restItems('types', vs)))
+			types: (
+				...vs: NonEmptyArray<(T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types>
+			) => rebuilt(node, handle, () => buildExtendsTypeClause(...restItems('types', vs)))
 		},
 		types: () => _type,
 		$render: () => renderText(handle, node),
@@ -9455,7 +9455,7 @@ export function buildParenthesizedExpressionSequence(
 	value: AdmitBound<T.SequenceExpression, T.AdmittedNodes>
 ): ReturnType<typeof _buildParenthesizedExpressionSequence>;
 export function buildParenthesizedExpressionSequence(
-	...children: AdmitBound<T.Expression[], T.AdmittedNodes>
+	...children: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>
 ): ReturnType<typeof _buildParenthesizedExpressionSequence>;
 export function buildParenthesizedExpressionSequence(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
