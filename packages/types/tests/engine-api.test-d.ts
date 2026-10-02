@@ -29,6 +29,10 @@ interface FakeAPI extends LanguageAPI {
 
 type API = ApiOf<Language<FakeAPI>>;
 
+// An engine's recorded language names the same API.
+declare const recorded: Engine<API>['language'];
+export const sameApi: ApiOf<typeof recorded> = null as unknown as API;
+
 export const leaf: Types<Engine<API>>['leaf'] = { $type: 1 };
 
 // @ts-expect-error a kind the language doesn't have
@@ -40,6 +44,9 @@ export const descriptor: Language<FakeAPI> = {
 	name: 'fake',
 	fileTypes: [],
 	load: async (): Promise<LanguageHooks<FakeAPI>> => {
+		throw new Error('type-only');
+	},
+	createEngine: async () => {
 		throw new Error('type-only');
 	}
 };

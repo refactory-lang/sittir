@@ -15,9 +15,9 @@ describe('emitFactorySourceText (real rust grammar)', () => {
 	// the built node, as the `$with` setters do, since trivia is not config.
 	it('builds through an engine over the grammar descriptor, importing Delimiter only when used', async () => {
 		const source = await emitFactorySourceText('rust', '#[derive(Debug, Clone)]\nstruct S;\n', 'rebuildDerive');
-		expect(source).toContain("import { createEngine } from '@sittir/common';");
+		expect(source).not.toContain('createEngine(rust)');
 		expect(source).toContain("import rust from '@sittir/rust';");
-		expect(source).toContain('const rs = await createEngine(rust);');
+		expect(source).toContain('const rs = await rust.createEngine();');
 		expect(source).not.toContain('Delimiter');
 		expect(source).not.toContain('engine.');
 	});

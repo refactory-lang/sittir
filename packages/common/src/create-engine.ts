@@ -6,6 +6,7 @@ import type {
 	EngineOptions,
 	Language,
 	LanguageAPI,
+	LanguageIdentity,
 	LanguageHooks,
 	NativeEngineOptions,
 	ParseOptions,
@@ -13,7 +14,7 @@ import type {
 	Rendered,
 	RenderArgument,
 	RenderCallOptions,
-	RenderOptionsCheck
+	CreateEngineOptions
 } from '@sittir/types';
 import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle } from './engine-scope.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
@@ -25,9 +26,9 @@ import {
 	isParsedNode
 } from './utils.ts';
 
-const loaded = new WeakMap<Language<LanguageAPI>, Promise<LanguageHooks<LanguageAPI>>>();
+const loaded = new WeakMap<LanguageIdentity<LanguageAPI>, Promise<LanguageHooks<LanguageAPI>>>();
 
-function loadLanguage<API extends LanguageAPI>(language: Language<API>): Promise<LanguageHooks<API>> {
+function loadLanguage<API extends LanguageAPI>(language: LanguageIdentity<API>): Promise<LanguageHooks<API>> {
 	const cached = loaded.get(language);
 	if (cached !== undefined) return cached as Promise<LanguageHooks<API>>;
 	const loading = language.load().catch((cause: unknown) => {
@@ -195,7 +196,7 @@ function assembleEngine<API extends LanguageAPI>(
 
 export async function createEngine<API extends LanguageAPI, const R extends API['options'] = API['options']>(
 	language: Language<API>,
-	options?: EngineOptions<API> & { readonly render?: R & RenderOptionsCheck<API, R> }
+	options?: CreateEngineOptions<API, R>
 ): Promise<Engine<API>> {
 	refuseUnimplemented(options);
 	return assembleEngine(language, await loadLanguage(language), options);

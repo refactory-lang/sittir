@@ -11097,7 +11097,7 @@ omits the key.
 
 ### `packages/codegen/src/emitters/index-file.ts::emitIndex`
 
-The grammar's `index.ts`: the language descriptor as the default export (its name, and a `load` that imports `./api.js` on demand, so importing the package's descriptor loads no factories and no native binding), the language API type, and the grammar's types, re-exported type-only. Builders, guards and kind ids are values reached through an engine (`engine.build`, `engine.is`, `engine.kinds`), never through the package index; the descriptor is its only value export. It depends on the grammar's name only, not on its node list.
+The grammar's `index.ts`: the language descriptor as the default export (its name, and a `load` that imports `./api.js` on demand, so importing the package's descriptor loads no factories and no native binding; its `createEngine` imports `@sittir/common` on the first call for the same reason, and delegates to the one `createEngine` there), the language API type, and the grammar's types, re-exported type-only. Builders, guards and kind ids are values reached through an engine (`engine.build`, `engine.is`, `engine.kinds`), never through the package index; the descriptor is its only value export. It depends on the grammar's name only, not on its node list.
 
 The descriptor carries `fileTypes`, the model's file types, an empty list for a grammar with none.
 
