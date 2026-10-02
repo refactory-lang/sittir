@@ -16,6 +16,9 @@ import {
 	inTreeEngine,
 	currentHandle,
 	listSlotWith,
+	seatWith,
+	groupField,
+	STORED_SLOT_READERS,
 	LIST_ITEMS,
 	LIST_READ,
 	LIST_METHODS,
@@ -30,8 +33,7 @@ import {
 	renderText,
 	toEditAt,
 	triviaSide,
-	triviaInner,
-	withGroupSeat
+	triviaInner
 } from '@sittir/common/utils';
 import type { TreeHandle, TokenInterior } from '@sittir/common/utils';
 import { TOKEN_INTERIORS } from './consts.js';
@@ -40,7 +42,6 @@ import type { AnyUntypedNode as _UntypedNode, NonEmptyArray, StringIndexRange, S
 import { TSKindId, KIND_NAMES, KIND_DISPLAY_NAMES } from './types.js';
 import { Delimiter } from '@sittir/common/utils';
 import type * as T from './types-internal.js';
-import { withMethods } from './utils.js';
 import * as RAW from './factories/raw.js';
 
 // A hydrated read-layer TEXT LEAF: the reader modeled no addressable
@@ -3556,55 +3557,101 @@ export function wrapSwitchDefault(data: T.SwitchDefault, tree: TreeHandle): T.Sw
 
 export function wrapCatchClause(data: T.CatchClause, tree: TreeHandle): T.CatchClause.Parsed {
 	data = _keepModelledSlots(data, ['_catch_clause_group', '_body']);
-	const _node = withMethods(
-		withGroupSeat(
-			{
-				...data,
-				$type: TSKindId.CatchClause as const,
-				_catch_clause_group: storeExpanded(
-					normalizeSingularWrapSlot(data._catch_clause_group, 'catch_clause_group', false, data.$type, {
-						tree,
-						nodeType: data.$type,
-						slotName: 'catch_clause_group',
-						span: (data as _UntypedNode).$span
-					}),
-					tree
-				),
-				_body: storeExpanded(
-					normalizeSingularWrapSlot(data._body, 'body', true, data.$type, {
-						tree,
-						nodeType: data.$type,
-						slotName: 'body',
-						span: (data as _UntypedNode).$span
-					}),
-					tree
-				),
-
-				catchClauseGroup() {
-					return hydrateChild<T.CatchClauseGroup | undefined>(this._catch_clause_group, tree);
-				},
-				body() {
-					return hydrateChild<T.StatementBlock>(this._body, tree);
-				},
-				$with: {
-					catchClauseGroup: (v: NonNullable<T.CatchClause['_catch_clause_group']>) =>
-						wrapCatchClause({ ...$edited(data), _catch_clause_group: v }, tree),
-					body: (v: NonNullable<T.CatchClause['_body']>) => wrapCatchClause({ ...$edited(data), _body: v }, tree)
-				}
-			},
-			{
-				slot: 'catchClauseGroup',
-				stored: '_catch_clause_group',
-				kind: TSKindId.CatchClauseGroup as const,
-				make: RAW.buildCatchClauseGroup,
-				keys: [
-					{ name: 'parameter', rest: false, required: true },
-					{ name: 'type', rest: false }
-				]
-			}
-		)
+	const handle = currentHandle();
+	const _catch_clause_group = storeExpanded(
+		normalizeSingularWrapSlot(data._catch_clause_group, 'catch_clause_group', false, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'catch_clause_group',
+			span: (data as _UntypedNode).$span
+		}),
+		tree
 	);
-	return _node as unknown as T.CatchClause.Parsed;
+	const readGroup_catchClauseGroup = () => hydrateChild<T.CatchClauseGroup | undefined>(_catch_clause_group, tree);
+	const node = {
+		...data,
+		$type: TSKindId.CatchClause as const,
+		_catch_clause_group,
+		_body: storeExpanded(
+			normalizeSingularWrapSlot(data._body, 'body', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'body',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
+
+		catchClauseGroup() {
+			return hydrateChild<T.CatchClauseGroup | undefined>(this._catch_clause_group, tree);
+		},
+		body() {
+			return hydrateChild<T.StatementBlock>(this._body, tree);
+		},
+		$with: {
+			catchClauseGroup: (v: NonNullable<T.CatchClause['_catch_clause_group']>) =>
+				rebuilt(node, handle, () => wrapCatchClause({ ...$edited(data), _catch_clause_group: v }, tree)),
+			body: (v: NonNullable<T.CatchClause['_body']>) =>
+				rebuilt(node, handle, () => wrapCatchClause({ ...$edited(data), _body: v }, tree)),
+			parameter: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'catchClauseGroup',
+							stored: '_catch_clause_group',
+							kind: TSKindId.CatchClauseGroup as const,
+							make: RAW.buildCatchClauseGroup,
+							keys: [
+								{ name: 'parameter', rest: false, required: true },
+								{ name: 'type', rest: false }
+							]
+						},
+						'parameter',
+						args,
+						(v: NonNullable<T.CatchClause['_catch_clause_group']>) =>
+							wrapCatchClause({ ...$edited(data), _catch_clause_group: v }, tree),
+						() => readGroup_catchClauseGroup.call(node)
+					)
+				),
+			type: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'catchClauseGroup',
+							stored: '_catch_clause_group',
+							kind: TSKindId.CatchClauseGroup as const,
+							make: RAW.buildCatchClauseGroup,
+							keys: [
+								{ name: 'parameter', rest: false, required: true },
+								{ name: 'type', rest: false }
+							]
+						},
+						'type',
+						args,
+						(v: NonNullable<T.CatchClause['_catch_clause_group']>) =>
+							wrapCatchClause({ ...$edited(data), _catch_clause_group: v }, tree),
+						() => readGroup_catchClauseGroup.call(node)
+					)
+				)
+		},
+		parameter:
+			_catch_clause_group === undefined
+				? undefined
+				: () => groupField(readGroup_catchClauseGroup.call(node), 'parameter'),
+		type:
+			_catch_clause_group === undefined ? undefined : () => groupField(readGroup_catchClauseGroup.call(node), 'type'),
+		[STORED_SLOT_READERS]: { catchClauseGroup: readGroup_catchClauseGroup },
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CatchClause.Parsed;
 }
 
 export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle): T.FinallyClause.Parsed {

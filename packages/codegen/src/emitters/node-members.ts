@@ -56,8 +56,14 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 	return lines;
 }
 
+export function spelledGroupSlots(plan: SeatPlan): ReadonlySet<string> {
+	return new Set(plan.groups.filter(({ hint }) => hint.keys.some((key) => key.name === hint.slot)).map(({ hint }) => hint.slot));
+}
+
+const readGroupName = (slot: string): string => `readGroup_${slot}`;
+
 export function seatedSetters(setters: readonly SetterEntry[], plan: SeatPlan): SetterEntry[] {
-	return setters.map((entry) => {
+	const seated = setters.map((entry) => {
 		const base = `(${entry.params}) => ${entry.body}`;
 		const element = plan.elements.find((candidate) => candidate.slot === entry.name);
 		const slot = plan.slots.find((candidate) => candidate.slot === entry.name);
@@ -70,6 +76,34 @@ export function seatedSetters(setters: readonly SetterEntry[], plan: SeatPlan): 
 		}
 		return entry;
 	});
+	const keyed: SetterEntry[] = [];
+	for (const { hint, spec } of plan.groups) {
+		const seat = seated.find((entry) => entry.name === hint.slot);
+		if (seat === undefined) continue;
+		const base = `(${seat.params}) => ${seat.body}`;
+		for (const key of hint.keys) {
+			keyed.push({
+				name: key.name,
+				params: '...args: unknown[]',
+				body: `seatWith(${spec}, ${JSON.stringify(key.name)}, args, ${base}, () => ${readGroupName(hint.slot)}.call(node))`
+			});
+		}
+	}
+	const replaced = new Set(keyed.map((entry) => entry.name));
+	return [...seated.filter((entry) => !replaced.has(entry.name)), ...keyed];
+}
+
+export function groupSeatParts(plan: SeatPlan, readOf: (slot: string) => string): { readonly prelude: string[]; readonly members: string[] } {
+	if (plan.groups.length === 0) return { prelude: [], members: [] };
+	const prelude = plan.groups.map(({ hint }) => `  const ${readGroupName(hint.slot)} = ${readOf(hint.slot)};`);
+	const members = plan.groups.flatMap(({ hint }) =>
+		hint.keys.map(
+			(key) =>
+				`    ${key.name}: ${hint.stored} === undefined ? undefined : () => groupField(${readGroupName(hint.slot)}.call(node), ${JSON.stringify(key.field ?? key.name)}),`
+		)
+	);
+	members.push(`    [STORED_SLOT_READERS]: { ${plan.groups.map(({ hint }) => `${hint.slot}: ${readGroupName(hint.slot)}`).join(', ')} },`);
+	return { prelude, members };
 }
 
 export interface ListViewParts {

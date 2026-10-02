@@ -39,18 +39,10 @@ const classes: Record<string, () => object> = {
 	'python group seat': () => py.build.slice({})
 };
 
-const pending = new Set([
-	'rust group seat, group present',
-	'rust group seat, group absent',
-	'typescript group seat',
-	'python group seat',
-	'parsed'
-]);
-
 describe('a built node keeps fast properties', () => {
 	for (const [label, make] of Object.entries(classes)) {
 		const run = () => expect(fastCount(make)).toBe(COUNT);
-		(pending.has(label) ? it.fails : it)(label, run);
+		it(label, run);
 	}
 });
 
@@ -99,7 +91,7 @@ describe('a parsed plain kind keeps fast properties', () => {
 describe('a parsed node keeps fast properties', () => {
 	const source = 'fn f(a: i32) { let x = g(a, a + 1); match x { 1 => 1, _ => 2 } }\n';
 	for (const deep of [false, true]) {
-		(pending.has('parsed') ? it.fails : it)(deep ? 'deep parse' : 'shallow parse', () => {
+		it(deep ? 'deep parse' : 'shallow parse', () => {
 			const nodes = typedNodesOf(rs.parse(source, deep ? { deep: true } : undefined));
 			expect(nodes.length).toBeGreaterThan(10);
 			expect(nodes.filter((node) => !hasFastProperties(node))).toEqual([]);

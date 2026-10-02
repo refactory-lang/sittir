@@ -113,7 +113,7 @@ describe('wrap emitter — polymorph variant stamping', () => {
 		expect(wrapEmitterSource).not.toContain('function resolveChildrenStoreExpr');
 		expect(wrapEmitterSource).not.toContain('function resolveChildrenAccessorBody');
 		// Named-field storage/accessor expansion was extracted into
-		// emitFieldStorageLines/emitFieldAccessorLines (separator-as-slot Bug B
+		// emitFieldStorageLines/fieldAccessorBodies (separator-as-slot Bug B
 		// follow-up — shared with emitSeparatedListWrap's multi-field case), so
 		// emitFieldCarryingWrap's OWN body now calls resolveSlotHydrateExprs only
 		// for the unnamed-children slot (storage + accessor = 2), while the two
@@ -123,9 +123,9 @@ describe('wrap emitter — polymorph variant stamping', () => {
 		expect(emitFieldCarryingWrapBody.match(/resolveSlotHydrateExprs\(/g)?.length).toBe(2);
 		expect(emitFieldCarryingWrapBody).not.toMatch(/resolve[A-Za-z0-9_]*Children[A-Za-z0-9_]*\(/);
 		const emitFieldStorageLinesBody = extractFunctionBody(wrapEmitterSource, 'emitFieldStorageLines');
-		const emitFieldAccessorLinesBody = extractFunctionBody(wrapEmitterSource, 'emitFieldAccessorLines');
+		const fieldAccessorBodiesBody = extractFunctionBody(wrapEmitterSource, 'fieldAccessorBodies');
 		expect(emitFieldStorageLinesBody.match(/resolveSlotHydrateExprs\(/g)?.length).toBe(1);
-		expect(emitFieldAccessorLinesBody.match(/resolveSlotHydrateExprs\(/g)?.length).toBe(1);
+		expect(fieldAccessorBodiesBody.match(/resolveSlotHydrateExprs\(/g)?.length).toBe(1);
 	});
 
 	it('wrap-kind filtering matches storage kinds without an alias remap', () => {

@@ -21,7 +21,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 		'',
 		...emitTriviaFacts(whitespaceTrivia(config.nodeMap), config.triviaKinds ?? []),
 		'',
-		`export const { isNode, withMethods } = bindRuntime<${map}>();`,
+		`export const { isNode } = bindRuntime<${map}>();`,
 		''
 	].join('\n');
 }

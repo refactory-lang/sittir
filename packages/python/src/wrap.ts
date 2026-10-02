@@ -17,6 +17,9 @@ import {
 	currentHandle,
 	listSlotWith,
 	elementsWith,
+	seatWith,
+	groupField,
+	STORED_SLOT_READERS,
 	LIST_ITEMS,
 	LIST_READ,
 	LIST_METHODS,
@@ -31,8 +34,7 @@ import {
 	renderText,
 	toEditAt,
 	triviaSide,
-	triviaInner,
-	withGroupSeat
+	triviaInner
 } from '@sittir/common/utils';
 import type { TreeHandle, TokenInterior } from '@sittir/common/utils';
 import { TOKEN_INTERIORS } from './consts.js';
@@ -41,7 +43,6 @@ import type { AnyUntypedNode as _UntypedNode, NonEmptyArray, StringIndexRange, S
 import { TSKindId, KIND_NAMES, KIND_DISPLAY_NAMES } from './types.js';
 import { Delimiter } from '@sittir/common/utils';
 import type * as T from './types-internal.js';
-import { withMethods } from './utils.js';
 import * as RAW from './factories/raw.js';
 
 // A hydrated read-layer TEXT LEAF: the reader modeled no addressable
@@ -6677,70 +6678,92 @@ export function wrapSubscript(data: T.Subscript, tree: TreeHandle): T.Subscript.
 
 export function wrapSlice(data: T.Slice, tree: TreeHandle): T.Slice.Parsed {
 	data = _keepModelledSlots(data, ['_start', '_stop', '_step']);
-	const _node = withMethods(
-		withGroupSeat(
-			{
-				...data,
-				$type: TSKindId.Slice as const,
-				_start: storeExpanded(
-					projectMixedEnumStorage(
-						normalizeSingularWrapSlot(data._start, 'start', false, data.$type, {
-							tree,
-							nodeType: data.$type,
-							slotName: 'start',
-							span: (data as _UntypedNode).$span
-						}),
-						{ True: 70, False: 71, None: 72, '...': 64 }
-					),
-					tree
-				),
-				_stop: storeExpanded(
-					projectMixedEnumStorage(
-						normalizeSingularWrapSlot(data._stop, 'stop', false, data.$type, {
-							tree,
-							nodeType: data.$type,
-							slotName: 'stop',
-							span: (data as _UntypedNode).$span
-						}),
-						{ True: 70, False: 71, None: 72, '...': 64 }
-					),
-					tree
-				),
-				_step: storeExpanded(
-					normalizeSingularWrapSlot(data._step, 'step', false, data.$type, {
-						tree,
-						nodeType: data.$type,
-						slotName: 'step',
-						span: (data as _UntypedNode).$span
-					}),
-					tree
-				),
-
-				start() {
-					return hydrateChild<T.Expression | undefined>(this._start, tree);
-				},
-				stop() {
-					return hydrateChild<T.Expression | undefined>(this._stop, tree);
-				},
-				step() {
-					return hydrateChild<T.SliceGroup | undefined>(this._step, tree);
-				},
-				$with: {
-					start: (v: NonNullable<T.Slice['_start']>) => wrapSlice({ ...$edited(data), _start: v }, tree),
-					stop: (v: NonNullable<T.Slice['_stop']>) => wrapSlice({ ...$edited(data), _stop: v }, tree),
-					step: (v: NonNullable<T.Slice['_step']>) => wrapSlice({ ...$edited(data), _step: v }, tree)
-				}
-			},
-			{
-				slot: 'step',
-				stored: '_step',
-				kind: TSKindId.SliceGroup as const,
-				make: RAW.buildSliceGroup,
-				keys: [{ name: 'expression', rest: false }]
-			}
-		)
+	const handle = currentHandle();
+	const _step = storeExpanded(
+		normalizeSingularWrapSlot(data._step, 'step', false, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'step',
+			span: (data as _UntypedNode).$span
+		}),
+		tree
 	);
-	return _node as unknown as T.Slice.Parsed;
+	const readGroup_step = () => hydrateChild<T.SliceGroup | undefined>(_step, tree);
+	const node = {
+		...data,
+		$type: TSKindId.Slice as const,
+		_start: storeExpanded(
+			projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._start, 'start', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'start',
+					span: (data as _UntypedNode).$span
+				}),
+				{ True: 70, False: 71, None: 72, '...': 64 }
+			),
+			tree
+		),
+		_stop: storeExpanded(
+			projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._stop, 'stop', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'stop',
+					span: (data as _UntypedNode).$span
+				}),
+				{ True: 70, False: 71, None: 72, '...': 64 }
+			),
+			tree
+		),
+		_step,
+
+		start() {
+			return hydrateChild<T.Expression | undefined>(this._start, tree);
+		},
+		stop() {
+			return hydrateChild<T.Expression | undefined>(this._stop, tree);
+		},
+		step() {
+			return hydrateChild<T.SliceGroup | undefined>(this._step, tree);
+		},
+		$with: {
+			start: (v: NonNullable<T.Slice['_start']>) =>
+				rebuilt(node, handle, () => wrapSlice({ ...$edited(data), _start: v }, tree)),
+			stop: (v: NonNullable<T.Slice['_stop']>) =>
+				rebuilt(node, handle, () => wrapSlice({ ...$edited(data), _stop: v }, tree)),
+			step: (v: NonNullable<T.Slice['_step']>) =>
+				rebuilt(node, handle, () => wrapSlice({ ...$edited(data), _step: v }, tree)),
+			expression: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'step',
+							stored: '_step',
+							kind: TSKindId.SliceGroup as const,
+							make: RAW.buildSliceGroup,
+							keys: [{ name: 'expression', rest: false }]
+						},
+						'expression',
+						args,
+						(v: NonNullable<T.Slice['_step']>) => wrapSlice({ ...$edited(data), _step: v }, tree),
+						() => readGroup_step.call(node)
+					)
+				)
+		},
+		expression: _step === undefined ? undefined : () => groupField(readGroup_step.call(node), 'expression'),
+		[STORED_SLOT_READERS]: { step: readGroup_step },
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Slice.Parsed;
 }
 
 export function wrapCall(data: T.Call, tree: TreeHandle): T.Call.Parsed {

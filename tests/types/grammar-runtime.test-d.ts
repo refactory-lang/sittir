@@ -27,14 +27,9 @@ interface FakeTypeMap extends GrammarTypeMap {
 
 const runtime = bindRuntime<FakeTypeMap>();
 
-declare const leaf: Leaf;
-
 declare const value: unknown;
 if (runtime.isNode(value)) value satisfies AnyUntypedNode;
 
-const built = runtime.withMethods(leaf);
-// @ts-expect-error methods attach to a node, and an object without a $type is not one
-runtime.withMethods({});
-built satisfies Leaf & NodeMethods<Comment>;
+declare const built: Leaf & NodeMethods<Comment>;
 built.$trivia.leading() satisfies readonly Comment[];
 built.$trivia.leading('// note') satisfies typeof built;

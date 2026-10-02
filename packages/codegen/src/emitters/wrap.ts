@@ -18,7 +18,7 @@ type BranchLikeForWrap = AuthoredCompound;
 import { deriveUnnamedChildrenCardinality } from '../compiler/model/node-map.ts';
 import { buildSupertypeMembersMap } from '../compiler/model/supertype-members.ts';
 import { interiorOf } from './interior.ts';
-import { innerPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, type SetterEntry } from './node-members.ts';
+import { groupSeatParts, innerPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, spelledGroupSlots, type SetterEntry } from './node-members.ts';
 
 import {
 	DELIMITER_IMPORT,
@@ -48,11 +48,7 @@ import {
 	declaredSeparatorDefault,
 	fieldElementType,
 	listViewOwners,
-	convertsToLiteral,
-	seatPlanOf,
-	seatRuntimes,
-	seatOpening,
-	seatClosing
+	seatPlanOf
 } from './factories.ts';
 import { deriveChildrenKinds } from './transport-common.ts';
 import {
@@ -389,22 +385,14 @@ function emitSeparatedListWrap(
 	const parsedType = declaredParsedType(node, kindEntries);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle)${returnAnnotation(parsedType)} {`);
 	lines.push(`  data = _keepModelledSlots(data, ${JSON.stringify([...canonicalKeys])});`);
-	const earlyPlan = seatPlanOf(nodeMap.nodes.get(node.kind)!, nodeMap, kindEntries, 'RAW.', 'tree');
-	const earlyLiteral = convertsToLiteral(earlyPlan) && earlyPlan.viewPlan !== undefined;
-	if (earlyLiteral) lines.push('  const handle = currentHandle();');
+	lines.push('  const handle = currentHandle();');
 	if (wrapsAnonLiteralContent(node.slots, nodeMap)) {
-		if (earlyLiteral) {
-			lines.push(
-				'  if (_isReadTextLeaf(data)) {',
-				`    const node = { ...data${wrapTextLeafTypeStamp(node, kindEntries)}, ${nodeMemberLines({ accessors: [], inner: innerPositionsOf(node.kind, nodeMap) }).map((line) => line.trim()).join(' ')} };`,
-				`    return ${castToParsed('node', parsedType)};`,
-				'  }'
-			);
-		} else {
-			lines.push(
-				`  if (_isReadTextLeaf(data)) return ${castToParsed(`withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} })`, parsedType)};`
-			);
-		}
+		lines.push(
+			'  if (_isReadTextLeaf(data)) {',
+			`    const node = { ...data${wrapTextLeafTypeStamp(node, kindEntries)}, ${nodeMemberLines({ accessors: [], inner: innerPositionsOf(node.kind, nodeMap) }).map((line) => line.trim()).join(' ')} };`,
+			`    return ${castToParsed('node', parsedType)};`,
+			'  }'
+		);
 	}
 
 	const storageInfo = resolveFieldStorageInfo(contentSlot, nodeMap, kindEntries);
@@ -423,14 +411,11 @@ function emitSeparatedListWrap(
 		forceUnknownElement: node.slots.length > 1
 	});
 	lines.push(`  const _content = ${storeExpr};`);
-	const seats = seatRuntimes(nodeMap.nodes.get(node.kind)!, nodeMap, kindEntries, 'RAW.', 'tree');
-	const plan = seatPlanOf(nodeMap.nodes.get(node.kind)!, nodeMap, kindEntries, 'RAW.', 'tree');
-	const literal = convertsToLiteral(plan) && plan.viewPlan !== undefined;
-	const hoist = { keys: new Set(literal && node.slots.length > 1 ? [canonical.storageKey] : []), prelude: [] as string[] };
+	const plan = seatPlanOf(nodeMap.nodes.get(node.kind)!, nodeMap, kindEntries, 'RAW.');
+	const hoist = { keys: new Set(node.slots.length > 1 ? [canonical.storageKey] : []), prelude: [] as string[] };
 	if (node.slots.length > 1) emitSlotOrderDraftLine(node.slots, node.kind, lines, kindEntries, nodeMap);
 	const literalStart = lines.length;
-	if (literal) lines.push('  const node = {');
-	else lines.push(`  return withMethods(${seatOpening(seats)}{`);
+	lines.push('  const node = {');
 	lines.push('    ...data,');
 	if (kindEntries) {
 		const entry = findKindEntry(kindEntries, node.kind);
@@ -449,12 +434,8 @@ function emitSeparatedListWrap(
 			.filter((k) => hasCatalogEntry(kindEntries, k))
 			.map((k) => kindDiscriminantExpr(k, nodeMap, kindEntries));
 		const separatorExpr = `_separatorKindOf(data, [${candidateExprs.join(', ')}])${separatorDefaultSuffix(declaredSeparatorDefault(node, nodeMap, kindEntries))}`;
-		if (literal) {
-			optionConsts.push(`  const _separator = ${separatorExpr};`);
-			lines.push('    _separator,');
-		} else {
-			lines.push(`    _separator: ${separatorExpr},`);
-		}
+		optionConsts.push(`  const _separator = ${separatorExpr};`);
+		lines.push('    _separator,');
 	}
 	const bothFlanksOptional = node.leadingDelimiter === 'optional' && node.trailingDelimiter === 'optional';
 	const delimiterParts: string[] = [];
@@ -471,12 +452,8 @@ function emitSeparatedListWrap(
 		);
 	}
 	if (delimiterParts.length > 0) {
-		if (literal) {
-			optionConsts.push(`  const _delimiter = ${delimiterParts.join(' | ')};`);
-			lines.push('    _delimiter,');
-		} else {
-			lines.push(`    _delimiter: ${delimiterParts.join(' | ')},`);
-		}
+		optionConsts.push(`  const _delimiter = ${delimiterParts.join(' | ')};`);
+		lines.push('    _delimiter,');
 	}
 	lines.push('');
 	if (node.slots.length > 1) {
@@ -484,25 +461,19 @@ function emitSeparatedListWrap(
 	} else {
 		lines.push(`    ${canonical.propertyName}() { ${accessorBody}; },`);
 	}
-	if (literal) {
-		const view = listSelfViewParts(plan.viewPlan!, node.slots.length > 1 ? canonical.storageKey : '_content', canonical.propertyName, 'wrap');
-		lines.push(
-			...nodeMemberLines({
-				setters: seatedSetters([], plan),
-				accessors: [],
-				extra: view.members,
-				inner: innerPositionsOf(node.kind, nodeMap)
-			})
-		);
-		lines.push('  };');
-		lines.push(...view.postlude);
-		lines.splice(literalStart, 0, ...hoist.prelude, ...optionConsts, ...view.prelude);
-		lines.push(`  return ${castToParsed('node', parsedType)};`);
-		lines.push('}');
-		return lines.join('\n');
-	}
-	lines.push('    $with: {},');
-	lines.push(`  }${seatClosing(seats)})${parsedType === undefined ? '' : ` as unknown as ${parsedType}`};`);
+	const view = listSelfViewParts(plan.viewPlan!, node.slots.length > 1 ? canonical.storageKey : '_content', canonical.propertyName, 'wrap');
+	lines.push(
+		...nodeMemberLines({
+			setters: seatedSetters([], plan),
+			accessors: [],
+			extra: view.members,
+			inner: innerPositionsOf(node.kind, nodeMap)
+		})
+	);
+	lines.push('  };');
+	lines.push(...view.postlude);
+	lines.splice(literalStart, 0, ...hoist.prelude, ...optionConsts, ...view.prelude);
+	lines.push(`  return ${castToParsed('node', parsedType)};`);
 	lines.push('}');
 	return lines.join('\n');
 }
@@ -653,16 +624,14 @@ function fieldTaggedLiteralTexts(node: AssembledNode): ReadonlyMap<string, reado
 }
 
 
-function emitFieldAccessorLines(
+function fieldAccessorBodies(
 	slots: readonly AssembledNonterminal[],
 	ownerKind: string,
 	dataExpr: string,
-	lines: string[],
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
-): void {
-	for (const f of slots) {
-		const propName = f.propertyName;
+): readonly { readonly propName: string; readonly body: string }[] {
+	return slots.map((f) => {
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 		const elided = hasOptionalElements(f);
 		const { accessorBody } = resolveSlotHydrateExprs(f, {
@@ -674,7 +643,21 @@ function emitFieldAccessorLines(
 			separatorIdsExpr: separatorIdsExprOf(f, nodeMap.nodes.get(ownerKind), kindEntries, elided),
 			elided
 		});
-		lines.push(`    ${propName}() { ${accessorBody}; },`);
+		return { propName: f.propertyName, body: accessorBody };
+	});
+}
+
+function emitFieldAccessorLines(
+	slots: readonly AssembledNonterminal[],
+	ownerKind: string,
+	dataExpr: string,
+	lines: string[],
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap,
+	skip: ReadonlySet<string> = new Set()
+): void {
+	for (const { propName, body } of fieldAccessorBodies(slots, ownerKind, dataExpr, kindEntries, nodeMap)) {
+		if (!skip.has(propName)) lines.push(`    ${propName}() { ${body}; },`);
 	}
 }
 
@@ -710,35 +693,32 @@ function emitFieldCarryingWrap(
 			`  data = _projectLexed(data, TOKEN_INTERIORS[${JSON.stringify(node.kind)}], ${JSON.stringify(node.kind)});`
 		);
 	}
-	const seats = seatRuntimes(nodeMap.nodes.get(node.kind)!, nodeMap, kindEntries, 'RAW.', 'tree');
-	const plan = seatPlanOf(nodeMap.nodes.get(node.kind)!, nodeMap, kindEntries, 'RAW.', 'tree');
-	const literal = convertsToLiteral(plan);
+	const plan = seatPlanOf(nodeMap.nodes.get(node.kind)!, nodeMap, kindEntries, 'RAW.');
 	const owner = plan.viewPlan?.owner;
-	const view = literal && plan.viewPlan !== undefined && owner !== undefined ? ownerViewParts(plan.viewPlan, owner.storage, owner.accessor, 'wrap') : undefined;
-	const hoist = { keys: new Set(owner === undefined || view === undefined ? [] : [owner.storage]), prelude: [] as string[] };
+	const view = plan.viewPlan !== undefined && owner !== undefined ? ownerViewParts(plan.viewPlan, owner.storage, owner.accessor, 'wrap') : undefined;
+	const groups = groupSeatParts(plan, (slot) => {
+		const { stored, group } = plan.groups.find(({ hint }) => hint.slot === slot)!.hint;
+		return `() => hydrateChild<T.${group} | undefined>(${stored}, tree)`;
+	});
+	const spelled = spelledGroupSlots(plan);
+	const hoist = {
+		keys: new Set([...(owner === undefined || view === undefined ? [] : [owner.storage]), ...plan.groups.map(({ hint }) => hint.stored)]),
+		prelude: [] as string[]
+	};
 	const inner = innerPositionsOf(node.kind, nodeMap);
-	if (literal) lines.push('  const handle = currentHandle();');
+	lines.push('  const handle = currentHandle();');
 	if (wrapsAnonLiteralContent(slots, nodeMap)) {
-		if (literal) {
-			lines.push(
-				'  if (_isReadTextLeaf(data)) {',
-				`    const node = { ...data${wrapTextLeafTypeStamp(node, kindEntries)}, ${nodeMemberLines({ accessors: [], inner }).map((line) => line.trim()).join(' ')} };`,
-				`    return ${castToParsed('node', parsedType)};`,
-				'  }'
-			);
-		} else {
-			lines.push(
-				`  if (_isReadTextLeaf(data)) return ${castToParsed(`withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} })`, parsedType)};`
-			);
-		}
+		lines.push(
+			'  if (_isReadTextLeaf(data)) {',
+			`    const node = { ...data${wrapTextLeafTypeStamp(node, kindEntries)}, ${nodeMemberLines({ accessors: [], inner }).map((line) => line.trim()).join(' ')} };`,
+			`    return ${castToParsed('node', parsedType)};`,
+			'  }'
+		);
 	}
-
-	const hasWithSetters = node.rawFactoryName && (slots.length > 0 || children.length > 0);
 
 	emitSlotOrderDraftLine(slots, node.kind, lines, kindEntries, nodeMap);
 	const literalStart = lines.length;
-	if (literal) lines.push('  const node = {');
-	else lines.push(hasWithSetters ? `  const _node = withMethods(${seatOpening(seats)}{` : `  return withMethods(${seatOpening(seats)}{`);
+	lines.push('  const node = {');
 	lines.push('    ...data,');
 	if (kindEntries) {
 		const entry = findKindEntry(kindEntries, node.kind);
@@ -760,7 +740,7 @@ function emitFieldCarryingWrap(
 	}
 	lines.push('');
 
-	emitFieldAccessorLines(slots, node.kind, 'data', lines, kindEntries, nodeMap);
+	emitFieldAccessorLines(slots, node.kind, 'data', lines, kindEntries, nodeMap, spelled);
 	if (children.length > 0) {
 		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, kindEntries);
 		const { accessorBody } = resolveSlotHydrateExprs(childrenConfig.slot, {
@@ -773,31 +753,18 @@ function emitFieldCarryingWrap(
 		lines.push(`    children() { ${accessorBody}; },`);
 	}
 
-	if (literal) {
-		lines.push(
-			...nodeMemberLines({
-				setters: node.rawFactoryName ? seatedSetters(inlineSetters(node, slots, children, nodeMap, kindEntries), plan) : undefined,
-				accessors: [],
-				extra: view?.members,
-				inner
-			})
-		);
-		lines.push('  };');
-		lines.push(...(view?.postlude ?? []));
-		lines.splice(literalStart, 0, ...hoist.prelude, ...(view?.prelude ?? []));
-		lines.push(`  return ${castToParsed('node', parsedType)};`);
-		lines.push('}');
-		return lines.join('\n');
-	}
-	emitInlineWithProperty(lines, node, slots, children, nodeMap, kindEntries);
-
-	const closing = `  }${seatClosing(seats)})`;
 	lines.push(
-		hasWithSetters ? `${closing};` : `${closing}${parsedType === undefined ? '' : ` as unknown as ${parsedType}`};`
+		...nodeMemberLines({
+			setters: node.rawFactoryName ? seatedSetters(inlineSetters(node, slots, children, nodeMap, kindEntries), plan) : undefined,
+			accessors: [],
+			extra: [...(view?.members ?? []), ...groups.members],
+			inner
+		})
 	);
-	if (hasWithSetters) {
-		lines.push(`  return ${castToParsed('_node', parsedType)};`);
-	}
+	lines.push('  };');
+	lines.push(...(view?.postlude ?? []));
+	lines.splice(literalStart, 0, ...hoist.prelude, ...(view?.prelude ?? []), ...groups.prelude);
+	lines.push(`  return ${castToParsed('node', parsedType)};`);
 	lines.push('}');
 	return lines.join('\n');
 }
@@ -869,19 +836,6 @@ function inlineSetters(
 		}
 	}
 	return setters;
-}
-
-function emitInlineWithProperty(
-	lines: string[],
-	node: WrapNode,
-	slots: readonly AssembledNonterminal[],
-	children: readonly AssembledNonterminal[],
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): void {
-	if (!node.rawFactoryName) return;
-	const setters = inlineSetters(node, slots, children, nodeMap, kindEntries);
-	lines.push('    $with: {', ...setters.map((entry) => `      ${entry.name}: (${entry.params}) => ${entry.body},`), '    },');
 }
 
 export class WrapEmitter implements CodegenEmitter<string> {
@@ -1135,7 +1089,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'// Auto-generated by @sittir/codegen — do not edit',
 			'// Lazy view layer over readUntypedNode output — shape A surface.',
 			'',
-			"import { readUntypedNode, restItems, isNode, isStub, isTypedNode, holdsSlots, markEdited as $edited, treeHandleOf, mapTriviaEntries, projectInterior, coerceBooleanKeywordStorage, coerceBitflagStorage, inTreeEngine, currentHandle, listSlotWith, elementsWith, LIST_ITEMS, LIST_READ, LIST_METHODS, listIterator, listItems, storedElements, ownerView, ownerElements, listOption, defineListIndices, rebuilt, renderText, toEditAt, triviaSide, triviaInner, triviaInnerAt, withListView, withListSlots, withGroupSeat, withElementsSeat } from '@sittir/common/utils';",
+			"import { readUntypedNode, restItems, isNode, isStub, isTypedNode, holdsSlots, markEdited as $edited, treeHandleOf, mapTriviaEntries, projectInterior, coerceBooleanKeywordStorage, coerceBitflagStorage, inTreeEngine, currentHandle, listSlotWith, elementsWith, seatWith, groupField, STORED_SLOT_READERS, LIST_ITEMS, LIST_READ, LIST_METHODS, listIterator, listItems, storedElements, ownerView, ownerElements, listOption, defineListIndices, rebuilt, renderText, toEditAt, triviaSide, triviaInner, triviaInnerAt } from '@sittir/common/utils';",
 			"import type { TreeHandle, TokenInterior } from '@sittir/common/utils';",
 			"import { TOKEN_INTERIORS } from './consts.js';",
 			"import type { ParsedRoot } from '@sittir/common/engine';",
@@ -1144,7 +1098,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			DELIMITER_IMPORT,
 			"import type * as T from './types-internal.js';",
 			...(this.#typeImportLine ? [this.#typeImportLine] : []),
-			"import { withMethods } from './utils.js';",
 			"import * as FR from './factories/coerce.js';",
 			"import * as RAW from './factories/raw.js';",
 			'',
@@ -1900,9 +1853,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'TOKEN_INTERIORS',
 			'coerceBooleanKeywordStorage',
 			'coerceBitflagStorage',
-			'withMethods',
 			'listSlotWith',
 			'elementsWith',
+			'seatWith',
+			'groupField',
+			'STORED_SLOT_READERS',
 			'LIST_ITEMS',
 			'LIST_READ',
 			'LIST_METHODS',
@@ -1915,10 +1870,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'defineListIndices',
 			'triviaInner',
 			'triviaInnerAt',
-			'withListView',
-			'withListSlots',
-			'withGroupSeat',
-			'withElementsSeat',
 			'FR',
 			'RAW',
 			'SupertypeSurface'

@@ -7531,80 +7531,6 @@ Collision guard for the `$other` reclaim. Across a kind's reclaiming slots (`rec
  */
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::emitInlineWithProperty`
-
-```text
-/**
- * Emit the inline `$with: { ... }` property for a wrap function literal.
- *
- * Container-shape nodes with a real unnamed-children wire slot (`children`
- * non-empty) emit `$other`/`$child` lambdas calling the rest-param factory.
- * `node.childSurface` alone is NOT sufficient to pick that path — it
- * describes the factory's own calling convention, and under the unified-slot
- * model an unnamed slot lives in `fields` with a real `_<name>` storage key,
- * not in `$other`. All other nodes (including childSurface spread/direct
- * nodes whose unnamed slot is a `fields` entry) fall through to the
- * per-field setters below, which build a lazy config and call the factory
- * with a patched value at the field's real storage key.
- *
- * @param lines - Output line buffer to append to.
- * @param node - The assembled node descriptor.
- * @param slots - The node's slots; unnamed ones are already unified in.
- * @param children - Always `[]` from both call sites.
- */
-```
-
-A repeated slot's setter takes its values as rest arguments only when the slot's storage is verbatim, and as one array otherwise. That is the rule the factory's own `$with` follows (`slotSetter`), so a built node and a parsed node take the same call for the same slot.
-
-#### body
-
-```text
-// An edited node is re-spelled by its template, so the text captured from
-// the source it was read out of no longer describes it. Dropping `$text`
-// here records that at the edit, which is the only place that knows it
-// happened — leaving it in storage would force every downstream consumer
-// to guess whether the text is still current. Leaves take the empty
-// `$with` path above and keep their `$text`, which is their only content.
-```
-
-#### body
-
-```text
-// A SETTER DOES NOT COERCE. It takes the slot's own type and stores it.
-// Coercion belongs to construction: a caller who wants it reaches for the
-// constructor that does it — `node.$with.name(ir.identifier('run'))` — which
-// is one composition longer and says exactly what it converts. Routing the
-// setter through the field resolver instead would make the same key mean
-// different things on a built node and a parsed one, which is the drift
-// this rule exists to prevent.
-```
-
-#### body
-
-```text
-// Named after the slot, like every other setter — inside `$with` every
-// key IS a slot name, so a sigil there would mark the namespace twice.
-// The model names an unnamed slot too, falling back to `content` and
-// pluralising it when the slot is repeated.
-```
-
-#### body
-
-```text
-// Field-carrying: $with setters spread `data` + patch the target
-// `_<name>` key, then re-wrap — producing another fluent wrapped node
-// with hydration support (not a raw factory node). Typed params align
-// with the factory version's setter signatures.
-```
-
-#### body
-
-```text
-// A repeated field keeps its rest-parameter calling convention; the
-// element type is the storage element, since the setter stores what
-// it is given.
-```
-
 ### `packages/codegen/src/emitters/client-utils.ts::triviaKinds`
 
 ```text
@@ -10940,7 +10866,7 @@ The union of the grammar's trivia kind types, `AnyUntypedNode` when it has none:
 
 ### `packages/codegen/src/emitters/client-utils.ts::module`
 
-Emits the grammar's `utils.ts`: its trivia facts (`triviaFacts`) and the runtime bound to its type map (`bindRuntime`), destructured as `isNode` and `withMethods`. Every other runtime helper is grammar-free and generated code imports it from `@sittir/common/utils`. The binding stays in its own module rather than `api.ts`: the factories index calls `hoist` while it loads, and `api.ts` reads `ir` while it loads, so a factory importing the runtime from `api.ts` would reach `ir` before it is initialised.
+Emits the grammar's `utils.ts`: its trivia facts (`triviaFacts`) and the runtime bound to its type map (`bindRuntime`), destructured as `isNode`. Every other runtime helper is grammar-free and generated code imports it from `@sittir/common/utils`. The binding stays in its own module rather than `api.ts`: the factories index calls `hoist` while it loads, and `api.ts` reads `ir` while it loads, so a factory importing the runtime from `api.ts` would reach `ir` before it is initialised.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitTriviaFacts`
 
@@ -16521,10 +16447,6 @@ The emitted `_keywordOr(input, keywords, () => resolved)` that replaces `_keywor
 
 The options a separated list's factory takes, each with the expression the factory falls back to when the option is not passed: the delimiter's resolved arm (`Delimiter.None` when the list declares none) and the separator's declared arm (`undefined` when there is none). It reads the same option flags as the options type and the same default derivations as the list factory, so a list owner's getters report exactly what the factory would build.
 
-### `packages/codegen/src/emitters/factories.ts::listViewRuntimeSpec`
-
-The object literal a list's or list owner's builder and wrap pass to `withListView`: for an owner, its accessor for the list and the storage key that holds it (`list: { accessor, storage }`); the list's accessor for its elements (`elements`) and the storage key that holds them (`count`, read once to size the index); each option its factory takes as `{ key, default }`; and, when the list's element is a transparent wrapper, the wrapper's kind id, the accessor that names its content and the storage keys of its other slots (`wrapper`). It shares `listViewTarget` with `listViewHint`, so the type-level stamp and the runtime members come from one test; `undefined` means the node does not read as a list. The wrapper facts come from `separatedListSurface`, which derives the factory's element union from the same wrapper, so the read collapse and the factory's wrap of bare content cannot disagree.
-
 ### `packages/codegen/src/emitters/factories.ts::listSlotTargets`
 
 The slots of a node that hold a list: each single-valued slot whose one kind reads as a list (`listViewTarget`) and has a raw factory, paired with that kind.
@@ -16535,7 +16457,7 @@ The facts of each slot `listSlotTargets` names: the slot's accessor name, the ki
 
 ### `packages/codegen/src/emitters/factories.ts::listSlotsRuntimeSpec`
 
-The array a node's builder and wrap pass to `withListSlots`: per slot `listSlotTargets` names, the setter's name, the held kind's id, whether the slot is optional, and the held kind's raw factory (`make`, prefixed by `factoryScope` where the caller reaches it through a namespace import).
+The entries a node's builder and wrap pass to `listSlotWith`, one per list slot: per slot `listSlotTargets` names, the setter's name, the held kind's id, whether the slot is optional, and the held kind's raw factory (`make`, prefixed by `factoryScope` where the caller reaches it through a namespace import).
 
 ### `packages/codegen/src/emitters/factories.ts::ListViewFacts`
 
@@ -16544,18 +16466,6 @@ The facts `listViewHint` returns: the item type, the options type, the list's ra
 ### `packages/codegen/src/emitters/factories.ts::SeatRuntime`
 
 One runtime helper call a node's builder and wrap add: the helper's name and its spec literal.
-
-### `packages/codegen/src/emitters/factories.ts::seatRuntimes`
-
-The helper calls a node's builder and wrap wrap their object literal in, in the order they nest: `withListView` when the node reads as a list, `withListSlots` when it has slots that hold lists, `withGroupSeat` when it seats a flattened group, and one `withElementsSeat` per elements seat. The wrap passes the name of its tree (`tree`), which `withListView` takes as its third argument to read an owner's list that arrived as a stub; a builder has no tree and stores its list whole. Each spec comes from the function that also derives the type-level stamp, so a member exists at runtime exactly when its type says so. The config builder, the separated-list builder and the wrap all call it, and the raw module imports exactly the helpers it returns.
-
-### `packages/codegen/src/emitters/factories.ts::seatOpening`
-
-The helper calls of `seatRuntimes`, opened: `withA(withB(`. Paired with `seatClosing`.
-
-### `packages/codegen/src/emitters/factories.ts::seatClosing`
-
-The closing half of `seatOpening`: the specs in reverse nesting order, each as the trailing argument of its helper call.
 
 ### `packages/codegen/src/emitters/factories.ts::listViewOwners`
 
@@ -16567,15 +16477,15 @@ The separated list a node reads as: the node itself when it is an `AssembledList
 
 ### `packages/codegen/src/emitters/factories.ts::groupSeatHints`
 
-The facts each flattened group of a node needs for its node surface, one per seat: the slot that seats the group and the parent's storage property that holds it (`stored`), the group's type and kind, its raw factory, whether the seat is optional, and the keys it flattens. Each key has the name the parent reads and sets it by (`name`), the group field it stands for (`field`) whether its setter takes rest arguments, and whether the group requires it (`required`, which lets `withGroupSeat` refuse to build a partial group). There is one for each seat `flattenSeatsOf` names, and its keys come from that seat's own keys, so the config surface and the node surface agree on which kinds flatten a group and on every key's name. A key the seat prefixed is named with `prefixedKey` from the seat's accessor and the field's, the same rule the config key follows. A key that spells the seat's own slot reads the group's inner value, and its setter takes the inner value or the whole group.
+The facts each flattened group of a node needs for its node surface, one per seat: the slot that seats the group and the parent's storage property that holds it (`stored`), the group's type and kind, its raw factory, whether the seat is optional, and the keys it flattens. Each key has the name the parent reads and sets it by (`name`), the group field it stands for (`field`) whether its setter takes rest arguments, and whether the group requires it (`required`, which lets `seatWith` refuse to build a partial group). There is one for each seat `flattenSeatsOf` names, and its keys come from that seat's own keys, so the config surface and the node surface agree on which kinds flatten a group and on every key's name. A key the seat prefixed is named with `prefixedKey` from the seat's accessor and the field's, the same rule the config key follows. A key that spells the seat's own slot reads the group's inner value, and its setter takes the inner value or the whole group.
 
 ### `packages/codegen/src/emitters/factories.ts::groupSeatRuntimeSpecs`
 
-The object literals a node's builder and wrap pass to `withGroupSeat`, one per seat, each applied in turn: the seat's accessor (`slot`) and storage property (`stored`), the group's kind id (`kind`), the group's raw factory (`make`) and its keys (`keys`), each with its rest mark and, for a prefixed key, the group field it names. It shares `groupSeatHints` with the type-level `$flat` stamp, so the flattened members exist at runtime exactly when the interface declares them.
+The object literal a node's builder and wrap pass to `seatWith`, one per seat: the seat's accessor (`slot`) and storage property (`stored`), the group's kind id (`kind`), the group's raw factory (`make`) and its keys (`keys`), each with its rest mark and, for a prefixed key, the group field it names. It shares `groupSeatHints` with the type-level `$flat` stamp, so the flattened members exist at runtime exactly when the interface declares them.
 
 ### `packages/codegen/src/emitters/factories.ts::elementConfigsOf`
 
-The elements seats of a node: each multiple slot whose elements include exactly one hoisted config-shaped group, as the slot's accessor name, the group's type and raw factory, its config keys and the type of its config object. A separated list's element slot is one when its element is such a group. The config surface takes the group's config objects in these slots and builds each through the group's factory; the node surface takes them the same way in every `$with` setter for the slot, including the setter of a slot that holds the list. The type stamp (`config` of a slot hint or a list-slot hint) and the runtime spec (`element` of a list-slot spec, or a `withElementsSeat` call) come from this one function.
+The elements seats of a node: each multiple slot whose elements include exactly one hoisted config-shaped group, as the slot's accessor name, the group's type and raw factory, its config keys and the type of its config object. A separated list's element slot is one when its element is such a group. The config surface takes the group's config objects in these slots and builds each through the group's factory; the node surface takes them the same way in every `$with` setter for the slot, including the setter of a slot that holds the list. The type stamp (`config` of a slot hint or a list-slot hint) and the runtime spec (`element` of a list-slot spec, or an `elementsWith` call) come from this one function.
 
 ### `packages/codegen/src/emitters/templates.ts::droppedLiteralTexts`
 
@@ -16599,7 +16509,7 @@ A text slot's pattern guard in the raw builder skips `undefined` only where `und
 
 ### `packages/codegen/src/emitters/node-members.ts::SetterEntry`
 
-One `$with` setter of a node literal: its name, its parameter list and the rebuild expression it runs. The factory emitters collect these, so the literal path and the helper-nesting path write the same setters.
+One `$with` setter of a node literal: its name, its parameter list and the rebuild expression it runs. The factory and wrap emitters collect these, and `seatedSetters` wraps the ones a seat changes.
 
 ### `packages/codegen/src/emitters/node-members.ts::nodeMemberLines`
 
@@ -16620,3 +16530,27 @@ One `$with` setter line: the entry runs its rebuild through `rebuilt`, which sco
 ### `packages/codegen/src/emitters/factories.ts::narrowedStorageExpr`
 
 The storage of a refine form's narrowed slot: the kind id the narrowing literal names (a missing one fails at emit time), `true` for a keyword-presence slot. A strict builder reads no text, so the literal is resolved here once instead of being mapped at run time.
+
+### `packages/codegen/src/emitters/node-members.ts::seatedSetters`
+
+The setters of a node as its literal writes them, after its seats. A list slot's setter runs through `listSlotWith`, an elements slot's through `elementsWith`. Each key a group seat flattens onto the node gets a setter that runs `seatWith` over the seat's slot setter, and a key that spells its slot replaces that slot's own setter. A seat with no slot setter to wrap, a wrapped list owner among them, adds no keys.
+
+### `packages/codegen/src/emitters/node-members.ts::spelledGroupSlots`
+
+The slots whose group seat has a key of the slot's own name. That key reads the group's inner value, so the slot's own accessor is not written: the node keeps the group's reader under `STORED_SLOT_READERS` instead.
+
+### `packages/codegen/src/emitters/node-members.ts::groupSeatParts`
+
+The lines a group seat adds to a node's builder: a reader of the seated group, hoisted before the literal because both the setters and the stored-reader member call it; a member per flattened key, `undefined` while the group is absent and a reader of the group's field while it is present; and the `STORED_SLOT_READERS` member. A reader exists only when it has a value, decided when the node is built, so a node with the group and a node without it differ in the value of these members and not in the shape of the node.
+
+### `packages/codegen/src/emitters/node-members.ts::ownerViewParts`
+
+The lines that make a list owner read as an array: before the literal, the owner's view of its list; as members, `length`, the items under `LIST_ITEMS`, the shared array methods, the iterator, `isConcatSpreadable`, `unscopables` and the list's options; after the literal, the index positions. A built owner holds its items and writes them as plain properties; a wrapped owner holds none until first use (`LIST_READ`) and takes the shared index getters. An owner built over a read stub with no tree takes the throwing `length`.
+
+### `packages/codegen/src/emitters/node-members.ts::listSelfViewParts`
+
+The same lines for a separated list node that is the list itself: its own stored elements instead of an owner's view, and its options read from its own storage keys, hoisted before the literal in a wrap. A built list and a wrapped list differ only in where the items come from, and both read them on first use.
+
+### `packages/codegen/src/emitters/wrap.ts::fieldAccessorBodies`
+
+The reader body of each slot of a wrap: the expression its accessor returns, built from the stored value. The accessor lines of a wrap and the wrap's own uses of a slot's reader take it from here.

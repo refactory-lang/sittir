@@ -2,13 +2,12 @@ import type {
 	AnyUntypedNode,
 	FlavorPair,
 	HoistArity,
-	NodeMethods,
 	GrammarTypeMap,
 	Hoisted,
 	MaxArity,
 	StrictFlavor
 } from '@sittir/types';
-import { isNode as isAnyNode, withMethods as withAnyMethods } from './utils.ts';
+import { isNode as isAnyNode } from './utils.ts';
 
 type NamespacePart<M extends GrammarTypeMap, K, P extends 'Node' | 'Loose'> = K extends keyof M['namespaces']
 	? M['namespaces'][K] extends { readonly [Q in P]: infer X }
@@ -21,15 +20,11 @@ export interface GrammarRuntime<M extends GrammarTypeMap> {
 		v: NamespacePart<M, K, 'Node'> | NamespacePart<M, K, 'Loose'>
 	): v is Extract<NamespacePart<M, K, 'Node'>, AnyUntypedNode>;
 	isNode(v: unknown): v is AnyUntypedNode;
-	withMethods<T extends AnyUntypedNode>(node: T): T & NodeMethods<M['trivia']>;
 }
 
 export function bindRuntime<M extends GrammarTypeMap>(): GrammarRuntime<M> {
 	return {
-		isNode: isAnyNode,
-		withMethods<T extends AnyUntypedNode>(node: T) {
-			return withAnyMethods(node) as unknown as T & NodeMethods<M['trivia']>;
-		}
+		isNode: isAnyNode
 	} as GrammarRuntime<M>;
 }
 

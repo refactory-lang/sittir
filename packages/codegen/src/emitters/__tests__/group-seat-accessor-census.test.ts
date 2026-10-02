@@ -73,7 +73,7 @@ describe('a group seat flattens exactly the group fields its config surface name
 			}
 			const hints = seated.flatMap(({ hints }) => hints);
 			for (const file of ['wrap.ts', 'factories/raw.ts']) {
-				expect([...read(grammar, file).matchAll(/withGroupSeat\(/g)]).toHaveLength(hints.length);
+				expect([...read(grammar, file).matchAll(/const readGroup_\w+ = /g)]).toHaveLength(hints.length);
 			}
 		});
 	}

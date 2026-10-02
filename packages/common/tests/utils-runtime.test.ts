@@ -2,8 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 import type { AnyUntypedNode } from '@sittir/types';
 import { inEngine } from '../src/engine-scope.ts';
 import { liveHandle } from './support/fake-engine.ts';
+import { withMembers as withMethods } from './support/members.ts';
 import {
-	withMethods,
 	isNode,
 	isParsedNode,
 	isFactoryNode,
@@ -17,7 +17,6 @@ import {
 
 describe('@sittir/common/utils runtime surface', () => {
 	it('exports the shared runtime helpers', () => {
-		expect(typeof withMethods).toBe('function');
 		expect(typeof isNode).toBe('function');
 		expect(typeof hasKind).toBe('function');
 		expect(typeof coerceBooleanKeywordStorage).toBe('function');

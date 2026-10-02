@@ -130,11 +130,11 @@ export interface AnyUntypedNode {
 
 	// -------------------------------------------------------------------------
 	// $-prefixed methods — present on factory/wrap output only.
-	// Attached via per-grammar withMethods<T> (non-enumerable defineProperty).
+	// Members of the literal the factory or wrap writes for the node.
 	// Absent on readUntypedNode / native JSON transport.
 	// -------------------------------------------------------------------------
 
-	/** Render this node to source text. Non-enumerable on factory/wrap output. */
+	/** Render this node to source text. */
 	$render?: () => string;
 	/**
 	 * Create an Edit replacing a range with this node's rendered text: byte

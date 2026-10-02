@@ -10,9 +10,8 @@
  * `it.fails` cases: the freeze contract and $with non-enumerability are
  * not yet wired into generated factory output (the one-time scaffolding
  * helpers for them were deleted as dead code — zero callers; the wiring,
- * when it lands, is emitted per-kind). Non-enumerable accessors shipped
- * separately via `withAccessors` (packages/common/src/utils.ts), wired
- * into the factories emitter's accessor-emission sites. The remaining
+ * when it lands, is emitted per-kind). Accessors are members of the node
+ * literal the emitters write. The remaining
  * `it.fails` cases assert the target contract and are expected to fail
  * until the wiring lands; `it.fails` flags loudly (test failure) if one
  * unexpectedly starts passing, which is the signal that its slice has

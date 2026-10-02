@@ -25,4 +25,4 @@ export const triviaFacts = Object.freeze({
 	})
 } satisfies TriviaFacts);
 
-export const { isNode, withMethods } = bindRuntime<TypescriptTypeMap>();
+export const { isNode } = bindRuntime<TypescriptTypeMap>();

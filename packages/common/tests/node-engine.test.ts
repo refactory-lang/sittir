@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import type { AnyUntypedNode } from '@sittir/types';
 import { inEngine, type EngineHandle } from '../src/engine-scope.ts';
-import { withMethods } from '../src/utils.ts';
+import { rebuilt as rebuiltIn } from '../src/utils.ts';
+import { withMembers as withMethods } from './support/members.ts';
 import { detach, liveHandle, triviaFacts } from './support/fake-engine.ts';
 
 const COMMENT = 9;
@@ -28,11 +29,10 @@ type Methods = {
 const methods = (node: AnyUntypedNode): AnyUntypedNode & Methods => node as AnyUntypedNode & Methods;
 
 describe('a node and its engine', () => {
-	it('is stamped with the handle in scope, as a non-enumerable method', () => {
+	it('is stamped with the handle in scope', () => {
 		const a = engineHandle('a');
 		const node = methods(builtIn(a));
 		expect(node.$engine?.()).toBe(a.current);
-		expect(Object.keys(node)).not.toContain('$engine');
 	});
 
 	it('carries no engine outside a scope, so it cannot render, edit or take trivia', () => {
@@ -40,7 +40,7 @@ describe('a node and its engine', () => {
 		expect(node.$engine).toBeUndefined();
 		expect(() => node.$render()).toThrow(/no engine.*engine\.render\(node\)/);
 		expect(() => node.$toEdit(0, 1)).toThrow(/no engine/);
-		expect(() => node.$trivia).toThrow(/no engine/);
+		expect(() => node.$trivia.leading('// x')).toThrow(/no engine/);
 	});
 
 	it('renders and edits through its engine, not the supplied facts', () => {
@@ -66,11 +66,11 @@ describe('a node and its engine', () => {
 	it('rebuilds a $with setter under its own engine, whatever scope calls it', () => {
 		const a = engineHandle('a');
 		const b = engineHandle('b');
-		const node = methods(
+		const node: AnyUntypedNode & Methods = methods(
 			builtIn(a, {
 				$type: 1,
 				$text: 'x',
-				$with: { x: () => withMethods({ $type: 2, $text: 'y' } as AnyUntypedNode) }
+				$with: { x: () => rebuiltIn(node, a, () => withMethods({ $type: 2, $text: 'y' } as AnyUntypedNode)) }
 			})
 		);
 		const rebuilt = inEngine(b, () => node.$with.x());

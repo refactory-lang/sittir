@@ -5,7 +5,6 @@ import { Delimiter } from '@sittir/common/utils';
 import { TSKindId } from '../types.js';
 import type { AdmitBound, StringIndexRange, ConfigOf, NonEmptyArray, WidenNumeric } from '@sittir/types';
 import {
-	withAccessors,
 	currentHandle,
 	listSlotWith,
 	LIST_ITEMS,
@@ -16,6 +15,9 @@ import {
 	ownerElements,
 	listOption,
 	readStubLength,
+	seatWith,
+	groupField,
+	STORED_SLOT_READERS,
 	LIST_READ,
 	storedElements,
 	defineListIndices,
@@ -34,10 +36,8 @@ import {
 	numberText,
 	orDefault,
 	rejectBareText,
-	rejectKeywordText,
-	withGroupSeat
+	rejectKeywordText
 } from '@sittir/common/utils';
-import { withMethods } from '../utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
 	if (arr.length === 0) {
@@ -1528,37 +1528,77 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 		'CatchClause.body',
 		'a built StatementBlock'
 	);
-	return withMethods(
-		withGroupSeat(
-			withAccessors(
-				{
-					$type: TSKindId.CatchClause as const,
-					$source: 2 as const,
-					$named: true as const,
-					_catch_clause_group,
-					_body,
-					$with: {
-						catchClauseGroup: (value?: T.CatchClauseGroup) => buildCatchClause({ ...config, catchClauseGroup: value }),
-						body: (value: T.StatementBlock) => buildCatchClause({ ...config, body: value })
-					}
-				},
-				{
-					catchClauseGroup: () => _catch_clause_group,
-					body: () => _body
-				}
-			),
-			{
-				slot: 'catchClauseGroup',
-				stored: '_catch_clause_group',
-				kind: TSKindId.CatchClauseGroup as const,
-				make: buildCatchClauseGroup,
-				keys: [
-					{ name: 'parameter', rest: false, required: true },
-					{ name: 'type', rest: false }
-				]
-			}
-		)
-	) as unknown as T.CatchClause.Bound;
+	const readGroup_catchClauseGroup = () => _catch_clause_group;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.CatchClause as const,
+		$source: 2 as const,
+		$named: true as const,
+		_catch_clause_group,
+		_body,
+		$with: {
+			catchClauseGroup: (value?: T.CatchClauseGroup) =>
+				rebuilt(node, handle, () => buildCatchClause({ ...config, catchClauseGroup: value })),
+			body: (value: T.StatementBlock) => rebuilt(node, handle, () => buildCatchClause({ ...config, body: value })),
+			parameter: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'catchClauseGroup',
+							stored: '_catch_clause_group',
+							kind: TSKindId.CatchClauseGroup as const,
+							make: buildCatchClauseGroup,
+							keys: [
+								{ name: 'parameter', rest: false, required: true },
+								{ name: 'type', rest: false }
+							]
+						},
+						'parameter',
+						args,
+						(value?: T.CatchClauseGroup) => buildCatchClause({ ...config, catchClauseGroup: value }),
+						() => readGroup_catchClauseGroup.call(node)
+					)
+				),
+			type: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'catchClauseGroup',
+							stored: '_catch_clause_group',
+							kind: TSKindId.CatchClauseGroup as const,
+							make: buildCatchClauseGroup,
+							keys: [
+								{ name: 'parameter', rest: false, required: true },
+								{ name: 'type', rest: false }
+							]
+						},
+						'type',
+						args,
+						(value?: T.CatchClauseGroup) => buildCatchClause({ ...config, catchClauseGroup: value }),
+						() => readGroup_catchClauseGroup.call(node)
+					)
+				)
+		},
+		catchClauseGroup: () => _catch_clause_group,
+		body: () => _body,
+		parameter:
+			_catch_clause_group === undefined
+				? undefined
+				: () => groupField(readGroup_catchClauseGroup.call(node), 'parameter'),
+		type:
+			_catch_clause_group === undefined ? undefined : () => groupField(readGroup_catchClauseGroup.call(node), 'type'),
+		[STORED_SLOT_READERS]: { catchClauseGroup: readGroup_catchClauseGroup },
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CatchClause.Bound;
 }
 
 export function buildFinallyClause(

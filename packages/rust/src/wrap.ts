@@ -16,6 +16,9 @@ import {
 	inTreeEngine,
 	currentHandle,
 	listSlotWith,
+	seatWith,
+	groupField,
+	STORED_SLOT_READERS,
 	LIST_ITEMS,
 	LIST_READ,
 	LIST_METHODS,
@@ -30,8 +33,7 @@ import {
 	renderText,
 	toEditAt,
 	triviaSide,
-	triviaInner,
-	withGroupSeat
+	triviaInner
 } from '@sittir/common/utils';
 import type { TreeHandle, TokenInterior } from '@sittir/common/utils';
 import { TOKEN_INTERIORS } from './consts.js';
@@ -40,7 +42,6 @@ import type { AnyUntypedNode as _UntypedNode, NonEmptyArray, StringIndexRange, S
 import { TSKindId, KIND_NAMES, KIND_DISPLAY_NAMES } from './types.js';
 import { Delimiter } from '@sittir/common/utils';
 import type * as T from './types-internal.js';
-import { withMethods } from './utils.js';
 import * as RAW from './factories/raw.js';
 
 // A hydrated read-layer TEXT LEAF: the reader modeled no addressable
@@ -10754,42 +10755,86 @@ export function wrapMatchExpression(data: T.MatchExpression, tree: TreeHandle): 
 
 export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlock.Parsed {
 	data = _keepModelledSlots(data, ['_match_block_arms']);
-	const _node = withMethods(
-		withGroupSeat(
-			{
-				...data,
-				$type: TSKindId.MatchBlock as const,
-				_match_block_arms: storeExpanded(
-					normalizeSingularWrapSlot(data._match_block_arms, 'match_block_arms', false, data.$type, {
-						tree,
-						nodeType: data.$type,
-						slotName: 'match_block_arms',
-						span: (data as _UntypedNode).$span
-					}),
-					tree
-				),
-
-				matchBlockArms() {
-					return hydrateChild<T.MatchBlockArms | undefined>(this._match_block_arms, tree);
-				},
-				$with: {
-					matchBlockArms: (v: NonNullable<T.MatchBlock['_match_block_arms']>) =>
-						wrapMatchBlock({ ...$edited(data), _match_block_arms: v }, tree)
-				}
-			},
-			{
-				slot: 'matchBlockArms',
-				stored: '_match_block_arms',
-				kind: TSKindId.MatchBlockArms as const,
-				make: RAW.buildMatchBlockArms,
-				keys: [
-					{ name: 'matchArms', rest: true },
-					{ name: 'lastArm', rest: false, required: true }
-				]
-			}
-		)
+	const handle = currentHandle();
+	const _match_block_arms = storeExpanded(
+		normalizeSingularWrapSlot(data._match_block_arms, 'match_block_arms', false, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'match_block_arms',
+			span: (data as _UntypedNode).$span
+		}),
+		tree
 	);
-	return _node as unknown as T.MatchBlock.Parsed;
+	const readGroup_matchBlockArms = () => hydrateChild<T.MatchBlockArms | undefined>(_match_block_arms, tree);
+	const node = {
+		...data,
+		$type: TSKindId.MatchBlock as const,
+		_match_block_arms,
+
+		matchBlockArms() {
+			return hydrateChild<T.MatchBlockArms | undefined>(this._match_block_arms, tree);
+		},
+		$with: {
+			matchBlockArms: (v: NonNullable<T.MatchBlock['_match_block_arms']>) =>
+				rebuilt(node, handle, () => wrapMatchBlock({ ...$edited(data), _match_block_arms: v }, tree)),
+			matchArms: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'matchBlockArms',
+							stored: '_match_block_arms',
+							kind: TSKindId.MatchBlockArms as const,
+							make: RAW.buildMatchBlockArms,
+							keys: [
+								{ name: 'matchArms', rest: true },
+								{ name: 'lastArm', rest: false, required: true }
+							]
+						},
+						'matchArms',
+						args,
+						(v: NonNullable<T.MatchBlock['_match_block_arms']>) =>
+							wrapMatchBlock({ ...$edited(data), _match_block_arms: v }, tree),
+						() => readGroup_matchBlockArms.call(node)
+					)
+				),
+			lastArm: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'matchBlockArms',
+							stored: '_match_block_arms',
+							kind: TSKindId.MatchBlockArms as const,
+							make: RAW.buildMatchBlockArms,
+							keys: [
+								{ name: 'matchArms', rest: true },
+								{ name: 'lastArm', rest: false, required: true }
+							]
+						},
+						'lastArm',
+						args,
+						(v: NonNullable<T.MatchBlock['_match_block_arms']>) =>
+							wrapMatchBlock({ ...$edited(data), _match_block_arms: v }, tree),
+						() => readGroup_matchBlockArms.call(node)
+					)
+				)
+		},
+		matchArms:
+			_match_block_arms === undefined ? undefined : () => groupField(readGroup_matchBlockArms.call(node), 'matchArms'),
+		lastArm:
+			_match_block_arms === undefined ? undefined : () => groupField(readGroup_matchBlockArms.call(node), 'lastArm'),
+		[STORED_SLOT_READERS]: { matchBlockArms: readGroup_matchBlockArms },
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MatchBlock.Parsed;
 }
 
 export function wrapMatchArm(
@@ -10823,91 +10868,143 @@ export function wrapMatchArm(
 
 export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.LastMatchArm.Parsed {
 	data = _keepModelledSlots(data, ['_attributes', '_pattern', '_value', '_comma']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.LastMatchArm as const }) as unknown as T.LastMatchArm.Parsed;
-	const _node = withMethods(
-		withGroupSeat(
-			{
-				...data,
-				$type: TSKindId.LastMatchArm as const,
-				_attributes: storeExpanded(
-					normalizeRepeatedWrapSlot(data._attributes, false, 'attributes', {
-						tree,
-						nodeType: data.$type,
-						slotName: 'attributes',
-						span: (data as _UntypedNode).$span
-					}),
-					tree
-				),
-				_pattern: storeExpanded(
-					normalizeSingularWrapSlot(data._pattern, 'pattern', true, data.$type, {
-						tree,
-						nodeType: data.$type,
-						slotName: 'pattern',
-						span: (data as _UntypedNode).$span
-					}),
-					tree
-				),
-				_value: storeExpanded(
-					projectMixedEnumStorage(
-						normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
-							tree,
-							nodeType: data.$type,
-							slotName: 'value',
-							span: (data as _UntypedNode).$span
-						}),
-						{ true: 117, false: 118, self: 125 },
-						undefined,
-						[336]
-					),
-					tree
-				),
-				_comma: coerceBooleanKeywordStorage(
-					normalizeSingularWrapSlot(data._comma, 'comma', false, data.$type, {
-						tree,
-						nodeType: data.$type,
-						slotName: 'comma',
-						span: (data as _UntypedNode).$span
-					})
-				),
-
-				attributes() {
-					return hydrateChildren<T.AttributeItem | T.InnerAttributeItem>(
-						this._attributes as readonly (T.AttributeItem | T.InnerAttributeItem)[] | undefined,
-						tree
-					);
-				},
-				pattern() {
-					return hydrateChild<T.MatchPattern>(this._pattern, tree);
-				},
-				value() {
-					return hydrateChild<T.Expression>(this._value, tree);
-				},
-				comma() {
-					return this._comma;
-				},
-				$with: {
-					attributes: (...v: NonNullable<T.LastMatchArm['_attributes']>[number][]) =>
-						wrapLastMatchArm({ ...$edited(data), _attributes: restItems('attributes', v) }, tree),
-					pattern: (v: NonNullable<T.LastMatchArm['_pattern']>) =>
-						wrapLastMatchArm({ ...$edited(data), _pattern: v }, tree),
-					value: (v: NonNullable<T.LastMatchArm['_value']>) => wrapLastMatchArm({ ...$edited(data), _value: v }, tree),
-					comma: (v: NonNullable<T.LastMatchArm['_comma']>) => wrapLastMatchArm({ ...$edited(data), _comma: v }, tree)
-				}
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
+			...data,
+			$type: TSKindId.LastMatchArm as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 			},
-			{
-				slot: 'pattern',
-				stored: '_pattern',
-				kind: TSKindId.MatchPattern as const,
-				make: RAW.buildMatchPattern,
-				keys: [
-					{ name: 'pattern', rest: false, required: true },
-					{ name: 'condition', rest: false }
-				]
-			}
-		)
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.LastMatchArm.Parsed;
+	}
+	const _pattern = storeExpanded(
+		normalizeSingularWrapSlot(data._pattern, 'pattern', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'pattern',
+			span: (data as _UntypedNode).$span
+		}),
+		tree
 	);
-	return _node as unknown as T.LastMatchArm.Parsed;
+	const readGroup_pattern = () => hydrateChild<T.MatchPattern | undefined>(_pattern, tree);
+	const node = {
+		...data,
+		$type: TSKindId.LastMatchArm as const,
+		_attributes: storeExpanded(
+			normalizeRepeatedWrapSlot(data._attributes, false, 'attributes', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'attributes',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
+		_pattern,
+		_value: storeExpanded(
+			projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'value',
+					span: (data as _UntypedNode).$span
+				}),
+				{ true: 117, false: 118, self: 125 },
+				undefined,
+				[336]
+			),
+			tree
+		),
+		_comma: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._comma, 'comma', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'comma',
+				span: (data as _UntypedNode).$span
+			})
+		),
+
+		attributes() {
+			return hydrateChildren<T.AttributeItem | T.InnerAttributeItem>(
+				this._attributes as readonly (T.AttributeItem | T.InnerAttributeItem)[] | undefined,
+				tree
+			);
+		},
+		value() {
+			return hydrateChild<T.Expression>(this._value, tree);
+		},
+		comma() {
+			return this._comma;
+		},
+		$with: {
+			attributes: (...v: NonNullable<T.LastMatchArm['_attributes']>[number][]) =>
+				rebuilt(node, handle, () =>
+					wrapLastMatchArm({ ...$edited(data), _attributes: restItems('attributes', v) }, tree)
+				),
+			value: (v: NonNullable<T.LastMatchArm['_value']>) =>
+				rebuilt(node, handle, () => wrapLastMatchArm({ ...$edited(data), _value: v }, tree)),
+			comma: (v: NonNullable<T.LastMatchArm['_comma']>) =>
+				rebuilt(node, handle, () => wrapLastMatchArm({ ...$edited(data), _comma: v }, tree)),
+			pattern: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'pattern',
+							stored: '_pattern',
+							kind: TSKindId.MatchPattern as const,
+							make: RAW.buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'pattern',
+						args,
+						(v: NonNullable<T.LastMatchArm['_pattern']>) => wrapLastMatchArm({ ...$edited(data), _pattern: v }, tree),
+						() => readGroup_pattern.call(node)
+					)
+				),
+			condition: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'pattern',
+							stored: '_pattern',
+							kind: TSKindId.MatchPattern as const,
+							make: RAW.buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'condition',
+						args,
+						(v: NonNullable<T.LastMatchArm['_pattern']>) => wrapLastMatchArm({ ...$edited(data), _pattern: v }, tree),
+						() => readGroup_pattern.call(node)
+					)
+				)
+		},
+		pattern: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'pattern'),
+		condition: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'condition'),
+		[STORED_SLOT_READERS]: { pattern: readGroup_pattern },
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LastMatchArm.Parsed;
 }
 
 export function wrapMatchPattern(data: T.MatchPattern, tree: TreeHandle): T.MatchPattern.Parsed {
@@ -17461,161 +17558,237 @@ export function wrapForeignModItemBody(data: T.ForeignModItemBody, tree: TreeHan
 
 export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandle): T.MatchArmWithComma.Parsed {
 	data = _keepModelledSlots(data, ['_attributes', '_pattern', '_value']);
-	const _node = withMethods(
-		withGroupSeat(
-			{
-				...data,
-				$type: TSKindId.MatchArmWithComma as const,
-				_attributes: storeExpanded(
-					normalizeRepeatedWrapSlot(data._attributes, false, 'attributes', {
-						tree,
-						nodeType: data.$type,
-						slotName: 'attributes',
-						span: (data as _UntypedNode).$span
-					}),
-					tree
-				),
-				_pattern: storeExpanded(
-					normalizeSingularWrapSlot(data._pattern, 'pattern', true, data.$type, {
-						tree,
-						nodeType: data.$type,
-						slotName: 'pattern',
-						span: (data as _UntypedNode).$span
-					}),
-					tree
-				),
-				_value: storeExpanded(
-					projectMixedEnumStorage(
-						normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
-							tree,
-							nodeType: data.$type,
-							slotName: 'value',
-							span: (data as _UntypedNode).$span
-						}),
-						{ true: 117, false: 118, self: 125 },
-						undefined,
-						[336]
-					),
-					tree
-				),
-
-				attributes() {
-					return hydrateChildren<T.AttributeItem | T.InnerAttributeItem>(
-						this._attributes as readonly (T.AttributeItem | T.InnerAttributeItem)[] | undefined,
-						tree
-					);
-				},
-				pattern() {
-					return hydrateChild<T.MatchPattern>(this._pattern, tree);
-				},
-				value() {
-					return hydrateChild<T.Expression>(this._value, tree);
-				},
-				$with: {
-					attributes: (...v: NonNullable<T.MatchArmWithComma['_attributes']>[number][]) =>
-						wrapMatchArmWithComma({ ...$edited(data), _attributes: restItems('attributes', v) }, tree),
-					pattern: (v: NonNullable<T.MatchArmWithComma['_pattern']>) =>
-						wrapMatchArmWithComma({ ...$edited(data), _pattern: v }, tree),
-					value: (v: NonNullable<T.MatchArmWithComma['_value']>) =>
-						wrapMatchArmWithComma({ ...$edited(data), _value: v }, tree)
-				}
-			},
-			{
-				slot: 'pattern',
-				stored: '_pattern',
-				kind: TSKindId.MatchPattern as const,
-				make: RAW.buildMatchPattern,
-				keys: [
-					{ name: 'pattern', rest: false, required: true },
-					{ name: 'condition', rest: false }
-				]
-			}
-		)
+	const handle = currentHandle();
+	const _pattern = storeExpanded(
+		normalizeSingularWrapSlot(data._pattern, 'pattern', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'pattern',
+			span: (data as _UntypedNode).$span
+		}),
+		tree
 	);
-	return _node as unknown as T.MatchArmWithComma.Parsed;
+	const readGroup_pattern = () => hydrateChild<T.MatchPattern | undefined>(_pattern, tree);
+	const node = {
+		...data,
+		$type: TSKindId.MatchArmWithComma as const,
+		_attributes: storeExpanded(
+			normalizeRepeatedWrapSlot(data._attributes, false, 'attributes', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'attributes',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
+		_pattern,
+		_value: storeExpanded(
+			projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'value',
+					span: (data as _UntypedNode).$span
+				}),
+				{ true: 117, false: 118, self: 125 },
+				undefined,
+				[336]
+			),
+			tree
+		),
+
+		attributes() {
+			return hydrateChildren<T.AttributeItem | T.InnerAttributeItem>(
+				this._attributes as readonly (T.AttributeItem | T.InnerAttributeItem)[] | undefined,
+				tree
+			);
+		},
+		value() {
+			return hydrateChild<T.Expression>(this._value, tree);
+		},
+		$with: {
+			attributes: (...v: NonNullable<T.MatchArmWithComma['_attributes']>[number][]) =>
+				rebuilt(node, handle, () =>
+					wrapMatchArmWithComma({ ...$edited(data), _attributes: restItems('attributes', v) }, tree)
+				),
+			value: (v: NonNullable<T.MatchArmWithComma['_value']>) =>
+				rebuilt(node, handle, () => wrapMatchArmWithComma({ ...$edited(data), _value: v }, tree)),
+			pattern: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'pattern',
+							stored: '_pattern',
+							kind: TSKindId.MatchPattern as const,
+							make: RAW.buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'pattern',
+						args,
+						(v: NonNullable<T.MatchArmWithComma['_pattern']>) =>
+							wrapMatchArmWithComma({ ...$edited(data), _pattern: v }, tree),
+						() => readGroup_pattern.call(node)
+					)
+				),
+			condition: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'pattern',
+							stored: '_pattern',
+							kind: TSKindId.MatchPattern as const,
+							make: RAW.buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'condition',
+						args,
+						(v: NonNullable<T.MatchArmWithComma['_pattern']>) =>
+							wrapMatchArmWithComma({ ...$edited(data), _pattern: v }, tree),
+						() => readGroup_pattern.call(node)
+					)
+				)
+		},
+		pattern: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'pattern'),
+		condition: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'condition'),
+		[STORED_SLOT_READERS]: { pattern: readGroup_pattern },
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MatchArmWithComma.Parsed;
 }
 
 export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeHandle): T.MatchArmBlockEnding.Parsed {
 	data = _keepModelledSlots(data, ['_attributes', '_pattern', '_value']);
-	const _node = withMethods(
-		withGroupSeat(
-			{
-				...data,
-				$type: TSKindId.MatchArmBlockEnding as const,
-				_attributes: storeExpanded(
-					normalizeRepeatedWrapSlot(data._attributes, false, 'attributes', {
-						tree,
-						nodeType: data.$type,
-						slotName: 'attributes',
-						span: (data as _UntypedNode).$span
-					}),
-					tree
-				),
-				_pattern: storeExpanded(
-					normalizeSingularWrapSlot(data._pattern, 'pattern', true, data.$type, {
-						tree,
-						nodeType: data.$type,
-						slotName: 'pattern',
-						span: (data as _UntypedNode).$span
-					}),
-					tree
-				),
-				_value: storeExpanded(
-					normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
-						tree,
-						nodeType: data.$type,
-						slotName: 'value',
-						span: (data as _UntypedNode).$span
-					}),
-					tree
-				),
-
-				attributes() {
-					return hydrateChildren<T.AttributeItem | T.InnerAttributeItem>(
-						this._attributes as readonly (T.AttributeItem | T.InnerAttributeItem)[] | undefined,
-						tree
-					);
-				},
-				pattern() {
-					return hydrateChild<T.MatchPattern>(this._pattern, tree);
-				},
-				value() {
-					return hydrateChild<
-						| T.UnsafeBlock
-						| T.AsyncBlock
-						| T.GenBlock
-						| T.TryBlock
-						| T.Block
-						| T.IfExpression
-						| T.MatchExpression
-						| T.WhileExpression
-						| T.LoopExpression
-						| T.ForExpression
-						| T.ConstBlock
-					>(this._value, tree);
-				},
-				$with: {
-					attributes: (...v: NonNullable<T.MatchArmBlockEnding['_attributes']>[number][]) =>
-						wrapMatchArmBlockEnding({ ...$edited(data), _attributes: restItems('attributes', v) }, tree),
-					pattern: (v: NonNullable<T.MatchArmBlockEnding['_pattern']>) =>
-						wrapMatchArmBlockEnding({ ...$edited(data), _pattern: v }, tree),
-					value: (v: NonNullable<T.MatchArmBlockEnding['_value']>) =>
-						wrapMatchArmBlockEnding({ ...$edited(data), _value: v }, tree)
-				}
-			},
-			{
-				slot: 'pattern',
-				stored: '_pattern',
-				kind: TSKindId.MatchPattern as const,
-				make: RAW.buildMatchPattern,
-				keys: [
-					{ name: 'pattern', rest: false, required: true },
-					{ name: 'condition', rest: false }
-				]
-			}
-		)
+	const handle = currentHandle();
+	const _pattern = storeExpanded(
+		normalizeSingularWrapSlot(data._pattern, 'pattern', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'pattern',
+			span: (data as _UntypedNode).$span
+		}),
+		tree
 	);
-	return _node as unknown as T.MatchArmBlockEnding.Parsed;
+	const readGroup_pattern = () => hydrateChild<T.MatchPattern | undefined>(_pattern, tree);
+	const node = {
+		...data,
+		$type: TSKindId.MatchArmBlockEnding as const,
+		_attributes: storeExpanded(
+			normalizeRepeatedWrapSlot(data._attributes, false, 'attributes', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'attributes',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
+		_pattern,
+		_value: storeExpanded(
+			normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'value',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
+
+		attributes() {
+			return hydrateChildren<T.AttributeItem | T.InnerAttributeItem>(
+				this._attributes as readonly (T.AttributeItem | T.InnerAttributeItem)[] | undefined,
+				tree
+			);
+		},
+		value() {
+			return hydrateChild<
+				| T.UnsafeBlock
+				| T.AsyncBlock
+				| T.GenBlock
+				| T.TryBlock
+				| T.Block
+				| T.IfExpression
+				| T.MatchExpression
+				| T.WhileExpression
+				| T.LoopExpression
+				| T.ForExpression
+				| T.ConstBlock
+			>(this._value, tree);
+		},
+		$with: {
+			attributes: (...v: NonNullable<T.MatchArmBlockEnding['_attributes']>[number][]) =>
+				rebuilt(node, handle, () =>
+					wrapMatchArmBlockEnding({ ...$edited(data), _attributes: restItems('attributes', v) }, tree)
+				),
+			value: (v: NonNullable<T.MatchArmBlockEnding['_value']>) =>
+				rebuilt(node, handle, () => wrapMatchArmBlockEnding({ ...$edited(data), _value: v }, tree)),
+			pattern: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'pattern',
+							stored: '_pattern',
+							kind: TSKindId.MatchPattern as const,
+							make: RAW.buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'pattern',
+						args,
+						(v: NonNullable<T.MatchArmBlockEnding['_pattern']>) =>
+							wrapMatchArmBlockEnding({ ...$edited(data), _pattern: v }, tree),
+						() => readGroup_pattern.call(node)
+					)
+				),
+			condition: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'pattern',
+							stored: '_pattern',
+							kind: TSKindId.MatchPattern as const,
+							make: RAW.buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'condition',
+						args,
+						(v: NonNullable<T.MatchArmBlockEnding['_pattern']>) =>
+							wrapMatchArmBlockEnding({ ...$edited(data), _pattern: v }, tree),
+						() => readGroup_pattern.call(node)
+					)
+				)
+		},
+		pattern: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'pattern'),
+		condition: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'condition'),
+		[STORED_SLOT_READERS]: { pattern: readGroup_pattern },
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MatchArmBlockEnding.Parsed;
 }
 
 export function wrapLineCommentDocOuter(data: T.LineCommentDocOuter, tree: TreeHandle): T.LineCommentDocOuter.Parsed {

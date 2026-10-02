@@ -5,7 +5,6 @@ import { Delimiter } from '@sittir/common/utils';
 import { TSKindId } from '../types.js';
 import type { AdmitBound, StringIndexRange, NonEmptyArray, WidenNumeric } from '@sittir/types';
 import {
-	withAccessors,
 	currentHandle,
 	listSlotWith,
 	LIST_ITEMS,
@@ -20,6 +19,9 @@ import {
 	storedElements,
 	defineListIndices,
 	elementsWith,
+	seatWith,
+	groupField,
+	STORED_SLOT_READERS,
 	rebuilt,
 	renderText,
 	toEditAt,
@@ -33,10 +35,8 @@ import {
 	numberText,
 	orDefault,
 	rejectBareText,
-	rejectKeywordText,
-	withGroupSeat
+	rejectKeywordText
 } from '@sittir/common/utils';
-import { withMethods } from '../utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
 	if (arr.length === 0) {
@@ -3527,37 +3527,54 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound 
 		'a built Expression'
 	);
 	const _step = rejectBareText(config.step, 'Slice.step', 'a built SliceGroup');
-	return withMethods(
-		withGroupSeat(
-			withAccessors(
-				{
-					$type: TSKindId.Slice as const,
-					$source: 2 as const,
-					$named: true as const,
-					_start,
-					_stop,
-					_step,
-					$with: {
-						start: (value?: NonNullable<T.Slice.Config>['start']) => buildSlice({ ...config, start: value }),
-						stop: (value?: NonNullable<T.Slice.Config>['stop']) => buildSlice({ ...config, stop: value }),
-						step: (value?: T.SliceGroup) => buildSlice({ ...config, step: value })
-					}
-				},
-				{
-					start: () => _start,
-					stop: () => _stop,
-					step: () => _step
-				}
-			),
-			{
-				slot: 'step',
-				stored: '_step',
-				kind: TSKindId.SliceGroup as const,
-				make: buildSliceGroup,
-				keys: [{ name: 'expression', rest: false }]
-			}
-		)
-	) as unknown as T.Slice.Bound;
+	const readGroup_step = () => _step;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.Slice as const,
+		$source: 2 as const,
+		$named: true as const,
+		_start,
+		_stop,
+		_step,
+		$with: {
+			start: (value?: NonNullable<T.Slice.Config>['start']) =>
+				rebuilt(node, handle, () => buildSlice({ ...config, start: value })),
+			stop: (value?: NonNullable<T.Slice.Config>['stop']) =>
+				rebuilt(node, handle, () => buildSlice({ ...config, stop: value })),
+			step: (value?: T.SliceGroup) => rebuilt(node, handle, () => buildSlice({ ...config, step: value })),
+			expression: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'step',
+							stored: '_step',
+							kind: TSKindId.SliceGroup as const,
+							make: buildSliceGroup,
+							keys: [{ name: 'expression', rest: false }]
+						},
+						'expression',
+						args,
+						(value?: T.SliceGroup) => buildSlice({ ...config, step: value }),
+						() => readGroup_step.call(node)
+					)
+				)
+		},
+		start: () => _start,
+		stop: () => _stop,
+		step: () => _step,
+		expression: _step === undefined ? undefined : () => groupField(readGroup_step.call(node), 'expression'),
+		[STORED_SLOT_READERS]: { step: readGroup_step },
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Slice.Bound;
 }
 
 export const buildEllipsis: TSKindId.Ellipsis = TSKindId.Ellipsis;

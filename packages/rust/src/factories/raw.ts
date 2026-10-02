@@ -5,7 +5,6 @@ import { Delimiter } from '@sittir/common/utils';
 import { TSKindId } from '../types.js';
 import type { AdmitBound, StringIndexRange, NonEmptyArray, WidenNumeric } from '@sittir/types';
 import {
-	withAccessors,
 	currentHandle,
 	listSlotWith,
 	LIST_ITEMS,
@@ -16,6 +15,9 @@ import {
 	ownerElements,
 	listOption,
 	readStubLength,
+	seatWith,
+	groupField,
+	STORED_SLOT_READERS,
 	LIST_READ,
 	storedElements,
 	defineListIndices,
@@ -34,10 +36,8 @@ import {
 	numberText,
 	orDefault,
 	rejectBareText,
-	rejectKeywordText,
-	withGroupSeat
+	rejectKeywordText
 } from '@sittir/common/utils';
-import { withMethods } from '../utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
 	if (arr.length === 0) {
@@ -5426,34 +5426,72 @@ export function buildMatchBlock(): T.EmptyMatchBlock;
 export function buildMatchBlock(value?: AdmitBound<T.MatchBlockArms, T.AdmittedNodes>): T.MatchBlock.Bound;
 export function buildMatchBlock(value?: AdmitBound<T.MatchBlockArms, T.AdmittedNodes>): T.MatchBlock.Bound {
 	const _match_block_arms = rejectBareText(value, 'MatchBlock.matchBlockArms', 'a built MatchBlockArms');
-	return withMethods(
-		withGroupSeat(
-			withAccessors(
-				{
-					$type: TSKindId.MatchBlock as const,
-					$source: 2 as const,
-					$named: true as const,
-					_match_block_arms,
-					$with: {
-						matchBlockArms: (value?: T.MatchBlockArms) => buildMatchBlock(value)
-					}
-				},
-				{
-					matchBlockArms: () => _match_block_arms
-				}
-			),
-			{
-				slot: 'matchBlockArms',
-				stored: '_match_block_arms',
-				kind: TSKindId.MatchBlockArms as const,
-				make: buildMatchBlockArms,
-				keys: [
-					{ name: 'matchArms', rest: true },
-					{ name: 'lastArm', rest: false, required: true }
-				]
-			}
-		)
-	) as unknown as T.MatchBlock.Bound;
+	const readGroup_matchBlockArms = () => _match_block_arms;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MatchBlock as const,
+		$source: 2 as const,
+		$named: true as const,
+		_match_block_arms,
+		$with: {
+			matchBlockArms: (value?: T.MatchBlockArms) => rebuilt(node, handle, () => buildMatchBlock(value)),
+			matchArms: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'matchBlockArms',
+							stored: '_match_block_arms',
+							kind: TSKindId.MatchBlockArms as const,
+							make: buildMatchBlockArms,
+							keys: [
+								{ name: 'matchArms', rest: true },
+								{ name: 'lastArm', rest: false, required: true }
+							]
+						},
+						'matchArms',
+						args,
+						(value?: T.MatchBlockArms) => buildMatchBlock(value),
+						() => readGroup_matchBlockArms.call(node)
+					)
+				),
+			lastArm: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'matchBlockArms',
+							stored: '_match_block_arms',
+							kind: TSKindId.MatchBlockArms as const,
+							make: buildMatchBlockArms,
+							keys: [
+								{ name: 'matchArms', rest: true },
+								{ name: 'lastArm', rest: false, required: true }
+							]
+						},
+						'lastArm',
+						args,
+						(value?: T.MatchBlockArms) => buildMatchBlock(value),
+						() => readGroup_matchBlockArms.call(node)
+					)
+				)
+		},
+		matchBlockArms: () => _match_block_arms,
+		matchArms:
+			_match_block_arms === undefined ? undefined : () => groupField(readGroup_matchBlockArms.call(node), 'matchArms'),
+		lastArm:
+			_match_block_arms === undefined ? undefined : () => groupField(readGroup_matchBlockArms.call(node), 'lastArm'),
+		[STORED_SLOT_READERS]: { matchBlockArms: readGroup_matchBlockArms },
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MatchBlock.Bound;
 }
 
 export function buildLastMatchArm(config: T.LastMatchArm.Config): T.LastMatchArm.Bound {
@@ -5469,46 +5507,79 @@ export function buildLastMatchArm(config: T.LastMatchArm.Config): T.LastMatchArm
 		'a built Expression'
 	);
 	const _comma = coerceBooleanKeywordStorage(rejectBareText(config.comma, 'LastMatchArm.comma', 'a boolean'));
-	return withMethods(
-		withGroupSeat(
-			withAccessors(
-				{
-					$type: TSKindId.LastMatchArm as const,
-					$source: 2 as const,
-					$named: true as const,
-					_attributes,
-					_pattern,
-					_value,
-					_comma,
-					$with: {
-						attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
-							buildLastMatchArm({ ...config, attributes: restItems('attributes', values) }),
-						pattern: (value: T.MatchPattern) => buildLastMatchArm({ ...config, pattern: value }),
-						value: (value: NonNullable<T.LastMatchArm.Config>['value']) =>
-							buildLastMatchArm({ ...config, value: value }),
-						comma: (value?: NonNullable<T.LastMatchArm.Config>['comma']) =>
-							buildLastMatchArm({ ...config, comma: value })
-					}
-				},
-				{
-					attributes: () => _attributes,
-					pattern: () => _pattern,
-					value: () => _value,
-					comma: () => _comma
-				}
-			),
-			{
-				slot: 'pattern',
-				stored: '_pattern',
-				kind: TSKindId.MatchPattern as const,
-				make: buildMatchPattern,
-				keys: [
-					{ name: 'pattern', rest: false, required: true },
-					{ name: 'condition', rest: false }
-				]
-			}
-		)
-	) as unknown as T.LastMatchArm.Bound;
+	const readGroup_pattern = () => _pattern;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.LastMatchArm as const,
+		$source: 2 as const,
+		$named: true as const,
+		_attributes,
+		_pattern,
+		_value,
+		_comma,
+		$with: {
+			attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
+				rebuilt(node, handle, () => buildLastMatchArm({ ...config, attributes: restItems('attributes', values) })),
+			value: (value: NonNullable<T.LastMatchArm.Config>['value']) =>
+				rebuilt(node, handle, () => buildLastMatchArm({ ...config, value: value })),
+			comma: (value?: NonNullable<T.LastMatchArm.Config>['comma']) =>
+				rebuilt(node, handle, () => buildLastMatchArm({ ...config, comma: value })),
+			pattern: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'pattern',
+							stored: '_pattern',
+							kind: TSKindId.MatchPattern as const,
+							make: buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'pattern',
+						args,
+						(value: T.MatchPattern) => buildLastMatchArm({ ...config, pattern: value }),
+						() => readGroup_pattern.call(node)
+					)
+				),
+			condition: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'pattern',
+							stored: '_pattern',
+							kind: TSKindId.MatchPattern as const,
+							make: buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'condition',
+						args,
+						(value: T.MatchPattern) => buildLastMatchArm({ ...config, pattern: value }),
+						() => readGroup_pattern.call(node)
+					)
+				)
+		},
+		attributes: () => _attributes,
+		value: () => _value,
+		comma: () => _comma,
+		pattern: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'pattern'),
+		condition: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'condition'),
+		[STORED_SLOT_READERS]: { pattern: readGroup_pattern },
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LastMatchArm.Bound;
 }
 
 export function buildMatchPattern(config: T.MatchPattern.Config): T.MatchPattern.Bound {
@@ -10648,42 +10719,75 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 		'MatchArmWithComma.value',
 		'a built Expression'
 	);
-	return withMethods(
-		withGroupSeat(
-			withAccessors(
-				{
-					$type: TSKindId.MatchArmWithComma as const,
-					$source: 2 as const,
-					$named: true as const,
-					_attributes,
-					_pattern,
-					_value,
-					$with: {
-						attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
-							buildMatchArmWithComma({ ...config, attributes: restItems('attributes', values) }),
-						pattern: (value: T.MatchPattern) => buildMatchArmWithComma({ ...config, pattern: value }),
-						value: (value: NonNullable<T.MatchArmWithComma.Config>['value']) =>
-							buildMatchArmWithComma({ ...config, value: value })
-					}
-				},
-				{
-					attributes: () => _attributes,
-					pattern: () => _pattern,
-					value: () => _value
-				}
-			),
-			{
-				slot: 'pattern',
-				stored: '_pattern',
-				kind: TSKindId.MatchPattern as const,
-				make: buildMatchPattern,
-				keys: [
-					{ name: 'pattern', rest: false, required: true },
-					{ name: 'condition', rest: false }
-				]
-			}
-		)
-	) as unknown as T.MatchArmWithComma.Bound;
+	const readGroup_pattern = () => _pattern;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MatchArmWithComma as const,
+		$source: 2 as const,
+		$named: true as const,
+		_attributes,
+		_pattern,
+		_value,
+		$with: {
+			attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
+				rebuilt(node, handle, () => buildMatchArmWithComma({ ...config, attributes: restItems('attributes', values) })),
+			value: (value: NonNullable<T.MatchArmWithComma.Config>['value']) =>
+				rebuilt(node, handle, () => buildMatchArmWithComma({ ...config, value: value })),
+			pattern: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'pattern',
+							stored: '_pattern',
+							kind: TSKindId.MatchPattern as const,
+							make: buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'pattern',
+						args,
+						(value: T.MatchPattern) => buildMatchArmWithComma({ ...config, pattern: value }),
+						() => readGroup_pattern.call(node)
+					)
+				),
+			condition: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'pattern',
+							stored: '_pattern',
+							kind: TSKindId.MatchPattern as const,
+							make: buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'condition',
+						args,
+						(value: T.MatchPattern) => buildMatchArmWithComma({ ...config, pattern: value }),
+						() => readGroup_pattern.call(node)
+					)
+				)
+		},
+		attributes: () => _attributes,
+		value: () => _value,
+		pattern: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'pattern'),
+		condition: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'condition'),
+		[STORED_SLOT_READERS]: { pattern: readGroup_pattern },
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MatchArmWithComma.Bound;
 }
 
 export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): T.MatchArmBlockEnding.Bound {
@@ -10698,54 +10802,89 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 		'MatchArmBlockEnding.value',
 		'a built UnsafeBlock / AsyncBlock / GenBlock / TryBlock / Block / IfExpression / MatchExpression / WhileExpression / LoopExpression / ForExpression / ConstBlock'
 	);
-	return withMethods(
-		withGroupSeat(
-			withAccessors(
-				{
-					$type: TSKindId.MatchArmBlockEnding as const,
-					$source: 2 as const,
-					$named: true as const,
-					_attributes,
-					_pattern,
-					_value,
-					$with: {
-						attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
-							buildMatchArmBlockEnding({ ...config, attributes: restItems('attributes', values) }),
-						pattern: (value: T.MatchPattern) => buildMatchArmBlockEnding({ ...config, pattern: value }),
-						value: (
-							value:
-								| T.UnsafeBlock
-								| T.AsyncBlock
-								| T.GenBlock
-								| T.TryBlock
-								| T.Block
-								| T.IfExpression
-								| T.MatchExpression
-								| T.WhileExpression
-								| T.LoopExpression
-								| T.ForExpression
-								| T.ConstBlock
-						) => buildMatchArmBlockEnding({ ...config, value: value })
-					}
-				},
-				{
-					attributes: () => _attributes,
-					pattern: () => _pattern,
-					value: () => _value
-				}
-			),
-			{
-				slot: 'pattern',
-				stored: '_pattern',
-				kind: TSKindId.MatchPattern as const,
-				make: buildMatchPattern,
-				keys: [
-					{ name: 'pattern', rest: false, required: true },
-					{ name: 'condition', rest: false }
-				]
-			}
-		)
-	) as unknown as T.MatchArmBlockEnding.Bound;
+	const readGroup_pattern = () => _pattern;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MatchArmBlockEnding as const,
+		$source: 2 as const,
+		$named: true as const,
+		_attributes,
+		_pattern,
+		_value,
+		$with: {
+			attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
+				rebuilt(node, handle, () =>
+					buildMatchArmBlockEnding({ ...config, attributes: restItems('attributes', values) })
+				),
+			value: (
+				value:
+					| T.UnsafeBlock
+					| T.AsyncBlock
+					| T.GenBlock
+					| T.TryBlock
+					| T.Block
+					| T.IfExpression
+					| T.MatchExpression
+					| T.WhileExpression
+					| T.LoopExpression
+					| T.ForExpression
+					| T.ConstBlock
+			) => rebuilt(node, handle, () => buildMatchArmBlockEnding({ ...config, value: value })),
+			pattern: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'pattern',
+							stored: '_pattern',
+							kind: TSKindId.MatchPattern as const,
+							make: buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'pattern',
+						args,
+						(value: T.MatchPattern) => buildMatchArmBlockEnding({ ...config, pattern: value }),
+						() => readGroup_pattern.call(node)
+					)
+				),
+			condition: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'pattern',
+							stored: '_pattern',
+							kind: TSKindId.MatchPattern as const,
+							make: buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'condition',
+						args,
+						(value: T.MatchPattern) => buildMatchArmBlockEnding({ ...config, pattern: value }),
+						() => readGroup_pattern.call(node)
+					)
+				)
+		},
+		attributes: () => _attributes,
+		value: () => _value,
+		pattern: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'pattern'),
+		condition: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'condition'),
+		[STORED_SLOT_READERS]: { pattern: readGroup_pattern },
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MatchArmBlockEnding.Bound;
 }
 
 export function buildLineCommentExtraSlashes(text: string): T.LineCommentExtraSlashes.Bound {

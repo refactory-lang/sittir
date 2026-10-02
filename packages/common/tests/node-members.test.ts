@@ -14,8 +14,7 @@ import {
 	seatWith,
 	triviaInner,
 	triviaInnerAt,
-	triviaSide,
-	withMethods
+	triviaSide
 } from '../src/utils.ts';
 
 const comment = (text: string): AnyUntypedNode => ({ $type: 9, $source: 2, $text: text });
@@ -139,20 +138,12 @@ describe('setter bodies', () => {
 		const spec = { slot: 'seat', stored: '_seat', kind: 7, make: (config: never) => ({ $type: 7, ...(config as object) }), keys: [{ name: 'left', rest: false }, { name: 'right', rest: false, required: true }] };
 		const seat = vi.fn((value?: unknown) => ({ seated: value }));
 		const group = { $type: 7, $with: { left: (v: string) => ({ $type: 7, left: v }) } } as never;
-		expect(seatWith(spec, spec.keys[0]!, ['L'], seat, () => group)).toEqual({ seated: { $type: 7, left: 'L' } });
-		expect(() => seatWith(spec, spec.keys[0]!, ['L'], seat, () => undefined)).toThrow("without its required right");
-		expect(seatWith(spec, spec.keys[1]!, ['R'], seat, () => undefined)).toEqual({ seated: { $type: 7, right: 'R' } });
-		expect(seatWith(spec, spec.keys[1]!, [], seat, () => undefined)).toEqual({ seated: undefined });
+		expect(seatWith(spec, 'left', ['L'], seat, () => group)).toEqual({ seated: { $type: 7, left: 'L' } });
+		expect(() => seatWith(spec, 'left', ['L'], seat, () => undefined)).toThrow("without its required right");
+		expect(seatWith(spec, 'right', ['R'], seat, () => undefined)).toEqual({ seated: { $type: 7, right: 'R' } });
+		expect(seatWith(spec, 'right', [], seat, () => undefined)).toEqual({ seated: undefined });
 		const whole = { $type: 7 };
-		expect(seatWith({ ...spec, keys: [{ name: 'seat', rest: false }] }, { name: 'seat', rest: false }, [whole], seat, () => undefined)).toEqual({ seated: whole });
-	});
-});
-
-describe('withMethods still serves the old helpers through the same functions', () => {
-	it('attaches positions that use the shared writers', () => {
-		const handle = handleOf();
-		const node = inEngine(handle, () => withMethods({ $type: 1, $source: 2 } as AnyUntypedNode));
-		expect(node.$trivia.leading(comment('// a'))).toBe(node);
+		expect(seatWith({ ...spec, keys: [{ name: 'seat', rest: false }] }, 'seat', [whole], seat, () => undefined)).toEqual({ seated: whole });
 	});
 });
 

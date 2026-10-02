@@ -1,16 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { withElementsSeat } from '../src/utils.ts';
+import { elementsWith } from '../src/utils.ts';
 
 const seat = () => {
 	const seated: unknown[][] = [];
-	const node = withElementsSeat(
-		{ $type: 1, $with: { comparators: (...items: unknown[]) => (seated.push(items), 'rebuilt') } },
-		{ slot: 'comparators', keys: ['operators', 'primaryExpression'], make: ((config: unknown) => ({ $type: 9, config })) as (config: never) => unknown }
-	);
+	const spec = { slot: 'comparators', keys: ['operators', 'primaryExpression'], make: ((config: unknown) => ({ $type: 9, config })) as (config: never) => unknown };
+	const set = (...items: unknown[]) => (seated.push(items), 'rebuilt');
+	const node = { $type: 1, $with: { comparators: (...args: unknown[]) => elementsWith(args, spec, set) } };
 	return { node, seated };
 };
 
-describe('withElementsSeat', () => {
+describe('elementsWith as a node setter', () => {
 	it('builds each config object among the rest arguments and passes nodes through', () => {
 		const { node, seated } = seat();
 		const built = { $type: 9 };
