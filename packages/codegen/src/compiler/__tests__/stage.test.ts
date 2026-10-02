@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { evaluate } from '../evaluate.ts';
@@ -21,19 +21,25 @@ describe('evaluation stages', () => {
 		}
 	});
 
-	it('the raw stage is the base before enrich, the enriched stage the base after it', async () => {
-		const raw = await evaluatePackage(grammarPackage('typescript'));
-		const { raw: before, enriched: after } = raw.stages!;
-		expect(before.ruleNames).not.toContain('export_statement_arm5');
-		expect(after.ruleNames).toContain('export_statement_arm5');
-	}, 60_000);
+	describe('typescript', () => {
+		let typescript: Awaited<ReturnType<typeof evaluatePackage>>;
 
-	it('the rule names are every name the base declares, including ones the catalog prunes as unreachable', async () => {
-		const raw = await evaluatePackage(grammarPackage('typescript'));
-		const evaluation = raw.stages!.enriched;
-		expect(Object.keys(evaluation.grammar.rules)).not.toContain('_reserved_identifier');
-		expect(diagnoseEvaluationStage(evaluation).ruleNames.has('_reserved_identifier')).toBe(true);
-	}, 60_000);
+		beforeAll(async () => {
+			typescript = await evaluatePackage(grammarPackage('typescript'));
+		});
+
+		it('the raw stage is the base before enrich, the enriched stage the base after it', () => {
+			const { raw: before, enriched: after } = typescript.stages!;
+			expect(before.ruleNames).not.toContain('export_statement_arm5');
+			expect(after.ruleNames).toContain('export_statement_arm5');
+		});
+
+		it('the rule names are every name the base declares, including ones the catalog prunes as unreachable', () => {
+			const evaluation = typescript.stages!.enriched;
+			expect(Object.keys(evaluation.grammar.rules)).not.toContain('_reserved_identifier');
+			expect(diagnoseEvaluationStage(evaluation).ruleNames.has('_reserved_identifier')).toBe(true);
+		});
+	});
 
 	it('a grammar with no wire config has no stages', async () => {
 		const raw = await evaluate(fixture('test-grammar.js'), NO_FILE_TYPES);

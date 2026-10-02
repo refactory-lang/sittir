@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { buildRuleCatalog, createRuleId, ruleIdPath } from '../rule-catalog.ts';
 import { collapseRenamedRules } from '../link.ts';
 import { kindCatalogOf, stampVisibleExternals } from '../../dsl/symbol-table.ts';
@@ -9,6 +9,12 @@ import { evaluatePackage } from '../evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 
 describe('rule ids', () => {
+	let python: Awaited<ReturnType<typeof evaluatePackage>>;
+
+	beforeAll(async () => {
+		python = await evaluatePackage(grammarPackage('python'));
+	});
+
 	it('ruleIdPath reads back the path createRuleId wrote, whatever the owner name holds', () => {
 		expect(ruleIdPath(createRuleId('host', { path: [] }))).toBe('root');
 		expect(ruleIdPath(createRuleId('a:b', { path: [{ edge: 'content' }, { edge: 'members', index: 2 }] }))).toBe(
@@ -32,21 +38,21 @@ describe('rule ids', () => {
 	});
 
 	it('a kind the catalog renames keeps its source rule id', async () => {
-		const raw = await evaluatePackage(grammarPackage('python'));
+		const raw = python;
 		const collapsed = collapseRenamedRules(raw, {
 			kindEntries: kindCatalogOf(stampVisibleExternals(await loadGeneratedIdTables('python'), raw), raw)
 		});
 		expect(collapsed.rules['_match_block']).toBeUndefined();
 		expect(collapsed.ruleCatalog.rootsByKind.get('match_block')).toBe('rule:_match_block:root');
-	}, 60_000);
+	});
 
 	it('a synthesized kind the catalog renames is recorded under its new name', async () => {
-		const evaluated = await evaluatePackage(grammarPackage('python'));
+		const evaluated = python;
 		const raw = { ...evaluated, evaluateSynthesized: new Set([...evaluated.evaluateSynthesized, '_match_block']) };
 		const collapsed = collapseRenamedRules(raw, {
 			kindEntries: kindCatalogOf(stampVisibleExternals(await loadGeneratedIdTables('python'), raw), raw)
 		});
 		expect(collapsed.evaluateSynthesized.has('match_block')).toBe(true);
 		expect(collapsed.evaluateSynthesized.has('_match_block')).toBe(false);
-	}, 60_000);
+	});
 });
