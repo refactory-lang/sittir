@@ -4317,6 +4317,28 @@
     }
   },
   "innerGapsKeyed": false,
+  "spelledTrivia": {
+    "forms": [
+      {
+        "kind": "comment_block",
+        "opens": [
+          "/*"
+        ],
+        "closes": [
+          "*/"
+        ]
+      },
+      {
+        "kind": "comment_line",
+        "opens": [
+          "//"
+        ],
+        "closes": [
+          ""
+        ]
+      }
+    ]
+  },
   "nodes": [
     {
       "kind": "__error_recovery",

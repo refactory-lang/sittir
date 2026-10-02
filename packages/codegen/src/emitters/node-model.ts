@@ -1,6 +1,6 @@
 import { type RuleListEntry } from '../dsl/rule-patterns.ts';
 import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
-import { innerGapsKeyed } from '../compiler/model/trivia.ts';
+import { innerGapsKeyed, spelledTriviaTable, type SpelledTriviaTable } from '../compiler/model/trivia.ts';
 import type { RuleAnnotations } from '../types/rule.ts';
 import { seatOf, type Seat } from './overlays/sub-factories.ts';
 import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
@@ -145,6 +145,7 @@ interface SerializedNodeModel {
 	fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>;
 	factorySlots: Readonly<Record<string, Readonly<Record<string, FactorySlotMeta>>>>;
 	innerGapsKeyed: boolean;
+	spelledTrivia: SpelledTriviaTable | null;
 	nodes: SerializedNode[];
 }
 
@@ -201,6 +202,7 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 		fieldAliasMap: factoryData.fieldAliasMap,
 		factorySlots: factoryData.factorySlots,
 		innerGapsKeyed: innerGapsKeyed(nodeMap),
+		spelledTrivia: spelledTriviaTable(nodeMap) ?? null,
 		nodes
 	};
 }

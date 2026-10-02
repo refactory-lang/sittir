@@ -4617,6 +4617,20 @@ A non-default arm of a polymorph with a full form: `lead`, the start-anchored re
 
 One way a kind's text can begin: a literal text or a pattern source. `siblingLeads` derives both the runtime regex and the typed `texts` from one list of these, so the two refusals read one fact. A pattern counts as literal only through a kind's `fixedLiteralText`; a pattern terminal never does.
 
+### `packages/codegen/src/compiler/model/trivia.ts::spelledTriviaTable`
+
+The comment kinds a trivia position can tell apart from text spelled in full, or the reason the grammar has no such table; `undefined` when the grammar has no `ir.comment`. A trivia position holds every comment kind, so text given to it does not say which kind it is. Where each kind opens with fixed text and no opening begins another's (`spelledFormsClash`), the opening picks the kind, and that is the only thing about the text that is inspected. The forms are the kinds of the `ir.comment` supertype that have a full form, each with every fixed text it may open and close with, ordered longest opening first, which is the order the run time matches in.
+
+A grammar whose `ir.comment` is one kind has nothing to choose between and gets a reason, not a table: its text goes to that kind's coercer as before. A kind with no full form takes no text and is left out.
+
+The table does not replace the default: text that matches no form is the default comment kind's content (`defaultTriviaForm`), so `' x'` is a line comment in every grammar that has one. What happens inside the picked kind is that kind's own surface. A polymorph parent picked by `//` still refuses text that reads as one of its other arms.
+
+The node model carries the table (`spelledTrivia`), where `sittir tool spelled-trivia` reads it.
+
+### `packages/codegen/src/compiler/model/trivia.ts::spelledFormsClash`
+
+The sentence naming two kinds a trivia position cannot tell apart by how they open, or `undefined` when every pair is told apart. Two openings clash when one begins the other, which includes being equal, or when either is empty: a kind that opens with nothing (one whose only fixed text is a suffix) is opened by any text. Every spelling of a kind is checked against every spelling of each other kind.
+
 ### `packages/codegen/src/compiler/model/trivia.ts::defaultTriviaForm`
 
 The loose trivia form: the `comment` kind itself, or, when it is a supertype, its `arm.default` subtype; `open` and `close` are that kind's `fullForm` delimiters. Rust `line_comment` (`//`), python `comment` (`#`), typescript `comment_line` (`//`); none has a close. Undefined for a grammar with no `comment`; a default arm with no full form, or with a spelled delimiter, throws. There is no ranking across trivia kinds: a block or html comment is built only through its strict builder.
