@@ -602,15 +602,15 @@ export enum TSKindId {
 	UseClauses = 348,
 	ParametersElements = 349,
 	Lifetimes = 350,
-	UseBoundsElements = 351,
-	TypeArgumentsElements = 352,
-	ArgumentsElements = 353,
-	FieldInitializerListElements = 354,
-	TuplePatternElements = 355,
-	Patterns = 356,
-	StructPatternElements = 357,
-	UseWildcardGroup = 358,
-	TupleTypeElements = 359,
+	Types = 351,
+	UseBoundsElements = 352,
+	TypeArgumentsElements = 353,
+	ArgumentsElements = 354,
+	FieldInitializerListElements = 355,
+	TuplePatternElements = 356,
+	Patterns = 357,
+	StructPatternElements = 358,
+	UseWildcardGroup = 359,
 	TokenTreePunctuation = 360,
 	TokenKeywords = 361,
 	_RangeExpressionBare = 362,
@@ -704,15 +704,15 @@ export enum TSKindId {
 	UseClausesRepeat1 = 450,
 	ParametersElementsRepeat1 = 451,
 	LifetimesRepeat1 = 452,
-	UseBoundsElementsRepeat1 = 453,
-	TypeArgumentsElementsRepeat1 = 454,
-	ArgumentsElementsRepeat1 = 455,
-	FieldInitializerListElementsRepeat1 = 456,
-	_ClosureParametersOptional1Repeat1 = 457,
-	TuplePatternElementsRepeat1 = 458,
-	PatternsRepeat1 = 459,
-	StructPatternElementsRepeat1 = 460,
-	_TupleTypeElementsRepeat1 = 461,
+	TypesRepeat1 = 453,
+	UseBoundsElementsRepeat1 = 454,
+	TypeArgumentsElementsRepeat1 = 455,
+	ArgumentsElementsRepeat1 = 456,
+	FieldInitializerListElementsRepeat1 = 457,
+	_ClosureParametersOptional1Repeat1 = 458,
+	TuplePatternElementsRepeat1 = 459,
+	PatternsRepeat1 = 460,
+	StructPatternElementsRepeat1 = 461,
 	_TupleExpressionElementsRepeat1 = 462,
 	DelimTokenTreeParenRepeat1 = 463,
 	_MatchBlockArmsRepeat1 = 464,
@@ -1077,15 +1077,15 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[348, 'use_clauses'],
 	[349, 'parameters_elements'],
 	[350, 'lifetimes'],
-	[351, 'use_bounds_elements'],
-	[352, 'type_arguments_elements'],
-	[353, 'arguments_elements'],
-	[354, 'field_initializer_list_elements'],
-	[355, 'tuple_pattern_elements'],
-	[356, 'patterns'],
-	[357, 'struct_pattern_elements'],
-	[358, 'use_wildcard_group'],
-	[359, 'tuple_type_elements'],
+	[351, 'types'],
+	[352, 'use_bounds_elements'],
+	[353, 'type_arguments_elements'],
+	[354, 'arguments_elements'],
+	[355, 'field_initializer_list_elements'],
+	[356, 'tuple_pattern_elements'],
+	[357, 'patterns'],
+	[358, 'struct_pattern_elements'],
+	[359, 'use_wildcard_group'],
 	[360, 'token_tree_punctuation'],
 	[361, '_token_keywords'],
 	[362, '_range_expression_bare'],
@@ -1179,15 +1179,15 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[450, 'use_clauses_repeat1'],
 	[451, 'parameters_elements_repeat1'],
 	[452, 'lifetimes_repeat1'],
-	[453, 'use_bounds_elements_repeat1'],
-	[454, 'type_arguments_elements_repeat1'],
-	[455, 'arguments_elements_repeat1'],
-	[456, 'field_initializer_list_elements_repeat1'],
-	[457, '_closure_parameters_optional1_repeat1'],
-	[458, 'tuple_pattern_elements_repeat1'],
-	[459, 'patterns_repeat1'],
-	[460, 'struct_pattern_elements_repeat1'],
-	[461, '_tuple_type_elements_repeat1'],
+	[453, 'types_repeat1'],
+	[454, 'use_bounds_elements_repeat1'],
+	[455, 'type_arguments_elements_repeat1'],
+	[456, 'arguments_elements_repeat1'],
+	[457, 'field_initializer_list_elements_repeat1'],
+	[458, '_closure_parameters_optional1_repeat1'],
+	[459, 'tuple_pattern_elements_repeat1'],
+	[460, 'patterns_repeat1'],
+	[461, 'struct_pattern_elements_repeat1'],
 	[462, '_tuple_expression_elements_repeat1'],
 	[463, 'delim_token_tree_paren_repeat1'],
 	[464, '_match_block_arms_repeat1'],
@@ -1550,15 +1550,15 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[348, 'use_clauses'],
 	[349, 'parameters_elements'],
 	[350, 'lifetimes'],
-	[351, 'use_bounds_elements'],
-	[352, 'type_arguments_elements'],
-	[353, 'arguments_elements'],
-	[354, 'field_initializer_list_elements'],
-	[355, 'tuple_pattern_elements'],
-	[356, 'patterns'],
-	[357, 'struct_pattern_elements'],
-	[358, 'use_wildcard_group'],
-	[359, 'tuple_type_elements'],
+	[351, 'types'],
+	[352, 'use_bounds_elements'],
+	[353, 'type_arguments_elements'],
+	[354, 'arguments_elements'],
+	[355, 'field_initializer_list_elements'],
+	[356, 'tuple_pattern_elements'],
+	[357, 'patterns'],
+	[358, 'struct_pattern_elements'],
+	[359, 'use_wildcard_group'],
 	[360, 'token_tree_punctuation'],
 	[361, '_token_keywords'],
 	[362, '_range_expression_bare'],
@@ -1652,15 +1652,15 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[450, 'use_clauses_repeat1'],
 	[451, 'parameters_elements_repeat1'],
 	[452, 'lifetimes_repeat1'],
-	[453, 'use_bounds_elements_repeat1'],
-	[454, 'type_arguments_elements_repeat1'],
-	[455, 'arguments_elements_repeat1'],
-	[456, 'field_initializer_list_elements_repeat1'],
-	[457, '_closure_parameters_optional1_repeat1'],
-	[458, 'tuple_pattern_elements_repeat1'],
-	[459, 'patterns_repeat1'],
-	[460, 'struct_pattern_elements_repeat1'],
-	[461, '_tuple_type_elements_repeat1'],
+	[453, 'types_repeat1'],
+	[454, 'use_bounds_elements_repeat1'],
+	[455, 'type_arguments_elements_repeat1'],
+	[456, 'arguments_elements_repeat1'],
+	[457, 'field_initializer_list_elements_repeat1'],
+	[458, '_closure_parameters_optional1_repeat1'],
+	[459, 'tuple_pattern_elements_repeat1'],
+	[460, 'patterns_repeat1'],
+	[461, 'struct_pattern_elements_repeat1'],
 	[462, '_tuple_expression_elements_repeat1'],
 	[463, 'delim_token_tree_paren_repeat1'],
 	[464, '_match_block_arms_repeat1'],
@@ -2375,6 +2375,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ParametersElements;
 		case 'lifetimes':
 			return TSKindId.Lifetimes;
+		case 'types':
+			return TSKindId.Types;
 		case 'use_bounds_elements':
 			return TSKindId.UseBoundsElements;
 		case 'type_arguments_elements':
@@ -2391,8 +2393,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.StructPatternElements;
 		case 'use_wildcard_group':
 			return TSKindId.UseWildcardGroup;
-		case 'tuple_type_elements':
-			return TSKindId.TupleTypeElements;
 		case 'token_tree_punctuation':
 			return TSKindId.TokenTreePunctuation;
 		case '_token_keywords':
@@ -2579,6 +2579,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ParametersElementsRepeat1;
 		case 'lifetimes_repeat1':
 			return TSKindId.LifetimesRepeat1;
+		case 'types_repeat1':
+			return TSKindId.TypesRepeat1;
 		case 'use_bounds_elements_repeat1':
 			return TSKindId.UseBoundsElementsRepeat1;
 		case 'type_arguments_elements_repeat1':
@@ -2595,8 +2597,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PatternsRepeat1;
 		case 'struct_pattern_elements_repeat1':
 			return TSKindId.StructPatternElementsRepeat1;
-		case '_tuple_type_elements_repeat1':
-			return TSKindId._TupleTypeElementsRepeat1;
 		case '_tuple_expression_elements_repeat1':
 			return TSKindId._TupleExpressionElementsRepeat1;
 		case 'delim_token_tree_paren_repeat1':
@@ -6602,24 +6602,24 @@ export interface FunctionType {
 
 export interface TupleType {
 	readonly $type: TSKindId.TupleType;
-	readonly _tuple_type_elements: TupleTypeElements;
+	readonly _types: Types;
 	readonly __looseHints__?: {
-		readonly tuple_type_elements: readonly Type[];
+		readonly types: readonly Type[];
 	};
 	readonly __slotHints__?: {
-		readonly tupleTypeElements: SlotHint<T.TupleTypeElements>;
+		readonly types: SlotHint<T.Types>;
 		readonly $listView: ListViewHint<
 			T.Type | T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 		readonly $listSlots: {
-			readonly tupleTypeElements: ListSlotHint<
+			readonly types: ListSlotHint<
 				T.Type | T.TypeIdentifier.Types,
 				{ delimiter?: Delimiter.None | Delimiter.Trailing }
 			>;
 		};
 	};
-	tupleTypeElements(): TupleTypeElements;
+	types(): Types;
 }
 
 export interface GenericFunction {
@@ -9021,6 +9021,20 @@ export interface Lifetimes {
 	lifetimes(): NonEmptyArray<Lifetime>;
 }
 
+export interface Types {
+	readonly $type: TSKindId.Types;
+	readonly _type: NonEmptyArray<Type>;
+	readonly __slotHints__?: {
+		readonly types: SlotHint<NonEmptyArray<T.Type | T.TypeIdentifier.Types>, false, true>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.Type | T.TypeIdentifier.Types,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
+	};
+	types(): NonEmptyArray<Type>;
+}
+
 export interface UseBoundsElements {
 	readonly $type: TSKindId.UseBoundsElements;
 	readonly _element: NonEmptyArray<Lifetime | TypeIdentifier>;
@@ -9284,20 +9298,6 @@ export interface UseWildcardGroup {
 		| TSKindId.UnionKeyword
 		| TSKindId.GenKeyword
 		| undefined;
-}
-
-export interface TupleTypeElements {
-	readonly $type: TSKindId.TupleTypeElements;
-	readonly _type: NonEmptyArray<Type>;
-	readonly __slotHints__?: {
-		readonly types: SlotHint<NonEmptyArray<T.Type | T.TypeIdentifier.Types>, false, true>;
-		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
-		readonly $listView: ListViewHint<
-			T.Type | T.TypeIdentifier.Types,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing }
-		>;
-	};
-	types(): NonEmptyArray<Type>;
 }
 
 export interface TupleExpressionElements {
@@ -12400,6 +12400,7 @@ export interface OptionsHintMap {
 	useClauses: UseClauses.Hints;
 	parametersElements: ParametersElements.Hints;
 	lifetimes: Lifetimes.Hints;
+	types: Types.Hints;
 	useBoundsElements: UseBoundsElements.Hints;
 	typeArgumentsElements: TypeArgumentsElements.Hints;
 	argumentsElements: ArgumentsElements.Hints;
@@ -12408,7 +12409,6 @@ export interface OptionsHintMap {
 	patterns: Patterns.Hints;
 	structPatternElements: StructPatternElements.Hints;
 	useWildcardGroup: UseWildcardGroup.Hints;
-	tupleTypeElements: TupleTypeElements.Hints;
 	tupleExpressionElements: TupleExpressionElements.Hints;
 	arrayExpressionSemi: ArrayExpressionSemi.Hints;
 	arrayExpressionList: ArrayExpressionList.Hints;
@@ -14142,6 +14142,34 @@ export namespace Lifetimes {
 	}
 }
 
+export namespace Types {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly type?: {
+				readonly abstractType?: { readonly after?: WhitespaceArm };
+				readonly arrayType?: { readonly after?: WhitespaceArm };
+				readonly boundedType?: { readonly after?: WhitespaceArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly dynamicType?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly functionType?: { readonly after?: WhitespaceArm };
+				readonly genericType?: { readonly after?: WhitespaceArm };
+				readonly macroInvocation?: { readonly after?: WhitespaceArm };
+				readonly pointerTypeConst?: { readonly after?: WhitespaceArm };
+				readonly pointerTypeMut?: { readonly after?: WhitespaceArm };
+				readonly referenceType?: { readonly after?: WhitespaceArm };
+				readonly removedTraitBound?: { readonly after?: WhitespaceArm };
+				readonly scopedTypeIdentifier?: { readonly after?: WhitespaceArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly start?: WhitespaceArm;
+				readonly tupleType?: { readonly after?: WhitespaceArm };
+			};
+		};
+	}
+}
+
 export namespace UseBoundsElements {
 	export interface Hints {
 		readonly __optionsHint__?: {
@@ -14301,34 +14329,6 @@ export namespace UseWildcardGroup {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
 			readonly colonColon?: { readonly before?: WhitespaceArm };
-		};
-	}
-}
-
-export namespace TupleTypeElements {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: WhitespaceArm;
-			readonly before?: WhitespaceArm;
-			readonly type?: {
-				readonly abstractType?: { readonly after?: WhitespaceArm };
-				readonly arrayType?: { readonly after?: WhitespaceArm };
-				readonly boundedType?: { readonly after?: WhitespaceArm };
-				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly dynamicType?: { readonly after?: WhitespaceArm };
-				readonly end?: WhitespaceArm;
-				readonly functionType?: { readonly after?: WhitespaceArm };
-				readonly genericType?: { readonly after?: WhitespaceArm };
-				readonly macroInvocation?: { readonly after?: WhitespaceArm };
-				readonly pointerTypeConst?: { readonly after?: WhitespaceArm };
-				readonly pointerTypeMut?: { readonly after?: WhitespaceArm };
-				readonly referenceType?: { readonly after?: WhitespaceArm };
-				readonly removedTraitBound?: { readonly after?: WhitespaceArm };
-				readonly scopedTypeIdentifier?: { readonly after?: WhitespaceArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly start?: WhitespaceArm;
-				readonly tupleType?: { readonly after?: WhitespaceArm };
-			};
 		};
 	}
 }
@@ -15993,7 +15993,7 @@ export interface TupleTypeNs extends NodeNs<
 	TupleType.Bound,
 	TupleType.BuildArgs,
 	TupleType.LooseArgs,
-	'tuple_type_elements',
+	'types',
 	TSKindId.TupleType,
 	TupleType.Parsed,
 	never
@@ -17038,6 +17038,19 @@ export interface LifetimesNs extends NodeNs<
 	Lifetimes.Parsed,
 	never
 > {}
+export interface TypesNs extends NodeNs<
+	Types,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	Types.Bound,
+	Types.BuildArgs,
+	Types.LooseArgs,
+	'type',
+	TSKindId.Types,
+	Types.Parsed,
+	never
+> {}
 export interface UseBoundsElementsNs extends NodeNs<
 	UseBoundsElements,
 	LeafScalarMap,
@@ -17140,19 +17153,6 @@ export interface UseWildcardGroupNs extends NodeNs<
 	'path',
 	TSKindId.UseWildcardGroup,
 	UseWildcardGroup.Parsed,
-	never
-> {}
-export interface TupleTypeElementsNs extends NodeNs<
-	TupleTypeElements,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	TupleTypeElements.Bound,
-	TupleTypeElements.BuildArgs,
-	TupleTypeElements.LooseArgs,
-	'type',
-	TSKindId.TupleTypeElements,
-	TupleTypeElements.Parsed,
 	never
 > {}
 export interface TupleExpressionElementsNs extends NodeNs<
@@ -18495,6 +18495,7 @@ export interface NamespaceMap {
 	[TSKindId.UseClauses]: UseClausesNs;
 	[TSKindId.ParametersElements]: ParametersElementsNs;
 	[TSKindId.Lifetimes]: LifetimesNs;
+	[TSKindId.Types]: TypesNs;
 	[TSKindId.UseBoundsElements]: UseBoundsElementsNs;
 	[TSKindId.TypeArgumentsElements]: TypeArgumentsElementsNs;
 	[TSKindId.ArgumentsElements]: ArgumentsElementsNs;
@@ -18503,7 +18504,6 @@ export interface NamespaceMap {
 	[TSKindId.Patterns]: PatternsNs;
 	[TSKindId.StructPatternElements]: StructPatternElementsNs;
 	[TSKindId.UseWildcardGroup]: UseWildcardGroupNs;
-	[TSKindId.TupleTypeElements]: TupleTypeElementsNs;
 	[TSKindId.TupleExpressionElements]: TupleExpressionElementsNs;
 	[TSKindId.IntegerLiteralDecimal]: IntegerLiteralDecimalNs;
 	[TSKindId.IntegerLiteralHex]: IntegerLiteralHexNs;
@@ -18783,6 +18783,7 @@ export interface BoundByKindId {
 	[TSKindId.UseClauses]: UseClauses.Bound;
 	[TSKindId.ParametersElements]: ParametersElements.Bound;
 	[TSKindId.Lifetimes]: Lifetimes.Bound;
+	[TSKindId.Types]: Types.Bound;
 	[TSKindId.UseBoundsElements]: UseBoundsElements.Bound;
 	[TSKindId.TypeArgumentsElements]: TypeArgumentsElements.Bound;
 	[TSKindId.ArgumentsElements]: ArgumentsElements.Bound;
@@ -18791,7 +18792,6 @@ export interface BoundByKindId {
 	[TSKindId.Patterns]: Patterns.Bound;
 	[TSKindId.StructPatternElements]: StructPatternElements.Bound;
 	[TSKindId.UseWildcardGroup]: UseWildcardGroup.Bound;
-	[TSKindId.TupleTypeElements]: TupleTypeElements.Bound;
 	[TSKindId.TupleExpressionElements]: TupleExpressionElements.Bound;
 	[TSKindId.IntegerLiteralDecimal]: IntegerLiteralDecimal.Bound;
 	[TSKindId.IntegerLiteralHex]: IntegerLiteralHex.Bound;
@@ -19027,6 +19027,7 @@ export interface ParsedByKindId {
 	[TSKindId.UseClauses]: UseClauses.Parsed;
 	[TSKindId.ParametersElements]: ParametersElements.Parsed;
 	[TSKindId.Lifetimes]: Lifetimes.Parsed;
+	[TSKindId.Types]: Types.Parsed;
 	[TSKindId.UseBoundsElements]: UseBoundsElements.Parsed;
 	[TSKindId.TypeArgumentsElements]: TypeArgumentsElements.Parsed;
 	[TSKindId.ArgumentsElements]: ArgumentsElements.Parsed;
@@ -19035,7 +19036,6 @@ export interface ParsedByKindId {
 	[TSKindId.Patterns]: Patterns.Parsed;
 	[TSKindId.StructPatternElements]: StructPatternElements.Parsed;
 	[TSKindId.UseWildcardGroup]: UseWildcardGroup.Parsed;
-	[TSKindId.TupleTypeElements]: TupleTypeElements.Parsed;
 	[TSKindId.TupleExpressionElements]: TupleExpressionElements.Parsed;
 	[TSKindId.IntegerLiteralDecimal]: IntegerLiteralDecimal.Parsed;
 	[TSKindId.IntegerLiteralHex]: IntegerLiteralHex.Parsed;
@@ -19453,6 +19453,7 @@ export interface IrKeyOf {
 	[TSKindId.UseClauses]: 'useClauses';
 	[TSKindId.ParametersElements]: 'parametersElements';
 	[TSKindId.Lifetimes]: 'lifetimes';
+	[TSKindId.Types]: 'types';
 	[TSKindId.UseBoundsElements]: 'useBoundsElements';
 	[TSKindId.TypeArgumentsElements]: 'typeArgumentsElements';
 	[TSKindId.ArgumentsElements]: 'argumentsElements';
@@ -19461,7 +19462,6 @@ export interface IrKeyOf {
 	[TSKindId.Patterns]: 'patterns';
 	[TSKindId.StructPatternElements]: 'structPatternElements';
 	[TSKindId.UseWildcardGroup]: 'useWildcardGroup';
-	[TSKindId.TupleTypeElements]: 'tupleTypeElements';
 	[TSKindId.TupleExpressionElements]: 'tupleExpressionElements';
 	[TSKindId.IntegerLiteralDecimal]: 'integerLiteralDecimal';
 	[TSKindId.IntegerLiteralHex]: 'integerLiteralHex';
@@ -20700,8 +20700,8 @@ export namespace TupleType {
 	}
 	export type Loose = LooseFor<TSKindId.TupleType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TupleType>;
-	export type BuildArgs = [value: AdmitBound<T.TupleTypeElements, T.AdmittedNodes>] | T.TupleTypeElements.BuildArgs;
-	export type LooseArgs = [value: T.TupleType.Loose] | T.TupleTypeElements.LooseArgs;
+	export type BuildArgs = [value: AdmitBound<T.Types, T.AdmittedNodes>] | T.Types.BuildArgs;
+	export type LooseArgs = [value: T.TupleType.Loose] | T.Types.LooseArgs;
 	export type Kind = TSKindId.TupleType;
 }
 export namespace GenericFunction {
@@ -22789,6 +22789,52 @@ export namespace Lifetimes {
 		  ];
 	export type Kind = TSKindId.Lifetimes;
 }
+export namespace Types {
+	export type Config = ConfigFor<TSKindId.Types>;
+	export interface Bound extends BoundOf<T.Types, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.Types['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly _delimiter: Delimiter;
+	}
+	export interface Parsed extends ParsedOf<T.Types, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.Types['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly _delimiter: Delimiter;
+	}
+	export type Loose = LooseFor<TSKindId.Types>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Types>;
+	export type BuildArgs =
+		| [
+				element: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>,
+				...elements: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				element: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>,
+				...elements: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>[]
+		  ];
+	export type LooseArgs =
+		| [
+				element:
+					| T.Types.Loose
+					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.Types.Loose
+					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				element:
+					| T.Types.Loose
+					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.Types.Loose
+					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ];
+	export type Kind = TSKindId.Types;
+}
 export namespace UseBoundsElements {
 	export type Config = ConfigFor<TSKindId.UseBoundsElements>;
 	export interface Bound extends BoundOf<T.UseBoundsElements, BoundByKindId>, NodeMethodsOf {
@@ -23265,52 +23311,6 @@ export namespace UseWildcardGroup {
 	];
 	export type LooseArgs = [value?: T.UseWildcardGroup.Loose];
 	export type Kind = TSKindId.UseWildcardGroup;
-}
-export namespace TupleTypeElements {
-	export type Config = ConfigFor<TSKindId.TupleTypeElements>;
-	export interface Bound extends BoundOf<T.TupleTypeElements, BoundByKindId>, NodeMethodsOf {
-		readonly $type: T.TupleTypeElements['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
-	}
-	export interface Parsed extends ParsedOf<T.TupleTypeElements, ParsedByKindId>, NodeMethodsOf {
-		readonly $type: T.TupleTypeElements['$type'];
-		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
-	}
-	export type Loose = LooseFor<TSKindId.TupleTypeElements>;
-	export type LooseConfig = LooseConfigFor<TSKindId.TupleTypeElements>;
-	export type BuildArgs =
-		| [
-				element: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>,
-				...elements: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>[]
-		  ]
-		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				element: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>,
-				...elements: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>[]
-		  ];
-	export type LooseArgs =
-		| [
-				element:
-					| T.TupleTypeElements.Loose
-					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: (
-					| T.TupleTypeElements.Loose
-					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
-		  ]
-		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				element:
-					| T.TupleTypeElements.Loose
-					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: (
-					| T.TupleTypeElements.Loose
-					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
-		  ];
-	export type Kind = TSKindId.TupleTypeElements;
 }
 export namespace TupleExpressionElements {
 	export type Config = ConfigFor<TSKindId.TupleExpressionElements>;

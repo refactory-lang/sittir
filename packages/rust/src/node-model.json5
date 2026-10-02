@@ -341,7 +341,7 @@
     "raw_string_literal.string_content": {
       "string_content": "raw_string_literal_content"
     },
-    "tuple_type_elements.type": {
+    "types.type": {
       "type_identifier": "identifier"
     },
     "closure_expression_block.return_type": {
@@ -1437,7 +1437,7 @@
       }
     },
     "tuple_type": {
-      "tuple_type_elements": {
+      "types": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2557,6 +2557,15 @@
         "nonEmpty": true
       }
     },
+    "types": {
+      "type": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
     "use_bounds_elements": {
       "element": {
         "unnamed": false,
@@ -2627,15 +2636,6 @@
         "required": false,
         "multiple": false,
         "nonEmpty": false
-      }
-    },
-    "tuple_type_elements": {
-      "type": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
       }
     },
     "tuple_expression_elements": {
@@ -7139,8 +7139,8 @@
         "scoped_type_identifier",
         "str_keyword",
         "tuple_type",
-        "tuple_type_elements",
         "type_identifier",
+        "types",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -9413,8 +9413,8 @@
         "scoped_type_identifier",
         "str_keyword",
         "tuple_type",
-        "tuple_type_elements",
         "type_identifier",
+        "types",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -16841,8 +16841,8 @@
         "scoped_type_identifier",
         "str_keyword",
         "tuple_type",
-        "tuple_type_elements",
         "type_identifier",
+        "types",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -16911,8 +16911,8 @@
         "scoped_type_identifier",
         "str_keyword",
         "tuple_type",
-        "tuple_type_elements",
         "type_identifier",
+        "types",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -17099,8 +17099,8 @@
         "self_parameter",
         "str_keyword",
         "tuple_type",
-        "tuple_type_elements",
         "type_identifier",
+        "types",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -17172,8 +17172,8 @@
         "self_parameter",
         "str_keyword",
         "tuple_type",
-        "tuple_type_elements",
         "type_identifier",
+        "types",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -17573,8 +17573,8 @@
         "scoped_type_identifier",
         "str_keyword",
         "tuple_type",
-        "tuple_type_elements",
         "type_identifier",
+        "types",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -17651,8 +17651,8 @@
         "scoped_type_identifier",
         "str_keyword",
         "tuple_type",
-        "tuple_type_elements",
         "type_identifier",
+        "types",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -19861,8 +19861,8 @@
         "scoped_type_identifier",
         "str_keyword",
         "tuple_type",
-        "tuple_type_elements",
         "type_identifier",
+        "types",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -23752,30 +23752,30 @@
       "hidden": false,
       "slots": [
         {
-          "name": "tuple_type_elements",
-          "propertyName": "tupleTypeElements",
-          "paramName": "tupleTypeElements",
+          "name": "types",
+          "propertyName": "types",
+          "paramName": "types",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "tuple_type_elements"
+            "types"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "tuple_type_elements",
-              "parseKind": "tuple_type_elements"
+              "name": "types",
+              "parseKind": "types"
             }
           ]
         }
       ],
       "factoryShape": "forwarded",
-      "forwardsTo": "tuple_type_elements",
+      "forwardsTo": "types",
       "factoryFields": [
-        "tuple_type_elements"
+        "types"
       ],
       "bareAccepts": [
         "abstract_type",
@@ -23807,68 +23807,8 @@
         "scoped_type_identifier",
         "str_keyword",
         "tuple_type",
-        "tuple_type_elements",
         "type_identifier",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
-        "unit_type",
-        "usize_keyword"
-      ]
-    },
-    {
-      "kind": "tuple_type_elements",
-      "modelType": "list",
-      "typeName": "TupleTypeElements",
-      "factoryName": "tupleTypeElements",
-      "irKey": "tupleTypeElements",
-      "hidden": false,
-      "nonEmpty": true,
-      "hasNonterminalSeparator": false,
-      "leadingDelimiter": "none",
-      "trailingDelimiter": "optional",
-      "defaultDelimiter": "Delimiter.None",
-      "elementKinds": [
-        "_type"
-      ],
-      "factoryShape": "elements",
-      "factoryFields": [
-        "type"
-      ],
-      "bareAccepts": [
-        "abstract_type",
-        "array_type",
-        "bool_keyword",
-        "bounded_type",
-        "char_keyword",
-        "dynamic_type",
-        "f32_keyword",
-        "f64_keyword",
-        "function_type",
-        "generic_type",
-        "higher_ranked_trait_bound",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
-        "identifier",
-        "isize_keyword",
-        "macro_invocation",
-        "metavariable",
-        "never_type",
-        "pointer_type_const",
-        "pointer_type_mut",
-        "primitive_type",
-        "reference_type",
-        "removed_trait_bound",
-        "scoped_type_identifier",
-        "str_keyword",
-        "tuple_type",
-        "tuple_type_elements",
-        "type_identifier",
+        "types",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -24058,11 +23998,11 @@
         "string_literal",
         "true_keyword",
         "tuple_type",
-        "tuple_type_elements",
         "type_argument",
         "type_arguments_elements",
         "type_binding",
         "type_identifier",
+        "types",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -24148,10 +24088,10 @@
         "string_literal",
         "true_keyword",
         "tuple_type",
-        "tuple_type_elements",
         "type_argument",
         "type_binding",
         "type_identifier",
+        "types",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -24632,6 +24572,69 @@
         "lifetime_parameter",
         "metavariable",
         "type_parameter"
+      ]
+    },
+    {
+      "kind": "types",
+      "modelType": "list",
+      "typeName": "Types",
+      "factoryName": "types",
+      "irKey": "types",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
+      "elementKinds": [
+        "_type"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "type"
+      ],
+      "bareAccepts": [
+        "abstract_type",
+        "array_type",
+        "bool_keyword",
+        "bounded_type",
+        "char_keyword",
+        "dynamic_type",
+        "f32_keyword",
+        "f64_keyword",
+        "function_type",
+        "generic_type",
+        "higher_ranked_trait_bound",
+        "i128_keyword",
+        "i16_keyword",
+        "i32_keyword",
+        "i64_keyword",
+        "i8_keyword",
+        "identifier",
+        "isize_keyword",
+        "macro_invocation",
+        "metavariable",
+        "never_type",
+        "pointer_type_const",
+        "pointer_type_mut",
+        "primitive_type",
+        "reference_type",
+        "removed_trait_bound",
+        "scoped_type_identifier",
+        "str_keyword",
+        "tuple_type",
+        "type_identifier",
+        "types",
+        "u128_keyword",
+        "u16_keyword",
+        "u32_keyword",
+        "u64_keyword",
+        "u8_keyword",
+        "unit_type",
+        "usize_keyword"
       ]
     },
     {

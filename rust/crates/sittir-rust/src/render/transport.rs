@@ -172,6 +172,7 @@ pub enum AnyTransport {
     UseClauses(UseClausesTransport),
     ParametersElements(ParametersElementsTransport),
     Lifetimes(LifetimesTransport),
+    Types(TypesTransport),
     UseBoundsElements(UseBoundsElementsTransport),
     TypeArgumentsElements(TypeArgumentsElementsTransport),
     ArgumentsElements(ArgumentsElementsTransport),
@@ -182,7 +183,6 @@ pub enum AnyTransport {
     UseWildcardGroup(UseWildcardGroupTransport),
     TokenRepetitionPatternText(TokenRepetitionPatternTextTransport),
     StringOpen(StringOpenTransport),
-    TupleTypeElements(TupleTypeElementsTransport),
     TokenTreePunctuation(TokenTreePunctuationEnum),
     TokenKeywords(TokenKeywordsEnum),
     _RangeExpressionBare(_RangeExpressionBareTransport),
@@ -709,6 +709,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::UseClauses(t) => t.prepare(ctx),
             AnyTransport::ParametersElements(t) => t.prepare(ctx),
             AnyTransport::Lifetimes(t) => t.prepare(ctx),
+            AnyTransport::Types(t) => t.prepare(ctx),
             AnyTransport::UseBoundsElements(t) => t.prepare(ctx),
             AnyTransport::TypeArgumentsElements(t) => t.prepare(ctx),
             AnyTransport::ArgumentsElements(t) => t.prepare(ctx),
@@ -719,7 +720,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::UseWildcardGroup(t) => t.prepare(ctx),
             AnyTransport::TokenRepetitionPatternText(t) => t.prepare(ctx),
             AnyTransport::StringOpen(t) => t.prepare(ctx),
-            AnyTransport::TupleTypeElements(t) => t.prepare(ctx),
             AnyTransport::TokenTreePunctuation(t) => t.prepare(ctx),
             AnyTransport::TokenKeywords(t) => t.prepare(ctx),
             AnyTransport::_RangeExpressionBare(t) => t.prepare(ctx),
@@ -1710,36 +1710,40 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 350 => Ok(AnyTransport::Lifetimes(
                     LifetimesTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: types (TYPES)
+                351 => Ok(AnyTransport::Types(
+                    TypesTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: use_bounds_elements (USE_BOUNDS_ELEMENTS)
-                351 => Ok(AnyTransport::UseBoundsElements(
+                352 => Ok(AnyTransport::UseBoundsElements(
                     UseBoundsElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: type_arguments_elements (TYPE_ARGUMENTS_ELEMENTS)
-                352 => Ok(AnyTransport::TypeArgumentsElements(
+                353 => Ok(AnyTransport::TypeArgumentsElements(
                     TypeArgumentsElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: arguments_elements (ARGUMENTS_ELEMENTS)
-                353 => Ok(AnyTransport::ArgumentsElements(
+                354 => Ok(AnyTransport::ArgumentsElements(
                     ArgumentsElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: field_initializer_list_elements (FIELD_INITIALIZER_LIST_ELEMENTS)
-                354 => Ok(AnyTransport::FieldInitializerListElements(
+                355 => Ok(AnyTransport::FieldInitializerListElements(
                     FieldInitializerListElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: tuple_pattern_elements (TUPLE_PATTERN_ELEMENTS)
-                355 => Ok(AnyTransport::TuplePatternElements(
+                356 => Ok(AnyTransport::TuplePatternElements(
                     TuplePatternElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: patterns (PATTERNS)
-                356 => Ok(AnyTransport::Patterns(
+                357 => Ok(AnyTransport::Patterns(
                     PatternsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: struct_pattern_elements (STRUCT_PATTERN_ELEMENTS)
-                357 => Ok(AnyTransport::StructPatternElements(
+                358 => Ok(AnyTransport::StructPatternElements(
                     StructPatternElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: use_wildcard_group (USE_WILDCARD_GROUP)
-                358 => Ok(AnyTransport::UseWildcardGroup(
+                359 => Ok(AnyTransport::UseWildcardGroup(
                     UseWildcardGroupTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: token_repetition_pattern_text (TOKEN_REPETITION_PATTERN_TEXT)
@@ -1749,10 +1753,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: string_open (STRING_OPEN)
                 133 => Ok(AnyTransport::StringOpen(
                     StringOpenTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: tuple_type_elements (TUPLE_TYPE_ELEMENTS)
-                359 => Ok(AnyTransport::TupleTypeElements(
-                    TupleTypeElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: token_tree_punctuation (TOKEN_TREE_PUNCTUATION)
                 360 => Ok(AnyTransport::TokenTreePunctuation(
@@ -45155,8 +45155,8 @@ pub struct TupleTypeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_elements"))]
-    pub tuple_type_elements: ::sittir_core::SlotValue<TupleTypeElementsTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_types"))]
+    pub types: ::sittir_core::SlotValue<TypesTransport>,
 }
 
 impl ::sittir_core::view::KindOf for TupleTypeTransport {
@@ -45181,7 +45181,7 @@ impl ::sittir_core::prepare::Prepare for TupleTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.tuple_type_elements.prepare(ctx)?;
+        self.types.prepare(ctx)?;
         Ok(())
     }
 }
@@ -51718,6 +51718,81 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LifetimesTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
+pub struct TypesTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
+    pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    pub type_: Vec<::sittir_core::SlotValue<TypeTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_before"))]
+    pub type_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_after"))]
+    pub type_separator_space_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for TypesTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(351)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for TypesTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(351) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+}
+
+impl ::sittir_core::render::Render for TypesTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(351)), render_types(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for TypesTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
+        ::sittir_core::prepare::prepare_edges(self, ctx);
+        let separated_type_ = {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.type_.iter().map(|item| item.coord()).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TYPES_TYPE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TYPES_TYPE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.type_separator_space_before.is_none() { self.type_separator_space_before = gaps.before; }
+            if self.type_separator_space_after.is_none() { self.type_separator_space_after = gaps.after; }
+            gaps.separated
+        };
+        self.type_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TYPES_TYPE_SEPARATOR_SPACE_BEFORE].arm);
+        self.type_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_TYPES_TYPE_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.type_.iter_mut().map(Some), options::SEATS_TYPES_TYPE, &separated_type_, ctx);
+        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_TYPES_TYPE]);
+        self.type_.prepare(ctx)?;
+        Ok(())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TypesTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        TypesTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TypesTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        TypesTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct UseBoundsElementsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
@@ -51735,19 +51810,19 @@ pub struct UseBoundsElementsTransport {
 
 impl ::sittir_core::view::KindOf for UseBoundsElementsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(351)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(352)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for UseBoundsElementsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(351) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(352) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for UseBoundsElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(351)), render_use_bounds_elements(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(352)), render_use_bounds_elements(self, w))
     }
 }
 
@@ -51810,19 +51885,19 @@ pub struct TypeArgumentsElementsTransport {
 
 impl ::sittir_core::view::KindOf for TypeArgumentsElementsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(352)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(353)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TypeArgumentsElementsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(352) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(353) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for TypeArgumentsElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(352)), render_type_arguments_elements(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(353)), render_type_arguments_elements(self, w))
     }
 }
 
@@ -51885,19 +51960,19 @@ pub struct ArgumentsElementsTransport {
 
 impl ::sittir_core::view::KindOf for ArgumentsElementsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(353)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(354)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ArgumentsElementsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(353) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(354) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ArgumentsElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(353)), render_arguments_elements(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(354)), render_arguments_elements(self, w))
     }
 }
 
@@ -51960,19 +52035,19 @@ pub struct FieldInitializerListElementsTransport {
 
 impl ::sittir_core::view::KindOf for FieldInitializerListElementsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(354)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(355)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for FieldInitializerListElementsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(354) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(355) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for FieldInitializerListElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(354)), render_field_initializer_list_elements(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(355)), render_field_initializer_list_elements(self, w))
     }
 }
 
@@ -52035,19 +52110,19 @@ pub struct TuplePatternElementsTransport {
 
 impl ::sittir_core::view::KindOf for TuplePatternElementsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(355)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(356)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TuplePatternElementsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(355) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(356) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for TuplePatternElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(355)), render_tuple_pattern_elements(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(356)), render_tuple_pattern_elements(self, w))
     }
 }
 
@@ -52110,19 +52185,19 @@ pub struct PatternsTransport {
 
 impl ::sittir_core::view::KindOf for PatternsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(356)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(357)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for PatternsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(356) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(357) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for PatternsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(356)), render_patterns(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(357)), render_patterns(self, w))
     }
 }
 
@@ -52185,19 +52260,19 @@ pub struct StructPatternElementsTransport {
 
 impl ::sittir_core::view::KindOf for StructPatternElementsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(357)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(358)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for StructPatternElementsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(357) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(358) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for StructPatternElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(357)), render_struct_pattern_elements(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(358)), render_struct_pattern_elements(self, w))
     }
 }
 
@@ -52254,19 +52329,19 @@ pub struct UseWildcardGroupTransport {
 
 impl ::sittir_core::view::KindOf for UseWildcardGroupTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(358)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(359)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for UseWildcardGroupTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(358) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(359) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for UseWildcardGroupTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(358)), render_use_wildcard_group(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(359)), render_use_wildcard_group(self, w))
     }
 }
 
@@ -52518,81 +52593,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StringOpenTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         StringOpenTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct TupleTypeElementsTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: Vec<::sittir_core::SlotValue<TypeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
-    pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_before"))]
-    pub type_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_after"))]
-    pub type_separator_space_after: Option<u16>,
-}
-
-impl ::sittir_core::view::KindOf for TupleTypeElementsTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(359)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::options::Edged for TupleTypeElementsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(359) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for TupleTypeElementsTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(359)), render_tuple_type_elements(self, w))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for TupleTypeElementsTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_type_ = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.type_.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TUPLE_TYPE_ELEMENTS_TYPE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TUPLE_TYPE_ELEMENTS_TYPE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.type_separator_space_before.is_none() { self.type_separator_space_before = gaps.before; }
-            if self.type_separator_space_after.is_none() { self.type_separator_space_after = gaps.after; }
-            gaps.separated
-        };
-        self.type_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_TYPE_ELEMENTS_TYPE_SEPARATOR_SPACE_BEFORE].arm);
-        self.type_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_TYPE_ELEMENTS_TYPE_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.type_.iter_mut().map(Some), options::SEATS_TUPLE_TYPE_ELEMENTS_TYPE, &separated_type_, ctx);
-        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_TUPLE_TYPE_ELEMENTS_TYPE]);
-        self.type_.prepare(ctx)?;
-        Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TupleTypeElementsTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        TupleTypeElementsTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TupleTypeElementsTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        TupleTypeElementsTransport::to_napi_value(env, *val)
     }
 }
 
@@ -78550,11 +78550,11 @@ fn render_function_type(node: &FunctionTypeTransport, w: &mut dyn ::sittir_core:
 }
 
 fn render_tuple_type(node: &TupleTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let tuple_type_elements = &node.tuple_type_elements;
+    let types = &node.types;
     w.edge(::sittir_core::types::KindId(243), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_TUPLE_TYPE_LPAREN_AFTER);
-    tuple_type_elements.render(w)?;
+    types.render(w)?;
     w.site_at(options::SITE_TUPLE_TYPE_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(243), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -79780,6 +79780,24 @@ fn render_lifetimes(node: &LifetimesTransport, w: &mut dyn ::sittir_core::render
     Ok(())
 }
 
+fn render_types(node: &TypesTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let type_ = ListView {
+        items: &node.type_,
+        template: "{}",
+        token: ",",
+        before: node.type_separator_space_before.unwrap_or(0),
+        after: node.type_separator_space_after.unwrap_or(0),
+        leading: false,
+        trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        head: Some(options::SITE_TYPES_TYPE_START),
+        tail: Some(options::SITE_TYPES_TYPE_END),
+    };
+    w.edge(::sittir_core::types::KindId(351), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    type_.render(w)?;
+    w.edge(::sittir_core::types::KindId(351), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    Ok(())
+}
+
 fn render_use_bounds_elements(node: &UseBoundsElementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let element = ListView {
         items: &node.element,
@@ -79792,9 +79810,9 @@ fn render_use_bounds_elements(node: &UseBoundsElementsTransport, w: &mut dyn ::s
         head: Some(options::SITE_USE_BOUNDS_ELEMENTS_ELEMENT_START),
         tail: Some(options::SITE_USE_BOUNDS_ELEMENTS_ELEMENT_END),
     };
-    w.edge(::sittir_core::types::KindId(351), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(352), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     element.render(w)?;
-    w.edge(::sittir_core::types::KindId(351), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(352), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -79810,9 +79828,9 @@ fn render_type_arguments_elements(node: &TypeArgumentsElementsTransport, w: &mut
         head: Some(options::SITE_TYPE_ARGUMENTS_ELEMENTS_ELEMENT_START),
         tail: Some(options::SITE_TYPE_ARGUMENTS_ELEMENTS_ELEMENT_END),
     };
-    w.edge(::sittir_core::types::KindId(352), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(353), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     element.render(w)?;
-    w.edge(::sittir_core::types::KindId(352), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(353), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -79828,9 +79846,9 @@ fn render_arguments_elements(node: &ArgumentsElementsTransport, w: &mut dyn ::si
         head: Some(options::SITE_ARGUMENTS_ELEMENTS_ELEMENT_START),
         tail: Some(options::SITE_ARGUMENTS_ELEMENTS_ELEMENT_END),
     };
-    w.edge(::sittir_core::types::KindId(353), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(354), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     element.render(w)?;
-    w.edge(::sittir_core::types::KindId(353), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(354), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -79846,9 +79864,9 @@ fn render_field_initializer_list_elements(node: &FieldInitializerListElementsTra
         head: Some(options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_START),
         tail: Some(options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_END),
     };
-    w.edge(::sittir_core::types::KindId(354), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(355), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     element.render(w)?;
-    w.edge(::sittir_core::types::KindId(354), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(355), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -79864,9 +79882,9 @@ fn render_tuple_pattern_elements(node: &TuplePatternElementsTransport, w: &mut d
         head: Some(options::SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_START),
         tail: Some(options::SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_END),
     };
-    w.edge(::sittir_core::types::KindId(355), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(356), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     element.render(w)?;
-    w.edge(::sittir_core::types::KindId(355), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(356), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -79882,9 +79900,9 @@ fn render_patterns(node: &PatternsTransport, w: &mut dyn ::sittir_core::render::
         head: Some(options::SITE_PATTERNS_PATTERN_START),
         tail: Some(options::SITE_PATTERNS_PATTERN_END),
     };
-    w.edge(::sittir_core::types::KindId(356), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(357), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     pattern.render(w)?;
-    w.edge(::sittir_core::types::KindId(356), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(357), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -79900,19 +79918,19 @@ fn render_struct_pattern_elements(node: &StructPatternElementsTransport, w: &mut
         head: Some(options::SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_START),
         tail: Some(options::SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_END),
     };
-    w.edge(::sittir_core::types::KindId(357), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(358), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     element.render(w)?;
-    w.edge(::sittir_core::types::KindId(357), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(358), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_use_wildcard_group(node: &UseWildcardGroupTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let path = View::new(&node.path, "{}");
-    w.edge(::sittir_core::types::KindId(358), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(359), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     path.render(w)?;
     w.site_at(options::SITE_USE_WILDCARD_GROUP_COLON_COLON_BEFORE);
     w.text("::")?;
-    w.edge(::sittir_core::types::KindId(358), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(359), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -79922,24 +79940,6 @@ fn render_token_repetition_pattern_text(t: &TokenRepetitionPatternTextTransport,
 
 fn render_string_open(t: &StringOpenTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
-}
-
-fn render_tuple_type_elements(node: &TupleTypeElementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let type_ = ListView {
-        items: &node.type_,
-        template: "{}",
-        token: ",",
-        before: node.type_separator_space_before.unwrap_or(0),
-        after: node.type_separator_space_after.unwrap_or(0),
-        leading: false,
-        trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: Some(options::SITE_TUPLE_TYPE_ELEMENTS_TYPE_START),
-        tail: Some(options::SITE_TUPLE_TYPE_ELEMENTS_TYPE_END),
-    };
-    w.edge(::sittir_core::types::KindId(359), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    type_.render(w)?;
-    w.edge(::sittir_core::types::KindId(359), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
-    Ok(())
 }
 
 fn render_token_tree_punctuation(t: &TokenTreePunctuationEnum, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -82337,6 +82337,7 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::UseClauses(inner) => inner.kind_in(kinds),
             Self::ParametersElements(inner) => inner.kind_in(kinds),
             Self::Lifetimes(inner) => inner.kind_in(kinds),
+            Self::Types(inner) => inner.kind_in(kinds),
             Self::UseBoundsElements(inner) => inner.kind_in(kinds),
             Self::TypeArgumentsElements(inner) => inner.kind_in(kinds),
             Self::ArgumentsElements(inner) => inner.kind_in(kinds),
@@ -82347,7 +82348,6 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::UseWildcardGroup(inner) => inner.kind_in(kinds),
             Self::TokenRepetitionPatternText(inner) => inner.kind_in(kinds),
             Self::StringOpen(inner) => inner.kind_in(kinds),
-            Self::TupleTypeElements(inner) => inner.kind_in(kinds),
             Self::TokenTreePunctuation(inner) => inner.kind_in(kinds),
             Self::TokenKeywords(inner) => inner.kind_in(kinds),
             Self::_RangeExpressionBare(inner) => inner.kind_in(kinds),
@@ -82744,6 +82744,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::UseClauses(t) => t.render(w),
             AnyTransport::ParametersElements(t) => t.render(w),
             AnyTransport::Lifetimes(t) => t.render(w),
+            AnyTransport::Types(t) => t.render(w),
             AnyTransport::UseBoundsElements(t) => t.render(w),
             AnyTransport::TypeArgumentsElements(t) => t.render(w),
             AnyTransport::ArgumentsElements(t) => t.render(w),
@@ -82754,7 +82755,6 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::UseWildcardGroup(t) => t.render(w),
             AnyTransport::TokenRepetitionPatternText(t) => t.render(w),
             AnyTransport::StringOpen(t) => t.render(w),
-            AnyTransport::TupleTypeElements(t) => t.render(w),
             AnyTransport::TokenTreePunctuation(t) => t.render(w),
             AnyTransport::TokenKeywords(t) => t.render(w),
             AnyTransport::_RangeExpressionBare(t) => t.render(w),

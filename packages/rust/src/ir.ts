@@ -441,6 +441,7 @@ export const ir: {
 	readonly useClauses: typeof F.useClauses;
 	readonly parametersElements: typeof F.parametersElements;
 	readonly lifetimes: typeof F.lifetimes;
+	readonly types: typeof F.types;
 	readonly useBoundsElements: typeof F.useBoundsElements;
 	readonly typeArgumentsElements: typeof F.typeArgumentsElements;
 	readonly argumentsElements: typeof F.argumentsElements;
@@ -449,7 +450,6 @@ export const ir: {
 	readonly patterns: typeof F.patterns;
 	readonly structPatternElements: typeof F.structPatternElements;
 	readonly useWildcardGroup: typeof F.useWildcardGroup;
-	readonly tupleTypeElements: typeof F.tupleTypeElements;
 	readonly tupleExpressionElements: typeof F.tupleExpressionElements;
 	readonly macroDefinition: typeof F.macroDefinition;
 	readonly tokenTreePattern: typeof F.tokenTreePattern;
@@ -647,6 +647,7 @@ export const ir: {
 	useClauses: F.useClauses,
 	parametersElements: F.parametersElements,
 	lifetimes: F.lifetimes,
+	types: F.types,
 	useBoundsElements: F.useBoundsElements,
 	typeArgumentsElements: F.typeArgumentsElements,
 	argumentsElements: F.argumentsElements,
@@ -655,7 +656,6 @@ export const ir: {
 	patterns: F.patterns,
 	structPatternElements: F.structPatternElements,
 	useWildcardGroup: F.useWildcardGroup,
-	tupleTypeElements: F.tupleTypeElements,
 	tupleExpressionElements: F.tupleExpressionElements,
 	macroDefinition: F.macroDefinition,
 	tokenTreePattern: F.tokenTreePattern,

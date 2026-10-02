@@ -535,24 +535,10 @@ export default sittirGrammar(base, {
 			'_non_special_token',
 			'_primitive_type',
 			'impl_item',
-			'reference_expression',
-			'tuple_type'
+			'reference_expression'
 		]
 	},
 	rules: {
-		// tuple_type's separated list realized as its own kind — the
-		// delimiter is a fact of the list, so the list is a top-level
-		// rule carrying it (hidden rule + visible alias, matching the
-		// `*_elements` family). Every element position is fielded so
-		// the extracted rule classifies separatedList and enrich's
-		// separated-list field wrap has nothing left to target.
-		_tuple_type_elements: vocabulary(($) =>
-			seq(field('type', $._type), repeat(seq(',', field('type', $._type))), optional(','))
-		),
-		tuple_type: reauthored('alias-shape', ($) =>
-			seq('(', alias($._tuple_type_elements, $.tuple_type_elements), ')')
-		),
-
 		_token_tree_punctuation: vocabulary(($) =>
 			choice(
 				'+',

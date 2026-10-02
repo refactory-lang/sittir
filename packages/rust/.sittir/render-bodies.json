@@ -7216,7 +7216,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "tuple_type_elements"
+			"name": "types"
 		},
 		{
 			"kind": "seam",
@@ -7229,20 +7229,6 @@
 		{
 			"kind": "seam",
 			"field": "tuple_type_after"
-		}
-	],
-	"tuple_type_elements": [
-		{
-			"kind": "seam",
-			"field": "tuple_type_elements_before"
-		},
-		{
-			"kind": "slot",
-			"name": "type"
-		},
-		{
-			"kind": "seam",
-			"field": "tuple_type_elements_after"
 		}
 	],
 	"type_argument": [
@@ -7609,6 +7595,20 @@
 		{
 			"kind": "seam",
 			"field": "type_parameters_elements_after"
+		}
+	],
+	"types": [
+		{
+			"kind": "seam",
+			"field": "types_before"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "seam",
+			"field": "types_after"
 		}
 	],
 	"unary_expression": [

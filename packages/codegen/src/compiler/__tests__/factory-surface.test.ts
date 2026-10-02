@@ -160,7 +160,7 @@ describe('terminated separated lists', () => {
 	});
 
 	it('a list with an optional trailing separator and no required one does not', () => {
-		expect(needsTrailing('tuple_type_elements')).toBe(false);
+		expect(needsTrailing('types')).toBe(false);
 	});
 
 	it('the factory accepts one element; the requirement is the render template\'s', () => {

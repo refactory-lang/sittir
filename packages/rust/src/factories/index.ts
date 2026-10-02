@@ -216,6 +216,7 @@ export const parametersElements: Hoisted<typeof O.parametersElements> = hoistAs<
 	O.parametersElements
 );
 export const lifetimes: Hoisted<typeof O.lifetimes> = hoistAs<typeof O.lifetimes>(O.lifetimes);
+export const types: Hoisted<typeof O.types> = hoistAs<typeof O.types>(O.types);
 export const useBoundsElements: Hoisted<typeof O.useBoundsElements> = hoistAs<typeof O.useBoundsElements>(
 	O.useBoundsElements
 );
@@ -237,9 +238,6 @@ export const structPatternElements: Hoisted<typeof O.structPatternElements> = ho
 );
 export const useWildcardGroup: Hoisted<typeof O.useWildcardGroup> = hoistAs<typeof O.useWildcardGroup>(
 	O.useWildcardGroup
-);
-export const tupleTypeElements: Hoisted<typeof O.tupleTypeElements> = hoistAs<typeof O.tupleTypeElements>(
-	O.tupleTypeElements
 );
 export const tupleExpressionElements: Hoisted<typeof O.tupleExpressionElements> = hoistAs<
 	typeof O.tupleExpressionElements

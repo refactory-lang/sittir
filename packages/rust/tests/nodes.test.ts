@@ -1328,7 +1328,7 @@ describe('function_type sub-factories', () => {
 describe('tuple_type', () => {
 	it('factory produces correct type', () => {
 		const node = ir.tupleType({
-			$type: TSKindId.TupleTypeElements,
+			$type: TSKindId.Types,
 			$text: 'test',
 			$source: 2,
 			$named: true,
@@ -1339,7 +1339,7 @@ describe('tuple_type', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.tupleType({
-			$type: TSKindId.TupleTypeElements,
+			$type: TSKindId.Types,
 			$text: 'test',
 			$source: 2,
 			$named: true,
@@ -3456,6 +3456,18 @@ describe('lifetimes', () => {
 	});
 });
 
+describe('types', () => {
+	it('factory produces correct type', () => {
+		const node = ir.types(...[{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]);
+		expect(node.$type).toBe(TSKindId.Types);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.types(...[{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
 describe('use_bounds_elements', () => {
 	it('factory produces correct type', () => {
 		const node = ir.useBoundsElements(
@@ -3655,18 +3667,6 @@ describe('string_open', () => {
 		expect(node.$type).toBe(TSKindId.StringOpen);
 		expect(node.$source).toBe(2);
 		expect(node.$text).toBe('"');
-	});
-});
-
-describe('tuple_type_elements', () => {
-	it('factory produces correct type', () => {
-		const node = ir.tupleTypeElements(...[{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]);
-		expect(node.$type).toBe(TSKindId.TupleTypeElements);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.tupleTypeElements(...[{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]);
-		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 

@@ -161,6 +161,7 @@ export const _fromMap = {
 	use_clauses: coerceToUseClauses,
 	parameters_elements: coerceToParametersElements,
 	lifetimes: coerceToLifetimes,
+	types: coerceToTypes,
 	use_bounds_elements: coerceToUseBoundsElements,
 	type_arguments_elements: coerceToTypeArgumentsElements,
 	arguments_elements: coerceToArgumentsElements,
@@ -171,7 +172,6 @@ export const _fromMap = {
 	use_wildcard_group: coerceToUseWildcardGroup,
 	token_repetition_pattern_text: coerceToTokenRepetitionPatternText,
 	string_open: coerceToStringOpen,
-	tuple_type_elements: coerceToTupleTypeElements,
 	tuple_expression_elements: coerceToTupleExpressionElements,
 	integer_literal_decimal: coerceToIntegerLiteralDecimal,
 	integer_literal_hex: coerceToIntegerLiteralHex,
@@ -607,41 +607,41 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	field_declaration_list: new Set([202, 344, 427]),
 	ordered_field_declaration_list: new Set([
 		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 345, 359, 388, 389, 432, 468
+		252, 254, 255, 256, 259, 265, 341, 345, 351, 388, 389, 432, 468
 	]),
 	where_clause: new Set([212, 346]),
 	removed_trait_bound: new Set([
 		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 359, 388, 389, 468
+		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 468
 	]),
 	type_parameters: new Set([128, 220, 221, 222, 347, 430]),
-	use_list: new Set([1, 125, 126, 127, 128, 226, 227, 228, 229, 263, 348, 358]),
-	use_wildcard: new Set([1, 125, 126, 127, 128, 263, 358]),
+	use_list: new Set([1, 125, 126, 127, 128, 226, 227, 228, 229, 263, 348, 359]),
+	use_wildcard: new Set([1, 125, 126, 127, 128, 263, 359]),
 	parameters: new Set([
 		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 231, 232, 233, 240, 242, 243,
-		244, 246, 248, 252, 254, 255, 256, 259, 265, 341, 349, 359, 388, 389, 429, 468
+		244, 246, 248, 252, 254, 255, 256, 259, 265, 341, 349, 351, 388, 389, 429, 468
 	]),
 	extern_modifier: new Set([332]),
 	visibility_modifier: new Set([1, 125, 126, 127, 128, 263, 379, 380, 381]),
 	bracketed_type: new Set([
 		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 238, 240, 242, 243, 244, 246,
-		248, 252, 254, 255, 256, 259, 265, 341, 359, 388, 389, 468
+		248, 252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 468
 	]),
 	lifetime: new Set([1]),
 	for_lifetimes: new Set([1, 239, 350]),
 	tuple_type: new Set([
 		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 359, 388, 389, 468
+		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 468
 	]),
-	use_bounds: new Set([1, 239, 351, 468]),
+	use_bounds: new Set([1, 239, 352, 468]),
 	type_arguments: new Set([
 		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 128, 141, 142, 143, 144, 145, 146,
 		147, 148, 149, 150, 162, 217, 218, 239, 240, 242, 243, 244, 246, 248, 251, 252, 254, 255, 256, 259, 265, 313, 332,
-		333, 336, 341, 352, 359, 388, 389, 433, 468
+		333, 336, 341, 351, 353, 388, 389, 433, 468
 	]),
 	dynamic_type: new Set([
 		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 359, 388, 389, 468
+		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 468
 	]),
 	try_expression: new Set([
 		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
@@ -664,7 +664,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	arguments: new Set([
 		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
 		143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271, 272, 273, 274, 275, 276, 279, 280,
-		281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 332, 333, 336, 353,
+		281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 332, 333, 336, 354,
 		362, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 431
 	]),
 	parenthesized_expression: new Set([
@@ -677,7 +677,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
 		143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271, 272, 273, 274, 275, 276, 279, 280,
 		281, 282, 284, 285, 286, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 332,
-		333, 336, 354, 362, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		333, 336, 355, 362, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 	]),
 	base_field_initializer: new Set([
 		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
@@ -701,22 +701,22 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	tuple_pattern: new Set([
 		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 141, 142, 143, 144,
 		145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319, 321, 322, 324, 325, 326, 330, 332,
-		333, 336, 355, 356, 369, 370, 386, 387, 419, 422, 426
+		333, 336, 356, 357, 369, 370, 386, 387, 419, 422, 426
 	]),
 	slice_pattern: new Set([
 		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 141, 142, 143, 144,
 		145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319, 321, 322, 324, 325, 326, 330, 332,
-		333, 336, 355, 356, 369, 370, 386, 387, 419, 422, 426
+		333, 336, 356, 357, 369, 370, 386, 387, 419, 422, 426
 	]),
 	mut_pattern: new Set([
 		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 141, 142, 143, 144,
 		145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319, 321, 322, 324, 325, 326, 330, 332,
-		333, 336, 355, 356, 369, 370, 386, 387, 419, 422, 426
+		333, 336, 356, 357, 369, 370, 386, 387, 419, 422, 426
 	]),
 	ref_pattern: new Set([
 		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 141, 142, 143, 144,
 		145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319, 321, 322, 324, 325, 326, 330, 332,
-		333, 336, 355, 356, 369, 370, 386, 387, 419, 422, 426
+		333, 336, 356, 357, 369, 370, 386, 387, 419, 422, 426
 	]),
 	negative_literal: new Set([141, 142, 143, 144, 162]),
 	line_comment: new Set([156, 166, 399, 400, 401]),
@@ -726,21 +726,25 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	field_declaration_list_elements: new Set([202, 427]),
 	ordered_field_declaration_list_elements: new Set([
 		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 359, 388, 389, 432, 468
+		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 432, 468
 	]),
 	where_predicates: new Set([212]),
 	type_parameters_elements: new Set([128, 220, 221, 222, 430]),
-	use_clauses: new Set([1, 125, 126, 127, 128, 226, 227, 228, 229, 263, 348, 358]),
+	use_clauses: new Set([1, 125, 126, 127, 128, 226, 227, 228, 229, 263, 348, 359]),
 	parameters_elements: new Set([
 		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 231, 232, 233, 240, 242, 243,
-		244, 246, 248, 252, 254, 255, 256, 259, 265, 341, 359, 388, 389, 429, 468
+		244, 246, 248, 252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 429, 468
 	]),
 	lifetimes: new Set([1, 239]),
+	types: new Set([
+		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 240, 242, 243, 244, 246, 248,
+		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 468
+	]),
 	use_bounds_elements: new Set([1, 239, 468]),
 	type_arguments_elements: new Set([
 		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 128, 141, 142, 143, 144, 145, 146,
 		147, 148, 149, 150, 162, 217, 218, 239, 240, 242, 243, 244, 246, 248, 251, 252, 254, 255, 256, 259, 265, 313, 332,
-		333, 336, 341, 359, 388, 389, 433, 468
+		333, 336, 341, 351, 388, 389, 433, 468
 	]),
 	arguments_elements: new Set([
 		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
@@ -757,19 +761,15 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	tuple_pattern_elements: new Set([
 		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 141, 142, 143, 144,
 		145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319, 321, 322, 324, 325, 326, 330, 332,
-		333, 336, 355, 356, 369, 370, 386, 387, 419, 422, 426
+		333, 336, 356, 357, 369, 370, 386, 387, 419, 422, 426
 	]),
 	patterns: new Set([
 		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 141, 142, 143, 144,
 		145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319, 321, 322, 324, 325, 326, 330, 332,
-		333, 336, 355, 356, 369, 370, 386, 387, 419, 422, 426
+		333, 336, 356, 357, 369, 370, 386, 387, 419, 422, 426
 	]),
 	struct_pattern_elements: new Set([321, 414, 415]),
 	use_wildcard_group: new Set([1, 125, 126, 127, 128, 263]),
-	tuple_type_elements: new Set([
-		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 359, 388, 389, 468
-	]),
 	tuple_expression_elements: new Set([
 		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
 		143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271, 272, 273, 274, 275, 276, 279, 280,
@@ -810,15 +810,15 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	or_pattern_prefix: new Set([
 		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 141, 142, 143, 144,
 		145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319, 321, 322, 324, 325, 326, 330, 332,
-		333, 336, 355, 356, 369, 370, 386, 387, 419, 422, 426
+		333, 336, 356, 357, 369, 370, 386, 387, 419, 422, 426
 	]),
 	pointer_type_const: new Set([
 		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 359, 388, 389, 468
+		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 468
 	]),
 	pointer_type_mut: new Set([
 		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 359, 388, 389, 468
+		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 468
 	]),
 	range_expression_postfix: new Set([
 		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
@@ -1168,6 +1168,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	use_clauses: TSKindId.UseClauses,
 	parameters_elements: TSKindId.ParametersElements,
 	lifetimes: TSKindId.Lifetimes,
+	types: TSKindId.Types,
 	use_bounds_elements: TSKindId.UseBoundsElements,
 	type_arguments_elements: TSKindId.TypeArgumentsElements,
 	arguments_elements: TSKindId.ArgumentsElements,
@@ -1176,7 +1177,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	patterns: TSKindId.Patterns,
 	struct_pattern_elements: TSKindId.StructPatternElements,
 	use_wildcard_group: TSKindId.UseWildcardGroup,
-	tuple_type_elements: TSKindId.TupleTypeElements,
 	tuple_expression_elements: TSKindId.TupleExpressionElements,
 	reference_expression_raw_const: TSKindId.ReferenceExpressionRawConst,
 	reference_expression_raw_mut: TSKindId.ReferenceExpressionRawMut,
@@ -1232,7 +1232,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	visibility_modifier: 'visibility_modifier_pub',
 	lifetime: 'identifier',
 	for_lifetimes: 'lifetimes',
-	tuple_type: 'tuple_type_elements',
+	tuple_type: 'types',
 	use_bounds: 'use_bounds_elements',
 	type_arguments: 'type_arguments_elements',
 	try_expression: '_expression',
@@ -1261,11 +1261,11 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	type_parameters_elements: 'attributed_type_parameter',
 	parameters_elements: 'attributed_parameter',
 	lifetimes: 'lifetime',
+	types: '_type',
 	type_arguments_elements: 'type_argument',
 	arguments_elements: 'attributed_argument',
 	patterns: '_pattern',
 	struct_pattern_elements: 'field_pattern',
-	tuple_type_elements: '_type',
 	tuple_expression_elements: '_expression',
 	reference_expression_raw_const: '_expression',
 	reference_expression_raw_mut: '_expression',
@@ -1506,6 +1506,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (coerceToParametersElements as (...args: unknown[]) => unknown)(...children);
 		case 'lifetimes':
 			return (coerceToLifetimes as (...args: unknown[]) => unknown)(...children);
+		case 'types':
+			return (coerceToTypes as (...args: unknown[]) => unknown)(...children);
 		case 'use_bounds_elements':
 			return (coerceToUseBoundsElements as (...args: unknown[]) => unknown)(...children);
 		case 'type_arguments_elements':
@@ -1522,8 +1524,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (coerceToStructPatternElements as (...args: unknown[]) => unknown)(...children);
 		case 'use_wildcard_group':
 			return F.buildUseWildcardGroup(children[0] as Parameters<typeof F.buildUseWildcardGroup>[0]);
-		case 'tuple_type_elements':
-			return (coerceToTupleTypeElements as (...args: unknown[]) => unknown)(...children);
 		case 'tuple_expression_elements':
 			return (coerceToTupleExpressionElements as (...args: unknown[]) => unknown)(...children);
 		case 'reference_expression_raw_const':
@@ -5323,25 +5323,22 @@ export function coerceToFunctionType(input: T.FunctionType.Loose): ReturnType<ty
 	});
 }
 
-export function resolveTupleType_tupleTypeElements(
-	value: T.TupleType.LooseConfig['tupleTypeElements']
-): T.TupleType['_tuple_type_elements'] {
-	return _resolveOneBranch<T.TupleTypeElements>(value, 'tuple_type_elements');
+export function resolveTupleType_types(value: T.TupleType.LooseConfig['types']): T.TupleType['_types'] {
+	return _resolveOneBranch<T.Types>(value, 'types');
 }
 
-export function coerceToTupleType(...input: T.TupleTypeElements.LooseArgs): ReturnType<typeof F.buildTupleType>;
+export function coerceToTupleType(...input: T.Types.LooseArgs): ReturnType<typeof F.buildTupleType>;
 export function coerceToTupleType(input: T.TupleType.Loose): ReturnType<typeof F.buildTupleType>;
 export function coerceToTupleType(...args: unknown[]): ReturnType<typeof F.buildTupleType> {
-	if (args.length > 1)
-		return F.buildTupleType(coerceToTupleTypeElements(...(args as Parameters<typeof coerceToTupleTypeElements>)));
+	if (args.length > 1) return F.buildTupleType(coerceToTypes(...(args as Parameters<typeof coerceToTypes>)));
 	const input = args[0] as T.TupleType.Loose;
 	return F.buildTupleType(
 		_requireField(
 			'tuple_type',
-			'tupleTypeElements',
-			_resolveOneBranch<T.TupleTypeElements>(
-				configFieldOr(input, 'tupleTypeElements', () => input),
-				'tuple_type_elements'
+			'types',
+			_resolveOneBranch<T.Types>(
+				configFieldOr(input, 'types', () => input),
+				'types'
 			)
 		)
 	);
@@ -8099,6 +8096,55 @@ export function coerceToLifetimes(...input: T.Lifetimes.LooseArgs): ReturnType<t
 	);
 }
 
+export function coerceToTypes(...input: T.Types.LooseArgs): ReturnType<typeof F.buildTypes> {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Types)) {
+		const data = input[0];
+		const stored = (data as unknown as { _type?: unknown })._type;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildTypes(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<T.Type | T.TypeIdentifier.Types>)
+		);
+	}
+	return F.buildTypes(
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) =>
+				coerceMixedEnumStorage(
+					_resolveKindEnum(els, () => _resolveMany<T.Type | T.TypeIdentifier.Types>(els, _K14, _K15)),
+					[]
+				),
+			[
+				'unit_type',
+				'never_type',
+				'primitive_type',
+				'abstract_type',
+				'reference_type',
+				'metavariable',
+				'pointer_type_const',
+				'pointer_type_mut',
+				'generic_type',
+				'scoped_type_identifier',
+				'tuple_type',
+				'array_type',
+				'function_type',
+				'type_identifier',
+				'macro_invocation',
+				'dynamic_type',
+				'bounded_type',
+				'removed_trait_bound'
+			]
+		) as unknown as NonEmptyArray<T.Type | T.TypeIdentifier.Types>)
+	);
+}
+
 export function coerceToUseBoundsElements(
 	...input: T.UseBoundsElements.LooseArgs
 ): ReturnType<typeof F.buildUseBoundsElements> {
@@ -8867,57 +8913,6 @@ export function coerceToTokenRepetitionPatternText(
 export function coerceToStringOpen(input: T.StringOpen.Loose): ReturnType<typeof F.buildStringOpen> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringOpen>;
 	return F.buildStringOpen(input as Parameters<typeof F.buildStringOpen>[0]);
-}
-
-export function coerceToTupleTypeElements(
-	...input: T.TupleTypeElements.LooseArgs
-): ReturnType<typeof F.buildTupleTypeElements> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TupleTypeElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _type?: unknown })._type;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTupleTypeElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<T.Type | T.TypeIdentifier.Types>)
-		);
-	}
-	return F.buildTupleTypeElements(
-		...(_listElements(
-			input,
-			['delimiter'],
-			undefined,
-			(els) =>
-				coerceMixedEnumStorage(
-					_resolveKindEnum(els, () => _resolveMany<T.Type | T.TypeIdentifier.Types>(els, _K14, _K15)),
-					[]
-				),
-			[
-				'unit_type',
-				'never_type',
-				'primitive_type',
-				'abstract_type',
-				'reference_type',
-				'metavariable',
-				'pointer_type_const',
-				'pointer_type_mut',
-				'generic_type',
-				'scoped_type_identifier',
-				'tuple_type',
-				'array_type',
-				'function_type',
-				'type_identifier',
-				'macro_invocation',
-				'dynamic_type',
-				'bounded_type',
-				'removed_trait_bound'
-			]
-		) as unknown as NonEmptyArray<T.Type | T.TypeIdentifier.Types>)
-	);
 }
 
 export function coerceToTupleExpressionElements(

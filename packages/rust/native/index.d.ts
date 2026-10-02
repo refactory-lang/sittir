@@ -1535,19 +1535,10 @@ export interface TupleStructPatternTransport {
   _patterns?: SlotValue<PatternsTransport>
 }
 
-export interface TupleTypeElementsTransport {
-  '$_trivia'?: TransportTrivia
-  '$_edges'?: Edges
-  _type: Array<SlotValue<TypeTransport>>
-  _delimiter?: number
-  _type_separator_space_before?: number
-  _type_separator_space_after?: number
-}
-
 export interface TupleTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _tuple_type_elements: SlotValue<TupleTypeElementsTransport>
+  _types: SlotValue<TypesTransport>
 }
 
 export interface TypeArgumentsElementsTransport {
@@ -1625,6 +1616,15 @@ export interface TypeParameterTransport {
   _name: SlotValue<TypeIdentifierTransport>
   _bounds?: SlotValue<TraitBoundsTransport>
   _default_type?: SlotValue<TypeTransport>
+}
+
+export interface TypesTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _type: Array<SlotValue<TypeTransport>>
+  _delimiter?: number
+  _type_separator_space_before?: number
+  _type_separator_space_after?: number
 }
 
 export interface UnaryExpressionTransport {

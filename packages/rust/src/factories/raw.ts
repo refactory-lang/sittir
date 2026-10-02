@@ -3377,9 +3377,7 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 	return node as unknown as T.FunctionType.Bound;
 }
 
-export function buildTupleType(
-	value: AdmitBound<T.TupleTypeElements, T.AdmittedNodes>
-): ReturnType<typeof _buildTupleType>;
+export function buildTupleType(value: AdmitBound<T.Types, T.AdmittedNodes>): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>
@@ -3389,20 +3387,20 @@ export function buildTupleType(
 ): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildTupleType(args[0] as T.TupleTypeElements);
+		return _buildTupleType(args[0] as T.Types);
 	}
 	const prebuilt =
 		args.length === 1 &&
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.TupleTypeElements as const);
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Types as const);
 	return prebuilt
-		? _buildTupleType(args[0] as T.TupleTypeElements)
-		: _buildTupleType((buildTupleTypeElements as (...a: unknown[]) => unknown)(...args) as T.TupleTypeElements);
+		? _buildTupleType(args[0] as T.Types)
+		: _buildTupleType((buildTypes as (...a: unknown[]) => unknown)(...args) as T.Types);
 }
-function _buildTupleType(value: AdmitBound<T.TupleTypeElements, T.AdmittedNodes>): T.TupleType.Bound {
-	const _tuple_type_elements = rejectBareText(value, 'TupleType.tupleTypeElements', 'a built TupleTypeElements');
-	const listView = ownerView(_tuple_type_elements, '_type');
+function _buildTupleType(value: AdmitBound<T.Types, T.AdmittedNodes>): T.TupleType.Bound {
+	const _types = rejectBareText(value, 'TupleType.types', 'a built Types');
+	const listView = ownerView(_types, '_type');
 	const listedItems =
 		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'types'), undefined);
 	const handle = currentHandle();
@@ -3410,21 +3408,19 @@ function _buildTupleType(value: AdmitBound<T.TupleTypeElements, T.AdmittedNodes>
 		$type: TSKindId.TupleType as const,
 		$source: 2 as const,
 		$named: true as const,
-		_tuple_type_elements,
+		_types,
 		$with: {
-			tupleTypeElements: (...args: unknown[]) =>
+			types: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TupleTypeElements as const, optional: false, make: buildTupleTypeElements },
-						(value: T.TupleTypeElements) => _buildTupleType(value)
+					listSlotWith(args, { kind: TSKindId.Types as const, optional: false, make: buildTypes }, (value: T.Types) =>
+						_buildTupleType(value)
 					)
 				)
 		},
-		tupleTypeElements: () => _tuple_type_elements,
+		types: () => _types,
 		length: listedItems?.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_tuple_type_elements') : undefined,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_types') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -3437,7 +3433,7 @@ function _buildTupleType(value: AdmitBound<T.TupleTypeElements, T.AdmittedNodes>
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_tuple_type_elements');
+	if (listedItems === undefined) readStubLength(node, '_types');
 	else
 		for (let index = 0; index < listedItems.length; index++)
 			(node as Record<number, unknown>)[index] = listedItems[index];
@@ -7482,6 +7478,74 @@ function _buildLifetimes(
 	return node as unknown as T.Lifetimes.Bound;
 }
 
+export function buildTypes(
+	...elements: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>
+): ReturnType<typeof _buildTypes>;
+export function buildTypes(
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	...elements: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>
+): ReturnType<typeof _buildTypes>;
+export function buildTypes(
+	...args: (
+		| { delimiter?: Delimiter.None | Delimiter.Trailing }
+		| AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
+	)[]
+) {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
+	>;
+	return _buildTypes(elements, options);
+}
+function _buildTypes(
+	elements: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.Types.Bound {
+	_assertNonEmpty(elements, 'types.elements');
+	const _type = admitAliasContent<NonEmptyArray<T.Type>>(elements, [
+		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+	]);
+	const _delimiter = options.delimiter ?? Delimiter.None;
+	const listedStored = storedElements(_type);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.Types as const,
+		$source: 2 as const,
+		$named: true as const,
+		_type,
+		_delimiter,
+		$with: {
+			types: (...vs: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildTypes(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildTypes({ ...options, delimiter: v }, ...elements))
+		},
+		types: () => _type,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.Types.Bound;
+}
+
 export function buildUseBoundsElements(
 	...elements: NonEmptyArray<AdmitBound<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>>
 ): ReturnType<typeof _buildUseBoundsElements>;
@@ -8168,74 +8232,6 @@ export function buildStringOpen(text: string): T.StringOpen.Bound {
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.StringOpen.Bound;
-}
-
-export function buildTupleTypeElements(
-	...elements: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>
-): ReturnType<typeof _buildTupleTypeElements>;
-export function buildTupleTypeElements(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>
-): ReturnType<typeof _buildTupleTypeElements>;
-export function buildTupleTypeElements(
-	...args: (
-		| { delimiter?: Delimiter.None | Delimiter.Trailing }
-		| AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
-	)[]
-) {
-	const _optsFirst =
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		!Array.isArray(args[0]) &&
-		!('$type' in (args[0] as object)) &&
-		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
-	>;
-	return _buildTupleTypeElements(elements, options);
-}
-function _buildTupleTypeElements(
-	elements: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>,
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.TupleTypeElements.Bound {
-	_assertNonEmpty(elements, 'tuple_type_elements.elements');
-	const _type = admitAliasContent<NonEmptyArray<T.Type>>(elements, [
-		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
-	]);
-	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_type);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.TupleTypeElements as const,
-		$source: 2 as const,
-		$named: true as const,
-		_type,
-		_delimiter,
-		$with: {
-			types: (...vs: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>) =>
-				rebuilt(node, handle, () => buildTupleTypeElements(options, ...vs)),
-			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => buildTupleTypeElements({ ...options, delimiter: v }, ...elements))
-		},
-		types: () => _type,
-		length: listedStored.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(listedStored, undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
-		$render: () => renderText(handle, node),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	defineListIndices(node, listedStored.length);
-	return node as unknown as T.TupleTypeElements.Bound;
 }
 
 export function buildTupleExpressionElements(
@@ -12132,6 +12128,7 @@ export type FluentKindMap = {
 	use_clauses: T.UseClauses.Bound;
 	parameters_elements: T.ParametersElements.Bound;
 	lifetimes: T.Lifetimes.Bound;
+	types: T.Types.Bound;
 	use_bounds_elements: T.UseBoundsElements.Bound;
 	type_arguments_elements: T.TypeArgumentsElements.Bound;
 	arguments_elements: T.ArgumentsElements.Bound;
@@ -12142,7 +12139,6 @@ export type FluentKindMap = {
 	use_wildcard_group: T.UseWildcardGroup.Bound;
 	token_repetition_pattern_text: T.TokenRepetitionPatternText;
 	string_open: T.StringOpen;
-	tuple_type_elements: T.TupleTypeElements.Bound;
 	tuple_expression_elements: T.TupleExpressionElements.Bound;
 	integer_literal_decimal: T.IntegerLiteralDecimal.Bound;
 	integer_literal_hex: T.IntegerLiteralHex.Bound;
@@ -12399,6 +12395,7 @@ export const _factoryMap = {
 	use_clauses: buildUseClauses,
 	parameters_elements: buildParametersElements,
 	lifetimes: buildLifetimes,
+	types: buildTypes,
 	use_bounds_elements: buildUseBoundsElements,
 	type_arguments_elements: buildTypeArgumentsElements,
 	arguments_elements: buildArgumentsElements,
@@ -12409,7 +12406,6 @@ export const _factoryMap = {
 	use_wildcard_group: buildUseWildcardGroup,
 	token_repetition_pattern_text: buildTokenRepetitionPatternText,
 	string_open: buildStringOpen,
-	tuple_type_elements: buildTupleTypeElements,
 	tuple_expression_elements: buildTupleExpressionElements,
 	integer_literal_decimal: buildIntegerLiteralDecimal,
 	integer_literal_hex: buildIntegerLiteralHex,

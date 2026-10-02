@@ -6647,26 +6647,10 @@
       "required": true,
       "types": [
         {
-          "type": "tuple_type_elements",
+          "type": "types",
           "named": true
         }
       ]
-    }
-  },
-  {
-    "type": "tuple_type_elements",
-    "named": true,
-    "fields": {
-      "type": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "_type",
-            "named": true
-          }
-        ]
-      }
     }
   },
   {
@@ -6924,6 +6908,22 @@
         "types": [
           {
             "type": "attributed_type_parameter",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "types",
+    "named": true,
+    "fields": {
+      "type": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "_type",
             "named": true
           }
         ]
