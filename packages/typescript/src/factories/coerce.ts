@@ -11092,8 +11092,6 @@ export function resolveParenthesizedExpressionSequence_sequenceExpression(
 export function coerceToParenthesizedExpressionSequence(
 	input: T.ParenthesizedExpressionSequence.Loose
 ): ReturnType<typeof F.buildParenthesizedExpressionSequence> {
-	if (isNodeOfKind(input, TSKindId.ParenthesizedExpressionSequence))
-		return input as unknown as ReturnType<typeof F.buildParenthesizedExpressionSequence>;
 	return F.buildParenthesizedExpressionSequence(
 		_requireField(
 			'parenthesized_expression_sequence',

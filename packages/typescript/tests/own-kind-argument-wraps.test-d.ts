@@ -8,7 +8,7 @@
  */
 
 import { ir } from '../src/ir.ts';
-import type { AwaitExpression, TupleType, Array, Arguments } from '../src/types.ts';
+import type { AwaitExpression, TupleType, Array, Arguments, ParenthesizedExpressionSequence } from '../src/types.ts';
 
 export function ownKindArguments(): void {
 	const x = ir.identifier('x');
@@ -16,14 +16,19 @@ export function ownKindArguments(): void {
 	const tuple = ir.tupleType('A', 'B');
 	const array = ir.array(x);
 	const args = ir.arguments(x);
+	const sequence = ir.parenthesizedExpression.sequence.strict(x, ir.identifier('y'));
 
 	ir.awaitExpression(awaited);
 	ir.tupleType(tuple);
 	ir.array(array);
 	ir.arguments(args);
+	ir.parenthesizedExpression.sequence(sequence);
+	ir.parenthesizedExpression.sequence.strict(sequence);
 
 	[awaited] satisfies AwaitExpression.LooseArgs;
 	[tuple] satisfies TupleType.LooseArgs;
 	[array] satisfies Array.LooseArgs;
 	[args] satisfies Arguments.LooseArgs;
+	[sequence] satisfies ParenthesizedExpressionSequence.LooseArgs;
+	[sequence] satisfies ParenthesizedExpressionSequence.BuildArgs;
 }

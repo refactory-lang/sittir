@@ -16377,8 +16377,10 @@ The table and each row's key list are frozen.
 
 ```text
 Can the kind's one config slot hold the kind itself: its own kind is among the kinds the slot holds,
-expanded through supertypes, or the slot holds a list whose elements admit it (`tuple` through
-`collection_elements`). For such a kind a single argument of its own kind is ambiguous between the
+expanded through supertypes, or the slot holds a child whose elements the builder takes and those
+elements admit it. That child is a list (`tuple` through `collection_elements`), or the one kind the
+builder forwards to when that kind is built from its spread elements (typescript's parenthesized
+sequence through `sequence_expression`). For such a kind a single argument of its own kind is ambiguous between the
 node itself and a value of the slot, so its coercer has no own-node short circuit and no re-spread of
 the node's elements: the argument is resolved as the slot's value, and the call wraps it
 (`await(awaitNode)` is `await await x`, `array(arr)` is `[[…]]`). A list that cannot contain itself
