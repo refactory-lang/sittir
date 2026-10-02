@@ -9610,6 +9610,8 @@ The two modules `emitTypesModules` produces: `types`, the public type surface th
 
 Emits the types module and its internal sibling in one pass. A declared supertype's union alias and namespace go to `types`; an undeclared one goes to `internal`, and `types` imports it back for the interfaces and hints that name it (a type-only import cycle). Which module a supertype lands in is `isDeclaredSupertype`, with no second predicate.
 
+Given `entryRows`, the internal module also declares `SubBuilderRowKind`: each `ir` sub-builder path with the kind whose `LooseArgs` row declares that entry. It is not public; the per-grammar type test reads it to compare every sub-builder with its row.
+
 ### `packages/codegen/src/emitters/types.ts::internalModule`
 
 The internal types module: everything `types` exports (`export type *`) plus the undeclared supertypes' aliases and namespaces, importing only the public names its aliases use. Consumers that resolve `T.<Name>` for any supertype alias import this module; the package index never re-exports it, so the public type surface has no alias for an undeclared hidden choice.
@@ -11068,6 +11070,10 @@ Only the factory, wrap, template and render-module emitters take the
 	 *  this kind's factory forwards (see buildFactoryMap.forwardsTo). */
 ```
 
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.oneSurface`
+
+Set on a kind with one builder and no strict/coerce pair (`hasOneSurface`). The predicate is the emitter's own, stamped here so a tool that spells calls reads it and does not re-derive it from the kind's shape.
+
 ### `packages/codegen/src/emitters/node-model.ts::serializeNode`
 
 #### body
@@ -11705,7 +11711,7 @@ Reads a `RowParam` off a kind's factory surface: the row types as `paramsToTuple
 
 ### `packages/codegen/src/emitters/factories.ts::fieldCarryingBuiltTypeSurface`
 
-The construction surface of a field-carrying kind, from its factory surface: the `$with` setters, and the `BuildArgs` / `LooseArgs` tuples from the surface's row parameters. A kind with a `listSpreadTarget` unions its tuples with the target's own (`… | T.<Target>.BuildArgs`), by name, so the spread form is the list's derivation rather than a copy; its `maxArgs` is then unbounded.
+The construction surface of a field-carrying kind, from its factory surface: the `$with` setters, and the `BuildArgs` / `LooseArgs` tuples from the surface's row parameters. An own-text leaf (`ownTextLeaf`) has one row for both, `ownTextArgs`, and takes at most two arguments. A kind with a `listSpreadTarget` unions its tuples with the target's own (`… | T.<Target>.BuildArgs`), by name, so the spread form is the list's derivation rather than a copy; its `maxArgs` is then unbounded.
 
 ### `packages/codegen/src/emitters/factories.ts::constructorSurface`
 
@@ -12388,6 +12394,38 @@ A supertype gets an ir namespace if and only if the grammar declares it (`Assemb
  *  an enum of literals gets none for the same reason, per member. One
  *  predicate for ir's flat-key set, its two emission loops, and the flat
  *  leaf keys `flattenedVariantParents` checks its parent keys against. */
+```
+
+
+### `packages/codegen/src/emitters/overlays/module.ts::hasOneSurface`
+
+```text
+A kind with one builder and no strict/coerce pair: a pattern leaf, whose builder takes its text, a
+lexed kind whose one slot is its own text (`ownTextLeaf`), whose builder takes that text, or a
+kind stored as its id (a keyword or fixed-text token), whose entry is the constant. Every place such a
+kind is exposed uses the same raw entry — at the top of `ir`, in a supertype group, and under a parent
+as a variant route — so the kind has one entry form wherever it is reached.
+```
+
+### `packages/codegen/src/emitters/overlays/module.ts::ownTextEntries`
+
+The keyed kinds that have one surface: the complement of `bundleEntries` over the same derivation (`keyedEntries`). They have a raw factory, a coercer for the slots that hold them, and a catalog entry, and get a flat `ir` entry that is the raw factory instead of a bundle.
+
+### `packages/codegen/src/emitters/shared.ts::ownTextLeaf`
+
+The facts of a lexed kind that is nothing but its own text between two fixed affixes, or `undefined` for any other kind: the content slot, the opening and closing text, and the template-literal type of the text spelled in full (`\`<open>${string}<close>\``). The kind qualifies when it has a lexed content slot, that slot is its only slot, and it has a full form. A kind whose affix is a spelled slot or a choice of texts has no single spelled type and is a compile-time error here, so the classification cannot drift from what the builder can type.
+
+Such a kind is a leaf. Its builder takes text only and has one surface. It never reads the text to decide whether the affixes are present: detection lives only on a coercion surface, and a leaf has none. The caller says which it gave, with the `affix` argument. A slot that holds the kind keeps its coercer, which still detects either form (`spelledInterior`); a kind with a second slot, and a polymorph parent, keep their coercing entry and its detection.
+
+### `packages/codegen/src/emitters/factories.ts::ownTextArgs`
+
+The argument row of an own-text leaf, as both its `BuildArgs` and its `LooseArgs`: `[content: T, affix?: true] | [text: <spelled type>, affix: false]`. `T` is `ownTextContentType`, the content slot's storage type widened by what its storage coercion accepts (a numeric content also takes `number | bigint`). With `affix` true or absent the first argument is the content, and the builder adds the affixes; with `affix: false` it is the token spelled in full, typed by the kind's affixes, and the builder removes them (`unaffixed`), refusing text that lacks either. Text that carries the affixes passed without `affix: false` is content like any other: it is refused when the content pattern excludes it, and renders with the affixes doubled when the pattern admits it.
+
+### `packages/codegen/src/emitters/overlays/module.ts::hasFlatEntry`
+
+```text
+Does this leaf or keyword get its own flat `ir.<irKey>` entry: `isFlatLeafOrKeyword`, and not a
+token form. The predicate of ir's two flat emission loops.
 ```
 
 ### `packages/codegen/src/emitters/ir.ts::emitIr`
@@ -14669,6 +14707,8 @@ The strict/coerce expression pair for a parent builder; `coerce` is absent when 
 
 The strict/coerce expression pair for an arm: a direct child uses its own factories (strict builder doubling as the coerce seat when no coercer exists); a flattened arm references the decorated child const emitted above (`<childKey>.<path>.strict` / `.coerce`).
 
+A child with one surface is forwarded as that surface on both sides. `builderRefs` gives the pair for a direct child: the raw builder, and the coercer only when the child is not an own-text leaf, since that leaf's coercer detects the spelled form and takes one argument where the entry takes the `affix` toggle. `coerceSideOf` names which member of a child's namespace is its coercing side: it follows the default variant of each flattened parent down to the kind the bare call builds, and answers `strict` when that kind has one surface, because the namespace then has no `coerce` member.
+
 Given the wires, the refs also carry the child's arity, `max`: a route reference reads `routeArity`, a supertype or seated child's key reads `entryArity`, and a direct child reads `surfaceArity`. An arm that forwards the child's arguments takes this `max` as its own.
 
 A flattened arm through a hoisted child references that child's private
@@ -15151,6 +15191,23 @@ not depend on the order the derivation listed the arms in. A host that
 appears after an arm it hosts (python `case_pattern`'s `negative` after the
 `integer` and `float` it hosts) still receives them.
 
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::entryRowsByIrPath`
+
+```text
+Rewrites the paths recorded during emission, which start at an emitted const's name, as paths from
+the public `ir` namespace. An emitted set referenced under another path (a nested parent, a child's
+own sub-factory set) is reachable under every path that references it, so its entries repeat under
+each; a set with no `ir` key of its own (a hoisted compound's private set) is reachable only that way.
+```
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::variantChildAt`
+
+```text
+The kind a path of variant or alias names leads to, starting from a kind, or undefined when a step is
+neither. Read from the same route and alias facts the overlay emits from.
+```
+
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatBearing`
 
 Whether a child must be reached through its own overlay entry rather than its
@@ -15413,6 +15470,10 @@ It imports the grammar types as `T` when any emitted block names `T.`.
 Every table the overlay emits (a wired parent, a private set, a flattened variant parent) is frozen where it is built, and so is a route pair it builds for a variant child; the pairs a sub-factory method emits are consumed by hoisting, which builds a frozen callable from them.
 
 Alias routes, variant routes and a flattened parent's default pair are built through `bundle` with the variant child's `entryArity` as their stamp, keyed by their dotted route path; alias paths are recorded in `routes` like arm paths.
+
+A route to a kind with one surface (`hasOneSurface`) is the kind's raw entry itself (`empty: F.buildCharLiteralEmpty`, `pass: F.buildPassStatement`), never a bundle: the same function or constant the top of `ir` holds. A default route to a pattern leaf binds the parent's call to that builder with no coercer; a kind stored as its id cannot be a default, since there is nothing to call, and throws. A forwarding sub-factory that reaches such a kind through a path (`nonSpecialToken.char.empty`) reads the kind's builder and coercer directly (`variantChildAt`), because the routed entry has no `.strict` / `.coerce` to read; it still fills the parent's slot, so its coerce flavor keeps accepting a built leaf.
+
+The return carries, beside the module text, `entryRows`: every `ir` path whose entry is a kind's own entry, mapped to that kind (`entryRowsByIrPath`), recorded at the one place a route is resolved (`variantRouteOf`) and for a parent's default call. `forwardingPaths` are the remaining routed paths: sub-factories that build the parent. Their argument type is spelled from the parent's and the child's builders (`paramFor(parent, child) => ReturnType<parent>`), so no kind's row declares them and nothing compares them.
 
 ### `packages/codegen/src/emitters/options.ts::kindIdArmType`
 
@@ -16380,6 +16441,19 @@ Emits `INNER_GAPS`: for every compound with inner gaps, the gap keys in render o
 
 The table and each row's key list are frozen.
 
+### `packages/codegen/src/emitters/shared.ts::holdsOwnKind`
+
+```text
+Can the kind's one config slot hold the kind itself: its own kind is among the kinds the slot holds,
+expanded through supertypes, or the slot holds a list whose elements admit it (`tuple` through
+`collection_elements`). For such a kind a single argument of its own kind is ambiguous between the
+node itself and a value of the slot, so its coercer has no own-node short circuit and no re-spread of
+the node's elements: the argument is resolved as the slot's value, and the call wraps it
+(`await(awaitNode)` is `await await x`, `array(arr)` is `[[…]]`). A list that cannot contain itself
+(`arguments`) is not selected and keeps taking its own node as its elements. A kind with several
+config slots is not selected either: its argument is a config object, which a node is not.
+```
+
 ### `packages/codegen/src/emitters/shared.ts::lexedContentSlot`
 
 ```text
@@ -16420,7 +16494,7 @@ A kind with a full form serializes it (`fullForm`, its literal `open` and `close
 ### `packages/codegen/src/emitters/ir.ts::factoryRef`
 
 ```text
-A text leaf is called through its raw builder; a lexed kind through its hoisted factory, which coerces the bare content.
+A text leaf is called through its raw builder, and so is any other kind with one surface; a lexed kind with a coercing entry is called through its hoisted factory, which coerces the bare content.
 ```
 
 ### `packages/codegen/src/emitters/test.ts::patternSlotDummy`

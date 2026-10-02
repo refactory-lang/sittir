@@ -6844,30 +6844,20 @@ export const string: {
 
 export const comment: {
 	readonly strict: typeof F.buildCommentLine;
-	readonly coerce: typeof C.coerceToCommentLine;
-	readonly line: { strict: typeof F.buildCommentLine; coerce: typeof C.coerceToCommentLine };
-	readonly block: { strict: typeof F.buildCommentBlock; coerce: typeof C.coerceToCommentBlock };
+	readonly line: typeof F.buildCommentLine;
+	readonly block: typeof F.buildCommentBlock;
 } = Object.freeze({
-	...bundle(F.buildCommentLine, C.coerceToCommentLine, { key: 'comment', max: 1 }),
-	line: bundle(F.buildCommentLine, C.coerceToCommentLine, { key: 'comment.line', max: 1 }),
-	block: bundle(F.buildCommentBlock, C.coerceToCommentBlock, { key: 'comment.block', max: 1 })
+	...bundle(F.buildCommentLine, undefined, { key: 'comment', max: 2 }),
+	line: F.buildCommentLine,
+	block: F.buildCommentBlock
 });
 
 export const metaProperty: {
-	readonly newTarget: { strict: typeof F.buildMetaPropertyNewTarget; coerce: typeof C.coerceToMetaPropertyNewTarget };
-	readonly importMeta: {
-		strict: typeof F.buildMetaPropertyImportMeta;
-		coerce: typeof C.coerceToMetaPropertyImportMeta;
-	};
+	readonly newTarget: typeof F.buildMetaPropertyNewTarget;
+	readonly importMeta: typeof F.buildMetaPropertyImportMeta;
 } = Object.freeze({
-	newTarget: bundle(F.buildMetaPropertyNewTarget, C.coerceToMetaPropertyNewTarget, {
-		key: 'metaProperty.newTarget',
-		max: 1
-	}),
-	importMeta: bundle(F.buildMetaPropertyImportMeta, C.coerceToMetaPropertyImportMeta, {
-		key: 'metaProperty.importMeta',
-		max: 1
-	})
+	newTarget: F.buildMetaPropertyNewTarget,
+	importMeta: F.buildMetaPropertyImportMeta
 });
 
 export const pattern: {
@@ -6906,7 +6896,7 @@ export const classBodyMember: {
 		strict: typeof F.buildClassBodyMemberDeclaration;
 		coerce: typeof C.coerceToClassBodyMemberDeclaration;
 	};
-	readonly empty: { strict: typeof F.buildEmptyMember; coerce: typeof C.coerceToEmptyMember };
+	readonly empty: typeof F.buildEmptyMember;
 } = Object.freeze({
 	method: bundle(F.buildClassBodyMemberMethod, C.coerceToClassBodyMemberMethod, {
 		key: 'classBodyMember.method',
@@ -6921,7 +6911,7 @@ export const classBodyMember: {
 		key: 'classBodyMember.declaration',
 		max: 2
 	}),
-	empty: bundle(F.buildEmptyMember, C.coerceToEmptyMember, { key: 'classBodyMember.empty', max: 1 })
+	empty: F.buildEmptyMember
 });
 
 export const enumBodyElement: {
@@ -6960,17 +6950,16 @@ export const exportStatementDefault: {
 
 export const numberBigint: {
 	readonly strict: typeof F.buildNumberBigintDecimal;
-	readonly coerce: typeof C.coerceToNumberBigintDecimal;
-	readonly hex: { strict: typeof F.buildNumberBigintHex; coerce: typeof C.coerceToNumberBigintHex };
-	readonly binary: { strict: typeof F.buildNumberBigintBinary; coerce: typeof C.coerceToNumberBigintBinary };
-	readonly octal: { strict: typeof F.buildNumberBigintOctal; coerce: typeof C.coerceToNumberBigintOctal };
-	readonly decimal: { strict: typeof F.buildNumberBigintDecimal; coerce: typeof C.coerceToNumberBigintDecimal };
+	readonly hex: typeof F.buildNumberBigintHex;
+	readonly binary: typeof F.buildNumberBigintBinary;
+	readonly octal: typeof F.buildNumberBigintOctal;
+	readonly decimal: typeof F.buildNumberBigintDecimal;
 } = Object.freeze({
-	...bundle(F.buildNumberBigintDecimal, C.coerceToNumberBigintDecimal, { key: 'numberBigint', max: 1 }),
-	hex: bundle(F.buildNumberBigintHex, C.coerceToNumberBigintHex, { key: 'numberBigint.hex', max: 1 }),
-	binary: bundle(F.buildNumberBigintBinary, C.coerceToNumberBigintBinary, { key: 'numberBigint.binary', max: 1 }),
-	octal: bundle(F.buildNumberBigintOctal, C.coerceToNumberBigintOctal, { key: 'numberBigint.octal', max: 1 }),
-	decimal: bundle(F.buildNumberBigintDecimal, C.coerceToNumberBigintDecimal, { key: 'numberBigint.decimal', max: 1 })
+	...bundle(F.buildNumberBigintDecimal, undefined, { key: 'numberBigint', max: 2 }),
+	hex: F.buildNumberBigintHex,
+	binary: F.buildNumberBigintBinary,
+	octal: F.buildNumberBigintOctal,
+	decimal: F.buildNumberBigintDecimal
 });
 
 const literalType$negativeNumber =
@@ -7044,7 +7033,7 @@ const literalType$bigint =
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const literalType$bigint$strict = literalType$bigint(F.buildLiteralType, numberBigint.strict);
-const literalType$bigint$coerce = literalType$bigint(F.buildLiteralType, numberBigint.coerce);
+const literalType$bigint$coerce = literalType$bigint(F.buildLiteralType, numberBigint.strict);
 const literalType$double =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -7085,26 +7074,26 @@ const literalType$bigint$hex =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$bigint$hex$strict = literalType$bigint$hex(F.buildLiteralType, numberBigint.hex.strict);
-const literalType$bigint$hex$coerce = literalType$bigint$hex(F.buildLiteralType, numberBigint.hex.coerce);
+const literalType$bigint$hex$strict = literalType$bigint$hex(F.buildLiteralType, F.buildNumberBigintHex);
+const literalType$bigint$hex$coerce = literalType$bigint$hex(F.buildLiteralType, F.buildNumberBigintHex);
 const literalType$bigint$binary =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$bigint$binary$strict = literalType$bigint$binary(F.buildLiteralType, numberBigint.binary.strict);
-const literalType$bigint$binary$coerce = literalType$bigint$binary(F.buildLiteralType, numberBigint.binary.coerce);
+const literalType$bigint$binary$strict = literalType$bigint$binary(F.buildLiteralType, F.buildNumberBigintBinary);
+const literalType$bigint$binary$coerce = literalType$bigint$binary(F.buildLiteralType, F.buildNumberBigintBinary);
 const literalType$bigint$octal =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$bigint$octal$strict = literalType$bigint$octal(F.buildLiteralType, numberBigint.octal.strict);
-const literalType$bigint$octal$coerce = literalType$bigint$octal(F.buildLiteralType, numberBigint.octal.coerce);
+const literalType$bigint$octal$strict = literalType$bigint$octal(F.buildLiteralType, F.buildNumberBigintOctal);
+const literalType$bigint$octal$coerce = literalType$bigint$octal(F.buildLiteralType, F.buildNumberBigintOctal);
 const literalType$bigint$decimal =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$bigint$decimal$strict = literalType$bigint$decimal(F.buildLiteralType, numberBigint.decimal.strict);
-const literalType$bigint$decimal$coerce = literalType$bigint$decimal(F.buildLiteralType, numberBigint.decimal.coerce);
+const literalType$bigint$decimal$strict = literalType$bigint$decimal(F.buildLiteralType, F.buildNumberBigintDecimal);
+const literalType$bigint$decimal$coerce = literalType$bigint$decimal(F.buildLiteralType, F.buildNumberBigintDecimal);
 export const literalType = Object.freeze({
 	...B.literalType,
 	negativeNumber: bundle(literalType$negativeNumber$strict, literalType$negativeNumber$coerce, {
@@ -7128,22 +7117,22 @@ export const literalType = Object.freeze({
 	binary: bundle(literalType$binary$strict, literalType$binary$coerce, { key: 'literalType.binary', max: 2 }),
 	octal: bundle(literalType$octal$strict, literalType$octal$coerce, { key: 'literalType.octal', max: 2 }),
 	bigint: {
-		...bundle(literalType$bigint$strict, literalType$bigint$coerce, { key: 'literalType.bigint', max: 1 }),
+		...bundle(literalType$bigint$strict, literalType$bigint$coerce, { key: 'literalType.bigint', max: 2 }),
 		hex: bundle(literalType$bigint$hex$strict, literalType$bigint$hex$coerce, {
 			key: 'literalType.bigint.hex',
-			max: 1
+			max: 2
 		}),
 		binary: bundle(literalType$bigint$binary$strict, literalType$bigint$binary$coerce, {
 			key: 'literalType.bigint.binary',
-			max: 1
+			max: 2
 		}),
 		octal: bundle(literalType$bigint$octal$strict, literalType$bigint$octal$coerce, {
 			key: 'literalType.bigint.octal',
-			max: 1
+			max: 2
 		}),
 		decimal: bundle(literalType$bigint$decimal$strict, literalType$bigint$decimal$coerce, {
 			key: 'literalType.bigint.decimal',
-			max: 1
+			max: 2
 		})
 	},
 	double: bundle(literalType$double$strict, literalType$double$coerce),
@@ -7190,22 +7179,22 @@ export const literalType = Object.freeze({
 	};
 	bigint: {
 		strict: (...args: ArgsOf<typeof numberBigint.strict>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof numberBigint.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof numberBigint.strict>) => ReturnType<typeof F.buildLiteralType>;
 		hex: {
-			strict: (...args: ArgsOf<typeof numberBigint.hex.strict>) => ReturnType<typeof F.buildLiteralType>;
-			coerce: (...args: ArgsOf<typeof numberBigint.hex.coerce>) => ReturnType<typeof F.buildLiteralType>;
+			strict: (...args: ArgsOf<typeof F.buildNumberBigintHex>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof F.buildNumberBigintHex>) => ReturnType<typeof F.buildLiteralType>;
 		};
 		binary: {
-			strict: (...args: ArgsOf<typeof numberBigint.binary.strict>) => ReturnType<typeof F.buildLiteralType>;
-			coerce: (...args: ArgsOf<typeof numberBigint.binary.coerce>) => ReturnType<typeof F.buildLiteralType>;
+			strict: (...args: ArgsOf<typeof F.buildNumberBigintBinary>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof F.buildNumberBigintBinary>) => ReturnType<typeof F.buildLiteralType>;
 		};
 		octal: {
-			strict: (...args: ArgsOf<typeof numberBigint.octal.strict>) => ReturnType<typeof F.buildLiteralType>;
-			coerce: (...args: ArgsOf<typeof numberBigint.octal.coerce>) => ReturnType<typeof F.buildLiteralType>;
+			strict: (...args: ArgsOf<typeof F.buildNumberBigintOctal>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof F.buildNumberBigintOctal>) => ReturnType<typeof F.buildLiteralType>;
 		};
 		decimal: {
-			strict: (...args: ArgsOf<typeof numberBigint.decimal.strict>) => ReturnType<typeof F.buildLiteralType>;
-			coerce: (...args: ArgsOf<typeof numberBigint.decimal.coerce>) => ReturnType<typeof F.buildLiteralType>;
+			strict: (...args: ArgsOf<typeof F.buildNumberBigintDecimal>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof F.buildNumberBigintDecimal>) => ReturnType<typeof F.buildLiteralType>;
 		};
 	};
 	double: {
@@ -7265,7 +7254,7 @@ export const statement: {
 	readonly continue: typeof B.continueStatement;
 	readonly return: typeof B.returnStatement;
 	readonly throw: typeof B.throwStatement;
-	readonly empty: { strict: typeof F.buildEmptyStatement; coerce: typeof C.coerceToEmptyStatement };
+	readonly empty: typeof F.buildEmptyStatement;
 	readonly labeled: typeof B.labeledStatement;
 } = Object.freeze({
 	export: exportStatement,
@@ -7286,13 +7275,12 @@ export const statement: {
 	continue: B.continueStatement,
 	return: B.returnStatement,
 	throw: B.throwStatement,
-	empty: bundle(F.buildEmptyStatement, C.coerceToEmptyStatement, { key: 'statement.empty', max: 1 }),
+	empty: F.buildEmptyStatement,
 	labeled: B.labeledStatement
 });
 
 export const number: {
 	readonly strict: typeof F.buildNumberDecimal;
-	readonly coerce: typeof C.coerceToNumberDecimal;
 	readonly hex: { strict: typeof F.buildNumberHex; coerce: typeof C.coerceToNumberHex };
 	readonly floatPoint: { strict: typeof F.buildNumberFloatPoint; coerce: typeof C.coerceToNumberFloatPoint };
 	readonly floatLeadingPoint: {
@@ -7303,12 +7291,12 @@ export const number: {
 		strict: typeof F.buildNumberFloatScientific;
 		coerce: typeof C.coerceToNumberFloatScientific;
 	};
-	readonly decimal: { strict: typeof F.buildNumberDecimal; coerce: typeof C.coerceToNumberDecimal };
+	readonly decimal: typeof F.buildNumberDecimal;
 	readonly binary: { strict: typeof F.buildNumberBinary; coerce: typeof C.coerceToNumberBinary };
 	readonly octal: { strict: typeof F.buildNumberOctal; coerce: typeof C.coerceToNumberOctal };
 	readonly bigint: typeof numberBigint;
 } = Object.freeze({
-	...bundle(F.buildNumberDecimal, C.coerceToNumberDecimal, { key: 'number', max: 1 }),
+	...bundle(F.buildNumberDecimal, undefined, { key: 'number', max: 1 }),
 	hex: bundle(F.buildNumberHex, C.coerceToNumberHex, { key: 'number.hex', max: 2 }),
 	floatPoint: bundle(F.buildNumberFloatPoint, C.coerceToNumberFloatPoint, { key: 'number.floatPoint', max: 2 }),
 	floatLeadingPoint: bundle(F.buildNumberFloatLeadingPoint, C.coerceToNumberFloatLeadingPoint, {
@@ -7319,7 +7307,7 @@ export const number: {
 		key: 'number.floatScientific',
 		max: 2
 	}),
-	decimal: bundle(F.buildNumberDecimal, C.coerceToNumberDecimal, { key: 'number.decimal', max: 1 }),
+	decimal: F.buildNumberDecimal,
 	binary: bundle(F.buildNumberBinary, C.coerceToNumberBinary, { key: 'number.binary', max: 2 }),
 	octal: bundle(F.buildNumberOctal, C.coerceToNumberOctal, { key: 'number.octal', max: 2 }),
 	bigint: numberBigint

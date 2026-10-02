@@ -76,7 +76,8 @@ import type {
 	ArrayExpression,
 	ClosureExpression,
 	Literal,
-	Dollar
+	Dollar,
+	TSKindId
 } from './types.js';
 export type * from './types.js';
 
@@ -263,4 +264,105 @@ export namespace Condition {
 
 export namespace Path {
 	export type Kind = '_path';
+}
+
+export interface SubBuilderRowKind {
+	arrayExpression: TSKindId.ArrayExpressionList;
+	'arrayExpression.list': TSKindId.ArrayExpressionList;
+	'arrayExpression.semi': TSKindId.ArrayExpressionSemi;
+	charLiteral: TSKindId.CharLiteralPlain;
+	'charLiteral.empty': TSKindId.CharLiteralEmpty;
+	'charLiteral.escaped': TSKindId.CharLiteralEscapedSimple;
+	'charLiteral.escaped.hex': TSKindId.CharLiteralEscapedHex;
+	'charLiteral.escaped.simple': TSKindId.CharLiteralEscapedSimple;
+	'charLiteral.escaped.unicodeBraced': TSKindId.CharLiteralEscapedUnicodeBraced;
+	'charLiteral.escaped.unicodeFixed': TSKindId.CharLiteralEscapedUnicodeFixed;
+	'charLiteral.plain': TSKindId.CharLiteralPlain;
+	charLiteralEscaped: TSKindId.CharLiteralEscapedSimple;
+	'charLiteralEscaped.hex': TSKindId.CharLiteralEscapedHex;
+	'charLiteralEscaped.simple': TSKindId.CharLiteralEscapedSimple;
+	'charLiteralEscaped.unicodeBraced': TSKindId.CharLiteralEscapedUnicodeBraced;
+	'charLiteralEscaped.unicodeFixed': TSKindId.CharLiteralEscapedUnicodeFixed;
+	'closureExpression.block': TSKindId.ClosureExpressionBlock;
+	'closureExpression.expr': TSKindId.ClosureExpressionExpr;
+	comment: TSKindId.LineComment;
+	'comment.blockComment': TSKindId.BlockComment;
+	'comment.lineComment': TSKindId.LineComment;
+	'declarationStatement.associated': TSKindId.AssociatedType;
+	'declarationStatement.attribute': TSKindId.AttributeItem;
+	'declarationStatement.const': TSKindId.ConstItem;
+	'declarationStatement.empty': TSKindId.EmptyStatement;
+	'declarationStatement.enum': TSKindId.EnumItem;
+	'declarationStatement.externCrate': TSKindId.ExternCrateDeclaration;
+	'declarationStatement.foreignMod.body': TSKindId.ForeignModItemBody;
+	'declarationStatement.foreignMod.semi': TSKindId.ForeignModItemSemi;
+	'declarationStatement.function': TSKindId.FunctionItem;
+	'declarationStatement.functionSignature': TSKindId.FunctionSignatureItem;
+	'declarationStatement.impl.body': TSKindId.ImplItemBody;
+	'declarationStatement.impl.semi': TSKindId.ImplItemSemi;
+	'declarationStatement.innerAttribute': TSKindId.InnerAttributeItem;
+	'declarationStatement.let': TSKindId.LetDeclaration;
+	'declarationStatement.macro.brace': TSKindId.MacroDefinitionBrace;
+	'declarationStatement.macro.bracket': TSKindId.MacroDefinitionBracket;
+	'declarationStatement.macro.paren': TSKindId.MacroDefinitionParen;
+	'declarationStatement.macroInvocation': TSKindId.MacroInvocation;
+	'declarationStatement.mod.external': TSKindId.ModItemExternal;
+	'declarationStatement.mod.inline': TSKindId.ModItemInline;
+	'declarationStatement.static': TSKindId.StaticItem;
+	'declarationStatement.struct.brace': TSKindId.StructItemBrace;
+	'declarationStatement.struct.tuple': TSKindId.StructItemTuple;
+	'declarationStatement.struct.unit': TSKindId.StructItemUnit;
+	'declarationStatement.trait': TSKindId.TraitItem;
+	'declarationStatement.type': TSKindId.TypeItem;
+	'declarationStatement.union': TSKindId.UnionItem;
+	'declarationStatement.use': TSKindId.UseDeclaration;
+	'delimTokenTree.brace': TSKindId.DelimTokenTreeBrace;
+	'delimTokenTree.bracket': TSKindId.DelimTokenTreeBracket;
+	'delimTokenTree.paren': TSKindId.DelimTokenTreeParen;
+	escapeSequence: TSKindId.EscapeSequenceSimple;
+	'escapeSequence.hex': TSKindId.EscapeSequenceHex;
+	'escapeSequence.simple': TSKindId.EscapeSequenceSimple;
+	'escapeSequence.unicodeBraced': TSKindId.EscapeSequenceUnicodeBraced;
+	'escapeSequence.unicodeFixed': TSKindId.EscapeSequenceUnicodeFixed;
+	'fieldPattern.named': TSKindId.FieldPatternNamed;
+	'fieldPattern.shorthand': TSKindId.FieldPatternShorthand;
+	'foreignModItem.body': TSKindId.ForeignModItemBody;
+	'foreignModItem.semi': TSKindId.ForeignModItemSemi;
+	'implItem.body': TSKindId.ImplItemBody;
+	'implItem.semi': TSKindId.ImplItemSemi;
+	integerLiteral: TSKindId.IntegerLiteralDecimal;
+	'integerLiteral.binary': TSKindId.IntegerLiteralBinary;
+	'integerLiteral.decimal': TSKindId.IntegerLiteralDecimal;
+	'integerLiteral.hex': TSKindId.IntegerLiteralHex;
+	'integerLiteral.octal': TSKindId.IntegerLiteralOctal;
+	'macroDefinition.brace': TSKindId.MacroDefinitionBrace;
+	'macroDefinition.bracket': TSKindId.MacroDefinitionBracket;
+	'macroDefinition.paren': TSKindId.MacroDefinitionParen;
+	'matchArm.blockEnding': TSKindId.MatchArmBlockEnding;
+	'matchArm.withComma': TSKindId.MatchArmWithComma;
+	'modItem.external': TSKindId.ModItemExternal;
+	'modItem.inline': TSKindId.ModItemInline;
+	'orPattern.binary': TSKindId.OrPatternBinary;
+	'orPattern.prefix': TSKindId.OrPatternPrefix;
+	'pointerType.const': TSKindId.PointerTypeConst;
+	'pointerType.mut': TSKindId.PointerTypeMut;
+	'rangeExpression.bare': TSKindId.RangeExpressionBare;
+	'rangeExpression.binary': TSKindId.RangeExpressionBinary;
+	'rangeExpression.postfix': TSKindId.RangeExpressionPostfix;
+	'rangeExpression.prefix': TSKindId.RangeExpressionPrefix;
+	'rangePattern.prefix': TSKindId.RangePatternPrefix;
+	'rangePattern.withLeft': TSKindId.RangePatternWithLeft;
+	'referenceExpression.bare': TSKindId.ReferenceExpressionBare;
+	'referenceExpression.mut': TSKindId.ReferenceExpressionMut;
+	'referenceExpression.rawConst': TSKindId.ReferenceExpressionRawConst;
+	'referenceExpression.rawMut': TSKindId.ReferenceExpressionRawMut;
+	'structItem.brace': TSKindId.StructItemBrace;
+	'structItem.tuple': TSKindId.StructItemTuple;
+	'structItem.unit': TSKindId.StructItemUnit;
+	'tokenTree.brace': TSKindId.TokenTreeBrace;
+	'tokenTree.bracket': TSKindId.TokenTreeBracket;
+	'tokenTree.paren': TSKindId.TokenTreeParen;
+	'tokenTreePattern.brace': TSKindId.TokenTreePatternBrace;
+	'tokenTreePattern.bracket': TSKindId.TokenTreePatternBracket;
+	'tokenTreePattern.paren': TSKindId.TokenTreePatternParen;
 }

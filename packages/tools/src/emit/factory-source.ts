@@ -55,6 +55,7 @@ export interface ModelFacts {
 	readonly listDefaults: Record<string, string>;
 	readonly listElementKinds: Record<string, readonly string[]>;
 	readonly hoistedKinds: ReadonlySet<string>;
+	readonly oneSurfaceKinds: ReadonlySet<string>;
 	readonly kindIdOfName: (kind: string) => number | undefined;
 }
 
@@ -579,8 +580,8 @@ function camelCase(kind: string): string {
 	return kind.replace(/^_+/, '').replace(/_([a-z0-9])/g, (_m, c: string) => c.toUpperCase());
 }
 
-function callSpelling(path: string, ctx: PrintContext): string {
-	return isLoose(ctx) ? path : `${path}.strict`;
+function callSpelling(path: string, ctx: PrintContext, kind?: string): string {
+	return isLoose(ctx) || (kind !== undefined && ctx.facts.oneSurfaceKinds.has(kind)) ? path : `${path}.strict`;
 }
 
 function ownedListArgs(owner: string, value: unknown, ctx: PrintContext): string | undefined {
@@ -602,7 +603,7 @@ export function printingFactoryMap(
 		const path = ctx.irPathOfKind(kind);
 		const id = kindIdOfName(kind) ?? kind;
 		const publicName = kind.replace(/^_+/, '');
-		const call = callSpelling(path, ctx);
+		const call = callSpelling(path, ctx, kind);
 		const entry = (...args: unknown[]): Printed | string => {
 			if (ctx.aliasKinds?.has(kind)) return args[0] instanceof Printed ? args[0] : printValue(args[0], ctx, 0);
 			switch (shape) {
@@ -1084,6 +1085,7 @@ export async function emitFactorySourceText(
 			listDefaults: model.listDefaults,
 			listElementKinds: model.listElementKinds,
 			hoistedKinds: model.hoistedKinds,
+			oneSurfaceKinds: model.oneSurfaceKinds,
 			kindIdOfName: (kind) => idOfName.get(kind)
 		}
 	};

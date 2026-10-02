@@ -86,10 +86,11 @@ describe('typescript NamespaceMap access-path convergence', () => {
 		expectTrue<Equals<Equals<SwitchBody.BuildArgs, SwitchBody.LooseArgs>, false>>();
 		// separated list
 		expectTrue<Equals<Equals<FormalParametersElements.BuildArgs, FormalParametersElements.LooseArgs>, false>>();
-		// leaf — a free-text leaf. The builder takes the raw text; the coercer
-		// also takes the leaf itself, so the loose row is the kind's `Loose`.
-		expectTrue<Equals<Equals<HashBangLine.BuildArgs, HashBangLine.LooseArgs>, false>>();
-		expectTrue<Equals<HashBangLine.LooseArgs, [value: HashBangLine.Loose]>>();
+		// leaf — a lexed leaf whose one slot is its own text. It has one
+		// surface, so both rows are that entry's: its content, or its text
+		// spelled in full when the affix toggle is off.
+		expectTrue<Equals<HashBangLine.BuildArgs, HashBangLine.LooseArgs>>();
+		expectTrue<Equals<HashBangLine.LooseArgs, [content: string, affix?: true] | [text: `#!${string}`, affix: false]>>();
 	});
 
 	it('BuildArgs stays a MUTABLE tuple whose element is Config', () => {

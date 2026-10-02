@@ -6,10 +6,6 @@ export * from './raw.js';
 export * from './coerce.js';
 
 export const program = bundle(F.buildProgram, C.coerceToProgram);
-export const escapeSequence = bundle(F.buildEscapeSequence, C.coerceToEscapeSequence, {
-	key: 'escapeSequence',
-	max: 1
-});
 export const capture = bundle(F.buildCapture, C.coerceToCapture, { key: 'capture', max: 1 });
 export const string = bundle(F.buildString, C.coerceToString, { key: 'string', max: 1 });
 export const immediateString = bundle(F.buildImmediateString, C.coerceToImmediateString, {
@@ -18,7 +14,6 @@ export const immediateString = bundle(F.buildImmediateString, C.coerceToImmediat
 });
 export const stringContent = bundle(F.buildStringContent, C.coerceToStringContent);
 export const parameters = bundle(F.buildParameters, C.coerceToParameters);
-export const comment = bundle(F.buildComment, C.coerceToComment, { key: 'comment', max: 1 });
 export const list = bundle(F.buildList, C.coerceToList, { key: 'list', max: 1 });
 export const grouping = bundle(F.buildGrouping, C.coerceToGrouping, { key: 'grouping', max: 1 });
 export const missingNode = bundle(F.buildMissingNode, C.coerceToMissingNode, { key: 'missingNode', max: 1 });

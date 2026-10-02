@@ -17,6 +17,7 @@ import {
 	orDefault,
 	rejectBareText,
 	rejectKeywordText,
+	unaffixed,
 	withGroupSeat,
 	withListSlots,
 	withListView
@@ -101,7 +102,10 @@ export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.
 	) as unknown as T.Program.Bound;
 }
 
-export function buildHashBangLine(value: AdmitBound<string, T.AdmittedNodes>): T.HashBangLine.Bound {
+export function buildHashBangLine(content: string, affix?: true): T.HashBangLine.Bound;
+export function buildHashBangLine(text: `#!${string}`, affix: false): T.HashBangLine.Bound;
+export function buildHashBangLine(input: string, affix: boolean = true): T.HashBangLine.Bound {
+	const value = affix ? input : unaffixed(String(input), '#!', '', 'hash_bang_line');
 	const _content = value;
 	if (!_slotRe_buildHashBangLine_content.test(_content))
 		throw new Error(`hash_bang_line.content: text does not match pattern: ${describeValue(_content)}`);
@@ -2962,7 +2966,10 @@ export function buildUnescapedSingleStringFragment(text: string): T.UnescapedSin
 	});
 }
 
-export function buildEscapeSequence(value: AdmitBound<string, T.AdmittedNodes>): T.EscapeSequence.Bound {
+export function buildEscapeSequence(content: string, affix?: true): T.EscapeSequence.Bound;
+export function buildEscapeSequence(text: `\\${string}`, affix: false): T.EscapeSequence.Bound;
+export function buildEscapeSequence(input: string, affix: boolean = true): T.EscapeSequence.Bound {
+	const value = affix ? input : unaffixed(String(input), '\\', '', 'escape_sequence');
 	const _content = value;
 	if (!_slotRe_buildEscapeSequence_content.test(_content))
 		throw new Error(`escape_sequence.content: text does not match pattern: ${describeValue(_content)}`);
@@ -3093,9 +3100,13 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 	});
 }
 
+export function buildPrivatePropertyIdentifier(content: string, affix?: true): T.PrivatePropertyIdentifier.Bound;
+export function buildPrivatePropertyIdentifier(text: `#${string}`, affix: false): T.PrivatePropertyIdentifier.Bound;
 export function buildPrivatePropertyIdentifier(
-	value: AdmitBound<string, T.AdmittedNodes>
+	input: string,
+	affix: boolean = true
 ): T.PrivatePropertyIdentifier.Bound {
+	const value = affix ? input : unaffixed(String(input), '#', '', 'private_property_identifier');
 	const _content = value;
 	if (!_slotRe_buildPrivatePropertyIdentifier_content.test(_content))
 		throw new Error(`private_property_identifier.content: text does not match pattern: ${describeValue(_content)}`);
@@ -8115,7 +8126,10 @@ export function buildExportStatementEqualsExport(
 	) as unknown as T.ExportStatementEqualsExport.Bound;
 }
 
-export function buildCommentLine(value: AdmitBound<string, T.AdmittedNodes>): T.CommentLine.Bound {
+export function buildCommentLine(content: string, affix?: true): T.CommentLine.Bound;
+export function buildCommentLine(text: `//${string}`, affix: false): T.CommentLine.Bound;
+export function buildCommentLine(input: string, affix: boolean = true): T.CommentLine.Bound {
+	const value = affix ? input : unaffixed(String(input), '//', '', 'comment_line');
 	const _content = value;
 	if (!_slotRe_buildCommentLine_content.test(_content))
 		throw new Error(`comment_line.content: text does not match pattern: ${describeValue(_content)}`);
@@ -8137,7 +8151,10 @@ export function buildCommentLine(value: AdmitBound<string, T.AdmittedNodes>): T.
 	) as unknown as T.CommentLine.Bound;
 }
 
-export function buildCommentBlock(value: AdmitBound<string, T.AdmittedNodes>): T.CommentBlock.Bound {
+export function buildCommentBlock(content: string, affix?: true): T.CommentBlock.Bound;
+export function buildCommentBlock(text: `/*${string}*/`, affix: false): T.CommentBlock.Bound;
+export function buildCommentBlock(input: string, affix: boolean = true): T.CommentBlock.Bound {
+	const value = affix ? input : unaffixed(String(input), '/*', '*/', 'comment_block');
 	const _content = value;
 	if (!_slotRe_buildCommentBlock_content.test(_content))
 		throw new Error(`comment_block.content: text does not match pattern: ${describeValue(_content)}`);
@@ -8439,9 +8456,10 @@ export function buildNumberOctal(
 	) as unknown as T.NumberOctal.Bound;
 }
 
-export function buildNumberBigintHex(
-	value: AdmitBound<string | number | bigint, T.AdmittedNodes>
-): T.NumberBigintHex.Bound {
+export function buildNumberBigintHex(content: string | number | bigint, affix?: true): T.NumberBigintHex.Bound;
+export function buildNumberBigintHex(text: `${string}n`, affix: false): T.NumberBigintHex.Bound;
+export function buildNumberBigintHex(input: string | number | bigint, affix: boolean = true): T.NumberBigintHex.Bound {
+	const value = affix ? input : unaffixed(String(input), '', 'n', 'number_bigint_hex');
 	const _content = numberText(16, '0x', value);
 	if (!_slotRe_buildNumberBigintHex_content.test(_content))
 		throw new Error(`number_bigint_hex.content: text does not match pattern: ${describeValue(_content)}`);
@@ -8463,9 +8481,13 @@ export function buildNumberBigintHex(
 	) as unknown as T.NumberBigintHex.Bound;
 }
 
+export function buildNumberBigintBinary(content: string | number | bigint, affix?: true): T.NumberBigintBinary.Bound;
+export function buildNumberBigintBinary(text: `${string}n`, affix: false): T.NumberBigintBinary.Bound;
 export function buildNumberBigintBinary(
-	value: AdmitBound<string | number | bigint, T.AdmittedNodes>
+	input: string | number | bigint,
+	affix: boolean = true
 ): T.NumberBigintBinary.Bound {
+	const value = affix ? input : unaffixed(String(input), '', 'n', 'number_bigint_binary');
 	const _content = numberText(2, '0b', value);
 	if (!_slotRe_buildNumberBigintBinary_content.test(_content))
 		throw new Error(`number_bigint_binary.content: text does not match pattern: ${describeValue(_content)}`);
@@ -8487,9 +8509,13 @@ export function buildNumberBigintBinary(
 	) as unknown as T.NumberBigintBinary.Bound;
 }
 
+export function buildNumberBigintOctal(content: string | number | bigint, affix?: true): T.NumberBigintOctal.Bound;
+export function buildNumberBigintOctal(text: `${string}n`, affix: false): T.NumberBigintOctal.Bound;
 export function buildNumberBigintOctal(
-	value: AdmitBound<string | number | bigint, T.AdmittedNodes>
+	input: string | number | bigint,
+	affix: boolean = true
 ): T.NumberBigintOctal.Bound {
+	const value = affix ? input : unaffixed(String(input), '', 'n', 'number_bigint_octal');
 	const _content = numberText(8, '0o', value);
 	if (!_slotRe_buildNumberBigintOctal_content.test(_content))
 		throw new Error(`number_bigint_octal.content: text does not match pattern: ${describeValue(_content)}`);
@@ -8511,9 +8537,13 @@ export function buildNumberBigintOctal(
 	) as unknown as T.NumberBigintOctal.Bound;
 }
 
+export function buildNumberBigintDecimal(content: string | number | bigint, affix?: true): T.NumberBigintDecimal.Bound;
+export function buildNumberBigintDecimal(text: `${string}n`, affix: false): T.NumberBigintDecimal.Bound;
 export function buildNumberBigintDecimal(
-	value: AdmitBound<string | number | bigint, T.AdmittedNodes>
+	input: string | number | bigint,
+	affix: boolean = true
 ): T.NumberBigintDecimal.Bound {
+	const value = affix ? input : unaffixed(String(input), '', 'n', 'number_bigint_decimal');
 	const _content = numberText(10, '', value);
 	if (!_slotRe_buildNumberBigintDecimal_content.test(_content))
 		throw new Error(`number_bigint_decimal.content: text does not match pattern: ${describeValue(_content)}`);

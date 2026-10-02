@@ -60,6 +60,8 @@ import {
 	isSlotBearingCompound,
 	classifyFactoryEmission,
 	forwardedTargetKind,
+	ownTextLeaf,
+	type OwnTextLeaf,
 	resolveDirectFactorySlot,
 	warnSkippedParserSymbol,
 	soleSlotFacts,
@@ -134,6 +136,7 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 	}
 	for (const [kind, node] of nodeMap.nodes) {
 		if (numericSlotKeys(node).length > 0 || numericLeafShape(kind, node) !== undefined) imports.add('numberText');
+		if (ownTextLeaf(node) !== undefined) imports.add('unaffixed');
 	}
 	return [...imports].sort();
 }
@@ -729,6 +732,11 @@ function fieldCarryingBuiltTypeSurface(
 			...registeredSlots(node).map((f) => slotSetter(f, `T.${node.typeName}.Options`, nodeMap, kindEntries))
 		];
 	}
+	const ownText = ownTextLeaf(node);
+	if (ownText !== undefined) {
+		const args = ownTextArgs(ownText, ownTextContentType(ownText));
+		return { mainType: `T.${node.typeName}`, members: [], setters, buildArgs: args, looseArgs: args, maxArgs: 2 };
+	}
 	return {
 		...(spreadTarget === null && !surface.param.rest ? { row: rowParamOf(node, surface, nodeMap, kindEntries) } : {}),
 		mainType: `T.${node.typeName}`,
@@ -738,6 +746,15 @@ function fieldCarryingBuiltTypeSurface(
 		looseArgs: `${paramsToTuple(surface.rowLooseParams)}${spreadArgs('LooseArgs')}`,
 		maxArgs: spreadTarget === null ? surface.arity : undefined
 	};
+}
+
+function ownTextContentType(leaf: OwnTextLeaf): string {
+	const shape = numericSlotShape(leaf.slot);
+	return shape === undefined ? 'string' : `string | ${numberInputType(shape)}`;
+}
+
+function ownTextArgs(leaf: OwnTextLeaf, contentType: string): string {
+	return `[content: ${contentType}, affix?: true] | [text: ${leaf.spelledType}, affix: false]`;
 }
 
 function rowParamOf(
@@ -1262,7 +1279,16 @@ function emitFieldCarryingFactory(
 		withLines.push(...spellingWith((patch) => `${fn}(${configAccess}, ${patch})`), '    },');
 	}
 
-	const lines: string[] = [signature];
+	const ownText = ownTextLeaf(node);
+	const lines: string[] =
+		ownText === undefined
+			? [signature]
+			: [
+					`${exportKw}function ${fn}(content: ${ownTextContentType(ownText)}, affix?: true): ${builtName};`,
+					`${exportKw}function ${fn}(text: ${ownText.spelledType}, affix: false): ${builtName};`,
+					`${exportKw}function ${fn}(input: ${ownTextContentType(ownText)}, affix: boolean = true): ${builtName} {`,
+					`  const value = affix ? input : unaffixed(String(input), ${JSON.stringify(ownText.open)}, ${JSON.stringify(ownText.close)}, ${JSON.stringify(node.kind)});`
+				];
 	if (spreadFacts?.multiple && spreadFacts.nonEmpty) {
 		lines.push(`  _assertNonEmpty(children, '${node.kind}.children');`);
 	}
@@ -1362,6 +1388,7 @@ function emitFieldCarryingFactory(
 		lines.unshift(...wrapper);
 		return renameUnusedConfigParam(lines);
 	}
+	if (ownText !== undefined) return lines.join('\n');
 	return renameUnusedConfigParam(
 		withEmptyOverload(nodeMap, node.kind, `${exportKw}function ${fn}`, lines, `${exportKw}function ${fn}(${declarationParams(surface.params)}): ${builtName};`)
 	);

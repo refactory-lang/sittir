@@ -4,9 +4,9 @@ import { createEngine } from '@sittir/common';
 
 const rx = await createEngine(regex);
 
-describe('builders accept their kind spelled in full', () => {
-	it('strips the literal delimiters around a pattern content', () => {
-		expect(rx.build.identityEscape('\\.').$render()).toBe('\\.');
+describe('builders and their kind spelled in full', () => {
+	it('takes the delimiters in the text only when told they are there', () => {
+		expect(rx.build.identityEscape('\\.', false).$render()).toBe('\\.');
 	});
 
 	it('strips the literal delimiters around a pattern leaf', () => {

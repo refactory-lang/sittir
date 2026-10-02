@@ -10,7 +10,8 @@ import {
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
-	rejectBareText
+	rejectBareText,
+	unaffixed
 } from '@sittir/common/utils';
 import { withMethods } from '../utils.js';
 
@@ -46,7 +47,10 @@ export function buildProgram(...children: AdmitBound<T.Definition[], T.AdmittedN
 	) as unknown as T.Program.Bound;
 }
 
-export function buildEscapeSequence(value: AdmitBound<string, T.AdmittedNodes>): T.EscapeSequence.Bound {
+export function buildEscapeSequence(content: string, affix?: true): T.EscapeSequence.Bound;
+export function buildEscapeSequence(text: `\\${string}`, affix: false): T.EscapeSequence.Bound;
+export function buildEscapeSequence(input: string, affix: boolean = true): T.EscapeSequence.Bound {
+	const value = affix ? input : unaffixed(String(input), '\\', '', 'escape_sequence');
 	const _content = value;
 	if (!_slotRe_buildEscapeSequence_content.test(_content))
 		throw new Error(`escape_sequence.content: text does not match pattern: ${describeValue(_content)}`);
@@ -251,7 +255,10 @@ export function buildParameters(
 	) as unknown as T.Parameters.Bound;
 }
 
-export function buildComment(value: AdmitBound<string, T.AdmittedNodes>): T.Comment.Bound {
+export function buildComment(content: string, affix?: true): T.Comment.Bound;
+export function buildComment(text: `;${string}`, affix: false): T.Comment.Bound;
+export function buildComment(input: string, affix: boolean = true): T.Comment.Bound {
+	const value = affix ? input : unaffixed(String(input), ';', '', 'comment');
 	const _content = value;
 	if (!_slotRe_buildComment_content.test(_content))
 		throw new Error(`comment.content: text does not match pattern: ${describeValue(_content)}`);

@@ -4,9 +4,9 @@ import { createEngine } from '@sittir/common';
 
 const rs = await createEngine(rust);
 
-describe('builders accept their kind spelled in full', () => {
-	it('strips the literal delimiters around a pattern content', () => {
-		expect(rs.build.escapeSequence.hex('\\x41').$render()).toBe('\\x41');
+describe('builders and their kind spelled in full', () => {
+	it('takes the delimiters in the text only when told they are there', () => {
+		expect(rs.build.escapeSequence.hex('\\x41', false).$render()).toBe('\\x41');
 		expect(rs.build.escapeSequence.hex('x41').$render()).toBe('\\x41');
 	});
 

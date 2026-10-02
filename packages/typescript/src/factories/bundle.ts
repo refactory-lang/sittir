@@ -6,7 +6,6 @@ export * from './raw.js';
 export * from './coerce.js';
 
 export const program = bundle(F.buildProgram, C.coerceToProgram, { key: 'program', max: 1 });
-export const hashBangLine = bundle(F.buildHashBangLine, C.coerceToHashBangLine, { key: 'hashBangLine', max: 1 });
 export const namespaceExport = bundle(F.buildNamespaceExport, C.coerceToNamespaceExport, {
 	key: 'namespaceExport',
 	max: 1
@@ -174,20 +173,12 @@ export const unaryExpression = bundle(F.buildUnaryExpression, C.coerceToUnaryExp
 	max: 1
 });
 export const sequenceExpression = bundle(F.buildSequenceExpression, C.coerceToSequenceExpression);
-export const escapeSequence = bundle(F.buildEscapeSequence, C.coerceToEscapeSequence, {
-	key: 'escapeSequence',
-	max: 1
-});
 export const templateString = bundle(F.buildTemplateString, C.coerceToTemplateString);
 export const templateSubstitution = bundle(F.buildTemplateSubstitution, C.coerceToTemplateSubstitution, {
 	key: 'templateSubstitution',
 	max: 1
 });
 export const regex = bundle(F.buildRegex, C.coerceToRegex, { key: 'regex', max: 1 });
-export const privatePropertyIdentifier = bundle(F.buildPrivatePropertyIdentifier, C.coerceToPrivatePropertyIdentifier, {
-	key: 'privatePropertyIdentifier',
-	max: 1
-});
 export const arguments_ = bundle(F.buildArguments, C.coerceToArguments);
 export const decorator = bundle(F.buildDecorator, C.coerceToDecorator, { key: 'decorator', max: 1 });
 export const decoratorMemberExpression = bundle(F.buildDecoratorMemberExpression, C.coerceToDecoratorMemberExpression, {

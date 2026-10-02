@@ -15,7 +15,8 @@ import type {
 	MatchKeyword,
 	Pattern,
 	Expression,
-	Assignment
+	Assignment,
+	TSKindId
 } from './types.js';
 export type * from './types.js';
 
@@ -66,4 +67,76 @@ export namespace FExpression {
 
 export namespace KeywordIdentifier {
 	export type Kind = 'keyword_identifier';
+}
+
+export interface SubBuilderRowKind {
+	'assignment.eq': TSKindId.AssignmentEq;
+	'assignment.type': TSKindId.AssignmentType;
+	'assignment.typed': TSKindId.AssignmentTyped;
+	'compoundStatement.class': TSKindId.ClassDefinition;
+	'compoundStatement.decorated': TSKindId.DecoratedDefinition;
+	'compoundStatement.for': TSKindId.ForStatement;
+	'compoundStatement.function': TSKindId.FunctionDefinition;
+	'compoundStatement.if': TSKindId.IfStatement;
+	'compoundStatement.match': TSKindId.MatchStatement;
+	'compoundStatement.try': TSKindId.TryStatement;
+	'compoundStatement.while': TSKindId.WhileStatement;
+	'compoundStatement.with': TSKindId.WithStatement;
+	escapeSequence: TSKindId.EscapeSequenceSimple;
+	'escapeSequence.hex': TSKindId.EscapeSequenceHex;
+	'escapeSequence.lineBreak': TSKindId.EscapeSequenceLineBreak;
+	'escapeSequence.named': TSKindId.EscapeSequenceNamed;
+	'escapeSequence.octal': TSKindId.EscapeSequenceOctal;
+	'escapeSequence.simple': TSKindId.EscapeSequenceSimple;
+	'escapeSequence.unicodeFixed': TSKindId.EscapeSequenceUnicodeFixed;
+	'escapeSequence.unicodeWide': TSKindId.EscapeSequenceUnicodeWide;
+	float: TSKindId.FloatPoint;
+	'float.leadingPoint': TSKindId.FloatLeadingPoint;
+	'float.point': TSKindId.FloatPoint;
+	'float.scientific': TSKindId.FloatScientific;
+	integer: TSKindId.IntegerDecimalPlain;
+	'integer.binary': TSKindId.IntegerBinary;
+	'integer.decimal': TSKindId.IntegerDecimalPlain;
+	'integer.decimal.imaginary': TSKindId.IntegerDecimalImaginary;
+	'integer.decimal.long': TSKindId.IntegerDecimalLong;
+	'integer.decimal.plain': TSKindId.IntegerDecimalPlain;
+	'integer.hex': TSKindId.IntegerHex;
+	'integer.octal': TSKindId.IntegerOctal;
+	integerDecimal: TSKindId.IntegerDecimalPlain;
+	'integerDecimal.imaginary': TSKindId.IntegerDecimalImaginary;
+	'integerDecimal.long': TSKindId.IntegerDecimalLong;
+	'integerDecimal.plain': TSKindId.IntegerDecimalPlain;
+	lineContinuation: TSKindId.LineContinuationNewline;
+	'lineContinuation.newline': TSKindId.LineContinuationNewline;
+	'lineContinuation.nul': TSKindId.LineContinuationNul;
+	'parameter.default': TSKindId.DefaultParameter;
+	'parameter.dictionarySplat': TSKindId.DictionarySplatPattern;
+	'parameter.identifier': TSKindId.Identifier;
+	'parameter.keywordSeparator': TSKindId.KeywordSeparator;
+	'parameter.listSplat': TSKindId.ListSplatPattern;
+	'parameter.positionalSeparator': TSKindId.PositionalSeparator;
+	'parameter.tuple': TSKindId.TuplePattern;
+	'parameter.typed': TSKindId.TypedParameter;
+	'parameter.typedDefault': TSKindId.TypedDefaultParameter;
+	'simpleStatement.assert': TSKindId.AssertStatement;
+	'simpleStatement.break': TSKindId.BreakStatement;
+	'simpleStatement.continue': TSKindId.ContinueStatement;
+	'simpleStatement.delete': TSKindId.DeleteStatement;
+	'simpleStatement.exec': TSKindId.ExecStatement;
+	'simpleStatement.expression': TSKindId.ExpressionStatement;
+	'simpleStatement.futureImport': TSKindId.FutureImportStatement;
+	'simpleStatement.global': TSKindId.GlobalStatement;
+	'simpleStatement.import': TSKindId.ImportStatement;
+	'simpleStatement.importFrom': TSKindId.ImportFromStatement;
+	'simpleStatement.nonlocal': TSKindId.NonlocalStatement;
+	'simpleStatement.pass': TSKindId.PassStatement;
+	'simpleStatement.print': TSKindId.PrintStatement;
+	'simpleStatement.raise': TSKindId.RaiseStatement;
+	'simpleStatement.return': TSKindId.ReturnStatement;
+	'simpleStatement.typeAlias': TSKindId.TypeAliasStatement;
+	'suite.block': TSKindId.SuiteBlock;
+	'suite.empty': TSKindId.SuiteEmpty;
+	'suite.inline': TSKindId.SuiteInline;
+	'withClause.bare': TSKindId.WithClauseBare;
+	'withClause.paren': TSKindId.WithClauseParen;
 }

@@ -32,8 +32,8 @@ export const synonym = Object.freeze({
 			}
 		}
 	),
-	comment(text: string): ReturnType<typeof F.comment> {
-		return F.comment(text);
+	comment(text: string): ReturnType<typeof F.buildComment> {
+		return F.buildComment(text);
 	},
 	type(name: string): ReturnType<typeof F.buildIdentifier> {
 		return F.buildIdentifier(name);
@@ -294,7 +294,6 @@ export const ir: {
 	readonly interpolation: typeof F.interpolation;
 	readonly formatSpecifier: typeof F.formatSpecifier;
 	readonly await: typeof F.await_;
-	readonly comment: typeof F.comment;
 	readonly simpleStatementsElements: typeof F.simpleStatementsElements;
 	readonly subjects: typeof F.subjects;
 	readonly casePatterns: typeof F.casePatterns;
@@ -339,6 +338,7 @@ export const ir: {
 	readonly keywordSeparator: typeof F.buildKeywordSeparator;
 	readonly wildcardPattern: typeof F.buildWildcardPattern;
 	readonly newline: typeof F.buildNewline;
+	readonly comment: typeof F.buildComment;
 	readonly importPrefix: typeof F.buildImportPrefix;
 	readonly typeConversion: typeof F.buildTypeConversion;
 	readonly identifier: typeof F.buildIdentifier;
@@ -466,7 +466,6 @@ export const ir: {
 	interpolation: F.interpolation,
 	formatSpecifier: F.formatSpecifier,
 	await: F.await_,
-	comment: F.comment,
 	simpleStatementsElements: F.simpleStatementsElements,
 	subjects: F.subjects,
 	casePatterns: F.casePatterns,
@@ -513,6 +512,9 @@ export const ir: {
 	keywordSeparator: F.buildKeywordSeparator,
 	wildcardPattern: F.buildWildcardPattern,
 	newline: F.buildNewline,
+
+	// Leaves whose one slot is their own text
+	comment: F.buildComment,
 
 	// Leaf node factories
 	importPrefix: F.buildImportPrefix,

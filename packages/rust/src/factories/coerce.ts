@@ -4471,8 +4471,6 @@ export function resolveRemovedTraitBound_type(
 export function coerceToRemovedTraitBound(
 	input: T.RemovedTraitBound.Loose
 ): ReturnType<typeof F.buildRemovedTraitBound> {
-	if (isNodeOfKind(input, TSKindId.RemovedTraitBound))
-		return input as unknown as ReturnType<typeof F.buildRemovedTraitBound>;
 	return F.buildRemovedTraitBound(
 		_requireField(
 			'removed_trait_bound',
@@ -4873,8 +4871,6 @@ export function coerceToUseList(input?: T.UseList.Loose): ReturnType<typeof F.bu
 export function coerceToUseList(...args: unknown[]): ReturnType<typeof F.buildUseList> {
 	if (args.length > 1) return F.buildUseList(coerceToUseClauses(...(args as Parameters<typeof coerceToUseClauses>)));
 	const input = args[0] as T.UseList.Loose | undefined;
-	if (input !== undefined && isNodeOfKind(input, TSKindId.UseList))
-		return input as unknown as ReturnType<typeof F.buildUseList>;
 	return F.buildUseList(
 		_resolveOneBranch<T.UseClauses>(
 			configFieldOr(input, 'useClauses', () => input),
@@ -5338,7 +5334,6 @@ export function coerceToTupleType(...args: unknown[]): ReturnType<typeof F.build
 	if (args.length > 1)
 		return F.buildTupleType(coerceToTupleTypeElements(...(args as Parameters<typeof coerceToTupleTypeElements>)));
 	const input = args[0] as T.TupleType.Loose;
-	if (isNodeOfKind(input, TSKindId.TupleType)) return input as unknown as ReturnType<typeof F.buildTupleType>;
 	return F.buildTupleType(
 		_requireField(
 			'tuple_type',
@@ -6049,7 +6044,6 @@ export function resolveTryExpression_value(value: T.TryExpression.LooseConfig['v
 }
 
 export function coerceToTryExpression(input: T.TryExpression.Loose): ReturnType<typeof F.buildTryExpression> {
-	if (isNodeOfKind(input, TSKindId.TryExpression)) return input as unknown as ReturnType<typeof F.buildTryExpression>;
 	return F.buildTryExpression(
 		_requireField(
 			'try_expression',
@@ -6271,8 +6265,6 @@ export function resolveReturnExpression_expression(
 }
 
 export function coerceToReturnExpression(input?: T.ReturnExpression.Loose): ReturnType<typeof F.buildReturnExpression> {
-	if (input !== undefined && isNodeOfKind(input, TSKindId.ReturnExpression))
-		return input as unknown as ReturnType<typeof F.buildReturnExpression>;
 	return F.buildReturnExpression(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
@@ -6299,8 +6291,6 @@ export function resolveYieldExpression_expression(
 }
 
 export function coerceToYieldExpression(input?: T.YieldExpression.Loose): ReturnType<typeof F.buildYieldExpression> {
-	if (input !== undefined && isNodeOfKind(input, TSKindId.YieldExpression))
-		return input as unknown as ReturnType<typeof F.buildYieldExpression>;
 	return F.buildYieldExpression(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
@@ -6490,8 +6480,6 @@ export function resolveParenthesizedExpression_expression(
 export function coerceToParenthesizedExpression(
 	input: T.ParenthesizedExpression.Loose
 ): ReturnType<typeof F.buildParenthesizedExpression> {
-	if (isNodeOfKind(input, TSKindId.ParenthesizedExpression))
-		return input as unknown as ReturnType<typeof F.buildParenthesizedExpression>;
 	return F.buildParenthesizedExpression(
 		_requireField(
 			'parenthesized_expression',
@@ -7111,8 +7099,6 @@ export function resolveAwaitExpression_expression(
 }
 
 export function coerceToAwaitExpression(input: T.AwaitExpression.Loose): ReturnType<typeof F.buildAwaitExpression> {
-	if (isNodeOfKind(input, TSKindId.AwaitExpression))
-		return input as unknown as ReturnType<typeof F.buildAwaitExpression>;
 	return F.buildAwaitExpression(
 		_requireField(
 			'await_expression',
@@ -7295,8 +7281,6 @@ export function coerceToTuplePattern(...args: unknown[]): ReturnType<typeof F.bu
 			coerceToTuplePatternElements(...(args as Parameters<typeof coerceToTuplePatternElements>))
 		);
 	const input = args[0] as T.TuplePattern.Loose | undefined;
-	if (input !== undefined && isNodeOfKind(input, TSKindId.TuplePattern))
-		return input as unknown as ReturnType<typeof F.buildTuplePattern>;
 	return F.buildTuplePattern(
 		_resolveOneBranch<T.TuplePatternElements>(
 			configFieldOr(input, 'elements', () => input),
@@ -7319,8 +7303,6 @@ export function coerceToSlicePattern(input?: T.SlicePattern.Loose): ReturnType<t
 export function coerceToSlicePattern(...args: unknown[]): ReturnType<typeof F.buildSlicePattern> {
 	if (args.length > 1) return F.buildSlicePattern(coerceToPatterns(...(args as Parameters<typeof coerceToPatterns>)));
 	const input = args[0] as T.SlicePattern.Loose | undefined;
-	if (input !== undefined && isNodeOfKind(input, TSKindId.SlicePattern))
-		return input as unknown as ReturnType<typeof F.buildSlicePattern>;
 	return F.buildSlicePattern(
 		_resolveOneBranch<T.Patterns>(
 			configFieldOr(input, 'patterns', () => input),
@@ -7385,7 +7367,6 @@ export function resolveMutPattern_pattern(value: T.MutPattern.LooseConfig['patte
 }
 
 export function coerceToMutPattern(input: T.MutPattern.Loose): ReturnType<typeof F.buildMutPattern> {
-	if (isNodeOfKind(input, TSKindId.MutPattern)) return input as unknown as ReturnType<typeof F.buildMutPattern>;
 	return F.buildMutPattern(
 		_requireField(
 			'mut_pattern',
@@ -7414,7 +7395,6 @@ export function resolveRefPattern_pattern(value: T.RefPattern.LooseConfig['patte
 }
 
 export function coerceToRefPattern(input: T.RefPattern.Loose): ReturnType<typeof F.buildRefPattern> {
-	if (isNodeOfKind(input, TSKindId.RefPattern)) return input as unknown as ReturnType<typeof F.buildRefPattern>;
 	return F.buildRefPattern(
 		_requireField(
 			'ref_pattern',
@@ -9614,8 +9594,6 @@ export function resolveReferenceExpressionRawConst_value(
 export function coerceToReferenceExpressionRawConst(
 	input: T.ReferenceExpressionRawConst.Loose
 ): ReturnType<typeof F.buildReferenceExpressionRawConst> {
-	if (isNodeOfKind(input, TSKindId.ReferenceExpressionRawConst))
-		return input as unknown as ReturnType<typeof F.buildReferenceExpressionRawConst>;
 	return F.buildReferenceExpressionRawConst(
 		_requireField(
 			'reference_expression_raw_const',
@@ -9648,8 +9626,6 @@ export function resolveReferenceExpressionRawMut_value(
 export function coerceToReferenceExpressionRawMut(
 	input: T.ReferenceExpressionRawMut.Loose
 ): ReturnType<typeof F.buildReferenceExpressionRawMut> {
-	if (isNodeOfKind(input, TSKindId.ReferenceExpressionRawMut))
-		return input as unknown as ReturnType<typeof F.buildReferenceExpressionRawMut>;
 	return F.buildReferenceExpressionRawMut(
 		_requireField(
 			'reference_expression_raw_mut',
@@ -9682,8 +9658,6 @@ export function resolveReferenceExpressionMut_value(
 export function coerceToReferenceExpressionMut(
 	input: T.ReferenceExpressionMut.Loose
 ): ReturnType<typeof F.buildReferenceExpressionMut> {
-	if (isNodeOfKind(input, TSKindId.ReferenceExpressionMut))
-		return input as unknown as ReturnType<typeof F.buildReferenceExpressionMut>;
 	return F.buildReferenceExpressionMut(
 		_requireField(
 			'reference_expression_mut',
@@ -9716,8 +9690,6 @@ export function resolveReferenceExpressionBare_value(
 export function coerceToReferenceExpressionBare(
 	input: T.ReferenceExpressionBare.Loose
 ): ReturnType<typeof F.buildReferenceExpressionBare> {
-	if (isNodeOfKind(input, TSKindId.ReferenceExpressionBare))
-		return input as unknown as ReturnType<typeof F.buildReferenceExpressionBare>;
 	return F.buildReferenceExpressionBare(
 		_requireField(
 			'reference_expression_bare',
@@ -10275,8 +10247,6 @@ export function resolveOrPatternPrefix_right(
 }
 
 export function coerceToOrPatternPrefix(input: T.OrPatternPrefix.Loose): ReturnType<typeof F.buildOrPatternPrefix> {
-	if (isNodeOfKind(input, TSKindId.OrPatternPrefix))
-		return input as unknown as ReturnType<typeof F.buildOrPatternPrefix>;
 	return F.buildOrPatternPrefix(
 		_requireField(
 			'or_pattern_prefix',
@@ -10307,8 +10277,6 @@ export function resolvePointerTypeConst_type(
 }
 
 export function coerceToPointerTypeConst(input: T.PointerTypeConst.Loose): ReturnType<typeof F.buildPointerTypeConst> {
-	if (isNodeOfKind(input, TSKindId.PointerTypeConst))
-		return input as unknown as ReturnType<typeof F.buildPointerTypeConst>;
 	return F.buildPointerTypeConst(
 		_requireField(
 			'pointer_type_const',
@@ -10337,7 +10305,6 @@ export function resolvePointerTypeMut_type(value: T.PointerTypeMut.LooseConfig['
 }
 
 export function coerceToPointerTypeMut(input: T.PointerTypeMut.Loose): ReturnType<typeof F.buildPointerTypeMut> {
-	if (isNodeOfKind(input, TSKindId.PointerTypeMut)) return input as unknown as ReturnType<typeof F.buildPointerTypeMut>;
 	return F.buildPointerTypeMut(
 		_requireField(
 			'pointer_type_mut',
@@ -10413,8 +10380,6 @@ export function resolveRangeExpressionPostfix_start(
 export function coerceToRangeExpressionPostfix(
 	input: T.RangeExpressionPostfix.Loose
 ): ReturnType<typeof F.buildRangeExpressionPostfix> {
-	if (isNodeOfKind(input, TSKindId.RangeExpressionPostfix))
-		return input as unknown as ReturnType<typeof F.buildRangeExpressionPostfix>;
 	return F.buildRangeExpressionPostfix(
 		_requireField(
 			'range_expression_postfix',
@@ -10447,8 +10412,6 @@ export function resolveRangeExpressionPrefix_end(
 export function coerceToRangeExpressionPrefix(
 	input: T.RangeExpressionPrefix.Loose
 ): ReturnType<typeof F.buildRangeExpressionPrefix> {
-	if (isNodeOfKind(input, TSKindId.RangeExpressionPrefix))
-		return input as unknown as ReturnType<typeof F.buildRangeExpressionPrefix>;
 	return F.buildRangeExpressionPrefix(
 		_requireField(
 			'range_expression_prefix',
@@ -10773,16 +10736,6 @@ export function coerceToTokenTreePatternParen(
 export function coerceToTokenTreePatternParen(
 	...input: T.TokenTreePatternParen.LooseArgs
 ): ReturnType<typeof F.buildTokenTreePatternParen> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TokenTreePatternParen)) {
-		const data = input[0];
-		const stored = (data as unknown as { _token_patterns?: unknown })._token_patterns;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTokenTreePatternParen(
-			...(_resolveMany<
-				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
-			>(children, _K2, _K4) as unknown as Parameters<typeof F.buildTokenTreePatternParen>)
-		);
-	}
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -10804,16 +10757,6 @@ export function coerceToTokenTreePatternBracket(
 export function coerceToTokenTreePatternBracket(
 	...input: T.TokenTreePatternBracket.LooseArgs
 ): ReturnType<typeof F.buildTokenTreePatternBracket> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TokenTreePatternBracket)) {
-		const data = input[0];
-		const stored = (data as unknown as { _token_patterns?: unknown })._token_patterns;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTokenTreePatternBracket(
-			...(_resolveMany<
-				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
-			>(children, _K2, _K4) as unknown as Parameters<typeof F.buildTokenTreePatternBracket>)
-		);
-	}
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -10835,16 +10778,6 @@ export function coerceToTokenTreePatternBrace(
 export function coerceToTokenTreePatternBrace(
 	...input: T.TokenTreePatternBrace.LooseArgs
 ): ReturnType<typeof F.buildTokenTreePatternBrace> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TokenTreePatternBrace)) {
-		const data = input[0];
-		const stored = (data as unknown as { _token_patterns?: unknown })._token_patterns;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTokenTreePatternBrace(
-			...(_resolveMany<
-				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
-			>(children, _K2, _K4) as unknown as Parameters<typeof F.buildTokenTreePatternBrace>)
-		);
-	}
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -10862,18 +10795,6 @@ export function coerceToTokenTreePatternBrace(
 export function coerceToTokenTreeParen(): T.EmptyTokenTreeParen;
 export function coerceToTokenTreeParen(...input: T.TokenTreeParen.LooseArgs): ReturnType<typeof F.buildTokenTreeParen>;
 export function coerceToTokenTreeParen(...input: T.TokenTreeParen.LooseArgs): ReturnType<typeof F.buildTokenTreeParen> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TokenTreeParen)) {
-		const data = input[0];
-		const stored = (data as unknown as { _tokens?: unknown })._tokens;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTokenTreeParen(
-			...(_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(
-				children,
-				_K2,
-				_K5
-			) as unknown as Parameters<typeof F.buildTokenTreeParen>)
-		);
-	}
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -10897,18 +10818,6 @@ export function coerceToTokenTreeBracket(
 export function coerceToTokenTreeBracket(
 	...input: T.TokenTreeBracket.LooseArgs
 ): ReturnType<typeof F.buildTokenTreeBracket> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TokenTreeBracket)) {
-		const data = input[0];
-		const stored = (data as unknown as { _tokens?: unknown })._tokens;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTokenTreeBracket(
-			...(_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(
-				children,
-				_K2,
-				_K5
-			) as unknown as Parameters<typeof F.buildTokenTreeBracket>)
-		);
-	}
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -10928,18 +10837,6 @@ export function coerceToTokenTreeBracket(
 export function coerceToTokenTreeBrace(): T.EmptyTokenTreeBrace;
 export function coerceToTokenTreeBrace(...input: T.TokenTreeBrace.LooseArgs): ReturnType<typeof F.buildTokenTreeBrace>;
 export function coerceToTokenTreeBrace(...input: T.TokenTreeBrace.LooseArgs): ReturnType<typeof F.buildTokenTreeBrace> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TokenTreeBrace)) {
-		const data = input[0];
-		const stored = (data as unknown as { _tokens?: unknown })._tokens;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTokenTreeBrace(
-			...(_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(
-				children,
-				_K2,
-				_K5
-			) as unknown as Parameters<typeof F.buildTokenTreeBrace>)
-		);
-	}
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -10963,17 +10860,6 @@ export function coerceToDelimTokenTreeParen(
 export function coerceToDelimTokenTreeParen(
 	...input: T.DelimTokenTreeParen.LooseArgs
 ): ReturnType<typeof F.buildDelimTokenTreeParen> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.DelimTokenTreeParen)) {
-		const data = input[0];
-		const stored = (data as unknown as { _delim_tokens?: unknown })._delim_tokens;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildDelimTokenTreeParen(
-			...(coerceMixedEnumStorage(
-				_resolveKindEnum(children, () => _resolveMany<T.NonSpecialToken | '$' | T.DelimTokenTree>(children, _K2, _K69)),
-				[['$', TSKindId.Dollar] as const]
-			) as unknown as Parameters<typeof F.buildDelimTokenTreeParen>)
-		);
-	}
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -10996,17 +10882,6 @@ export function coerceToDelimTokenTreeBracket(
 export function coerceToDelimTokenTreeBracket(
 	...input: T.DelimTokenTreeBracket.LooseArgs
 ): ReturnType<typeof F.buildDelimTokenTreeBracket> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.DelimTokenTreeBracket)) {
-		const data = input[0];
-		const stored = (data as unknown as { _delim_tokens?: unknown })._delim_tokens;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildDelimTokenTreeBracket(
-			...(coerceMixedEnumStorage(
-				_resolveKindEnum(children, () => _resolveMany<T.NonSpecialToken | '$' | T.DelimTokenTree>(children, _K2, _K69)),
-				[['$', TSKindId.Dollar] as const]
-			) as unknown as Parameters<typeof F.buildDelimTokenTreeBracket>)
-		);
-	}
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -11029,17 +10904,6 @@ export function coerceToDelimTokenTreeBrace(
 export function coerceToDelimTokenTreeBrace(
 	...input: T.DelimTokenTreeBrace.LooseArgs
 ): ReturnType<typeof F.buildDelimTokenTreeBrace> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.DelimTokenTreeBrace)) {
-		const data = input[0];
-		const stored = (data as unknown as { _delim_tokens?: unknown })._delim_tokens;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildDelimTokenTreeBrace(
-			...(coerceMixedEnumStorage(
-				_resolveKindEnum(children, () => _resolveMany<T.NonSpecialToken | '$' | T.DelimTokenTree>(children, _K2, _K69)),
-				[['$', TSKindId.Dollar] as const]
-			) as unknown as Parameters<typeof F.buildDelimTokenTreeBrace>)
-		);
-	}
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];

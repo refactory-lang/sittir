@@ -2061,29 +2061,16 @@ export const integerLiteral: {
 
 export const escapeSequence: {
 	readonly strict: typeof F.buildEscapeSequenceSimple;
-	readonly coerce: typeof C.coerceToEscapeSequenceSimple;
-	readonly simple: { strict: typeof F.buildEscapeSequenceSimple; coerce: typeof C.coerceToEscapeSequenceSimple };
-	readonly unicodeFixed: {
-		strict: typeof F.buildEscapeSequenceUnicodeFixed;
-		coerce: typeof C.coerceToEscapeSequenceUnicodeFixed;
-	};
-	readonly unicodeBraced: {
-		strict: typeof F.buildEscapeSequenceUnicodeBraced;
-		coerce: typeof C.coerceToEscapeSequenceUnicodeBraced;
-	};
-	readonly hex: { strict: typeof F.buildEscapeSequenceHex; coerce: typeof C.coerceToEscapeSequenceHex };
+	readonly simple: typeof F.buildEscapeSequenceSimple;
+	readonly unicodeFixed: typeof F.buildEscapeSequenceUnicodeFixed;
+	readonly unicodeBraced: typeof F.buildEscapeSequenceUnicodeBraced;
+	readonly hex: typeof F.buildEscapeSequenceHex;
 } = Object.freeze({
-	...bundle(F.buildEscapeSequenceSimple, C.coerceToEscapeSequenceSimple, { key: 'escapeSequence', max: 1 }),
-	simple: bundle(F.buildEscapeSequenceSimple, C.coerceToEscapeSequenceSimple, { key: 'escapeSequence.simple', max: 1 }),
-	unicodeFixed: bundle(F.buildEscapeSequenceUnicodeFixed, C.coerceToEscapeSequenceUnicodeFixed, {
-		key: 'escapeSequence.unicodeFixed',
-		max: 1
-	}),
-	unicodeBraced: bundle(F.buildEscapeSequenceUnicodeBraced, C.coerceToEscapeSequenceUnicodeBraced, {
-		key: 'escapeSequence.unicodeBraced',
-		max: 1
-	}),
-	hex: bundle(F.buildEscapeSequenceHex, C.coerceToEscapeSequenceHex, { key: 'escapeSequence.hex', max: 1 })
+	...bundle(F.buildEscapeSequenceSimple, undefined, { key: 'escapeSequence', max: 2 }),
+	simple: F.buildEscapeSequenceSimple,
+	unicodeFixed: F.buildEscapeSequenceUnicodeFixed,
+	unicodeBraced: F.buildEscapeSequenceUnicodeBraced,
+	hex: F.buildEscapeSequenceHex
 });
 
 export const comment: {
@@ -2134,7 +2121,7 @@ export const declarationStatement: {
 	readonly const: typeof B.constItem;
 	readonly macroInvocation: typeof B.macroInvocation;
 	readonly macro: typeof macroDefinition;
-	readonly empty: { strict: typeof F.buildEmptyStatement; coerce: typeof C.coerceToEmptyStatement };
+	readonly empty: typeof F.buildEmptyStatement;
 	readonly attribute: typeof B.attributeItem;
 	readonly innerAttribute: typeof B.innerAttributeItem;
 	readonly mod: typeof modItem;
@@ -2156,7 +2143,7 @@ export const declarationStatement: {
 	const: B.constItem,
 	macroInvocation: B.macroInvocation,
 	macro: macroDefinition,
-	empty: bundle(F.buildEmptyStatement, C.coerceToEmptyStatement, { key: 'declarationStatement.empty', max: 1 }),
+	empty: F.buildEmptyStatement,
 	attribute: B.attributeItem,
 	innerAttribute: B.innerAttributeItem,
 	mod: modItem,
@@ -2181,12 +2168,12 @@ export const charLiteral: {
 	readonly coerce: typeof C.coerceToCharLiteralPlain;
 	readonly escaped: typeof charLiteralEscaped;
 	readonly plain: { strict: typeof F.buildCharLiteralPlain; coerce: typeof C.coerceToCharLiteralPlain };
-	readonly empty: { strict: typeof F.buildCharLiteralEmpty; coerce: typeof C.coerceToCharLiteralEmpty };
+	readonly empty: typeof F.buildCharLiteralEmpty;
 } = Object.freeze({
 	...bundle(F.buildCharLiteralPlain, C.coerceToCharLiteralPlain, { key: 'charLiteral', max: 1 }),
 	escaped: charLiteralEscaped,
 	plain: bundle(F.buildCharLiteralPlain, C.coerceToCharLiteralPlain, { key: 'charLiteral.plain', max: 1 }),
-	empty: bundle(F.buildCharLiteralEmpty, C.coerceToCharLiteralEmpty, { key: 'charLiteral.empty', max: 1 })
+	empty: F.buildCharLiteralEmpty
 });
 
 const nonSpecialToken$string =
@@ -2277,8 +2264,11 @@ const nonSpecialToken$char$empty =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const nonSpecialToken$char$empty$strict = nonSpecialToken$char$empty(F.buildNonSpecialToken, charLiteral.empty.strict);
-const nonSpecialToken$char$empty$coerce = nonSpecialToken$char$empty(F.buildNonSpecialToken, charLiteral.empty.coerce);
+const nonSpecialToken$char$empty$strict = nonSpecialToken$char$empty(F.buildNonSpecialToken, F.buildCharLiteralEmpty);
+const nonSpecialToken$char$empty$coerce = nonSpecialToken$char$empty(
+	F.buildNonSpecialToken,
+	C.coerceToCharLiteralEmpty
+);
 const nonSpecialToken$integer$decimal =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -2407,8 +2397,8 @@ export const nonSpecialToken = Object.freeze({
 			coerce: (...args: ArgsOf<typeof charLiteral.plain.coerce>) => ReturnType<typeof F.buildNonSpecialToken>;
 		};
 		empty: {
-			strict: (...args: ArgsOf<typeof charLiteral.empty.strict>) => ReturnType<typeof F.buildNonSpecialToken>;
-			coerce: (...args: ArgsOf<typeof charLiteral.empty.coerce>) => ReturnType<typeof F.buildNonSpecialToken>;
+			strict: (...args: ArgsOf<typeof F.buildCharLiteralEmpty>) => ReturnType<typeof F.buildNonSpecialToken>;
+			coerce: (...args: ArgsOf<typeof C.coerceToCharLiteralEmpty>) => ReturnType<typeof F.buildNonSpecialToken>;
 		};
 	};
 	integer: {

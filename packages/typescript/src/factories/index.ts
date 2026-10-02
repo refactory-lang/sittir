@@ -5,7 +5,6 @@ import { hoistAs } from '@sittir/common/utils';
 export * from './overlays/supertypes.js';
 
 export const program: Hoisted<typeof O.program> = hoistAs<typeof O.program>(O.program);
-export const hashBangLine: Hoisted<typeof O.hashBangLine> = hoistAs<typeof O.hashBangLine>(O.hashBangLine);
 export const namespaceExport: Hoisted<typeof O.namespaceExport> = hoistAs<typeof O.namespaceExport>(O.namespaceExport);
 export const exportClause: Hoisted<typeof O.exportClause> = hoistAs<typeof O.exportClause>(O.exportClause);
 export const exportSpecifier: Hoisted<typeof O.exportSpecifier> = hoistAs<typeof O.exportSpecifier>(O.exportSpecifier);
@@ -108,15 +107,11 @@ export const unaryExpression: Hoisted<typeof O.unaryExpression> = hoistAs<typeof
 export const sequenceExpression: Hoisted<typeof O.sequenceExpression> = hoistAs<typeof O.sequenceExpression>(
 	O.sequenceExpression
 );
-export const escapeSequence: Hoisted<typeof O.escapeSequence> = hoistAs<typeof O.escapeSequence>(O.escapeSequence);
 export const templateString: Hoisted<typeof O.templateString> = hoistAs<typeof O.templateString>(O.templateString);
 export const templateSubstitution: Hoisted<typeof O.templateSubstitution> = hoistAs<typeof O.templateSubstitution>(
 	O.templateSubstitution
 );
 export const regex: Hoisted<typeof O.regex> = hoistAs<typeof O.regex>(O.regex);
-export const privatePropertyIdentifier: Hoisted<typeof O.privatePropertyIdentifier> = hoistAs<
-	typeof O.privatePropertyIdentifier
->(O.privatePropertyIdentifier);
 export const arguments_: Hoisted<typeof O.arguments_> = hoistAs<typeof O.arguments_>(O.arguments_);
 export const decorator: Hoisted<typeof O.decorator> = hoistAs<typeof O.decorator>(O.decorator);
 export const decoratorMemberExpression: Hoisted<typeof O.decoratorMemberExpression> = hoistAs<

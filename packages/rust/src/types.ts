@@ -21863,8 +21863,8 @@ export namespace Shebang {
 	}
 	export type Loose = LooseFor<TSKindId.Shebang>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Shebang>;
-	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.Shebang.Loose];
+	export type BuildArgs = [content: string, affix?: true] | [text: `#!${string}\n`, affix: false];
+	export type LooseArgs = [content: string, affix?: true] | [text: `#!${string}\n`, affix: false];
 	export type Kind = TSKindId.Shebang;
 }
 export namespace Metavariable {
@@ -21879,8 +21879,8 @@ export namespace Metavariable {
 	}
 	export type Loose = LooseFor<TSKindId.Metavariable>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Metavariable>;
-	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.Metavariable.Loose];
+	export type BuildArgs = [content: string, affix?: true] | [text: `$${string}`, affix: false];
+	export type LooseArgs = [content: string, affix?: true] | [text: `$${string}`, affix: false];
 	export type Kind = TSKindId.Metavariable;
 }
 export namespace MacroRules {
@@ -23503,8 +23503,8 @@ export namespace EscapeSequenceSimple {
 	}
 	export type Loose = LooseFor<TSKindId.EscapeSequenceSimple>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceSimple>;
-	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.EscapeSequenceSimple.Loose];
+	export type BuildArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
+	export type LooseArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
 	export type Kind = TSKindId.EscapeSequenceSimple;
 }
 export namespace EscapeSequenceUnicodeFixed {
@@ -23519,8 +23519,8 @@ export namespace EscapeSequenceUnicodeFixed {
 	}
 	export type Loose = LooseFor<TSKindId.EscapeSequenceUnicodeFixed>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceUnicodeFixed>;
-	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.EscapeSequenceUnicodeFixed.Loose];
+	export type BuildArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
+	export type LooseArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
 	export type Kind = TSKindId.EscapeSequenceUnicodeFixed;
 }
 export namespace EscapeSequenceUnicodeBraced {
@@ -23535,8 +23535,8 @@ export namespace EscapeSequenceUnicodeBraced {
 	}
 	export type Loose = LooseFor<TSKindId.EscapeSequenceUnicodeBraced>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceUnicodeBraced>;
-	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.EscapeSequenceUnicodeBraced.Loose];
+	export type BuildArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
+	export type LooseArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
 	export type Kind = TSKindId.EscapeSequenceUnicodeBraced;
 }
 export namespace EscapeSequenceHex {
@@ -23551,8 +23551,8 @@ export namespace EscapeSequenceHex {
 	}
 	export type Loose = LooseFor<TSKindId.EscapeSequenceHex>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceHex>;
-	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.EscapeSequenceHex.Loose];
+	export type BuildArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
+	export type LooseArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
 	export type Kind = TSKindId.EscapeSequenceHex;
 }
 export namespace ArrayExpressionSemi {

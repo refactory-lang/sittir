@@ -3626,8 +3626,6 @@ export function resolveYieldExpression_expression(
 }
 
 export function coerceToYieldExpression(input?: T.YieldExpression.Loose): ReturnType<typeof F.buildYieldExpression> {
-	if (input !== undefined && isNodeOfKind(input, TSKindId.YieldExpression))
-		return input as unknown as ReturnType<typeof F.buildYieldExpression>;
 	return F.buildYieldExpression(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
@@ -4163,17 +4161,6 @@ export function coerceToObjectAssignmentPattern(
 export function coerceToArray(): T.EmptyArray;
 export function coerceToArray(...input: T.Array.LooseArgs): ReturnType<typeof F.buildArray>;
 export function coerceToArray(...input: T.Array.LooseArgs): ReturnType<typeof F.buildArray> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Array)) {
-		const data = input[0];
-		const stored = (data as unknown as { _elements?: unknown })._elements;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildArray(
-			...(coerceMixedEnumStorage(
-				_resolveKindEnum(children, () => _resolveMany<T.Expression | T.SpreadElement>(children, _K6, _K16)),
-				[]
-			) as unknown as Parameters<typeof F.buildArray>)
-		);
-	}
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -4635,8 +4622,6 @@ export function resolveAwaitExpression_expression(
 }
 
 export function coerceToAwaitExpression(input: T.AwaitExpression.Loose): ReturnType<typeof F.buildAwaitExpression> {
-	if (isNodeOfKind(input, TSKindId.AwaitExpression))
-		return input as unknown as ReturnType<typeof F.buildAwaitExpression>;
 	return F.buildAwaitExpression(
 		_requireField(
 			'await_expression',
@@ -6559,8 +6544,6 @@ export function resolveNonNullExpression_expression(
 export function coerceToNonNullExpression(
 	input: T.NonNullExpression.Loose
 ): ReturnType<typeof F.buildNonNullExpression> {
-	if (isNodeOfKind(input, TSKindId.NonNullExpression))
-		return input as unknown as ReturnType<typeof F.buildNonNullExpression>;
 	return F.buildNonNullExpression(
 		_requireField(
 			'non_null_expression',
@@ -7236,8 +7219,6 @@ export function resolveAmbientDeclaration_content(
 export function coerceToAmbientDeclaration(
 	input: T.AmbientDeclaration.Loose
 ): ReturnType<typeof F.buildAmbientDeclaration> {
-	if (isNodeOfKind(input, TSKindId.AmbientDeclaration))
-		return input as unknown as ReturnType<typeof F.buildAmbientDeclaration>;
 	return F.buildAmbientDeclaration(
 		_requireField(
 			'ambient_declaration',
@@ -8711,7 +8692,6 @@ export function resolveIndexTypeQuery_type(value: T.IndexTypeQuery.LooseConfig['
 }
 
 export function coerceToIndexTypeQuery(input: T.IndexTypeQuery.Loose): ReturnType<typeof F.buildIndexTypeQuery> {
-	if (isNodeOfKind(input, TSKindId.IndexTypeQuery)) return input as unknown as ReturnType<typeof F.buildIndexTypeQuery>;
 	return F.buildIndexTypeQuery(
 		_requireField(
 			'index_type_query',
@@ -8869,7 +8849,6 @@ export function resolveFlowMaybeType_type(value: T.FlowMaybeType.LooseConfig['ty
 }
 
 export function coerceToFlowMaybeType(input: T.FlowMaybeType.Loose): ReturnType<typeof F.buildFlowMaybeType> {
-	if (isNodeOfKind(input, TSKindId.FlowMaybeType)) return input as unknown as ReturnType<typeof F.buildFlowMaybeType>;
 	return F.buildFlowMaybeType(
 		_requireField(
 			'flow_maybe_type',
@@ -8902,8 +8881,6 @@ export function resolveParenthesizedType_type(
 export function coerceToParenthesizedType(
 	input: T.ParenthesizedType.Loose
 ): ReturnType<typeof F.buildParenthesizedType> {
-	if (isNodeOfKind(input, TSKindId.ParenthesizedType))
-		return input as unknown as ReturnType<typeof F.buildParenthesizedType>;
 	return F.buildParenthesizedType(
 		_requireField(
 			'parenthesized_type',
@@ -9308,7 +9285,6 @@ export function resolveArrayType_type(value: T.ArrayType.LooseConfig['type']): T
 }
 
 export function coerceToArrayType(input: T.ArrayType.Loose): ReturnType<typeof F.buildArrayType> {
-	if (isNodeOfKind(input, TSKindId.ArrayType)) return input as unknown as ReturnType<typeof F.buildArrayType>;
 	return F.buildArrayType(
 		_requireField(
 			'array_type',
@@ -9342,8 +9318,6 @@ export function coerceToTupleType(...args: unknown[]): ReturnType<typeof F.build
 	if (args.length > 1)
 		return F.buildTupleType(coerceToTupleTypeMembers(...(args as Parameters<typeof coerceToTupleTypeMembers>)));
 	const input = args[0] as T.TupleType.Loose | undefined;
-	if (input !== undefined && isNodeOfKind(input, TSKindId.TupleType))
-		return input as unknown as ReturnType<typeof F.buildTupleType>;
 	return F.buildTupleType(
 		_resolveOneBranch<T.TupleTypeMembers>(
 			configFieldOr(input, 'tupleTypeMembers', () => input),
@@ -9362,7 +9336,6 @@ export function resolveReadonlyType_type(value: T.ReadonlyType.LooseConfig['type
 }
 
 export function coerceToReadonlyType(input: T.ReadonlyType.Loose): ReturnType<typeof F.buildReadonlyType> {
-	if (isNodeOfKind(input, TSKindId.ReadonlyType)) return input as unknown as ReturnType<typeof F.buildReadonlyType>;
 	return F.buildReadonlyType(
 		_requireField(
 			'readonly_type',

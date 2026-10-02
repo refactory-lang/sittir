@@ -197,8 +197,6 @@ export const rawStringLiteral: Hoisted<typeof O.rawStringLiteral> = hoistAs<type
 );
 export const lineComment: Hoisted<typeof O.lineComment> = hoistAs<typeof O.lineComment>(O.lineComment);
 export const blockComment: Hoisted<typeof O.blockComment> = hoistAs<typeof O.blockComment>(O.blockComment);
-export const shebang: Hoisted<typeof O.shebang> = hoistAs<typeof O.shebang>(O.shebang);
-export const metavariable: Hoisted<typeof O.metavariable> = hoistAs<typeof O.metavariable>(O.metavariable);
 export const macroRules: Hoisted<typeof O.macroRules> = hoistAs<typeof O.macroRules>(O.macroRules);
 export const enumVariantListElements: Hoisted<typeof O.enumVariantListElements> = hoistAs<
 	typeof O.enumVariantListElements

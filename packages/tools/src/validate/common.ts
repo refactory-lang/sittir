@@ -701,6 +701,7 @@ export interface LoadedNodeModel {
 	readonly modelTypes: Record<string, string>;
 	readonly leafPatterns: Record<string, RegExp>;
 	readonly hoistedKinds: ReadonlySet<string>;
+	readonly oneSurfaceKinds: ReadonlySet<string>;
 	readonly seats: SeatTable;
 	readonly slotKinds: Record<string, Record<string, readonly string[]>>;
 	readonly slotStorage: Record<string, Record<string, string>>;
@@ -746,6 +747,7 @@ interface ParsedNodeModel {
 		}>;
 		elementSeats?: readonly Seat[];
 		elementKinds?: readonly string[];
+		oneSurface?: boolean;
 		factoryShape?: FactoryShape;
 		factoryFields?: readonly string[];
 		subtypes?: readonly string[];
@@ -769,6 +771,7 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	modelTypes: {},
 	leafPatterns: {},
 	hoistedKinds: new Set(),
+	oneSurfaceKinds: new Set(),
 	seats: {},
 	slotKinds: {},
 	slotStorage: {},
@@ -814,6 +817,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	const modelTypes: Record<string, string> = {};
 	const leafPatterns: Record<string, RegExp> = {};
 	const hoistedKinds = new Set<string>();
+	const oneSurfaceKinds = new Set<string>();
 	const seats: SeatTable = {};
 	const seatAt = (kind: string, slot: string, seat: Seat): void => {
 		((seats[kind] ??= {})[slot] ??= {})[seat.kind] = seat;
@@ -837,6 +841,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		if (node.modelType !== undefined) modelTypes[node.kind] = node.modelType;
 		if (node.leafPattern !== undefined) leafPatterns[node.kind] = regexOfLiteral(node.leafPattern);
 		if (node.annotations?.hoisted === true) hoistedKinds.add(node.kind);
+		if (node.oneSurface === true) oneSurfaceKinds.add(node.kind);
 		for (const seat of node.elementSeats ?? []) seatAt(node.kind, '*', seat);
 		if (node.slots !== undefined) {
 			for (const slot of node.slots) {
@@ -874,6 +879,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		modelTypes,
 		leafPatterns,
 		hoistedKinds,
+		oneSurfaceKinds,
 		seats,
 		slotKinds,
 		slotStorage,

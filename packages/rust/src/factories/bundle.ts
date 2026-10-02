@@ -295,8 +295,6 @@ export const rawStringLiteral = bundle(F.buildRawStringLiteral, C.coerceToRawStr
 });
 export const lineComment = bundle(F.buildLineComment, C.coerceToLineComment, { key: 'lineComment', max: 1 });
 export const blockComment = bundle(F.buildBlockComment, C.coerceToBlockComment, { key: 'blockComment', max: 1 });
-export const shebang = bundle(F.buildShebang, C.coerceToShebang, { key: 'shebang', max: 1 });
-export const metavariable = bundle(F.buildMetavariable, C.coerceToMetavariable, { key: 'metavariable', max: 1 });
 export const macroRules = bundle(F.buildMacroRules, C.coerceToMacroRules);
 export const enumVariantListElements = bundle(F.buildEnumVariantListElements, C.coerceToEnumVariantListElements);
 export const fieldDeclarationListElements = bundle(
