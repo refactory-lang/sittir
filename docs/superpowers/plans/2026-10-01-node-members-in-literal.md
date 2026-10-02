@@ -570,3 +570,12 @@ for (let index = 0; index < items.length; index++) node[index] = items[index];
 **Placeholder scan.** No step defers a decision; the three open questions are stated with a recommendation and the task that depends on each.
 
 **Type consistency.** `rebuilt(node, handle, build)`, `renderText(handle, node)`, `triviaSide(node, handle, position, items)`, `seatWith(node, spec, key, args, seat, readGroup)`, `listSlotWith(args, spec, set)`, `elementsWith(args, spec, set)`, `isDataKey(key)` and `nodeMemberLines`/`withEntry` are spelled the same in Tasks 3-9. `StringIndexRange` (from the span-units change) is used in the emitted `$toEdit`/`$replace`.
+
+## What landed, where it differs from the tasks above
+
+- Order: list slots and elements seats, then list owners, then separated lists, then group seats, then removal of the helpers.
+- `seatWith(spec, keyName, args, set, readGroup)` takes the key's name and no node: the setter closes over the node's own reader of the group.
+- A group seat hoists its stored value and a reader of the group before the literal, writes each flattened key as `undefined` or a reader, and records the group's reader under `STORED_SLOT_READERS`. A key that spells its slot replaces the slot's own accessor.
+- Wrapped owners and lists hold their items unread until first use (`LIST_READ`), with shared non-enumerable index getters.
+- Strict builders read no text: kind-id and boolean slots keep ids and booleans and refuse a string.
+- The census waiver stands; the per-grammar inner-position runtime pin is not added.
