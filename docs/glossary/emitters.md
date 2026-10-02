@@ -11621,7 +11621,13 @@ The direct-value parameter is optional when its slot is optional or holds fixed 
 
 ### `packages/codegen/src/emitters/factories.ts::forwardedConstructorTarget`
 
-The kind a field-carrying factory forwards its argument to, when its strict builder is a forwarding wrapper: the node takes a direct value (`directParamType`), `forwardedTargetKind` names a target, the target has a catalog entry, and the target is not a hoisted config-shaped group (which splices through its seat instead). `emitFieldCarryingFactory` emits the forwarding overloads exactly when this answers a kind; `listSpreadTarget` reads the same answer.
+The kind a field-carrying factory forwards its argument to, when its strict builder is a forwarding wrapper: the node takes a direct value (`directParamType`), `forwardedTargetKind` names a target, the target has a catalog entry, the target's constructor does not resolve (`constructorTargetKind`) to a pattern leaf, and the target is not a hoisted config-shaped group (which splices through its seat instead). `emitFieldCarryingFactory` emits the forwarding overloads exactly when this answers a kind; `listSpreadTarget` reads the same answer.
+
+A chain that ends in a pattern leaf forwards nothing, because that leaf's constructor takes text (or a number, for a numeric leaf) and a strict builder takes no text: building a leaf from a scalar is coercion, and the loose entry does it. Such a kind's strict builder takes the built leaf only, and refuses bare text at run time (`rejectBareText`).
+
+### `packages/codegen/src/emitters/factories.ts::forwardedConstruction`
+
+The overload list of a forwarding strict builder, as a value: the kind's own parameters, then each parameter list the target's constructor declares (`constructorSurface`; a target with no constructor surface forwards the target builder's own arguments), with an empty list first. It carries the list twice, in the two spellings the two readers need: `overloads` for the builder's declarations in `raw.ts`, and `rows` as tuples for `types.ts`, where a target with no constructor surface is named by its row (`T.<Target>.BuildArgs`) because the types module does not see the factories. `emitFieldCarryingFactory` writes the declarations from it and `fieldCarryingBuiltTypeSurface` writes `BuildArgs` as the union of its rows, so a strict row cannot omit an overload the builder declares. `null` when the kind forwards nothing.
 
 ### `packages/codegen/src/emitters/factories.ts::listSpreadTarget`
 
@@ -11637,7 +11643,7 @@ Reads a `RowParam` off a kind's factory surface: the row types as `paramsToTuple
 
 ### `packages/codegen/src/emitters/factories.ts::fieldCarryingBuiltTypeSurface`
 
-The construction surface of a field-carrying kind, from its factory surface: the `$with` setters, and the `BuildArgs` / `LooseArgs` tuples from the surface's row parameters. An own-text leaf (`ownTextLeaf`) has one row for both, `ownTextArgs`, and takes at most two arguments. A kind with a `listSpreadTarget` unions its tuples with the target's own (`… | T.<Target>.BuildArgs`), by name, so the spread form is the list's derivation rather than a copy; its `maxArgs` is then unbounded.
+The construction surface of a field-carrying kind, from its factory surface: the `$with` setters, and the `BuildArgs` / `LooseArgs` tuples from the surface's row parameters. The `BuildArgs` of a kind whose strict builder forwards to its child's constructor is the union of that builder's overloads (`forwardedConstruction`): the child itself, the child's config, the child's content, or the child's elements, each typed by the child's strict types. An own-text leaf (`ownTextLeaf`) has one row for both, `ownTextArgs`, and takes at most two arguments. A kind with a `listSpreadTarget` unions its tuples with the target's own (`… | T.<Target>.BuildArgs`), by name, so the spread form is the list's derivation rather than a copy; its `maxArgs` is then unbounded.
 
 ### `packages/codegen/src/emitters/factories.ts::constructorSurface`
 

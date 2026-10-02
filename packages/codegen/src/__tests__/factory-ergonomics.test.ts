@@ -59,8 +59,8 @@ describe('factory ergonomics', () => {
 			// `Config` instead re-projects the slot through the config surface
 			// and loses the union of kinds it admits.
 			expect(content).toMatch(/export function buildLabel\(value: AdmitBound<T\.Identifier, T\.AdmittedNodes>\)/);
-			expect(content).toMatch(/function _buildLabel\(value: AdmitBound<T\.Identifier, T\.AdmittedNodes>\)/);
-			expect(content).toMatch(/function _buildLabel\(value: AdmitBound<T\.Identifier, T\.AdmittedNodes>\): T\.Label\.Bound \{/);
+			expect(content).toMatch(/function buildLabel\(value: AdmitBound<T\.Identifier, T\.AdmittedNodes>\)/);
+			expect(content).toMatch(/function buildLabel\(value: AdmitBound<T\.Identifier, T\.AdmittedNodes>\): T\.Label\.Bound \{/);
 			// Should NOT have a config parameter
 			expect(content).not.toMatch(/export function buildLabel\(config/);
 		});
@@ -79,10 +79,10 @@ describe('factory ergonomics', () => {
 			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories/raw.ts'), 'utf-8');
 			// The setter of a forwarding factory calls the direct builder with the value, so it stores the
 			// slot type only: neither the config-spread form nor the dispatcher that builds the target.
-			const labelMatch = content.match(/function _buildLabel\(value[\s\S]*?\n\}/);
+			const labelMatch = content.match(/function buildLabel\(value[\s\S]*?\n\}/);
 			expect(labelMatch).not.toBeNull();
 			const labelBody = labelMatch![0];
-			expect(labelBody).toMatch(/=> _buildLabel\(value\)/);
+			expect(labelBody).toMatch(/=> buildLabel\(value\)/);
 			// Not the config-spread form
 			expect(labelBody).not.toMatch(/\.\.\.\s*config/);
 		});

@@ -775,7 +775,10 @@ function fieldCarryingBuiltTypeSurface(
 		mainType: `T.${node.typeName}`,
 		members: [],
 		setters,
-		buildArgs: `${paramsToTuple(surface.rowParams)}${spreadArgs('BuildArgs')}`,
+		buildArgs:
+			spreadTarget === null
+				? (forwardedConstruction(node, surface, nodeMap, kindEntries)?.rows.join(' | ') ?? paramsToTuple(surface.rowParams))
+				: `${paramsToTuple(surface.rowParams)}${spreadArgs('BuildArgs')}`,
 		looseArgs: `${paramsToTuple(surface.rowLooseParams)}${spreadArgs('LooseArgs')}`,
 		maxArgs: spreadTarget === null ? surface.arity : undefined
 	};
@@ -1149,12 +1152,43 @@ export function forwardedConstructorTarget(
 	const target = forwardedTargetKind(node, nodeMap);
 	if (target === null) return null;
 	if (kindEntries !== undefined && !hasCatalogEntry(kindEntries, target)) return null;
+	if (nodeMap.nodes.get(constructorTargetKind(target, nodeMap, kindEntries))?.modelType === 'pattern') return null;
 	const targetNode = nodeMap.nodes.get(target);
 	const seatedGroup =
 		targetNode instanceof AbstractAssembledCompound &&
 		targetNode.annotations?.hoisted === true &&
 		classifyFactoryShape(targetNode, nodeMap) === 'config';
 	return seatedGroup ? null : target;
+}
+
+interface ForwardedConstruction {
+	readonly target: string;
+	readonly targetParams: string | undefined;
+	readonly overloads: readonly string[];
+	readonly rows: readonly string[];
+}
+
+function forwardedConstruction(
+	node: FieldCarryingNode,
+	surface: FactorySurface,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): ForwardedConstruction | null {
+	const target = forwardedConstructorTarget(node, nodeMap, kindEntries);
+	if (target === null) return null;
+	const targetNode = nodeMap.nodes.get(target)!;
+	const targetSurface = constructorSurface(target, nodeMap, kindEntries);
+	const targetParams = targetSurface?.params;
+	const targetOverloads = targetSurface?.paramsOverloads ?? (targetParams === undefined ? undefined : [targetParams]);
+	const ordered = (all: readonly string[]): string[] => [...all.filter((params) => params === ''), ...all.filter((params) => params !== '')];
+	return {
+		target,
+		targetParams,
+		overloads: ordered([surface.params, ...(targetOverloads ?? [`...args: Parameters<typeof ${targetNode.rawFactoryName!}>`])].map(declarationParams)),
+		rows: ordered([surface.rowParams, ...(targetOverloads ?? [`...args: T.${targetNode.typeName}.BuildArgs`])].map(declarationParams)).map(
+			(params) => `[${params}]`
+		)
+	};
 }
 
 export function listSpreadTarget(
@@ -1265,7 +1299,8 @@ function emitFieldCarryingFactory(
 	let slotsToEmit: readonly AssembledNonterminal[] = slots;
 	const registered = registeredSlots(node);
 	const registeredSet = new Set(registered);
-	const forwardTarget = forwardedConstructorTarget(node, nodeMap, kindEntries);
+	const forwarded = forwardedConstruction(node, surface, nodeMap, kindEntries);
+	const forwardTarget = forwarded?.target ?? null;
 	const spellingWith = (rebuild: (patch: string) => string): SetterEntry[] =>
 		registered.map((f) => ({
 			name: f.propertyName,
@@ -1374,12 +1409,10 @@ function emitFieldCarryingFactory(
 	lines.push('}');
 
 	const { directParamType, directParamOptional } = surface;
-	if (forwardTarget !== null) {
+	if (forwarded !== null && forwardTarget !== null) {
 		const targetFn = nodeMap.nodes.get(forwardTarget)!.rawFactoryName!;
 		lines[0] = lines[0]!.replace(`${exportKw}function ${fn}(`, `function _${fn}(`);
-		const targetSurface = constructorSurface(forwardTarget, nodeMap, kindEntries);
-		const targetSurfaceParams = targetSurface?.params;
-		const rawTargetParams = targetSurfaceParams ?? `...args: Parameters<typeof ${targetFn}>`;
+		const targetSurfaceParams = forwarded.targetParams;
 		const targetNode = nodeMap.nodes.get(forwardTarget);
 		const targetIsConstant = targetNode !== undefined && isBuilderTextLeaf(targetNode);
 		const targetBuilt = (args: string): string =>
@@ -1387,12 +1420,8 @@ function emitFieldCarryingFactory(
 		const targetEmpty = targetIsConstant ? targetFn : `${targetFn}()`;
 		const targetTakesNoArgs =
 			targetSurfaceParams !== undefined && targetNode !== undefined && targetNode.argumentOptional(nodeMap);
-		const targetOverloads = targetSurface?.paramsOverloads ?? [rawTargetParams];
-		const overloadParams = [surface.params, ...targetOverloads].map(declarationParams);
 		const wrapper = withEmptyOverload(nodeMap, node.kind, `${exportKw}function ${fn}`, [
-			...[...overloadParams.filter((params) => params === ''), ...overloadParams.filter((params) => params !== '')].map(
-				(params) => `${exportKw}function ${fn}(${params}): ReturnType<typeof _${fn}>;`
-			),
+			...forwarded.overloads.map((params) => `${exportKw}function ${fn}(${params}): ReturnType<typeof _${fn}>;`),
 			`${exportKw}function ${fn}(...args: unknown[]) {`
 		]);
 		if (registered.length > 0) {

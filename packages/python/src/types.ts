@@ -10719,7 +10719,9 @@ export namespace ImportStatement {
 	}
 	export type Loose = LooseFor<TSKindId.ImportStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportStatement>;
-	export type BuildArgs = [value: AdmitBound<T.Names | T.Names.Types, T.AdmittedNodes>];
+	export type BuildArgs =
+		| [value: AdmitBound<T.Names | T.Names.Types, T.AdmittedNodes>]
+		| [value: AdmitBound<T.ImportList, T.AdmittedNodes>];
 	export type LooseArgs = [value: T.ImportStatement.Loose];
 	export type Kind = TSKindId.ImportStatement;
 }
@@ -14097,7 +14099,7 @@ export namespace MatchBlockEmpty {
 	}
 	export type Loose = LooseFor<TSKindId.MatchBlockEmpty>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlockEmpty>;
-	export type BuildArgs = [value?: AdmitBound<TSKindId.Newline, T.AdmittedNodes>];
+	export type BuildArgs = [] | [value?: AdmitBound<TSKindId.Newline, T.AdmittedNodes>];
 	export type LooseArgs = [value?: T.MatchBlockEmpty.Loose];
 	export type Kind = TSKindId.MatchBlockEmpty;
 }
@@ -14131,7 +14133,9 @@ export namespace SuiteBlock {
 	}
 	export type Loose = LooseFor<TSKindId.SuiteBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SuiteBlock>;
-	export type BuildArgs = [value: AdmitBound<T.Block, T.AdmittedNodes>];
+	export type BuildArgs =
+		| [value: AdmitBound<T.Block, T.AdmittedNodes>]
+		| [...children: AdmitBound<T.Statement[], T.AdmittedNodes>];
 	export type LooseArgs = [value?: T.SuiteBlock.Loose];
 	export type Kind = TSKindId.SuiteBlock;
 }
@@ -14147,7 +14151,7 @@ export namespace SuiteEmpty {
 	}
 	export type Loose = LooseFor<TSKindId.SuiteEmpty>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SuiteEmpty>;
-	export type BuildArgs = [value?: AdmitBound<TSKindId.Newline, T.AdmittedNodes>];
+	export type BuildArgs = [] | [value?: AdmitBound<TSKindId.Newline, T.AdmittedNodes>];
 	export type LooseArgs = [value?: T.SuiteEmpty.Loose];
 	export type Kind = TSKindId.SuiteEmpty;
 }

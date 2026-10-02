@@ -1,14 +1,20 @@
 import { describe, expect, it } from 'vitest';
+import { createEngine } from '@sittir/common';
+import regex from '../src/index.ts';
 import { buildCountQuantifierGroup } from '../src/factories/raw.ts';
 
-describe('a forwarding factory given a number for its target', () => {
-	const digits = (value: number | bigint) => buildCountQuantifierGroup(value).decimalDigits();
+const rx = await createEngine(regex);
 
-	it('builds the target from a bigint', () => {
-		expect(typeof digits(1n)).toBe('object');
+describe('a strict builder whose one slot holds a numeric leaf', () => {
+	it('takes the built leaf', () => {
+		const digits = rx.build.decimalDigits(3);
+		expect(buildCountQuantifierGroup(digits).decimalDigits()).toBe(digits);
 	});
 
-	it('builds the target from a number', () => {
-		expect(typeof digits(3)).toBe('object');
+	it('does not take the leaf\'s number: a scalar to a leaf is coercion', () => {
+		// @ts-expect-error a number is not a built leaf
+		void (() => buildCountQuantifierGroup(3));
+		// @ts-expect-error a bigint is not a built leaf
+		void (() => buildCountQuantifierGroup(1n));
 	});
 });

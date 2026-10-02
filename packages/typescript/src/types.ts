@@ -19283,10 +19283,39 @@ export namespace BreakStatement {
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.BreakStatement>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.BreakStatement>, 'terminator'>;
-	export type BuildArgs = [
-		value?: AdmitBound<T.StatementIdentifier | T.StatementIdentifier.Types, T.AdmittedNodes>,
-		options?: T.BreakStatement.Options
-	];
+	export type BuildArgs =
+		| [
+				value?: AdmitBound<T.StatementIdentifier | T.StatementIdentifier.Types, T.AdmittedNodes>,
+				options?: T.BreakStatement.Options
+		  ]
+		| [
+				value: AdmitBound<
+					| T.Identifier
+					| TSKindId.DeclareKeyword
+					| TSKindId.NamespaceKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.PublicKeyword
+					| TSKindId.PrivateKeyword
+					| TSKindId.ProtectedKeyword
+					| TSKindId.OverrideKeyword
+					| TSKindId.ReadonlyKeyword
+					| TSKindId.ModuleKeyword
+					| TSKindId.AnyKeyword
+					| TSKindId.NumberKeyword
+					| TSKindId.BooleanKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.SymbolKeyword
+					| TSKindId.ExportKeyword
+					| TSKindId.ObjectKeyword
+					| TSKindId.NewKeyword
+					| TSKindId.GetKeyword
+					| TSKindId.SetKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.LetKeyword,
+					T.AdmittedNodes
+				>
+		  ];
 	export type LooseArgs = [value?: T.BreakStatement.Loose, options?: T.BreakStatement.Options];
 	export type Kind = TSKindId.BreakStatement;
 }
@@ -19303,10 +19332,39 @@ export namespace ContinueStatement {
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.ContinueStatement>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ContinueStatement>, 'terminator'>;
-	export type BuildArgs = [
-		value?: AdmitBound<T.StatementIdentifier | T.StatementIdentifier.Types, T.AdmittedNodes>,
-		options?: T.ContinueStatement.Options
-	];
+	export type BuildArgs =
+		| [
+				value?: AdmitBound<T.StatementIdentifier | T.StatementIdentifier.Types, T.AdmittedNodes>,
+				options?: T.ContinueStatement.Options
+		  ]
+		| [
+				value: AdmitBound<
+					| T.Identifier
+					| TSKindId.DeclareKeyword
+					| TSKindId.NamespaceKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.PublicKeyword
+					| TSKindId.PrivateKeyword
+					| TSKindId.ProtectedKeyword
+					| TSKindId.OverrideKeyword
+					| TSKindId.ReadonlyKeyword
+					| TSKindId.ModuleKeyword
+					| TSKindId.AnyKeyword
+					| TSKindId.NumberKeyword
+					| TSKindId.BooleanKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.SymbolKeyword
+					| TSKindId.ExportKeyword
+					| TSKindId.ObjectKeyword
+					| TSKindId.NewKeyword
+					| TSKindId.GetKeyword
+					| TSKindId.SetKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.LetKeyword,
+					T.AdmittedNodes
+				>
+		  ];
 	export type LooseArgs = [value?: T.ContinueStatement.Loose, options?: T.ContinueStatement.Options];
 	export type Kind = TSKindId.ContinueStatement;
 }
@@ -19491,7 +19549,9 @@ export namespace FinallyClause {
 	}
 	export type Loose = LooseFor<TSKindId.FinallyClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FinallyClause>;
-	export type BuildArgs = [value: AdmitBound<T.StatementBlock, T.AdmittedNodes>];
+	export type BuildArgs =
+		| [value: AdmitBound<T.StatementBlock, T.AdmittedNodes>]
+		| [config?: Partial<T.StatementBlock.Config>];
 	export type LooseArgs = [value?: T.FinallyClause.Loose];
 	export type Kind = TSKindId.FinallyClause;
 }
@@ -21152,7 +21212,9 @@ export namespace AssertsAnnotation {
 	}
 	export type Loose = LooseFor<TSKindId.AssertsAnnotation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AssertsAnnotation>;
-	export type BuildArgs = [value: AdmitBound<T.Asserts, T.AdmittedNodes>];
+	export type BuildArgs =
+		| [value: AdmitBound<T.Asserts, T.AdmittedNodes>]
+		| [value: AdmitBound<T.TypePredicate | T.Identifier | TSKindId.This, T.AdmittedNodes>];
 	export type LooseArgs = [value: T.AssertsAnnotation.Loose];
 	export type Kind = TSKindId.AssertsAnnotation;
 }
@@ -21349,7 +21411,7 @@ export namespace TypePredicateAnnotation {
 	}
 	export type Loose = LooseFor<TSKindId.TypePredicateAnnotation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypePredicateAnnotation>;
-	export type BuildArgs = [value: AdmitBound<T.TypePredicate, T.AdmittedNodes>];
+	export type BuildArgs = [value: AdmitBound<T.TypePredicate, T.AdmittedNodes>] | [config: T.TypePredicate.Config];
 	export type LooseArgs = [value: T.TypePredicateAnnotation.Loose];
 	export type Kind = TSKindId.TypePredicateAnnotation;
 }
@@ -22307,7 +22369,9 @@ export namespace AmbientDeclarationGlobal {
 	}
 	export type Loose = LooseFor<TSKindId.AmbientDeclarationGlobal>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AmbientDeclarationGlobal>;
-	export type BuildArgs = [value: AdmitBound<T.StatementBlock, T.AdmittedNodes>];
+	export type BuildArgs =
+		| [value: AdmitBound<T.StatementBlock, T.AdmittedNodes>]
+		| [config?: Partial<T.StatementBlock.Config>];
 	export type LooseArgs = [value?: T.AmbientDeclarationGlobal.Loose];
 	export type Kind = TSKindId.AmbientDeclarationGlobal;
 }
@@ -23033,7 +23097,9 @@ export namespace ParenthesizedExpressionSequence {
 	}
 	export type Loose = LooseFor<TSKindId.ParenthesizedExpressionSequence>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedExpressionSequence>;
-	export type BuildArgs = [value: AdmitBound<T.SequenceExpression, T.AdmittedNodes>];
+	export type BuildArgs =
+		| [value: AdmitBound<T.SequenceExpression, T.AdmittedNodes>]
+		| [...children: AdmitBound<T.Expression[], T.AdmittedNodes>];
 	export type LooseArgs = [value: T.ParenthesizedExpressionSequence.Loose];
 	export type Kind = TSKindId.ParenthesizedExpressionSequence;
 }
