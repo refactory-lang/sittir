@@ -4162,6 +4162,12 @@ with no separator has no flank.
  */
 ```
 
+A member beside the list counts as a flank only when it is the separator: the
+separator itself, one of its arms when it is a choice, or a choice that shares
+an arm with a choice separator. Any other token beside the list (an
+`optional('.')` next to a `,`/`;` list) is not part of the list, so a body
+holding one is not a single list.
+
 Besides the form, the result carries what a consumer needs to build the list
 without matching the shape again: `repeat` (the grammar's repeat member),
 `leading` and `trailing` (whether a separator stands before the first element

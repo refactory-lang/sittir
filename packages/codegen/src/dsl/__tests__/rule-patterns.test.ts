@@ -268,6 +268,22 @@ describe('separatedListBodyInfo: what a consumer builds the list from', () => {
 		expect(read(seq(suffix, optional(sym('item'))))).toMatchObject({ form: 'tail', repeat: suffix, trailing: 'optional' });
 	});
 
+	it.each([
+		['the separator itself', optional({ type: 'CHOICE', members: [str(','), str(';')] }), 'optional'],
+		['one arm of a choice separator', optional(str(',')), 'optional'],
+		['a choice sharing an arm with a choice separator', optional({ type: 'CHOICE', members: [str(','), sym('_semicolon')] }), 'optional']
+	])('a flank may be %s', (_name, flank, presence) => {
+		const choiceRun = { type: 'REPEAT', content: seq({ type: 'CHOICE', members: [str(','), str(';')] }, sym('item')) };
+		expect(read(seq(sym('item'), choiceRun, flank))).toMatchObject({ form: 'head', trailing: presence });
+	});
+
+	it('a token that is not the separator is no flank, even beside a choice separator', () => {
+		const choiceRun = { type: 'REPEAT', content: seq({ type: 'CHOICE', members: [str(','), str(';')] }, sym('item')) };
+		expect(read(seq(sym('item'), choiceRun, optional(str('.'))))).toBeNull();
+		const headless = { type: 'REPEAT1', content: seq({ type: 'CHOICE', members: [str(','), str(';')] }, sym('item')) };
+		expect(read(seq(headless, optional(str('.'))))).toBeNull();
+	});
+
 	it('a head element that is a different rule under the same field name is not the list element', () => {
 		const field = (rule: unknown) => ({ type: 'FIELD', name: 'item', content: rule });
 		const fieldedRun = { type: 'REPEAT', content: seq(str(','), field(sym('item'))) };

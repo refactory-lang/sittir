@@ -1080,19 +1080,19 @@ export function separatedListBodyInfo<P extends PhaseName>(body: Rule<P>, symbol
 	if (repeatIdx === -1) return null;
 	const detected = separatorRepeatOf(members[repeatIdx]!)!;
 	const separatorIsChoice = typeEq(detected.separator.type, 'CHOICE');
-	const separatorLiteral = typeEq(detected.separator.type, 'STRING')
-		? ((detected.separator as { value?: unknown }).value as string)
-		: null;
+	const separatorArms = separatorIsChoice ? membersOf(detected.separator as Rule<P>) : [];
+	const isSeparatorArm = (rule: Rule<P>): boolean =>
+		[detected.separator as Rule<P>, ...separatorArms].some((s) => rulesEqual(rule as RuntimeRule, s as RuntimeRule));
+	const isSeparator = (rule: Rule<P> | undefined): boolean =>
+		rule !== undefined &&
+		(isSeparatorArm(rule) || (separatorIsChoice && isChoiceType((rule as { type?: string }).type ?? '') && membersOf(rule).some(isSeparatorArm)));
 	const elementName = separatedListElementName(detected.content as Rule<P>);
 
 	if (detected.trailing !== true) {
 		if (repeatIdx === 0) {
 			if (!typeEq((members[0] as { type?: string }).type, 'REPEAT1')) return null;
 			if (members.length !== 2) return null;
-			const flank = optionalContentOf(members[1]!);
-			const flankLit =
-				flank && isStringType((flank as { type?: string }).type) ? (flank as { value?: unknown }).value : null;
-			if (flankLit === null || (separatorLiteral !== null && flankLit !== separatorLiteral)) return null;
+			if (!isSeparator(optionalContentOf(members[1]!))) return null;
 			return {
 				elementName,
 				flankCarrying: true,
@@ -1116,19 +1116,12 @@ export function separatedListBodyInfo<P extends PhaseName>(body: Rule<P>, symbol
 		};
 		for (const [i, m] of members.entries()) {
 			if (i === repeatIdx || i === repeatIdx - 1) continue;
-			if (isStringType((m as { type?: string }).type) && (m as { value?: unknown }).value === separatorLiteral) {
+			const inner = optionalContentOf(m);
+			if (inner === undefined && isSeparator(m)) {
 				flank(i, 'mandatory');
 				continue;
 			}
-			const inner = optionalContentOf(m);
-			const innerLit =
-				inner && isStringType((inner as { type?: string }).type) ? (inner as { value?: unknown }).value : null;
-			const innerMatchesChoiceSep =
-				inner !== undefined && separatorIsChoice && isChoiceType((inner as { type?: string }).type ?? '');
-			if (
-				(innerLit !== null && (separatorLiteral === null || innerLit === separatorLiteral)) ||
-				innerMatchesChoiceSep
-			) {
+			if (isSeparator(inner)) {
 				flankCarrying = true;
 				flank(i, 'optional');
 				continue;

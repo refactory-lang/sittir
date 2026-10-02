@@ -969,6 +969,15 @@ describe('liftSeparators: a separated list inside a longer seq', () => {
 		});
 	});
 
+	it('keeps a token beside the list that is not its separator', () => {
+		const either: Rule<'link'> = { type: CHOICE, members: [comma, { type: STRING, value: ';' }] } as Rule<'link'>;
+		const choiceRun = { type: REPEAT, content: seqOf(either, item) } as Rule<'link'>;
+		const dot = optional({ type: STRING, value: '.' });
+		expect(liftSeparators(seqOf(item, choiceRun, dot), ctx())).toEqual(
+			seqOf({ type: REPEAT1, content: item, separator: { value: either, trailing: undefined, leading: undefined } } as Rule<'link'>, dot)
+		);
+	});
+
 	it('leaves a repeat whose head element is a different rule as a stamped repeat', () => {
 		const other: Rule<'link'> = { type: SYMBOL, name: 'other' } as Rule<'link'>;
 		expect(liftSeparators(seqOf(other, run()), ctx())).toEqual(
