@@ -25,8 +25,9 @@ describe('a descriptor creates an engine the same way createEngine(descriptor) d
 
 	it('applies the render options it is given', async () => {
 		const tabs = await rust.createEngine({ render: { indent: '\t' } });
-		const spaces = await createEngine(rust, { render: { indent: '\t' } });
-		const source = 'fn f() { let x = 1; }\n';
-		expect(tabs.render(tabs.parse(source)).toString()).toBe(spaces.render(spaces.parse(source)).toString());
+		const spaces = await rust.createEngine({ render: { indent: '  ' } });
+		const block = (engine: typeof tabs) => engine.build.block({ statements: [engine.build.expressionStatement(engine.build.identifier('a'))] });
+		expect(tabs.render(block(tabs)).toString()).toBe('{\n\ta;\n}');
+		expect(spaces.render(block(spaces)).toString()).toBe('{\n  a;\n}');
 	});
 });

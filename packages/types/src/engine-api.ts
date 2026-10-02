@@ -279,4 +279,4 @@ export type NodeOfNamespaces<NsMap extends object> = Extract<
 >;
 
 export type Types<E> = E extends Engine<infer API, ApiSurface> ? API['types'] : never;
-export type ApiOf<L> = L extends Language<infer API> ? API : never;
+export type ApiOf<L> = L extends LanguageDescriptor<infer API> ? API : never;
