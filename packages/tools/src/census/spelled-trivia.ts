@@ -1,12 +1,5 @@
+import type { SpelledTriviaForm, SpelledTriviaTable } from '../codegen-surface.ts';
 import { readNodeModelFile } from '../validate/common.ts';
-
-export interface SpelledTriviaForm {
-	readonly kind: string;
-	readonly opens: readonly string[];
-	readonly closes: readonly string[];
-}
-
-export type SpelledTriviaTable = { readonly forms: readonly SpelledTriviaForm[] } | { readonly reason: string };
 
 export interface SpelledTriviaModel {
 	readonly spelledTrivia?: SpelledTriviaTable | null;
