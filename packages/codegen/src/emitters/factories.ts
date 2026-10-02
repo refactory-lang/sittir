@@ -1,5 +1,5 @@
 import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
-import { innerPositionsOf, nodeMemberLines, triviaInnerImports, type SetterEntry } from './node-members.ts';
+import { innerPositionsOf, nodeMemberLines, seatedSetters, triviaInnerImports, type SetterEntry } from './node-members.ts';
 import { findOwnKindEntry, reservedWordset } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -130,7 +130,10 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 			if (seatedKeywordTexts(slot, nodeMap, kindEntries).length > 0) imports.add('rejectKeywordText');
 			if (kindEntries !== undefined && slotAliases(slot, nodeMap).length > 0) imports.add('admitAliasContent');
 		}
-		for (const seat of seatRuntimes(node, nodeMap, kindEntries)) imports.add(seat.helper);
+		const seatPlan = seatPlanOf(node, nodeMap, kindEntries);
+		if (seatPlan.view !== undefined || seatPlan.groups.length > 0) {
+			for (const seat of seatRuntimes(node, nodeMap, kindEntries)) imports.add(seat.helper);
+		}
 		if (kindEntries !== undefined && node instanceof AssembledList && slotAliases(buildSeparatedListContentSlot(node), nodeMap).length > 0)
 			imports.add('admitAliasContent');
 	}
@@ -1275,7 +1278,8 @@ function emitFieldCarryingFactory(
 		}
 	}
 	const seats = seatRuntimes(node, nodeMap, kindEntries);
-	if (seats.length === 0) {
+	const plan = seatPlanOf(node, nodeMap, kindEntries);
+	if (plan.view === undefined && plan.groups.length === 0) {
 		lines.push('  const handle = currentHandle();');
 		lines.push('  const node = {');
 		lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
@@ -1286,7 +1290,7 @@ function emitFieldCarryingFactory(
 		}
 		lines.push(
 			...nodeMemberLines({
-				setters,
+				setters: seatedSetters(setters, plan),
 				accessors: slotsToEmit.map((f) => ({ name: f.propertyName, read: f.storageKey })),
 				inner: innerPositionsOf(typeKind, nodeMap)
 			})
@@ -1851,24 +1855,56 @@ export function listSlotHints(
 	}));
 }
 
-function listSlotsRuntimeSpec(
+function listSlotSpecs(
 	node: AssembledNode,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	factoryScope: string
-): string | undefined {
-	const targets = listSlotTargets(node, nodeMap);
-	if (targets.length === 0) return undefined;
-	const specs = targets.map(
-		({ slot, kind }) =>
-			`{ slot: ${JSON.stringify(slot.propertyName)}, kind: ${factoryTypeDiscriminant(kind.kind, nodeMap, kindEntries)}, optional: ${!isRequired(slot)}, make: ${factoryScope}${kind.rawFactoryName}${elementSpecOf(kind, nodeMap, factoryScope)} }`
-	);
-	return `[${specs.join(', ')}]`;
+): readonly { readonly slot: string; readonly spec: string }[] {
+	return listSlotTargets(node, nodeMap).map(({ slot, kind }) => ({
+		slot: slot.propertyName,
+		spec: `kind: ${factoryTypeDiscriminant(kind.kind, nodeMap, kindEntries)}, optional: ${!isRequired(slot)}, make: ${factoryScope}${kind.rawFactoryName}${elementSpecOf(kind, nodeMap, factoryScope)}`
+	}));
 }
 
 export interface SeatRuntime {
 	readonly helper: 'withListView' | 'withListSlots' | 'withGroupSeat' | 'withElementsSeat';
 	readonly spec: string;
+}
+
+export interface SeatPlan {
+	readonly view: string | undefined;
+	readonly slots: readonly { readonly slot: string; readonly spec: string }[];
+	readonly groups: readonly { readonly hint: GroupSeatHint; readonly spec: string }[];
+	readonly elements: readonly { readonly slot: string; readonly spec: string }[];
+}
+
+export function seatPlanOf(
+	node: AssembledNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	factoryScope = '',
+	tree?: string
+): SeatPlan {
+	const view = listViewRuntimeSpec(node, nodeMap, kindEntries);
+	const specs = groupSeatRuntimeSpecs(node, nodeMap, kindEntries, factoryScope);
+	return {
+		view: view === undefined ? undefined : tree === undefined ? view : `${view}, ${tree}`,
+		slots: listSlotSpecs(node, nodeMap, kindEntries, factoryScope),
+		groups: groupSeatHints(node, nodeMap, kindEntries).map((hint, index) => ({ hint, spec: specs[index]! })),
+		elements: elementConfigsOf(node, nodeMap).map((fact) => ({ slot: fact.slot, spec: elementConfigFields(fact, factoryScope) }))
+	};
+}
+
+export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): readonly string[] {
+	const names = new Set<string>();
+	for (const node of nodeMap.nodes.values()) {
+		const plan = seatPlanOf(node, nodeMap, kindEntries);
+		if (plan.view !== undefined || plan.groups.length > 0) continue;
+		if (plan.slots.length > 0) names.add('listSlotWith');
+		if (plan.elements.length > 0) names.add('elementsWith');
+	}
+	return [...names];
 }
 
 export function seatRuntimes(
@@ -1878,17 +1914,14 @@ export function seatRuntimes(
 	factoryScope = '',
 	tree?: string
 ): readonly SeatRuntime[] {
-	const view = listViewRuntimeSpec(node, nodeMap, kindEntries);
-	const slots = listSlotsRuntimeSpec(node, nodeMap, kindEntries, factoryScope);
-	const groups = groupSeatRuntimeSpecs(node, nodeMap, kindEntries, factoryScope);
+	const plan = seatPlanOf(node, nodeMap, kindEntries, factoryScope, tree);
 	return [
-		...(view === undefined ? [] : [{ helper: 'withListView' as const, spec: tree === undefined ? view : `${view}, ${tree}` }]),
-		...(slots === undefined ? [] : [{ helper: 'withListSlots' as const, spec: slots }]),
-		...groups.map((spec) => ({ helper: 'withGroupSeat' as const, spec })),
-		...elementConfigsOf(node, nodeMap).map((fact) => ({
-			helper: 'withElementsSeat' as const,
-			spec: `{ slot: ${JSON.stringify(fact.slot)}, ${elementConfigFields(fact, factoryScope)} }`
-		}))
+		...(plan.view === undefined ? [] : [{ helper: 'withListView' as const, spec: plan.view }]),
+		...(plan.slots.length === 0
+			? []
+			: [{ helper: 'withListSlots' as const, spec: `[${plan.slots.map((entry) => `{ slot: ${JSON.stringify(entry.slot)}, ${entry.spec} }`).join(', ')}]` }]),
+		...plan.groups.map((group) => ({ helper: 'withGroupSeat' as const, spec: group.spec })),
+		...plan.elements.map((entry) => ({ helper: 'withElementsSeat' as const, spec: `{ slot: ${JSON.stringify(entry.slot)}, ${entry.spec} }` }))
 	];
 }
 
@@ -2205,7 +2238,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		lines.push(
-			`import { ${[...(usesAttachedMembers ? ['withAccessors'] : []), 'currentHandle', 'rebuilt', 'renderText', 'toEditAt', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
+			`import { ${[...(usesAttachedMembers ? ['withAccessors'] : []), 'currentHandle', ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'toEditAt', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
 		);
 		if (usesAttachedMembers) lines.push(`import { withMethods } from '../utils.js';`);
 		lines.push('');

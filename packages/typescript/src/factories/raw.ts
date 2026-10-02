@@ -7,6 +7,7 @@ import type { AdmitBound, StringIndexRange, ConfigOf, NonEmptyArray, WidenNumeri
 import {
 	withAccessors,
 	currentHandle,
+	listSlotWith,
 	rebuilt,
 	renderText,
 	toEditAt,
@@ -2073,38 +2074,48 @@ export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound 
 		'Class.body',
 		'a built ClassBody'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.Class as const,
-					$source: 2 as const,
-					$named: true as const,
-					_decorator,
-					_name,
-					_type_parameters,
-					_heritage,
-					_body,
-					$with: {
-						decorators: (...values: T.Decorator[]) =>
-							buildClass({ ...config, decorator: restItems('decorators', values) }),
-						name: (value?: T.TypeIdentifier | T.TypeIdentifier.Types) => buildClass({ ...config, name: value }),
-						typeParameters: (value?: T.TypeParameters) => buildClass({ ...config, typeParameters: value }),
-						heritage: (value?: T.ClassHeritage) => buildClass({ ...config, heritage: value }),
-						body: (value: T.ClassBody) => buildClass({ ...config, body: value })
-					}
-				},
-				{
-					decorators: () => _decorator,
-					name: () => _name,
-					typeParameters: () => _type_parameters,
-					heritage: () => _heritage,
-					body: () => _body
-				}
-			),
-			[{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters }]
-		)
-	) as unknown as T.Class.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.Class as const,
+		$source: 2 as const,
+		$named: true as const,
+		_decorator,
+		_name,
+		_type_parameters,
+		_heritage,
+		_body,
+		$with: {
+			decorators: (...values: T.Decorator[]) =>
+				rebuilt(node, handle, () => buildClass({ ...config, decorator: restItems('decorators', values) })),
+			name: (value?: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildClass({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: T.TypeParameters) => buildClass({ ...config, typeParameters: value })
+					)
+				),
+			heritage: (value?: T.ClassHeritage) => rebuilt(node, handle, () => buildClass({ ...config, heritage: value })),
+			body: (value: T.ClassBody) => rebuilt(node, handle, () => buildClass({ ...config, body: value }))
+		},
+		decorators: () => _decorator,
+		name: () => _name,
+		typeParameters: () => _type_parameters,
+		heritage: () => _heritage,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Class.Bound;
 }
 
 export function buildClassDeclaration(config: T.ClassDeclaration.Config): T.ClassDeclaration.Bound {
@@ -2127,43 +2138,53 @@ export function buildClassDeclaration(config: T.ClassDeclaration.Config): T.Clas
 	const _automatic_semicolon = coerceBooleanKeywordStorage(
 		rejectBareText(config.automaticSemicolon, 'ClassDeclaration.automaticSemicolon', 'a boolean')
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.ClassDeclaration as const,
-					$source: 2 as const,
-					$named: true as const,
-					_decorator,
-					_name,
-					_type_parameters,
-					_heritage,
-					_body,
-					_automatic_semicolon,
-					$with: {
-						decorators: (...values: T.Decorator[]) =>
-							buildClassDeclaration({ ...config, decorator: restItems('decorators', values) }),
-						name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
-							buildClassDeclaration({ ...config, name: value }),
-						typeParameters: (value?: T.TypeParameters) => buildClassDeclaration({ ...config, typeParameters: value }),
-						heritage: (value?: T.ClassHeritage) => buildClassDeclaration({ ...config, heritage: value }),
-						body: (value: T.ClassBody) => buildClassDeclaration({ ...config, body: value }),
-						automaticSemicolon: (value?: NonNullable<T.ClassDeclaration.Config>['automaticSemicolon']) =>
-							buildClassDeclaration({ ...config, automaticSemicolon: value })
-					}
-				},
-				{
-					decorators: () => _decorator,
-					name: () => _name,
-					typeParameters: () => _type_parameters,
-					heritage: () => _heritage,
-					body: () => _body,
-					automaticSemicolon: () => _automatic_semicolon
-				}
-			),
-			[{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters }]
-		)
-	) as unknown as T.ClassDeclaration.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ClassDeclaration as const,
+		$source: 2 as const,
+		$named: true as const,
+		_decorator,
+		_name,
+		_type_parameters,
+		_heritage,
+		_body,
+		_automatic_semicolon,
+		$with: {
+			decorators: (...values: T.Decorator[]) =>
+				rebuilt(node, handle, () => buildClassDeclaration({ ...config, decorator: restItems('decorators', values) })),
+			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildClassDeclaration({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: T.TypeParameters) => buildClassDeclaration({ ...config, typeParameters: value })
+					)
+				),
+			heritage: (value?: T.ClassHeritage) =>
+				rebuilt(node, handle, () => buildClassDeclaration({ ...config, heritage: value })),
+			body: (value: T.ClassBody) => rebuilt(node, handle, () => buildClassDeclaration({ ...config, body: value })),
+			automaticSemicolon: (value?: NonNullable<T.ClassDeclaration.Config>['automaticSemicolon']) =>
+				rebuilt(node, handle, () => buildClassDeclaration({ ...config, automaticSemicolon: value }))
+		},
+		decorators: () => _decorator,
+		name: () => _name,
+		typeParameters: () => _type_parameters,
+		heritage: () => _heritage,
+		body: () => _body,
+		automaticSemicolon: () => _automatic_semicolon,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ClassDeclaration.Bound;
 }
 
 export function buildClassHeritage(
@@ -2223,45 +2244,59 @@ export function buildFunctionExpression(config: Partial<T.FunctionExpression.Con
 		'FunctionExpression.body',
 		'a built StatementBlock'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.FunctionExpression as const,
-					$source: 2 as const,
-					$named: true as const,
-					_async_marker,
-					_name,
-					_type_parameters,
-					_parameters,
-					_return_type,
-					_body,
-					$with: {
-						asyncMarker: (value?: NonNullable<T.FunctionExpression.Config>['asyncMarker']) =>
-							buildFunctionExpression({ ...config, asyncMarker: value }),
-						name: (value?: T.Identifier) => buildFunctionExpression({ ...config, name: value }),
-						typeParameters: (value?: T.TypeParameters) => buildFunctionExpression({ ...config, typeParameters: value }),
-						parameters: (value: T.FormalParameters) => buildFunctionExpression({ ...config, parameters: value }),
-						returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
-							buildFunctionExpression({ ...config, returnType: value }),
-						body: (value: T.StatementBlock) => buildFunctionExpression({ ...config, body: value })
-					}
-				},
-				{
-					asyncMarker: () => _async_marker,
-					name: () => _name,
-					typeParameters: () => _type_parameters,
-					parameters: () => _parameters,
-					returnType: () => _return_type,
-					body: () => _body
-				}
-			),
-			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
-			]
-		)
-	) as unknown as T.FunctionExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FunctionExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_async_marker,
+		_name,
+		_type_parameters,
+		_parameters,
+		_return_type,
+		_body,
+		$with: {
+			asyncMarker: (value?: NonNullable<T.FunctionExpression.Config>['asyncMarker']) =>
+				rebuilt(node, handle, () => buildFunctionExpression({ ...config, asyncMarker: value })),
+			name: (value?: T.Identifier) => rebuilt(node, handle, () => buildFunctionExpression({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: T.TypeParameters) => buildFunctionExpression({ ...config, typeParameters: value })
+					)
+				),
+			parameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
+						(value: T.FormalParameters) => buildFunctionExpression({ ...config, parameters: value })
+					)
+				),
+			returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+				rebuilt(node, handle, () => buildFunctionExpression({ ...config, returnType: value })),
+			body: (value: T.StatementBlock) =>
+				rebuilt(node, handle, () => buildFunctionExpression({ ...config, body: value }))
+		},
+		asyncMarker: () => _async_marker,
+		name: () => _name,
+		typeParameters: () => _type_parameters,
+		parameters: () => _parameters,
+		returnType: () => _return_type,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FunctionExpression.Bound;
 }
 
 export function buildFunctionDeclaration(config: T.FunctionDeclaration.Config): T.FunctionDeclaration.Bound {
@@ -2292,50 +2327,63 @@ export function buildFunctionDeclaration(config: T.FunctionDeclaration.Config): 
 	const _automatic_semicolon = coerceBooleanKeywordStorage(
 		rejectBareText(config.automaticSemicolon, 'FunctionDeclaration.automaticSemicolon', 'a boolean')
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.FunctionDeclaration as const,
-					$source: 2 as const,
-					$named: true as const,
-					_async_marker,
-					_name,
-					_type_parameters,
-					_parameters,
-					_return_type,
-					_body,
-					_automatic_semicolon,
-					$with: {
-						asyncMarker: (value?: NonNullable<T.FunctionDeclaration.Config>['asyncMarker']) =>
-							buildFunctionDeclaration({ ...config, asyncMarker: value }),
-						name: (value: T.Identifier) => buildFunctionDeclaration({ ...config, name: value }),
-						typeParameters: (value?: T.TypeParameters) =>
-							buildFunctionDeclaration({ ...config, typeParameters: value }),
-						parameters: (value: T.FormalParameters) => buildFunctionDeclaration({ ...config, parameters: value }),
-						returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
-							buildFunctionDeclaration({ ...config, returnType: value }),
-						body: (value: T.StatementBlock) => buildFunctionDeclaration({ ...config, body: value }),
-						automaticSemicolon: (value?: NonNullable<T.FunctionDeclaration.Config>['automaticSemicolon']) =>
-							buildFunctionDeclaration({ ...config, automaticSemicolon: value })
-					}
-				},
-				{
-					asyncMarker: () => _async_marker,
-					name: () => _name,
-					typeParameters: () => _type_parameters,
-					parameters: () => _parameters,
-					returnType: () => _return_type,
-					body: () => _body,
-					automaticSemicolon: () => _automatic_semicolon
-				}
-			),
-			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
-			]
-		)
-	) as unknown as T.FunctionDeclaration.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FunctionDeclaration as const,
+		$source: 2 as const,
+		$named: true as const,
+		_async_marker,
+		_name,
+		_type_parameters,
+		_parameters,
+		_return_type,
+		_body,
+		_automatic_semicolon,
+		$with: {
+			asyncMarker: (value?: NonNullable<T.FunctionDeclaration.Config>['asyncMarker']) =>
+				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, asyncMarker: value })),
+			name: (value: T.Identifier) => rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: T.TypeParameters) => buildFunctionDeclaration({ ...config, typeParameters: value })
+					)
+				),
+			parameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
+						(value: T.FormalParameters) => buildFunctionDeclaration({ ...config, parameters: value })
+					)
+				),
+			returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, returnType: value })),
+			body: (value: T.StatementBlock) =>
+				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, body: value })),
+			automaticSemicolon: (value?: NonNullable<T.FunctionDeclaration.Config>['automaticSemicolon']) =>
+				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, automaticSemicolon: value }))
+		},
+		asyncMarker: () => _async_marker,
+		name: () => _name,
+		typeParameters: () => _type_parameters,
+		parameters: () => _parameters,
+		returnType: () => _return_type,
+		body: () => _body,
+		automaticSemicolon: () => _automatic_semicolon,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FunctionDeclaration.Bound;
 }
 
 export function buildGeneratorFunction(config: Partial<T.GeneratorFunction.Config> = {}): T.GeneratorFunction.Bound {
@@ -2363,45 +2411,58 @@ export function buildGeneratorFunction(config: Partial<T.GeneratorFunction.Confi
 		'GeneratorFunction.body',
 		'a built StatementBlock'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.GeneratorFunction as const,
-					$source: 2 as const,
-					$named: true as const,
-					_async_marker,
-					_name,
-					_type_parameters,
-					_parameters,
-					_return_type,
-					_body,
-					$with: {
-						asyncMarker: (value?: NonNullable<T.GeneratorFunction.Config>['asyncMarker']) =>
-							buildGeneratorFunction({ ...config, asyncMarker: value }),
-						name: (value?: T.Identifier) => buildGeneratorFunction({ ...config, name: value }),
-						typeParameters: (value?: T.TypeParameters) => buildGeneratorFunction({ ...config, typeParameters: value }),
-						parameters: (value: T.FormalParameters) => buildGeneratorFunction({ ...config, parameters: value }),
-						returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
-							buildGeneratorFunction({ ...config, returnType: value }),
-						body: (value: T.StatementBlock) => buildGeneratorFunction({ ...config, body: value })
-					}
-				},
-				{
-					asyncMarker: () => _async_marker,
-					name: () => _name,
-					typeParameters: () => _type_parameters,
-					parameters: () => _parameters,
-					returnType: () => _return_type,
-					body: () => _body
-				}
-			),
-			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
-			]
-		)
-	) as unknown as T.GeneratorFunction.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.GeneratorFunction as const,
+		$source: 2 as const,
+		$named: true as const,
+		_async_marker,
+		_name,
+		_type_parameters,
+		_parameters,
+		_return_type,
+		_body,
+		$with: {
+			asyncMarker: (value?: NonNullable<T.GeneratorFunction.Config>['asyncMarker']) =>
+				rebuilt(node, handle, () => buildGeneratorFunction({ ...config, asyncMarker: value })),
+			name: (value?: T.Identifier) => rebuilt(node, handle, () => buildGeneratorFunction({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: T.TypeParameters) => buildGeneratorFunction({ ...config, typeParameters: value })
+					)
+				),
+			parameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
+						(value: T.FormalParameters) => buildGeneratorFunction({ ...config, parameters: value })
+					)
+				),
+			returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+				rebuilt(node, handle, () => buildGeneratorFunction({ ...config, returnType: value })),
+			body: (value: T.StatementBlock) => rebuilt(node, handle, () => buildGeneratorFunction({ ...config, body: value }))
+		},
+		asyncMarker: () => _async_marker,
+		name: () => _name,
+		typeParameters: () => _type_parameters,
+		parameters: () => _parameters,
+		returnType: () => _return_type,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.GeneratorFunction.Bound;
 }
 
 export function buildGeneratorFunctionDeclaration(
@@ -2434,51 +2495,64 @@ export function buildGeneratorFunctionDeclaration(
 	const _automatic_semicolon = coerceBooleanKeywordStorage(
 		rejectBareText(config.automaticSemicolon, 'GeneratorFunctionDeclaration.automaticSemicolon', 'a boolean')
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.GeneratorFunctionDeclaration as const,
-					$source: 2 as const,
-					$named: true as const,
-					_async_marker,
-					_name,
-					_type_parameters,
-					_parameters,
-					_return_type,
-					_body,
-					_automatic_semicolon,
-					$with: {
-						asyncMarker: (value?: NonNullable<T.GeneratorFunctionDeclaration.Config>['asyncMarker']) =>
-							buildGeneratorFunctionDeclaration({ ...config, asyncMarker: value }),
-						name: (value: T.Identifier) => buildGeneratorFunctionDeclaration({ ...config, name: value }),
-						typeParameters: (value?: T.TypeParameters) =>
-							buildGeneratorFunctionDeclaration({ ...config, typeParameters: value }),
-						parameters: (value: T.FormalParameters) =>
-							buildGeneratorFunctionDeclaration({ ...config, parameters: value }),
-						returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
-							buildGeneratorFunctionDeclaration({ ...config, returnType: value }),
-						body: (value: T.StatementBlock) => buildGeneratorFunctionDeclaration({ ...config, body: value }),
-						automaticSemicolon: (value?: NonNullable<T.GeneratorFunctionDeclaration.Config>['automaticSemicolon']) =>
-							buildGeneratorFunctionDeclaration({ ...config, automaticSemicolon: value })
-					}
-				},
-				{
-					asyncMarker: () => _async_marker,
-					name: () => _name,
-					typeParameters: () => _type_parameters,
-					parameters: () => _parameters,
-					returnType: () => _return_type,
-					body: () => _body,
-					automaticSemicolon: () => _automatic_semicolon
-				}
-			),
-			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
-			]
-		)
-	) as unknown as T.GeneratorFunctionDeclaration.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.GeneratorFunctionDeclaration as const,
+		$source: 2 as const,
+		$named: true as const,
+		_async_marker,
+		_name,
+		_type_parameters,
+		_parameters,
+		_return_type,
+		_body,
+		_automatic_semicolon,
+		$with: {
+			asyncMarker: (value?: NonNullable<T.GeneratorFunctionDeclaration.Config>['asyncMarker']) =>
+				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, asyncMarker: value })),
+			name: (value: T.Identifier) =>
+				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: T.TypeParameters) => buildGeneratorFunctionDeclaration({ ...config, typeParameters: value })
+					)
+				),
+			parameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
+						(value: T.FormalParameters) => buildGeneratorFunctionDeclaration({ ...config, parameters: value })
+					)
+				),
+			returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, returnType: value })),
+			body: (value: T.StatementBlock) =>
+				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, body: value })),
+			automaticSemicolon: (value?: NonNullable<T.GeneratorFunctionDeclaration.Config>['automaticSemicolon']) =>
+				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, automaticSemicolon: value }))
+		},
+		asyncMarker: () => _async_marker,
+		name: () => _name,
+		typeParameters: () => _type_parameters,
+		parameters: () => _parameters,
+		returnType: () => _return_type,
+		body: () => _body,
+		automaticSemicolon: () => _automatic_semicolon,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.GeneratorFunctionDeclaration.Bound;
 }
 
 export function buildArrowFunction(config: T.ArrowFunction.Config): T.ArrowFunction.Bound {
@@ -2537,32 +2611,42 @@ export function buildNewExpression(config: T.NewExpression.Config): T.NewExpress
 	);
 	const _type_arguments = rejectBareText(config.typeArguments, 'NewExpression.typeArguments', 'a built TypeArguments');
 	const _arguments = rejectBareText(config.arguments, 'NewExpression.arguments', 'a built Arguments');
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.NewExpression as const,
-					$source: 2 as const,
-					$named: true as const,
-					_constructor,
-					_type_arguments,
-					_arguments,
-					$with: {
-						constructor_: (value: NonNullable<T.NewExpression.Config>['constructor_']) =>
-							buildNewExpression({ ...config, constructor_: value }),
-						typeArguments: (value?: T.TypeArguments) => buildNewExpression({ ...config, typeArguments: value }),
-						arguments: (value?: T.Arguments) => buildNewExpression({ ...config, arguments: value })
-					}
-				},
-				{
-					constructor_: () => _constructor,
-					typeArguments: () => _type_arguments,
-					arguments: () => _arguments
-				}
-			),
-			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments }]
-		)
-	) as unknown as T.NewExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.NewExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_constructor,
+		_type_arguments,
+		_arguments,
+		$with: {
+			constructor_: (value: NonNullable<T.NewExpression.Config>['constructor_']) =>
+				rebuilt(node, handle, () => buildNewExpression({ ...config, constructor_: value })),
+			typeArguments: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
+						(value?: T.TypeArguments) => buildNewExpression({ ...config, typeArguments: value })
+					)
+				),
+			arguments: (value?: T.Arguments) =>
+				rebuilt(node, handle, () => buildNewExpression({ ...config, arguments: value }))
+		},
+		constructor_: () => _constructor,
+		typeArguments: () => _type_arguments,
+		arguments: () => _arguments,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.NewExpression.Bound;
 }
 
 export function buildAwaitExpression(value: AdmitBound<T.Expression, T.AdmittedNodes>): T.AwaitExpression.Bound {
@@ -3541,33 +3625,42 @@ export function buildDecoratorCallExpression(
 		'DecoratorCallExpression.arguments',
 		'a built Arguments'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.DecoratorCallExpression as const,
-					$source: 2 as const,
-					$named: true as const,
-					_function,
-					_type_arguments,
-					_arguments,
-					$with: {
-						function: (value: T.Identifier | T.DecoratorMemberExpression) =>
-							buildDecoratorCallExpression({ ...config, function: value }),
-						typeArguments: (value?: T.TypeArguments) =>
-							buildDecoratorCallExpression({ ...config, typeArguments: value }),
-						arguments: (value: T.Arguments) => buildDecoratorCallExpression({ ...config, arguments: value })
-					}
-				},
-				{
-					function: () => _function,
-					typeArguments: () => _type_arguments,
-					arguments: () => _arguments
-				}
-			),
-			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments }]
-		)
-	) as unknown as T.DecoratorCallExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.DecoratorCallExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_function,
+		_type_arguments,
+		_arguments,
+		$with: {
+			function: (value: T.Identifier | T.DecoratorMemberExpression) =>
+				rebuilt(node, handle, () => buildDecoratorCallExpression({ ...config, function: value })),
+			typeArguments: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
+						(value?: T.TypeArguments) => buildDecoratorCallExpression({ ...config, typeArguments: value })
+					)
+				),
+			arguments: (value: T.Arguments) =>
+				rebuilt(node, handle, () => buildDecoratorCallExpression({ ...config, arguments: value }))
+		},
+		function: () => _function,
+		typeArguments: () => _type_arguments,
+		arguments: () => _arguments,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.DecoratorCallExpression.Bound;
 }
 
 export function buildClassBody(): T.EmptyClassBody;
@@ -3881,70 +3974,83 @@ export function buildMethodDefinition(config: T.MethodDefinition.Config): T.Meth
 		'MethodDefinition.body',
 		'a built StatementBlock'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.MethodDefinition as const,
-					$source: 2 as const,
-					$named: true as const,
-					_accessibility_modifier,
-					_static_marker,
-					_override_modifier,
-					_readonly_marker,
-					_async_marker,
-					_accessor_kind,
-					_name,
-					_optional_marker,
-					_type_parameters,
-					_parameters,
-					_return_type,
-					_body,
-					$with: {
-						accessibilityModifier: (value?: NonNullable<T.MethodDefinition.Config>['accessibilityModifier']) =>
-							buildMethodDefinition({ ...config, accessibilityModifier: value }),
-						staticMarker: (value?: NonNullable<T.MethodDefinition.Config>['staticMarker']) =>
-							buildMethodDefinition({ ...config, staticMarker: value }),
-						overrideModifier: (value?: NonNullable<T.MethodDefinition.Config>['overrideModifier']) =>
-							buildMethodDefinition({ ...config, overrideModifier: value }),
-						readonlyMarker: (value?: NonNullable<T.MethodDefinition.Config>['readonlyMarker']) =>
-							buildMethodDefinition({ ...config, readonlyMarker: value }),
-						asyncMarker: (value?: NonNullable<T.MethodDefinition.Config>['asyncMarker']) =>
-							buildMethodDefinition({ ...config, asyncMarker: value }),
-						accessorKind: (value?: NonNullable<T.MethodDefinition.Config>['accessorKind']) =>
-							buildMethodDefinition({ ...config, accessorKind: value }),
-						name: (value: NonNullable<T.MethodDefinition.Config>['name']) =>
-							buildMethodDefinition({ ...config, name: value }),
-						optionalMarker: (value?: NonNullable<T.MethodDefinition.Config>['optionalMarker']) =>
-							buildMethodDefinition({ ...config, optionalMarker: value }),
-						typeParameters: (value?: T.TypeParameters) => buildMethodDefinition({ ...config, typeParameters: value }),
-						parameters: (value: T.FormalParameters) => buildMethodDefinition({ ...config, parameters: value }),
-						returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
-							buildMethodDefinition({ ...config, returnType: value }),
-						body: (value: T.StatementBlock) => buildMethodDefinition({ ...config, body: value })
-					}
-				},
-				{
-					accessibilityModifier: () => _accessibility_modifier,
-					staticMarker: () => _static_marker,
-					overrideModifier: () => _override_modifier,
-					readonlyMarker: () => _readonly_marker,
-					asyncMarker: () => _async_marker,
-					accessorKind: () => _accessor_kind,
-					name: () => _name,
-					optionalMarker: () => _optional_marker,
-					typeParameters: () => _type_parameters,
-					parameters: () => _parameters,
-					returnType: () => _return_type,
-					body: () => _body
-				}
-			),
-			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
-			]
-		)
-	) as unknown as T.MethodDefinition.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MethodDefinition as const,
+		$source: 2 as const,
+		$named: true as const,
+		_accessibility_modifier,
+		_static_marker,
+		_override_modifier,
+		_readonly_marker,
+		_async_marker,
+		_accessor_kind,
+		_name,
+		_optional_marker,
+		_type_parameters,
+		_parameters,
+		_return_type,
+		_body,
+		$with: {
+			accessibilityModifier: (value?: NonNullable<T.MethodDefinition.Config>['accessibilityModifier']) =>
+				rebuilt(node, handle, () => buildMethodDefinition({ ...config, accessibilityModifier: value })),
+			staticMarker: (value?: NonNullable<T.MethodDefinition.Config>['staticMarker']) =>
+				rebuilt(node, handle, () => buildMethodDefinition({ ...config, staticMarker: value })),
+			overrideModifier: (value?: NonNullable<T.MethodDefinition.Config>['overrideModifier']) =>
+				rebuilt(node, handle, () => buildMethodDefinition({ ...config, overrideModifier: value })),
+			readonlyMarker: (value?: NonNullable<T.MethodDefinition.Config>['readonlyMarker']) =>
+				rebuilt(node, handle, () => buildMethodDefinition({ ...config, readonlyMarker: value })),
+			asyncMarker: (value?: NonNullable<T.MethodDefinition.Config>['asyncMarker']) =>
+				rebuilt(node, handle, () => buildMethodDefinition({ ...config, asyncMarker: value })),
+			accessorKind: (value?: NonNullable<T.MethodDefinition.Config>['accessorKind']) =>
+				rebuilt(node, handle, () => buildMethodDefinition({ ...config, accessorKind: value })),
+			name: (value: NonNullable<T.MethodDefinition.Config>['name']) =>
+				rebuilt(node, handle, () => buildMethodDefinition({ ...config, name: value })),
+			optionalMarker: (value?: NonNullable<T.MethodDefinition.Config>['optionalMarker']) =>
+				rebuilt(node, handle, () => buildMethodDefinition({ ...config, optionalMarker: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: T.TypeParameters) => buildMethodDefinition({ ...config, typeParameters: value })
+					)
+				),
+			parameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
+						(value: T.FormalParameters) => buildMethodDefinition({ ...config, parameters: value })
+					)
+				),
+			returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+				rebuilt(node, handle, () => buildMethodDefinition({ ...config, returnType: value })),
+			body: (value: T.StatementBlock) => rebuilt(node, handle, () => buildMethodDefinition({ ...config, body: value }))
+		},
+		accessibilityModifier: () => _accessibility_modifier,
+		staticMarker: () => _static_marker,
+		overrideModifier: () => _override_modifier,
+		readonlyMarker: () => _readonly_marker,
+		asyncMarker: () => _async_marker,
+		accessorKind: () => _accessor_kind,
+		name: () => _name,
+		optionalMarker: () => _optional_marker,
+		typeParameters: () => _type_parameters,
+		parameters: () => _parameters,
+		returnType: () => _return_type,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MethodDefinition.Bound;
 }
 
 export function buildPair(config: T.Pair.Config): T.Pair.Bound {
@@ -4250,67 +4356,80 @@ export function buildMethodSignature(config: T.MethodSignature.Config): T.Method
 		'MethodSignature.returnType',
 		'a built TypeAnnotation / AssertsAnnotation / TypePredicateAnnotation'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.MethodSignature as const,
-					$source: 2 as const,
-					$named: true as const,
-					_accessibility_modifier,
-					_static_marker,
-					_override_modifier,
-					_readonly_marker,
-					_async_marker,
-					_accessor_kind,
-					_name,
-					_optional_marker,
-					_type_parameters,
-					_parameters,
-					_return_type,
-					$with: {
-						accessibilityModifier: (value?: NonNullable<T.MethodSignature.Config>['accessibilityModifier']) =>
-							buildMethodSignature({ ...config, accessibilityModifier: value }),
-						staticMarker: (value?: NonNullable<T.MethodSignature.Config>['staticMarker']) =>
-							buildMethodSignature({ ...config, staticMarker: value }),
-						overrideModifier: (value?: NonNullable<T.MethodSignature.Config>['overrideModifier']) =>
-							buildMethodSignature({ ...config, overrideModifier: value }),
-						readonlyMarker: (value?: NonNullable<T.MethodSignature.Config>['readonlyMarker']) =>
-							buildMethodSignature({ ...config, readonlyMarker: value }),
-						asyncMarker: (value?: NonNullable<T.MethodSignature.Config>['asyncMarker']) =>
-							buildMethodSignature({ ...config, asyncMarker: value }),
-						accessorKind: (value?: NonNullable<T.MethodSignature.Config>['accessorKind']) =>
-							buildMethodSignature({ ...config, accessorKind: value }),
-						name: (value: NonNullable<T.MethodSignature.Config>['name']) =>
-							buildMethodSignature({ ...config, name: value }),
-						optionalMarker: (value?: NonNullable<T.MethodSignature.Config>['optionalMarker']) =>
-							buildMethodSignature({ ...config, optionalMarker: value }),
-						typeParameters: (value?: T.TypeParameters) => buildMethodSignature({ ...config, typeParameters: value }),
-						parameters: (value: T.FormalParameters) => buildMethodSignature({ ...config, parameters: value }),
-						returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
-							buildMethodSignature({ ...config, returnType: value })
-					}
-				},
-				{
-					accessibilityModifier: () => _accessibility_modifier,
-					staticMarker: () => _static_marker,
-					overrideModifier: () => _override_modifier,
-					readonlyMarker: () => _readonly_marker,
-					asyncMarker: () => _async_marker,
-					accessorKind: () => _accessor_kind,
-					name: () => _name,
-					optionalMarker: () => _optional_marker,
-					typeParameters: () => _type_parameters,
-					parameters: () => _parameters,
-					returnType: () => _return_type
-				}
-			),
-			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
-			]
-		)
-	) as unknown as T.MethodSignature.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MethodSignature as const,
+		$source: 2 as const,
+		$named: true as const,
+		_accessibility_modifier,
+		_static_marker,
+		_override_modifier,
+		_readonly_marker,
+		_async_marker,
+		_accessor_kind,
+		_name,
+		_optional_marker,
+		_type_parameters,
+		_parameters,
+		_return_type,
+		$with: {
+			accessibilityModifier: (value?: NonNullable<T.MethodSignature.Config>['accessibilityModifier']) =>
+				rebuilt(node, handle, () => buildMethodSignature({ ...config, accessibilityModifier: value })),
+			staticMarker: (value?: NonNullable<T.MethodSignature.Config>['staticMarker']) =>
+				rebuilt(node, handle, () => buildMethodSignature({ ...config, staticMarker: value })),
+			overrideModifier: (value?: NonNullable<T.MethodSignature.Config>['overrideModifier']) =>
+				rebuilt(node, handle, () => buildMethodSignature({ ...config, overrideModifier: value })),
+			readonlyMarker: (value?: NonNullable<T.MethodSignature.Config>['readonlyMarker']) =>
+				rebuilt(node, handle, () => buildMethodSignature({ ...config, readonlyMarker: value })),
+			asyncMarker: (value?: NonNullable<T.MethodSignature.Config>['asyncMarker']) =>
+				rebuilt(node, handle, () => buildMethodSignature({ ...config, asyncMarker: value })),
+			accessorKind: (value?: NonNullable<T.MethodSignature.Config>['accessorKind']) =>
+				rebuilt(node, handle, () => buildMethodSignature({ ...config, accessorKind: value })),
+			name: (value: NonNullable<T.MethodSignature.Config>['name']) =>
+				rebuilt(node, handle, () => buildMethodSignature({ ...config, name: value })),
+			optionalMarker: (value?: NonNullable<T.MethodSignature.Config>['optionalMarker']) =>
+				rebuilt(node, handle, () => buildMethodSignature({ ...config, optionalMarker: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: T.TypeParameters) => buildMethodSignature({ ...config, typeParameters: value })
+					)
+				),
+			parameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
+						(value: T.FormalParameters) => buildMethodSignature({ ...config, parameters: value })
+					)
+				),
+			returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+				rebuilt(node, handle, () => buildMethodSignature({ ...config, returnType: value }))
+		},
+		accessibilityModifier: () => _accessibility_modifier,
+		staticMarker: () => _static_marker,
+		overrideModifier: () => _override_modifier,
+		readonlyMarker: () => _readonly_marker,
+		asyncMarker: () => _async_marker,
+		accessorKind: () => _accessor_kind,
+		name: () => _name,
+		optionalMarker: () => _optional_marker,
+		typeParameters: () => _type_parameters,
+		parameters: () => _parameters,
+		returnType: () => _return_type,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MethodSignature.Bound;
 }
 
 export function buildAbstractMethodSignature(
@@ -4355,56 +4474,68 @@ export function buildAbstractMethodSignature(
 		'AbstractMethodSignature.returnType',
 		'a built TypeAnnotation / AssertsAnnotation / TypePredicateAnnotation'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.AbstractMethodSignature as const,
-					$source: 2 as const,
-					$named: true as const,
-					_accessibility_modifier,
-					_override_modifier,
-					_accessor_kind,
-					_name,
-					_optional_marker,
-					_type_parameters,
-					_parameters,
-					_return_type,
-					$with: {
-						accessibilityModifier: (value?: NonNullable<T.AbstractMethodSignature.Config>['accessibilityModifier']) =>
-							buildAbstractMethodSignature({ ...config, accessibilityModifier: value }),
-						overrideModifier: (value?: NonNullable<T.AbstractMethodSignature.Config>['overrideModifier']) =>
-							buildAbstractMethodSignature({ ...config, overrideModifier: value }),
-						accessorKind: (value?: NonNullable<T.AbstractMethodSignature.Config>['accessorKind']) =>
-							buildAbstractMethodSignature({ ...config, accessorKind: value }),
-						name: (value: NonNullable<T.AbstractMethodSignature.Config>['name']) =>
-							buildAbstractMethodSignature({ ...config, name: value }),
-						optionalMarker: (value?: NonNullable<T.AbstractMethodSignature.Config>['optionalMarker']) =>
-							buildAbstractMethodSignature({ ...config, optionalMarker: value }),
-						typeParameters: (value?: T.TypeParameters) =>
-							buildAbstractMethodSignature({ ...config, typeParameters: value }),
-						parameters: (value: T.FormalParameters) => buildAbstractMethodSignature({ ...config, parameters: value }),
-						returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
-							buildAbstractMethodSignature({ ...config, returnType: value })
-					}
-				},
-				{
-					accessibilityModifier: () => _accessibility_modifier,
-					overrideModifier: () => _override_modifier,
-					accessorKind: () => _accessor_kind,
-					name: () => _name,
-					optionalMarker: () => _optional_marker,
-					typeParameters: () => _type_parameters,
-					parameters: () => _parameters,
-					returnType: () => _return_type
-				}
-			),
-			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
-			]
-		)
-	) as unknown as T.AbstractMethodSignature.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.AbstractMethodSignature as const,
+		$source: 2 as const,
+		$named: true as const,
+		_accessibility_modifier,
+		_override_modifier,
+		_accessor_kind,
+		_name,
+		_optional_marker,
+		_type_parameters,
+		_parameters,
+		_return_type,
+		$with: {
+			accessibilityModifier: (value?: NonNullable<T.AbstractMethodSignature.Config>['accessibilityModifier']) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, accessibilityModifier: value })),
+			overrideModifier: (value?: NonNullable<T.AbstractMethodSignature.Config>['overrideModifier']) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, overrideModifier: value })),
+			accessorKind: (value?: NonNullable<T.AbstractMethodSignature.Config>['accessorKind']) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, accessorKind: value })),
+			name: (value: NonNullable<T.AbstractMethodSignature.Config>['name']) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, name: value })),
+			optionalMarker: (value?: NonNullable<T.AbstractMethodSignature.Config>['optionalMarker']) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, optionalMarker: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: T.TypeParameters) => buildAbstractMethodSignature({ ...config, typeParameters: value })
+					)
+				),
+			parameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
+						(value: T.FormalParameters) => buildAbstractMethodSignature({ ...config, parameters: value })
+					)
+				),
+			returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, returnType: value }))
+		},
+		accessibilityModifier: () => _accessibility_modifier,
+		overrideModifier: () => _override_modifier,
+		accessorKind: () => _accessor_kind,
+		name: () => _name,
+		optionalMarker: () => _optional_marker,
+		typeParameters: () => _type_parameters,
+		parameters: () => _parameters,
+		returnType: () => _return_type,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AbstractMethodSignature.Bound;
 }
 
 export function buildFunctionSignature(
@@ -4435,49 +4566,61 @@ export function buildFunctionSignature(
 		[';', TSKindId.Semi] as const,
 		['\n', TSKindId.FunctionSignatureAutomaticSemicolon] as const
 	]);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.FunctionSignature as const,
-					$source: 2 as const,
-					$named: true as const,
-					_async_marker,
-					_name,
-					_type_parameters,
-					_parameters,
-					_return_type,
-					_terminator,
-					$with: {
-						asyncMarker: (value?: NonNullable<T.FunctionSignature.Config>['asyncMarker']) =>
-							buildFunctionSignature({ ...config, asyncMarker: value }, options),
-						name: (value: T.Identifier) => buildFunctionSignature({ ...config, name: value }, options),
-						typeParameters: (value?: T.TypeParameters) =>
-							buildFunctionSignature({ ...config, typeParameters: value }, options),
-						parameters: (value: T.FormalParameters) =>
-							buildFunctionSignature({ ...config, parameters: value }, options),
-						returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
-							buildFunctionSignature({ ...config, returnType: value }, options),
-						terminator: (
-							spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.FunctionSignatureAutomaticSemicolon
-						) => buildFunctionSignature(config, { ...options, terminator: spelling })
-					}
-				},
-				{
-					asyncMarker: () => _async_marker,
-					name: () => _name,
-					typeParameters: () => _type_parameters,
-					parameters: () => _parameters,
-					returnType: () => _return_type,
-					terminator: () => _terminator
-				}
-			),
-			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
-			]
-		)
-	) as unknown as T.FunctionSignature.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FunctionSignature as const,
+		$source: 2 as const,
+		$named: true as const,
+		_async_marker,
+		_name,
+		_type_parameters,
+		_parameters,
+		_return_type,
+		_terminator,
+		$with: {
+			asyncMarker: (value?: NonNullable<T.FunctionSignature.Config>['asyncMarker']) =>
+				rebuilt(node, handle, () => buildFunctionSignature({ ...config, asyncMarker: value }, options)),
+			name: (value: T.Identifier) =>
+				rebuilt(node, handle, () => buildFunctionSignature({ ...config, name: value }, options)),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: T.TypeParameters) => buildFunctionSignature({ ...config, typeParameters: value }, options)
+					)
+				),
+			parameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
+						(value: T.FormalParameters) => buildFunctionSignature({ ...config, parameters: value }, options)
+					)
+				),
+			returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+				rebuilt(node, handle, () => buildFunctionSignature({ ...config, returnType: value }, options)),
+			terminator: (
+				spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.FunctionSignatureAutomaticSemicolon
+			) => rebuilt(node, handle, () => buildFunctionSignature(config, { ...options, terminator: spelling }))
+		},
+		asyncMarker: () => _async_marker,
+		name: () => _name,
+		typeParameters: () => _type_parameters,
+		parameters: () => _parameters,
+		returnType: () => _return_type,
+		terminator: () => _terminator,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FunctionSignature.Bound;
 }
 
 export function buildDecoratorParenthesizedExpression(
@@ -4515,29 +4658,38 @@ export function buildTypeAssertion(config: T.TypeAssertion.Config): T.TypeAssert
 		'TypeAssertion.expression',
 		'a built Expression'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.TypeAssertion as const,
-					$source: 2 as const,
-					$named: true as const,
-					_type_arguments,
-					_expression,
-					$with: {
-						typeArguments: (value: T.TypeArguments) => buildTypeAssertion({ ...config, typeArguments: value }),
-						expression: (value: NonNullable<T.TypeAssertion.Config>['expression']) =>
-							buildTypeAssertion({ ...config, expression: value })
-					}
-				},
-				{
-					typeArguments: () => _type_arguments,
-					expression: () => _expression
-				}
-			),
-			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments }]
-		)
-	) as unknown as T.TypeAssertion.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeAssertion as const,
+		$source: 2 as const,
+		$named: true as const,
+		_type_arguments,
+		_expression,
+		$with: {
+			typeArguments: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
+						(value: T.TypeArguments) => buildTypeAssertion({ ...config, typeArguments: value })
+					)
+				),
+			expression: (value: NonNullable<T.TypeAssertion.Config>['expression']) =>
+				rebuilt(node, handle, () => buildTypeAssertion({ ...config, expression: value }))
+		},
+		typeArguments: () => _type_arguments,
+		expression: () => _expression,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TypeAssertion.Bound;
 }
 
 export function buildAsExpression(config: T.AsExpression.Config): T.AsExpression.Bound {
@@ -4637,29 +4789,38 @@ export function buildInstantiationExpression(
 		'InstantiationExpression.typeArguments',
 		'a built TypeArguments'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.InstantiationExpression as const,
-					$source: 2 as const,
-					$named: true as const,
-					_expression,
-					_type_arguments,
-					$with: {
-						expression: (value: NonNullable<T.InstantiationExpression.Config>['expression']) =>
-							buildInstantiationExpression({ ...config, expression: value }),
-						typeArguments: (value: T.TypeArguments) => buildInstantiationExpression({ ...config, typeArguments: value })
-					}
-				},
-				{
-					expression: () => _expression,
-					typeArguments: () => _type_arguments
-				}
-			),
-			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments }]
-		)
-	) as unknown as T.InstantiationExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.InstantiationExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_expression,
+		_type_arguments,
+		$with: {
+			expression: (value: NonNullable<T.InstantiationExpression.Config>['expression']) =>
+				rebuilt(node, handle, () => buildInstantiationExpression({ ...config, expression: value })),
+			typeArguments: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
+						(value: T.TypeArguments) => buildInstantiationExpression({ ...config, typeArguments: value })
+					)
+				)
+		},
+		expression: () => _expression,
+		typeArguments: () => _type_arguments,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.InstantiationExpression.Bound;
 }
 
 export function buildImportRequireClause(config: T.ImportRequireClause.Config): T.ImportRequireClause.Bound {
@@ -4735,29 +4896,38 @@ export function buildExtendsClauseSingle(config: T.ExtendsClauseSingle.Config): 
 		'ExtendsClauseSingle.typeArguments',
 		'a built TypeArguments'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.ExtendsClauseSingle as const,
-					$source: 2 as const,
-					$named: true as const,
-					_value,
-					_type_arguments,
-					$with: {
-						value: (value: NonNullable<T.ExtendsClauseSingle.Config>['value']) =>
-							buildExtendsClauseSingle({ ...config, value: value }),
-						typeArguments: (value?: T.TypeArguments) => buildExtendsClauseSingle({ ...config, typeArguments: value })
-					}
-				},
-				{
-					value: () => _value,
-					typeArguments: () => _type_arguments
-				}
-			),
-			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments }]
-		)
-	) as unknown as T.ExtendsClauseSingle.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ExtendsClauseSingle as const,
+		$source: 2 as const,
+		$named: true as const,
+		_value,
+		_type_arguments,
+		$with: {
+			value: (value: NonNullable<T.ExtendsClauseSingle.Config>['value']) =>
+				rebuilt(node, handle, () => buildExtendsClauseSingle({ ...config, value: value })),
+			typeArguments: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
+						(value?: T.TypeArguments) => buildExtendsClauseSingle({ ...config, typeArguments: value })
+					)
+				)
+		},
+		value: () => _value,
+		typeArguments: () => _type_arguments,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ExtendsClauseSingle.Bound;
 }
 
 export function buildImplementsClause(
@@ -4843,40 +5013,52 @@ export function buildAbstractClassDeclaration(
 		'AbstractClassDeclaration.body',
 		'a built ClassBody'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.AbstractClassDeclaration as const,
-					$source: 2 as const,
-					$named: true as const,
-					_decorator,
-					_name,
-					_type_parameters,
-					_heritage,
-					_body,
-					$with: {
-						decorators: (...values: T.Decorator[]) =>
-							buildAbstractClassDeclaration({ ...config, decorator: restItems('decorators', values) }),
-						name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
-							buildAbstractClassDeclaration({ ...config, name: value }),
-						typeParameters: (value?: T.TypeParameters) =>
-							buildAbstractClassDeclaration({ ...config, typeParameters: value }),
-						heritage: (value?: T.ClassHeritage) => buildAbstractClassDeclaration({ ...config, heritage: value }),
-						body: (value: T.ClassBody) => buildAbstractClassDeclaration({ ...config, body: value })
-					}
-				},
-				{
-					decorators: () => _decorator,
-					name: () => _name,
-					typeParameters: () => _type_parameters,
-					heritage: () => _heritage,
-					body: () => _body
-				}
-			),
-			[{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters }]
-		)
-	) as unknown as T.AbstractClassDeclaration.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.AbstractClassDeclaration as const,
+		$source: 2 as const,
+		$named: true as const,
+		_decorator,
+		_name,
+		_type_parameters,
+		_heritage,
+		_body,
+		$with: {
+			decorators: (...values: T.Decorator[]) =>
+				rebuilt(node, handle, () =>
+					buildAbstractClassDeclaration({ ...config, decorator: restItems('decorators', values) })
+				),
+			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: T.TypeParameters) => buildAbstractClassDeclaration({ ...config, typeParameters: value })
+					)
+				),
+			heritage: (value?: T.ClassHeritage) =>
+				rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, heritage: value })),
+			body: (value: T.ClassBody) =>
+				rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, body: value }))
+		},
+		decorators: () => _decorator,
+		name: () => _name,
+		typeParameters: () => _type_parameters,
+		heritage: () => _heritage,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AbstractClassDeclaration.Bound;
 }
 
 export function buildModule(config: T.Module.Config): T.Module.Bound {
@@ -5030,38 +5212,46 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 		rejectBareText(config.body, 'InterfaceDeclaration.body', 'a built InterfaceBody'),
 		[[[361], (v: unknown) => buildInterfaceBody(v as never)]]
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.InterfaceDeclaration as const,
-					$source: 2 as const,
-					$named: true as const,
-					_name,
-					_type_parameters,
-					_extends_type_clause,
-					_body,
-					$with: {
-						name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
-							buildInterfaceDeclaration({ ...config, name: value }),
-						typeParameters: (value?: T.TypeParameters) =>
-							buildInterfaceDeclaration({ ...config, typeParameters: value }),
-						extendsTypeClause: (value?: T.ExtendsTypeClause) =>
-							buildInterfaceDeclaration({ ...config, extendsTypeClause: value }),
-						body: (value: T.InterfaceBody | T.InterfaceBody.Types) =>
-							buildInterfaceDeclaration({ ...config, body: value })
-					}
-				},
-				{
-					name: () => _name,
-					typeParameters: () => _type_parameters,
-					extendsTypeClause: () => _extends_type_clause,
-					body: () => _body
-				}
-			),
-			[{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters }]
-		)
-	) as unknown as T.InterfaceDeclaration.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.InterfaceDeclaration as const,
+		$source: 2 as const,
+		$named: true as const,
+		_name,
+		_type_parameters,
+		_extends_type_clause,
+		_body,
+		$with: {
+			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: T.TypeParameters) => buildInterfaceDeclaration({ ...config, typeParameters: value })
+					)
+				),
+			extendsTypeClause: (value?: T.ExtendsTypeClause) =>
+				rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, extendsTypeClause: value })),
+			body: (value: T.InterfaceBody | T.InterfaceBody.Types) =>
+				rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, body: value }))
+		},
+		name: () => _name,
+		typeParameters: () => _type_parameters,
+		extendsTypeClause: () => _extends_type_clause,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.InterfaceDeclaration.Bound;
 }
 
 export function buildExtendsTypeClause(
@@ -5109,32 +5299,41 @@ export function buildEnumDeclaration(config: T.EnumDeclaration.Config): T.EnumDe
 		'EnumDeclaration.body',
 		'a built EnumBody'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.EnumDeclaration as const,
-					$source: 2 as const,
-					$named: true as const,
-					_const_marker,
-					_name,
-					_body,
-					$with: {
-						constMarker: (value?: NonNullable<T.EnumDeclaration.Config>['constMarker']) =>
-							buildEnumDeclaration({ ...config, constMarker: value }),
-						name: (value: T.Identifier) => buildEnumDeclaration({ ...config, name: value }),
-						body: (value: T.EnumBody) => buildEnumDeclaration({ ...config, body: value })
-					}
-				},
-				{
-					constMarker: () => _const_marker,
-					name: () => _name,
-					body: () => _body
-				}
-			),
-			[{ slot: 'body', kind: TSKindId.EnumBody as const, optional: false, make: buildEnumBody }]
-		)
-	) as unknown as T.EnumDeclaration.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.EnumDeclaration as const,
+		$source: 2 as const,
+		$named: true as const,
+		_const_marker,
+		_name,
+		_body,
+		$with: {
+			constMarker: (value?: NonNullable<T.EnumDeclaration.Config>['constMarker']) =>
+				rebuilt(node, handle, () => buildEnumDeclaration({ ...config, constMarker: value })),
+			name: (value: T.Identifier) => rebuilt(node, handle, () => buildEnumDeclaration({ ...config, name: value })),
+			body: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.EnumBody as const, optional: false, make: buildEnumBody },
+						(value: T.EnumBody) => buildEnumDeclaration({ ...config, body: value })
+					)
+				)
+		},
+		constMarker: () => _const_marker,
+		name: () => _name,
+		body: () => _body,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.EnumDeclaration.Bound;
 }
 
 export function buildEnumBody(): T.EmptyEnumBody;
@@ -5266,38 +5465,46 @@ export function buildTypeAliasDeclaration(
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.TypeAliasDeclaration as const,
-					$source: 2 as const,
-					$named: true as const,
-					_name,
-					_type_parameters,
-					_value,
-					_terminator,
-					$with: {
-						name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
-							buildTypeAliasDeclaration({ ...config, name: value }, options),
-						typeParameters: (value?: T.TypeParameters) =>
-							buildTypeAliasDeclaration({ ...config, typeParameters: value }, options),
-						value: (value: NonNullable<T.TypeAliasDeclaration.Config>['value']) =>
-							buildTypeAliasDeclaration({ ...config, value: value }, options),
-						terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-							buildTypeAliasDeclaration(config, { ...options, terminator: spelling })
-					}
-				},
-				{
-					name: () => _name,
-					typeParameters: () => _type_parameters,
-					value: () => _value,
-					terminator: () => _terminator
-				}
-			),
-			[{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters }]
-		)
-	) as unknown as T.TypeAliasDeclaration.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeAliasDeclaration as const,
+		$source: 2 as const,
+		$named: true as const,
+		_name,
+		_type_parameters,
+		_value,
+		_terminator,
+		$with: {
+			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildTypeAliasDeclaration({ ...config, name: value }, options)),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: T.TypeParameters) => buildTypeAliasDeclaration({ ...config, typeParameters: value }, options)
+					)
+				),
+			value: (value: NonNullable<T.TypeAliasDeclaration.Config>['value']) =>
+				rebuilt(node, handle, () => buildTypeAliasDeclaration({ ...config, value: value }, options)),
+			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildTypeAliasDeclaration(config, { ...options, terminator: spelling }))
+		},
+		name: () => _name,
+		typeParameters: () => _type_parameters,
+		value: () => _value,
+		terminator: () => _terminator,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TypeAliasDeclaration.Bound;
 }
 
 export const buildOverrideModifier: TSKindId.OverrideModifier = TSKindId.OverrideModifier;
@@ -5891,39 +6098,52 @@ export function buildConstructorType(config: T.ConstructorType.Config): T.Constr
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.ConstructorType as const,
-					$source: 2 as const,
-					$named: true as const,
-					_abstract_marker,
-					_type_parameters,
-					_parameters,
-					_type,
-					$with: {
-						abstractMarker: (value?: NonNullable<T.ConstructorType.Config>['abstractMarker']) =>
-							buildConstructorType({ ...config, abstractMarker: value }),
-						typeParameters: (value?: T.TypeParameters) => buildConstructorType({ ...config, typeParameters: value }),
-						parameters: (value: T.FormalParameters) => buildConstructorType({ ...config, parameters: value }),
-						type: (value: NonNullable<T.ConstructorType.Config>['type']) =>
-							buildConstructorType({ ...config, type: value })
-					}
-				},
-				{
-					abstractMarker: () => _abstract_marker,
-					typeParameters: () => _type_parameters,
-					parameters: () => _parameters,
-					type: () => _type
-				}
-			),
-			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
-			]
-		)
-	) as unknown as T.ConstructorType.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ConstructorType as const,
+		$source: 2 as const,
+		$named: true as const,
+		_abstract_marker,
+		_type_parameters,
+		_parameters,
+		_type,
+		$with: {
+			abstractMarker: (value?: NonNullable<T.ConstructorType.Config>['abstractMarker']) =>
+				rebuilt(node, handle, () => buildConstructorType({ ...config, abstractMarker: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: T.TypeParameters) => buildConstructorType({ ...config, typeParameters: value })
+					)
+				),
+			parameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
+						(value: T.FormalParameters) => buildConstructorType({ ...config, parameters: value })
+					)
+				),
+			type: (value: NonNullable<T.ConstructorType.Config>['type']) =>
+				rebuilt(node, handle, () => buildConstructorType({ ...config, type: value }))
+		},
+		abstractMarker: () => _abstract_marker,
+		typeParameters: () => _type_parameters,
+		parameters: () => _parameters,
+		type: () => _type,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ConstructorType.Bound;
 }
 
 export function buildTemplateType(
@@ -6101,29 +6321,38 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _type_arguments = rejectBareText(config.typeArguments, 'GenericType.typeArguments', 'a built TypeArguments');
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.GenericType as const,
-					$source: 2 as const,
-					$named: true as const,
-					_name,
-					_type_arguments,
-					$with: {
-						name: (value: T.TypeIdentifier | T.NestedTypeIdentifier | T.TypeIdentifier.Types) =>
-							buildGenericType({ ...config, name: value }),
-						typeArguments: (value: T.TypeArguments) => buildGenericType({ ...config, typeArguments: value })
-					}
-				},
-				{
-					name: () => _name,
-					typeArguments: () => _type_arguments
-				}
-			),
-			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments }]
-		)
-	) as unknown as T.GenericType.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.GenericType as const,
+		$source: 2 as const,
+		$named: true as const,
+		_name,
+		_type_arguments,
+		$with: {
+			name: (value: T.TypeIdentifier | T.NestedTypeIdentifier | T.TypeIdentifier.Types) =>
+				rebuilt(node, handle, () => buildGenericType({ ...config, name: value })),
+			typeArguments: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
+						(value: T.TypeArguments) => buildGenericType({ ...config, typeArguments: value })
+					)
+				)
+		},
+		name: () => _name,
+		typeArguments: () => _type_arguments,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.GenericType.Bound;
 }
 
 export function buildTypePredicate(config: T.TypePredicate.Config): T.TypePredicate.Bound {
@@ -6399,30 +6628,38 @@ export function buildTypeQueryInstantiationExpression(
 		'TypeQueryInstantiationExpression.typeArguments',
 		'a built TypeArguments'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.TypeQueryInstantiationExpression as const,
-					$source: 2 as const,
-					$named: true as const,
-					_function,
-					_type_arguments,
-					$with: {
-						function: (value: NonNullable<T.TypeQueryInstantiationExpression.Config>['function']) =>
-							buildTypeQueryInstantiationExpression({ ...config, function: value }),
-						typeArguments: (value: T.TypeArguments) =>
-							buildTypeQueryInstantiationExpression({ ...config, typeArguments: value })
-					}
-				},
-				{
-					function: () => _function,
-					typeArguments: () => _type_arguments
-				}
-			),
-			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments }]
-		)
-	) as unknown as T.TypeQueryInstantiationExpression.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeQueryInstantiationExpression as const,
+		$source: 2 as const,
+		$named: true as const,
+		_function,
+		_type_arguments,
+		$with: {
+			function: (value: NonNullable<T.TypeQueryInstantiationExpression.Config>['function']) =>
+				rebuilt(node, handle, () => buildTypeQueryInstantiationExpression({ ...config, function: value })),
+			typeArguments: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
+						(value: T.TypeArguments) => buildTypeQueryInstantiationExpression({ ...config, typeArguments: value })
+					)
+				)
+		},
+		function: () => _function,
+		typeArguments: () => _type_arguments,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TypeQueryInstantiationExpression.Bound;
 }
 
 export function buildTypeQuery(
@@ -6797,33 +7034,42 @@ export function buildObjectType(config: ConfigOf<T.ObjectType, T.NamespaceMap>):
 		'ObjectType.closing',
 		'a kind id'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.ObjectType as const,
-					$source: 2 as const,
-					$named: true as const,
-					_opening,
-					_members,
-					_closing,
-					$with: {
-						opening: (value: NonNullable<ConfigOf<T.ObjectType, T.NamespaceMap>>['opening']) =>
-							buildObjectType({ ...config, opening: value }),
-						members: (value?: T.ObjectTypeContent) => buildObjectType({ ...config, members: value }),
-						closing: (value: NonNullable<ConfigOf<T.ObjectType, T.NamespaceMap>>['closing']) =>
-							buildObjectType({ ...config, closing: value })
-					}
-				},
-				{
-					opening: () => _opening,
-					members: () => _members,
-					closing: () => _closing
-				}
-			),
-			[{ slot: 'members', kind: TSKindId.ObjectTypeContent as const, optional: true, make: buildObjectTypeContent }]
-		)
-	) as unknown as T.ObjectType.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ObjectType as const,
+		$source: 2 as const,
+		$named: true as const,
+		_opening,
+		_members,
+		_closing,
+		$with: {
+			opening: (value: NonNullable<ConfigOf<T.ObjectType, T.NamespaceMap>>['opening']) =>
+				rebuilt(node, handle, () => buildObjectType({ ...config, opening: value })),
+			members: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.ObjectTypeContent as const, optional: true, make: buildObjectTypeContent },
+						(value?: T.ObjectTypeContent) => buildObjectType({ ...config, members: value })
+					)
+				),
+			closing: (value: NonNullable<ConfigOf<T.ObjectType, T.NamespaceMap>>['closing']) =>
+				rebuilt(node, handle, () => buildObjectType({ ...config, closing: value }))
+		},
+		opening: () => _opening,
+		members: () => _members,
+		closing: () => _closing,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ObjectType.Bound;
 }
 
 export function buildObjectTypeCurly(config?: T.ObjectType.Curly.Config): T.ObjectType.Curly.Bound {
@@ -6906,35 +7152,48 @@ export function buildCallSignature(config: Partial<T.CallSignature.Config> = {})
 		'CallSignature.returnType',
 		'a built TypeAnnotation / AssertsAnnotation / TypePredicateAnnotation'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.CallSignature as const,
-					$source: 2 as const,
-					$named: true as const,
-					_type_parameters,
-					_parameters,
-					_return_type,
-					$with: {
-						typeParameters: (value?: T.TypeParameters) => buildCallSignature({ ...config, typeParameters: value }),
-						parameters: (value: T.FormalParameters) => buildCallSignature({ ...config, parameters: value }),
-						returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
-							buildCallSignature({ ...config, returnType: value })
-					}
-				},
-				{
-					typeParameters: () => _type_parameters,
-					parameters: () => _parameters,
-					returnType: () => _return_type
-				}
-			),
-			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
-			]
-		)
-	) as unknown as T.CallSignature.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.CallSignature as const,
+		$source: 2 as const,
+		$named: true as const,
+		_type_parameters,
+		_parameters,
+		_return_type,
+		$with: {
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: T.TypeParameters) => buildCallSignature({ ...config, typeParameters: value })
+					)
+				),
+			parameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
+						(value: T.FormalParameters) => buildCallSignature({ ...config, parameters: value })
+					)
+				),
+			returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+				rebuilt(node, handle, () => buildCallSignature({ ...config, returnType: value }))
+		},
+		typeParameters: () => _type_parameters,
+		parameters: () => _parameters,
+		returnType: () => _return_type,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CallSignature.Bound;
 }
 
 export function buildPropertySignature(config: T.PropertySignature.Config): T.PropertySignature.Bound {
@@ -7213,38 +7472,52 @@ export function buildConstructSignature(config: Partial<T.ConstructSignature.Con
 		'a built FormalParameters'
 	);
 	const _type = rejectBareText(config.type, 'ConstructSignature.type', 'a built TypeAnnotation');
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.ConstructSignature as const,
-					$source: 2 as const,
-					$named: true as const,
-					_abstract_marker,
-					_type_parameters,
-					_parameters,
-					_type,
-					$with: {
-						abstractMarker: (value?: NonNullable<T.ConstructSignature.Config>['abstractMarker']) =>
-							buildConstructSignature({ ...config, abstractMarker: value }),
-						typeParameters: (value?: T.TypeParameters) => buildConstructSignature({ ...config, typeParameters: value }),
-						parameters: (value: T.FormalParameters) => buildConstructSignature({ ...config, parameters: value }),
-						type: (value?: T.TypeAnnotation) => buildConstructSignature({ ...config, type: value })
-					}
-				},
-				{
-					abstractMarker: () => _abstract_marker,
-					typeParameters: () => _type_parameters,
-					parameters: () => _parameters,
-					type: () => _type
-				}
-			),
-			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
-			]
-		)
-	) as unknown as T.ConstructSignature.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ConstructSignature as const,
+		$source: 2 as const,
+		$named: true as const,
+		_abstract_marker,
+		_type_parameters,
+		_parameters,
+		_type,
+		$with: {
+			abstractMarker: (value?: NonNullable<T.ConstructSignature.Config>['abstractMarker']) =>
+				rebuilt(node, handle, () => buildConstructSignature({ ...config, abstractMarker: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: T.TypeParameters) => buildConstructSignature({ ...config, typeParameters: value })
+					)
+				),
+			parameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
+						(value: T.FormalParameters) => buildConstructSignature({ ...config, parameters: value })
+					)
+				),
+			type: (value?: T.TypeAnnotation) =>
+				rebuilt(node, handle, () => buildConstructSignature({ ...config, type: value }))
+		},
+		abstractMarker: () => _abstract_marker,
+		typeParameters: () => _type_parameters,
+		parameters: () => _parameters,
+		type: () => _type,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ConstructSignature.Bound;
 }
 
 export function buildArrayType(
@@ -7482,35 +7755,48 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.FunctionType as const,
-					$source: 2 as const,
-					$named: true as const,
-					_type_parameters,
-					_parameters,
-					_return_type,
-					$with: {
-						typeParameters: (value?: T.TypeParameters) => buildFunctionType({ ...config, typeParameters: value }),
-						parameters: (value: T.FormalParameters) => buildFunctionType({ ...config, parameters: value }),
-						returnType: (value: NonNullable<T.FunctionType.Config>['returnType']) =>
-							buildFunctionType({ ...config, returnType: value })
-					}
-				},
-				{
-					typeParameters: () => _type_parameters,
-					parameters: () => _parameters,
-					returnType: () => _return_type
-				}
-			),
-			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
-			]
-		)
-	) as unknown as T.FunctionType.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FunctionType as const,
+		$source: 2 as const,
+		$named: true as const,
+		_type_parameters,
+		_parameters,
+		_return_type,
+		$with: {
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: T.TypeParameters) => buildFunctionType({ ...config, typeParameters: value })
+					)
+				),
+			parameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
+						(value: T.FormalParameters) => buildFunctionType({ ...config, parameters: value })
+					)
+				),
+			returnType: (value: NonNullable<T.FunctionType.Config>['returnType']) =>
+				rebuilt(node, handle, () => buildFunctionType({ ...config, returnType: value }))
+		},
+		typeParameters: () => _type_parameters,
+		parameters: () => _parameters,
+		returnType: () => _return_type,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FunctionType.Bound;
 }
 
 export function buildExportSpecifiers(
@@ -8460,33 +8746,42 @@ export function buildExportStatementTypeExport(
 		options?.terminator,
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.ExportStatementTypeExport as const,
-					$source: 2 as const,
-					$named: true as const,
-					_export_clause,
-					_source,
-					_terminator,
-					$with: {
-						exportClause: (value: T.ExportClause) =>
-							buildExportStatementTypeExport({ ...config, exportClause: value }, options),
-						source: (value?: T.String) => buildExportStatementTypeExport({ ...config, source: value }, options),
-						terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-							buildExportStatementTypeExport(config, { ...options, terminator: spelling })
-					}
-				},
-				{
-					exportClause: () => _export_clause,
-					source: () => _source,
-					terminator: () => _terminator
-				}
-			),
-			[{ slot: 'exportClause', kind: TSKindId.ExportClause as const, optional: false, make: buildExportClause }]
-		)
-	) as unknown as T.ExportStatementTypeExport.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ExportStatementTypeExport as const,
+		$source: 2 as const,
+		$named: true as const,
+		_export_clause,
+		_source,
+		_terminator,
+		$with: {
+			exportClause: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.ExportClause as const, optional: false, make: buildExportClause },
+						(value: T.ExportClause) => buildExportStatementTypeExport({ ...config, exportClause: value }, options)
+					)
+				),
+			source: (value?: T.String) =>
+				rebuilt(node, handle, () => buildExportStatementTypeExport({ ...config, source: value }, options)),
+			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildExportStatementTypeExport(config, { ...options, terminator: spelling }))
+		},
+		exportClause: () => _export_clause,
+		source: () => _source,
+		terminator: () => _terminator,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ExportStatementTypeExport.Bound;
 }
 
 export function buildExportStatementEqualsExport(
@@ -9642,32 +9937,42 @@ export function buildCallExpressionCall(config: T.CallExpressionCall.Config): T.
 		'CallExpressionCall.arguments',
 		'a built Arguments'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.CallExpressionCall as const,
-					$source: 2 as const,
-					$named: true as const,
-					_function,
-					_type_arguments,
-					_arguments,
-					$with: {
-						function: (value: NonNullable<T.CallExpressionCall.Config>['function']) =>
-							buildCallExpressionCall({ ...config, function: value }),
-						typeArguments: (value?: T.TypeArguments) => buildCallExpressionCall({ ...config, typeArguments: value }),
-						arguments: (value: T.Arguments) => buildCallExpressionCall({ ...config, arguments: value })
-					}
-				},
-				{
-					function: () => _function,
-					typeArguments: () => _type_arguments,
-					arguments: () => _arguments
-				}
-			),
-			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments }]
-		)
-	) as unknown as T.CallExpressionCall.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.CallExpressionCall as const,
+		$source: 2 as const,
+		$named: true as const,
+		_function,
+		_type_arguments,
+		_arguments,
+		$with: {
+			function: (value: NonNullable<T.CallExpressionCall.Config>['function']) =>
+				rebuilt(node, handle, () => buildCallExpressionCall({ ...config, function: value })),
+			typeArguments: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
+						(value?: T.TypeArguments) => buildCallExpressionCall({ ...config, typeArguments: value })
+					)
+				),
+			arguments: (value: T.Arguments) =>
+				rebuilt(node, handle, () => buildCallExpressionCall({ ...config, arguments: value }))
+		},
+		function: () => _function,
+		typeArguments: () => _type_arguments,
+		arguments: () => _arguments,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CallExpressionCall.Bound;
 }
 
 export function buildCallExpressionTemplateCall(
@@ -9727,32 +10032,42 @@ export function buildCallExpressionMember(config: T.CallExpressionMember.Config)
 		'CallExpressionMember.arguments',
 		'a built Arguments'
 	);
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.CallExpressionMember as const,
-					$source: 2 as const,
-					$named: true as const,
-					_function,
-					_type_arguments,
-					_arguments,
-					$with: {
-						function: (value: NonNullable<T.CallExpressionMember.Config>['function']) =>
-							buildCallExpressionMember({ ...config, function: value }),
-						typeArguments: (value?: T.TypeArguments) => buildCallExpressionMember({ ...config, typeArguments: value }),
-						arguments: (value: T.Arguments) => buildCallExpressionMember({ ...config, arguments: value })
-					}
-				},
-				{
-					function: () => _function,
-					typeArguments: () => _type_arguments,
-					arguments: () => _arguments
-				}
-			),
-			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments }]
-		)
-	) as unknown as T.CallExpressionMember.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.CallExpressionMember as const,
+		$source: 2 as const,
+		$named: true as const,
+		_function,
+		_type_arguments,
+		_arguments,
+		$with: {
+			function: (value: NonNullable<T.CallExpressionMember.Config>['function']) =>
+				rebuilt(node, handle, () => buildCallExpressionMember({ ...config, function: value })),
+			typeArguments: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
+						(value?: T.TypeArguments) => buildCallExpressionMember({ ...config, typeArguments: value })
+					)
+				),
+			arguments: (value: T.Arguments) =>
+				rebuilt(node, handle, () => buildCallExpressionMember({ ...config, arguments: value }))
+		},
+		function: () => _function,
+		typeArguments: () => _type_arguments,
+		arguments: () => _arguments,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CallExpressionMember.Bound;
 }
 
 export function buildStringDouble(
@@ -10258,29 +10573,38 @@ export function buildExportStatementDefaultFromClauseFrom(
 		'a built ExportClause'
 	);
 	const _source = rejectBareText(config.source, 'ExportStatementDefaultFromClauseFrom.source', 'a built String');
-	return withMethods(
-		withListSlots(
-			withAccessors(
-				{
-					$type: TSKindId.ExportStatementDefaultFromClauseFrom as const,
-					$source: 2 as const,
-					$named: true as const,
-					_export_clause,
-					_source,
-					$with: {
-						exportClause: (value: T.ExportClause) =>
-							buildExportStatementDefaultFromClauseFrom({ ...config, exportClause: value }),
-						source: (value: T.String) => buildExportStatementDefaultFromClauseFrom({ ...config, source: value })
-					}
-				},
-				{
-					exportClause: () => _export_clause,
-					source: () => _source
-				}
-			),
-			[{ slot: 'exportClause', kind: TSKindId.ExportClause as const, optional: false, make: buildExportClause }]
-		)
-	) as unknown as T.ExportStatementDefaultFromClauseFrom.Bound;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ExportStatementDefaultFromClauseFrom as const,
+		$source: 2 as const,
+		$named: true as const,
+		_export_clause,
+		_source,
+		$with: {
+			exportClause: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.ExportClause as const, optional: false, make: buildExportClause },
+						(value: T.ExportClause) => buildExportStatementDefaultFromClauseFrom({ ...config, exportClause: value })
+					)
+				),
+			source: (value: T.String) =>
+				rebuilt(node, handle, () => buildExportStatementDefaultFromClauseFrom({ ...config, source: value }))
+		},
+		exportClause: () => _export_clause,
+		source: () => _source,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ExportStatementDefaultFromClauseFrom.Bound;
 }
 
 export function buildExportStatementDefaultDeclarationDefaultKw(

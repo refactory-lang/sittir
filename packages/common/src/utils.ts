@@ -471,12 +471,13 @@ export function withListView<T extends object>(node: T, spec: ListViewSpec, tree
 export function listSlotWith(
 	args: readonly unknown[],
 	spec: Omit<ListSlotSpec, 'slot'>,
-	set: (...args: unknown[]) => unknown
+	set: (...args: never[]) => unknown
 ): unknown {
 	const make = spec.make as (...args: unknown[]) => unknown;
-	if (args.length === 0) return spec.optional ? set() : set(make());
+	const run = set as (...args: unknown[]) => unknown;
+	if (args.length === 0) return spec.optional ? run() : run(make());
 	const whole = args.length === 1 && (args[0] === undefined || (args[0] as { $type?: unknown } | null)?.$type === spec.kind);
-	return set(whole ? args[0] : make(...convertElements(args, spec.element)));
+	return run(whole ? args[0] : make(...convertElements(args, spec.element)));
 }
 
 export function withListSlots<T extends object>(node: T, specs: readonly ListSlotSpec[]): T {
@@ -506,14 +507,14 @@ export function withElementsSeat<T extends object>(node: T, spec: ElementsSeatSp
 export function elementsWith(
 	args: readonly unknown[],
 	spec: ElementsSeatSpec,
-	set: (...args: unknown[]) => unknown
+	set: (...args: never[]) => unknown
 ): unknown {
 	if (args.some(Array.isArray)) {
 		throw new TypeError(
 			`$with.${spec.slot} takes its elements as rest arguments, $with.${spec.slot}(a, b), not an array; spread it: $with.${spec.slot}(...items)`
 		);
 	}
-	return set(...convertElements(args, spec));
+	return (set as (...args: unknown[]) => unknown)(...convertElements(args, spec));
 }
 
 interface GroupSeatKey {
@@ -572,9 +573,10 @@ export function seatWith(
 	spec: GroupSeatSpec,
 	key: GroupSeatKey,
 	args: readonly unknown[],
-	seat: (...args: unknown[]) => unknown,
+	set: (...args: never[]) => unknown,
 	readGroup: () => Members | undefined
 ): unknown {
+	const seat = set as (...args: unknown[]) => unknown;
 	const make = spec.make as (config: unknown) => unknown;
 	if (key.name === spec.slot && args.length === 1 && (args[0] as { $type?: unknown } | null)?.$type === spec.kind) {
 		return seat(args[0]);

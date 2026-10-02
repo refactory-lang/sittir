@@ -1,5 +1,6 @@
 import { emptyForms, innerGapsKeyed } from '../compiler/model/trivia.ts';
 import type { NodeMap } from '../compiler/types.ts';
+import type { SeatPlan } from './factories.ts';
 
 export interface SetterEntry {
 	readonly name: string;
@@ -53,4 +54,20 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 		'    $engine: handle && (() => handle.current)'
 	);
 	return lines;
+}
+
+export function seatedSetters(setters: readonly SetterEntry[], plan: SeatPlan): SetterEntry[] {
+	return setters.map((entry) => {
+		const base = `(${entry.params}) => ${entry.body}`;
+		const element = plan.elements.find((candidate) => candidate.slot === entry.name);
+		const slot = plan.slots.find((candidate) => candidate.slot === entry.name);
+		const elementSet = element === undefined ? base : `(...args: never[]) => elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${element.spec} }, ${base})`;
+		if (slot !== undefined) {
+			return { name: entry.name, params: '...args: unknown[]', body: `listSlotWith(args, { ${slot.spec} }, ${elementSet})` };
+		}
+		if (element !== undefined) {
+			return { name: entry.name, params: '...args: unknown[]', body: `elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${element.spec} }, ${base})` };
+		}
+		return entry;
+	});
 }

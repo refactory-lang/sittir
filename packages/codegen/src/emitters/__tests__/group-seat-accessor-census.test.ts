@@ -92,8 +92,9 @@ describe('an elements seat sets the element config objects its config surface ta
 				const block = compact(types.slice(types.indexOf(`export interface ${node.typeName} {`), types.indexOf('\n}\n', types.indexOf(`export interface ${node.typeName} {`))));
 				expect(block, `${node.kind}.${fact.slot}`).toMatch(new RegExp(`readonly${fact.slot}:SlotHint<[\\s\\S]*?,(?:true|false),(?:true|false),T\\.${fact.group}\\.Config>;`));
 			}
-			expect([...read(grammar, 'factories/raw.ts').matchAll(/withElementsSeat\(/g)]).toHaveLength(seats.length);
-			expect([...read(grammar, 'wrap.ts').matchAll(/withElementsSeat\(/g)]).toHaveLength(seats.length);
+			for (const file of ['factories/raw.ts', 'wrap.ts']) {
+				expect([...read(grammar, file).matchAll(/\b(?:withElementsSeat|elementsWith)\(/g)]).toHaveLength(seats.length);
+			}
 		});
 
 		it(`${grammar}: every slot that holds a list carries its list's element config`, async () => {
