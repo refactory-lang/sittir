@@ -17,14 +17,14 @@ describe('an argument of the builder\'s own kind', () => {
 	});
 
 	it('is one element of a list that can hold itself', () => {
-		expect(ts.build.tupleType(ts.build.tupleType('A' as never, 'B' as never) as never).$render()).toBe('[[A, B]]');
+		expect(ts.build.tupleType(ts.build.tupleType('A', 'B')).$render()).toBe('[[A, B]]');
 	});
 
 	it('is one element of a spread kind', () => {
-		expect(ts.build.array(ts.build.array(x) as never).$render()).toBe('[[x]]');
+		expect(ts.build.array(ts.build.array(x)).$render()).toBe('[[x]]');
 	});
 
 	it('is still the elements of a list that cannot hold itself', () => {
-		expect(ts.build.arguments(ts.build.arguments(x) as never).$render()).toBe('(x)');
+		expect(ts.build.arguments(ts.build.arguments(x)).$render()).toBe('(x)');
 	});
 });

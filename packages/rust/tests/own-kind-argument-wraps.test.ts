@@ -19,14 +19,14 @@ describe('an argument of the builder\'s own kind', () => {
 
 	it('is one element of a list that can hold itself', () => {
 		const inner = rs.build.tuplePattern(x, y);
-		expect(rs.build.tuplePattern(inner as never).elements()?.elements()).toEqual([inner]);
+		expect(rs.build.tuplePattern(inner).elements()?.elements()).toEqual([inner]);
 	});
 
 	it('is one element of a spread kind', () => {
-		expect(rs.build.tokenTree.paren(rs.build.tokenTree.paren(x) as never).$render()).toBe('((x))');
+		expect(rs.build.tokenTree.paren(rs.build.tokenTree.paren(x)).$render()).toBe('((x))');
 	});
 
 	it('is still the elements of a list that cannot hold itself', () => {
-		expect(rs.build.arguments(rs.build.arguments(x) as never).$render()).toBe('(x)');
+		expect(rs.build.arguments(rs.build.arguments(x)).$render()).toBe('(x)');
 	});
 });

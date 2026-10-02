@@ -20,16 +20,16 @@ describe('an argument of the builder\'s own kind', () => {
 
 	it('is one element of a list that can hold itself', () => {
 		const inner = py.build.tuple(x, y);
-		expect(py.build.tuple(inner as never).collectionElements()?.elements()).toEqual([inner]);
-		expect(py.build.list(py.build.list(x) as never).$render()).toBe('[[x]]');
+		expect(py.build.tuple(inner).collectionElements()?.elements()).toEqual([inner]);
+		expect(py.build.list(py.build.list(x)).$render()).toBe('[[x]]');
 	});
 
 	it('is one element of a spread kind', () => {
 		const inner = py.build.unionPattern(py.build.dottedName(x), py.build.dottedName(y));
-		expect(py.build.unionPattern(inner as never).patterns().length).toBe(1);
+		expect(py.build.unionPattern(inner).patterns().length).toBe(1);
 	});
 
 	it('is still the elements of a list that cannot hold itself', () => {
-		expect(py.build.argumentList(py.build.argumentList(x) as never).$render()).toBe('(x)');
+		expect(py.build.argumentList(py.build.argumentList(x)).$render()).toBe('(x)');
 	});
 });
