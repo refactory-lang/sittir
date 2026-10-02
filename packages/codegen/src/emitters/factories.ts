@@ -2124,13 +2124,6 @@ function emitSeparatedListFactory(
 	if (node.nonEmpty) {
 		lines.push(`  _assertNonEmpty(elements, '${node.kind}.elements');`);
 	}
-	if (node.singleElementNeedsTrailing) {
-		lines.push(
-			`  if (elements.length === 1 && ((options.delimiter ?? ${delimiterDefault}) & Delimiter.Trailing) === 0) {`
-		);
-		lines.push(`    throw new Error('${node.kind}: a single element requires a trailing delimiter (delimiter: 2)');`);
-		lines.push('  }');
-	}
 	const w = surface.wrapper;
 	if (w !== undefined) {
 		lines.push(

@@ -883,12 +883,15 @@ function buildTypedTemplateBody(
 					: separatedList?.leadingDelimiter === 'mandatory'
 						? 'true'
 						: 'false';
-			const trailingExpr =
+			const trailingOption =
 				separatedList?.trailingDelimiter === 'optional'
 					? 'node.delimiter.map(|d| d & 2 != 0).unwrap_or(false)'
 					: separatedList?.trailingDelimiter === 'mandatory'
 						? 'true'
 						: 'false';
+			const trailingExpr = separatedList?.singleElementNeedsTrailing
+				? `(${items}).len() == 1 || ${trailingOption}`
+				: trailingOption;
 			const separatorSite = separatedList === undefined ? undefined : separatorSiteOf(plan, separatedList);
 			const fallback =
 				separatorSite?.defaultText === undefined ? fieldSepLiteral : JSON.stringify(separatorSite.defaultText);

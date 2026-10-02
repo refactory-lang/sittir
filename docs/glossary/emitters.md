@@ -6251,9 +6251,6 @@ its parent, or `undefined` when the kind has no public path.
 ```
 
 
-It returns whether it passed `{ delimiter: Delimiter.Trailing }`
-(`singleElementNeedsTrailing`); `emitTests` adds the `Delimiter` import only
-when some list test used it.
 
 ### `packages/codegen/src/emitters/test.ts::subFactoryChildrenArgs`
 
