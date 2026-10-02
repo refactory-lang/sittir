@@ -346,17 +346,6 @@ macro_rules! napi_engine {
                 })
             }
 
-            #[::napi_derive::napi]
-            pub fn apply_edits(
-                &self,
-                source: String,
-                edits: Vec<$crate::types::Edit>,
-            ) -> ::napi::Result<String> {
-                self.engine
-                    .apply_edits(source, edits)
-                    .map_err(::napi::Error::from_reason)
-            }
-
             /// Free this engine's own state. The trees it parsed stay in the
             /// addon's table: they belong to whoever still names them.
             #[::napi_derive::napi]

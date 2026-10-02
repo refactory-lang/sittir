@@ -40,7 +40,7 @@ The entry point: refuses unimplemented options, loads the language (once per des
 
 ### `packages/common/src/engine-scope.ts::LiveEngine`
 
-An engine's identity plus its `render`: what a node's `$render` and `$toEdit` reach through their handle. The public `Engine` satisfies it structurally.
+An engine's identity plus its `render`: what a node's `$render` reaches through its handle. The public `Engine` satisfies it structurally.
 
 ### `packages/common/src/engine-scope.ts::EngineHandle`
 
@@ -123,7 +123,7 @@ One member (`Node` or `Loose`) of kind `K`'s namespace in a grammar type map; `n
 
 The runtime a grammar binds, one generic signature per guard over its type map:
 - `isNode`'s kind-parameterised overload narrows to `Extract<Node, AnyUntypedNode>`, not `Node`: the namespaces carry keyword kinds whose `Node` is the bare id, and an id is never node data, so with the plain `Node` the predicate would contain numbers and stop narrowing ids away in every `coerceTo*` `isNode(input)` check.
-- The node members (`$render`, `$toEdit`, `$replace`, `$trivia`, `$engine`) are written in each node's literal by the factories and wraps, typed by the map's trivia union. A node built inside an engine's scope renders, edits and takes trivia through that engine; one built outside any scope carries no engine and refuses each of those.
+- The node members (`$render`, `$trivia`, `$engine`) are written in each node's literal by the factories and wraps, typed by the map's trivia union. A node built inside an engine's scope renders, edits and takes trivia through that engine; one built outside any scope carries no engine and refuses each of those.
 
 ### `packages/common/src/runtime.ts::bindRuntime`
 
@@ -293,7 +293,7 @@ A seated key's `$with` setter. Through a present group it writes the group's own
 
 ### `packages/common/src/transport-data.ts::isDataKey`
 
-Whether a key carries node data across the native boundary: a storage key (`_<slot>`, `$other`) or a `$` metadata key that is not a member (`$with`, `$trivia`, `$engine`, `$render`, `$toEdit`, `$replace`). A reader, a list index, `length` and a list option are members and so are not data. The boundary projection and every walker that visits a node's keys select by this, and read only the keys it selects, so a member that throws when read is never read.
+Whether a key carries node data across the native boundary: a storage key (`_<slot>`, `$other`) or a `$` metadata key that is not a member (`$with`, `$trivia`, `$engine`, `$render`). A reader, a list index, `length` and a list option are members and so are not data. The boundary projection and every walker that visits a node's keys select by this, and read only the keys it selects, so a member that throws when read is never read.
 
 ### `packages/common/src/runtime.ts::kindIdStorage`
 

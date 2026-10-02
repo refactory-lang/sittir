@@ -1,4 +1,3 @@
-export { replace, applyEdits } from './edit.ts';
 export { applyFormat, rebaseTrivia } from './format.ts';
 export { withMetrics, dumpMetrics } from './metrics.ts';
 export type { MetricsFile, PerKindMetrics, FfiMetrics } from './metrics.ts';

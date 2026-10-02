@@ -45,7 +45,6 @@ function fakeLanguage(name: string) {
 			return {
 				render: (n: AnyUntypedNode, call?: Options) =>
 					createRenderHandle(() => `${label}:${call?.indent ?? opts?.options?.indent ?? ''}:${n.$type}`),
-				applyEdits: (s: string) => s,
 				parseAndRead: () => {
 					const tree = { source: 'src' };
 					trees.push(tree);

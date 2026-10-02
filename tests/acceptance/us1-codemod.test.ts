@@ -6,11 +6,8 @@
  * 20-file `fixtures/codemod-sample/` corpus and asserts the output is
  * byte-identical to the JS-baseline captured by `capture-baseline.ts`
  * (one-shot, run with `SITTIR_BACKEND=js`). The codemod goes
- * through the rust language engine's `applyEdits`, so on
- * a machine where the napi `.node` artifact has been built the active
- * backend is `native`; without it, the test still validates the JS
- * fallback against its own baseline (it'll just not exercise the
- * `name === 'native'` assertion).
+ * through plain text splicing at the parsed positions, so the output does
+ * not depend on the backend.
  *
  * The native-backend assertion is conditional on the `.node` artifact
  * being available so this test is fully self-contained on a fresh
@@ -23,7 +20,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { runCodemodOnDir } from './codemod-inline.ts';
+import { runCodemodOnDir, runCodemodOnSource } from './codemod-inline.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CORPUS_DIR = join(__dirname, 'fixtures', 'codemod-sample');
@@ -50,5 +47,11 @@ describe('US1 acceptance — native-backend codemod (T050)', () => {
 			// Equality at byte level — JS baseline IS the contract.
 			expect(r.output).toBe(expected);
 		}
+	});
+
+	it('inserts at the right place when non-ASCII text precedes the function', async () => {
+		const { output, insertions } = await runCodemodOnSource('// ψψ\nfn f() { 1 }\n');
+		expect(insertions).toBe(1);
+		expect(output).toBe('// ψψ\n#[inline]\nfn f() { 1 }\n');
 	});
 });

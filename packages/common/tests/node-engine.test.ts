@@ -21,8 +21,6 @@ function builtIn(handle: EngineHandle, node: Record<string, unknown> = { $type: 
 type Methods = {
 	$engine?(): unknown;
 	$render(): string;
-	$toEdit(start: number, end: number): unknown;
-	$replace(target: { range(): unknown }): unknown;
 	$with: { x(): AnyUntypedNode & Methods };
 	$trivia: { leading(...items: unknown[]): AnyUntypedNode & Methods; leading(): readonly unknown[] };
 };
@@ -35,20 +33,16 @@ describe('a node and its engine', () => {
 		expect(node.$engine?.()).toBe(a.current);
 	});
 
-	it('carries no engine outside a scope, so it cannot render, edit or take trivia', () => {
+	it('carries no engine outside a scope, so it cannot render or take trivia', () => {
 		const node = methods(withMethods({ $type: 1, $text: 'x' } as AnyUntypedNode));
 		expect(node.$engine).toBeUndefined();
 		expect(() => node.$render()).toThrow(/no engine.*engine\.render\(node\)/);
-		expect(() => node.$toEdit(0, 1)).toThrow(/no engine/);
 		expect(() => node.$trivia.leading('// x')).toThrow(/no engine/);
 	});
 
-	it('renders and edits through its engine, not the supplied facts', () => {
+	it('renders through its engine, not the supplied facts', () => {
 		const node = methods(builtIn(engineHandle('a')));
 		expect(node.$render()).toBe('a');
-		expect(node.$toEdit(0, 3)).toEqual({ startPos: 0, endPos: 3, insertedText: 'a' });
-		const range = { start: { index: 1 }, end: { index: 2 } };
-		expect(node.$replace({ range: () => range })).toEqual({ startPos: 1, endPos: 2, insertedText: 'a' });
 	});
 
 	it('names engine.render(node) when its engine is disposed, and leaves other engines alone', () => {
@@ -59,7 +53,6 @@ describe('a node and its engine', () => {
 		const identity = detach(a);
 		expect(nodeA.$engine?.()).toBe(identity);
 		expect(() => nodeA.$render()).toThrow(/engine disposed.*engine\.render\(node\)/);
-		expect(() => nodeA.$toEdit(0, 1)).toThrow(/engine disposed/);
 		expect(nodeB.$render()).toBe('b');
 	});
 

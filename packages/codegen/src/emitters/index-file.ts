@@ -16,13 +16,18 @@ export function emitIndex(config: EmitIndexConfig): string {
 		'',
 		`export type { ${api} } from './api.js';`,
 		'',
-		`const ${config.grammar}: Language<${api}> = { name: '${config.grammar}', fileTypes: ${JSON.stringify(config.nodeMap.fileTypes)}, load: () => import('./api.js').then((m) => m.hooks) };`,
+		`const ${config.grammar}: Language<${api}> = {`,
+		`\tname: '${config.grammar}',`,
+		`\tfileTypes: ${JSON.stringify(config.nodeMap.fileTypes)},`,
+		"\tload: () => import('./api.js').then((m) => m.hooks),",
+		`\tcreateEngine: (options) => import('@sittir/common').then((m) => m.createEngine(${config.grammar}, options))`,
+		'};',
 		`export default ${config.grammar};`,
 		'',
 		"export type * from './types.js';",
 		"export type * from './options.js';",
 		"export type { IsGuards } from './is.js';",
-		"export type { Edit, CSTNode } from '@sittir/types';",
+		"export type { CSTNode } from '@sittir/types';",
 		''
 	].join('\n');
 }

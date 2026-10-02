@@ -20,6 +20,7 @@
 		"./07-read-source.ts",
 		"./09-type-guards.ts",
 		"./12-cross-language-migration.ts",
+		"./14-format-preserving-transform.ts",
 		"./15-generate-file.ts",
 		"./16-dogfooding.ts",
 		"./17-dogfood-rust-strict.ts",

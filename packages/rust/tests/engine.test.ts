@@ -33,16 +33,6 @@ describe('engine', () => {
 						render(_node: Record<string, unknown>): string {
 							return 'ok';
 						}
-						applyEdits(
-							source: string,
-							_edits: {
-								startPos: number;
-								endPos: number;
-								insertedText: string;
-							}[]
-						): string {
-							return source;
-						}
 						parseAndRead(_source: string): string {
 							// $type is numeric (TSKindId).
 							return JSON.stringify({
@@ -75,7 +65,6 @@ describe('engine', () => {
 		// The engine exposes parse, render, edit and dispose; the native engine exposes the read path
 		expect(typeof engine.parse).toBe('function');
 		expect(typeof engine.render).toBe('function');
-		expect(typeof engine.applyEdits).toBe('function');
 		expect(typeof engine.dispose).toBe('function');
 		const native = (await (await descriptor()).load()).createNative();
 		expect(typeof native.parseAndRead).toBe('function');
@@ -90,9 +79,6 @@ describe('engine', () => {
 					SittirEngine: class {
 						render(_node: Record<string, unknown>): string {
 							return 'ok';
-						}
-						applyEdits(source: string): string {
-							return source;
 						}
 						parseAndRead(_source: string): string {
 							return JSON.stringify({
@@ -193,16 +179,6 @@ describe('engine', () => {
 						render(_node: Record<string, unknown>): string {
 							return 'fn main() {}';
 						}
-						applyEdits(
-							source: string,
-							_edits: {
-								startPos: number;
-								endPos: number;
-								insertedText: string;
-							}[]
-						): string {
-							return source;
-						}
 						dispose(): void {}
 					}
 				}
@@ -237,16 +213,6 @@ describe('engine', () => {
 						}
 						renderToFile(untypedNode: Record<string, unknown>, path: string): void {
 							renderToFile(untypedNode, path);
-						}
-						applyEdits(
-							source: string,
-							_edits: {
-								startPos: number;
-								endPos: number;
-								insertedText: string;
-							}[]
-						): string {
-							return source;
 						}
 						dispose(): void {}
 					}

@@ -32,7 +32,7 @@ Generated packages (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) cont
 - **S-expression templates** — tree-sitter query syntax for render rules. Field references use raw names.
 - **Grammar-aligned terminology** — kind, field, named, anonymous, supertype (tree-sitter/ast-grep terms)
 - **Supertype unions** — `_expression` → `Expression`, `ExpressionTree`
-- **Node methods need no extra args** — `node.$render()`, `node.$toEdit()`, `node.$replace()`
+- **Node methods need no extra args** — `node.$render()`
 - **Render guards** — branch nodes without `$fields` throw; leaf nodes without `$text` throw
 
 ### Public API surfaces (post-008)

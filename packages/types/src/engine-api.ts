@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, StringIndexRange, Edit, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaSetter } from './core-types.ts';
+import type { AnyUntypedNode, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
 
 export interface TriviaFacts {
@@ -37,7 +37,7 @@ export interface ParseOptions {
 }
 
 export interface EngineIdentity<API extends LanguageAPI = LanguageAPI> {
-	readonly language: Language<API>;
+	readonly language: LanguageIdentity<API>;
 	readonly renderModuleHash: string;
 	readonly options: API['options'] | undefined;
 	readonly trivia: TriviaFacts;
@@ -51,16 +51,6 @@ export interface GrammarTypeMap {
 
 export interface NodeMethods<Trivia = any> {
 	$render(): string;
-	/**
-	 * An Edit replacing a range with this node's rendered text: byte offsets as
-	 * two numbers, or a range. A range's `index` is a string index (UTF-16 code units, as ast-grep reports it) while an `Edit` counts bytes, so the edit lands in the wrong place when non-ASCII text precedes the range.
-	 */
-	$toEdit(startOrRange: number | StringIndexRange, endPos?: number): Edit;
-	/**
-	 * An Edit replacing the target's range with this node's rendered text.
-	 * A range's `index` is a string index (UTF-16 code units, as ast-grep reports it) while an `Edit` counts bytes, so the edit lands in the wrong place when non-ASCII text precedes the range.
-	 */
-	$replace(target: { range(): StringIndexRange }): Edit;
 	$trivia: TriviaSetter<this, Trivia>;
 }
 
@@ -88,11 +78,29 @@ export interface LanguageAPI {
 	readonly empty: GrammarTypeMap['empty'];
 }
 
+/** What names a language and what an engine records of it: a `Language` without its engine constructor. Unlike `Language`, it is assignable across `LanguageAPI`s. */
+export type LanguageIdentity<API extends LanguageAPI> = Omit<Language<API>, 'createEngine'>;
+
+/** The options `createEngine` takes: the engine options, with the `render` block checked against the language's render options. */
+export type CreateEngineOptions<API extends LanguageAPI, R = API['options']> = EngineOptions<API> & {
+	readonly render?: R & RenderOptionsCheck<API, R>;
+};
+
 export interface Language<API extends LanguageAPI> {
 	readonly name: API['name'];
 	readonly fileTypes: readonly string[];
 	load(): Promise<LanguageHooks<API>>;
 	readonly __api?: API;
+	/**
+	 * Creates an engine for this language, the same as `createEngine(language, options)` from
+	 * `@sittir/common`. The implementation loads on the first call; importing the descriptor does not.
+	 *
+	 * @param options - Engine options. `render` sets the engine's render options and is checked
+	 * against this language's options: an unknown key or a mistyped value is a type error.
+	 * @returns The engine, once the language has loaded.
+	 * @throws When an option the engine does not implement yet is set, or the language fails to load.
+	 */
+	createEngine<const R extends API['options'] = API['options']>(options?: CreateEngineOptions<API, R>): Promise<Engine<API>>;
 }
 
 export interface NativeEngineOptions<O extends object = Readonly<Record<string, unknown>>> {
@@ -113,7 +121,6 @@ export interface LanguageHooks<API extends LanguageAPI> {
 
 export interface NativeLanguageEngine<API extends LanguageAPI> {
 	render(node: AnyUntypedNode | number, options?: API['options'] & RenderCallOptions): Rendered;
-	applyEdits(source: string, edits: readonly Edit[]): string;
 	parseAndRead: EngineDiagnostics['parseAndRead'];
 	readonly buildProfile?: EngineDiagnostics['buildProfile'];
 	dispose(): void;
@@ -184,7 +191,6 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	readonly create: (path: string, fn: (build: API['build']) => API['root']) => Pending;
 	readonly edit: (path: string, fn: (root: API['root']) => API['root']) => Pending;
 	readonly write: (path: string, node: API['root']) => Pending;
-	readonly applyEdits: (source: string, edits: readonly Edit[]) => string;
 	readonly dispose: () => void;
 }
 
@@ -261,4 +267,4 @@ export type NodeOfNamespaces<NsMap extends object> = Extract<
 >;
 
 export type Types<E> = E extends Engine<infer API, ApiSurface> ? API['types'] : never;
-export type ApiOf<L> = L extends Language<infer API> ? API : never;
+export type ApiOf<L> = L extends LanguageIdentity<infer API> ? API : never;

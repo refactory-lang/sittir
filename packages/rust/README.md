@@ -129,9 +129,9 @@ const fn = engine.build.statement.function({
 engine.render(fn).toString(); // "fn f() {\n\ta;\n}"
 ```
 
-## Edits
+## Editing a parsed tree
 
-`$toEdit` renders a node into an `Edit` that replaces a byte range, and `engine.applyEdits` applies a batch to a source string.
+`$with` replaces one slot of a parsed node. The edited node renders its own text, and a node the edit did not touch renders the bytes it was read from.
 
 ```ts
 import { createEngine } from '@sittir/common';
@@ -139,8 +139,8 @@ import rust from '@sittir/rust';
 
 const engine = await createEngine(rust);
 
-const rename = engine.build.identifier('b').$toEdit(4, 5);
-engine.applyEdits('let a = 1;', [rename]); // "let b = 1;"
+const [fn] = engine.parse('fn  a( ) { 1 }\n').statements();
+if (fn !== undefined && engine.is.functionItem(fn)) fn.$with.name(engine.build.identifier('b')).$render(); // "fn b( ) { 1 }"
 ```
 
 ## Guards and kinds

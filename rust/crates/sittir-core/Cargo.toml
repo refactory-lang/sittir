@@ -5,11 +5,11 @@ edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
-description = "Render / readNode / splice primitives for sittir — hot-path engine shared across per-grammar render crates."
+description = "Render / readNode primitives for sittir — hot-path engine shared across per-grammar render crates."
 
 [features]
 # Enable napi FromNapiValue / ToNapiValue impls for core boundary types
-# (Source, Span, Edit). Activated by the per-grammar napi crates via
+# (Source, Span). Activated by the per-grammar napi crates via
 # `sittir-core = { features = ["napi-bindings"] }`. NOT enabled by
 # default so `cargo test -p sittir-core` builds without Node.js symbols.
 napi-bindings = ["dep:napi", "dep:napi-derive"]
@@ -24,13 +24,11 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 tree-sitter = { workspace = true }
 indexmap = { workspace = true }
-# napi + napi-derive: `#[napi(object)]` on boundary types (see
-# data-model.md §3 for `Edit`) expands to references against the napi
-# runtime crate. Both are pure Rust — no Node.js is required at
-# compile time, so FR-004 ("sittir-core builds without Node.js/npm")
-# still holds. The actual .node artifact is linked by the
-# sittir-* grammar binding crates; this dep only buys us the boundary
-# attribute on `Edit`.
+# napi + napi-derive: `#[napi(object)]` on boundary types expands to
+# references against the napi runtime crate. Both are pure Rust — no
+# Node.js is required at compile time, so sittir-core builds without
+# Node.js/npm. The actual .node artifact is linked by the sittir-*
+# grammar binding crates; these deps only buy us the boundary attribute.
 napi = { version = "3", default-features = false, features = ["napi4"], optional = true }
 napi-derive = { version = "3", optional = true }
 # ast-grep-core is named in spec 012 T003 but deferred from Phase 1;

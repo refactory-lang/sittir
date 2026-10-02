@@ -136,16 +136,6 @@ export interface AnyUntypedNode {
 
 	/** Render this node to source text. */
 	$render?: () => string;
-	/**
-	 * Create an Edit replacing a range with this node's rendered text: byte
-	 * offsets as two numbers, or a range. A range's `index` is a string index (UTF-16 code units, as ast-grep reports it) while an `Edit` counts bytes, so the edit lands in the wrong place when non-ASCII text precedes the range.
-	 */
-	$toEdit?: (startOrRange: number | StringIndexRange, endPos?: number) => Edit;
-	/**
-	 * Create an Edit replacing the target tree node's range with this node's
-	 * rendered text. A range's `index` is a string index (UTF-16 code units, as ast-grep reports it) while an `Edit` counts bytes, so the edit lands in the wrong place when non-ASCII text precedes the range.
-	 */
-	$replace?: (target: { range(): StringIndexRange }) => Edit;
 	/** Trivia metadata (leading / trailing comments) attached through `$trivia`. */
 	$_trivia?: NodeTrivia;
 	/** The node's trivia positions (`leading`, `trailing`); see {@link TriviaSetter}.
@@ -242,21 +232,10 @@ export interface RulesConfig {
 	kindNames?: ReadonlyMap<number, string>;
 }
 
-// ---------------------------------------------------------------------------
-// Edit — ast-grep compatible byte-range replacement
-// ---------------------------------------------------------------------------
-
-/** A text-level edit: replace the UTF-8 bytes `[startPos, endPos)` with `insertedText`. The positions count bytes, as `$span` does, not string indices. */
-export interface Edit {
-	readonly startPos: number;
-	readonly endPos: number;
-	readonly insertedText: string;
-}
-
 /**
  * A range whose positions are string indices (UTF-16 code units), the shape
  * ast-grep's `SgNode.range()` returns: any object with `start.index` and
- * `end.index`. These are not the byte offsets an `Edit` and a `$span` count.
+ * `end.index`. These are not the byte offsets a `$span` counts.
  */
 export interface StringIndexRange {
 	start: { index: number };
@@ -363,19 +342,16 @@ export interface FormatRecord {
 // ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
-// Edit helpers — structural types for ast-grep SgNode compatibility
+// Parsed tree node
 // ---------------------------------------------------------------------------
 
-export interface ReplaceTarget<T extends string = string> {
-	readonly type: T;
-	range(): StringIndexRange;
-}
-
 /**
- * A parsed tree node that can be assigned from.
+ * A parsed tree node.
  * Structurally compatible with ast-grep SgNode.
  */
-export interface AnyTreeNode extends ReplaceTarget {
+export interface AnyTreeNode {
+	readonly type: string;
+	range(): StringIndexRange;
 	id(): number;
 	field(name: string): AnyTreeNode | null;
 	fieldChildren(name: string): AnyTreeNode[];
@@ -384,14 +360,6 @@ export interface AnyTreeNode extends ReplaceTarget {
 	children(): AnyTreeNode[];
 	isNamed(): boolean;
 }
-
-/** Factory output that can render itself. */
-export interface Renderable {
-	render(): string;
-}
-
-/** Extract type string(s) from a navigation node type. */
-export type KindOf<T> = T extends { readonly type: infer K extends string } ? K : never;
 
 // ---------------------------------------------------------------------------
 // Native (NAPI) parse result

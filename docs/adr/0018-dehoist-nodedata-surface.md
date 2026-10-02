@@ -50,8 +50,6 @@ const fn = {
 
     // Methods ($-prefixed, non-enumerable)
     $render() { ... },
-    $toEdit(range) { ... },
-    $replace(target) { ... },
     $trivia(...) { ... },
 };
 ```

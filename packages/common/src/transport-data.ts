@@ -45,7 +45,7 @@ export function isStorageKey(key: string): boolean {
 	return key.charCodeAt(0) === 95 || key === '$other';
 }
 
-const MEMBER_KEYS: ReadonlySet<string> = new Set(['$with', '$trivia', '$engine', '$render', '$toEdit', '$replace']);
+const MEMBER_KEYS: ReadonlySet<string> = new Set(['$with', '$trivia', '$engine', '$render']);
 
 /**
  * Whether `key` carries node data across the boundary: a storage key, or a `$` metadata key that

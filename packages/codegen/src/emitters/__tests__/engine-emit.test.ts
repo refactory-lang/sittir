@@ -91,9 +91,10 @@ describe('emitIndex', () => {
 	const output = emitIndex({ grammar: 'rust', nodeMap: { fileTypes: ['rs'] } as never });
 
 	it('exports the language descriptor as the default, loading the api on demand', () => {
-		expect(output).toContain(
-			`const rust: Language<RustAPI> = { name: 'rust', fileTypes: ["rs"], load: () => import('./api.js').then((m) => m.hooks) };`
-		);
+		expect(output).toContain('const rust: Language<RustAPI> = {');
+		expect(output).toContain(`\tfileTypes: ["rs"],`);
+		expect(output).toContain("\tload: () => import('./api.js').then((m) => m.hooks),");
+		expect(output).toContain("\tcreateEngine: (options) => import('@sittir/common').then((m) => m.createEngine(rust, options))");
 		expect(output).toContain('export default rust;');
 		expect(output).toContain("export type { RustAPI } from './api.js';");
 	});

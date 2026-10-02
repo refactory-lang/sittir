@@ -20,7 +20,6 @@ export type {
 	TemplateRule,
 	TemplateRuleObject,
 	RulesConfig,
-	Edit,
 	StringIndexRange,
 	Position,
 	CSTNode,
@@ -34,8 +33,6 @@ export type {
 	NodeTrivia,
 	TriviaEntry,
 	NativeParseResult,
-	ReplaceTarget,
-	Renderable,
 	GrammarTriviaEntry,
 	TriviaSetter
 } from './core-types.ts';
@@ -1219,6 +1216,7 @@ export type {
 	Engine,
 	EngineDiagnostics,
 	EngineIdentity,
+	CreateEngineOptions,
 	EngineOptions,
 	FileChange,
 	GrammarInnerTrivia,
@@ -1228,6 +1226,7 @@ export type {
 	Interceptor,
 	KindTypes,
 	Language,
+	LanguageIdentity,
 	LanguageAPI,
 	LanguageHooks,
 	NativeEngineOptions,

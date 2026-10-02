@@ -2306,7 +2306,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		lines.push(
-			`import { ${['currentHandle', ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'toEditAt', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
+			`import { ${['currentHandle', ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
 		);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());
@@ -2414,4 +2414,4 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 	}
 }
 
-const SITTIR_TYPES_IMPORT_CANDIDATES = ['AdmitBound', 'AnyUntypedNode', 'StringIndexRange', 'ConfigOf', 'Edit', 'LooseValue', 'NonEmptyArray', 'WidenNumeric'];
+const SITTIR_TYPES_IMPORT_CANDIDATES = ['AdmitBound', 'AnyUntypedNode', 'ConfigOf', 'LooseValue', 'NonEmptyArray', 'WidenNumeric'];

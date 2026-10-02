@@ -471,7 +471,7 @@ export interface RoundTripFixture {
 	 *  at MVP; the fixture exists to anchor full-pipeline parity. */
 	pattern: string;
 	/** Edit spec list — empty at MVP (render-only reparse probe). Kept
-	 *  in the schema so future fixtures can exercise applyEdits. */
+	 *  in the schema for future fixtures. */
 	edits: readonly unknown[];
 	/** Expected source after render (equals `sourceIn` for render-only
 	 *  render-parse probes that match byte-for-byte; may differ when render

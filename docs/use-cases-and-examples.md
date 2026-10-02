@@ -443,76 +443,7 @@ for (const stmt of tree.statements()) {
 }
 ```
 
-## 10. Complete codemod: find → transform → apply
-
-Replace `unwrap()` with `?`.
-
-```ts
-import fs from 'node:fs';
-import { createEngine, ir, replace, wrap } from '@sittir/rust';
-
-const engine = createEngine();
-const source = fs.readFileSync('src/main.rs', 'utf8');
-const tree = engine.parse(source);
-
-const matches = engine.findAndRead(source, '$EXPR.unwrap()');
-
-const edits = matches.map((match) =>
-	replace(match, ir.tryExpression({ value: wrap(match, tree).value() }))
-);
-
-fs.writeFileSync('src/main.rs', engine.applyEdits(source, edits));
-```
-
-## 11. Codemod with construction templates
-
-```rust
-// snippets/try-wrapper.rust.template
-match (|| -> Result<$RET, Box<dyn std::error::Error>> {
-    $BODY
-    Ok(())
-})() {
-    Ok(v) => v,
-    Err(e) => {
-        eprintln!("Error in {}: {}", $FNAME, e);
-        $FALLBACK
-    }
-}
-```
-
-```ts
-import fs from 'node:fs';
-import { createEngine, snippets, ir, replace, wrap } from '@sittir/rust';
-
-const engine = createEngine();
-const source = fs.readFileSync('src/handlers.rs', 'utf8');
-const tree = engine.parse(source);
-const fns = engine.findAndRead(source, 'pub fn $NAME($...PARAMS) -> $RET { $...BODY }');
-
-const edits = fns.map((fn) => {
-	const w = wrap(fn, tree);
-	return replace(
-		w.body(),
-		ir.block([
-			snippets.tryWrapper
-				.fill({
-					RET: w.returnType(),
-					BODY: w.body(),
-					FNAME: ir.stringLiteral(w.name()),
-					FALLBACK: ir.macroInvocation({
-						macro: 'panic!',
-						args: ['"unrecoverable"']
-					})
-				})
-				.read()
-		])
-	);
-});
-
-fs.writeFileSync('src/handlers.rs', engine.applyEdits(source, edits));
-```
-
-## 12. Cross-language migration
+## 10. Cross-language migration
 
 TypeScript interface → Python dataclass.
 
@@ -546,63 +477,7 @@ export function interfaceToPythonDataclass(tsSource: string) {
 }
 ```
 
-## 13. Bulk file processing
-
-```ts
-import fs from 'node:fs';
-import { createEngine, ir, replace, wrap } from '@sittir/rust';
-import { glob } from 'glob';
-
-const engine = createEngine();
-
-for (const file of glob.sync('src/**/*.rs')) {
-	const source = fs.readFileSync(file, 'utf8');
-	const tree = engine.parse(source);
-	const matches = engine.findAndRead(source, 'println!($...ARGS)');
-	if (!matches.length) continue;
-
-	const edits = matches.map((match) =>
-		replace(
-			match,
-			ir.macroInvocation({
-				macro: 'log::info!',
-				args: wrap(match, tree).arguments()
-			})
-		)
-	);
-
-	fs.writeFileSync(file, engine.applyEdits(source, edits));
-}
-```
-
-## 14. Format-preserving transforms
-
-```ts
-import fs from 'node:fs';
-import { createEngine, ir, replace, wrap } from '@sittir/rust';
-
-const engine = createEngine();
-const source = fs.readFileSync('src/lib.rs', 'utf8');
-const tree = engine.parse(source); // pending: format extraction option
-
-const fns = engine.findAndRead(source, 'fn $NAME($...PARAMS) $BODY');
-const target = wrap(
-	fns.find((f) => wrap(f, tree).name() === 'process'),
-	tree
-);
-
-const updatedParams = ir.parameters([
-	...target.parameters().$children,
-	ir.parameter({ name: 'verbose', type: 'bool' })
-]);
-
-fs.writeFileSync(
-	'src/lib.rs',
-	engine.applyEdits(source, [replace(target.parameters(), updatedParams)])
-);
-```
-
-## 15. Generate a file from scratch
+## 11. Generate a file from scratch
 
 ```ts
 import fs from 'node:fs';
@@ -638,7 +513,7 @@ const file = ir.sourceFile({
 fs.writeFileSync('src/cache.rs', file.$render());
 ```
 
-## 16. Dogfooding
+## 12. Dogfooding
 
 sittir's codegen emitters use TypeScript grammar construction templates.
 
@@ -702,7 +577,6 @@ export function emitIsModule(grammar: GrammarModel): string {
 - [x] `engine.parse()` with depth control, `$parentHandle` / `$childIndex` hydration
 - [ ] `engine.readUntypedNode(handle, childIndex)` for lazy hydration
 - [ ] `engine.findAndRead()` with pattern matching
-- [ ] `engine.applyEdits()` for source modification
 - [ ] `wrap(node, tree)` — getter methods with `hydrateChild` for lazy hydration
 - [ ] Format-preserving transforms
 - [ ] Native backend: one crossing per terminal

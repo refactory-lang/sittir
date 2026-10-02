@@ -10,7 +10,6 @@ function fakeSittirEngine() {
 			calls.render.push(options);
 			return createRenderHandle(() => `rendered:${String(node.$type)}`);
 		},
-		applyEdits: (source: string) => `${source}!`,
 		dispose() {
 			calls.disposed++;
 		},
@@ -47,10 +46,9 @@ describe('nativeLanguageEngine', () => {
 		]);
 	});
 
-	it('applies edits and disposes through the native engine', () => {
+	it('disposes through the native engine', () => {
 		const { engine, calls } = fakeSittirEngine();
 		const native = nativeLanguageEngine(engine);
-		expect(native.applyEdits('x', [])).toBe('x!');
 		native.dispose();
 		expect(calls.disposed).toBe(1);
 	});

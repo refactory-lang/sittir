@@ -83,7 +83,7 @@ describe('ADR-0018 Phase 2 factory shape — branch node', () => {
 		const keys = Object.keys(node);
 		// A reader is an enumerable member; every key is a member or data
 		expect(keys).toContain('name');
-		expect(keys).toEqual(expect.arrayContaining(['$render', '$toEdit', '$replace', '$trivia', '$with']));
+		expect(keys).toEqual(expect.arrayContaining(['$render', '$trivia', '$with']));
 		// $type and $source are present
 		expect(keys).toContain('$type');
 		expect(keys).toContain('$source');
@@ -206,11 +206,9 @@ describe('ADR-0018 Phase 2 — JSON serialization (SC-007)', () => {
 		expect(Object.prototype.hasOwnProperty.call(parsed, 'name')).toBe(false);
 	});
 
-	it('SC-007: JSON.stringify does NOT include render/toEdit/replace function artifacts', () => {
+	it('SC-007: JSON.stringify does NOT include render function artifacts', () => {
 		const json = JSON.stringify(node);
 		expect(json).not.toContain('"render"');
-		expect(json).not.toContain('"toEdit"');
-		expect(json).not.toContain('"replace"');
 	});
 });
 
