@@ -2,7 +2,7 @@ import { nativeShownKindId } from './shown-kind.ts';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { createEngine, detachCoordinates, dumpMetrics, sliceSpan } from '@sittir/common';
+import { createEngine, detachCoordinates, dumpMetrics, holdTree, sliceSpan, treeTokenOf } from '@sittir/common';
 import {
 	hydrateStub,
 	isStub,
@@ -931,7 +931,19 @@ export function materializeDetached(
 	root: unknown,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): AnyUntypedNode {
-	return detachCoordinates(materialize(root, onAccessorThrow));
+	return holdingTreeOf(root, detachCoordinates(materialize(root, onAccessorThrow)));
+}
+
+/**
+ * Make `copy` hold the tree `original` holds, and return it. A copy made by
+ * string keys, by JSON or by `detachCoordinates` holds no tree, and its
+ * coordinates are refused at render; a tool that copies read data and still
+ * renders it passes the tree on here.
+ */
+export function holdingTreeOf<T>(original: unknown, copy: T): T {
+	const token = original !== null && typeof original === 'object' ? treeTokenOf(original) : undefined;
+	if (token !== undefined) holdTree(copy, token);
+	return copy;
 }
 
 export interface AccessorThrowRecord {

@@ -14,9 +14,8 @@ import type {
 	Rendered
 } from '@sittir/types';
 import type { TreeHandle } from './readUntypedNode.ts';
-import { isStorageKey, toTransportData, TREE_KEY } from './transport-data.ts';
-import { mintTreeToken, type TreeToken } from './tree-token.ts';
-import { forEachTriviaList, type TriviaSides } from './trivia.ts';
+import { holdTree, toTransportData } from './transport-data.ts';
+import { mintTreeToken } from './tree-token.ts';
 
 /** The options object a grammar package types as its `Options`. */
 export type RenderOptionValues = Readonly<Record<string, unknown>>;
@@ -128,6 +127,12 @@ export type { ParseOptions };
  */
 export interface NativeEngineDiagnostics<TRoot extends AnyUntypedNode = AnyUntypedNode>
 	extends EngineDiagnostics<TRoot & ParsedRoot, TreeHandle> {
+	/**
+	 * Reads one node by handle, for inspection. The data it returns does not
+	 * hold its tree: the tree lives only as long as the tree handle of the
+	 * parse that made it, and a render refuses the data. Read through that
+	 * tree handle's `read` for data that renders.
+	 */
 	readUntypedNode(handle: number, childIndex?: number, options?: ParseOptions): AnyUntypedNode;
 }
 
@@ -205,28 +210,6 @@ const treeDisposalRegistry = new FinalizationRegistry<{
 	readonly release: (treeId: number) => void;
 	readonly treeId: number;
 }>(({ release, treeId }) => release(treeId));
-
-/**
- * Give every parsed object under `value` the tree's token. A coordinate is a
- * number, which keeps nothing alive: a leaf is plain data, and once a built
- * node is all that holds it, nothing else of its tree is reachable. The
- * token is an ordinary enumerable member, so a spread copy of the object
- * keeps the tree as well.
- */
-function holdTree(value: unknown, token: TreeToken): void {
-	if (Array.isArray(value)) {
-		for (const entry of value) holdTree(entry, token);
-		return;
-	}
-	if (value === null || typeof value !== 'object') return;
-	const record = value as Record<string, unknown>;
-	if (typeof record.$type === 'number') record[TREE_KEY] = token;
-	for (const key in record) {
-		if (isStorageKey(key)) holdTree(record[key], token);
-	}
-	const trivia = record.$_trivia;
-	if (trivia != null) forEachTriviaList(trivia as TriviaSides<unknown>, (entries) => holdTree(entries, token));
-}
 
 /**
  * Tagged-union result for `createNativeEngine` — mirrors the

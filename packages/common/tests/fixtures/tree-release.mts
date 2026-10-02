@@ -35,20 +35,30 @@ await settle(base);
 report.heldCount = native.liveTreeCount() - base;
 report.after = String(engine.render(held));
 
+// A spread copy of a parsed leaf holds the leaf's tree as the leaf did.
+const copied = (() => {
+	const leaf = (engine.parse('fn c() {}\n').statements()[0] as unknown as Named).name() as object;
+	const copy = { ...leaf };
+	return engine.build.binaryExpression({ left: copy as never, operator: '+', right: engine.build.identifier('y') });
+})();
+await settle(base + 1);
+report.copyCount = native.liveTreeCount() - base;
+report.afterCopy = String(engine.render(copied));
+
 // A render handle is lazy: it holds the tree of a node nothing else names
 // until it is turned into text.
 const handles: { pending?: { toString(): string } } = {};
 (() => {
 	handles.pending = engine.render(engine.parse('fn p() { a + b; }\n').statements()[0] as never);
 })();
-await settle(base + 1);
+await settle(base + 3);
 report.pendingCount = native.liveTreeCount() - base;
 report.pending = String(handles.pending);
 delete handles.pending;
 
 // Trees nothing names are released.
 for (let i = 0; i < 50; i += 1) engine.parse(`fn dropped${i}() {}\n`);
-await settle(base + 1);
+await settle(base + 2);
 report.droppedCount = native.liveTreeCount() - base;
 
 // A tree outlives a disposed engine, and is released once its node is gone.
@@ -58,10 +68,10 @@ await (async () => {
 	holder.orphan = short.parse('fn orphan() {}\n').statements()[0];
 	short.dispose();
 })();
-await settle(base + 2);
+await settle(base + 3);
 report.orphanCount = native.liveTreeCount() - base;
 delete holder.orphan;
-await settle(base + 1);
+await settle(base + 2);
 report.afterOrphanCount = native.liveTreeCount() - base;
 
 console.log(JSON.stringify(report));

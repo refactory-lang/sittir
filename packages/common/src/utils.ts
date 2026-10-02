@@ -641,6 +641,7 @@ export { toEditAt } from './edit.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
 export { toTransportData, markEdited, treeHandleOf, isStorageKey, holdsSlots } from './transport-data.ts';
+export { carryTree } from './tree-token.ts';
 export {
 	projectInterior,
 	lexedConfig,

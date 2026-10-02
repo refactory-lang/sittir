@@ -1,7 +1,8 @@
 // A worker thread handed read data cloned from another thread. Tree ids
 // count from 0 on every thread, so it first parses trees of its own until
 // the clone's tree id names one of them: a lookup alone would then answer
-// the clone from the wrong source.
+// the clone from the wrong source. The clone holds no tree, and that is
+// what refuses it.
 import { parentPort, workerData } from 'node:worker_threads';
 import { createEngine } from '../../src/index.ts';
 import rust from '../../../rust/src/index.ts';

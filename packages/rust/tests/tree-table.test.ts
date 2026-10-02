@@ -73,11 +73,13 @@ describe('the live tree table of a language', () => {
 			before: 'g + y',
 			heldCount: 1,
 			after: 'g + y',
-			pendingCount: 2,
+			copyCount: 2,
+			afterCopy: 'c + y',
+			pendingCount: 3,
 			pending: 'fn p() { a + b; }',
-			droppedCount: 1,
-			orphanCount: 2,
-			afterOrphanCount: 1
+			droppedCount: 2,
+			orphanCount: 3,
+			afterOrphanCount: 2
 		});
 	}, 60_000);
 });
@@ -130,7 +132,7 @@ describe('rendering parts parsed by other engines of the language', () => {
 describe('the tree table across threads and processes', () => {
 	const fixture = (name: string): string =>
 		fileURLToPath(new URL(`../../common/tests/fixtures/${name}`, import.meta.url));
-	const REFUSAL = /another tree table.*parse the source on this thread/;
+	const REFUSAL = /does not hold that tree.*parse the source here/;
 	const reply = <T>(worker: Worker): Promise<T> =>
 		new Promise((resolve, reject) => {
 			worker.once('message', resolve);
@@ -162,8 +164,8 @@ describe('the tree table across threads and processes', () => {
 	}, 60_000);
 
 	it('refuses read data copied in from another process', () => {
-		// Every process counts its tree ids from 0 and its main thread is
-		// thread 0, so both match between the two child processes here.
+		// Every process counts its tree ids from 0, so the copy's coordinate
+		// names a tree of the receiver: only the missing hold tells them apart.
 		const run = (name: string, ...args: string[]): string =>
 			execFileSync(process.execPath, ['--import', 'tsx', fixture(name), ...args], {
 				cwd: fileURLToPath(new URL('..', import.meta.url)),

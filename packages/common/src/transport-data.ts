@@ -1,5 +1,5 @@
 import type { AnyUntypedNode } from '@sittir/types';
-import { assertOwnTableToken } from './tree-token.ts';
+import { assertHoldsTree, holdTreeOn, releaseTreeOn, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -8,10 +8,27 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 export const HANDLE_KEYS = ['$handle', '$parentHandle', '$treeHandle'] as const;
 
-/** The member a parsed object holds its tree's token under, which keeps the tree its handle names live. */
-export const TREE_KEY = '$tree';
+const COORDINATE_KEYS = [...HANDLE_KEYS, '$span', '$childIndex', '$textOnly'] as const;
 
-const COORDINATE_KEYS = [...HANDLE_KEYS, '$span', '$childIndex', '$textOnly', TREE_KEY] as const;
+/**
+ * Give every parsed object under `value` the tree's token, through slots and
+ * trivia. A coordinate is a number, which keeps nothing alive: a leaf is
+ * plain data, and once a built node is all that holds it, nothing else of
+ * its tree is reachable. Every object needs the token because any of them
+ * can cross as a coordinate on its own.
+ */
+export function holdTree(value: unknown, token: TreeToken): void {
+	if (Array.isArray(value)) {
+		for (const entry of value) holdTree(entry, token);
+		return;
+	}
+	if (!isRecord(value)) return;
+	if (typeof value.$type === 'number') holdTreeOn(value, token);
+	for (const key in value) {
+		if (isStorageKey(key)) holdTree(value[key], token);
+	}
+	if (value.$_trivia != null) forEachTriviaList(value.$_trivia as TriviaSides<unknown>, (entries) => holdTree(entries, token));
+}
 
 /**
  * The tree a node's handle names, whichever handle it carries: every handle is
@@ -123,6 +140,9 @@ function foldToCoordinate(record: Record<string, unknown>): Record<string, unkno
  * this the new node would still fold to the pre-edit bytes. Recorded here,
  * at the edit, because an emptied node and a node that parsed childless have
  * the same shape afterwards and only the first is dirty.
+ *
+ * The rest-spread copies the tree token with the other members, so the token
+ * is removed from the copy: a rebuilt node names no tree.
  */
 export function markEdited<T extends object>(data: T): Omit<T, (typeof COORDINATE_KEYS)[number]> {
 	const {
@@ -132,9 +152,9 @@ export function markEdited<T extends object>(data: T): Omit<T, (typeof COORDINAT
 		$span: _span,
 		$childIndex: _index,
 		$textOnly: _textOnly,
-		$tree: _tree,
 		...rest
 	} = data as T & Record<(typeof COORDINATE_KEYS)[number], unknown>;
+	releaseTreeOn(rest);
 	return rest;
 }
 
@@ -146,6 +166,7 @@ export function markEdited<T extends object>(data: T): Omit<T, (typeof COORDINAT
  */
 export function detachCoordinate(data: object): void {
 	for (const key of COORDINATE_KEYS) delete (data as Record<string, unknown>)[key];
+	releaseTreeOn(data);
 }
 
 /**
@@ -169,19 +190,19 @@ export function toTransportData(node: AnyUntypedNode): AnyUntypedNode {
 	return toTransportValue(node) as AnyUntypedNode;
 }
 
-function assertOwnTableTrivia(entries: readonly unknown[]): void {
-	for (const entry of entries) if (isRecord(entry)) assertOwnTableToken(entry[TREE_KEY]);
+function assertTriviaHoldsTree(entries: readonly unknown[]): void {
+	for (const entry of entries) if (isRecord(entry) && treeHandleOf(entry) !== undefined) assertHoldsTree(entry);
 }
 
 function toTransportValue(value: unknown): unknown {
 	if (Array.isArray(value)) return value.map(toTransportValue);
 	if (!isRecord(value)) return value;
 	if (canFold(value)) {
-		assertOwnTableToken(value[TREE_KEY]);
+		assertHoldsTree(value);
 		return foldToCoordinate(value);
 	}
 	// Trivia entries cross as they are, coordinates included.
-	if (value.$_trivia != null) forEachTriviaList(value.$_trivia as TriviaSides<unknown>, assertOwnTableTrivia);
+	if (value.$_trivia != null) forEachTriviaList(value.$_trivia as TriviaSides<unknown>, assertTriviaHoldsTree);
 	const out: Record<string, unknown> = {};
 	for (const [key, raw] of Object.entries(value)) {
 		if (key === '$with' || typeof raw === 'function') continue;
@@ -193,7 +214,6 @@ function toTransportValue(value: unknown): unknown {
 	for (const key of HANDLE_KEYS) delete out[key];
 	delete out.$childIndex;
 	delete out.$textOnly;
-	delete out[TREE_KEY];
 	if (holdsSlots(out)) {
 		delete out.$text;
 		delete out.$span;
@@ -208,7 +228,7 @@ function dropTreeTokens(value: unknown): void {
 		return;
 	}
 	if (!isRecord(value)) return;
-	delete value[TREE_KEY];
+	releaseTreeOn(value);
 	for (const key in value) if (isStorageKey(key)) dropTreeTokens(value[key]);
 	dropTriviaTreeTokens(value);
 }
@@ -238,7 +258,7 @@ export function detachCoordinates<T>(root: T): T {
 			delete value.$text;
 			for (const key of COORDINATE_KEYS) delete value[key];
 		}
-		delete value[TREE_KEY];
+		releaseTreeOn(value);
 		dropTriviaTreeTokens(value);
 		const tree = treeHandleOf(value);
 		if (tree !== undefined) {

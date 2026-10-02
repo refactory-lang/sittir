@@ -1,5 +1,5 @@
 // Run with `node --import tsx`: prints, as one JSON line, a leaf this process
-// parsed. Its coordinate is valid only against this process's tree table.
+// parsed. The JSON carries the leaf's coordinate and not its hold on the tree.
 import { createEngine } from '../../src/index.ts';
 import rust from '../../../rust/src/index.ts';
 
