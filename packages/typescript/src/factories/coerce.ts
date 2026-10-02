@@ -6,7 +6,7 @@ import { lexedConfig, numberText, spelledForm, spelledInterior } from '@sittir/c
 import type * as T from '../types-internal.js';
 import { TSKindId, KIND_NAMES } from '../types.js';
 import { Delimiter } from '@sittir/common/utils';
-import type { AnyUntypedNode, NonEmptyArray, SpelledAffix, WithSpelling } from '@sittir/types';
+import type { AnyUntypedNode, NonEmptyArray, NumericInput, SpelledAffix, WithSpelling } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind } from '@sittir/common/utils';
 import { isNode } from '../utils.js';
 
@@ -10235,7 +10235,7 @@ export function resolveNumberHex_content(value: T.NumberHex.LooseConfig['content
 }
 
 export function coerceToNumberHex<const I extends T.NumberHex.Loose, const O extends T.NumberHex.Options = {}>(
-	input: I,
+	input: I & NumericInput<I, true, { content: true }>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberHex>,
@@ -10294,6 +10294,10 @@ export function resolveNumberFloatPoint_exponent(
 		: _resolveOne<string>(value, _K2, _K2);
 }
 
+export function coerceToNumberFloatPoint<const I extends T.NumberFloatPoint.Loose>(
+	input: I & NumericInput<I, false, { integer: true; fraction: true; exponent: true }>,
+	options?: T.NumberFloatPoint.Options
+): ReturnType<typeof F.buildNumberFloatPoint>;
 export function coerceToNumberFloatPoint(
 	input: T.NumberFloatPoint.Loose,
 	options?: T.NumberFloatPoint.Options
@@ -10338,6 +10342,10 @@ export function resolveNumberFloatLeadingPoint_exponent(
 		: _resolveOne<string>(value, _K2, _K2);
 }
 
+export function coerceToNumberFloatLeadingPoint<const I extends T.NumberFloatLeadingPoint.Loose>(
+	input: I & NumericInput<I, false, { fraction: true; exponent: true }>,
+	options?: T.NumberFloatLeadingPoint.Options
+): ReturnType<typeof F.buildNumberFloatLeadingPoint>;
 export function coerceToNumberFloatLeadingPoint(
 	input: T.NumberFloatLeadingPoint.Loose,
 	options?: T.NumberFloatLeadingPoint.Options
@@ -10389,6 +10397,10 @@ export function resolveNumberFloatScientific_exponent(
 		: _resolveOne<string>(value, _K2, _K2);
 }
 
+export function coerceToNumberFloatScientific<const I extends T.NumberFloatScientific.Loose>(
+	input: I & NumericInput<I, false, { integer: true; exponent: true }>,
+	options?: T.NumberFloatScientific.Options
+): ReturnType<typeof F.buildNumberFloatScientific>;
 export function coerceToNumberFloatScientific(
 	input: T.NumberFloatScientific.Loose,
 	options?: T.NumberFloatScientific.Options
@@ -10431,7 +10443,7 @@ export function resolveNumberBinary_content(value: T.NumberBinary.LooseConfig['c
 }
 
 export function coerceToNumberBinary<const I extends T.NumberBinary.Loose, const O extends T.NumberBinary.Options = {}>(
-	input: I,
+	input: I & NumericInput<I, true, { content: true }>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberBinary>,
@@ -10467,7 +10479,7 @@ export function resolveNumberOctal_content(value: T.NumberOctal.LooseConfig['con
 }
 
 export function coerceToNumberOctal<const I extends T.NumberOctal.Loose, const O extends T.NumberOctal.Options = {}>(
-	input: I,
+	input: I & NumericInput<I, true, { content: true }>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildNumberOctal>,
@@ -10504,6 +10516,9 @@ export function resolveNumberBigintHex_content(
 		: _resolveOne<string>(value, _K2, _K2);
 }
 
+export function coerceToNumberBigintHex<const I extends T.NumberBigintHex.Loose>(
+	input: I & NumericInput<I, true, { content: true }>
+): ReturnType<typeof F.buildNumberBigintHex>;
 export function coerceToNumberBigintHex(input: T.NumberBigintHex.Loose): ReturnType<typeof F.buildNumberBigintHex> {
 	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildNumberBigintHex>;
 	const _value = configFieldOr(input, 'content', () =>
@@ -10526,6 +10541,9 @@ export function resolveNumberBigintBinary_content(
 		: _resolveOne<string>(value, _K2, _K2);
 }
 
+export function coerceToNumberBigintBinary<const I extends T.NumberBigintBinary.Loose>(
+	input: I & NumericInput<I, true, { content: true }>
+): ReturnType<typeof F.buildNumberBigintBinary>;
 export function coerceToNumberBigintBinary(
 	input: T.NumberBigintBinary.Loose
 ): ReturnType<typeof F.buildNumberBigintBinary> {
@@ -10550,6 +10568,9 @@ export function resolveNumberBigintOctal_content(
 		: _resolveOne<string>(value, _K2, _K2);
 }
 
+export function coerceToNumberBigintOctal<const I extends T.NumberBigintOctal.Loose>(
+	input: I & NumericInput<I, true, { content: true }>
+): ReturnType<typeof F.buildNumberBigintOctal>;
 export function coerceToNumberBigintOctal(
 	input: T.NumberBigintOctal.Loose
 ): ReturnType<typeof F.buildNumberBigintOctal> {
@@ -10574,6 +10595,9 @@ export function resolveNumberBigintDecimal_content(
 		: _resolveOne<string>(value, _K2, _K2);
 }
 
+export function coerceToNumberBigintDecimal<const I extends T.NumberBigintDecimal.Loose>(
+	input: I & NumericInput<I, true, { content: true }>
+): ReturnType<typeof F.buildNumberBigintDecimal>;
 export function coerceToNumberBigintDecimal(
 	input: T.NumberBigintDecimal.Loose
 ): ReturnType<typeof F.buildNumberBigintDecimal> {

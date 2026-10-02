@@ -19,11 +19,13 @@ function textsOf(kind: number, value: unknown, out: string[] = []): string[] {
 	return out;
 }
 
+type Arm = (digits: string) => { $render(): string };
+
 const RADIX_ARMS = [
-	['decimal', ts.build.number.bigint.decimal, '42', '42n', ts.kinds.NumberBigintDecimal],
-	['hex', ts.build.number.bigint.hex, '0x2A', '0x2An', ts.kinds.NumberBigintHex],
-	['binary', ts.build.number.bigint.binary, '0b101010', '0b101010n', ts.kinds.NumberBigintBinary],
-	['octal', ts.build.number.bigint.octal, '0o52', '0o52n', ts.kinds.NumberBigintOctal]
+	['decimal', ts.build.number.bigint.decimal as Arm, '42', '42n', ts.kinds.NumberBigintDecimal],
+	['hex', ts.build.number.bigint.hex as Arm, '0x2A', '0x2An', ts.kinds.NumberBigintHex],
+	['binary', ts.build.number.bigint.binary as Arm, '0b101010', '0b101010n', ts.kinds.NumberBigintBinary],
+	['octal', ts.build.number.bigint.octal as Arm, '0o52', '0o52n', ts.kinds.NumberBigintOctal]
 ] as const;
 
 describe('a bigint literal', () => {
