@@ -1,7 +1,16 @@
 import { withAnnotations } from './annotations.ts';
 import type { Rule, RuleAnnotations } from '../types/rule.ts';
 import { armNameOf, undisplayedKindAddress } from './arm-names.ts';
-import { hiddenChoiceClass, isBlank, isNamedArmChoice, isParserHiddenName, throughPrec, unwrapPrec } from './rule-patterns.ts';
+import {
+	hiddenChoiceClass,
+	isBlank,
+	isNamedArmChoice,
+	isParserHiddenName,
+	separatedListBodyInfo,
+	throughPrec,
+	unwrapPrec,
+	type SymbolSource
+} from './rule-patterns.ts';
 
 export const ENRICH_AUTOMATIC_VARIANTS_KEY = '__enrichedAutomaticVariants__' as const;
 
@@ -99,7 +108,8 @@ function stampRuleVariants(
 	rule: unknown,
 	ruleOf: (name: string) => unknown,
 	automatic: AutomaticVariants,
-	elementChoices: ReadonlySet<string>
+	elementChoices: ReadonlySet<string>,
+	symbols: SymbolSource
 ): unknown {
 	const ownerIsSupertype = automatic.supertypeOwners.has(owner);
 	const label = (core: ArmShape): ArmShape => withAutomaticLabel(core, labelOf(owner, armDisplayOf(core), ownerIsSupertype), automatic);
@@ -118,6 +128,7 @@ function stampRuleVariants(
 			return isHoistedChoiceGroup(ruleOf(node.name) as ArmShape | undefined, elementChoices) ? label(node) : node;
 		}
 		if (node.type !== undefined && SLOT_BOUNDARIES.has(node.type)) return node;
+		if (separatedListBodyInfo(node as Rule, symbols)?.form === 'terminated') return node;
 		if (node.members !== undefined) {
 			const members = node.members.map(visit);
 			return members.some((m, i) => m !== node.members![i]) ? { ...node, members } : node;
@@ -135,14 +146,15 @@ export function stampAutomaticVariants(
 	rules: Record<string, Rule>,
 	supertypeNames: ReadonlySet<string>,
 	inlineNames: ReadonlySet<string>,
-	elementChoices: ReadonlySet<string>
+	elementChoices: ReadonlySet<string>,
+	symbols: SymbolSource
 ): AutomaticVariants {
 	const supertypeOwners = new Set(Object.keys(rules).filter((owner) => isSupertypeOwner(owner, rules, supertypeNames, inlineNames)));
 	const automatic: AutomaticVariants = { keys: new Set(), supertypeOwners };
 	for (const owner of Object.keys(rules)) {
 		const rule = rules[owner];
 		if (rule === undefined) continue;
-		rules[owner] = stampRuleVariants(owner, rule, (name) => rules[name], automatic, elementChoices) as Rule;
+		rules[owner] = stampRuleVariants(owner, rule, (name) => rules[name], automatic, elementChoices, symbols) as Rule;
 	}
 	return automatic;
 }

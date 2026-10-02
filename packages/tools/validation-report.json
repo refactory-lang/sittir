@@ -727,21 +727,6 @@
     "scope": "grammar",
     "code": "rule-reauthored-without-cause",
     "severity": "error",
-    "ownerKind": "tuple_expression",
-    "message": "rules: 'tuple_expression' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
-    "canProceed": false,
-    "details": {
-      "cause": "alias-shape"
-    },
-    "location": "tuple_expression"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "rule-reauthored-without-cause",
-    "severity": "error",
     "ownerKind": "_non_special_token",
     "message": "rules: '_non_special_token' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
     "canProceed": false,
@@ -4810,27 +4795,6 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "pattern_list_patterns",
-    "count": 14,
-    "entries": [
-      "Actually not match",
-      "Assignments",
-      "Dictionary comprehensions",
-      "For statements",
-      "Generator expression",
-      "Set comprehensions",
-      "Splat Inside of Expression List"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "pattern_list_patterns"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
     "kind": "expression_list",
     "count": 13,
     "entries": [
@@ -4849,28 +4813,6 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "expression_list"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "expression_list_expressions",
-    "count": 12,
-    "entries": [
-      "Actually not match",
-      "Assignments",
-      "Default Tuple Arguments",
-      "Delete statements",
-      "Function definitions",
-      "Return statements",
-      "Splat Inside of Expression List",
-      "Tuples with yield"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "expression_list_expressions"
   },
   {
     "source": "validator",
@@ -7283,27 +7225,6 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "pattern_list_patterns",
-    "count": 14,
-    "entries": [
-      "Actually not match",
-      "Assignments",
-      "Dictionary comprehensions",
-      "For statements",
-      "Generator expression",
-      "Set comprehensions",
-      "Splat Inside of Expression List"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "pattern_list_patterns"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
     "kind": "expression_list",
     "count": 13,
     "entries": [
@@ -7322,28 +7243,6 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "expression_list"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "expression_list_expressions",
-    "count": 12,
-    "entries": [
-      "Actually not match",
-      "Assignments",
-      "Default Tuple Arguments",
-      "Delete statements",
-      "Function definitions",
-      "Return statements",
-      "Splat Inside of Expression List",
-      "Tuples with yield"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "expression_list_expressions"
   },
   {
     "source": "validator",

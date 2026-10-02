@@ -300,10 +300,8 @@ export const ir: {
 	readonly withClauseWithItems: typeof F.withClauseWithItems;
 	readonly types: typeof F.types;
 	readonly argumentListElements: typeof F.argumentListElements;
-	readonly expressionListExpressions: typeof F.expressionListExpressions;
 	readonly listPatternCasePatterns: typeof F.listPatternCasePatterns;
 	readonly dictPatternElements: typeof F.dictPatternElements;
-	readonly patternListPatterns: typeof F.patternListPatterns;
 	readonly subscripts: typeof F.subscripts;
 	readonly dictionaryElements: typeof F.dictionaryElements;
 	readonly exceptClauseExceptionAs: typeof F.exceptClauseExceptionAs;
@@ -472,10 +470,8 @@ export const ir: {
 	withClauseWithItems: F.withClauseWithItems,
 	types: F.types,
 	argumentListElements: F.argumentListElements,
-	expressionListExpressions: F.expressionListExpressions,
 	listPatternCasePatterns: F.listPatternCasePatterns,
 	dictPatternElements: F.dictPatternElements,
-	patternListPatterns: F.patternListPatterns,
 	subscripts: F.subscripts,
 	dictionaryElements: F.dictionaryElements,
 	exceptClauseExceptionAs: F.exceptClauseExceptionAs,
