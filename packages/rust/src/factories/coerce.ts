@@ -10156,8 +10156,17 @@ export function resolveFunctionTypeFnForm_functionModifiers(
 }
 
 export function coerceToFunctionTypeFnForm(
+	...input: T.FunctionModifiers.LooseArgs
+): ReturnType<typeof F.buildFunctionTypeFnForm>;
+export function coerceToFunctionTypeFnForm(
 	input?: T.FunctionTypeFnForm.Loose
-): ReturnType<typeof F.buildFunctionTypeFnForm> {
+): ReturnType<typeof F.buildFunctionTypeFnForm>;
+export function coerceToFunctionTypeFnForm(...args: unknown[]): ReturnType<typeof F.buildFunctionTypeFnForm> {
+	if (args.length > 1)
+		return F.buildFunctionTypeFnForm(
+			coerceToFunctionModifiers(...(args as Parameters<typeof coerceToFunctionModifiers>))
+		);
+	const input = args[0] as T.FunctionTypeFnForm.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.FunctionTypeFnForm))
 		return input as unknown as ReturnType<typeof F.buildFunctionTypeFnForm>;
 	return F.buildFunctionTypeFnForm(

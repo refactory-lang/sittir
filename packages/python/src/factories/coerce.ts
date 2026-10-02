@@ -7191,7 +7191,11 @@ export function resolveSuiteBlock_block(value: T.SuiteBlock.LooseConfig['block']
 	return _resolveOneBranch<T.Block>(value, 'block');
 }
 
-export function coerceToSuiteBlock(input?: T.SuiteBlock.Loose): ReturnType<typeof F.buildSuiteBlock> {
+export function coerceToSuiteBlock(...input: T.Block.LooseArgs): ReturnType<typeof F.buildSuiteBlock>;
+export function coerceToSuiteBlock(input?: T.SuiteBlock.Loose): ReturnType<typeof F.buildSuiteBlock>;
+export function coerceToSuiteBlock(...args: unknown[]): ReturnType<typeof F.buildSuiteBlock> {
+	if (args.length > 1) return F.buildSuiteBlock(coerceToBlock(...(args as Parameters<typeof coerceToBlock>)));
+	const input = args[0] as T.SuiteBlock.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.SuiteBlock))
 		return input as unknown as ReturnType<typeof F.buildSuiteBlock>;
 	return F.buildSuiteBlock(
