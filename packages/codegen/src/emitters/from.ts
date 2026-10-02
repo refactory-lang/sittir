@@ -1,7 +1,7 @@
 import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { isBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
+import { isBuilderTextLeaf } from '../compiler/model/node-map.ts';
 import { bareInteriorText, interiorOf, interiorSlotGuards, numberInputTest, numberInputType, numberTextArgs, numericLeafKinds, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
@@ -51,14 +51,16 @@ import {
 	stringConstructibleTexts,
 	wordConstructibleText,
 	isAuthoredCompound,
-	listRestParamType,
 	transparentContentKindNames,
 	isAffixedLeaf,
 	transparentWrapperContentSlot,
 	referencedKinds,
 	classifyFactoryEmission,
 	registeredSlots,
-	pruneUnusedImports
+	pruneUnusedImports,
+	classifyKindsForResolver,
+	resolvesLooseInput,
+	looseElementType
 } from './shared.ts';
 import {
 	fieldElementType,
@@ -567,10 +569,7 @@ function emitRestParamFromResolver(
 	storageKey: string,
 	unwrapConfigKey: string | undefined,
 	buildCallExpr: (varExpr: string, isSelfUnwrap: boolean) => string,
-	childrenTypeAnnotation = '',
-	optionsType?: string,
-	nonEmpty = false,
-	optionsRequired = false
+	childrenTypeAnnotation = ''
 ): string {
 	const typeCheck = kindDiscriminantCheck(kind, kindEntries, nodeMap);
 	const hasNumericDiscriminant = (kindEntries !== undefined && findOwnKindEntry(kindEntries, kind) !== undefined);
@@ -586,9 +585,8 @@ function emitRestParamFromResolver(
 					`    return Array.isArray(v) ? v : [v];`,
 					`  })();`
 				];
-	const paramType = `${tName}.Loose | LooseValue<${elementType}, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>`;
 	const returnType = factoryReturnTypeExpr(factory);
-	const inputType = listRestParamType(nonEmpty, `(${paramType})`, optionsType, optionsRequired);
+	const inputType = `${tName}.LooseArgs`;
 	const freshVar = unwrapConfigKey === undefined ? 'input' : '_elems';
 	const signature = `export function ${fn}(...input: ${inputType}): ${returnType} {`;
 	const head = withEmptyOverload(nodeMap, kind, `export function ${fn}`, [signature], signature.replace(/ \{$/, ';'));
@@ -645,22 +643,6 @@ function emitRepeatedChildrenFrom(
 				? `${factory}(...(${resolveFieldCall(varExpr, slot, true, nodeMap, intern, false, elementType, kindEntries)} as unknown as Parameters<typeof ${factory}>))`
 				: `${factory}(...(${varExpr} as unknown as Parameters<typeof ${factory}>))`
 	);
-}
-
-function resolvesLooseInput(slot: AssembledNonterminal, nodeMap: NodeMap): boolean {
-	if (slotLiteralValues(slot).length === 0) return true;
-	const { leafKinds, branchKinds } = classifyKindsForResolver(
-		expandAndDedupeContentTypes(slotKindNames(slot), nodeMap, storageKindIdByNameOf(slot)),
-		nodeMap
-	);
-	return leafKinds.length + branchKinds.length > 0;
-}
-
-function looseElementType(elementType: string, slot: AssembledNonterminal, nodeMap: NodeMap): string {
-	const expanded = expandAndDedupeContentTypes(slotKindNames(slot), nodeMap, storageKindIdByNameOf(slot));
-	const { leafKinds, branchKinds } = classifyKindsForResolver(expanded, nodeMap);
-	const admitsText = leafKinds.length === 1 || leafKinds.some((kind) => !isAffixedLeaf(nodeMap.nodes.get(kind)));
-	return admitsText && branchKinds.length === 0 ? `${elementType} | string` : elementType;
 }
 
 function emitSingularChildrenFrom(
@@ -826,10 +808,7 @@ function emitSeparatedListFrom(
 			isSelfUnwrap && hasOptions
 				? buildOptionsPreservingCall(varExpr)
 				: `${factory}(${spreadElements(`_listElements(${varExpr}, ${optionKeys}, ${wrapperKindExpr}, (els) => ${resolvedElements('els')}, ${JSON.stringify(tagKinds)}${bagKinds === undefined ? '' : `, ${JSON.stringify(bagKinds)}`})`)})`,
-		': readonly unknown[]',
-		surface.optionsType,
-		node.nonEmpty,
-		surface.separatorRequired
+		': readonly unknown[]'
 	);
 }
 
@@ -880,30 +859,6 @@ export function transparentEnvelopeTextLeaves(node: AssembledNode, nodeMap: Node
 
 export function slotResolverKinds(field: { values: readonly NodeOrTerminal[] }, nodeMap: NodeMap): ReturnType<typeof classifyKindsForResolver> {
 	return classifyKindsForResolver(expandAndDedupeContentTypes(slotKindNames(field), nodeMap, storageKindIdByNameOf(field)), nodeMap);
-}
-
-function classifyKindsForResolver(
-	expanded: string[],
-	nodeMap: NodeMap
-): { leafKinds: string[]; branchKinds: string[]; tokenKinds: string[] } {
-	const leafKinds: string[] = [];
-	const branchKinds: string[] = [];
-	const tokenKinds: string[] = [];
-	for (const t of expanded) {
-		const n = nodeMap.nodes.get(t);
-		if (!n) {
-			branchKinds.push(t);
-			continue;
-		}
-		if (n instanceof AssembledPattern || n instanceof AssembledEnum || isBuilderTextLeaf(n)) {
-			leafKinds.push(t);
-		} else if (isBuilderlessPunctuationLeaf(n)) {
-			tokenKinds.push(t);
-		} else {
-			branchKinds.push(t);
-		}
-	}
-	return { leafKinds, branchKinds, tokenKinds };
 }
 
 function buildSingleKindFastPath(

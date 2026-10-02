@@ -86,10 +86,10 @@ describe('typescript NamespaceMap access-path convergence', () => {
 		expectTrue<Equals<Equals<SwitchBody.BuildArgs, SwitchBody.LooseArgs>, false>>();
 		// separated list
 		expectTrue<Equals<Equals<FormalParametersElements.BuildArgs, FormalParametersElements.LooseArgs>, false>>();
-		// leaf — a free-text leaf, where the parameter IS the raw text and the
-		// two genuinely coincide. Pinned so that stays a DECISION rather than
-		// drifting back into the missing-widening it looks identical to.
-		expectTrue<Equals<HashBangLine.BuildArgs, HashBangLine.LooseArgs>>();
+		// leaf — a free-text leaf. The builder takes the raw text; the coercer
+		// also takes the leaf itself, so the loose row is the kind's `Loose`.
+		expectTrue<Equals<Equals<HashBangLine.BuildArgs, HashBangLine.LooseArgs>, false>>();
+		expectTrue<Equals<HashBangLine.LooseArgs, [value: HashBangLine.Loose]>>();
 	});
 
 	it('BuildArgs stays a MUTABLE tuple whose element is Config', () => {

@@ -1,6 +1,6 @@
 {
   "grammar": "scm",
-  "source_hash": "b9850acad890caba99e52210067e589579b5a4fbbdc7037109ba0e525b7f1fed",
+  "source_hash": "6e798634204763c446cc07889356da8a2432747f8a5ea629019eaf4c9b6a4b07",
   "files": {
     "packages/scm/.sittir/grammar-diagnostics.json": "90639655c429bfe36ef2a36aaa2a31c5fabb65229200218dcf431681dad38f0a",
     "packages/scm/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -22,7 +22,7 @@
     "packages/scm/src/backend.ts": "04861575d3c63d8e21edd762e5fa261394cf3cd58132a5183013d5640014c634",
     "packages/scm/src/consts.ts": "741705fcb9424c942d868f505e95ceb4b2e469863a9d01c7dbee6f1f886671b6",
     "packages/scm/src/factories/bundle.ts": "ae5dee9aa728d5d59fe51d6a1a04f514458ec16420821e6af4e34b3de9f2f4d3",
-    "packages/scm/src/factories/coerce.ts": "902bd02eb80b1fd575ee6fe0b5b4c9bcc2145a9ac2566e68099c6360a2cfc5bb",
+    "packages/scm/src/factories/coerce.ts": "f6c6431c5f513010b8b1ccdb2f8fcdd5aacfc5681fa680fdb8f18b5161984e03",
     "packages/scm/src/factories/index.ts": "cd7dddd9b1d58f7a70230420d2edee4d03b1037e994e8dee9d4ea12d7c2de82f",
     "packages/scm/src/factories/overlays/polymorphs.ts": "464e48894e42ab4d365578f24f826258fbd6ae24a6e19e52b3c2442358c80f24",
     "packages/scm/src/factories/overlays/refines.ts": "37f8a0f79f435a13a3261d39196ce8132ef459b4934501fbd452d65e7b9abdf0",
@@ -36,7 +36,7 @@
     "packages/scm/src/options.ts": "ff87ad287deb2748feb18def7b265eeed14c3c3e208b3b64e9085b96cb1ccd83",
     "packages/scm/src/render-engine.ts": "f3517b7d9eddafe7ab7fc6bc4f80f47cca8c16735352e09969a5363669c987b9",
     "packages/scm/src/types-internal.ts": "471c667850e9cc3518a7eedbcd78dca22e6b8537172fd3ab1d3c4b1949829faa",
-    "packages/scm/src/types.ts": "cc0f2bf28987eb6434cb5bb307b474b3979fbc559f7a3d707a53890fe6825d0c",
+    "packages/scm/src/types.ts": "6ab43a4819baab8c6fbf10c8bd7550c92ec4b913d799d76a9fcf87b5d5950544",
     "packages/scm/src/utils.ts": "eb971ad2b4210550096f6b1dc1044ea0d2f27deaa09e59fbb80b5617960e4a86",
     "packages/scm/src/wrap.ts": "6aab5425090e3b82067e3f125767aeb0326449dd7a7743623a621bb19c100fa9",
     "rust/crates/sittir-scm/src/lib.rs": "78690c5c5388a2f4c9e594a0cc9a174c125d7e559d04eb044db2eb29052b36e7",
