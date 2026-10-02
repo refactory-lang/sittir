@@ -73,6 +73,8 @@ describe('the live tree table of a language', () => {
 			before: 'g + y',
 			heldCount: 1,
 			after: 'g + y',
+			pendingCount: 2,
+			pending: 'fn p() { a + b; }',
 			droppedCount: 1,
 			orphanCount: 2,
 			afterOrphanCount: 1

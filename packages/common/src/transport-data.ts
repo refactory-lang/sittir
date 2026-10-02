@@ -224,6 +224,9 @@ function dropTriviaTreeTokens(node: Record<string, unknown>): void {
  * {@link toTransportData}. A coordinate that survives addresses its node's
  * text only: it crosses as the `$treeHandle` its span slices, stamped
  * `$textOnly` so no edge or gap reader takes layout evidence from it.
+ *
+ * The result holds no tree: a surviving coordinate is valid only while the
+ * caller keeps its tree live by other means.
  */
 export function detachCoordinates<T>(root: T): T {
 	const seen = new WeakSet<object>();

@@ -35,6 +35,17 @@ await settle(base);
 report.heldCount = native.liveTreeCount() - base;
 report.after = String(engine.render(held));
 
+// A render handle is lazy: it holds the tree of a node nothing else names
+// until it is turned into text.
+const handles: { pending?: { toString(): string } } = {};
+(() => {
+	handles.pending = engine.render(engine.parse('fn p() { a + b; }\n').statements()[0] as never);
+})();
+await settle(base + 1);
+report.pendingCount = native.liveTreeCount() - base;
+report.pending = String(handles.pending);
+delete handles.pending;
+
 // Trees nothing names are released.
 for (let i = 0; i < 50; i += 1) engine.parse(`fn dropped${i}() {}\n`);
 await settle(base + 1);

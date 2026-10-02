@@ -278,9 +278,18 @@ export function createNativeEngine<
 			// path, so a caller handing over raw read data cannot slice a
 			// pre-edit span past a rebuilt slot.
 			const transport = (typeof node === 'number' ? node : toTransportData(node)) as TTransport;
+			// The handle renders lazily, and the transport's coordinates are
+			// numbers: the tokens stayed on `node`. Both closures name `node`,
+			// so the handle holds the trees it will slice for as long as it
+			// can still render.
+			const holdsTrees = (): unknown => node;
 			return createRenderHandle(
-				() => engine.render(transport, undefined, perCall),
+				() => {
+					holdsTrees();
+					return engine.render(transport, undefined, perCall);
+				},
 				(path) => {
+					holdsTrees();
 					if (engine.renderToFile) {
 						engine.renderToFile(transport, path, undefined, perCall);
 						return true;
