@@ -828,6 +828,7 @@ interface FactoryParam {
 	readonly looseType: string;
 	readonly rowStrictType?: string;
 	readonly rowLooseType?: string;
+	readonly rowLooseOptional?: boolean;
 	readonly defaultValue?: string;
 	readonly admitsNodes?: true;
 }
@@ -874,7 +875,10 @@ function renderSurfaceParams(param: FactoryParam): {
 		params: paramText(param, strict(param.strictType)),
 		looseParams: paramText(param, param.looseType),
 		rowParams: paramText(param, strict(param.rowStrictType ?? param.strictType)),
-		rowLooseParams: paramText(param, param.rowLooseType ?? param.looseType)
+		rowLooseParams: paramText(
+			{ ...param, optional: param.rowLooseOptional ?? param.optional },
+			param.rowLooseType ?? param.looseType
+		)
 	};
 }
 
@@ -984,6 +988,7 @@ function resolveConfigFactorySurface(
 			strictType: elementType,
 			looseType: looseValueOf(elementType),
 			rowLooseType: `T.${node.typeName}.Loose`,
+			rowLooseOptional: !spreadFacts.required || node.argumentOptional(nodeMap),
 			admitsNodes: true
 		};
 		return {
@@ -1010,6 +1015,7 @@ function resolveConfigFactorySurface(
 			strictType: elemType,
 			looseType: looseValueOf(elemType),
 			rowLooseType: `T.${node.typeName}.Loose`,
+			rowLooseOptional: optional || node.argumentOptional(nodeMap),
 			admitsNodes: true
 		};
 		return {

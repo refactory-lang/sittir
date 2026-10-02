@@ -11497,6 +11497,10 @@ A parameter that holds a node (`admitsNodes`) is typed through `AdmitBound` over
 /** The type a coercing caller may pass for the same position. */
 ```
 
+### `packages/codegen/src/emitters/factories.ts::FactoryParam.rowLooseOptional`
+
+Whether the loose row's parameter may be left out, where that differs from the strict one. A wrapper around a kind that can be built from nothing takes no argument on the coercing side (`argumentOptional`), while its strict row names the built child.
+
 ### `packages/codegen/src/emitters/factories.ts::FactoryParam.defaultValue`
 
 ```text

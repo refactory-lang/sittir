@@ -21379,7 +21379,7 @@ export namespace ConstBlock {
 	export type Loose = LooseFor<TSKindId.ConstBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConstBlock>;
 	export type BuildArgs = [value: AdmitBound<T.Block, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.ConstBlock.Loose];
+	export type LooseArgs = [value?: T.ConstBlock.Loose];
 	export type Kind = TSKindId.ConstBlock;
 }
 export namespace ClosureParameters {
@@ -21512,7 +21512,7 @@ export namespace UnsafeBlock {
 	export type Loose = LooseFor<TSKindId.UnsafeBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnsafeBlock>;
 	export type BuildArgs = [value: AdmitBound<T.Block, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.UnsafeBlock.Loose];
+	export type LooseArgs = [value?: T.UnsafeBlock.Loose];
 	export type Kind = TSKindId.UnsafeBlock;
 }
 export namespace AsyncBlock {
@@ -21560,7 +21560,7 @@ export namespace TryBlock {
 	export type Loose = LooseFor<TSKindId.TryBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TryBlock>;
 	export type BuildArgs = [value: AdmitBound<T.Block, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.TryBlock.Loose];
+	export type LooseArgs = [value?: T.TryBlock.Loose];
 	export type Kind = TSKindId.TryBlock;
 }
 export namespace Block {

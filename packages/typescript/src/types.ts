@@ -19468,7 +19468,7 @@ export namespace FinallyClause {
 	export type Loose = LooseFor<TSKindId.FinallyClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FinallyClause>;
 	export type BuildArgs = [value: AdmitBound<T.StatementBlock, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.FinallyClause.Loose];
+	export type LooseArgs = [value?: T.FinallyClause.Loose];
 	export type Kind = TSKindId.FinallyClause;
 }
 export namespace YieldExpression {
@@ -22284,7 +22284,7 @@ export namespace AmbientDeclarationGlobal {
 	export type Loose = LooseFor<TSKindId.AmbientDeclarationGlobal>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AmbientDeclarationGlobal>;
 	export type BuildArgs = [value: AdmitBound<T.StatementBlock, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.AmbientDeclarationGlobal.Loose];
+	export type LooseArgs = [value?: T.AmbientDeclarationGlobal.Loose];
 	export type Kind = TSKindId.AmbientDeclarationGlobal;
 }
 export namespace AmbientDeclarationModule {
