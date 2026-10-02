@@ -1098,7 +1098,7 @@
           }
         ]
       },
-      "move_marker": {
+      "move": {
         "multiple": false,
         "required": false,
         "types": [
@@ -1901,7 +1901,7 @@
     "type": "closure_expression_block",
     "named": true,
     "fields": {
-      "async_marker": {
+      "async": {
         "multiple": false,
         "required": false,
         "types": [
@@ -1921,7 +1921,7 @@
           }
         ]
       },
-      "move_marker": {
+      "move": {
         "multiple": false,
         "required": false,
         "types": [
@@ -1951,7 +1951,7 @@
           }
         ]
       },
-      "static_marker": {
+      "static": {
         "multiple": false,
         "required": false,
         "types": [
@@ -1967,7 +1967,7 @@
     "type": "closure_expression_expr",
     "named": true,
     "fields": {
-      "async_marker": {
+      "async": {
         "multiple": false,
         "required": false,
         "types": [
@@ -1991,7 +1991,7 @@
           }
         ]
       },
-      "move_marker": {
+      "move": {
         "multiple": false,
         "required": false,
         "types": [
@@ -2011,7 +2011,7 @@
           }
         ]
       },
-      "static_marker": {
+      "static": {
         "multiple": false,
         "required": false,
         "types": [
@@ -2875,7 +2875,7 @@
           }
         ]
       },
-      "ref_marker": {
+      "ref": {
         "multiple": false,
         "required": false,
         "types": [
@@ -2911,7 +2911,7 @@
           }
         ]
       },
-      "ref_marker": {
+      "ref": {
         "multiple": false,
         "required": false,
         "types": [
@@ -3352,7 +3352,7 @@
           }
         ]
       },
-      "move_marker": {
+      "move": {
         "multiple": false,
         "required": false,
         "types": [
@@ -3600,7 +3600,7 @@
           }
         ]
       },
-      "unsafe_marker": {
+      "unsafe": {
         "multiple": false,
         "required": false,
         "types": [
@@ -3718,7 +3718,7 @@
           }
         ]
       },
-      "unsafe_marker": {
+      "unsafe": {
         "multiple": false,
         "required": false,
         "types": [
@@ -5763,7 +5763,7 @@
           }
         ]
       },
-      "ref_marker": {
+      "ref": {
         "multiple": false,
         "required": false,
         "types": [
@@ -6462,7 +6462,7 @@
           }
         ]
       },
-      "unsafe_marker": {
+      "unsafe": {
         "multiple": false,
         "required": false,
         "types": [

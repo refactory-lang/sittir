@@ -176,7 +176,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *   2. Optional keyword-prefix promotion (`tryPromoteInnerKeyword`) —
  *      `field(*, SYMBOL(_kw_*))`: the referenced symbol's reserved
  *      `_kw_` prefix is itself the signal (the field's own name follows
- *      the `<token>_marker` convention but that's not load-bearing here —
+ *      the keyword it holds, but that's not load-bearing here —
  *      the hidden-symbol prefix is enrich's exclusive namespace, so any
  *      FIELD wrapping a `_kw_*` SYMBOL is enrich-shaped).
  */

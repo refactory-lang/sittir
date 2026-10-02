@@ -746,7 +746,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "ref_marker": {
+      "ref": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -977,7 +977,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "unsafe_marker": {
+      "unsafe": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2213,7 +2213,7 @@
       }
     },
     "async_block": {
-      "move_marker": {
+      "move": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2229,7 +2229,7 @@
       }
     },
     "gen_block": {
-      "move_marker": {
+      "move": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2883,21 +2883,21 @@
       }
     },
     "closure_expression_block": {
-      "static_marker": {
+      "static": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "async_marker": {
+      "async": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "move_marker": {
+      "move": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2927,21 +2927,21 @@
       }
     },
     "closure_expression_expr": {
-      "static_marker": {
+      "static": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "async_marker": {
+      "async": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "move_marker": {
+      "move": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3018,7 +3018,7 @@
       }
     },
     "impl_item_body": {
-      "unsafe_marker": {
+      "unsafe": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3062,7 +3062,7 @@
       }
     },
     "impl_item_semi": {
-      "unsafe_marker": {
+      "unsafe": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3487,7 +3487,7 @@
       }
     },
     "field_pattern_shorthand": {
-      "ref_marker": {
+      "ref": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3510,7 +3510,7 @@
       }
     },
     "field_pattern_named": {
-      "ref_marker": {
+      "ref": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -5426,9 +5426,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "move_marker",
-          "propertyName": "moveMarker",
-          "paramName": "moveMarker",
+          "name": "move",
+          "propertyName": "move",
+          "paramName": "move",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -5466,7 +5466,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "move_marker",
+        "move",
         "body"
       ]
     },
@@ -8227,9 +8227,9 @@
       },
       "slots": [
         {
-          "name": "static_marker",
-          "propertyName": "staticMarker",
-          "paramName": "staticMarker",
+          "name": "static",
+          "propertyName": "static",
+          "paramName": "static_",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8245,9 +8245,9 @@
           ]
         },
         {
-          "name": "async_marker",
-          "propertyName": "asyncMarker",
-          "paramName": "asyncMarker",
+          "name": "async",
+          "propertyName": "async",
+          "paramName": "async",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8263,9 +8263,9 @@
           ]
         },
         {
-          "name": "move_marker",
-          "propertyName": "moveMarker",
-          "paramName": "moveMarker",
+          "name": "move",
+          "propertyName": "move",
+          "paramName": "move",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8344,9 +8344,9 @@
       "name": "closure_expression_block",
       "factoryShape": "config",
       "factoryFields": [
-        "static_marker",
-        "async_marker",
-        "move_marker",
+        "static",
+        "async",
+        "move",
         "parameters",
         "return_type",
         "body"
@@ -8364,9 +8364,9 @@
       },
       "slots": [
         {
-          "name": "static_marker",
-          "propertyName": "staticMarker",
-          "paramName": "staticMarker",
+          "name": "static",
+          "propertyName": "static",
+          "paramName": "static_",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8382,9 +8382,9 @@
           ]
         },
         {
-          "name": "async_marker",
-          "propertyName": "asyncMarker",
-          "paramName": "asyncMarker",
+          "name": "async",
+          "propertyName": "async",
+          "paramName": "async",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8400,9 +8400,9 @@
           ]
         },
         {
-          "name": "move_marker",
-          "propertyName": "moveMarker",
-          "paramName": "moveMarker",
+          "name": "move",
+          "propertyName": "move",
+          "paramName": "move",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8467,9 +8467,9 @@
       "name": "closure_expression_expr",
       "factoryShape": "config",
       "factoryFields": [
-        "static_marker",
-        "async_marker",
-        "move_marker",
+        "static",
+        "async",
+        "move",
         "parameters",
         "body"
       ]
@@ -11214,9 +11214,9 @@
       },
       "slots": [
         {
-          "name": "ref_marker",
-          "propertyName": "refMarker",
-          "paramName": "refMarker",
+          "name": "ref",
+          "propertyName": "ref",
+          "paramName": "ref",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -11295,7 +11295,7 @@
       "name": "field_pattern_named",
       "factoryShape": "config",
       "factoryFields": [
-        "ref_marker",
+        "ref",
         "mutable_specifier",
         "name",
         "pattern"
@@ -11313,9 +11313,9 @@
       },
       "slots": [
         {
-          "name": "ref_marker",
-          "propertyName": "refMarker",
-          "paramName": "refMarker",
+          "name": "ref",
+          "propertyName": "ref",
+          "paramName": "ref",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -11374,7 +11374,7 @@
       "name": "field_pattern_shorthand",
       "factoryShape": "config",
       "factoryFields": [
-        "ref_marker",
+        "ref",
         "mutable_specifier",
         "name"
       ]
@@ -12357,9 +12357,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "move_marker",
-          "propertyName": "moveMarker",
-          "paramName": "moveMarker",
+          "name": "move",
+          "propertyName": "move",
+          "paramName": "move",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -12397,7 +12397,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "move_marker",
+        "move",
         "body"
       ]
     },
@@ -12983,9 +12983,9 @@
       },
       "slots": [
         {
-          "name": "unsafe_marker",
-          "propertyName": "unsafeMarker",
-          "paramName": "unsafeMarker",
+          "name": "unsafe",
+          "propertyName": "unsafe",
+          "paramName": "unsafe",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -13126,7 +13126,7 @@
       "name": "impl_item_body",
       "factoryShape": "config",
       "factoryFields": [
-        "unsafe_marker",
+        "unsafe",
         "type_parameters",
         "trait_clause",
         "type",
@@ -13262,9 +13262,9 @@
       },
       "slots": [
         {
-          "name": "unsafe_marker",
-          "propertyName": "unsafeMarker",
-          "paramName": "unsafeMarker",
+          "name": "unsafe",
+          "propertyName": "unsafe",
+          "paramName": "unsafe",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -13385,7 +13385,7 @@
       "name": "impl_item_semi",
       "factoryShape": "config",
       "factoryFields": [
-        "unsafe_marker",
+        "unsafe",
         "type_parameters",
         "trait_clause",
         "type",
@@ -21418,9 +21418,9 @@
           ]
         },
         {
-          "name": "ref_marker",
-          "propertyName": "refMarker",
-          "paramName": "refMarker",
+          "name": "ref",
+          "propertyName": "ref",
+          "paramName": "ref",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -21519,7 +21519,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "visibility_modifier",
-        "ref_marker",
+        "ref",
         "mutable_specifier",
         "name",
         "type",
@@ -22991,9 +22991,9 @@
           ]
         },
         {
-          "name": "unsafe_marker",
-          "propertyName": "unsafeMarker",
-          "paramName": "unsafeMarker",
+          "name": "unsafe",
+          "propertyName": "unsafe",
+          "paramName": "unsafe",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -23112,7 +23112,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "visibility_modifier",
-        "unsafe_marker",
+        "unsafe",
         "name",
         "type_parameters",
         "bounds",

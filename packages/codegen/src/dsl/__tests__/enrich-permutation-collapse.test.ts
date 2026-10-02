@@ -1,7 +1,7 @@
 /**
  * Integration coverage for the permutation-choice collapse: enrich() must
  * BOTH decline the choice-arm mint AND normalize a required raw keyword
- * step into the shared `field('<kw>_marker', $._kw_<kw>_marker)` spelling,
+ * step into the shared `field('<kw>', $._kw_<kw>)` spelling,
  * so the arms' slots merge on the parent (public_field_definition's
  * modifier positions are the exemplar).
  */
@@ -66,12 +66,12 @@ describe('enrich — permutation-choice collapse', () => {
 
 	it('normalizes the required raw keyword to the shared marker field', () => {
 		const out = runEnrich(input());
-		expect(out.grammar.rules['_kw_declare_marker']).toBeDefined();
+		expect(out.grammar.rules['_kw_declare']).toBeDefined();
 		const json = JSON.stringify(out.grammar.rules['parent']);
 		// Required spelling (arm 1) and the optional spelling (arm 2, promoted
 		// by the optional-keyword pass) both carry the ONE marker field.
-		expect(json).toContain('"declare_marker"');
-		expect(json).toContain('_kw_declare_marker');
+		expect(json).toContain('"declare"');
+		expect(json).toContain('_kw_declare');
 		expect(json).not.toContain('"value":"declare"');
 	});
 });

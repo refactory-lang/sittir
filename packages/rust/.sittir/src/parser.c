@@ -3346,7 +3346,7 @@ enum ts_field_identifiers {
   field_alternative = 3,
   field_argument = 4,
   field_arguments = 5,
-  field_async_marker = 6,
+  field_async = 6,
   field_attribute = 7,
   field_attributes = 8,
   field_body = 9,
@@ -3383,7 +3383,7 @@ enum ts_field_identifiers {
   field_macro = 40,
   field_macro_rule = 41,
   field_modifier = 42,
-  field_move_marker = 43,
+  field_move = 43,
   field_mutable_specifier = 44,
   field_name = 45,
   field_object = 46,
@@ -3395,7 +3395,7 @@ enum ts_field_identifiers {
   field_pattern = 52,
   field_raw_string_literal_end = 53,
   field_raw_string_literal_start = 54,
-  field_ref_marker = 55,
+  field_ref = 55,
   field_reference = 56,
   field_return_type = 57,
   field_right = 58,
@@ -3404,7 +3404,7 @@ enum ts_field_identifiers {
   field_shebang = 61,
   field_start = 62,
   field_statements = 63,
-  field_static_marker = 64,
+  field_static = 64,
   field_string_content = 65,
   field_string_open = 66,
   field_token_patterns = 67,
@@ -3416,7 +3416,7 @@ enum ts_field_identifiers {
   field_type = 73,
   field_type_arguments = 74,
   field_type_parameters = 75,
-  field_unsafe_marker = 76,
+  field_unsafe = 76,
   field_use_clause = 77,
   field_value = 78,
   field_visibility_modifier = 79,
@@ -3431,7 +3431,7 @@ static const char * const ts_field_names[] = {
   [field_alternative] = "alternative",
   [field_argument] = "argument",
   [field_arguments] = "arguments",
-  [field_async_marker] = "async_marker",
+  [field_async] = "async",
   [field_attribute] = "attribute",
   [field_attributes] = "attributes",
   [field_body] = "body",
@@ -3468,7 +3468,7 @@ static const char * const ts_field_names[] = {
   [field_macro] = "macro",
   [field_macro_rule] = "macro_rule",
   [field_modifier] = "modifier",
-  [field_move_marker] = "move_marker",
+  [field_move] = "move",
   [field_mutable_specifier] = "mutable_specifier",
   [field_name] = "name",
   [field_object] = "object",
@@ -3480,7 +3480,7 @@ static const char * const ts_field_names[] = {
   [field_pattern] = "pattern",
   [field_raw_string_literal_end] = "raw_string_literal_end",
   [field_raw_string_literal_start] = "raw_string_literal_start",
-  [field_ref_marker] = "ref_marker",
+  [field_ref] = "ref",
   [field_reference] = "reference",
   [field_return_type] = "return_type",
   [field_right] = "right",
@@ -3489,7 +3489,7 @@ static const char * const ts_field_names[] = {
   [field_shebang] = "shebang",
   [field_start] = "start",
   [field_statements] = "statements",
-  [field_static_marker] = "static_marker",
+  [field_static] = "static",
   [field_string_content] = "string_content",
   [field_string_open] = "string_open",
   [field_token_patterns] = "token_patterns",
@@ -3501,7 +3501,7 @@ static const char * const ts_field_names[] = {
   [field_type] = "type",
   [field_type_arguments] = "type_arguments",
   [field_type_parameters] = "type_parameters",
-  [field_unsafe_marker] = "unsafe_marker",
+  [field_unsafe] = "unsafe",
   [field_use_clause] = "use_clause",
   [field_value] = "value",
   [field_visibility_modifier] = "visibility_modifier",
@@ -4027,7 +4027,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
   [55] =
     {field_body, 2},
     {field_parameters, 1},
-    {field_static_marker, 0},
+    {field_static, 0},
   [58] =
     {field_pattern, 0},
   [59] =
@@ -4058,7 +4058,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_argument, 1},
   [73] =
     {field_body, 2},
-    {field_move_marker, 1},
+    {field_move, 1},
   [75] =
     {field_value, 2},
   [76] =
@@ -4073,7 +4073,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_body, 2},
     {field_condition, 1},
   [83] =
-    {field_async_marker, 0},
+    {field_async, 0},
     {field_body, 2},
     {field_parameters, 1},
   [86] =
@@ -4084,7 +4084,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_type_arguments, 2},
   [90] =
     {field_body, 2},
-    {field_move_marker, 0},
+    {field_move, 0},
     {field_parameters, 1},
   [93] =
     {field_elements, 1},
@@ -4151,15 +4151,15 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_crate, 1},
     {field_name, 2},
   [136] =
-    {field_async_marker, 1},
+    {field_async, 1},
     {field_body, 3},
     {field_parameters, 2},
-    {field_static_marker, 0},
+    {field_static, 0},
   [140] =
     {field_body, 3},
-    {field_move_marker, 1},
+    {field_move, 1},
     {field_parameters, 2},
-    {field_static_marker, 0},
+    {field_static, 0},
   [144] =
     {field_bounds, 1},
   [145] =
@@ -4265,11 +4265,11 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
   [211] =
     {field_body, 3},
     {field_name, 2},
-    {field_unsafe_marker, 0},
+    {field_unsafe, 0},
   [214] =
-    {field_async_marker, 0},
+    {field_async, 0},
     {field_body, 3},
-    {field_move_marker, 1},
+    {field_move, 1},
     {field_parameters, 2},
   [218] =
     {field_initializers, 1},
@@ -4312,7 +4312,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_label, 0},
   [243] =
     {field_type, 2},
-    {field_unsafe_marker, 0},
+    {field_unsafe, 0},
   [245] =
     {field_element, 0},
     {field_element, 2, .inherited = true},
@@ -4342,16 +4342,16 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 1},
     {field_type, 3},
   [264] =
-    {field_async_marker, 1},
+    {field_async, 1},
     {field_body, 4},
-    {field_move_marker, 2},
+    {field_move, 2},
     {field_parameters, 3},
-    {field_static_marker, 0},
+    {field_static, 0},
   [269] =
     {field_body, 4},
     {field_parameters, 1},
     {field_return_type, 3},
-    {field_static_marker, 0},
+    {field_static, 0},
   [273] =
     {field_bounds, 1},
     {field_bounds, 2, .inherited = true},
@@ -4414,7 +4414,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 1},
   [317] =
     {field_name, 1},
-    {field_ref_marker, 0},
+    {field_ref, 0},
   [319] =
     {field_fields, 2},
     {field_type, 0},
@@ -4480,20 +4480,20 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
   [361] =
     {field_body, 4},
     {field_name, 2},
-    {field_unsafe_marker, 0},
+    {field_unsafe, 0},
     {field_where_clause, 3},
   [365] =
     {field_body, 4},
     {field_bounds, 3},
     {field_name, 2},
-    {field_unsafe_marker, 0},
+    {field_unsafe, 0},
   [369] =
     {field_body, 4},
     {field_name, 2},
     {field_type_parameters, 3},
-    {field_unsafe_marker, 0},
+    {field_unsafe, 0},
   [373] =
-    {field_async_marker, 0},
+    {field_async, 0},
     {field_body, 4},
     {field_parameters, 1},
     {field_return_type, 3},
@@ -4502,7 +4502,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_value, 2},
   [379] =
     {field_body, 4},
-    {field_move_marker, 0},
+    {field_move, 0},
     {field_parameters, 1},
     {field_return_type, 3},
   [383] =
@@ -4556,7 +4556,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
   [420] =
     {field_body, 4},
     {field_name, 3},
-    {field_unsafe_marker, 1},
+    {field_unsafe, 1},
     {field_visibility_modifier, 0},
   [424] =
     {field_body, 4},
@@ -4579,15 +4579,15 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
   [437] =
     {field_type, 3},
     {field_type_parameters, 2},
-    {field_unsafe_marker, 0},
+    {field_unsafe, 0},
   [440] =
     {field_type, 2},
-    {field_unsafe_marker, 0},
+    {field_unsafe, 0},
     {field_where_clause, 3},
   [443] =
     {field_trait_clause, 2},
     {field_type, 3},
-    {field_unsafe_marker, 0},
+    {field_unsafe, 0},
   [446] =
     {field_attributes, 1},
     {field_element, 2},
@@ -4613,21 +4613,21 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 2},
     {field_type, 4},
   [463] =
-    {field_async_marker, 1},
+    {field_async, 1},
     {field_body, 5},
     {field_parameters, 2},
     {field_return_type, 4},
-    {field_static_marker, 0},
+    {field_static, 0},
   [468] =
     {field_name, 2},
-    {field_ref_marker, 1},
+    {field_ref, 1},
     {field_type, 4},
   [471] =
     {field_body, 5},
-    {field_move_marker, 1},
+    {field_move, 1},
     {field_parameters, 2},
     {field_return_type, 4},
-    {field_static_marker, 0},
+    {field_static, 0},
   [476] =
     {field_bounds, 0, .inherited = true},
     {field_bounds, 1, .inherited = true},
@@ -4689,7 +4689,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
   [521] =
     {field_mutable_specifier, 1},
     {field_name, 2},
-    {field_ref_marker, 0},
+    {field_ref, 0},
   [524] =
     {field_lifetime, 1},
   [525] =
@@ -4730,24 +4730,24 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_body, 5},
     {field_bounds, 3},
     {field_name, 2},
-    {field_unsafe_marker, 0},
+    {field_unsafe, 0},
     {field_where_clause, 4},
   [555] =
     {field_body, 5},
     {field_name, 2},
     {field_type_parameters, 3},
-    {field_unsafe_marker, 0},
+    {field_unsafe, 0},
     {field_where_clause, 4},
   [560] =
     {field_body, 5},
     {field_bounds, 4},
     {field_name, 2},
     {field_type_parameters, 3},
-    {field_unsafe_marker, 0},
+    {field_unsafe, 0},
   [565] =
-    {field_async_marker, 0},
+    {field_async, 0},
     {field_body, 5},
-    {field_move_marker, 1},
+    {field_move, 1},
     {field_parameters, 2},
     {field_return_type, 4},
   [570] =
@@ -4832,20 +4832,20 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
   [632] =
     {field_body, 5},
     {field_name, 3},
-    {field_unsafe_marker, 1},
+    {field_unsafe, 1},
     {field_visibility_modifier, 0},
     {field_where_clause, 4},
   [637] =
     {field_body, 5},
     {field_bounds, 4},
     {field_name, 3},
-    {field_unsafe_marker, 1},
+    {field_unsafe, 1},
     {field_visibility_modifier, 0},
   [642] =
     {field_body, 5},
     {field_name, 3},
     {field_type_parameters, 4},
-    {field_unsafe_marker, 1},
+    {field_unsafe, 1},
     {field_visibility_modifier, 0},
   [647] =
     {field_body, 5},
@@ -4870,17 +4870,17 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
   [663] =
     {field_type, 3},
     {field_type_parameters, 2},
-    {field_unsafe_marker, 0},
+    {field_unsafe, 0},
     {field_where_clause, 4},
   [667] =
     {field_trait_clause, 3},
     {field_type, 4},
     {field_type_parameters, 2},
-    {field_unsafe_marker, 0},
+    {field_unsafe, 0},
   [671] =
     {field_trait_clause, 2},
     {field_type, 3},
-    {field_unsafe_marker, 0},
+    {field_unsafe, 0},
     {field_where_clause, 4},
   [675] =
     {field_name, 1},
@@ -4899,16 +4899,16 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_type, 3},
     {field_value, 5},
   [687] =
-    {field_async_marker, 1},
+    {field_async, 1},
     {field_body, 6},
-    {field_move_marker, 2},
+    {field_move, 2},
     {field_parameters, 3},
     {field_return_type, 5},
-    {field_static_marker, 0},
+    {field_static, 0},
   [693] =
     {field_mutable_specifier, 2},
     {field_name, 3},
-    {field_ref_marker, 1},
+    {field_ref, 1},
     {field_type, 5},
   [697] =
     {field_name, 1},
@@ -4963,7 +4963,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
   [737] =
     {field_name, 1},
     {field_pattern, 3},
-    {field_ref_marker, 0},
+    {field_ref, 0},
   [740] =
     {field_pattern, 1},
     {field_type, 3},
@@ -4989,7 +4989,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_bounds, 4},
     {field_name, 2},
     {field_type_parameters, 3},
-    {field_unsafe_marker, 0},
+    {field_unsafe, 0},
     {field_where_clause, 5},
   [761] =
     {field_function_modifiers, 0},
@@ -5027,7 +5027,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_visibility_modifier, 0},
   [789] =
     {field_name, 3},
-    {field_ref_marker, 2},
+    {field_ref, 2},
     {field_type, 5},
     {field_visibility_modifier, 0},
   [793] =
@@ -5080,14 +5080,14 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_body, 6},
     {field_bounds, 4},
     {field_name, 3},
-    {field_unsafe_marker, 1},
+    {field_unsafe, 1},
     {field_visibility_modifier, 0},
     {field_where_clause, 5},
   [837] =
     {field_body, 6},
     {field_name, 3},
     {field_type_parameters, 4},
-    {field_unsafe_marker, 1},
+    {field_unsafe, 1},
     {field_visibility_modifier, 0},
     {field_where_clause, 5},
   [843] =
@@ -5095,7 +5095,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_bounds, 5},
     {field_name, 3},
     {field_type_parameters, 4},
-    {field_unsafe_marker, 1},
+    {field_unsafe, 1},
     {field_visibility_modifier, 0},
   [849] =
     {field_function_modifiers, 1},
@@ -5132,7 +5132,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_trait_clause, 3},
     {field_type, 4},
     {field_type_parameters, 2},
-    {field_unsafe_marker, 0},
+    {field_unsafe, 0},
     {field_where_clause, 5},
   [880] =
     {field_body, 2},
@@ -5146,7 +5146,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_value, 6},
   [888] =
     {field_name, 2},
-    {field_ref_marker, 1},
+    {field_ref, 1},
     {field_type, 4},
     {field_value, 6},
   [892] =
@@ -5172,7 +5172,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_mutable_specifier, 1},
     {field_name, 2},
     {field_pattern, 4},
-    {field_ref_marker, 0},
+    {field_ref, 0},
   [912] =
     {field_mutable_specifier, 1},
     {field_pattern, 2},
@@ -5231,7 +5231,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
   [956] =
     {field_mutable_specifier, 3},
     {field_name, 4},
-    {field_ref_marker, 2},
+    {field_ref, 2},
     {field_type, 6},
     {field_visibility_modifier, 0},
   [961] =
@@ -5283,7 +5283,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_bounds, 5},
     {field_name, 3},
     {field_type_parameters, 4},
-    {field_unsafe_marker, 1},
+    {field_unsafe, 1},
     {field_visibility_modifier, 0},
     {field_where_clause, 6},
   [1005] =
@@ -5317,7 +5317,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
   [1029] =
     {field_mutable_specifier, 2},
     {field_name, 3},
-    {field_ref_marker, 1},
+    {field_ref, 1},
     {field_type, 5},
     {field_value, 7},
   [1034] =
@@ -5354,7 +5354,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_visibility_modifier, 0},
   [1060] =
     {field_name, 3},
-    {field_ref_marker, 2},
+    {field_ref, 2},
     {field_type, 5},
     {field_value, 7},
     {field_visibility_modifier, 0},
@@ -5423,7 +5423,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
   [1118] =
     {field_mutable_specifier, 3},
     {field_name, 4},
-    {field_ref_marker, 2},
+    {field_ref, 2},
     {field_type, 6},
     {field_value, 8},
     {field_visibility_modifier, 0},

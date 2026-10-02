@@ -50,7 +50,7 @@ describe('deriveValuesForRule — kind-id stamps at the mint (PR-K2)', () => {
 	});
 
 	it('a ref to a catalog-absent kind mints WITHOUT ids (typed absence)', () => {
-		const rule: Rule = { type: SYMBOL, name: '_kw_async_marker' };
+		const rule: Rule = { type: SYMBOL, name: '_kw_async' };
 		const [v] = deriveValuesForRule(rule, ctx, 'single');
 		expect(v?.storageKindId).toBeUndefined();
 		expect(v?.parseKindId).toBeUndefined();

@@ -412,19 +412,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "move_marker",
+					"test": "move",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "move_marker_before"
+							"field": "move_before"
 						},
 						{
 							"kind": "slot",
-							"name": "move_marker"
+							"name": "move"
 						},
 						{
 							"kind": "seam",
-							"field": "move_marker_after"
+							"field": "move_after"
 						}
 					]
 				}
@@ -1229,15 +1229,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "static_marker",
+					"test": "static",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "static_marker"
+							"name": "static"
 						},
 						{
 							"kind": "seam",
-							"field": "static_marker_after"
+							"field": "static_after"
 						}
 					]
 				}
@@ -1247,19 +1247,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "async_marker",
+					"test": "async",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "async_marker_before"
+							"field": "async_before"
 						},
 						{
 							"kind": "slot",
-							"name": "async_marker"
+							"name": "async"
 						},
 						{
 							"kind": "seam",
-							"field": "async_marker_after"
+							"field": "async_after"
 						}
 					]
 				}
@@ -1269,19 +1269,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "move_marker",
+					"test": "move",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "move_marker_before"
+							"field": "move_before"
 						},
 						{
 							"kind": "slot",
-							"name": "move_marker"
+							"name": "move"
 						},
 						{
 							"kind": "seam",
-							"field": "move_marker_after"
+							"field": "move_after"
 						}
 					]
 				}
@@ -1345,15 +1345,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "static_marker",
+					"test": "static",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "static_marker"
+							"name": "static"
 						},
 						{
 							"kind": "seam",
-							"field": "static_marker_after"
+							"field": "static_after"
 						}
 					]
 				}
@@ -1363,19 +1363,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "async_marker",
+					"test": "async",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "async_marker_before"
+							"field": "async_before"
 						},
 						{
 							"kind": "slot",
-							"name": "async_marker"
+							"name": "async"
 						},
 						{
 							"kind": "seam",
-							"field": "async_marker_after"
+							"field": "async_after"
 						}
 					]
 				}
@@ -1385,19 +1385,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "move_marker",
+					"test": "move",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "move_marker_before"
+							"field": "move_before"
 						},
 						{
 							"kind": "slot",
-							"name": "move_marker"
+							"name": "move"
 						},
 						{
 							"kind": "seam",
-							"field": "move_marker_after"
+							"field": "move_after"
 						}
 					]
 				}
@@ -2511,15 +2511,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "ref_marker",
+					"test": "ref",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "ref_marker"
+							"name": "ref"
 						},
 						{
 							"kind": "seam",
-							"field": "ref_marker_after"
+							"field": "ref_after"
 						}
 					]
 				}
@@ -2581,15 +2581,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "ref_marker",
+					"test": "ref",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "ref_marker"
+							"name": "ref"
 						},
 						{
 							"kind": "seam",
-							"field": "ref_marker_after"
+							"field": "ref_after"
 						}
 					]
 				}
@@ -3221,19 +3221,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "move_marker",
+					"test": "move",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "move_marker_before"
+							"field": "move_before"
 						},
 						{
 							"kind": "slot",
-							"name": "move_marker"
+							"name": "move"
 						},
 						{
 							"kind": "seam",
-							"field": "move_marker_after"
+							"field": "move_after"
 						}
 					]
 				}
@@ -3434,15 +3434,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "unsafe_marker",
+					"test": "unsafe",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "unsafe_marker"
+							"name": "unsafe"
 						},
 						{
 							"kind": "seam",
-							"field": "unsafe_marker_after"
+							"field": "unsafe_after"
 						}
 					]
 				}
@@ -3576,15 +3576,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "unsafe_marker",
+					"test": "unsafe",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "unsafe_marker"
+							"name": "unsafe"
 						},
 						{
 							"kind": "seam",
-							"field": "unsafe_marker_after"
+							"field": "unsafe_after"
 						}
 					]
 				}
@@ -6099,19 +6099,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "ref_marker",
+					"test": "ref",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "ref_marker_before"
+							"field": "ref_before"
 						},
 						{
 							"kind": "slot",
-							"name": "ref_marker"
+							"name": "ref"
 						},
 						{
 							"kind": "seam",
-							"field": "ref_marker_after"
+							"field": "ref_after"
 						}
 					]
 				}
@@ -6922,19 +6922,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "unsafe_marker",
+					"test": "unsafe",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "unsafe_marker_before"
+							"field": "unsafe_before"
 						},
 						{
 							"kind": "slot",
-							"name": "unsafe_marker"
+							"name": "unsafe"
 						},
 						{
 							"kind": "seam",
-							"field": "unsafe_marker_after"
+							"field": "unsafe_after"
 						}
 					]
 				}

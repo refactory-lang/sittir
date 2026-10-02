@@ -1580,10 +1580,10 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "ref_marker",
+              "name": "ref",
               "content": {
                 "type": "SYMBOL",
-                "name": "_kw_ref_marker"
+                "name": "_kw_ref"
               },
               "metadata": {
                 "fieldSource": "enriched"
@@ -2194,10 +2194,10 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "unsafe_marker",
+              "name": "unsafe",
               "content": {
                 "type": "SYMBOL",
-                "name": "_kw_unsafe_marker"
+                "name": "_kw_unsafe"
               },
               "metadata": {
                 "fieldSource": "enriched"
@@ -6878,10 +6878,10 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "move_marker",
+              "name": "move",
               "content": {
                 "type": "SYMBOL",
-                "name": "_kw_move_marker"
+                "name": "_kw_move"
               },
               "metadata": {
                 "fieldSource": "enriched"
@@ -6917,10 +6917,10 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "move_marker",
+              "name": "move",
               "content": {
                 "type": "SYMBOL",
-                "name": "_kw_move_marker"
+                "name": "_kw_move"
               },
               "metadata": {
                 "fieldSource": "enriched"
@@ -8726,23 +8726,23 @@
         ]
       }
     },
-    "_kw_ref_marker": {
+    "_kw_ref": {
       "type": "STRING",
       "value": "ref"
     },
-    "_kw_unsafe_marker": {
+    "_kw_unsafe": {
       "type": "STRING",
       "value": "unsafe"
     },
-    "_kw_static_marker": {
+    "_kw_static": {
       "type": "STRING",
       "value": "static"
     },
-    "_kw_async_marker": {
+    "_kw_async": {
       "type": "STRING",
       "value": "async"
     },
-    "_kw_move_marker": {
+    "_kw_move": {
       "type": "STRING",
       "value": "move"
     },
@@ -10138,10 +10138,6 @@
         }
       ]
     },
-    "_kw_async": {
-      "type": "STRING",
-      "value": "async"
-    },
     "_kw_default": {
       "type": "STRING",
       "value": "default"
@@ -10149,10 +10145,6 @@
     "_kw_const": {
       "type": "STRING",
       "value": "const"
-    },
-    "_kw_unsafe": {
-      "type": "STRING",
-      "value": "unsafe"
     },
     "token_repetition_pattern_text": {
       "type": "PATTERN",
@@ -11577,10 +11569,10 @@
             "members": [
               {
                 "type": "FIELD",
-                "name": "static_marker",
+                "name": "static",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_kw_static_marker"
+                  "name": "_kw_static"
                 },
                 "metadata": {
                   "fieldSource": "enriched"
@@ -11596,10 +11588,10 @@
             "members": [
               {
                 "type": "FIELD",
-                "name": "async_marker",
+                "name": "async",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_kw_async_marker"
+                  "name": "_kw_async"
                 },
                 "metadata": {
                   "fieldSource": "enriched"
@@ -11615,10 +11607,10 @@
             "members": [
               {
                 "type": "FIELD",
-                "name": "move_marker",
+                "name": "move",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_kw_move_marker"
+                  "name": "_kw_move"
                 },
                 "metadata": {
                   "fieldSource": "enriched"
@@ -11689,10 +11681,10 @@
             "members": [
               {
                 "type": "FIELD",
-                "name": "static_marker",
+                "name": "static",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_kw_static_marker"
+                  "name": "_kw_static"
                 },
                 "metadata": {
                   "fieldSource": "enriched"
@@ -11708,10 +11700,10 @@
             "members": [
               {
                 "type": "FIELD",
-                "name": "async_marker",
+                "name": "async",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_kw_async_marker"
+                  "name": "_kw_async"
                 },
                 "metadata": {
                   "fieldSource": "enriched"
@@ -11727,10 +11719,10 @@
             "members": [
               {
                 "type": "FIELD",
-                "name": "move_marker",
+                "name": "move",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_kw_move_marker"
+                  "name": "_kw_move"
                 },
                 "metadata": {
                   "fieldSource": "enriched"
@@ -11997,7 +11989,7 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "unsafe_marker",
+              "name": "unsafe",
               "content": {
                 "type": "SYMBOL",
                 "name": "_impl_item_unsafe_marker"
@@ -12118,7 +12110,7 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "unsafe_marker",
+              "name": "unsafe",
               "content": {
                 "type": "SYMBOL",
                 "name": "_impl_item_unsafe_marker"
@@ -13468,10 +13460,10 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "ref_marker",
+              "name": "ref",
               "content": {
                 "type": "SYMBOL",
-                "name": "_kw_ref_marker"
+                "name": "_kw_ref"
               },
               "metadata": {
                 "fieldSource": "enriched"
@@ -13530,10 +13522,10 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "ref_marker",
+              "name": "ref",
               "content": {
                 "type": "SYMBOL",
-                "name": "_kw_ref_marker"
+                "name": "_kw_ref"
               },
               "metadata": {
                 "fieldSource": "enriched"
@@ -14624,15 +14616,13 @@
     "_match_pattern_optional1",
     "_while_expression_optional1",
     "_closure_parameters_optional1",
-    "_kw_ref_marker",
-    "_kw_unsafe_marker",
-    "_kw_static_marker",
-    "_kw_async_marker",
-    "_kw_move_marker",
+    "_kw_ref",
+    "_kw_unsafe",
+    "_kw_static",
     "_kw_async",
+    "_kw_move",
     "_kw_default",
     "_kw_const",
-    "_kw_unsafe",
     "_kw_comma",
     "_kw_in",
     "_kw_operator",

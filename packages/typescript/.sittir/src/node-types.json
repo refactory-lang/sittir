@@ -829,7 +829,7 @@
           }
         ]
       },
-      "optional_marker": {
+      "optional": {
         "multiple": false,
         "required": false,
         "types": [
@@ -1081,7 +1081,7 @@
     "type": "arrow_function",
     "named": true,
     "fields": {
-      "async_marker": {
+      "async": {
         "multiple": false,
         "required": false,
         "types": [
@@ -1234,7 +1234,7 @@
           }
         ]
       },
-      "using_marker": {
+      "using": {
         "multiple": false,
         "required": false,
         "types": [
@@ -2221,7 +2221,7 @@
     "type": "construct_signature",
     "named": true,
     "fields": {
-      "abstract_marker": {
+      "abstract": {
         "multiple": false,
         "required": false,
         "types": [
@@ -2267,7 +2267,7 @@
     "type": "constructor_type",
     "named": true,
     "fields": {
-      "abstract_marker": {
+      "abstract": {
         "multiple": false,
         "required": false,
         "types": [
@@ -2682,7 +2682,7 @@
           }
         ]
       },
-      "const_marker": {
+      "const": {
         "multiple": false,
         "required": false,
         "types": [
@@ -3406,7 +3406,7 @@
     "type": "for_in_statement",
     "named": true,
     "fields": {
-      "await_marker": {
+      "await": {
         "multiple": false,
         "required": false,
         "types": [
@@ -3555,7 +3555,7 @@
     "type": "function_declaration",
     "named": true,
     "fields": {
-      "async_marker": {
+      "async": {
         "multiple": false,
         "required": false,
         "types": [
@@ -3639,7 +3639,7 @@
     "type": "function_expression",
     "named": true,
     "fields": {
-      "async_marker": {
+      "async": {
         "multiple": false,
         "required": false,
         "types": [
@@ -3713,7 +3713,7 @@
     "type": "function_signature",
     "named": true,
     "fields": {
-      "async_marker": {
+      "async": {
         "multiple": false,
         "required": false,
         "types": [
@@ -3839,7 +3839,7 @@
     "type": "generator_function",
     "named": true,
     "fields": {
-      "async_marker": {
+      "async": {
         "multiple": false,
         "required": false,
         "types": [
@@ -3913,7 +3913,7 @@
     "type": "generator_function_declaration",
     "named": true,
     "fields": {
-      "async_marker": {
+      "async": {
         "multiple": false,
         "required": false,
         "types": [
@@ -4443,7 +4443,7 @@
           }
         ]
       },
-      "readonly_marker": {
+      "readonly": {
         "multiple": false,
         "required": false,
         "types": [
@@ -4495,7 +4495,7 @@
     "type": "index_signature_mapped_type_clause",
     "named": true,
     "fields": {
-      "readonly_marker": {
+      "readonly": {
         "multiple": false,
         "required": false,
         "types": [
@@ -5101,7 +5101,7 @@
           }
         ]
       },
-      "async_marker": {
+      "async": {
         "multiple": false,
         "required": false,
         "types": [
@@ -5147,7 +5147,7 @@
           }
         ]
       },
-      "optional_marker": {
+      "optional": {
         "multiple": false,
         "required": false,
         "types": [
@@ -5177,7 +5177,7 @@
           }
         ]
       },
-      "readonly_marker": {
+      "readonly": {
         "multiple": false,
         "required": false,
         "types": [
@@ -5205,7 +5205,7 @@
           }
         ]
       },
-      "static_marker": {
+      "static": {
         "multiple": false,
         "required": false,
         "types": [
@@ -5259,7 +5259,7 @@
           }
         ]
       },
-      "async_marker": {
+      "async": {
         "multiple": false,
         "required": false,
         "types": [
@@ -5295,7 +5295,7 @@
           }
         ]
       },
-      "optional_marker": {
+      "optional": {
         "multiple": false,
         "required": false,
         "types": [
@@ -5325,7 +5325,7 @@
           }
         ]
       },
-      "readonly_marker": {
+      "readonly": {
         "multiple": false,
         "required": false,
         "types": [
@@ -5353,7 +5353,7 @@
           }
         ]
       },
-      "static_marker": {
+      "static": {
         "multiple": false,
         "required": false,
         "types": [
@@ -5819,7 +5819,7 @@
           }
         ]
       },
-      "readonly_marker": {
+      "readonly": {
         "multiple": false,
         "required": false,
         "types": [
@@ -6129,7 +6129,7 @@
           }
         ]
       },
-      "optional_marker": {
+      "optional": {
         "multiple": false,
         "required": false,
         "types": [
@@ -6149,7 +6149,7 @@
           }
         ]
       },
-      "readonly_marker": {
+      "readonly": {
         "multiple": false,
         "required": false,
         "types": [
@@ -6159,7 +6159,7 @@
           }
         ]
       },
-      "static_marker": {
+      "static": {
         "multiple": false,
         "required": false,
         "types": [
@@ -6185,7 +6185,7 @@
     "type": "public_field_definition",
     "named": true,
     "fields": {
-      "abstract_marker": {
+      "abstract": {
         "multiple": false,
         "required": false,
         "types": [
@@ -6205,7 +6205,7 @@
           }
         ]
       },
-      "accessor_marker": {
+      "accessor": {
         "multiple": false,
         "required": false,
         "types": [
@@ -6215,7 +6215,7 @@
           }
         ]
       },
-      "declare_marker": {
+      "declare": {
         "multiple": false,
         "required": false,
         "types": [
@@ -6261,7 +6261,7 @@
           }
         ]
       },
-      "optionality_marker": {
+      "optionality": {
         "multiple": false,
         "required": false,
         "types": [
@@ -6275,7 +6275,7 @@
           }
         ]
       },
-      "readonly_marker": {
+      "readonly": {
         "multiple": false,
         "required": false,
         "types": [
@@ -6285,7 +6285,7 @@
           }
         ]
       },
-      "static_marker": {
+      "static": {
         "multiple": false,
         "required": false,
         "types": [
@@ -6397,7 +6397,7 @@
           }
         ]
       },
-      "readonly_marker": {
+      "readonly": {
         "multiple": false,
         "required": false,
         "types": [
@@ -7166,7 +7166,7 @@
     "type": "type_parameter",
     "named": true,
     "fields": {
-      "const_marker": {
+      "const": {
         "multiple": false,
         "required": false,
         "types": [

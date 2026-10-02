@@ -18,8 +18,8 @@ pub const SITE_ABSTRACT_CLASS_DECLARATION_ABSTRACT_CLASS_DECLARATION_AFTER: usiz
 pub const SITE_ABSTRACT_METHOD_SIGNATURE_ACCESSIBILITY_MODIFIER_AFTER: usize = 10;
 pub const SITE_ABSTRACT_METHOD_SIGNATURE_ACCESSOR_KIND_BEFORE: usize = 11;
 pub const SITE_ABSTRACT_METHOD_SIGNATURE_ACCESSOR_KIND_AFTER: usize = 12;
-pub const SITE_ABSTRACT_METHOD_SIGNATURE_OPTIONAL_MARKER_BEFORE: usize = 13;
-pub const SITE_ABSTRACT_METHOD_SIGNATURE_OPTIONAL_MARKER_AFTER: usize = 14;
+pub const SITE_ABSTRACT_METHOD_SIGNATURE_OPTIONAL_BEFORE: usize = 13;
+pub const SITE_ABSTRACT_METHOD_SIGNATURE_OPTIONAL_AFTER: usize = 14;
 pub const SITE_ABSTRACT_METHOD_SIGNATURE_OVERRIDE_MODIFIER_BEFORE: usize = 15;
 pub const SITE_ABSTRACT_METHOD_SIGNATURE_OVERRIDE_MODIFIER_AFTER: usize = 16;
 pub const SITE_ABSTRACT_METHOD_SIGNATURE_ABSTRACT_KEYWORD_BEFORE: usize = 17;
@@ -141,9 +141,9 @@ pub const SITE_ARRAY_TYPE_LBRACK_AFTER: usize = 132;
 pub const SITE_ARRAY_TYPE_RBRACK_BEFORE: usize = 133;
 pub const SITE_ARRAY_TYPE_ARRAY_TYPE_BEFORE: usize = 134;
 pub const SITE_ARRAY_TYPE_ARRAY_TYPE_AFTER: usize = 135;
-pub const SITE_ARROW_FUNCTION_ASYNC_MARKER_AFTER: usize = 136;
-pub const SITE_ARROW_FUNCTION_EQ_GT_BEFORE: usize = 137;
-pub const SITE_ARROW_FUNCTION_EQ_GT_AFTER: usize = 138;
+pub const SITE_ARROW_FUNCTION_EQ_GT_BEFORE: usize = 136;
+pub const SITE_ARROW_FUNCTION_EQ_GT_AFTER: usize = 137;
+pub const SITE_ARROW_FUNCTION_ASYNC_AFTER: usize = 138;
 pub const SITE_ARROW_FUNCTION_ARROW_FUNCTION_BEFORE: usize = 139;
 pub const SITE_ARROW_FUNCTION_ARROW_FUNCTION_AFTER: usize = 140;
 pub const SITE_AS_EXPRESSION_AS_KEYWORD_BEFORE: usize = 141;
@@ -157,9 +157,9 @@ pub const SITE_ASSERTS_ASSERTS_AFTER: usize = 148;
 pub const SITE_ASSERTS_ANNOTATION_COLON_AFTER: usize = 149;
 pub const SITE_ASSERTS_ANNOTATION_ASSERTS_ANNOTATION_BEFORE: usize = 150;
 pub const SITE_ASSERTS_ANNOTATION_ASSERTS_ANNOTATION_AFTER: usize = 151;
-pub const SITE_ASSIGNMENT_EXPRESSION_USING_MARKER_AFTER: usize = 152;
-pub const SITE_ASSIGNMENT_EXPRESSION_EQ_BEFORE: usize = 153;
-pub const SITE_ASSIGNMENT_EXPRESSION_EQ_AFTER: usize = 154;
+pub const SITE_ASSIGNMENT_EXPRESSION_EQ_BEFORE: usize = 152;
+pub const SITE_ASSIGNMENT_EXPRESSION_EQ_AFTER: usize = 153;
+pub const SITE_ASSIGNMENT_EXPRESSION_USING_AFTER: usize = 154;
 pub const SITE_ASSIGNMENT_EXPRESSION_ASSIGNMENT_EXPRESSION_BEFORE: usize = 155;
 pub const SITE_ASSIGNMENT_EXPRESSION_ASSIGNMENT_EXPRESSION_AFTER: usize = 156;
 pub const SITE_ASSIGNMENT_PATTERN_EQ_BEFORE: usize = 157;
@@ -264,14 +264,14 @@ pub const SITE_CONSTRAINT_COLON_AFTER: usize = 255;
 pub const SITE_CONSTRAINT_EXTENDS_KEYWORD_AFTER: usize = 256;
 pub const SITE_CONSTRAINT_CONSTRAINT_BEFORE: usize = 257;
 pub const SITE_CONSTRAINT_CONSTRAINT_AFTER: usize = 258;
-pub const SITE_CONSTRUCT_SIGNATURE_ABSTRACT_MARKER_AFTER: usize = 259;
+pub const SITE_CONSTRUCT_SIGNATURE_ABSTRACT_AFTER: usize = 259;
 pub const SITE_CONSTRUCT_SIGNATURE_NEW_KEYWORD_BEFORE: usize = 260;
 pub const SITE_CONSTRUCT_SIGNATURE_NEW_KEYWORD_AFTER: usize = 261;
 pub const SITE_CONSTRUCT_SIGNATURE_CONSTRUCT_SIGNATURE_BEFORE: usize = 262;
 pub const SITE_CONSTRUCT_SIGNATURE_CONSTRUCT_SIGNATURE_AFTER: usize = 263;
-pub const SITE_CONSTRUCTOR_TYPE_ABSTRACT_MARKER_AFTER: usize = 264;
-pub const SITE_CONSTRUCTOR_TYPE_EQ_GT_BEFORE: usize = 265;
-pub const SITE_CONSTRUCTOR_TYPE_EQ_GT_AFTER: usize = 266;
+pub const SITE_CONSTRUCTOR_TYPE_EQ_GT_BEFORE: usize = 264;
+pub const SITE_CONSTRUCTOR_TYPE_EQ_GT_AFTER: usize = 265;
+pub const SITE_CONSTRUCTOR_TYPE_ABSTRACT_AFTER: usize = 266;
 pub const SITE_CONSTRUCTOR_TYPE_NEW_KEYWORD_BEFORE: usize = 267;
 pub const SITE_CONSTRUCTOR_TYPE_NEW_KEYWORD_AFTER: usize = 268;
 pub const SITE_CONSTRUCTOR_TYPE_CONSTRUCTOR_TYPE_BEFORE: usize = 269;
@@ -327,7 +327,7 @@ pub const SITE_ENUM_BODY_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE: usize = 318;
 pub const SITE_ENUM_BODY_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER: usize = 319;
 pub const SITE_ENUM_BODY_ELEMENTS_ENUM_BODY_ELEMENTS_BEFORE: usize = 320;
 pub const SITE_ENUM_BODY_ELEMENTS_ENUM_BODY_ELEMENTS_AFTER: usize = 321;
-pub const SITE_ENUM_DECLARATION_CONST_MARKER_AFTER: usize = 322;
+pub const SITE_ENUM_DECLARATION_CONST_AFTER: usize = 322;
 pub const SITE_ENUM_DECLARATION_ENUM_KEYWORD_BEFORE: usize = 323;
 pub const SITE_ENUM_DECLARATION_ENUM_KEYWORD_AFTER: usize = 324;
 pub const SITE_ENUM_DECLARATION_ENUM_DECLARATION_BEFORE: usize = 325;
@@ -460,8 +460,8 @@ pub const SITE_FOR_HEADER_VAR_KIND_EQ_BEFORE: usize = 451;
 pub const SITE_FOR_HEADER_VAR_KIND_EQ_AFTER: usize = 452;
 pub const SITE_FOR_HEADER_VAR_KIND_FOR_HEADER_VAR_KIND_BEFORE: usize = 453;
 pub const SITE_FOR_HEADER_VAR_KIND_FOR_HEADER_VAR_KIND_AFTER: usize = 454;
-pub const SITE_FOR_IN_STATEMENT_AWAIT_MARKER_BEFORE: usize = 455;
-pub const SITE_FOR_IN_STATEMENT_AWAIT_MARKER_AFTER: usize = 456;
+pub const SITE_FOR_IN_STATEMENT_AWAIT_BEFORE: usize = 455;
+pub const SITE_FOR_IN_STATEMENT_AWAIT_AFTER: usize = 456;
 pub const SITE_FOR_IN_STATEMENT_FOR_KEYWORD_AFTER: usize = 457;
 pub const SITE_FOR_IN_STATEMENT_FOR_IN_STATEMENT_BEFORE: usize = 458;
 pub const SITE_FOR_IN_STATEMENT_FOR_IN_STATEMENT_AFTER: usize = 459;
@@ -486,18 +486,18 @@ pub const SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_BEFOR
 pub const SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_AFTER: usize = 478;
 pub const SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETERS_ELEMENTS_BEFORE: usize = 479;
 pub const SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETERS_ELEMENTS_AFTER: usize = 480;
-pub const SITE_FUNCTION_DECLARATION_ASYNC_MARKER_AFTER: usize = 481;
+pub const SITE_FUNCTION_DECLARATION_ASYNC_AFTER: usize = 481;
 pub const SITE_FUNCTION_DECLARATION_FUNCTION_KEYWORD_BEFORE: usize = 482;
 pub const SITE_FUNCTION_DECLARATION_FUNCTION_KEYWORD_AFTER: usize = 483;
 pub const SITE_FUNCTION_DECLARATION_FUNCTION_DECLARATION_BEFORE: usize = 484;
 pub const SITE_FUNCTION_DECLARATION_FUNCTION_DECLARATION_AFTER: usize = 485;
-pub const SITE_FUNCTION_EXPRESSION_ASYNC_MARKER_AFTER: usize = 486;
+pub const SITE_FUNCTION_EXPRESSION_ASYNC_AFTER: usize = 486;
 pub const SITE_FUNCTION_EXPRESSION_FUNCTION_KEYWORD_BEFORE: usize = 487;
 pub const SITE_FUNCTION_EXPRESSION_FUNCTION_KEYWORD_AFTER: usize = 488;
 pub const SITE_FUNCTION_EXPRESSION_FUNCTION_EXPRESSION_BEFORE: usize = 489;
 pub const SITE_FUNCTION_EXPRESSION_FUNCTION_EXPRESSION_AFTER: usize = 490;
-pub const SITE_FUNCTION_SIGNATURE_ASYNC_MARKER_AFTER: usize = 491;
-pub const SITE_FUNCTION_SIGNATURE_TERMINATOR: usize = 492;
+pub const SITE_FUNCTION_SIGNATURE_TERMINATOR: usize = 491;
+pub const SITE_FUNCTION_SIGNATURE_ASYNC_AFTER: usize = 492;
 pub const SITE_FUNCTION_SIGNATURE_FUNCTION_KEYWORD_BEFORE: usize = 493;
 pub const SITE_FUNCTION_SIGNATURE_FUNCTION_KEYWORD_AFTER: usize = 494;
 pub const SITE_FUNCTION_SIGNATURE_FUNCTION_SIGNATURE_BEFORE: usize = 495;
@@ -506,16 +506,16 @@ pub const SITE_FUNCTION_TYPE_EQ_GT_BEFORE: usize = 497;
 pub const SITE_FUNCTION_TYPE_EQ_GT_AFTER: usize = 498;
 pub const SITE_FUNCTION_TYPE_FUNCTION_TYPE_BEFORE: usize = 499;
 pub const SITE_FUNCTION_TYPE_FUNCTION_TYPE_AFTER: usize = 500;
-pub const SITE_GENERATOR_FUNCTION_ASYNC_MARKER_AFTER: usize = 501;
-pub const SITE_GENERATOR_FUNCTION_STAR_BEFORE: usize = 502;
-pub const SITE_GENERATOR_FUNCTION_STAR_AFTER: usize = 503;
+pub const SITE_GENERATOR_FUNCTION_STAR_BEFORE: usize = 501;
+pub const SITE_GENERATOR_FUNCTION_STAR_AFTER: usize = 502;
+pub const SITE_GENERATOR_FUNCTION_ASYNC_AFTER: usize = 503;
 pub const SITE_GENERATOR_FUNCTION_FUNCTION_KEYWORD_BEFORE: usize = 504;
 pub const SITE_GENERATOR_FUNCTION_FUNCTION_KEYWORD_AFTER: usize = 505;
 pub const SITE_GENERATOR_FUNCTION_GENERATOR_FUNCTION_BEFORE: usize = 506;
 pub const SITE_GENERATOR_FUNCTION_GENERATOR_FUNCTION_AFTER: usize = 507;
-pub const SITE_GENERATOR_FUNCTION_DECLARATION_ASYNC_MARKER_AFTER: usize = 508;
-pub const SITE_GENERATOR_FUNCTION_DECLARATION_STAR_BEFORE: usize = 509;
-pub const SITE_GENERATOR_FUNCTION_DECLARATION_STAR_AFTER: usize = 510;
+pub const SITE_GENERATOR_FUNCTION_DECLARATION_STAR_BEFORE: usize = 508;
+pub const SITE_GENERATOR_FUNCTION_DECLARATION_STAR_AFTER: usize = 509;
+pub const SITE_GENERATOR_FUNCTION_DECLARATION_ASYNC_AFTER: usize = 510;
 pub const SITE_GENERATOR_FUNCTION_DECLARATION_FUNCTION_KEYWORD_BEFORE: usize = 511;
 pub const SITE_GENERATOR_FUNCTION_DECLARATION_FUNCTION_KEYWORD_AFTER: usize = 512;
 pub const SITE_GENERATOR_FUNCTION_DECLARATION_GENERATOR_FUNCTION_DECLARATION_BEFORE: usize = 513;
@@ -610,24 +610,24 @@ pub const SITE_IMPORT_STATEMENT_CLAUSE_FROM_FROM_KEYWORD_BEFORE: usize = 601;
 pub const SITE_IMPORT_STATEMENT_CLAUSE_FROM_FROM_KEYWORD_AFTER: usize = 602;
 pub const SITE_IMPORT_STATEMENT_CLAUSE_FROM_IMPORT_STATEMENT_CLAUSE_FROM_BEFORE: usize = 603;
 pub const SITE_IMPORT_STATEMENT_CLAUSE_FROM_IMPORT_STATEMENT_CLAUSE_FROM_AFTER: usize = 604;
-pub const SITE_INDEX_SIGNATURE_COLON_READONLY_MARKER_BEFORE: usize = 605;
-pub const SITE_INDEX_SIGNATURE_COLON_READONLY_MARKER_AFTER: usize = 606;
-pub const SITE_INDEX_SIGNATURE_COLON_SIGN_AFTER: usize = 607;
-pub const SITE_INDEX_SIGNATURE_COLON_COLON_BEFORE: usize = 608;
-pub const SITE_INDEX_SIGNATURE_COLON_COLON_AFTER: usize = 609;
-pub const SITE_INDEX_SIGNATURE_COLON_LBRACK_BEFORE: usize = 610;
-pub const SITE_INDEX_SIGNATURE_COLON_LBRACK_AFTER: usize = 611;
-pub const SITE_INDEX_SIGNATURE_COLON_RBRACK_BEFORE: usize = 612;
-pub const SITE_INDEX_SIGNATURE_COLON_RBRACK_AFTER: usize = 613;
+pub const SITE_INDEX_SIGNATURE_COLON_SIGN_AFTER: usize = 605;
+pub const SITE_INDEX_SIGNATURE_COLON_COLON_BEFORE: usize = 606;
+pub const SITE_INDEX_SIGNATURE_COLON_COLON_AFTER: usize = 607;
+pub const SITE_INDEX_SIGNATURE_COLON_LBRACK_BEFORE: usize = 608;
+pub const SITE_INDEX_SIGNATURE_COLON_LBRACK_AFTER: usize = 609;
+pub const SITE_INDEX_SIGNATURE_COLON_RBRACK_BEFORE: usize = 610;
+pub const SITE_INDEX_SIGNATURE_COLON_RBRACK_AFTER: usize = 611;
+pub const SITE_INDEX_SIGNATURE_COLON_READONLY_BEFORE: usize = 612;
+pub const SITE_INDEX_SIGNATURE_COLON_READONLY_AFTER: usize = 613;
 pub const SITE_INDEX_SIGNATURE_COLON_INDEX_SIGNATURE_COLON_BEFORE: usize = 614;
 pub const SITE_INDEX_SIGNATURE_COLON_INDEX_SIGNATURE_COLON_AFTER: usize = 615;
-pub const SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_READONLY_MARKER_BEFORE: usize = 616;
-pub const SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_READONLY_MARKER_AFTER: usize = 617;
-pub const SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_SIGN_AFTER: usize = 618;
-pub const SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_LBRACK_BEFORE: usize = 619;
-pub const SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_LBRACK_AFTER: usize = 620;
-pub const SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_RBRACK_BEFORE: usize = 621;
-pub const SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_RBRACK_AFTER: usize = 622;
+pub const SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_SIGN_AFTER: usize = 616;
+pub const SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_LBRACK_BEFORE: usize = 617;
+pub const SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_LBRACK_AFTER: usize = 618;
+pub const SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_RBRACK_BEFORE: usize = 619;
+pub const SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_RBRACK_AFTER: usize = 620;
+pub const SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_READONLY_BEFORE: usize = 621;
+pub const SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_READONLY_AFTER: usize = 622;
 pub const SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_BEFORE: usize = 623;
 pub const SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_AFTER: usize = 624;
 pub const SITE_INDEX_TYPE_QUERY_KEYOF_KEYWORD_AFTER: usize = 625;
@@ -696,31 +696,31 @@ pub const SITE_META_PROPERTY_NEW_TARGET_TARGET_KEYWORD_BEFORE: usize = 687;
 pub const SITE_METHOD_DEFINITION_ACCESSIBILITY_MODIFIER_AFTER: usize = 688;
 pub const SITE_METHOD_DEFINITION_ACCESSOR_KIND_BEFORE: usize = 689;
 pub const SITE_METHOD_DEFINITION_ACCESSOR_KIND_AFTER: usize = 690;
-pub const SITE_METHOD_DEFINITION_ASYNC_MARKER_BEFORE: usize = 691;
-pub const SITE_METHOD_DEFINITION_ASYNC_MARKER_AFTER: usize = 692;
-pub const SITE_METHOD_DEFINITION_OPTIONAL_MARKER_BEFORE: usize = 693;
-pub const SITE_METHOD_DEFINITION_OPTIONAL_MARKER_AFTER: usize = 694;
-pub const SITE_METHOD_DEFINITION_OVERRIDE_MODIFIER_BEFORE: usize = 695;
-pub const SITE_METHOD_DEFINITION_OVERRIDE_MODIFIER_AFTER: usize = 696;
-pub const SITE_METHOD_DEFINITION_READONLY_MARKER_BEFORE: usize = 697;
-pub const SITE_METHOD_DEFINITION_READONLY_MARKER_AFTER: usize = 698;
-pub const SITE_METHOD_DEFINITION_STATIC_MARKER_BEFORE: usize = 699;
-pub const SITE_METHOD_DEFINITION_STATIC_MARKER_AFTER: usize = 700;
+pub const SITE_METHOD_DEFINITION_OPTIONAL_BEFORE: usize = 691;
+pub const SITE_METHOD_DEFINITION_OPTIONAL_AFTER: usize = 692;
+pub const SITE_METHOD_DEFINITION_OVERRIDE_MODIFIER_BEFORE: usize = 693;
+pub const SITE_METHOD_DEFINITION_OVERRIDE_MODIFIER_AFTER: usize = 694;
+pub const SITE_METHOD_DEFINITION_ASYNC_BEFORE: usize = 695;
+pub const SITE_METHOD_DEFINITION_ASYNC_AFTER: usize = 696;
+pub const SITE_METHOD_DEFINITION_READONLY_BEFORE: usize = 697;
+pub const SITE_METHOD_DEFINITION_READONLY_AFTER: usize = 698;
+pub const SITE_METHOD_DEFINITION_STATIC_BEFORE: usize = 699;
+pub const SITE_METHOD_DEFINITION_STATIC_AFTER: usize = 700;
 pub const SITE_METHOD_DEFINITION_METHOD_DEFINITION_BEFORE: usize = 701;
 pub const SITE_METHOD_DEFINITION_METHOD_DEFINITION_AFTER: usize = 702;
 pub const SITE_METHOD_SIGNATURE_ACCESSIBILITY_MODIFIER_AFTER: usize = 703;
 pub const SITE_METHOD_SIGNATURE_ACCESSOR_KIND_BEFORE: usize = 704;
 pub const SITE_METHOD_SIGNATURE_ACCESSOR_KIND_AFTER: usize = 705;
-pub const SITE_METHOD_SIGNATURE_ASYNC_MARKER_BEFORE: usize = 706;
-pub const SITE_METHOD_SIGNATURE_ASYNC_MARKER_AFTER: usize = 707;
-pub const SITE_METHOD_SIGNATURE_OPTIONAL_MARKER_BEFORE: usize = 708;
-pub const SITE_METHOD_SIGNATURE_OPTIONAL_MARKER_AFTER: usize = 709;
-pub const SITE_METHOD_SIGNATURE_OVERRIDE_MODIFIER_BEFORE: usize = 710;
-pub const SITE_METHOD_SIGNATURE_OVERRIDE_MODIFIER_AFTER: usize = 711;
-pub const SITE_METHOD_SIGNATURE_READONLY_MARKER_BEFORE: usize = 712;
-pub const SITE_METHOD_SIGNATURE_READONLY_MARKER_AFTER: usize = 713;
-pub const SITE_METHOD_SIGNATURE_STATIC_MARKER_BEFORE: usize = 714;
-pub const SITE_METHOD_SIGNATURE_STATIC_MARKER_AFTER: usize = 715;
+pub const SITE_METHOD_SIGNATURE_OPTIONAL_BEFORE: usize = 706;
+pub const SITE_METHOD_SIGNATURE_OPTIONAL_AFTER: usize = 707;
+pub const SITE_METHOD_SIGNATURE_OVERRIDE_MODIFIER_BEFORE: usize = 708;
+pub const SITE_METHOD_SIGNATURE_OVERRIDE_MODIFIER_AFTER: usize = 709;
+pub const SITE_METHOD_SIGNATURE_ASYNC_BEFORE: usize = 710;
+pub const SITE_METHOD_SIGNATURE_ASYNC_AFTER: usize = 711;
+pub const SITE_METHOD_SIGNATURE_READONLY_BEFORE: usize = 712;
+pub const SITE_METHOD_SIGNATURE_READONLY_AFTER: usize = 713;
+pub const SITE_METHOD_SIGNATURE_STATIC_BEFORE: usize = 714;
+pub const SITE_METHOD_SIGNATURE_STATIC_AFTER: usize = 715;
 pub const SITE_METHOD_SIGNATURE_METHOD_SIGNATURE_BEFORE: usize = 716;
 pub const SITE_METHOD_SIGNATURE_METHOD_SIGNATURE_AFTER: usize = 717;
 pub const SITE_MODULE_MODULE_KEYWORD_AFTER: usize = 718;
@@ -812,12 +812,12 @@ pub const SITE_OPTIONAL_PARAMETER_DECORATOR_DECORATOR_AFTER: usize = 803;
 pub const SITE_OPTIONAL_PARAMETER_DECORATOR_END: usize = 804;
 pub const SITE_OPTIONAL_PARAMETER_DECORATOR_START: usize = 805;
 pub const SITE_OPTIONAL_PARAMETER_DECORATOR_SEPARATOR_SPACE: usize = 806;
-pub const SITE_OPTIONAL_PARAMETER_READONLY_MARKER_BEFORE: usize = 807;
-pub const SITE_OPTIONAL_PARAMETER_READONLY_MARKER_AFTER: usize = 808;
-pub const SITE_OPTIONAL_PARAMETER_EQ_BEFORE: usize = 809;
-pub const SITE_OPTIONAL_PARAMETER_EQ_AFTER: usize = 810;
-pub const SITE_OPTIONAL_PARAMETER_QMARK_BEFORE: usize = 811;
-pub const SITE_OPTIONAL_PARAMETER_QMARK_AFTER: usize = 812;
+pub const SITE_OPTIONAL_PARAMETER_EQ_BEFORE: usize = 807;
+pub const SITE_OPTIONAL_PARAMETER_EQ_AFTER: usize = 808;
+pub const SITE_OPTIONAL_PARAMETER_QMARK_BEFORE: usize = 809;
+pub const SITE_OPTIONAL_PARAMETER_QMARK_AFTER: usize = 810;
+pub const SITE_OPTIONAL_PARAMETER_READONLY_BEFORE: usize = 811;
+pub const SITE_OPTIONAL_PARAMETER_READONLY_AFTER: usize = 812;
 pub const SITE_OPTIONAL_PARAMETER_OPTIONAL_PARAMETER_BEFORE: usize = 813;
 pub const SITE_OPTIONAL_PARAMETER_OPTIONAL_PARAMETER_AFTER: usize = 814;
 pub const SITE_OPTIONAL_TUPLE_PARAMETER_QMARK_BEFORE: usize = 815;
@@ -909,28 +909,28 @@ pub const SITE_PROGRAM_STATEMENTS_SEPARATOR_SPACE: usize = 900;
 pub const SITE_PROGRAM_PROGRAM_BEFORE: usize = 901;
 pub const SITE_PROGRAM_PROGRAM_AFTER: usize = 902;
 pub const SITE_PROPERTY_SIGNATURE_ACCESSIBILITY_MODIFIER_AFTER: usize = 903;
-pub const SITE_PROPERTY_SIGNATURE_OPTIONAL_MARKER_BEFORE: usize = 904;
-pub const SITE_PROPERTY_SIGNATURE_OPTIONAL_MARKER_AFTER: usize = 905;
+pub const SITE_PROPERTY_SIGNATURE_OPTIONAL_BEFORE: usize = 904;
+pub const SITE_PROPERTY_SIGNATURE_OPTIONAL_AFTER: usize = 905;
 pub const SITE_PROPERTY_SIGNATURE_OVERRIDE_MODIFIER_BEFORE: usize = 906;
 pub const SITE_PROPERTY_SIGNATURE_OVERRIDE_MODIFIER_AFTER: usize = 907;
-pub const SITE_PROPERTY_SIGNATURE_READONLY_MARKER_BEFORE: usize = 908;
-pub const SITE_PROPERTY_SIGNATURE_READONLY_MARKER_AFTER: usize = 909;
-pub const SITE_PROPERTY_SIGNATURE_STATIC_MARKER_BEFORE: usize = 910;
-pub const SITE_PROPERTY_SIGNATURE_STATIC_MARKER_AFTER: usize = 911;
+pub const SITE_PROPERTY_SIGNATURE_READONLY_BEFORE: usize = 908;
+pub const SITE_PROPERTY_SIGNATURE_READONLY_AFTER: usize = 909;
+pub const SITE_PROPERTY_SIGNATURE_STATIC_BEFORE: usize = 910;
+pub const SITE_PROPERTY_SIGNATURE_STATIC_AFTER: usize = 911;
 pub const SITE_PROPERTY_SIGNATURE_PROPERTY_SIGNATURE_BEFORE: usize = 912;
 pub const SITE_PROPERTY_SIGNATURE_PROPERTY_SIGNATURE_AFTER: usize = 913;
 pub const SITE_PUBLIC_FIELD_DEFINITION_ACCESSIBILITY_MODIFIER_BEFORE: usize = 914;
 pub const SITE_PUBLIC_FIELD_DEFINITION_ACCESSIBILITY_MODIFIER_AFTER: usize = 915;
-pub const SITE_PUBLIC_FIELD_DEFINITION_DECLARE_MARKER_BEFORE: usize = 916;
-pub const SITE_PUBLIC_FIELD_DEFINITION_DECLARE_MARKER_AFTER: usize = 917;
-pub const SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_DECORATOR_AFTER: usize = 918;
-pub const SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_END: usize = 919;
-pub const SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_START: usize = 920;
-pub const SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_SEPARATOR_SPACE: usize = 921;
-pub const SITE_PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKER_BEFORE: usize = 922;
-pub const SITE_PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKER_AFTER: usize = 923;
-pub const SITE_PUBLIC_FIELD_DEFINITION_EQ_BEFORE: usize = 924;
-pub const SITE_PUBLIC_FIELD_DEFINITION_EQ_AFTER: usize = 925;
+pub const SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_DECORATOR_AFTER: usize = 916;
+pub const SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_END: usize = 917;
+pub const SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_START: usize = 918;
+pub const SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_SEPARATOR_SPACE: usize = 919;
+pub const SITE_PUBLIC_FIELD_DEFINITION_OPTIONALITY_BEFORE: usize = 920;
+pub const SITE_PUBLIC_FIELD_DEFINITION_OPTIONALITY_AFTER: usize = 921;
+pub const SITE_PUBLIC_FIELD_DEFINITION_EQ_BEFORE: usize = 922;
+pub const SITE_PUBLIC_FIELD_DEFINITION_EQ_AFTER: usize = 923;
+pub const SITE_PUBLIC_FIELD_DEFINITION_DECLARE_BEFORE: usize = 924;
+pub const SITE_PUBLIC_FIELD_DEFINITION_DECLARE_AFTER: usize = 925;
 pub const SITE_PUBLIC_FIELD_DEFINITION_PUBLIC_FIELD_DEFINITION_BEFORE: usize = 926;
 pub const SITE_PUBLIC_FIELD_DEFINITION_PUBLIC_FIELD_DEFINITION_AFTER: usize = 927;
 pub const SITE_READONLY_TYPE_READONLY_KEYWORD_AFTER: usize = 928;
@@ -944,10 +944,10 @@ pub const SITE_REQUIRED_PARAMETER_DECORATOR_DECORATOR_AFTER: usize = 935;
 pub const SITE_REQUIRED_PARAMETER_DECORATOR_END: usize = 936;
 pub const SITE_REQUIRED_PARAMETER_DECORATOR_START: usize = 937;
 pub const SITE_REQUIRED_PARAMETER_DECORATOR_SEPARATOR_SPACE: usize = 938;
-pub const SITE_REQUIRED_PARAMETER_READONLY_MARKER_BEFORE: usize = 939;
-pub const SITE_REQUIRED_PARAMETER_READONLY_MARKER_AFTER: usize = 940;
-pub const SITE_REQUIRED_PARAMETER_EQ_BEFORE: usize = 941;
-pub const SITE_REQUIRED_PARAMETER_EQ_AFTER: usize = 942;
+pub const SITE_REQUIRED_PARAMETER_EQ_BEFORE: usize = 939;
+pub const SITE_REQUIRED_PARAMETER_EQ_AFTER: usize = 940;
+pub const SITE_REQUIRED_PARAMETER_READONLY_BEFORE: usize = 941;
+pub const SITE_REQUIRED_PARAMETER_READONLY_AFTER: usize = 942;
 pub const SITE_REQUIRED_PARAMETER_REQUIRED_PARAMETER_BEFORE: usize = 943;
 pub const SITE_REQUIRED_PARAMETER_REQUIRED_PARAMETER_AFTER: usize = 944;
 pub const SITE_REST_PATTERN_DOT_DOT_DOT_AFTER: usize = 945;
@@ -1241,7 +1241,7 @@ pub const SITE_TYPE_ARGUMENTS_TYPE_ARGUMENTS_BEFORE: usize = 1232;
 pub const SITE_TYPE_ARGUMENTS_TYPE_ARGUMENTS_AFTER: usize = 1233;
 pub const SITE_TYPE_ASSERTION_TYPE_ASSERTION_BEFORE: usize = 1234;
 pub const SITE_TYPE_ASSERTION_TYPE_ASSERTION_AFTER: usize = 1235;
-pub const SITE_TYPE_PARAMETER_CONST_MARKER_AFTER: usize = 1236;
+pub const SITE_TYPE_PARAMETER_CONST_AFTER: usize = 1236;
 pub const SITE_TYPE_PARAMETER_TYPE_PARAMETER_BEFORE: usize = 1237;
 pub const SITE_TYPE_PARAMETER_TYPE_PARAMETER_AFTER: usize = 1238;
 pub const SITE_TYPE_PARAMETERS_LT_AFTER: usize = 1239;
@@ -1385,8 +1385,8 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("abstract_method_signature", "accessibility_modifier_after", "accessibility_modifier_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("abstract_method_signature", "accessor_kind_before", "accessor_kind_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("abstract_method_signature", "accessor_kind_after", "accessor_kind_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("abstract_method_signature", "optional_marker_before", "optional_marker_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("abstract_method_signature", "optional_marker_after", "optional_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("abstract_method_signature", "optional_before", "optional_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("abstract_method_signature", "optional_after", "optional_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("abstract_method_signature", "override_modifier_before", "override_modifier_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("abstract_method_signature", "override_modifier_after", "override_modifier_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("abstract_method_signature", "abstract_keyword_before", "abstract_keyword_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -1508,9 +1508,9 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("array_type", "rbrack_before", "rbrack_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("array_type", "array_type_before", "array_type_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("array_type", "array_type_after", "array_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("arrow_function", "async_marker_after", "async_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("arrow_function", "eq_gt_before", "eq_gt_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("arrow_function", "eq_gt_after", "eq_gt_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("arrow_function", "async_after", "async_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("arrow_function", "arrow_function_before", "arrow_function_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("arrow_function", "arrow_function_after", "arrow_function_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("as_expression", "as_keyword_before", "as_keyword_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -1524,9 +1524,9 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("asserts_annotation", "colon_after", "colon_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("asserts_annotation", "asserts_annotation_before", "asserts_annotation_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("asserts_annotation", "asserts_annotation_after", "asserts_annotation_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("assignment_expression", "using_marker_after", "using_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("assignment_expression", "eq_before", "eq_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("assignment_expression", "eq_after", "eq_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("assignment_expression", "using_after", "using_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("assignment_expression", "assignment_expression_before", "assignment_expression_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("assignment_expression", "assignment_expression_after", "assignment_expression_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("assignment_pattern", "eq_before", "eq_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -1631,14 +1631,14 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("constraint", "extends_keyword_after", "extends_keyword_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("constraint", "constraint_before", "constraint_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("constraint", "constraint_after", "constraint_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("construct_signature", "abstract_marker_after", "abstract_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("construct_signature", "abstract_after", "abstract_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("construct_signature", "new_keyword_before", "new_keyword_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("construct_signature", "new_keyword_after", "new_keyword_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("construct_signature", "construct_signature_before", "construct_signature_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("construct_signature", "construct_signature_after", "construct_signature_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("constructor_type", "abstract_marker_after", "abstract_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("constructor_type", "eq_gt_before", "eq_gt_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("constructor_type", "eq_gt_after", "eq_gt_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("constructor_type", "abstract_after", "abstract_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("constructor_type", "new_keyword_before", "new_keyword_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("constructor_type", "new_keyword_after", "new_keyword_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("constructor_type", "constructor_type_before", "constructor_type_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -1694,7 +1694,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("enum_body_elements", "element_separator_space_after", "comma_separator_space_after", &[180, 181, 182, 183, 184, 185]),
     ("enum_body_elements", "enum_body_elements_before", "enum_body_elements_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("enum_body_elements", "enum_body_elements_after", "enum_body_elements_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("enum_declaration", "const_marker_after", "const_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("enum_declaration", "const_after", "const_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("enum_declaration", "enum_keyword_before", "enum_keyword_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("enum_declaration", "enum_keyword_after", "enum_keyword_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("enum_declaration", "enum_declaration_before", "enum_declaration_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -1827,8 +1827,8 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("for_header_var_kind", "eq_after", "eq_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("for_header_var_kind", "for_header_var_kind_before", "for_header_var_kind_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("for_header_var_kind", "for_header_var_kind_after", "for_header_var_kind_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("for_in_statement", "await_marker_before", "await_marker_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("for_in_statement", "await_marker_after", "await_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("for_in_statement", "await_before", "await_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("for_in_statement", "await_after", "await_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("for_in_statement", "for_keyword_after", "for_keyword_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("for_in_statement", "for_in_statement_before", "for_in_statement_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("for_in_statement", "for_in_statement_after", "for_in_statement_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -1853,18 +1853,18 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("formal_parameters_elements", "formal_parameter_separator_space_after", "comma_separator_space_after", &[180, 181, 182, 183, 184, 185]),
     ("formal_parameters_elements", "formal_parameters_elements_before", "formal_parameters_elements_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("formal_parameters_elements", "formal_parameters_elements_after", "formal_parameters_elements_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("function_declaration", "async_marker_after", "async_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("function_declaration", "async_after", "async_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("function_declaration", "function_keyword_before", "function_keyword_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("function_declaration", "function_keyword_after", "function_keyword_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("function_declaration", "function_declaration_before", "function_declaration_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("function_declaration", "function_declaration_after", "function_declaration_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("function_expression", "async_marker_after", "async_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("function_expression", "async_after", "async_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("function_expression", "function_keyword_before", "function_keyword_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("function_expression", "function_keyword_after", "function_keyword_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("function_expression", "function_expression_before", "function_expression_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("function_expression", "function_expression_after", "function_expression_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("function_signature", "async_marker_after", "async_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("function_signature", "terminator", "terminator", &[173, 20, 178]),
+    ("function_signature", "async_after", "async_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("function_signature", "function_keyword_before", "function_keyword_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("function_signature", "function_keyword_after", "function_keyword_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("function_signature", "function_signature_before", "function_signature_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -1873,16 +1873,16 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("function_type", "eq_gt_after", "eq_gt_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("function_type", "function_type_before", "function_type_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("function_type", "function_type_after", "function_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("generator_function", "async_marker_after", "async_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("generator_function", "star_before", "star_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("generator_function", "star_after", "star_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("generator_function", "async_after", "async_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("generator_function", "function_keyword_before", "function_keyword_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("generator_function", "function_keyword_after", "function_keyword_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("generator_function", "generator_function_before", "generator_function_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("generator_function", "generator_function_after", "generator_function_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("generator_function_declaration", "async_marker_after", "async_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("generator_function_declaration", "star_before", "star_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("generator_function_declaration", "star_after", "star_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("generator_function_declaration", "async_after", "async_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("generator_function_declaration", "function_keyword_before", "function_keyword_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("generator_function_declaration", "function_keyword_after", "function_keyword_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("generator_function_declaration", "generator_function_declaration_before", "generator_function_declaration_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -1977,8 +1977,6 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("import_statement_clause_from", "from_keyword_after", "from_keyword_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("import_statement_clause_from", "import_statement_clause_from_before", "import_statement_clause_from_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("import_statement_clause_from", "import_statement_clause_from_after", "import_statement_clause_from_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("index_signature_colon", "readonly_marker_before", "readonly_marker_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("index_signature_colon", "readonly_marker_after", "readonly_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("index_signature_colon", "sign_after", "sign_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("index_signature_colon", "colon_before", "colon_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("index_signature_colon", "colon_after", "colon_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -1986,15 +1984,17 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("index_signature_colon", "lbrack_after", "lbrack_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("index_signature_colon", "rbrack_before", "rbrack_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("index_signature_colon", "rbrack_after", "rbrack_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("index_signature_colon", "readonly_before", "readonly_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("index_signature_colon", "readonly_after", "readonly_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("index_signature_colon", "index_signature_colon_before", "index_signature_colon_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("index_signature_colon", "index_signature_colon_after", "index_signature_colon_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("index_signature_mapped_type_clause", "readonly_marker_before", "readonly_marker_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("index_signature_mapped_type_clause", "readonly_marker_after", "readonly_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("index_signature_mapped_type_clause", "sign_after", "sign_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("index_signature_mapped_type_clause", "lbrack_before", "lbrack_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("index_signature_mapped_type_clause", "lbrack_after", "lbrack_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("index_signature_mapped_type_clause", "rbrack_before", "rbrack_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("index_signature_mapped_type_clause", "rbrack_after", "rbrack_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("index_signature_mapped_type_clause", "readonly_before", "readonly_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("index_signature_mapped_type_clause", "readonly_after", "readonly_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("index_signature_mapped_type_clause", "index_signature_mapped_type_clause_before", "index_signature_mapped_type_clause_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("index_signature_mapped_type_clause", "index_signature_mapped_type_clause_after", "index_signature_mapped_type_clause_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("index_type_query", "keyof_keyword_after", "keyof_keyword_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -2063,31 +2063,31 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("method_definition", "accessibility_modifier_after", "accessibility_modifier_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("method_definition", "accessor_kind_before", "accessor_kind_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("method_definition", "accessor_kind_after", "accessor_kind_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("method_definition", "async_marker_before", "async_marker_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("method_definition", "async_marker_after", "async_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("method_definition", "optional_marker_before", "optional_marker_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("method_definition", "optional_marker_after", "optional_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("method_definition", "optional_before", "optional_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("method_definition", "optional_after", "optional_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("method_definition", "override_modifier_before", "override_modifier_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("method_definition", "override_modifier_after", "override_modifier_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("method_definition", "readonly_marker_before", "readonly_marker_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("method_definition", "readonly_marker_after", "readonly_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("method_definition", "static_marker_before", "static_marker_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("method_definition", "static_marker_after", "static_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("method_definition", "async_before", "async_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("method_definition", "async_after", "async_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("method_definition", "readonly_before", "readonly_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("method_definition", "readonly_after", "readonly_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("method_definition", "static_before", "static_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("method_definition", "static_after", "static_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("method_definition", "method_definition_before", "method_definition_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("method_definition", "method_definition_after", "method_definition_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("method_signature", "accessibility_modifier_after", "accessibility_modifier_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("method_signature", "accessor_kind_before", "accessor_kind_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("method_signature", "accessor_kind_after", "accessor_kind_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("method_signature", "async_marker_before", "async_marker_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("method_signature", "async_marker_after", "async_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("method_signature", "optional_marker_before", "optional_marker_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("method_signature", "optional_marker_after", "optional_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("method_signature", "optional_before", "optional_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("method_signature", "optional_after", "optional_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("method_signature", "override_modifier_before", "override_modifier_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("method_signature", "override_modifier_after", "override_modifier_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("method_signature", "readonly_marker_before", "readonly_marker_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("method_signature", "readonly_marker_after", "readonly_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("method_signature", "static_marker_before", "static_marker_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("method_signature", "static_marker_after", "static_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("method_signature", "async_before", "async_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("method_signature", "async_after", "async_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("method_signature", "readonly_before", "readonly_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("method_signature", "readonly_after", "readonly_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("method_signature", "static_before", "static_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("method_signature", "static_after", "static_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("method_signature", "method_signature_before", "method_signature_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("method_signature", "method_signature_after", "method_signature_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("module", "module_keyword_after", "module_keyword_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -2179,12 +2179,12 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("optional_parameter", "optional_parameter_end", "optional_parameter_end", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("optional_parameter", "optional_parameter_start", "optional_parameter_start", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("optional_parameter", "decorator_separator_space", "empty_separator_space", &[180, 181, 182, 183, 184, 185]),
-    ("optional_parameter", "readonly_marker_before", "readonly_marker_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("optional_parameter", "readonly_marker_after", "readonly_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("optional_parameter", "eq_before", "eq_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("optional_parameter", "eq_after", "eq_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("optional_parameter", "qmark_before", "qmark_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("optional_parameter", "qmark_after", "qmark_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("optional_parameter", "readonly_before", "readonly_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("optional_parameter", "readonly_after", "readonly_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("optional_parameter", "optional_parameter_before", "optional_parameter_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("optional_parameter", "optional_parameter_after", "optional_parameter_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("optional_tuple_parameter", "qmark_before", "qmark_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -2276,28 +2276,28 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("program", "program_before", "program_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("program", "program_after", "program_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("property_signature", "accessibility_modifier_after", "accessibility_modifier_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("property_signature", "optional_marker_before", "optional_marker_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("property_signature", "optional_marker_after", "optional_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("property_signature", "optional_before", "optional_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("property_signature", "optional_after", "optional_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("property_signature", "override_modifier_before", "override_modifier_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("property_signature", "override_modifier_after", "override_modifier_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("property_signature", "readonly_marker_before", "readonly_marker_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("property_signature", "readonly_marker_after", "readonly_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("property_signature", "static_marker_before", "static_marker_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("property_signature", "static_marker_after", "static_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("property_signature", "readonly_before", "readonly_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("property_signature", "readonly_after", "readonly_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("property_signature", "static_before", "static_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("property_signature", "static_after", "static_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("property_signature", "property_signature_before", "property_signature_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("property_signature", "property_signature_after", "property_signature_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("public_field_definition", "accessibility_modifier_before", "accessibility_modifier_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("public_field_definition", "accessibility_modifier_after", "accessibility_modifier_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("public_field_definition", "declare_marker_before", "declare_marker_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("public_field_definition", "declare_marker_after", "declare_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("public_field_definition", "decorator_decorator_after", "decorator_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("public_field_definition", "public_field_definition_end", "public_field_definition_end", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("public_field_definition", "public_field_definition_start", "public_field_definition_start", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("public_field_definition", "decorator_separator_space", "empty_separator_space", &[180, 181, 182, 183, 184, 185]),
-    ("public_field_definition", "optionality_marker_before", "optionality_marker_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("public_field_definition", "optionality_marker_after", "optionality_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("public_field_definition", "optionality_before", "optionality_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("public_field_definition", "optionality_after", "optionality_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("public_field_definition", "eq_before", "eq_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("public_field_definition", "eq_after", "eq_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("public_field_definition", "declare_before", "declare_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("public_field_definition", "declare_after", "declare_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("public_field_definition", "public_field_definition_before", "public_field_definition_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("public_field_definition", "public_field_definition_after", "public_field_definition_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("readonly_type", "readonly_keyword_after", "readonly_keyword_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -2311,10 +2311,10 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("required_parameter", "required_parameter_end", "required_parameter_end", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("required_parameter", "required_parameter_start", "required_parameter_start", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("required_parameter", "decorator_separator_space", "empty_separator_space", &[180, 181, 182, 183, 184, 185]),
-    ("required_parameter", "readonly_marker_before", "readonly_marker_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("required_parameter", "readonly_marker_after", "readonly_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("required_parameter", "eq_before", "eq_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("required_parameter", "eq_after", "eq_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("required_parameter", "readonly_before", "readonly_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("required_parameter", "readonly_after", "readonly_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("required_parameter", "required_parameter_before", "required_parameter_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("required_parameter", "required_parameter_after", "required_parameter_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("rest_pattern", "dot_dot_dot_after", "dot_dot_dot_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -2608,7 +2608,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("type_arguments", "type_arguments_after", "type_arguments_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("type_assertion", "type_assertion_before", "type_assertion_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("type_assertion", "type_assertion_after", "type_assertion_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("type_parameter", "const_marker_after", "const_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("type_parameter", "const_after", "const_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("type_parameter", "type_parameter_before", "type_parameter_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("type_parameter", "type_parameter_after", "type_parameter_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("type_parameters", "lt_after", "lt_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -3006,11 +3006,11 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("array", &[119, 117, 114, 113, 118, 120, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112]),
     ("array_pattern", &[129, 127, 124, 123, 128, 130, 121, 122]),
     ("array_type", &[134, 131, 132, 133, 135]),
-    ("arrow_function", &[139, 136, 137, 138, 140]),
+    ("arrow_function", &[139, 138, 136, 137, 140]),
     ("as_expression", &[144, 141, 142, 143, 145]),
     ("asserts", &[147, 146, 148]),
     ("asserts_annotation", &[150, 149, 151]),
-    ("assignment_expression", &[155, 152, 153, 154, 156]),
+    ("assignment_expression", &[155, 154, 152, 153, 156]),
     ("assignment_pattern", &[159, 157, 158, 160]),
     ("augmented_assignment_expression", &[163, 161, 162, 164]),
     ("await_expression", &[166, 165, 167]),
@@ -3035,7 +3035,7 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("conditional_type", &[253, 251, 252, 249, 250, 247, 248, 254]),
     ("constraint", &[257, 256, 255, 258]),
     ("construct_signature", &[262, 259, 260, 261, 263]),
-    ("constructor_type", &[269, 264, 267, 268, 265, 266, 270]),
+    ("constructor_type", &[269, 266, 267, 268, 264, 265, 270]),
     ("continue_statement", &[274, 273, 272, 275]),
     ("debugger_statement", &[279, 278, 277, 280]),
     ("decorator", &[282, 281, 283]),
@@ -3077,10 +3077,10 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("formal_parameters_elements", &[479, 476, 475, 480, 473, 474]),
     ("function_declaration", &[484, 481, 482, 483, 485]),
     ("function_expression", &[489, 486, 487, 488, 490]),
-    ("function_signature", &[495, 491, 493, 494, 496]),
+    ("function_signature", &[495, 492, 493, 494, 496]),
     ("function_type", &[499, 497, 498, 500]),
-    ("generator_function", &[506, 501, 504, 505, 502, 503, 507]),
-    ("generator_function_declaration", &[513, 508, 511, 512, 509, 510, 514]),
+    ("generator_function", &[506, 503, 504, 505, 501, 502, 507]),
+    ("generator_function_declaration", &[513, 510, 511, 512, 508, 509, 514]),
     ("generic_type", &[515, 516]),
     ("if_statement", &[518, 517, 519]),
     ("implements_clause", &[548, 547, 544, 543, 549, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542]),
@@ -3094,8 +3094,8 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("import_specifiers", &[590, 587, 586, 591, 584, 585]),
     ("import_statement", &[599, 594, 595, 596, 597, 598, 593, 600]),
     ("import_statement_clause_from", &[603, 601, 602, 604]),
-    ("index_signature_colon", &[614, 607, 605, 606, 610, 611, 608, 609, 612, 613, 615]),
-    ("index_signature_mapped_type_clause", &[623, 618, 616, 617, 619, 620, 621, 622, 624]),
+    ("index_signature_colon", &[614, 605, 612, 613, 608, 609, 606, 607, 610, 611, 615]),
+    ("index_signature_mapped_type_clause", &[623, 616, 621, 622, 617, 618, 619, 620, 624]),
     ("index_type_query", &[626, 625, 627]),
     ("infer_type", &[631, 630, 628, 629, 632]),
     ("instantiation_expression", &[633, 634]),
@@ -3110,8 +3110,8 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("member_expression", &[678, 674, 675, 676, 677, 679]),
     ("meta_property_import_meta", &[682, 680, 681, 683]),
     ("meta_property_new_target", &[686, 684, 685, 687]),
-    ("method_definition", &[701, 688, 699, 700, 695, 696, 697, 698, 691, 692, 689, 690, 693, 694, 702]),
-    ("method_signature", &[716, 703, 714, 715, 710, 711, 712, 713, 706, 707, 704, 705, 708, 709, 717]),
+    ("method_definition", &[701, 688, 699, 700, 693, 694, 697, 698, 695, 696, 689, 690, 691, 692, 702]),
+    ("method_signature", &[716, 703, 714, 715, 708, 709, 712, 713, 710, 711, 704, 705, 706, 707, 717]),
     ("module", &[719, 718, 720]),
     ("named_imports", &[723, 721, 722, 724]),
     ("namespace_export", &[728, 725, 726, 727, 729]),
@@ -3127,7 +3127,7 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("object_type_content", &[795, 791, 790, 796, 779, 780, 781, 782, 783, 784, 785, 786, 787, 788, 789]),
     ("omitting_type_annotation", &[798, 797, 799]),
     ("opting_type_annotation", &[801, 800, 802]),
-    ("optional_parameter", &[813, 805, 804, 807, 808, 811, 812, 809, 810, 814, 803]),
+    ("optional_parameter", &[813, 805, 804, 811, 812, 809, 810, 807, 808, 814, 803]),
     ("optional_tuple_parameter", &[817, 815, 816, 818]),
     ("optional_type", &[820, 819, 821]),
     ("pair", &[824, 822, 823, 825]),
@@ -3138,11 +3138,11 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("predefined_type", &[842, 843, 848, 849, 844, 845, 852, 853, 854, 855, 856, 857, 860, 861, 858, 859, 846, 847, 850, 851]),
     ("program", &[901, 899, 898, 902, 862, 863, 864, 865, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896, 897]),
     ("property_signature", &[912, 903, 910, 911, 906, 907, 908, 909, 904, 905, 913]),
-    ("public_field_definition", &[926, 920, 919, 916, 917, 914, 915, 922, 923, 924, 925, 927, 918]),
+    ("public_field_definition", &[926, 918, 917, 924, 925, 914, 915, 920, 921, 922, 923, 927, 916]),
     ("readonly_type", &[929, 928, 930]),
     ("regex", &[931, 932]),
     ("regex_pattern", &[933, 934]),
-    ("required_parameter", &[943, 937, 936, 939, 940, 941, 942, 944, 935]),
+    ("required_parameter", &[943, 937, 936, 941, 942, 939, 940, 944, 935]),
     ("rest_pattern", &[946, 945, 947]),
     ("rest_type", &[949, 948, 950]),
     ("return_statement", &[954, 953, 952, 955]),
@@ -3710,16 +3710,9 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 20, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
-    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
-    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
-    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
@@ -3727,9 +3720,16 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
+    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
@@ -3824,8 +3824,6 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
-    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 180, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
@@ -3833,15 +3831,17 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 180, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 180, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 180, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 180, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 180, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
+    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
@@ -3910,8 +3910,6 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
-    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
@@ -3920,15 +3918,17 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
+    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
+    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
-    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
+    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
@@ -4028,10 +4028,10 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 180, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
-    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
-    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
+    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
@@ -4135,14 +4135,14 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
-    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
-    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 183, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 183, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 180, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
+    ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
@@ -5154,7 +5154,7 @@ pub static SEATS_PUBLIC_FIELD_DEFINITION_DECORATOR: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 918,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 916,
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
@@ -5492,9 +5492,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ABSTRACT_METHOD_SIGNATURE_ABSTRACT_METHOD_SIGNATURE_AFTER, path: "(abstract_method_signature)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ABSTRACT_METHOD_SIGNATURE_ABSTRACT_METHOD_SIGNATURE_BEFORE, path: "(abstract_method_signature)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "optionalMarker", path: "(abstract_method_signature)/optional_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ABSTRACT_METHOD_SIGNATURE_OPTIONAL_MARKER_AFTER, path: "(abstract_method_signature)/optional_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ABSTRACT_METHOD_SIGNATURE_OPTIONAL_MARKER_BEFORE, path: "(abstract_method_signature)/optional_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "optional", path: "(abstract_method_signature)/optional:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ABSTRACT_METHOD_SIGNATURE_OPTIONAL_AFTER, path: "(abstract_method_signature)/optional:/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ABSTRACT_METHOD_SIGNATURE_OPTIONAL_BEFORE, path: "(abstract_method_signature)/optional:/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "overrideModifier", path: "(abstract_method_signature)/override_modifier:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ABSTRACT_METHOD_SIGNATURE_OVERRIDE_MODIFIER_AFTER, path: "(abstract_method_signature)/override_modifier:/after" }] },
@@ -5818,8 +5818,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "arrowFunction", path: "(arrow_function)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ARROW_FUNCTION_ARROW_FUNCTION_AFTER, path: "(arrow_function)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "asyncMarker", path: "(arrow_function)/async_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ARROW_FUNCTION_ASYNC_MARKER_AFTER, path: "(arrow_function)/async_marker:/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "asyncKeyword", path: "(arrow_function)/\"async\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ARROW_FUNCTION_ASYNC_AFTER, path: "(arrow_function)/\"async\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ARROW_FUNCTION_ARROW_FUNCTION_BEFORE, path: "(arrow_function)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "eqGt", path: "(arrow_function)/\"=>\"", children: &[
@@ -5859,8 +5859,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ASSIGNMENT_EXPRESSION_EQ_AFTER, path: "(assignment_expression)/\"=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ASSIGNMENT_EXPRESSION_EQ_BEFORE, path: "(assignment_expression)/\"=\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "usingMarker", path: "(assignment_expression)/using_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ASSIGNMENT_EXPRESSION_USING_MARKER_AFTER, path: "(assignment_expression)/using_marker:/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "usingKeyword", path: "(assignment_expression)/\"using\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ASSIGNMENT_EXPRESSION_USING_AFTER, path: "(assignment_expression)/\"using\"/after" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "assignmentPattern", path: "(assignment_pattern)", children: &[
@@ -6094,8 +6094,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "constructSignature", path: "(construct_signature)", children: &[
-        ::sittir_core::options::AddressNode::Branch { key: "abstractMarker", path: "(construct_signature)/abstract_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CONSTRUCT_SIGNATURE_ABSTRACT_MARKER_AFTER, path: "(construct_signature)/abstract_marker:/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "abstractKeyword", path: "(construct_signature)/\"abstract\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CONSTRUCT_SIGNATURE_ABSTRACT_AFTER, path: "(construct_signature)/\"abstract\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CONSTRUCT_SIGNATURE_CONSTRUCT_SIGNATURE_AFTER, path: "(construct_signature)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CONSTRUCT_SIGNATURE_CONSTRUCT_SIGNATURE_BEFORE, path: "(construct_signature)/before" }] },
@@ -6105,8 +6105,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "constructorType", path: "(constructor_type)", children: &[
-        ::sittir_core::options::AddressNode::Branch { key: "abstractMarker", path: "(constructor_type)/abstract_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CONSTRUCTOR_TYPE_ABSTRACT_MARKER_AFTER, path: "(constructor_type)/abstract_marker:/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "abstractKeyword", path: "(constructor_type)/\"abstract\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CONSTRUCTOR_TYPE_ABSTRACT_AFTER, path: "(constructor_type)/\"abstract\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CONSTRUCTOR_TYPE_CONSTRUCTOR_TYPE_AFTER, path: "(constructor_type)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CONSTRUCTOR_TYPE_CONSTRUCTOR_TYPE_BEFORE, path: "(constructor_type)/before" }] },
@@ -6238,8 +6238,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "enumDeclaration", path: "(enum_declaration)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_DECLARATION_ENUM_DECLARATION_AFTER, path: "(enum_declaration)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_DECLARATION_ENUM_DECLARATION_BEFORE, path: "(enum_declaration)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "constMarker", path: "(enum_declaration)/const_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_DECLARATION_CONST_MARKER_AFTER, path: "(enum_declaration)/const_marker:/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "constKeyword", path: "(enum_declaration)/\"const\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_DECLARATION_CONST_AFTER, path: "(enum_declaration)/\"const\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "enumKeyword", path: "(enum_declaration)/\"enum\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_DECLARATION_ENUM_KEYWORD_AFTER, path: "(enum_declaration)/\"enum\"/after" }] },
@@ -6535,9 +6535,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "forInStatement", path: "(for_in_statement)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_IN_STATEMENT_FOR_IN_STATEMENT_AFTER, path: "(for_in_statement)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "awaitMarker", path: "(for_in_statement)/await_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_IN_STATEMENT_AWAIT_MARKER_AFTER, path: "(for_in_statement)/await_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_IN_STATEMENT_AWAIT_MARKER_BEFORE, path: "(for_in_statement)/await_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "awaitKeyword", path: "(for_in_statement)/\"await\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_IN_STATEMENT_AWAIT_AFTER, path: "(for_in_statement)/\"await\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_IN_STATEMENT_AWAIT_BEFORE, path: "(for_in_statement)/\"await\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_IN_STATEMENT_FOR_IN_STATEMENT_BEFORE, path: "(for_in_statement)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "forKeyword", path: "(for_in_statement)/\"for\"", children: &[
@@ -6596,8 +6596,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "functionDeclaration", path: "(function_declaration)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_DECLARATION_FUNCTION_DECLARATION_AFTER, path: "(function_declaration)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "asyncMarker", path: "(function_declaration)/async_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_DECLARATION_ASYNC_MARKER_AFTER, path: "(function_declaration)/async_marker:/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "asyncKeyword", path: "(function_declaration)/\"async\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_DECLARATION_ASYNC_AFTER, path: "(function_declaration)/\"async\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_DECLARATION_FUNCTION_DECLARATION_BEFORE, path: "(function_declaration)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "functionKeyword", path: "(function_declaration)/\"function\"", children: &[
@@ -6607,8 +6607,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "functionExpression", path: "(function_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_EXPRESSION_FUNCTION_EXPRESSION_AFTER, path: "(function_expression)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "asyncMarker", path: "(function_expression)/async_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_EXPRESSION_ASYNC_MARKER_AFTER, path: "(function_expression)/async_marker:/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "asyncKeyword", path: "(function_expression)/\"async\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_EXPRESSION_ASYNC_AFTER, path: "(function_expression)/\"async\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_EXPRESSION_FUNCTION_EXPRESSION_BEFORE, path: "(function_expression)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "functionKeyword", path: "(function_expression)/\"function\"", children: &[
@@ -6618,8 +6618,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "functionSignature", path: "(function_signature)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_SIGNATURE_FUNCTION_SIGNATURE_AFTER, path: "(function_signature)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "asyncMarker", path: "(function_signature)/async_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_SIGNATURE_ASYNC_MARKER_AFTER, path: "(function_signature)/async_marker:/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "asyncKeyword", path: "(function_signature)/\"async\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_SIGNATURE_ASYNC_AFTER, path: "(function_signature)/\"async\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_SIGNATURE_FUNCTION_SIGNATURE_BEFORE, path: "(function_signature)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "functionKeyword", path: "(function_signature)/\"function\"", children: &[
@@ -6641,8 +6641,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "generatorFunction", path: "(generator_function)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERATOR_FUNCTION_GENERATOR_FUNCTION_AFTER, path: "(generator_function)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "asyncMarker", path: "(generator_function)/async_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERATOR_FUNCTION_ASYNC_MARKER_AFTER, path: "(generator_function)/async_marker:/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "asyncKeyword", path: "(generator_function)/\"async\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERATOR_FUNCTION_ASYNC_AFTER, path: "(generator_function)/\"async\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERATOR_FUNCTION_GENERATOR_FUNCTION_BEFORE, path: "(generator_function)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "functionKeyword", path: "(generator_function)/\"function\"", children: &[
@@ -6656,8 +6656,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "generatorFunctionDeclaration", path: "(generator_function_declaration)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERATOR_FUNCTION_DECLARATION_GENERATOR_FUNCTION_DECLARATION_AFTER, path: "(generator_function_declaration)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "asyncMarker", path: "(generator_function_declaration)/async_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERATOR_FUNCTION_DECLARATION_ASYNC_MARKER_AFTER, path: "(generator_function_declaration)/async_marker:/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "asyncKeyword", path: "(generator_function_declaration)/\"async\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERATOR_FUNCTION_DECLARATION_ASYNC_AFTER, path: "(generator_function_declaration)/\"async\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERATOR_FUNCTION_DECLARATION_GENERATOR_FUNCTION_DECLARATION_BEFORE, path: "(generator_function_declaration)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "functionKeyword", path: "(generator_function_declaration)/\"function\"", children: &[
@@ -6905,9 +6905,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_INDEX_SIGNATURE_COLON_RBRACK_AFTER, path: "(index_signature_colon)/\"]\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_INDEX_SIGNATURE_COLON_RBRACK_BEFORE, path: "(index_signature_colon)/\"]\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "readonlyMarker", path: "(index_signature_colon)/readonly_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_INDEX_SIGNATURE_COLON_READONLY_MARKER_AFTER, path: "(index_signature_colon)/readonly_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_INDEX_SIGNATURE_COLON_READONLY_MARKER_BEFORE, path: "(index_signature_colon)/readonly_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "readonlyKeyword", path: "(index_signature_colon)/\"readonly\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_INDEX_SIGNATURE_COLON_READONLY_AFTER, path: "(index_signature_colon)/\"readonly\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_INDEX_SIGNATURE_COLON_READONLY_BEFORE, path: "(index_signature_colon)/\"readonly\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "sign", path: "(index_signature_colon)/sign:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_INDEX_SIGNATURE_COLON_SIGN_AFTER, path: "(index_signature_colon)/sign:/after" }] },
@@ -6924,9 +6924,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_RBRACK_AFTER, path: "(index_signature_mapped_type_clause)/\"]\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_RBRACK_BEFORE, path: "(index_signature_mapped_type_clause)/\"]\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "readonlyMarker", path: "(index_signature_mapped_type_clause)/readonly_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_READONLY_MARKER_AFTER, path: "(index_signature_mapped_type_clause)/readonly_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_READONLY_MARKER_BEFORE, path: "(index_signature_mapped_type_clause)/readonly_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "readonlyKeyword", path: "(index_signature_mapped_type_clause)/\"readonly\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_READONLY_AFTER, path: "(index_signature_mapped_type_clause)/\"readonly\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_READONLY_BEFORE, path: "(index_signature_mapped_type_clause)/\"readonly\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "sign", path: "(index_signature_mapped_type_clause)/sign:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_SIGN_AFTER, path: "(index_signature_mapped_type_clause)/sign:/after" }] },
@@ -7086,26 +7086,26 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_DEFINITION_ACCESSOR_KIND_BEFORE, path: "(method_definition)/accessor_kind:/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_DEFINITION_METHOD_DEFINITION_AFTER, path: "(method_definition)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "asyncMarker", path: "(method_definition)/async_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_DEFINITION_ASYNC_MARKER_AFTER, path: "(method_definition)/async_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_DEFINITION_ASYNC_MARKER_BEFORE, path: "(method_definition)/async_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "asyncKeyword", path: "(method_definition)/\"async\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_DEFINITION_ASYNC_AFTER, path: "(method_definition)/\"async\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_DEFINITION_ASYNC_BEFORE, path: "(method_definition)/\"async\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_DEFINITION_METHOD_DEFINITION_BEFORE, path: "(method_definition)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "optionalMarker", path: "(method_definition)/optional_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_DEFINITION_OPTIONAL_MARKER_AFTER, path: "(method_definition)/optional_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_DEFINITION_OPTIONAL_MARKER_BEFORE, path: "(method_definition)/optional_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "optional", path: "(method_definition)/optional:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_DEFINITION_OPTIONAL_AFTER, path: "(method_definition)/optional:/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_DEFINITION_OPTIONAL_BEFORE, path: "(method_definition)/optional:/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "overrideModifier", path: "(method_definition)/override_modifier:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_DEFINITION_OVERRIDE_MODIFIER_AFTER, path: "(method_definition)/override_modifier:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_DEFINITION_OVERRIDE_MODIFIER_BEFORE, path: "(method_definition)/override_modifier:/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "readonlyMarker", path: "(method_definition)/readonly_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_DEFINITION_READONLY_MARKER_AFTER, path: "(method_definition)/readonly_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_DEFINITION_READONLY_MARKER_BEFORE, path: "(method_definition)/readonly_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "readonlyKeyword", path: "(method_definition)/\"readonly\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_DEFINITION_READONLY_AFTER, path: "(method_definition)/\"readonly\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_DEFINITION_READONLY_BEFORE, path: "(method_definition)/\"readonly\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "staticMarker", path: "(method_definition)/static_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_DEFINITION_STATIC_MARKER_AFTER, path: "(method_definition)/static_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_DEFINITION_STATIC_MARKER_BEFORE, path: "(method_definition)/static_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "staticKeyword", path: "(method_definition)/\"static\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_DEFINITION_STATIC_AFTER, path: "(method_definition)/\"static\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_DEFINITION_STATIC_BEFORE, path: "(method_definition)/\"static\"/before" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "methodSignature", path: "(method_signature)", children: &[
@@ -7117,26 +7117,26 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_SIGNATURE_ACCESSOR_KIND_BEFORE, path: "(method_signature)/accessor_kind:/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_SIGNATURE_METHOD_SIGNATURE_AFTER, path: "(method_signature)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "asyncMarker", path: "(method_signature)/async_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_SIGNATURE_ASYNC_MARKER_AFTER, path: "(method_signature)/async_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_SIGNATURE_ASYNC_MARKER_BEFORE, path: "(method_signature)/async_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "asyncKeyword", path: "(method_signature)/\"async\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_SIGNATURE_ASYNC_AFTER, path: "(method_signature)/\"async\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_SIGNATURE_ASYNC_BEFORE, path: "(method_signature)/\"async\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_SIGNATURE_METHOD_SIGNATURE_BEFORE, path: "(method_signature)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "optionalMarker", path: "(method_signature)/optional_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_SIGNATURE_OPTIONAL_MARKER_AFTER, path: "(method_signature)/optional_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_SIGNATURE_OPTIONAL_MARKER_BEFORE, path: "(method_signature)/optional_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "optional", path: "(method_signature)/optional:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_SIGNATURE_OPTIONAL_AFTER, path: "(method_signature)/optional:/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_SIGNATURE_OPTIONAL_BEFORE, path: "(method_signature)/optional:/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "overrideModifier", path: "(method_signature)/override_modifier:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_SIGNATURE_OVERRIDE_MODIFIER_AFTER, path: "(method_signature)/override_modifier:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_SIGNATURE_OVERRIDE_MODIFIER_BEFORE, path: "(method_signature)/override_modifier:/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "readonlyMarker", path: "(method_signature)/readonly_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_SIGNATURE_READONLY_MARKER_AFTER, path: "(method_signature)/readonly_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_SIGNATURE_READONLY_MARKER_BEFORE, path: "(method_signature)/readonly_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "readonlyKeyword", path: "(method_signature)/\"readonly\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_SIGNATURE_READONLY_AFTER, path: "(method_signature)/\"readonly\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_SIGNATURE_READONLY_BEFORE, path: "(method_signature)/\"readonly\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "staticMarker", path: "(method_signature)/static_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_SIGNATURE_STATIC_MARKER_AFTER, path: "(method_signature)/static_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_SIGNATURE_STATIC_MARKER_BEFORE, path: "(method_signature)/static_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "staticKeyword", path: "(method_signature)/\"static\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_SIGNATURE_STATIC_AFTER, path: "(method_signature)/\"static\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_METHOD_SIGNATURE_STATIC_BEFORE, path: "(method_signature)/\"static\"/before" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "module", path: "(module)", children: &[
@@ -7364,9 +7364,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OPTIONAL_PARAMETER_QMARK_AFTER, path: "(optional_parameter)/\"?\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_OPTIONAL_PARAMETER_QMARK_BEFORE, path: "(optional_parameter)/\"?\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "readonlyMarker", path: "(optional_parameter)/readonly_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OPTIONAL_PARAMETER_READONLY_MARKER_AFTER, path: "(optional_parameter)/readonly_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_OPTIONAL_PARAMETER_READONLY_MARKER_BEFORE, path: "(optional_parameter)/readonly_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "readonlyKeyword", path: "(optional_parameter)/\"readonly\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OPTIONAL_PARAMETER_READONLY_AFTER, path: "(optional_parameter)/\"readonly\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_OPTIONAL_PARAMETER_READONLY_BEFORE, path: "(optional_parameter)/\"readonly\"/before" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "optionalTupleParameter", path: "(optional_tuple_parameter)", children: &[
@@ -7595,21 +7595,21 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PROPERTY_SIGNATURE_PROPERTY_SIGNATURE_AFTER, path: "(property_signature)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PROPERTY_SIGNATURE_PROPERTY_SIGNATURE_BEFORE, path: "(property_signature)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "optionalMarker", path: "(property_signature)/optional_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PROPERTY_SIGNATURE_OPTIONAL_MARKER_AFTER, path: "(property_signature)/optional_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PROPERTY_SIGNATURE_OPTIONAL_MARKER_BEFORE, path: "(property_signature)/optional_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "optional", path: "(property_signature)/optional:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PROPERTY_SIGNATURE_OPTIONAL_AFTER, path: "(property_signature)/optional:/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PROPERTY_SIGNATURE_OPTIONAL_BEFORE, path: "(property_signature)/optional:/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "overrideModifier", path: "(property_signature)/override_modifier:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PROPERTY_SIGNATURE_OVERRIDE_MODIFIER_AFTER, path: "(property_signature)/override_modifier:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PROPERTY_SIGNATURE_OVERRIDE_MODIFIER_BEFORE, path: "(property_signature)/override_modifier:/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "readonlyMarker", path: "(property_signature)/readonly_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PROPERTY_SIGNATURE_READONLY_MARKER_AFTER, path: "(property_signature)/readonly_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PROPERTY_SIGNATURE_READONLY_MARKER_BEFORE, path: "(property_signature)/readonly_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "readonlyKeyword", path: "(property_signature)/\"readonly\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PROPERTY_SIGNATURE_READONLY_AFTER, path: "(property_signature)/\"readonly\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PROPERTY_SIGNATURE_READONLY_BEFORE, path: "(property_signature)/\"readonly\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "staticMarker", path: "(property_signature)/static_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PROPERTY_SIGNATURE_STATIC_MARKER_AFTER, path: "(property_signature)/static_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PROPERTY_SIGNATURE_STATIC_MARKER_BEFORE, path: "(property_signature)/static_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "staticKeyword", path: "(property_signature)/\"static\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PROPERTY_SIGNATURE_STATIC_AFTER, path: "(property_signature)/\"static\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PROPERTY_SIGNATURE_STATIC_BEFORE, path: "(property_signature)/\"static\"/before" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "publicFieldDefinition", path: "(public_field_definition)", children: &[
@@ -7619,9 +7619,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PUBLIC_FIELD_DEFINITION_PUBLIC_FIELD_DEFINITION_AFTER, path: "(public_field_definition)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PUBLIC_FIELD_DEFINITION_PUBLIC_FIELD_DEFINITION_BEFORE, path: "(public_field_definition)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "declareMarker", path: "(public_field_definition)/declare_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PUBLIC_FIELD_DEFINITION_DECLARE_MARKER_AFTER, path: "(public_field_definition)/declare_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PUBLIC_FIELD_DEFINITION_DECLARE_MARKER_BEFORE, path: "(public_field_definition)/declare_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "declareKeyword", path: "(public_field_definition)/\"declare\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PUBLIC_FIELD_DEFINITION_DECLARE_AFTER, path: "(public_field_definition)/\"declare\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PUBLIC_FIELD_DEFINITION_DECLARE_BEFORE, path: "(public_field_definition)/\"declare\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "decorator", path: "(public_field_definition)/decorator:", children: &[
             ::sittir_core::options::AddressNode::Branch { key: "decorator", path: "(public_field_definition)/decorator:/(decorator)", children: &[
@@ -7635,9 +7635,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PUBLIC_FIELD_DEFINITION_EQ_AFTER, path: "(public_field_definition)/\"=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PUBLIC_FIELD_DEFINITION_EQ_BEFORE, path: "(public_field_definition)/\"=\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "optionalityMarker", path: "(public_field_definition)/optionality_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKER_AFTER, path: "(public_field_definition)/optionality_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKER_BEFORE, path: "(public_field_definition)/optionality_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "optionality", path: "(public_field_definition)/optionality:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PUBLIC_FIELD_DEFINITION_OPTIONALITY_AFTER, path: "(public_field_definition)/optionality:/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PUBLIC_FIELD_DEFINITION_OPTIONALITY_BEFORE, path: "(public_field_definition)/optionality:/before" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "quotes", path: "quotes", children: &[
@@ -7677,9 +7677,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REQUIRED_PARAMETER_EQ_AFTER, path: "(required_parameter)/\"=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_REQUIRED_PARAMETER_EQ_BEFORE, path: "(required_parameter)/\"=\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "readonlyMarker", path: "(required_parameter)/readonly_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REQUIRED_PARAMETER_READONLY_MARKER_AFTER, path: "(required_parameter)/readonly_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_REQUIRED_PARAMETER_READONLY_MARKER_BEFORE, path: "(required_parameter)/readonly_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "readonlyKeyword", path: "(required_parameter)/\"readonly\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REQUIRED_PARAMETER_READONLY_AFTER, path: "(required_parameter)/\"readonly\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_REQUIRED_PARAMETER_READONLY_BEFORE, path: "(required_parameter)/\"readonly\"/before" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "restPattern", path: "(rest_pattern)", children: &[
@@ -8466,8 +8466,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "typeParameter", path: "(type_parameter)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETER_TYPE_PARAMETER_AFTER, path: "(type_parameter)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETER_TYPE_PARAMETER_BEFORE, path: "(type_parameter)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "constMarker", path: "(type_parameter)/const_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETER_CONST_MARKER_AFTER, path: "(type_parameter)/const_marker:/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "constKeyword", path: "(type_parameter)/\"const\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETER_CONST_AFTER, path: "(type_parameter)/\"const\"/after" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "typeParameters", path: "(type_parameters)", children: &[

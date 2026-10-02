@@ -26,10 +26,10 @@ describe('isPermutationChoice', () => {
 	});
 
 	it('resolves a promoted marker field to its keyword so mixed spellings key equal', () => {
-		const kwRules = { _kw_declare_marker: str('declare') };
+		const kwRules = { _kw_declare: str('declare') };
 		const arms = choice(
 			seq(str('declare'), opt(sym('accessibility_modifier'))),
-			seq(sym('accessibility_modifier'), opt(field('declare_marker', sym('_kw_declare_marker'))))
+			seq(sym('accessibility_modifier'), opt(field('declare', sym('_kw_declare'))))
 		);
 		expect(isPermutationChoice(arms, undefined, kwRules)).toBe(true);
 		// Without the kwRules bag the promoted spelling cannot key to the raw

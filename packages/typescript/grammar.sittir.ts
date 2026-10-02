@@ -241,7 +241,7 @@ export default sittirGrammar(base, {
 
 		abstract_method_signature: {
 			'3/0': field('accessor_kind'),
-			'5/0': field('optional_marker')
+			'5/0': field('optional')
 		},
 
 		ambient_declaration: {
@@ -278,7 +278,7 @@ export default sittirGrammar(base, {
 				// itself optional, so without this field a sign-less
 				// `readonly [k: string]: T` has nothing recording the
 				// group's occurrence and render drops the keyword.
-				'0/0/1': field('readonly_marker')
+				'0/0/1': field('readonly')
 			},
 			{ '2/0': variant('colon'), '2/1': variant('mapped_type_clause') }
 		],
@@ -322,17 +322,17 @@ export default sittirGrammar(base, {
 		},
 
 		method_definition: {
-			1: field('static_marker'),
-			'3/0': field('readonly_marker'),
-			'4/0': field('async_marker'),
+			1: field('static'),
+			'3/0': field('readonly'),
+			'4/0': field('async'),
 			'5/0': field('accessor_kind'),
-			'7/0': field('optional_marker')
+			'7/0': field('optional')
 		},
 
 		method_signature: {
-			1: field('static_marker'),
+			1: field('static'),
 			'5/0': field('accessor_kind'),
-			'7/0': field('optional_marker')
+			'7/0': field('optional')
 		},
 
 		program: {
@@ -341,8 +341,8 @@ export default sittirGrammar(base, {
 		},
 
 		property_signature: {
-			1: field('static_marker'),
-			'5/0': field('optional_marker')
+			1: field('static'),
+			'5/0': field('optional')
 		},
 
 		satisfies_expression: {
@@ -390,19 +390,19 @@ export default sittirGrammar(base, {
 		},
 
 		function_expression: {
-			'0/0': field('async_marker')
+			'0/0': field('async')
 		},
 
 		function_declaration: {
-			'0/0': field('async_marker')
+			'0/0': field('async')
 		},
 
 		generator_function: {
-			'0/0': field('async_marker')
+			'0/0': field('async')
 		},
 
 		generator_function_declaration: {
-			'0/0': field('async_marker')
+			'0/0': field('async')
 		},
 
 		break_statement: {
@@ -422,11 +422,11 @@ export default sittirGrammar(base, {
 		},
 
 		constructor_type: {
-			'0/0': field('abstract_marker')
+			'0/0': field('abstract')
 		},
 
 		enum_declaration: {
-			'0/0': field('const_marker')
+			'0/0': field('const')
 		},
 
 		function_signature: {
@@ -434,7 +434,7 @@ export default sittirGrammar(base, {
 		},
 
 		assignment_expression: {
-			'0/0': field('using_marker')
+			'0/0': field('using')
 		},
 
 		export_specifier: {
@@ -447,11 +447,11 @@ export default sittirGrammar(base, {
 			// Both spellings of the accessibility position (declare-first
 			// and access-first modifier orders) carry ONE shared field so
 			// the exclusive occurrences merge into a single slot, same as
-			// the enrich-promoted `*_marker` fields merge across the
+			// the enrich-promoted keyword fields merge across the
 			// permutation arms.
 			'1/0/0/1/0': field('accessibility_modifier'),
 			'1/0/1/0': field('accessibility_modifier'),
-			'4/0': field('optionality_marker')
+			'4/0': field('optionality')
 		},
 
 		parenthesized_expression: {

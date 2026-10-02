@@ -2756,7 +2756,7 @@
             "$type": 310,
             "$source": 0,
             "$named": true,
-            "_move_marker": true,
+            "_move": true,
             "_body": {
               "$type": 313,
               "$source": 0,
@@ -2780,7 +2780,7 @@
               }
             ],
             "$slotOrder": [
-              "move_marker",
+              "move",
               "body"
             ]
           }
@@ -2971,7 +2971,7 @@
       "$type": 310,
       "$source": 0,
       "$named": true,
-      "_move_marker": true,
+      "_move": true,
       "_body": {
         "$type": 313,
         "$source": 0,
@@ -2995,7 +2995,7 @@
         }
       ],
       "$slotOrder": [
-        "move_marker",
+        "move",
         "body"
       ]
     },
@@ -3293,7 +3293,7 @@
             "$type": 370,
             "$source": 0,
             "$named": true,
-            "_async_marker": true,
+            "_async": true,
             "_parameters": {
               "$type": 302,
               "$source": 0,
@@ -3316,7 +3316,7 @@
               "$text": "()"
             },
             "$slotOrder": [
-              "async_marker",
+              "async",
               "parameters",
               "body"
             ]
@@ -3383,7 +3383,7 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "_async_marker": true,
+        "_async": true,
         "_parameters": {
           "$type": 302,
           "$source": 0,
@@ -3406,7 +3406,7 @@
           "$text": "()"
         },
         "$slotOrder": [
-          "async_marker",
+          "async",
           "parameters",
           "body"
         ]
@@ -3466,7 +3466,7 @@
       "$type": 370,
       "$source": 0,
       "$named": true,
-      "_async_marker": true,
+      "_async": true,
       "_parameters": {
         "$type": 302,
         "$source": 0,
@@ -3489,7 +3489,7 @@
         "$text": "()"
       },
       "$slotOrder": [
-        "async_marker",
+        "async",
         "parameters",
         "body"
       ]
@@ -3534,8 +3534,8 @@
             "$type": 370,
             "$source": 0,
             "$named": true,
-            "_async_marker": true,
-            "_move_marker": true,
+            "_async": true,
+            "_move": true,
             "_parameters": {
               "$type": 302,
               "$source": 0,
@@ -3551,7 +3551,7 @@
               "$type": 310,
               "$source": 0,
               "$named": true,
-              "_move_marker": true,
+              "_move": true,
               "_body": {
                 "$type": 313,
                 "$source": 0,
@@ -3575,13 +3575,13 @@
                 }
               ],
               "$slotOrder": [
-                "move_marker",
+                "move",
                 "body"
               ]
             },
             "$slotOrder": [
-              "async_marker",
-              "move_marker",
+              "async",
+              "move",
               "parameters",
               "body"
             ]
@@ -3657,8 +3657,8 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "_async_marker": true,
-        "_move_marker": true,
+        "_async": true,
+        "_move": true,
         "_parameters": {
           "$type": 302,
           "$source": 0,
@@ -3674,7 +3674,7 @@
           "$type": 310,
           "$source": 0,
           "$named": true,
-          "_move_marker": true,
+          "_move": true,
           "_body": {
             "$type": 313,
             "$source": 0,
@@ -3698,13 +3698,13 @@
             }
           ],
           "$slotOrder": [
-            "move_marker",
+            "move",
             "body"
           ]
         },
         "$slotOrder": [
-          "async_marker",
-          "move_marker",
+          "async",
+          "move",
           "parameters",
           "body"
         ]
@@ -3764,8 +3764,8 @@
       "$type": 370,
       "$source": 0,
       "$named": true,
-      "_async_marker": true,
-      "_move_marker": true,
+      "_async": true,
+      "_move": true,
       "_parameters": {
         "$type": 302,
         "$source": 0,
@@ -3781,7 +3781,7 @@
         "$type": 310,
         "$source": 0,
         "$named": true,
-        "_move_marker": true,
+        "_move": true,
         "_body": {
           "$type": 313,
           "$source": 0,
@@ -3805,13 +3805,13 @@
           }
         ],
         "$slotOrder": [
-          "move_marker",
+          "move",
           "body"
         ]
       },
       "$slotOrder": [
-        "async_marker",
-        "move_marker",
+        "async",
+        "move",
         "parameters",
         "body"
       ]
@@ -3837,7 +3837,7 @@
       "$type": 310,
       "$source": 0,
       "$named": true,
-      "_move_marker": true,
+      "_move": true,
       "_body": {
         "$type": 313,
         "$source": 0,
@@ -3861,7 +3861,7 @@
         }
       ],
       "$slotOrder": [
-        "move_marker",
+        "move",
         "body"
       ]
     },
@@ -4285,7 +4285,7 @@
             "$type": 311,
             "$source": 0,
             "$named": true,
-            "_move_marker": true,
+            "_move": true,
             "_body": {
               "$type": 313,
               "$source": 0,
@@ -4309,7 +4309,7 @@
               }
             ],
             "$slotOrder": [
-              "move_marker",
+              "move",
               "body"
             ]
           }
@@ -4607,7 +4607,7 @@
       "$type": 311,
       "$source": 0,
       "$named": true,
-      "_move_marker": true,
+      "_move": true,
       "_body": {
         "$type": 313,
         "$source": 0,
@@ -4631,7 +4631,7 @@
         }
       ],
       "$slotOrder": [
-        "move_marker",
+        "move",
         "body"
       ]
     },
@@ -51837,7 +51837,7 @@
           "$type": 206,
           "$source": 0,
           "$named": true,
-          "_ref_marker": true,
+          "_ref": true,
           "_name": {
             "$type": 1,
             "$source": 0,
@@ -51899,7 +51899,7 @@
             }
           ],
           "$slotOrder": [
-            "ref_marker",
+            "ref",
             "name",
             "type",
             "value"
@@ -51928,7 +51928,7 @@
       "$type": 206,
       "$source": 0,
       "$named": true,
-      "_ref_marker": true,
+      "_ref": true,
       "_name": {
         "$type": 1,
         "$source": 0,
@@ -51990,7 +51990,7 @@
         }
       ],
       "$slotOrder": [
-        "ref_marker",
+        "ref",
         "name",
         "type",
         "value"
@@ -78325,7 +78325,7 @@
           "$type": 377,
           "$source": 0,
           "$named": true,
-          "_unsafe_marker": true,
+          "_unsafe": true,
           "_type": {
             "$type": 468,
             "$source": 0,
@@ -78359,7 +78359,7 @@
             }
           ],
           "$slotOrder": [
-            "unsafe_marker",
+            "unsafe",
             "type",
             "declaration_list"
           ]
@@ -78387,7 +78387,7 @@
       "$type": 377,
       "$source": 0,
       "$named": true,
-      "_unsafe_marker": true,
+      "_unsafe": true,
       "_type": {
         "$type": 468,
         "$source": 0,
@@ -78421,7 +78421,7 @@
         }
       ],
       "$slotOrder": [
-        "unsafe_marker",
+        "unsafe",
         "type",
         "declaration_list"
       ]
@@ -78778,7 +78778,7 @@
               "$text": "pub"
             }
           },
-          "_unsafe_marker": true,
+          "_unsafe": true,
           "_name": {
             "$type": 468,
             "$source": 0,
@@ -78818,7 +78818,7 @@
           ],
           "$slotOrder": [
             "visibility_modifier",
-            "unsafe_marker",
+            "unsafe",
             "name",
             "body"
           ]
@@ -78827,7 +78827,7 @@
           "$type": 377,
           "$source": 0,
           "$named": true,
-          "_unsafe_marker": true,
+          "_unsafe": true,
           "_trait_clause": {
             "$type": 375,
             "$source": 0,
@@ -79052,7 +79052,7 @@
             }
           ],
           "$slotOrder": [
-            "unsafe_marker",
+            "unsafe",
             "trait_clause",
             "type",
             "declaration_list"
@@ -79096,7 +79096,7 @@
           "$text": "pub"
         }
       },
-      "_unsafe_marker": true,
+      "_unsafe": true,
       "_name": {
         "$type": 468,
         "$source": 0,
@@ -79136,7 +79136,7 @@
       ],
       "$slotOrder": [
         "visibility_modifier",
-        "unsafe_marker",
+        "unsafe",
         "name",
         "body"
       ]
@@ -79322,7 +79322,7 @@
       "$type": 377,
       "$source": 0,
       "$named": true,
-      "_unsafe_marker": true,
+      "_unsafe": true,
       "_trait_clause": {
         "$type": 375,
         "$source": 0,
@@ -79547,7 +79547,7 @@
         }
       ],
       "$slotOrder": [
-        "unsafe_marker",
+        "unsafe",
         "trait_clause",
         "type",
         "declaration_list"
@@ -83961,7 +83961,7 @@
           "$type": 214,
           "$source": 0,
           "$named": true,
-          "_unsafe_marker": true,
+          "_unsafe": true,
           "_name": {
             "$type": 468,
             "$source": 0,
@@ -83995,7 +83995,7 @@
             }
           ],
           "$slotOrder": [
-            "unsafe_marker",
+            "unsafe",
             "name",
             "body"
           ]
@@ -84372,7 +84372,7 @@
       "$type": 214,
       "$source": 0,
       "$named": true,
-      "_unsafe_marker": true,
+      "_unsafe": true,
       "_name": {
         "$type": 468,
         "$source": 0,
@@ -84406,7 +84406,7 @@
         }
       ],
       "$slotOrder": [
-        "unsafe_marker",
+        "unsafe",
         "name",
         "body"
       ]
@@ -166712,7 +166712,7 @@
                         "$type": 370,
                         "$source": 0,
                         "$named": true,
-                        "_move_marker": true,
+                        "_move": true,
                         "_parameters": {
                           "$type": 302,
                           "$source": 0,
@@ -166948,7 +166948,7 @@
                           ]
                         },
                         "$slotOrder": [
-                          "move_marker",
+                          "move",
                           "parameters",
                           "body"
                         ]
@@ -167677,7 +167677,7 @@
                 "$type": 370,
                 "$source": 0,
                 "$named": true,
-                "_move_marker": true,
+                "_move": true,
                 "_parameters": {
                   "$type": 302,
                   "$source": 0,
@@ -167913,7 +167913,7 @@
                   ]
                 },
                 "$slotOrder": [
-                  "move_marker",
+                  "move",
                   "parameters",
                   "body"
                 ]
@@ -168822,7 +168822,7 @@
               "$type": 370,
               "$source": 0,
               "$named": true,
-              "_move_marker": true,
+              "_move": true,
               "_parameters": {
                 "$type": 302,
                 "$source": 0,
@@ -169058,7 +169058,7 @@
                 ]
               },
               "$slotOrder": [
-                "move_marker",
+                "move",
                 "parameters",
                 "body"
               ]
@@ -169601,7 +169601,7 @@
       "$type": 370,
       "$source": 0,
       "$named": true,
-      "_move_marker": true,
+      "_move": true,
       "_parameters": {
         "$type": 302,
         "$source": 0,
@@ -169837,7 +169837,7 @@
         ]
       },
       "$slotOrder": [
-        "move_marker",
+        "move",
         "parameters",
         "body"
       ]
@@ -171742,7 +171742,7 @@
               "$type": 370,
               "$source": 0,
               "$named": true,
-              "_move_marker": true,
+              "_move": true,
               "_parameters": {
                 "$type": 302,
                 "$source": 0,
@@ -171996,7 +171996,7 @@
                 ]
               },
               "$slotOrder": [
-                "move_marker",
+                "move",
                 "parameters",
                 "body"
               ]
@@ -172037,7 +172037,7 @@
       "$type": 370,
       "$source": 0,
       "$named": true,
-      "_move_marker": true,
+      "_move": true,
       "_parameters": {
         "$type": 302,
         "$source": 0,
@@ -172291,7 +172291,7 @@
         ]
       },
       "$slotOrder": [
-        "move_marker",
+        "move",
         "parameters",
         "body"
       ]

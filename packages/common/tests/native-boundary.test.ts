@@ -21,7 +21,7 @@ describe('native boundary', () => {
 				$type: 1,
 				$source: 0,
 				$named: true,
-				_optional_marker: true
+				_optional: true
 			} as AnyUntypedNode)
 		).not.toThrow();
 	});

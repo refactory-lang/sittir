@@ -2391,7 +2391,7 @@ enum ts_field_identifiers {
   field_alternative = 2,
   field_argument = 3,
   field_arguments = 4,
-  field_async_marker = 5,
+  field_async = 5,
   field_attribute = 6,
   field_base_type = 7,
   field_block = 8,
@@ -2409,7 +2409,7 @@ enum ts_field_identifiers {
   field_element = 20,
   field_elements = 21,
   field_else_clause = 22,
-  field_eq_marker = 23,
+  field_eq = 23,
   field_except_clauses = 24,
   field_exception = 25,
   field_expression = 26,
@@ -2438,7 +2438,7 @@ enum ts_field_identifiers {
   field_right = 49,
   field_sign = 50,
   field_simple_statement = 51,
-  field_star_marker = 52,
+  field_star = 52,
   field_start = 53,
   field_statements = 54,
   field_step = 55,
@@ -2465,7 +2465,7 @@ static const char * const ts_field_names[] = {
   [field_alternative] = "alternative",
   [field_argument] = "argument",
   [field_arguments] = "arguments",
-  [field_async_marker] = "async_marker",
+  [field_async] = "async",
   [field_attribute] = "attribute",
   [field_base_type] = "base_type",
   [field_block] = "block",
@@ -2483,7 +2483,7 @@ static const char * const ts_field_names[] = {
   [field_element] = "element",
   [field_elements] = "elements",
   [field_else_clause] = "else_clause",
-  [field_eq_marker] = "eq_marker",
+  [field_eq] = "eq",
   [field_except_clauses] = "except_clauses",
   [field_exception] = "exception",
   [field_expression] = "expression",
@@ -2512,7 +2512,7 @@ static const char * const ts_field_names[] = {
   [field_right] = "right",
   [field_sign] = "sign",
   [field_simple_statement] = "simple_statement",
-  [field_star_marker] = "star_marker",
+  [field_star] = "star",
   [field_start] = "start",
   [field_statements] = "statements",
   [field_step] = "step",
@@ -3009,7 +3009,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
   [165] =
     {field_elements, 1, .inherited = true},
   [166] =
-    {field_eq_marker, 2},
+    {field_eq, 2},
     {field_expression, 1},
   [168] =
     {field_expression, 1},
@@ -3066,7 +3066,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 1},
     {field_superclasses, 2},
   [207] =
-    {field_async_marker, 0},
+    {field_async, 0},
     {field_body, 4},
     {field_with_clause, 2},
   [210] =
@@ -3095,11 +3095,11 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_elements, 0, .inherited = true},
     {field_elements, 1, .inherited = true},
   [227] =
-    {field_eq_marker, 2},
+    {field_eq, 2},
     {field_expression, 1},
     {field_type_conversion, 3},
   [230] =
-    {field_eq_marker, 2},
+    {field_eq, 2},
     {field_expression, 1},
     {field_format_specifier, 3},
   [233] =
@@ -3157,7 +3157,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_type, 2},
     {field_value, 4},
   [271] =
-    {field_async_marker, 0},
+    {field_async, 0},
     {field_body, 5},
     {field_name, 2},
     {field_parameters, 3},
@@ -3166,7 +3166,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_step, 3},
     {field_stop, 2},
   [278] =
-    {field_eq_marker, 2},
+    {field_eq, 2},
     {field_expression, 1},
     {field_format_specifier, 4},
     {field_type_conversion, 3},
@@ -3189,7 +3189,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_left, 1},
     {field_right, 3},
   [295] =
-    {field_star_marker, 1},
+    {field_star, 1},
   [296] =
     {field_value, 1},
   [297] =
@@ -3214,16 +3214,16 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_right, 3},
     {field_right, 4},
   [312] =
-    {field_async_marker, 0},
+    {field_async, 0},
     {field_left, 2},
     {field_right, 4},
   [315] =
-    {field_async_marker, 0},
+    {field_async, 0},
     {field_body, 6},
     {field_left, 2},
     {field_right, 4},
   [319] =
-    {field_async_marker, 0},
+    {field_async, 0},
     {field_body, 6},
     {field_name, 2},
     {field_parameters, 4},
@@ -3251,7 +3251,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_consequence, 3},
   [338] =
     {field_exception, 2},
-    {field_star_marker, 1},
+    {field_star, 1},
   [340] =
     {field_body, 7},
     {field_name, 1},
@@ -3264,23 +3264,23 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_right, 3},
     {field_right, 4},
   [349] =
-    {field_async_marker, 0},
+    {field_async, 0},
     {field_comma, 5},
     {field_left, 2},
     {field_right, 4},
   [353] =
-    {field_async_marker, 0},
+    {field_async, 0},
     {field_left, 2},
     {field_right, 4},
     {field_right, 5},
   [357] =
     {field_alternative, 7},
-    {field_async_marker, 0},
+    {field_async, 0},
     {field_body, 6},
     {field_left, 2},
     {field_right, 4},
   [362] =
-    {field_async_marker, 0},
+    {field_async, 0},
     {field_body, 7},
     {field_name, 2},
     {field_parameters, 3},
@@ -3301,13 +3301,13 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_consequence, 4},
     {field_guard, 2},
   [378] =
-    {field_async_marker, 0},
+    {field_async, 0},
     {field_comma, 6},
     {field_left, 2},
     {field_right, 4},
     {field_right, 5},
   [383] =
-    {field_async_marker, 0},
+    {field_async, 0},
     {field_body, 8},
     {field_name, 2},
     {field_parameters, 4},

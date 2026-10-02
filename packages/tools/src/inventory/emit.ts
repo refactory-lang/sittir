@@ -581,9 +581,9 @@ function withTrivia<N extends Triviable<N>>(node: N, leading: readonly Comment[]
 
 function memberIr(m: Member, base: boolean, leading: readonly Comment[]): PropertySignature.Bound {
 	const built = ir.propertySignature({
-		readonlyMarker: true,
+		readonly: true,
 		name: m.name,
-		...(m.optional ? { optionalMarker: true } : {}),
+		...(m.optional ? { optional: true } : {}),
 		type: ir.typeAnnotation(toIr(m.type, base))
 	});
 	return withTrivia(built, leading, m.trailing);

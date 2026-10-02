@@ -53,9 +53,9 @@ pub const SITE_ASSOCIATED_TYPE_SEMI_BEFORE: usize = 44;
 pub const SITE_ASSOCIATED_TYPE_TYPE_KEYWORD_AFTER: usize = 45;
 pub const SITE_ASSOCIATED_TYPE_ASSOCIATED_TYPE_BEFORE: usize = 46;
 pub const SITE_ASSOCIATED_TYPE_ASSOCIATED_TYPE_AFTER: usize = 47;
-pub const SITE_ASYNC_BLOCK_MOVE_MARKER_BEFORE: usize = 48;
-pub const SITE_ASYNC_BLOCK_MOVE_MARKER_AFTER: usize = 49;
-pub const SITE_ASYNC_BLOCK_ASYNC_KEYWORD_AFTER: usize = 50;
+pub const SITE_ASYNC_BLOCK_ASYNC_KEYWORD_AFTER: usize = 48;
+pub const SITE_ASYNC_BLOCK_MOVE_BEFORE: usize = 49;
+pub const SITE_ASYNC_BLOCK_MOVE_AFTER: usize = 50;
 pub const SITE_ASYNC_BLOCK_ASYNC_BLOCK_BEFORE: usize = 51;
 pub const SITE_ASYNC_BLOCK_ASYNC_BLOCK_AFTER: usize = 52;
 pub const SITE_ATTRIBUTE_ATTRIBUTE_BEFORE: usize = 53;
@@ -181,21 +181,21 @@ pub const SITE_CAPTURED_PATTERN_AT_AFTER: usize = 172;
 pub const SITE_CAPTURED_PATTERN_CAPTURED_PATTERN_BEFORE: usize = 173;
 pub const SITE_CAPTURED_PATTERN_CAPTURED_PATTERN_AFTER: usize = 174;
 pub const SITE_CHAR_LITERAL_EMPTY_SQUOTE_BEFORE: usize = 175;
-pub const SITE_CLOSURE_EXPRESSION_BLOCK_ASYNC_MARKER_BEFORE: usize = 176;
-pub const SITE_CLOSURE_EXPRESSION_BLOCK_ASYNC_MARKER_AFTER: usize = 177;
-pub const SITE_CLOSURE_EXPRESSION_BLOCK_MOVE_MARKER_BEFORE: usize = 178;
-pub const SITE_CLOSURE_EXPRESSION_BLOCK_MOVE_MARKER_AFTER: usize = 179;
-pub const SITE_CLOSURE_EXPRESSION_BLOCK_STATIC_MARKER_AFTER: usize = 180;
-pub const SITE_CLOSURE_EXPRESSION_BLOCK_DASH_GT_BEFORE: usize = 181;
-pub const SITE_CLOSURE_EXPRESSION_BLOCK_DASH_GT_AFTER: usize = 182;
+pub const SITE_CLOSURE_EXPRESSION_BLOCK_DASH_GT_BEFORE: usize = 176;
+pub const SITE_CLOSURE_EXPRESSION_BLOCK_DASH_GT_AFTER: usize = 177;
+pub const SITE_CLOSURE_EXPRESSION_BLOCK_ASYNC_BEFORE: usize = 178;
+pub const SITE_CLOSURE_EXPRESSION_BLOCK_ASYNC_AFTER: usize = 179;
+pub const SITE_CLOSURE_EXPRESSION_BLOCK_MOVE_BEFORE: usize = 180;
+pub const SITE_CLOSURE_EXPRESSION_BLOCK_MOVE_AFTER: usize = 181;
+pub const SITE_CLOSURE_EXPRESSION_BLOCK_STATIC_AFTER: usize = 182;
 pub const SITE_CLOSURE_EXPRESSION_BLOCK_CLOSURE_EXPRESSION_BLOCK_BEFORE: usize = 183;
 pub const SITE_CLOSURE_EXPRESSION_BLOCK_CLOSURE_EXPRESSION_BLOCK_AFTER: usize = 184;
-pub const SITE_CLOSURE_EXPRESSION_EXPR_ASYNC_MARKER_BEFORE: usize = 185;
-pub const SITE_CLOSURE_EXPRESSION_EXPR_ASYNC_MARKER_AFTER: usize = 186;
-pub const SITE_CLOSURE_EXPRESSION_EXPR_MOVE_MARKER_BEFORE: usize = 187;
-pub const SITE_CLOSURE_EXPRESSION_EXPR_MOVE_MARKER_AFTER: usize = 188;
-pub const SITE_CLOSURE_EXPRESSION_EXPR_STATIC_MARKER_AFTER: usize = 189;
-pub const SITE_CLOSURE_EXPRESSION_EXPR_UNDERSCORE_BEFORE: usize = 190;
+pub const SITE_CLOSURE_EXPRESSION_EXPR_UNDERSCORE_BEFORE: usize = 185;
+pub const SITE_CLOSURE_EXPRESSION_EXPR_ASYNC_BEFORE: usize = 186;
+pub const SITE_CLOSURE_EXPRESSION_EXPR_ASYNC_AFTER: usize = 187;
+pub const SITE_CLOSURE_EXPRESSION_EXPR_MOVE_BEFORE: usize = 188;
+pub const SITE_CLOSURE_EXPRESSION_EXPR_MOVE_AFTER: usize = 189;
+pub const SITE_CLOSURE_EXPRESSION_EXPR_STATIC_AFTER: usize = 190;
 pub const SITE_CLOSURE_EXPRESSION_EXPR_CLOSURE_EXPRESSION_EXPR_BEFORE: usize = 191;
 pub const SITE_CLOSURE_EXPRESSION_EXPR_CLOSURE_EXPRESSION_EXPR_AFTER: usize = 192;
 pub const SITE_CLOSURE_PARAMETERS_PARAMETERS_CAPTURED_PATTERN_AFTER: usize = 193;
@@ -404,14 +404,14 @@ pub const SITE_FIELD_INITIALIZER_LIST_ELEMENTS_FIELD_INITIALIZER_LIST_ELEMENTS_B
 pub const SITE_FIELD_INITIALIZER_LIST_ELEMENTS_FIELD_INITIALIZER_LIST_ELEMENTS_AFTER: usize = 396;
 pub const SITE_FIELD_PATTERN_NAMED_MUTABLE_SPECIFIER_BEFORE: usize = 397;
 pub const SITE_FIELD_PATTERN_NAMED_MUTABLE_SPECIFIER_AFTER: usize = 398;
-pub const SITE_FIELD_PATTERN_NAMED_REF_MARKER_AFTER: usize = 399;
-pub const SITE_FIELD_PATTERN_NAMED_COLON_BEFORE: usize = 400;
-pub const SITE_FIELD_PATTERN_NAMED_COLON_AFTER: usize = 401;
+pub const SITE_FIELD_PATTERN_NAMED_COLON_BEFORE: usize = 399;
+pub const SITE_FIELD_PATTERN_NAMED_COLON_AFTER: usize = 400;
+pub const SITE_FIELD_PATTERN_NAMED_REF_AFTER: usize = 401;
 pub const SITE_FIELD_PATTERN_NAMED_FIELD_PATTERN_NAMED_BEFORE: usize = 402;
 pub const SITE_FIELD_PATTERN_NAMED_FIELD_PATTERN_NAMED_AFTER: usize = 403;
 pub const SITE_FIELD_PATTERN_SHORTHAND_MUTABLE_SPECIFIER_BEFORE: usize = 404;
 pub const SITE_FIELD_PATTERN_SHORTHAND_MUTABLE_SPECIFIER_AFTER: usize = 405;
-pub const SITE_FIELD_PATTERN_SHORTHAND_REF_MARKER_AFTER: usize = 406;
+pub const SITE_FIELD_PATTERN_SHORTHAND_REF_AFTER: usize = 406;
 pub const SITE_FIELD_PATTERN_SHORTHAND_FIELD_PATTERN_SHORTHAND_BEFORE: usize = 407;
 pub const SITE_FIELD_PATTERN_SHORTHAND_FIELD_PATTERN_SHORTHAND_AFTER: usize = 408;
 pub const SITE_FOR_EXPRESSION_COLON_BEFORE: usize = 409;
@@ -459,9 +459,9 @@ pub const SITE_FUNCTION_TYPE_FUNCTION_TYPE_AFTER: usize = 450;
 pub const SITE_FUNCTION_TYPE_FN_FORM_FN_KEYWORD_BEFORE: usize = 451;
 pub const SITE_FUNCTION_TYPE_FN_FORM_FUNCTION_TYPE_FN_FORM_BEFORE: usize = 452;
 pub const SITE_FUNCTION_TYPE_FN_FORM_FUNCTION_TYPE_FN_FORM_AFTER: usize = 453;
-pub const SITE_GEN_BLOCK_MOVE_MARKER_BEFORE: usize = 454;
-pub const SITE_GEN_BLOCK_MOVE_MARKER_AFTER: usize = 455;
-pub const SITE_GEN_BLOCK_GEN_KEYWORD_AFTER: usize = 456;
+pub const SITE_GEN_BLOCK_GEN_KEYWORD_AFTER: usize = 454;
+pub const SITE_GEN_BLOCK_MOVE_BEFORE: usize = 455;
+pub const SITE_GEN_BLOCK_MOVE_AFTER: usize = 456;
 pub const SITE_GEN_BLOCK_GEN_BLOCK_BEFORE: usize = 457;
 pub const SITE_GEN_BLOCK_GEN_BLOCK_AFTER: usize = 458;
 pub const SITE_GENERIC_FUNCTION_COLON_COLON_BEFORE: usize = 459;
@@ -484,9 +484,9 @@ pub const SITE_HIGHER_RANKED_TRAIT_BOUND_HIGHER_RANKED_TRAIT_BOUND_AFTER: usize 
 pub const SITE_IF_EXPRESSION_IF_KEYWORD_AFTER: usize = 476;
 pub const SITE_IF_EXPRESSION_IF_EXPRESSION_BEFORE: usize = 477;
 pub const SITE_IF_EXPRESSION_IF_EXPRESSION_AFTER: usize = 478;
-pub const SITE_IMPL_ITEM_BODY_UNSAFE_MARKER_AFTER: usize = 479;
-pub const SITE_IMPL_ITEM_BODY_IMPL_KEYWORD_BEFORE: usize = 480;
-pub const SITE_IMPL_ITEM_BODY_IMPL_KEYWORD_AFTER: usize = 481;
+pub const SITE_IMPL_ITEM_BODY_IMPL_KEYWORD_BEFORE: usize = 479;
+pub const SITE_IMPL_ITEM_BODY_IMPL_KEYWORD_AFTER: usize = 480;
+pub const SITE_IMPL_ITEM_BODY_UNSAFE_AFTER: usize = 481;
 pub const SITE_IMPL_ITEM_BODY_IMPL_ITEM_BODY_BEFORE: usize = 482;
 pub const SITE_IMPL_ITEM_BODY_IMPL_ITEM_BODY_AFTER: usize = 483;
 pub const SITE_IMPL_ITEM_NEGATIVE_CLAUSE_BANG_AFTER: usize = 484;
@@ -496,10 +496,10 @@ pub const SITE_IMPL_ITEM_NEGATIVE_CLAUSE_IMPL_ITEM_NEGATIVE_CLAUSE_AFTER: usize 
 pub const SITE_IMPL_ITEM_POSITIVE_CLAUSE_FOR_KEYWORD_BEFORE: usize = 488;
 pub const SITE_IMPL_ITEM_POSITIVE_CLAUSE_IMPL_ITEM_POSITIVE_CLAUSE_BEFORE: usize = 489;
 pub const SITE_IMPL_ITEM_POSITIVE_CLAUSE_IMPL_ITEM_POSITIVE_CLAUSE_AFTER: usize = 490;
-pub const SITE_IMPL_ITEM_SEMI_UNSAFE_MARKER_AFTER: usize = 491;
-pub const SITE_IMPL_ITEM_SEMI_SEMI_BEFORE: usize = 492;
-pub const SITE_IMPL_ITEM_SEMI_IMPL_KEYWORD_BEFORE: usize = 493;
-pub const SITE_IMPL_ITEM_SEMI_IMPL_KEYWORD_AFTER: usize = 494;
+pub const SITE_IMPL_ITEM_SEMI_SEMI_BEFORE: usize = 491;
+pub const SITE_IMPL_ITEM_SEMI_IMPL_KEYWORD_BEFORE: usize = 492;
+pub const SITE_IMPL_ITEM_SEMI_IMPL_KEYWORD_AFTER: usize = 493;
+pub const SITE_IMPL_ITEM_SEMI_UNSAFE_AFTER: usize = 494;
 pub const SITE_IMPL_ITEM_SEMI_IMPL_ITEM_SEMI_BEFORE: usize = 495;
 pub const SITE_IMPL_ITEM_SEMI_IMPL_ITEM_SEMI_AFTER: usize = 496;
 pub const SITE_INDEX_EXPRESSION_LBRACK_BEFORE: usize = 497;
@@ -917,13 +917,13 @@ pub const SITE_SOURCE_FILE_SOURCE_FILE_BEFORE: usize = 908;
 pub const SITE_SOURCE_FILE_SOURCE_FILE_AFTER: usize = 909;
 pub const SITE_STATIC_ITEM_MUTABLE_SPECIFIER_BEFORE: usize = 910;
 pub const SITE_STATIC_ITEM_MUTABLE_SPECIFIER_AFTER: usize = 911;
-pub const SITE_STATIC_ITEM_REF_MARKER_BEFORE: usize = 912;
-pub const SITE_STATIC_ITEM_REF_MARKER_AFTER: usize = 913;
-pub const SITE_STATIC_ITEM_COLON_BEFORE: usize = 914;
-pub const SITE_STATIC_ITEM_COLON_AFTER: usize = 915;
-pub const SITE_STATIC_ITEM_SEMI_BEFORE: usize = 916;
-pub const SITE_STATIC_ITEM_EQ_BEFORE: usize = 917;
-pub const SITE_STATIC_ITEM_EQ_AFTER: usize = 918;
+pub const SITE_STATIC_ITEM_COLON_BEFORE: usize = 912;
+pub const SITE_STATIC_ITEM_COLON_AFTER: usize = 913;
+pub const SITE_STATIC_ITEM_SEMI_BEFORE: usize = 914;
+pub const SITE_STATIC_ITEM_EQ_BEFORE: usize = 915;
+pub const SITE_STATIC_ITEM_EQ_AFTER: usize = 916;
+pub const SITE_STATIC_ITEM_REF_BEFORE: usize = 917;
+pub const SITE_STATIC_ITEM_REF_AFTER: usize = 918;
 pub const SITE_STATIC_ITEM_STATIC_KEYWORD_BEFORE: usize = 919;
 pub const SITE_STATIC_ITEM_STATIC_KEYWORD_AFTER: usize = 920;
 pub const SITE_STATIC_ITEM_STATIC_ITEM_BEFORE: usize = 921;
@@ -1248,10 +1248,10 @@ pub const SITE_TRAIT_BOUNDS_BOUNDS_SEPARATOR_SPACE_AFTER: usize = 1239;
 pub const SITE_TRAIT_BOUNDS_COLON_AFTER: usize = 1240;
 pub const SITE_TRAIT_BOUNDS_TRAIT_BOUNDS_BEFORE: usize = 1241;
 pub const SITE_TRAIT_BOUNDS_TRAIT_BOUNDS_AFTER: usize = 1242;
-pub const SITE_TRAIT_ITEM_UNSAFE_MARKER_BEFORE: usize = 1243;
-pub const SITE_TRAIT_ITEM_UNSAFE_MARKER_AFTER: usize = 1244;
-pub const SITE_TRAIT_ITEM_TRAIT_KEYWORD_BEFORE: usize = 1245;
-pub const SITE_TRAIT_ITEM_TRAIT_KEYWORD_AFTER: usize = 1246;
+pub const SITE_TRAIT_ITEM_TRAIT_KEYWORD_BEFORE: usize = 1243;
+pub const SITE_TRAIT_ITEM_TRAIT_KEYWORD_AFTER: usize = 1244;
+pub const SITE_TRAIT_ITEM_UNSAFE_BEFORE: usize = 1245;
+pub const SITE_TRAIT_ITEM_UNSAFE_AFTER: usize = 1246;
 pub const SITE_TRAIT_ITEM_TRAIT_ITEM_BEFORE: usize = 1247;
 pub const SITE_TRAIT_ITEM_TRAIT_ITEM_AFTER: usize = 1248;
 pub const SITE_TRY_BLOCK_TRY_KEYWORD_AFTER: usize = 1249;
@@ -1583,9 +1583,9 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("associated_type", "type_keyword_after", "type_keyword_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("associated_type", "associated_type_before", "associated_type_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("associated_type", "associated_type_after", "associated_type_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("async_block", "move_marker_before", "move_marker_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("async_block", "move_marker_after", "move_marker_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("async_block", "async_keyword_after", "async_keyword_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("async_block", "move_before", "move_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("async_block", "move_after", "move_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("async_block", "async_block_before", "async_block_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("async_block", "async_block_after", "async_block_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("attribute", "attribute_before", "attribute_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
@@ -1711,21 +1711,21 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("captured_pattern", "captured_pattern_before", "captured_pattern_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("captured_pattern", "captured_pattern_after", "captured_pattern_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("char_literal_empty", "squote_before", "squote_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("closure_expression_block", "async_marker_before", "async_marker_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("closure_expression_block", "async_marker_after", "async_marker_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("closure_expression_block", "move_marker_before", "move_marker_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("closure_expression_block", "move_marker_after", "move_marker_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("closure_expression_block", "static_marker_after", "static_marker_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("closure_expression_block", "dash_gt_before", "dash_gt_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("closure_expression_block", "dash_gt_after", "dash_gt_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("closure_expression_block", "async_before", "async_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("closure_expression_block", "async_after", "async_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("closure_expression_block", "move_before", "move_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("closure_expression_block", "move_after", "move_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("closure_expression_block", "static_after", "static_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("closure_expression_block", "closure_expression_block_before", "closure_expression_block_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("closure_expression_block", "closure_expression_block_after", "closure_expression_block_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("closure_expression_expr", "async_marker_before", "async_marker_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("closure_expression_expr", "async_marker_after", "async_marker_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("closure_expression_expr", "move_marker_before", "move_marker_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("closure_expression_expr", "move_marker_after", "move_marker_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("closure_expression_expr", "static_marker_after", "static_marker_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("closure_expression_expr", "underscore_before", "underscore_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("closure_expression_expr", "async_before", "async_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("closure_expression_expr", "async_after", "async_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("closure_expression_expr", "move_before", "move_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("closure_expression_expr", "move_after", "move_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("closure_expression_expr", "static_after", "static_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("closure_expression_expr", "closure_expression_expr_before", "closure_expression_expr_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("closure_expression_expr", "closure_expression_expr_after", "closure_expression_expr_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("closure_parameters", "parameters_captured_pattern_after", "captured_pattern_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
@@ -1934,14 +1934,14 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("field_initializer_list_elements", "field_initializer_list_elements_after", "field_initializer_list_elements_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("field_pattern_named", "mutable_specifier_before", "mutable_specifier_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("field_pattern_named", "mutable_specifier_after", "mutable_specifier_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("field_pattern_named", "ref_marker_after", "ref_marker_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("field_pattern_named", "colon_before", "colon_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("field_pattern_named", "colon_after", "colon_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("field_pattern_named", "ref_after", "ref_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("field_pattern_named", "field_pattern_named_before", "field_pattern_named_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("field_pattern_named", "field_pattern_named_after", "field_pattern_named_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("field_pattern_shorthand", "mutable_specifier_before", "mutable_specifier_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("field_pattern_shorthand", "mutable_specifier_after", "mutable_specifier_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("field_pattern_shorthand", "ref_marker_after", "ref_marker_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("field_pattern_shorthand", "ref_after", "ref_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("field_pattern_shorthand", "field_pattern_shorthand_before", "field_pattern_shorthand_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("field_pattern_shorthand", "field_pattern_shorthand_after", "field_pattern_shorthand_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("for_expression", "colon_before", "colon_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
@@ -1989,9 +1989,9 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("function_type_fn_form", "fn_keyword_before", "fn_keyword_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("function_type_fn_form", "function_type_fn_form_before", "function_type_fn_form_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("function_type_fn_form", "function_type_fn_form_after", "function_type_fn_form_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("gen_block", "move_marker_before", "move_marker_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("gen_block", "move_marker_after", "move_marker_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("gen_block", "gen_keyword_after", "gen_keyword_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("gen_block", "move_before", "move_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("gen_block", "move_after", "move_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("gen_block", "gen_block_before", "gen_block_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("gen_block", "gen_block_after", "gen_block_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("generic_function", "colon_colon_before", "colon_colon_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
@@ -2014,9 +2014,9 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("if_expression", "if_keyword_after", "if_keyword_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("if_expression", "if_expression_before", "if_expression_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("if_expression", "if_expression_after", "if_expression_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("impl_item_body", "unsafe_marker_after", "unsafe_marker_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("impl_item_body", "impl_keyword_before", "impl_keyword_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("impl_item_body", "impl_keyword_after", "impl_keyword_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("impl_item_body", "unsafe_after", "unsafe_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("impl_item_body", "impl_item_body_before", "impl_item_body_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("impl_item_body", "impl_item_body_after", "impl_item_body_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("impl_item_negative_clause", "bang_after", "bang_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
@@ -2026,10 +2026,10 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("impl_item_positive_clause", "for_keyword_before", "for_keyword_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("impl_item_positive_clause", "impl_item_positive_clause_before", "impl_item_positive_clause_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("impl_item_positive_clause", "impl_item_positive_clause_after", "impl_item_positive_clause_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("impl_item_semi", "unsafe_marker_after", "unsafe_marker_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("impl_item_semi", "semi_before", "semi_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("impl_item_semi", "impl_keyword_before", "impl_keyword_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("impl_item_semi", "impl_keyword_after", "impl_keyword_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("impl_item_semi", "unsafe_after", "unsafe_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("impl_item_semi", "impl_item_semi_before", "impl_item_semi_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("impl_item_semi", "impl_item_semi_after", "impl_item_semi_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("index_expression", "lbrack_before", "lbrack_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
@@ -2447,13 +2447,13 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("source_file", "source_file_after", "source_file_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("static_item", "mutable_specifier_before", "mutable_specifier_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("static_item", "mutable_specifier_after", "mutable_specifier_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("static_item", "ref_marker_before", "ref_marker_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("static_item", "ref_marker_after", "ref_marker_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("static_item", "colon_before", "colon_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("static_item", "colon_after", "colon_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("static_item", "semi_before", "semi_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("static_item", "eq_before", "eq_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("static_item", "eq_after", "eq_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("static_item", "ref_before", "ref_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("static_item", "ref_after", "ref_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("static_item", "static_keyword_before", "static_keyword_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("static_item", "static_keyword_after", "static_keyword_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("static_item", "static_item_before", "static_item_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
@@ -2778,10 +2778,10 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("trait_bounds", "colon_after", "colon_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("trait_bounds", "trait_bounds_before", "trait_bounds_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("trait_bounds", "trait_bounds_after", "trait_bounds_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("trait_item", "unsafe_marker_before", "unsafe_marker_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("trait_item", "unsafe_marker_after", "unsafe_marker_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("trait_item", "trait_keyword_before", "trait_keyword_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("trait_item", "trait_keyword_after", "trait_keyword_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("trait_item", "unsafe_before", "unsafe_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("trait_item", "unsafe_after", "unsafe_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("trait_item", "trait_item_before", "trait_item_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("trait_item", "trait_item_after", "trait_item_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("try_block", "try_keyword_after", "try_keyword_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
@@ -3333,7 +3333,7 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("array_type", &[38, 36, 34, 35, 37, 39]),
     ("assignment_expression", &[42, 40, 41, 43]),
     ("associated_type", &[46, 45, 44, 47]),
-    ("async_block", &[51, 50, 48, 49, 52]),
+    ("async_block", &[51, 48, 49, 50, 52]),
     ("attribute", &[53, 54]),
     ("attribute_input", &[55]),
     ("attribute_item", &[60, 56, 57, 58, 59, 61]),
@@ -3354,8 +3354,8 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("call_expression", &[169, 170]),
     ("captured_pattern", &[173, 171, 172, 174]),
     ("char_literal_empty", &[175]),
-    ("closure_expression_block", &[183, 180, 176, 177, 178, 179, 181, 182, 184]),
-    ("closure_expression_expr", &[191, 189, 185, 186, 187, 188, 190, 192]),
+    ("closure_expression_block", &[183, 182, 178, 179, 180, 181, 176, 177, 184]),
+    ("closure_expression_expr", &[191, 190, 186, 187, 188, 189, 185, 192]),
     ("closure_parameters", &[219, 218, 214, 213, 217, 220, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212]),
     ("compound_assignment_expr", &[223, 221, 222, 224]),
     ("const_block", &[226, 225, 227]),
@@ -3382,7 +3382,7 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("field_initializer", &[382, 378, 377, 380, 381, 383, 376]),
     ("field_initializer_list", &[386, 384, 385, 387]),
     ("field_initializer_list_elements", &[395, 392, 391, 396, 388, 389, 390]),
-    ("field_pattern_named", &[402, 399, 397, 398, 400, 401, 403]),
+    ("field_pattern_named", &[402, 401, 397, 398, 399, 400, 403]),
     ("field_pattern_shorthand", &[407, 406, 404, 405, 408]),
     ("for_expression", &[415, 409, 410, 411, 412, 413, 414, 416]),
     ("for_lifetimes", &[421, 420, 417, 418, 419, 422]),
@@ -3393,17 +3393,17 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("function_signature_item", &[445, 443, 444, 440, 441, 442, 446]),
     ("function_type", &[449, 447, 448, 450]),
     ("function_type_fn_form", &[452, 451, 453]),
-    ("gen_block", &[457, 456, 454, 455, 458]),
+    ("gen_block", &[457, 454, 455, 456, 458]),
     ("generic_function", &[461, 459, 460, 462]),
     ("generic_pattern", &[465, 463, 464, 466]),
     ("generic_type", &[467, 468]),
     ("generic_type_with_turbofish", &[471, 469, 470, 472]),
     ("higher_ranked_trait_bound", &[474, 473, 475]),
     ("if_expression", &[477, 476, 478]),
-    ("impl_item_body", &[482, 479, 480, 481, 483]),
+    ("impl_item_body", &[482, 481, 479, 480, 483]),
     ("impl_item_negative_clause", &[486, 484, 485, 487]),
     ("impl_item_positive_clause", &[489, 488, 490]),
-    ("impl_item_semi", &[495, 491, 493, 494, 492, 496]),
+    ("impl_item_semi", &[495, 494, 492, 493, 491, 496]),
     ("index_expression", &[500, 497, 498, 499, 501]),
     ("inner_attribute_item", &[508, 504, 502, 503, 505, 506, 507, 509]),
     ("label", &[511, 510, 512]),
@@ -3468,7 +3468,7 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("shorthand_field_initializer", &[860, 858, 857, 861, 856]),
     ("slice_pattern", &[864, 862, 863, 865]),
     ("source_file", &[908, 906, 905, 909, 866, 867, 868, 869, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892, 893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904]),
-    ("static_item", &[921, 919, 920, 912, 913, 910, 911, 914, 915, 917, 918, 916, 922]),
+    ("static_item", &[921, 919, 920, 917, 918, 910, 911, 912, 913, 915, 916, 914, 922]),
     ("string_literal", &[923, 924]),
     ("struct_expression", &[925, 926]),
     ("struct_item_brace", &[929, 927, 928, 930]),
@@ -3488,7 +3488,7 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("token_tree_pattern_paren", &[1131, 1129, 1127, 1126, 1130, 1132, 1119, 1120, 1121, 1122, 1123, 1124, 1125]),
     ("token_tree_punctuation", &[1153, 1154, 1159, 1160, 1149, 1150, 1173, 1174, 1139, 1140, 1209, 1210, 1133, 1134, 1143, 1144, 1215, 1216, 1145, 1146, 1219, 1220, 1185, 1186, 1201, 1202, 1155, 1156, 1161, 1162, 1151, 1152, 1175, 1176, 1141, 1142, 1211, 1212, 1147, 1148, 1217, 1218, 1187, 1188, 1203, 1204, 1191, 1192, 1193, 1194, 1135, 1136, 1197, 1198, 1183, 1184, 1199, 1200, 1189, 1190, 1207, 1208, 1213, 1214, 1165, 1166, 1167, 1168, 1169, 1170, 1171, 1172, 1157, 1158, 1181, 1182, 1177, 1178, 1179, 1180, 1163, 1164, 1195, 1196, 1137, 1138, 1205, 1206]),
     ("trait_bounds", &[1241, 1240, 1237, 1236, 1242, 1221, 1222, 1223, 1224, 1225, 1226, 1227, 1228, 1229, 1230, 1231, 1232, 1233, 1234, 1235]),
-    ("trait_item", &[1247, 1243, 1244, 1245, 1246, 1248]),
+    ("trait_item", &[1247, 1245, 1246, 1243, 1244, 1248]),
     ("try_block", &[1250, 1249, 1251]),
     ("try_expression", &[1253, 1252, 1254]),
     ("tuple_expression", &[1261, 1259, 1257, 1256, 1260, 1262, 1255]),
@@ -3952,8 +3952,8 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
-    ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 168, strength: 2 },
+    ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 0 },
@@ -4044,8 +4044,8 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 168, strength: 2 },
+    ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 0 },
@@ -4465,11 +4465,11 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 171, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
-    ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
-    ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 168, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 168, strength: 2 },
+    ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
+    ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
@@ -6451,9 +6451,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ASYNC_BLOCK_ASYNC_KEYWORD_AFTER, path: "(async_block)/\"async\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ASYNC_BLOCK_ASYNC_BLOCK_BEFORE, path: "(async_block)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "moveMarker", path: "(async_block)/move_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ASYNC_BLOCK_MOVE_MARKER_AFTER, path: "(async_block)/move_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ASYNC_BLOCK_MOVE_MARKER_BEFORE, path: "(async_block)/move_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "moveKeyword", path: "(async_block)/\"move\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ASYNC_BLOCK_MOVE_AFTER, path: "(async_block)/\"move\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ASYNC_BLOCK_MOVE_BEFORE, path: "(async_block)/\"move\"/before" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "attribute", path: "(attribute)", children: &[
@@ -6761,36 +6761,36 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "closureExpressionBlock", path: "(closure_expression_block)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_CLOSURE_EXPRESSION_BLOCK_AFTER, path: "(closure_expression_block)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "asyncMarker", path: "(closure_expression_block)/async_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_ASYNC_MARKER_AFTER, path: "(closure_expression_block)/async_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_ASYNC_MARKER_BEFORE, path: "(closure_expression_block)/async_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "asyncKeyword", path: "(closure_expression_block)/\"async\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_ASYNC_AFTER, path: "(closure_expression_block)/\"async\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_ASYNC_BEFORE, path: "(closure_expression_block)/\"async\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_CLOSURE_EXPRESSION_BLOCK_BEFORE, path: "(closure_expression_block)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "dashGt", path: "(closure_expression_block)/\"->\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_DASH_GT_AFTER, path: "(closure_expression_block)/\"->\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_DASH_GT_BEFORE, path: "(closure_expression_block)/\"->\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "moveMarker", path: "(closure_expression_block)/move_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_MOVE_MARKER_AFTER, path: "(closure_expression_block)/move_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_MOVE_MARKER_BEFORE, path: "(closure_expression_block)/move_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "moveKeyword", path: "(closure_expression_block)/\"move\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_MOVE_AFTER, path: "(closure_expression_block)/\"move\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_MOVE_BEFORE, path: "(closure_expression_block)/\"move\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "staticMarker", path: "(closure_expression_block)/static_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_STATIC_MARKER_AFTER, path: "(closure_expression_block)/static_marker:/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "staticKeyword", path: "(closure_expression_block)/\"static\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_STATIC_AFTER, path: "(closure_expression_block)/\"static\"/after" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "closureExpressionExpr", path: "(closure_expression_expr)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_EXPR_CLOSURE_EXPRESSION_EXPR_AFTER, path: "(closure_expression_expr)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "asyncMarker", path: "(closure_expression_expr)/async_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_EXPR_ASYNC_MARKER_AFTER, path: "(closure_expression_expr)/async_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_EXPR_ASYNC_MARKER_BEFORE, path: "(closure_expression_expr)/async_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "asyncKeyword", path: "(closure_expression_expr)/\"async\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_EXPR_ASYNC_AFTER, path: "(closure_expression_expr)/\"async\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_EXPR_ASYNC_BEFORE, path: "(closure_expression_expr)/\"async\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_EXPR_CLOSURE_EXPRESSION_EXPR_BEFORE, path: "(closure_expression_expr)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "moveMarker", path: "(closure_expression_expr)/move_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_EXPR_MOVE_MARKER_AFTER, path: "(closure_expression_expr)/move_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_EXPR_MOVE_MARKER_BEFORE, path: "(closure_expression_expr)/move_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "moveKeyword", path: "(closure_expression_expr)/\"move\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_EXPR_MOVE_AFTER, path: "(closure_expression_expr)/\"move\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_EXPR_MOVE_BEFORE, path: "(closure_expression_expr)/\"move\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "staticMarker", path: "(closure_expression_expr)/static_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_EXPR_STATIC_MARKER_AFTER, path: "(closure_expression_expr)/static_marker:/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "staticKeyword", path: "(closure_expression_expr)/\"static\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_EXPR_STATIC_AFTER, path: "(closure_expression_expr)/\"static\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "underscore", path: "(closure_expression_expr)/\"_\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_EXPR_UNDERSCORE_BEFORE, path: "(closure_expression_expr)/\"_\"/before" }] },
@@ -7312,8 +7312,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_NAMED_MUTABLE_SPECIFIER_AFTER, path: "(field_pattern_named)/mutable_specifier:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_NAMED_MUTABLE_SPECIFIER_BEFORE, path: "(field_pattern_named)/mutable_specifier:/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "refMarker", path: "(field_pattern_named)/ref_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_NAMED_REF_MARKER_AFTER, path: "(field_pattern_named)/ref_marker:/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "refKeyword", path: "(field_pattern_named)/\"ref\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_NAMED_REF_AFTER, path: "(field_pattern_named)/\"ref\"/after" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "fieldPatternShorthand", path: "(field_pattern_shorthand)", children: &[
@@ -7323,8 +7323,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_SHORTHAND_MUTABLE_SPECIFIER_AFTER, path: "(field_pattern_shorthand)/mutable_specifier:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_SHORTHAND_MUTABLE_SPECIFIER_BEFORE, path: "(field_pattern_shorthand)/mutable_specifier:/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "refMarker", path: "(field_pattern_shorthand)/ref_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_SHORTHAND_REF_MARKER_AFTER, path: "(field_pattern_shorthand)/ref_marker:/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "refKeyword", path: "(field_pattern_shorthand)/\"ref\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_SHORTHAND_REF_AFTER, path: "(field_pattern_shorthand)/\"ref\"/after" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "forExpression", path: "(for_expression)", children: &[
@@ -7431,9 +7431,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ::sittir_core::options::AddressNode::Branch { key: "genKeyword", path: "(gen_block)/\"gen\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GEN_BLOCK_GEN_KEYWORD_AFTER, path: "(gen_block)/\"gen\"/after" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "moveMarker", path: "(gen_block)/move_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GEN_BLOCK_MOVE_MARKER_AFTER, path: "(gen_block)/move_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_GEN_BLOCK_MOVE_MARKER_BEFORE, path: "(gen_block)/move_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "moveKeyword", path: "(gen_block)/\"move\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GEN_BLOCK_MOVE_AFTER, path: "(gen_block)/\"move\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_GEN_BLOCK_MOVE_BEFORE, path: "(gen_block)/\"move\"/before" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "genericFunction", path: "(generic_function)", children: &[
@@ -7485,8 +7485,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_BODY_IMPL_KEYWORD_AFTER, path: "(impl_item_body)/\"impl\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_BODY_IMPL_KEYWORD_BEFORE, path: "(impl_item_body)/\"impl\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "unsafeMarker", path: "(impl_item_body)/unsafe_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_BODY_UNSAFE_MARKER_AFTER, path: "(impl_item_body)/unsafe_marker:/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "unsafeKeyword", path: "(impl_item_body)/\"unsafe\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_BODY_UNSAFE_AFTER, path: "(impl_item_body)/\"unsafe\"/after" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "implItemNegativeClause", path: "(impl_item_negative_clause)", children: &[
@@ -7516,8 +7516,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ::sittir_core::options::AddressNode::Branch { key: "semi", path: "(impl_item_semi)/\";\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_SEMI_SEMI_BEFORE, path: "(impl_item_semi)/\";\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "unsafeMarker", path: "(impl_item_semi)/unsafe_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_SEMI_UNSAFE_MARKER_AFTER, path: "(impl_item_semi)/unsafe_marker:/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "unsafeKeyword", path: "(impl_item_semi)/\"unsafe\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_SEMI_UNSAFE_AFTER, path: "(impl_item_semi)/\"unsafe\"/after" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "indexExpression", path: "(index_expression)", children: &[
@@ -8545,9 +8545,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_MUTABLE_SPECIFIER_AFTER, path: "(static_item)/mutable_specifier:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_MUTABLE_SPECIFIER_BEFORE, path: "(static_item)/mutable_specifier:/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "refMarker", path: "(static_item)/ref_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_REF_MARKER_AFTER, path: "(static_item)/ref_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_REF_MARKER_BEFORE, path: "(static_item)/ref_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "refKeyword", path: "(static_item)/\"ref\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_REF_AFTER, path: "(static_item)/\"ref\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_REF_BEFORE, path: "(static_item)/\"ref\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "semi", path: "(static_item)/\";\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_SEMI_BEFORE, path: "(static_item)/\";\"/before" }] },
@@ -9295,9 +9295,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_ITEM_TRAIT_KEYWORD_AFTER, path: "(trait_item)/\"trait\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_ITEM_TRAIT_KEYWORD_BEFORE, path: "(trait_item)/\"trait\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "unsafeMarker", path: "(trait_item)/unsafe_marker:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_ITEM_UNSAFE_MARKER_AFTER, path: "(trait_item)/unsafe_marker:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_ITEM_UNSAFE_MARKER_BEFORE, path: "(trait_item)/unsafe_marker:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "unsafeKeyword", path: "(trait_item)/\"unsafe\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_ITEM_UNSAFE_AFTER, path: "(trait_item)/\"unsafe\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_ITEM_UNSAFE_BEFORE, path: "(trait_item)/\"unsafe\"/before" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "tryBlock", path: "(try_block)", children: &[

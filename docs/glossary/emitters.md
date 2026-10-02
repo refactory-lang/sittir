@@ -3099,8 +3099,8 @@ Surface`
 // Concrete node: use the assembled typeName (PascalCase, leading-underscore-
 // stripped by the assemble phase). This ensures the render fn name and
 // struct type name match what renderTypedLeafFn / renderTypedBranchFn emit
-// (both use node.typeName). Hidden kinds like `_kw_abstract_marker` have
-// typeName `KwAbstractMarker` — using kind would produce double-underscore
+// (both use node.typeName). Hidden kinds like `_kw_abstract` have
+// typeName `KwAbstract` — using kind would produce double-underscore
 // render fn names that don't match.
 ```
 
@@ -4944,7 +4944,7 @@ the literal component, for `literalArmSeamSites`.
  * a node-ref to a keyword/token/pattern kind already works today, because
  * that kind's OWN leaf transport struct has a manual `FromNapiValue`
  * accepting bare strings/booleans (see `renderLeafTransportNapiImpls`) —
- * e.g. rust `closure_expression.move_marker`, a node-ref to `_move_marker`.
+ * e.g. rust `closure_expression.move`, a node-ref to `_move`.
  * A node-ref to an ordinary branch/supertype kind (e.g. `call_expression.
  * callee` → `_expression`) is a completely normal structural child —
  * `resolveFieldStorageInfo`'s `'verbatim'` result for THAT case means
@@ -4958,7 +4958,7 @@ the literal component, for `literalArmSeamSites`.
  * wrap actually puts on the wire:
  *
  * - `'boolean'` — wrap collapses this to a JS `true`/absent boolean
- *   (rust `self_parameter.reference` → `&`, `closure_expression.async_marker`
+ *   (rust `self_parameter.reference` → `&`, `closure_expression.async`
  *   → `async`). The Rust field should be a plain `bool` carrying presence,
  *   with `text` the fixed literal to write when present.
  * - `'verbatim'` — the literal has no stamped catalog kind_id at all. Wrap
@@ -9242,7 +9242,7 @@ One encoding per slot, derived from `enumArmsOf`. Presence slots come first (`ke
  * CONTENT — hidden rules are inlined, so the parse yields the anon token,
  * whose identity is the node's literal-chain stamp (`resolvedKind`/
  * `resolvedKindId`, anon-wins): stamping the rule's own id there compares a
- * kind no parse can produce (typescript `_kw_static_marker` id vs the anon
+ * kind no parse can produce (typescript `_kw_static` id vs the anon
  * `'static'` token the tree actually holds). A visible unaliased rule
  * surfaces as itself. Single preference derivation — every enum/keyword
  * storage emitter consumes this instead of ordering the stamps locally.
@@ -10008,7 +10008,7 @@ literal-default and fallback counts.
 // slot; rust's `tuple_expression` has three separate `elements`
 // positions, one inside a CHOICE arm), and singular slots via
 // structural-choice distribution (permutation arms sharing one marker
-// field, e.g. `readonly_marker` at three positions of
+// field, e.g. `readonly` at three positions of
 // `public_field_definition`'s modifier choice). Without this ctx-level
 // (rather than SEQ-local) guard the emitters would re-emit the merged
 // slot at each position, duplicating output; first occurrence wins (the
@@ -11354,7 +11354,7 @@ A slot that can default to its empty form stores `orDefault(<config value>, () =
 
 ```text
 // A required field alongside an optional sibling (e.g. async_block's
-// body next to moveMarker) is what makes `config` itself defaultable to
+// body next to move) is what makes `config` itself defaultable to
 // `{}` (argumentOptional, above) — reading it bare would then silently
 // store `undefined` instead of the empty construction that field's own
 // omission means. `emptyDefaultOf` is the same fact `emitBranchFrom`

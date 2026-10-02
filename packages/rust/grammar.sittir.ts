@@ -671,7 +671,7 @@ export default sittirGrammar(base, {
 		_impl_item_unsafe_marker: vocabulary(($) => 'unsafe'),
 		impl_item: reauthored('ambiguity', ($) =>
 			seq(
-				optional(field('unsafe_marker', $._impl_item_unsafe_marker)),
+				optional(field('unsafe', $._impl_item_unsafe_marker)),
 				'impl',
 				optional(field('type_parameters', $.type_parameters)),
 				optional(
