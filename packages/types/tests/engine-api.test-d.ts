@@ -41,6 +41,9 @@ export const descriptor: Language<FakeAPI> = {
 	fileTypes: [],
 	load: async (): Promise<LanguageHooks<FakeAPI>> => {
 		throw new Error('type-only');
+	},
+	createEngine: async () => {
+		throw new Error('type-only');
 	}
 };
 

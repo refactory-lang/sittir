@@ -37,3 +37,21 @@ void createEngine(rust, { render: { indent: '\t', indnet: '\t' } });
 // @ts-expect-error per-call options take no unknown key either
 rs.render(node, { indent: '\t', indnet: '\t' });
 rs.render(node, { indent: '\t', ignoreFormat: false });
+
+// The descriptor's createEngine takes exactly what createEngine(rust, …) takes.
+const viaDescriptor: Promise<Engine<RustAPI>> = rust.createEngine({ render: { indent: '\t' } });
+const viaFunction: Promise<Engine<RustAPI>> = createEngine(rust, { render: { indent: '\t' } });
+void [viaDescriptor, viaFunction];
+void rust.createEngine();
+void rust.createEngine({ render: { indent: '    ' } });
+void rust.createEngine({ render: { indent: wide } });
+// @ts-expect-error 'x' is not an indent character
+void rust.createEngine({ render: { indent: 'x' } });
+// @ts-expect-error a line break is not an indent character
+void rust.createEngine({ render: { indent: ' \n' } });
+// @ts-expect-error an empty unit indents nothing
+void rust.createEngine({ render: { indent: '' } });
+// @ts-expect-error a key the grammar's render options do not have
+void rust.createEngine({ render: { indent: '\t', indnet: '\t' } });
+// @ts-expect-error a mistyped value
+void rust.createEngine({ render: { indent: 4 } });

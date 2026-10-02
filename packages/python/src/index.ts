@@ -8,7 +8,8 @@ export type { PythonAPI } from './api.js';
 const python: Language<PythonAPI> = {
 	name: 'python',
 	fileTypes: ['py'],
-	load: () => import('./api.js').then((m) => m.hooks)
+	load: () => import('./api.js').then((m) => m.hooks),
+	createEngine: (options) => import('@sittir/common').then((m) => m.createEngine(python, options))
 };
 export default python;
 

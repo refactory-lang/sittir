@@ -8,7 +8,8 @@ export type { TypescriptAPI } from './api.js';
 const typescript: Language<TypescriptAPI> = {
 	name: 'typescript',
 	fileTypes: ['ts'],
-	load: () => import('./api.js').then((m) => m.hooks)
+	load: () => import('./api.js').then((m) => m.hooks),
+	createEngine: (options) => import('@sittir/common').then((m) => m.createEngine(typescript, options))
 };
 export default typescript;
 

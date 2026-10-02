@@ -5,7 +5,12 @@ import type { RegexAPI } from './api.js';
 
 export type { RegexAPI } from './api.js';
 
-const regex: Language<RegexAPI> = { name: 'regex', fileTypes: [], load: () => import('./api.js').then((m) => m.hooks) };
+const regex: Language<RegexAPI> = {
+	name: 'regex',
+	fileTypes: [],
+	load: () => import('./api.js').then((m) => m.hooks),
+	createEngine: (options) => import('@sittir/common').then((m) => m.createEngine(regex, options))
+};
 export default regex;
 
 export type * from './types.js';
