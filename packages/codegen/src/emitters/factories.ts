@@ -1,5 +1,5 @@
 import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
-import { innerPositionsOf, nodeMemberLines, ownerViewParts, seatedSetters, triviaInnerImports, type SetterEntry } from './node-members.ts';
+import { innerPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, triviaInnerImports, type SetterEntry } from './node-members.ts';
 import { findOwnKindEntry, reservedWordset } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -1923,7 +1923,7 @@ export function seatPlanOf(
 }
 
 export function convertsToLiteral(plan: SeatPlan): boolean {
-	return plan.groups.length === 0 && (plan.viewPlan === undefined || plan.viewPlan.owner !== undefined);
+	return plan.groups.length === 0;
 }
 
 export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): readonly string[] {
@@ -1934,7 +1934,8 @@ export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly Kind
 		if (plan.slots.length > 0) names.add('listSlotWith');
 		if (plan.elements.length > 0) names.add('elementsWith');
 		if (plan.viewPlan !== undefined) {
-			for (const name of ['LIST_ITEMS', 'LIST_METHODS', 'listIterator', 'listItems', 'ownerView', 'ownerElements', 'listOption', 'readStubLength']) names.add(name);
+			const names_ = plan.viewPlan.owner === undefined ? ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'storedElements', 'defineListIndices'] : ['LIST_ITEMS', 'LIST_METHODS', 'listIterator', 'listItems', 'ownerView', 'ownerElements', 'listOption', 'readStubLength'];
+			for (const name of names_) names.add(name);
 		}
 	}
 	return [...names];
@@ -2152,6 +2153,40 @@ function emitSeparatedListFactory(
 		lines.push(`  const _delimiter = options.delimiter ?? ${delimiterDefault};`);
 	}
 
+	const plan = seatPlanOf(node, nodeMap, kindEntries);
+	if (convertsToLiteral(plan) && plan.viewPlan !== undefined) {
+		const view = listSelfViewParts(plan.viewPlan, contentStorageKey, contentAccessorName, 'factory');
+		const optionsArg = hasOptions ? 'options, ' : '';
+		const setters: SetterEntry[] = [{ name: contentAccessorName, params: `...vs: ${elementsType}`, body: `${fn}(${optionsArg}...vs)` }];
+		if (hasSeparatorKindOption) {
+			setters.push({ name: 'separator', params: `v: ${separatorKindUnion}`, body: `${fn}({ ...options, separator: v }, ...elements)` });
+		}
+		if (hasDelimiterOption) {
+			setters.push({ name: 'delimiter', params: `v?: ${delimiterUnion}`, body: `${fn}({ ...options, delimiter: v }, ...elements)` });
+		}
+		lines.push(...view.prelude);
+		lines.push('  const handle = currentHandle();');
+		lines.push('  const node = {');
+		lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
+		lines.push('    $source: 2 as const,');
+		lines.push('    $named: true as const,');
+		lines.push(`    ${contentStorageKey},`);
+		if (hasSeparatorKindOption) lines.push('    _separator,');
+		if (hasDelimiterOption) lines.push('    _delimiter,');
+		lines.push(
+			...nodeMemberLines({
+				setters: seatedSetters(setters, plan),
+				accessors: [{ name: contentAccessorName, read: contentStorageKey }],
+				extra: view.members,
+				inner: innerPositionsOf(node.kind, nodeMap)
+			})
+		);
+		lines.push('  };');
+		lines.push(...view.postlude);
+		lines.push(`  return node as unknown as ${listBuiltName};`);
+		lines.push('}');
+		return lines.join('\n');
+	}
 	const seats = seatRuntimes(node, nodeMap, kindEntries);
 	lines.push(`  return withMethods(${seatOpening(seats)}withAccessors({`);
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);

@@ -387,6 +387,11 @@ export function ownerView(stored: unknown, count: string, tree?: TreeHandle): Ow
 	};
 }
 
+/** The elements a list stores: its array, or the one element it holds, or none. */
+export function storedElements(stored: unknown): readonly unknown[] {
+	return Array.isArray(stored) ? stored : stored == null ? [] : [stored];
+}
+
 /** The elements a list reads through its own reader, none for an absent list. */
 export function ownerElements(list: unknown, reader: string): readonly unknown[] {
 	if (list == null) return [];

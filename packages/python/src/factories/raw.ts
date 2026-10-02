@@ -16,6 +16,9 @@ import {
 	ownerElements,
 	listOption,
 	readStubLength,
+	LIST_READ,
+	storedElements,
+	defineListIndices,
 	elementsWith,
 	rebuilt,
 	renderText,
@@ -31,8 +34,7 @@ import {
 	orDefault,
 	rejectBareText,
 	rejectKeywordText,
-	withGroupSeat,
-	withListView
+	withGroupSeat
 } from '@sittir/common/utils';
 import { withMethods } from '../utils.js';
 
@@ -429,29 +431,41 @@ function _buildImportList(
 	_assertNonEmpty(elements, 'import_list.elements');
 	const _name = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.ImportList as const,
-					$source: 2 as const,
-					$named: true as const,
-					_name,
-					_delimiter,
-					$with: {
-						names: (...vs: NonEmptyArray<AdmitBound<T.DottedName | T.AliasedImport, T.AdmittedNodes>>) =>
-							buildImportList(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildImportList({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					names: () => _name
-				}
-			),
-			{ elements: 'names', count: '_name', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.ImportList.Bound;
+	const listedStored = storedElements(_name);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ImportList as const,
+		$source: 2 as const,
+		$named: true as const,
+		_name,
+		_delimiter,
+		$with: {
+			names: (...vs: NonEmptyArray<AdmitBound<T.DottedName | T.AliasedImport, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildImportList(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildImportList({ ...options, delimiter: v }, ...elements))
+		},
+		names: () => _name,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.ImportList.Bound;
 }
 
 export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImport.Bound {
@@ -2531,29 +2545,41 @@ function _buildParametersElements(
 	_assertNonEmpty(elements, 'parameters_elements.elements');
 	const _parameter = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.ParametersElements as const,
-					$source: 2 as const,
-					$named: true as const,
-					_parameter,
-					_delimiter,
-					$with: {
-						parameters: (...vs: NonEmptyArray<AdmitBound<T.Parameter, T.AdmittedNodes>>) =>
-							buildParametersElements(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildParametersElements({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					parameters: () => _parameter
-				}
-			),
-			{ elements: 'parameters', count: '_parameter', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.ParametersElements.Bound;
+	const listedStored = storedElements(_parameter);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ParametersElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_parameter,
+		_delimiter,
+		$with: {
+			parameters: (...vs: NonEmptyArray<AdmitBound<T.Parameter, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildParametersElements(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildParametersElements({ ...options, delimiter: v }, ...elements))
+		},
+		parameters: () => _parameter,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.ParametersElements.Bound;
 }
 
 export function buildPatterns(
@@ -2585,28 +2611,41 @@ function _buildPatterns(
 	_assertNonEmpty(elements, 'patterns.elements');
 	const _pattern = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.Patterns as const,
-					$source: 2 as const,
-					$named: true as const,
-					_pattern,
-					_delimiter,
-					$with: {
-						patterns: (...vs: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>) => buildPatterns(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildPatterns({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					patterns: () => _pattern
-				}
-			),
-			{ elements: 'patterns', count: '_pattern', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.Patterns.Bound;
+	const listedStored = storedElements(_pattern);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.Patterns as const,
+		$source: 2 as const,
+		$named: true as const,
+		_pattern,
+		_delimiter,
+		$with: {
+			patterns: (...vs: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildPatterns(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildPatterns({ ...options, delimiter: v }, ...elements))
+		},
+		patterns: () => _pattern,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.Patterns.Bound;
 }
 
 export function buildTuplePattern(): T.EmptyTuplePattern;
@@ -4379,32 +4418,44 @@ function _buildCollectionElements(
 	_assertNonEmpty(elements, 'collection_elements.elements');
 	const _element = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.CollectionElements as const,
-					$source: 2 as const,
-					$named: true as const,
-					_element,
-					_delimiter,
-					$with: {
-						elements: (
-							...vs: NonEmptyArray<
-								AdmitBound<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat, T.AdmittedNodes>
-							>
-						) => buildCollectionElements(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildCollectionElements({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					elements: () => _element
-				}
-			),
-			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.CollectionElements.Bound;
+	const listedStored = storedElements(_element);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.CollectionElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_element,
+		_delimiter,
+		$with: {
+			elements: (
+				...vs: NonEmptyArray<
+					AdmitBound<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat, T.AdmittedNodes>
+				>
+			) => rebuilt(node, handle, () => buildCollectionElements(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildCollectionElements({ ...options, delimiter: v }, ...elements))
+		},
+		elements: () => _element,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.CollectionElements.Bound;
 }
 
 export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Bound {
@@ -4861,33 +4912,41 @@ function _buildSimpleStatementsElements(
 	_assertNonEmpty(elements, 'simple_statements_elements.elements');
 	const _simple_statement = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.SimpleStatementsElements as const,
-					$source: 2 as const,
-					$named: true as const,
-					_simple_statement,
-					_delimiter,
-					$with: {
-						simpleStatements: (...vs: NonEmptyArray<AdmitBound<T.SimpleStatement, T.AdmittedNodes>>) =>
-							buildSimpleStatementsElements(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildSimpleStatementsElements({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					simpleStatements: () => _simple_statement
-				}
-			),
-			{
-				elements: 'simpleStatements',
-				count: '_simple_statement',
-				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
-		)
-	) as unknown as T.SimpleStatementsElements.Bound;
+	const listedStored = storedElements(_simple_statement);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.SimpleStatementsElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_simple_statement,
+		_delimiter,
+		$with: {
+			simpleStatements: (...vs: NonEmptyArray<AdmitBound<T.SimpleStatement, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildSimpleStatementsElements(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildSimpleStatementsElements({ ...options, delimiter: v }, ...elements))
+		},
+		simpleStatements: () => _simple_statement,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.SimpleStatementsElements.Bound;
 }
 
 export function buildSubjects(
@@ -4919,29 +4978,41 @@ function _buildSubjects(
 	_assertNonEmpty(elements, 'subjects.elements');
 	const _subject = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.Subjects as const,
-					$source: 2 as const,
-					$named: true as const,
-					_subject,
-					_delimiter,
-					$with: {
-						subjects: (...vs: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>) =>
-							buildSubjects(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildSubjects({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					subjects: () => _subject
-				}
-			),
-			{ elements: 'subjects', count: '_subject', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.Subjects.Bound;
+	const listedStored = storedElements(_subject);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.Subjects as const,
+		$source: 2 as const,
+		$named: true as const,
+		_subject,
+		_delimiter,
+		$with: {
+			subjects: (...vs: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildSubjects(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildSubjects({ ...options, delimiter: v }, ...elements))
+		},
+		subjects: () => _subject,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.Subjects.Bound;
 }
 
 export function buildCasePatterns(
@@ -4973,29 +5044,41 @@ function _buildCasePatterns(
 	_assertNonEmpty(elements, 'case_patterns.elements');
 	const _case_pattern = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.CasePatterns as const,
-					$source: 2 as const,
-					$named: true as const,
-					_case_pattern,
-					_delimiter,
-					$with: {
-						casePatterns: (...vs: NonEmptyArray<AdmitBound<T.CasePattern, T.AdmittedNodes>>) =>
-							buildCasePatterns(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildCasePatterns({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					casePatterns: () => _case_pattern
-				}
-			),
-			{ elements: 'casePatterns', count: '_case_pattern', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.CasePatterns.Bound;
+	const listedStored = storedElements(_case_pattern);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.CasePatterns as const,
+		$source: 2 as const,
+		$named: true as const,
+		_case_pattern,
+		_delimiter,
+		$with: {
+			casePatterns: (...vs: NonEmptyArray<AdmitBound<T.CasePattern, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildCasePatterns(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildCasePatterns({ ...options, delimiter: v }, ...elements))
+		},
+		casePatterns: () => _case_pattern,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.CasePatterns.Bound;
 }
 
 export function buildWithClauseWithItems(
@@ -5027,29 +5110,41 @@ function _buildWithClauseWithItems(
 	_assertNonEmpty(elements, 'with_clause_with_items.elements');
 	const _with_item = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.WithClauseWithItems as const,
-					$source: 2 as const,
-					$named: true as const,
-					_with_item,
-					_delimiter,
-					$with: {
-						withItems: (...vs: NonEmptyArray<AdmitBound<T.WithItem, T.AdmittedNodes>>) =>
-							buildWithClauseWithItems(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildWithClauseWithItems({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					withItems: () => _with_item
-				}
-			),
-			{ elements: 'withItems', count: '_with_item', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.WithClauseWithItems.Bound;
+	const listedStored = storedElements(_with_item);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.WithClauseWithItems as const,
+		$source: 2 as const,
+		$named: true as const,
+		_with_item,
+		_delimiter,
+		$with: {
+			withItems: (...vs: NonEmptyArray<AdmitBound<T.WithItem, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildWithClauseWithItems(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildWithClauseWithItems({ ...options, delimiter: v }, ...elements))
+		},
+		withItems: () => _with_item,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.WithClauseWithItems.Bound;
 }
 
 export function buildTypes(
@@ -5079,28 +5174,41 @@ function _buildTypes(
 	_assertNonEmpty(elements, 'types.elements');
 	const _type = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.Types as const,
-					$source: 2 as const,
-					$named: true as const,
-					_type,
-					_delimiter,
-					$with: {
-						types: (...vs: NonEmptyArray<AdmitBound<T.Type, T.AdmittedNodes>>) => buildTypes(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildTypes({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					types: () => _type
-				}
-			),
-			{ elements: 'types', count: '_type', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.Types.Bound;
+	const listedStored = storedElements(_type);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.Types as const,
+		$source: 2 as const,
+		$named: true as const,
+		_type,
+		_delimiter,
+		$with: {
+			types: (...vs: NonEmptyArray<AdmitBound<T.Type, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildTypes(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildTypes({ ...options, delimiter: v }, ...elements))
+		},
+		types: () => _type,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.Types.Bound;
 }
 
 export function buildArgumentListElements(
@@ -5156,35 +5264,47 @@ function _buildArgumentListElements(
 	_assertNonEmpty(elements, 'argument_list_elements.elements');
 	const _element = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.ArgumentListElements as const,
-					$source: 2 as const,
-					$named: true as const,
-					_element,
-					_delimiter,
-					$with: {
-						elements: (
-							...vs: NonEmptyArray<
-								AdmitBound<
-									T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
-									T.AdmittedNodes
-								>
-							>
-						) => buildArgumentListElements(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildArgumentListElements({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					elements: () => _element
-				}
-			),
-			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.ArgumentListElements.Bound;
+	const listedStored = storedElements(_element);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ArgumentListElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_element,
+		_delimiter,
+		$with: {
+			elements: (
+				...vs: NonEmptyArray<
+					AdmitBound<
+						T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
+						T.AdmittedNodes
+					>
+				>
+			) => rebuilt(node, handle, () => buildArgumentListElements(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildArgumentListElements({ ...options, delimiter: v }, ...elements))
+		},
+		elements: () => _element,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.ArgumentListElements.Bound;
 }
 
 export function buildExpressionListExpressions(
@@ -5216,29 +5336,41 @@ function _buildExpressionListExpressions(
 	_assertNonEmpty(elements, 'expression_list_expressions.elements');
 	const _expression = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.ExpressionListExpressions as const,
-					$source: 2 as const,
-					$named: true as const,
-					_expression,
-					_delimiter,
-					$with: {
-						expressions: (...vs: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>) =>
-							buildExpressionListExpressions(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildExpressionListExpressions({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					expressions: () => _expression
-				}
-			),
-			{ elements: 'expressions', count: '_expression', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.ExpressionListExpressions.Bound;
+	const listedStored = storedElements(_expression);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ExpressionListExpressions as const,
+		$source: 2 as const,
+		$named: true as const,
+		_expression,
+		_delimiter,
+		$with: {
+			expressions: (...vs: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildExpressionListExpressions(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildExpressionListExpressions({ ...options, delimiter: v }, ...elements))
+		},
+		expressions: () => _expression,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.ExpressionListExpressions.Bound;
 }
 
 export function buildListPatternCasePatterns(
@@ -5270,29 +5402,41 @@ function _buildListPatternCasePatterns(
 	_assertNonEmpty(elements, 'list_pattern_case_patterns.elements');
 	const _case_pattern = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.ListPatternCasePatterns as const,
-					$source: 2 as const,
-					$named: true as const,
-					_case_pattern,
-					_delimiter,
-					$with: {
-						casePatterns: (...vs: NonEmptyArray<AdmitBound<T.CasePattern, T.AdmittedNodes>>) =>
-							buildListPatternCasePatterns(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildListPatternCasePatterns({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					casePatterns: () => _case_pattern
-				}
-			),
-			{ elements: 'casePatterns', count: '_case_pattern', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.ListPatternCasePatterns.Bound;
+	const listedStored = storedElements(_case_pattern);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ListPatternCasePatterns as const,
+		$source: 2 as const,
+		$named: true as const,
+		_case_pattern,
+		_delimiter,
+		$with: {
+			casePatterns: (...vs: NonEmptyArray<AdmitBound<T.CasePattern, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildListPatternCasePatterns(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildListPatternCasePatterns({ ...options, delimiter: v }, ...elements))
+		},
+		casePatterns: () => _case_pattern,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.ListPatternCasePatterns.Bound;
 }
 
 export function buildDictPatternElements(
@@ -5327,29 +5471,41 @@ function _buildDictPatternElements(
 	_assertNonEmpty(elements, 'dict_pattern_elements.elements');
 	const _element = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.DictPatternElements as const,
-					$source: 2 as const,
-					$named: true as const,
-					_element,
-					_delimiter,
-					$with: {
-						elements: (...vs: NonEmptyArray<AdmitBound<T.KeyValuePattern | T.SplatPattern, T.AdmittedNodes>>) =>
-							buildDictPatternElements(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildDictPatternElements({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					elements: () => _element
-				}
-			),
-			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.DictPatternElements.Bound;
+	const listedStored = storedElements(_element);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.DictPatternElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_element,
+		_delimiter,
+		$with: {
+			elements: (...vs: NonEmptyArray<AdmitBound<T.KeyValuePattern | T.SplatPattern, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildDictPatternElements(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildDictPatternElements({ ...options, delimiter: v }, ...elements))
+		},
+		elements: () => _element,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.DictPatternElements.Bound;
 }
 
 export function buildPatternListPatterns(
@@ -5381,29 +5537,41 @@ function _buildPatternListPatterns(
 	_assertNonEmpty(elements, 'pattern_list_patterns.elements');
 	const _pattern = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.PatternListPatterns as const,
-					$source: 2 as const,
-					$named: true as const,
-					_pattern,
-					_delimiter,
-					$with: {
-						patterns: (...vs: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>) =>
-							buildPatternListPatterns(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildPatternListPatterns({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					patterns: () => _pattern
-				}
-			),
-			{ elements: 'patterns', count: '_pattern', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.PatternListPatterns.Bound;
+	const listedStored = storedElements(_pattern);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.PatternListPatterns as const,
+		$source: 2 as const,
+		$named: true as const,
+		_pattern,
+		_delimiter,
+		$with: {
+			patterns: (...vs: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildPatternListPatterns(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildPatternListPatterns({ ...options, delimiter: v }, ...elements))
+		},
+		patterns: () => _pattern,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.PatternListPatterns.Bound;
 }
 
 export function buildSubscripts(
@@ -5435,29 +5603,41 @@ function _buildSubscripts(
 	_assertNonEmpty(elements, 'subscripts.elements');
 	const _subscript = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.Subscripts as const,
-					$source: 2 as const,
-					$named: true as const,
-					_subscript,
-					_delimiter,
-					$with: {
-						subscripts: (...vs: NonEmptyArray<AdmitBound<T.Expression | T.Slice, T.AdmittedNodes>>) =>
-							buildSubscripts(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildSubscripts({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					subscripts: () => _subscript
-				}
-			),
-			{ elements: 'subscripts', count: '_subscript', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.Subscripts.Bound;
+	const listedStored = storedElements(_subscript);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.Subscripts as const,
+		$source: 2 as const,
+		$named: true as const,
+		_subscript,
+		_delimiter,
+		$with: {
+			subscripts: (...vs: NonEmptyArray<AdmitBound<T.Expression | T.Slice, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildSubscripts(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildSubscripts({ ...options, delimiter: v }, ...elements))
+		},
+		subscripts: () => _subscript,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.Subscripts.Bound;
 }
 
 export function buildDictionaryElements(
@@ -5492,29 +5672,41 @@ function _buildDictionaryElements(
 	_assertNonEmpty(elements, 'dictionary_elements.elements');
 	const _element = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.DictionaryElements as const,
-					$source: 2 as const,
-					$named: true as const,
-					_element,
-					_delimiter,
-					$with: {
-						elements: (...vs: NonEmptyArray<AdmitBound<T.Pair | T.DictionarySplat, T.AdmittedNodes>>) =>
-							buildDictionaryElements(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildDictionaryElements({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					elements: () => _element
-				}
-			),
-			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.DictionaryElements.Bound;
+	const listedStored = storedElements(_element);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.DictionaryElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_element,
+		_delimiter,
+		$with: {
+			elements: (...vs: NonEmptyArray<AdmitBound<T.Pair | T.DictionarySplat, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildDictionaryElements(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildDictionaryElements({ ...options, delimiter: v }, ...elements))
+		},
+		elements: () => _element,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.DictionaryElements.Bound;
 }
 
 export function buildSliceGroup(value?: AdmitBound<T.Expression, T.AdmittedNodes>): T.SliceGroup.Bound {
@@ -5797,29 +5989,41 @@ function _buildPrintArguments(
 	_assertNonEmpty(elements, 'print_arguments.elements');
 	const _argument = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.PrintArguments as const,
-					$source: 2 as const,
-					$named: true as const,
-					_argument,
-					_delimiter,
-					$with: {
-						arguments: (...vs: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>) =>
-							buildPrintArguments(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildPrintArguments({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					arguments: () => _argument
-				}
-			),
-			{ elements: 'arguments', count: '_argument', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.PrintArguments.Bound;
+	const listedStored = storedElements(_argument);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.PrintArguments as const,
+		$source: 2 as const,
+		$named: true as const,
+		_argument,
+		_delimiter,
+		$with: {
+			arguments: (...vs: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildPrintArguments(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildPrintArguments({ ...options, delimiter: v }, ...elements))
+		},
+		arguments: () => _argument,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.PrintArguments.Bound;
 }
 
 export function buildPrintChevronArguments(
@@ -5851,29 +6055,41 @@ function _buildPrintChevronArguments(
 	_assertNonEmpty(elements, 'print_chevron_arguments.elements');
 	const _argument = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.PrintChevronArguments as const,
-					$source: 2 as const,
-					$named: true as const,
-					_argument,
-					_delimiter,
-					$with: {
-						arguments: (...vs: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>) =>
-							buildPrintChevronArguments(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildPrintChevronArguments({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					arguments: () => _argument
-				}
-			),
-			{ elements: 'arguments', count: '_argument', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.PrintChevronArguments.Bound;
+	const listedStored = storedElements(_argument);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.PrintChevronArguments as const,
+		$source: 2 as const,
+		$named: true as const,
+		_argument,
+		_delimiter,
+		$with: {
+			arguments: (...vs: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildPrintChevronArguments(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildPrintChevronArguments({ ...options, delimiter: v }, ...elements))
+		},
+		arguments: () => _argument,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.PrintChevronArguments.Bound;
 }
 
 export function buildPrintStatementChevron(config: T.PrintStatementChevron.Config): T.PrintStatementChevron.Bound {
@@ -6884,29 +7100,41 @@ function _buildExpressionStatementTuple(
 	_assertNonEmpty(elements, 'expression_statement_tuple.elements');
 	const _expression = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.ExpressionStatementTuple as const,
-					$source: 2 as const,
-					$named: true as const,
-					_expression,
-					_delimiter,
-					$with: {
-						expressions: (...vs: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>) =>
-							buildExpressionStatementTuple(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildExpressionStatementTuple({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					expressions: () => _expression
-				}
-			),
-			{ elements: 'expressions', count: '_expression', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.ExpressionStatementTuple.Bound;
+	const listedStored = storedElements(_expression);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ExpressionStatementTuple as const,
+		$source: 2 as const,
+		$named: true as const,
+		_expression,
+		_delimiter,
+		$with: {
+			expressions: (...vs: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildExpressionStatementTuple(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildExpressionStatementTuple({ ...options, delimiter: v }, ...elements))
+		},
+		expressions: () => _expression,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.ExpressionStatementTuple.Bound;
 }
 
 export function buildWithClauseBare(
@@ -6938,29 +7166,41 @@ function _buildWithClauseBare(
 	_assertNonEmpty(elements, 'with_clause_bare.elements');
 	const _with_item = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	return withMethods(
-		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.WithClauseBare as const,
-					$source: 2 as const,
-					$named: true as const,
-					_with_item,
-					_delimiter,
-					$with: {
-						withItems: (...vs: NonEmptyArray<AdmitBound<T.WithItem, T.AdmittedNodes>>) =>
-							buildWithClauseBare(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildWithClauseBare({ ...options, delimiter: v }, ...elements)
-					}
-				},
-				{
-					withItems: () => _with_item
-				}
-			),
-			{ elements: 'withItems', count: '_with_item', options: [{ key: 'delimiter', default: Delimiter.None }] }
-		)
-	) as unknown as T.WithClauseBare.Bound;
+	const listedStored = storedElements(_with_item);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.WithClauseBare as const,
+		$source: 2 as const,
+		$named: true as const,
+		_with_item,
+		_delimiter,
+		$with: {
+			withItems: (...vs: NonEmptyArray<AdmitBound<T.WithItem, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildWithClauseBare(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildWithClauseBare({ ...options, delimiter: v }, ...elements))
+		},
+		withItems: () => _with_item,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.WithClauseBare.Bound;
 }
 
 export function buildWithClauseParen(

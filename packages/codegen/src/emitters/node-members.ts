@@ -114,3 +114,30 @@ export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: st
 		postlude: ['  defineListIndices(node, listView.stored?.length ?? 0);']
 	};
 }
+
+export function listSelfViewParts(
+	plan: ListViewPlan,
+	content: string,
+	elementsReader: string,
+	environment: 'factory' | 'wrap'
+): ListViewParts {
+	const wrapper = plan.wrapper ?? 'undefined';
+	const options = plan.options.map((option) => `    ${option.key}: _${option.key} ?? ${option.default},`);
+	const shared = [
+		'    ...LIST_METHODS,',
+		'    [Symbol.iterator]: listIterator,',
+		'    [Symbol.isConcatSpreadable]: true,',
+		'    [Symbol.unscopables]: Array.prototype[Symbol.unscopables],',
+		...options
+	];
+	return {
+		prelude: [`  const listedStored = storedElements(${content});`],
+		members: [
+			'    length: listedStored.length,',
+			'    [LIST_ITEMS]: undefined,',
+			`    [LIST_READ]: () => listItems(${environment === 'factory' ? 'listedStored' : `ownerElements(node, ${JSON.stringify(elementsReader)})`}, ${wrapper}),`,
+			...shared
+		],
+		postlude: ['  defineListIndices(node, listedStored.length);']
+	};
+}

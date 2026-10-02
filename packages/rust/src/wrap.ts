@@ -21,6 +21,7 @@ import {
 	LIST_METHODS,
 	listIterator,
 	listItems,
+	storedElements,
 	ownerView,
 	ownerElements,
 	listOption,
@@ -30,9 +31,7 @@ import {
 	toEditAt,
 	triviaSide,
 	triviaInner,
-	withListView,
-	withGroupSeat,
-	withElementsSeat
+	withGroupSeat
 } from '@sittir/common/utils';
 import type { TreeHandle, TokenInterior } from '@sittir/common/utils';
 import { TOKEN_INTERIORS } from './consts.js';
@@ -13235,6 +13234,7 @@ export function wrapMacroRules(
 	tree: TreeHandle
 ): T.MacroRules.Parsed {
 	data = _keepModelledSlots(data, ['_macro_rule']);
+	const handle = currentHandle();
 	const _content = storeExpanded(
 		normalizeRepeatedWrapSlot(data._macro_rule, true, 'macro_rule', {
 			tree,
@@ -13244,25 +13244,40 @@ export function wrapMacroRules(
 		}),
 		tree
 	);
-	return withMethods(
-		withListView(
-			{
-				...data,
-				$type: TSKindId.MacroRules as const,
-				_macro_rule: _content,
-				_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-					? Delimiter.Trailing
-					: Delimiter.None,
+	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+		? Delimiter.Trailing
+		: Delimiter.None;
+	const listedStored = storedElements(_content);
+	const node = {
+		...data,
+		$type: TSKindId.MacroRules as const,
+		_macro_rule: _content,
+		_delimiter,
 
-				macroRules() {
-					return hydrateChildren<T.MacroRule>(this._macro_rule as readonly T.MacroRule[] | undefined, tree);
-				},
-				$with: {}
-			},
-			{ elements: 'macroRules', count: '_macro_rule', options: [{ key: 'delimiter', default: Delimiter.None }] },
-			tree
-		)
-	) as unknown as T.MacroRules.Parsed;
+		macroRules() {
+			return hydrateChildren<T.MacroRule>(this._macro_rule as readonly T.MacroRule[] | undefined, tree);
+		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'macroRules'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.MacroRules.Parsed;
 }
 
 export function wrapEnumVariantListElements(
@@ -13273,6 +13288,7 @@ export function wrapEnumVariantListElements(
 	tree: TreeHandle
 ): T.EnumVariantListElements.Parsed {
 	data = _keepModelledSlots(data, ['_element']);
+	const handle = currentHandle();
 	const _content = storeExpanded(
 		normalizeRepeatedWrapSlot(data._element, true, 'element', {
 			tree,
@@ -13282,36 +13298,48 @@ export function wrapEnumVariantListElements(
 		}),
 		tree
 	);
-	return withMethods(
-		withListView(
-			withElementsSeat(
-				{
-					...data,
-					$type: TSKindId.EnumVariantListElements as const,
-					_element: _content,
-					_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-						? Delimiter.Trailing
-						: Delimiter.None,
+	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+		? Delimiter.Trailing
+		: Delimiter.None;
+	const listedStored = storedElements(_content);
+	const node = {
+		...data,
+		$type: TSKindId.EnumVariantListElements as const,
+		_element: _content,
+		_delimiter,
 
-					elements() {
-						return hydrateChildren<T.AttributedEnumVariant>(
-							this._element as readonly T.AttributedEnumVariant[] | undefined,
-							tree
-						);
-					},
-					$with: {}
-				},
-				{ slot: 'elements', keys: ['attributeItem', 'enumVariant'], make: RAW.buildAttributedEnumVariant }
-			),
-			{
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
-				wrapper: { kind: TSKindId.AttributedEnumVariant, content: 'enumVariant', decorations: ['_attribute_item'] }
-			},
-			tree
-		)
-	) as unknown as T.EnumVariantListElements.Parsed;
+		elements() {
+			return hydrateChildren<T.AttributedEnumVariant>(
+				this._element as readonly T.AttributedEnumVariant[] | undefined,
+				tree
+			);
+		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(ownerElements(node, 'elements'), {
+				kind: TSKindId.AttributedEnumVariant,
+				content: 'enumVariant',
+				decorations: ['_attribute_item']
+			}),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.Trailing,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.EnumVariantListElements.Parsed;
 }
 
 export function wrapFieldDeclarationListElements(
@@ -13322,6 +13350,7 @@ export function wrapFieldDeclarationListElements(
 	tree: TreeHandle
 ): T.FieldDeclarationListElements.Parsed {
 	data = _keepModelledSlots(data, ['_element']);
+	const handle = currentHandle();
 	const _content = storeExpanded(
 		normalizeRepeatedWrapSlot(data._element, true, 'element', {
 			tree,
@@ -13331,40 +13360,48 @@ export function wrapFieldDeclarationListElements(
 		}),
 		tree
 	);
-	return withMethods(
-		withListView(
-			withElementsSeat(
-				{
-					...data,
-					$type: TSKindId.FieldDeclarationListElements as const,
-					_element: _content,
-					_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-						? Delimiter.Trailing
-						: Delimiter.None,
+	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+		? Delimiter.Trailing
+		: Delimiter.None;
+	const listedStored = storedElements(_content);
+	const node = {
+		...data,
+		$type: TSKindId.FieldDeclarationListElements as const,
+		_element: _content,
+		_delimiter,
 
-					elements() {
-						return hydrateChildren<T.AttributedFieldDeclaration>(
-							this._element as readonly T.AttributedFieldDeclaration[] | undefined,
-							tree
-						);
-					},
-					$with: {}
-				},
-				{ slot: 'elements', keys: ['attributeItem', 'fieldDeclaration'], make: RAW.buildAttributedFieldDeclaration }
-			),
-			{
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
-				wrapper: {
-					kind: TSKindId.AttributedFieldDeclaration,
-					content: 'fieldDeclaration',
-					decorations: ['_attribute_item']
-				}
-			},
-			tree
-		)
-	) as unknown as T.FieldDeclarationListElements.Parsed;
+		elements() {
+			return hydrateChildren<T.AttributedFieldDeclaration>(
+				this._element as readonly T.AttributedFieldDeclaration[] | undefined,
+				tree
+			);
+		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(ownerElements(node, 'elements'), {
+				kind: TSKindId.AttributedFieldDeclaration,
+				content: 'fieldDeclaration',
+				decorations: ['_attribute_item']
+			}),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.Trailing,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.FieldDeclarationListElements.Parsed;
 }
 
 export function wrapOrderedFieldDeclarationListElements(
@@ -13375,6 +13412,7 @@ export function wrapOrderedFieldDeclarationListElements(
 	tree: TreeHandle
 ): T.OrderedFieldDeclarationListElements.Parsed {
 	data = _keepModelledSlots(data, ['_element']);
+	const handle = currentHandle();
 	const _content = storeExpanded(
 		normalizeRepeatedWrapSlot(data._element, true, 'element', {
 			tree,
@@ -13384,44 +13422,48 @@ export function wrapOrderedFieldDeclarationListElements(
 		}),
 		tree
 	);
-	return withMethods(
-		withListView(
-			withElementsSeat(
-				{
-					...data,
-					$type: TSKindId.OrderedFieldDeclarationListElements as const,
-					_element: _content,
-					_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-						? Delimiter.Trailing
-						: Delimiter.None,
+	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+		? Delimiter.Trailing
+		: Delimiter.None;
+	const listedStored = storedElements(_content);
+	const node = {
+		...data,
+		$type: TSKindId.OrderedFieldDeclarationListElements as const,
+		_element: _content,
+		_delimiter,
 
-					elements() {
-						return hydrateChildren<T.AttributedOrderedField>(
-							this._element as readonly T.AttributedOrderedField[] | undefined,
-							tree
-						);
-					},
-					$with: {}
-				},
-				{
-					slot: 'elements',
-					keys: ['attributeItem', 'visibilityModifier', 'type'],
-					make: RAW.buildAttributedOrderedField
-				}
-			),
-			{
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				wrapper: {
-					kind: TSKindId.AttributedOrderedField,
-					content: 'type',
-					decorations: ['_attribute_item', '_visibility_modifier']
-				}
-			},
-			tree
-		)
-	) as unknown as T.OrderedFieldDeclarationListElements.Parsed;
+		elements() {
+			return hydrateChildren<T.AttributedOrderedField>(
+				this._element as readonly T.AttributedOrderedField[] | undefined,
+				tree
+			);
+		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(ownerElements(node, 'elements'), {
+				kind: TSKindId.AttributedOrderedField,
+				content: 'type',
+				decorations: ['_attribute_item', '_visibility_modifier']
+			}),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.OrderedFieldDeclarationListElements.Parsed;
 }
 
 export function wrapWherePredicates(
@@ -13432,6 +13474,7 @@ export function wrapWherePredicates(
 	tree: TreeHandle
 ): T.WherePredicates.Parsed {
 	data = _keepModelledSlots(data, ['_where_predicate']);
+	const handle = currentHandle();
 	const _content = storeExpanded(
 		normalizeRepeatedWrapSlot(data._where_predicate, true, 'where_predicate', {
 			tree,
@@ -13441,32 +13484,40 @@ export function wrapWherePredicates(
 		}),
 		tree
 	);
-	return withMethods(
-		withListView(
-			{
-				...data,
-				$type: TSKindId.WherePredicates as const,
-				_where_predicate: _content,
-				_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-					? Delimiter.Trailing
-					: Delimiter.None,
+	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+		? Delimiter.Trailing
+		: Delimiter.None;
+	const listedStored = storedElements(_content);
+	const node = {
+		...data,
+		$type: TSKindId.WherePredicates as const,
+		_where_predicate: _content,
+		_delimiter,
 
-				wherePredicates() {
-					return hydrateChildren<T.WherePredicate>(
-						this._where_predicate as readonly T.WherePredicate[] | undefined,
-						tree
-					);
-				},
-				$with: {}
-			},
-			{
-				elements: 'wherePredicates',
-				count: '_where_predicate',
-				options: [{ key: 'delimiter', default: Delimiter.None }]
-			},
-			tree
-		)
-	) as unknown as T.WherePredicates.Parsed;
+		wherePredicates() {
+			return hydrateChildren<T.WherePredicate>(this._where_predicate as readonly T.WherePredicate[] | undefined, tree);
+		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'wherePredicates'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.WherePredicates.Parsed;
 }
 
 export function wrapTypeParametersElements(
@@ -13477,6 +13528,7 @@ export function wrapTypeParametersElements(
 	tree: TreeHandle
 ): T.TypeParametersElements.Parsed {
 	data = _keepModelledSlots(data, ['_element']);
+	const handle = currentHandle();
 	const _content = storeExpanded(
 		normalizeRepeatedWrapSlot(data._element, true, 'element', {
 			tree,
@@ -13486,36 +13538,48 @@ export function wrapTypeParametersElements(
 		}),
 		tree
 	);
-	return withMethods(
-		withListView(
-			withElementsSeat(
-				{
-					...data,
-					$type: TSKindId.TypeParametersElements as const,
-					_element: _content,
-					_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-						? Delimiter.Trailing
-						: Delimiter.None,
+	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+		? Delimiter.Trailing
+		: Delimiter.None;
+	const listedStored = storedElements(_content);
+	const node = {
+		...data,
+		$type: TSKindId.TypeParametersElements as const,
+		_element: _content,
+		_delimiter,
 
-					elements() {
-						return hydrateChildren<T.AttributedTypeParameter>(
-							this._element as readonly T.AttributedTypeParameter[] | undefined,
-							tree
-						);
-					},
-					$with: {}
-				},
-				{ slot: 'elements', keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
-			),
-			{
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['_attribute_item'] }
-			},
-			tree
-		)
-	) as unknown as T.TypeParametersElements.Parsed;
+		elements() {
+			return hydrateChildren<T.AttributedTypeParameter>(
+				this._element as readonly T.AttributedTypeParameter[] | undefined,
+				tree
+			);
+		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(ownerElements(node, 'elements'), {
+				kind: TSKindId.AttributedTypeParameter,
+				content: 'content',
+				decorations: ['_attribute_item']
+			}),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.TypeParametersElements.Parsed;
 }
 
 export function wrapUseClauses(
@@ -13523,8 +13587,23 @@ export function wrapUseClauses(
 	tree: TreeHandle
 ): T.UseClauses.Parsed {
 	data = _keepModelledSlots(data, ['_use_clause']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.UseClauses as const }) as unknown as T.UseClauses.Parsed;
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
+			...data,
+			$type: TSKindId.UseClauses as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.UseClauses.Parsed;
+	}
 	const _content = storeExpanded(
 		normalizeRepeatedWrapSlot(data._use_clause, true, 'use_clause', {
 			tree,
@@ -13534,92 +13613,107 @@ export function wrapUseClauses(
 		}),
 		tree
 	);
-	return withMethods(
-		withListView(
-			{
-				...data,
-				$type: TSKindId.UseClauses as const,
-				_use_clause: _content,
-				_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-					? Delimiter.Trailing
-					: Delimiter.None,
+	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+		? Delimiter.Trailing
+		: Delimiter.None;
+	const listedStored = storedElements(_content);
+	const node = {
+		...data,
+		$type: TSKindId.UseClauses as const,
+		_use_clause: _content,
+		_delimiter,
 
-				useClauses() {
-					return hydrateChildren<
-						| TSKindId.Self
-						| TSKindId.U8Keyword
-						| TSKindId.I8Keyword
-						| TSKindId.U16Keyword
-						| TSKindId.I16Keyword
-						| TSKindId.U32Keyword
-						| TSKindId.I32Keyword
-						| TSKindId.U64Keyword
-						| TSKindId.I64Keyword
-						| TSKindId.U128Keyword
-						| TSKindId.I128Keyword
-						| TSKindId.IsizeKeyword
-						| TSKindId.UsizeKeyword
-						| TSKindId.F32Keyword
-						| TSKindId.F64Keyword
-						| TSKindId.BoolKeyword
-						| TSKindId.StrKeyword
-						| TSKindId.CharKeyword
-						| T.Metavariable
-						| TSKindId.Super
-						| TSKindId.Crate
-						| T.Identifier
-						| T.ScopedIdentifier
-						| TSKindId.DefaultKeyword
-						| TSKindId.UnionKeyword
-						| TSKindId.GenKeyword
-						| T.UseAsClause
-						| T.UseList
-						| T.ScopedUseList
-						| T.UseWildcard
-					>(
-						this._use_clause as
-							| readonly (
-									| TSKindId.Self
-									| TSKindId.U8Keyword
-									| TSKindId.I8Keyword
-									| TSKindId.U16Keyword
-									| TSKindId.I16Keyword
-									| TSKindId.U32Keyword
-									| TSKindId.I32Keyword
-									| TSKindId.U64Keyword
-									| TSKindId.I64Keyword
-									| TSKindId.U128Keyword
-									| TSKindId.I128Keyword
-									| TSKindId.IsizeKeyword
-									| TSKindId.UsizeKeyword
-									| TSKindId.F32Keyword
-									| TSKindId.F64Keyword
-									| TSKindId.BoolKeyword
-									| TSKindId.StrKeyword
-									| TSKindId.CharKeyword
-									| T.Metavariable
-									| TSKindId.Super
-									| TSKindId.Crate
-									| T.Identifier
-									| T.ScopedIdentifier
-									| TSKindId.DefaultKeyword
-									| TSKindId.UnionKeyword
-									| TSKindId.GenKeyword
-									| T.UseAsClause
-									| T.UseList
-									| T.ScopedUseList
-									| T.UseWildcard
-							  )[]
-							| undefined,
-						tree
-					);
-				},
-				$with: {}
-			},
-			{ elements: 'useClauses', count: '_use_clause', options: [{ key: 'delimiter', default: Delimiter.None }] },
-			tree
-		)
-	) as unknown as T.UseClauses.Parsed;
+		useClauses() {
+			return hydrateChildren<
+				| TSKindId.Self
+				| TSKindId.U8Keyword
+				| TSKindId.I8Keyword
+				| TSKindId.U16Keyword
+				| TSKindId.I16Keyword
+				| TSKindId.U32Keyword
+				| TSKindId.I32Keyword
+				| TSKindId.U64Keyword
+				| TSKindId.I64Keyword
+				| TSKindId.U128Keyword
+				| TSKindId.I128Keyword
+				| TSKindId.IsizeKeyword
+				| TSKindId.UsizeKeyword
+				| TSKindId.F32Keyword
+				| TSKindId.F64Keyword
+				| TSKindId.BoolKeyword
+				| TSKindId.StrKeyword
+				| TSKindId.CharKeyword
+				| T.Metavariable
+				| TSKindId.Super
+				| TSKindId.Crate
+				| T.Identifier
+				| T.ScopedIdentifier
+				| TSKindId.DefaultKeyword
+				| TSKindId.UnionKeyword
+				| TSKindId.GenKeyword
+				| T.UseAsClause
+				| T.UseList
+				| T.ScopedUseList
+				| T.UseWildcard
+			>(
+				this._use_clause as
+					| readonly (
+							| TSKindId.Self
+							| TSKindId.U8Keyword
+							| TSKindId.I8Keyword
+							| TSKindId.U16Keyword
+							| TSKindId.I16Keyword
+							| TSKindId.U32Keyword
+							| TSKindId.I32Keyword
+							| TSKindId.U64Keyword
+							| TSKindId.I64Keyword
+							| TSKindId.U128Keyword
+							| TSKindId.I128Keyword
+							| TSKindId.IsizeKeyword
+							| TSKindId.UsizeKeyword
+							| TSKindId.F32Keyword
+							| TSKindId.F64Keyword
+							| TSKindId.BoolKeyword
+							| TSKindId.StrKeyword
+							| TSKindId.CharKeyword
+							| T.Metavariable
+							| TSKindId.Super
+							| TSKindId.Crate
+							| T.Identifier
+							| T.ScopedIdentifier
+							| TSKindId.DefaultKeyword
+							| TSKindId.UnionKeyword
+							| TSKindId.GenKeyword
+							| T.UseAsClause
+							| T.UseList
+							| T.ScopedUseList
+							| T.UseWildcard
+					  )[]
+					| undefined,
+				tree
+			);
+		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'useClauses'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.UseClauses.Parsed;
 }
 
 export function wrapParametersElements(
@@ -13630,6 +13724,7 @@ export function wrapParametersElements(
 	tree: TreeHandle
 ): T.ParametersElements.Parsed {
 	data = _keepModelledSlots(data, ['_element']);
+	const handle = currentHandle();
 	const _content = storeExpanded(
 		normalizeRepeatedWrapSlot(data._element, true, 'element', {
 			tree,
@@ -13639,36 +13734,48 @@ export function wrapParametersElements(
 		}),
 		tree
 	);
-	return withMethods(
-		withListView(
-			withElementsSeat(
-				{
-					...data,
-					$type: TSKindId.ParametersElements as const,
-					_element: _content,
-					_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-						? Delimiter.Trailing
-						: Delimiter.None,
+	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+		? Delimiter.Trailing
+		: Delimiter.None;
+	const listedStored = storedElements(_content);
+	const node = {
+		...data,
+		$type: TSKindId.ParametersElements as const,
+		_element: _content,
+		_delimiter,
 
-					elements() {
-						return hydrateChildren<T.AttributedParameter>(
-							this._element as readonly T.AttributedParameter[] | undefined,
-							tree
-						);
-					},
-					$with: {}
-				},
-				{ slot: 'elements', keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
-			),
-			{
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				wrapper: { kind: TSKindId.AttributedParameter, content: 'content', decorations: ['_attribute_item'] }
-			},
-			tree
-		)
-	) as unknown as T.ParametersElements.Parsed;
+		elements() {
+			return hydrateChildren<T.AttributedParameter>(
+				this._element as readonly T.AttributedParameter[] | undefined,
+				tree
+			);
+		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(ownerElements(node, 'elements'), {
+				kind: TSKindId.AttributedParameter,
+				content: 'content',
+				decorations: ['_attribute_item']
+			}),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.ParametersElements.Parsed;
 }
 
 export function wrapLifetimes(
@@ -13676,6 +13783,7 @@ export function wrapLifetimes(
 	tree: TreeHandle
 ): T.Lifetimes.Parsed {
 	data = _keepModelledSlots(data, ['_lifetime']);
+	const handle = currentHandle();
 	const _content = storeExpanded(
 		normalizeRepeatedWrapSlot(data._lifetime, true, 'lifetime', {
 			tree,
@@ -13685,25 +13793,40 @@ export function wrapLifetimes(
 		}),
 		tree
 	);
-	return withMethods(
-		withListView(
-			{
-				...data,
-				$type: TSKindId.Lifetimes as const,
-				_lifetime: _content,
-				_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-					? Delimiter.Trailing
-					: Delimiter.None,
+	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+		? Delimiter.Trailing
+		: Delimiter.None;
+	const listedStored = storedElements(_content);
+	const node = {
+		...data,
+		$type: TSKindId.Lifetimes as const,
+		_lifetime: _content,
+		_delimiter,
 
-				lifetimes() {
-					return hydrateChildren<T.Lifetime>(this._lifetime as readonly T.Lifetime[] | undefined, tree);
-				},
-				$with: {}
-			},
-			{ elements: 'lifetimes', count: '_lifetime', options: [{ key: 'delimiter', default: Delimiter.None }] },
-			tree
-		)
-	) as unknown as T.Lifetimes.Parsed;
+		lifetimes() {
+			return hydrateChildren<T.Lifetime>(this._lifetime as readonly T.Lifetime[] | undefined, tree);
+		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'lifetimes'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.Lifetimes.Parsed;
 }
 
 export function wrapUseBoundsElements(
@@ -13714,6 +13837,7 @@ export function wrapUseBoundsElements(
 	tree: TreeHandle
 ): T.UseBoundsElements.Parsed {
 	data = _keepModelledSlots(data, ['_element']);
+	const handle = currentHandle();
 	const _content = storeExpanded(
 		normalizeRepeatedWrapSlot(data._element, true, 'element', {
 			tree,
@@ -13723,28 +13847,43 @@ export function wrapUseBoundsElements(
 		}),
 		tree
 	);
-	return withMethods(
-		withListView(
-			{
-				...data,
-				$type: TSKindId.UseBoundsElements as const,
-				_element: _content,
-				_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-					? Delimiter.Trailing
-					: Delimiter.None,
+	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+		? Delimiter.Trailing
+		: Delimiter.None;
+	const listedStored = storedElements(_content);
+	const node = {
+		...data,
+		$type: TSKindId.UseBoundsElements as const,
+		_element: _content,
+		_delimiter,
 
-				elements() {
-					return hydrateChildren<T.Lifetime | T.TypeIdentifier>(
-						this._element as readonly (T.Lifetime | T.TypeIdentifier)[] | undefined,
-						tree
-					);
-				},
-				$with: {}
-			},
-			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] },
-			tree
-		)
-	) as unknown as T.UseBoundsElements.Parsed;
+		elements() {
+			return hydrateChildren<T.Lifetime | T.TypeIdentifier>(
+				this._element as readonly (T.Lifetime | T.TypeIdentifier)[] | undefined,
+				tree
+			);
+		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.UseBoundsElements.Parsed;
 }
 
 export function wrapTypeArgumentsElements(
@@ -13755,6 +13894,7 @@ export function wrapTypeArgumentsElements(
 	tree: TreeHandle
 ): T.TypeArgumentsElements.Parsed {
 	data = _keepModelledSlots(data, ['_element']);
+	const handle = currentHandle();
 	const _content = storeExpanded(
 		normalizeRepeatedWrapSlot(data._element, true, 'element', {
 			tree,
@@ -13764,33 +13904,45 @@ export function wrapTypeArgumentsElements(
 		}),
 		tree
 	);
-	return withMethods(
-		withListView(
-			withElementsSeat(
-				{
-					...data,
-					$type: TSKindId.TypeArgumentsElements as const,
-					_element: _content,
-					_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-						? Delimiter.Trailing
-						: Delimiter.None,
+	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+		? Delimiter.Trailing
+		: Delimiter.None;
+	const listedStored = storedElements(_content);
+	const node = {
+		...data,
+		$type: TSKindId.TypeArgumentsElements as const,
+		_element: _content,
+		_delimiter,
 
-					elements() {
-						return hydrateChildren<T.TypeArgument>(this._element as readonly T.TypeArgument[] | undefined, tree);
-					},
-					$with: {}
-				},
-				{ slot: 'elements', keys: ['content', 'traitBounds'], make: RAW.buildTypeArgument }
-			),
-			{
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				wrapper: { kind: TSKindId.TypeArgument, content: 'content', decorations: ['_trait_bounds'] }
-			},
-			tree
-		)
-	) as unknown as T.TypeArgumentsElements.Parsed;
+		elements() {
+			return hydrateChildren<T.TypeArgument>(this._element as readonly T.TypeArgument[] | undefined, tree);
+		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(ownerElements(node, 'elements'), {
+				kind: TSKindId.TypeArgument,
+				content: 'content',
+				decorations: ['_trait_bounds']
+			}),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.TypeArgumentsElements.Parsed;
 }
 
 export function wrapArgumentsElements(
@@ -13801,6 +13953,7 @@ export function wrapArgumentsElements(
 	tree: TreeHandle
 ): T.ArgumentsElements.Parsed {
 	data = _keepModelledSlots(data, ['_element']);
+	const handle = currentHandle();
 	const _content = storeExpanded(
 		normalizeRepeatedWrapSlot(data._element, true, 'element', {
 			tree,
@@ -13810,36 +13963,45 @@ export function wrapArgumentsElements(
 		}),
 		tree
 	);
-	return withMethods(
-		withListView(
-			withElementsSeat(
-				{
-					...data,
-					$type: TSKindId.ArgumentsElements as const,
-					_element: _content,
-					_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-						? Delimiter.Trailing
-						: Delimiter.None,
+	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+		? Delimiter.Trailing
+		: Delimiter.None;
+	const listedStored = storedElements(_content);
+	const node = {
+		...data,
+		$type: TSKindId.ArgumentsElements as const,
+		_element: _content,
+		_delimiter,
 
-					elements() {
-						return hydrateChildren<T.AttributedArgument>(
-							this._element as readonly T.AttributedArgument[] | undefined,
-							tree
-						);
-					},
-					$with: {}
-				},
-				{ slot: 'elements', keys: ['attributeItem', 'expression'], make: RAW.buildAttributedArgument }
-			),
-			{
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				wrapper: { kind: TSKindId.AttributedArgument, content: 'expression', decorations: ['_attribute_item'] }
-			},
-			tree
-		)
-	) as unknown as T.ArgumentsElements.Parsed;
+		elements() {
+			return hydrateChildren<T.AttributedArgument>(this._element as readonly T.AttributedArgument[] | undefined, tree);
+		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(ownerElements(node, 'elements'), {
+				kind: TSKindId.AttributedArgument,
+				content: 'expression',
+				decorations: ['_attribute_item']
+			}),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.ArgumentsElements.Parsed;
 }
 
 export function wrapFieldInitializerListElements(
@@ -13850,6 +14012,7 @@ export function wrapFieldInitializerListElements(
 	tree: TreeHandle
 ): T.FieldInitializerListElements.Parsed {
 	data = _keepModelledSlots(data, ['_element']);
+	const handle = currentHandle();
 	const _content = storeExpanded(
 		normalizeRepeatedWrapSlot(data._element, true, 'element', {
 			tree,
@@ -13859,30 +14022,45 @@ export function wrapFieldInitializerListElements(
 		}),
 		tree
 	);
-	return withMethods(
-		withListView(
-			{
-				...data,
-				$type: TSKindId.FieldInitializerListElements as const,
-				_element: _content,
-				_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-					? Delimiter.Trailing
-					: Delimiter.None,
+	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+		? Delimiter.Trailing
+		: Delimiter.None;
+	const listedStored = storedElements(_content);
+	const node = {
+		...data,
+		$type: TSKindId.FieldInitializerListElements as const,
+		_element: _content,
+		_delimiter,
 
-				elements() {
-					return hydrateChildren<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>(
-						this._element as
-							| readonly (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer)[]
-							| undefined,
-						tree
-					);
-				},
-				$with: {}
-			},
-			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] },
-			tree
-		)
-	) as unknown as T.FieldInitializerListElements.Parsed;
+		elements() {
+			return hydrateChildren<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>(
+				this._element as
+					| readonly (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer)[]
+					| undefined,
+				tree
+			);
+		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.FieldInitializerListElements.Parsed;
 }
 
 export function wrapTuplePatternElements(
@@ -13893,6 +14071,7 @@ export function wrapTuplePatternElements(
 	tree: TreeHandle
 ): T.TuplePatternElements.Parsed {
 	data = _keepModelledSlots(data, ['_element']);
+	const handle = currentHandle();
 	const _content = storeExpanded(
 		normalizeRepeatedWrapSlot(data._element, true, 'element', {
 			tree,
@@ -13902,28 +14081,43 @@ export function wrapTuplePatternElements(
 		}),
 		tree
 	);
-	return withMethods(
-		withListView(
-			{
-				...data,
-				$type: TSKindId.TuplePatternElements as const,
-				_element: _content,
-				_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-					? Delimiter.Trailing
-					: Delimiter.None,
+	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+		? Delimiter.Trailing
+		: Delimiter.None;
+	const listedStored = storedElements(_content);
+	const node = {
+		...data,
+		$type: TSKindId.TuplePatternElements as const,
+		_element: _content,
+		_delimiter,
 
-				elements() {
-					return hydrateChildren<T.Pattern | T.ClosureExpression>(
-						this._element as readonly (T.Pattern | T.ClosureExpression)[] | undefined,
-						tree
-					);
-				},
-				$with: {}
-			},
-			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] },
-			tree
-		)
-	) as unknown as T.TuplePatternElements.Parsed;
+		elements() {
+			return hydrateChildren<T.Pattern | T.ClosureExpression>(
+				this._element as readonly (T.Pattern | T.ClosureExpression)[] | undefined,
+				tree
+			);
+		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.TuplePatternElements.Parsed;
 }
 
 export function wrapPatterns(
@@ -13931,6 +14125,7 @@ export function wrapPatterns(
 	tree: TreeHandle
 ): T.Patterns.Parsed {
 	data = _keepModelledSlots(data, ['_pattern']);
+	const handle = currentHandle();
 	const _content = storeExpanded(
 		normalizeRepeatedWrapSlot(data._pattern, true, 'pattern', {
 			tree,
@@ -13940,25 +14135,40 @@ export function wrapPatterns(
 		}),
 		tree
 	);
-	return withMethods(
-		withListView(
-			{
-				...data,
-				$type: TSKindId.Patterns as const,
-				_pattern: _content,
-				_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-					? Delimiter.Trailing
-					: Delimiter.None,
+	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+		? Delimiter.Trailing
+		: Delimiter.None;
+	const listedStored = storedElements(_content);
+	const node = {
+		...data,
+		$type: TSKindId.Patterns as const,
+		_pattern: _content,
+		_delimiter,
 
-				patterns() {
-					return hydrateChildren<T.Pattern>(this._pattern as readonly T.Pattern[] | undefined, tree);
-				},
-				$with: {}
-			},
-			{ elements: 'patterns', count: '_pattern', options: [{ key: 'delimiter', default: Delimiter.None }] },
-			tree
-		)
-	) as unknown as T.Patterns.Parsed;
+		patterns() {
+			return hydrateChildren<T.Pattern>(this._pattern as readonly T.Pattern[] | undefined, tree);
+		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'patterns'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.Patterns.Parsed;
 }
 
 export function wrapStructPatternElements(
@@ -13969,11 +14179,23 @@ export function wrapStructPatternElements(
 	tree: TreeHandle
 ): T.StructPatternElements.Parsed {
 	data = _keepModelledSlots(data, ['_element']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.StructPatternElements as const
-		}) as unknown as T.StructPatternElements.Parsed;
+			$type: TSKindId.StructPatternElements as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.StructPatternElements.Parsed;
+	}
 	const _content = storeExpanded(
 		normalizeRepeatedWrapSlot(data._element, true, 'element', {
 			tree,
@@ -13983,28 +14205,43 @@ export function wrapStructPatternElements(
 		}),
 		tree
 	);
-	return withMethods(
-		withListView(
-			{
-				...data,
-				$type: TSKindId.StructPatternElements as const,
-				_element: _content,
-				_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-					? Delimiter.Trailing
-					: Delimiter.None,
+	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+		? Delimiter.Trailing
+		: Delimiter.None;
+	const listedStored = storedElements(_content);
+	const node = {
+		...data,
+		$type: TSKindId.StructPatternElements as const,
+		_element: _content,
+		_delimiter,
 
-				elements() {
-					return hydrateChildren<T.FieldPattern | TSKindId.RemainingFieldPattern>(
-						this._element as readonly (T.FieldPattern | TSKindId.RemainingFieldPattern)[] | undefined,
-						tree
-					);
-				},
-				$with: {}
-			},
-			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] },
-			tree
-		)
-	) as unknown as T.StructPatternElements.Parsed;
+		elements() {
+			return hydrateChildren<T.FieldPattern | TSKindId.RemainingFieldPattern>(
+				this._element as readonly (T.FieldPattern | TSKindId.RemainingFieldPattern)[] | undefined,
+				tree
+			);
+		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.StructPatternElements.Parsed;
 }
 
 export function wrapUseWildcardGroup(data: T.UseWildcardGroup, tree: TreeHandle): T.UseWildcardGroup.Parsed {
@@ -14122,6 +14359,7 @@ export function wrapTupleTypeElements(
 	tree: TreeHandle
 ): T.TupleTypeElements.Parsed {
 	data = _keepModelledSlots(data, ['_type']);
+	const handle = currentHandle();
 	const _content = storeExpanded(
 		normalizeRepeatedWrapSlot(data._type, true, 'type', {
 			tree,
@@ -14131,25 +14369,40 @@ export function wrapTupleTypeElements(
 		}),
 		tree
 	);
-	return withMethods(
-		withListView(
-			{
-				...data,
-				$type: TSKindId.TupleTypeElements as const,
-				_type: _content,
-				_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-					? Delimiter.Trailing
-					: Delimiter.None,
+	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+		? Delimiter.Trailing
+		: Delimiter.None;
+	const listedStored = storedElements(_content);
+	const node = {
+		...data,
+		$type: TSKindId.TupleTypeElements as const,
+		_type: _content,
+		_delimiter,
 
-				types() {
-					return hydrateChildren<T.Type>(this._type as readonly T.Type[] | undefined, tree);
-				},
-				$with: {}
-			},
-			{ elements: 'types', count: '_type', options: [{ key: 'delimiter', default: Delimiter.None }] },
-			tree
-		)
-	) as unknown as T.TupleTypeElements.Parsed;
+		types() {
+			return hydrateChildren<T.Type>(this._type as readonly T.Type[] | undefined, tree);
+		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'types'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.TupleTypeElements.Parsed;
 }
 
 export function wrapTupleExpressionElements(
@@ -14160,6 +14413,7 @@ export function wrapTupleExpressionElements(
 	tree: TreeHandle
 ): T.TupleExpressionElements.Parsed {
 	data = _keepModelledSlots(data, ['_element']);
+	const handle = currentHandle();
 	const _content = storeExpanded(
 		normalizeRepeatedWrapSlot(data._element, true, 'element', {
 			tree,
@@ -14169,25 +14423,40 @@ export function wrapTupleExpressionElements(
 		}),
 		tree
 	);
-	return withMethods(
-		withListView(
-			{
-				...data,
-				$type: TSKindId.TupleExpressionElements as const,
-				_element: _content,
-				_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-					? Delimiter.Trailing
-					: Delimiter.None,
+	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+		? Delimiter.Trailing
+		: Delimiter.None;
+	const listedStored = storedElements(_content);
+	const node = {
+		...data,
+		$type: TSKindId.TupleExpressionElements as const,
+		_element: _content,
+		_delimiter,
 
-				elements() {
-					return hydrateChildren<T.Expression>(this._element as readonly T.Expression[] | undefined, tree);
-				},
-				$with: {}
-			},
-			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] },
-			tree
-		)
-	) as unknown as T.TupleExpressionElements.Parsed;
+		elements() {
+			return hydrateChildren<T.Expression>(this._element as readonly T.Expression[] | undefined, tree);
+		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.TupleExpressionElements.Parsed;
 }
 
 export function wrapIntegerLiteralDecimal(

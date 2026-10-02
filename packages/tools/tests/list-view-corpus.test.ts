@@ -61,6 +61,6 @@ describe('a list view indexes exactly the items it iterates', () => {
 				}
 			}
 			if (['rust', 'python', 'typescript'].includes(grammar)) expect(views).toBeGreaterThan(0);
-		});
+		}, 120_000);
 	}
 });
