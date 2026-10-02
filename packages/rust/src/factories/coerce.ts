@@ -9043,7 +9043,7 @@ export function resolveIntegerLiteralDecimal_suffix(
 }
 
 export function coerceToIntegerLiteralDecimal<const I extends T.IntegerLiteralDecimal.Loose>(
-	input: I & NumericInput<I, undefined, { content: true }>
+	input: I & NumericInput<I, undefined, { content: true }, T.IntegerLiteralDecimal.Loose>
 ): ReturnType<typeof F.buildIntegerLiteralDecimal>;
 export function coerceToIntegerLiteralDecimal(
 	input: T.IntegerLiteralDecimal.Loose
@@ -9076,7 +9076,7 @@ export function resolveIntegerLiteralHex_suffix(
 }
 
 export function coerceToIntegerLiteralHex<const I extends T.IntegerLiteralHex.Loose>(
-	input: I & NumericInput<I, undefined, { content: true }>
+	input: I & NumericInput<I, undefined, { content: true }, T.IntegerLiteralHex.Loose>
 ): ReturnType<typeof F.buildIntegerLiteralHex>;
 export function coerceToIntegerLiteralHex(
 	input: T.IntegerLiteralHex.Loose
@@ -9109,7 +9109,7 @@ export function resolveIntegerLiteralBinary_suffix(
 }
 
 export function coerceToIntegerLiteralBinary<const I extends T.IntegerLiteralBinary.Loose>(
-	input: I & NumericInput<I, undefined, { content: true }>
+	input: I & NumericInput<I, undefined, { content: true }, T.IntegerLiteralBinary.Loose>
 ): ReturnType<typeof F.buildIntegerLiteralBinary>;
 export function coerceToIntegerLiteralBinary(
 	input: T.IntegerLiteralBinary.Loose
@@ -9142,7 +9142,7 @@ export function resolveIntegerLiteralOctal_suffix(
 }
 
 export function coerceToIntegerLiteralOctal<const I extends T.IntegerLiteralOctal.Loose>(
-	input: I & NumericInput<I, undefined, { content: true }>
+	input: I & NumericInput<I, undefined, { content: true }, T.IntegerLiteralOctal.Loose>
 ): ReturnType<typeof F.buildIntegerLiteralOctal>;
 export function coerceToIntegerLiteralOctal(
 	input: T.IntegerLiteralOctal.Loose

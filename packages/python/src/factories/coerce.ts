@@ -6290,7 +6290,7 @@ export function resolveIntegerHex_content(value: T.IntegerHex.LooseConfig['conte
 }
 
 export function coerceToIntegerHex<const I extends T.IntegerHex.Loose, const O extends T.IntegerHex.Options = {}>(
-	input: I & NumericInput<I, true, { content: true }>,
+	input: I & NumericInput<I, true, { content: true }, T.IntegerHex.Loose>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildIntegerHex>,
@@ -6326,7 +6326,7 @@ export function resolveIntegerOctal_content(value: T.IntegerOctal.LooseConfig['c
 }
 
 export function coerceToIntegerOctal<const I extends T.IntegerOctal.Loose, const O extends T.IntegerOctal.Options = {}>(
-	input: I & NumericInput<I, true, { content: true }>,
+	input: I & NumericInput<I, true, { content: true }, T.IntegerOctal.Loose>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildIntegerOctal>,
@@ -6367,7 +6367,7 @@ export function coerceToIntegerBinary<
 	const I extends T.IntegerBinary.Loose,
 	const O extends T.IntegerBinary.Options = {}
 >(
-	input: I & NumericInput<I, true, { content: true }>,
+	input: I & NumericInput<I, true, { content: true }, T.IntegerBinary.Loose>,
 	options?: O
 ): WithSpelling<
 	ReturnType<typeof F.buildIntegerBinary>,
@@ -6445,7 +6445,7 @@ export function resolveFloatPoint_imaginary(value: T.FloatPoint.LooseConfig['ima
 }
 
 export function coerceToFloatPoint<const I extends T.FloatPoint.Loose>(
-	input: I & NumericInput<I, false, { integer: true; fraction: true; exponent: true }>
+	input: I & NumericInput<I, false, { integer: true; fraction: true; exponent: true }, T.FloatPoint.Loose>
 ): ReturnType<typeof F.buildFloatPoint>;
 export function coerceToFloatPoint(input: T.FloatPoint.Loose): ReturnType<typeof F.buildFloatPoint> {
 	if (!_isLooseConfig<T.FloatPoint.LooseConfig | string | number>(input))
@@ -6501,7 +6501,7 @@ export function resolveFloatLeadingPoint_imaginary(
 }
 
 export function coerceToFloatLeadingPoint<const I extends T.FloatLeadingPoint.Loose>(
-	input: I & NumericInput<I, false, { integer: true; fraction: true; exponent: true }>
+	input: I & NumericInput<I, false, { integer: true; fraction: true; exponent: true }, T.FloatLeadingPoint.Loose>
 ): ReturnType<typeof F.buildFloatLeadingPoint>;
 export function coerceToFloatLeadingPoint(
 	input: T.FloatLeadingPoint.Loose
@@ -6551,7 +6551,7 @@ export function resolveFloatScientific_imaginary(
 }
 
 export function coerceToFloatScientific<const I extends T.FloatScientific.Loose>(
-	input: I & NumericInput<I, false, { integer: true; exponent: true }>
+	input: I & NumericInput<I, false, { integer: true; exponent: true }, T.FloatScientific.Loose>
 ): ReturnType<typeof F.buildFloatScientific>;
 export function coerceToFloatScientific(input: T.FloatScientific.Loose): ReturnType<typeof F.buildFloatScientific> {
 	if (!_isLooseConfig<T.FloatScientific.LooseConfig | string | number>(input))
@@ -6657,7 +6657,7 @@ export function resolveEscapeSequenceOctal_content(
 }
 
 export function coerceToEscapeSequenceOctal<const I extends T.EscapeSequenceOctal.Loose>(
-	input: I & NumericInput<I, true, { content: true }>
+	input: I & NumericInput<I, true, { content: true }, T.EscapeSequenceOctal.Loose>
 ): ReturnType<typeof F.buildEscapeSequenceOctal>;
 export function coerceToEscapeSequenceOctal(
 	input: T.EscapeSequenceOctal.Loose

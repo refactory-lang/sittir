@@ -1299,15 +1299,23 @@ export type {
 
 type RefusedValue<V, Integer extends boolean> = V extends number | bigint ? NumericLiteral<V, Integer> : V;
 
-/** The refusal an object-form builder applies to the numeric text slots of its config: `C & NumericConfig<C, W>` is `C` unless a slot of `W` (each mapped to whether it is an integer) holds a literal `NumericLiteral` refuses. */
-export type NumericConfig<C, W extends Readonly<Record<string, boolean>>> = {
-	readonly [K in keyof C & keyof W]?: RefusedValue<C[K], W[K]>;
-};
+type KeysOfAll<K> = K extends unknown ? keyof K : never;
+
+type SlotRefusal<C, K, Integer extends boolean> = C extends unknown ? (K extends keyof C ? RefusedValue<C[K], Integer> : never) : never;
+
+type NoExtraKeys<C, Known> = { readonly [P in Exclude<KeysOfAll<C>, KeysOfAll<Known>>]?: never };
 
 /**
- * The refusal a loose entry applies to its input `I`: a bare number or bigint literal is judged as `NumericLiteral` judges it (`Bare` says whether the bare value is an integer; `undefined` when the kind takes none), and a config literal's numeric slots (`W`) as `NumericConfig` does.
+ * The refusal an object-form builder applies to its config: `C & NumericConfig<C, W, Known>` is `C` unless a numeric slot of `W` (each mapped to whether it is an integer) holds a literal `NumericLiteral` refuses, or `C` names a key `Known` (the config type the builder accepts) does not. A union `C` is judged slot by slot across all its members, and a key one member lacks is not refused for that member.
  */
-export type NumericInput<I, Bare extends boolean | undefined, W extends Readonly<Record<string, boolean>> = {}> = (Bare extends boolean
+export type NumericConfig<C, W extends Readonly<Record<string, boolean>>, Known = C> = {
+	readonly [K in KeysOfAll<C> & keyof W]?: SlotRefusal<C, K, W[K]>;
+} & NoExtraKeys<C, Known>;
+
+/**
+ * The refusal a loose entry applies to its input `I`: a bare number or bigint literal is judged as `NumericLiteral` judges it (`Bare` says whether the bare value is an integer; `undefined` when the kind takes none), and a config literal as `NumericConfig` does, with `Known` the loose type the entry accepts.
+ */
+export type NumericInput<I, Bare extends boolean | undefined, W extends Readonly<Record<string, boolean>> = {}, Known = I> = (Bare extends boolean
 	? RefusedValue<I, Bare>
 	: unknown) &
-	NumericConfig<I, W>;
+	NumericConfig<I, W, Known>;

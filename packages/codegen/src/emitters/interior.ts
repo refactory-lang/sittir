@@ -308,10 +308,10 @@ export function numericConfigSlots(node: AssembledNode): string | undefined {
 	return slots.length === 0 ? undefined : `{ ${slots.join('; ')} }`;
 }
 
-export function numericInputRefusal(node: AssembledNode, bare: NumberShape | undefined): string | undefined {
+export function numericInputRefusal(node: AssembledNode, bare: NumberShape | undefined, known: string): string | undefined {
 	const slots = numericConfigSlots(node);
 	if (bare === undefined && slots === undefined) return undefined;
-	return `NumericInput<I, ${bare === undefined ? 'undefined' : bare.base === 'float' ? 'false' : 'true'}${slots === undefined ? '' : `, ${slots}`}>`;
+	return `NumericInput<I, ${bare === undefined ? 'undefined' : bare.base === 'float' ? 'false' : 'true'}${slots === undefined ? ', {}' : `, ${slots}`}, ${known}>`;
 }
 
 export function numberInputTest(shape: NumberShape, value: string): string {

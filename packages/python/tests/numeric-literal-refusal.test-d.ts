@@ -27,3 +27,16 @@ export function floatBuildersRefuseUnbuildableLiterals(): void {
 	// @ts-expect-error a negative literal is refused in a config slot
 	ir.float.point({ integer: -1, fraction: 5 });
 }
+
+export function configLiteralsKeepTheirUnknownKeyCheck(): void {
+	// @ts-expect-error a misspelled key is refused, strict
+	ir.float.point.strict({ integer: 1, fraction: 5, exponnet: 2 });
+	// @ts-expect-error a misspelled key is refused, loose
+	ir.float.point({ integer: 1, fraction: 5, exponnet: 2 });
+}
+
+export function unionArgumentsAreJudgedMemberByMember(): void {
+	const dirty = Math.random() > 0.5 ? ({ integer: 1, fraction: 5, exponent: -1 } as const) : ({ integer: 1, fraction: 5 } as const);
+	// @ts-expect-error a union member with a negative slot is refused
+	ir.float.point(dirty);
+}

@@ -1161,7 +1161,7 @@ function resolveConfigFactorySurface(
 			: {
 					numeric: {
 						typeParams: `<const C extends ${allOptional ? `Partial<${widen(configType)}>` : widen(configType)}>`,
-						strictType: `C & NumericConfig<C, ${numericConfigSlots(node)}>`
+						strictType: `C & NumericConfig<C, ${numericConfigSlots(node)}, ${allOptional ? `Partial<${widen(configType)}>` : widen(configType)}>`
 					}
 				})
 	};

@@ -407,7 +407,7 @@ function emitBranchFrom(
 	}
 	const spelledType = fullForm === undefined || spelled.length === 0 ? undefined : spelledReturnType(returnType, fullForm, spelled);
 	const bareShape = bareInteriorText(node.kind, node)?.number ?? (soleField === undefined ? undefined : numericSlotShape(soleField));
-	const numericRefusal = numericInputRefusal(node, bareShape);
+	const numericRefusal = numericInputRefusal(node, bareShape, inputType);
 	const refused = (...parts: readonly (string | undefined)[]): string => ['I', ...parts.filter((part) => part !== undefined)].join(' & ');
 	const signature =
 		spelledType !== undefined

@@ -6024,7 +6024,17 @@ export function buildFloatPoint<
 		T.FloatPoint.Config,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>
->(config: C & NumericConfig<C, { integer: true; fraction: true; exponent: true }>): T.FloatPoint.Bound;
+>(
+	config: C &
+		NumericConfig<
+			C,
+			{ integer: true; fraction: true; exponent: true },
+			WidenNumeric<
+				T.FloatPoint.Config,
+				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+			>
+		>
+): T.FloatPoint.Bound;
 export function buildFloatPoint(
 	config: WidenNumeric<
 		T.FloatPoint.Config,
@@ -6086,7 +6096,17 @@ export function buildFloatLeadingPoint<
 		T.FloatLeadingPoint.Config,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>
->(config: C & NumericConfig<C, { integer: true; fraction: true; exponent: true }>): T.FloatLeadingPoint.Bound;
+>(
+	config: C &
+		NumericConfig<
+			C,
+			{ integer: true; fraction: true; exponent: true },
+			WidenNumeric<
+				T.FloatLeadingPoint.Config,
+				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+			>
+		>
+): T.FloatLeadingPoint.Bound;
 export function buildFloatLeadingPoint(
 	config: WidenNumeric<
 		T.FloatLeadingPoint.Config,
@@ -6146,7 +6166,14 @@ export function buildFloatLeadingPoint(
 
 export function buildFloatScientific<
 	const C extends WidenNumeric<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>
->(config: C & NumericConfig<C, { integer: true; exponent: true }>): T.FloatScientific.Bound;
+>(
+	config: C &
+		NumericConfig<
+			C,
+			{ integer: true; exponent: true },
+			WidenNumeric<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>
+		>
+): T.FloatScientific.Bound;
 export function buildFloatScientific(
 	config: WidenNumeric<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>
 ): T.FloatScientific.Bound {

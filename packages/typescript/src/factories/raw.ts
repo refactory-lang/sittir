@@ -8568,7 +8568,15 @@ export function buildNumberFloatPoint<
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>
 >(
-	config: C & NumericConfig<C, { integer: true; fraction: true; exponent: true }>,
+	config: C &
+		NumericConfig<
+			C,
+			{ integer: true; fraction: true; exponent: true },
+			WidenNumeric<
+				T.NumberFloatPoint.Config,
+				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+			>
+		>,
 	options?: T.NumberFloatPoint.Options
 ): T.NumberFloatPoint.Bound;
 export function buildNumberFloatPoint(
@@ -8636,7 +8644,12 @@ export function buildNumberFloatLeadingPoint<
 		{ fraction: number | bigint; exponent: number | bigint }
 	>
 >(
-	config: C & NumericConfig<C, { fraction: true; exponent: true }>,
+	config: C &
+		NumericConfig<
+			C,
+			{ fraction: true; exponent: true },
+			WidenNumeric<T.NumberFloatLeadingPoint.Config, { fraction: number | bigint; exponent: number | bigint }>
+		>,
 	options?: T.NumberFloatLeadingPoint.Options
 ): T.NumberFloatLeadingPoint.Bound;
 export function buildNumberFloatLeadingPoint(
@@ -8691,7 +8704,12 @@ export function buildNumberFloatLeadingPoint(
 export function buildNumberFloatScientific<
 	const C extends WidenNumeric<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>
 >(
-	config: C & NumericConfig<C, { integer: true; exponent: true }>,
+	config: C &
+		NumericConfig<
+			C,
+			{ integer: true; exponent: true },
+			WidenNumeric<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>
+		>,
 	options?: T.NumberFloatScientific.Options
 ): T.NumberFloatScientific.Bound;
 export function buildNumberFloatScientific(

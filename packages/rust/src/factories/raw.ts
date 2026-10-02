@@ -8283,7 +8283,10 @@ function _buildTupleExpressionElements(
 
 export function buildIntegerLiteralDecimal<
 	const C extends WidenNumeric<T.IntegerLiteralDecimal.Config, { content: number | bigint }>
->(config: C & NumericConfig<C, { content: true }>): T.IntegerLiteralDecimal.Bound;
+>(
+	config: C &
+		NumericConfig<C, { content: true }, WidenNumeric<T.IntegerLiteralDecimal.Config, { content: number | bigint }>>
+): T.IntegerLiteralDecimal.Bound;
 export function buildIntegerLiteralDecimal(
 	config: WidenNumeric<T.IntegerLiteralDecimal.Config, { content: number | bigint }>
 ): T.IntegerLiteralDecimal.Bound {
@@ -8335,7 +8338,10 @@ export function buildIntegerLiteralDecimal(
 
 export function buildIntegerLiteralHex<
 	const C extends WidenNumeric<T.IntegerLiteralHex.Config, { content: number | bigint }>
->(config: C & NumericConfig<C, { content: true }>): T.IntegerLiteralHex.Bound;
+>(
+	config: C &
+		NumericConfig<C, { content: true }, WidenNumeric<T.IntegerLiteralHex.Config, { content: number | bigint }>>
+): T.IntegerLiteralHex.Bound;
 export function buildIntegerLiteralHex(
 	config: WidenNumeric<T.IntegerLiteralHex.Config, { content: number | bigint }>
 ): T.IntegerLiteralHex.Bound {
@@ -8387,7 +8393,10 @@ export function buildIntegerLiteralHex(
 
 export function buildIntegerLiteralBinary<
 	const C extends WidenNumeric<T.IntegerLiteralBinary.Config, { content: number | bigint }>
->(config: C & NumericConfig<C, { content: true }>): T.IntegerLiteralBinary.Bound;
+>(
+	config: C &
+		NumericConfig<C, { content: true }, WidenNumeric<T.IntegerLiteralBinary.Config, { content: number | bigint }>>
+): T.IntegerLiteralBinary.Bound;
 export function buildIntegerLiteralBinary(
 	config: WidenNumeric<T.IntegerLiteralBinary.Config, { content: number | bigint }>
 ): T.IntegerLiteralBinary.Bound {
@@ -8439,7 +8448,10 @@ export function buildIntegerLiteralBinary(
 
 export function buildIntegerLiteralOctal<
 	const C extends WidenNumeric<T.IntegerLiteralOctal.Config, { content: number | bigint }>
->(config: C & NumericConfig<C, { content: true }>): T.IntegerLiteralOctal.Bound;
+>(
+	config: C &
+		NumericConfig<C, { content: true }, WidenNumeric<T.IntegerLiteralOctal.Config, { content: number | bigint }>>
+): T.IntegerLiteralOctal.Bound;
 export function buildIntegerLiteralOctal(
 	config: WidenNumeric<T.IntegerLiteralOctal.Config, { content: number | bigint }>
 ): T.IntegerLiteralOctal.Bound {
