@@ -922,6 +922,61 @@ describe('liftSeparators: a list whose first element carries a required separato
 	});
 });
 
+describe('liftSeparators: a separated list inside a longer seq', () => {
+	const ctx = (): LinkCtx =>
+		new LinkCtx({
+			grammar: makeRaw({}),
+			diagnostics: new DiagnosticSink(),
+			supertypes: new Set(),
+			externalRoles: new Map(),
+			derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
+			applyPromotedRules: true,
+			hiddenNamedArmChoices: new Set()
+		});
+	const item: Rule<'link'> = { type: SYMBOL, name: 'item' } as Rule<'link'>;
+	const comma: Rule<'link'> = { type: STRING, value: ',' };
+	const open: Rule<'link'> = { type: STRING, value: '(' };
+	const close: Rule<'link'> = { type: STRING, value: ')' };
+	const seqOf = (...members: Rule<'link'>[]): Rule<'link'> => ({ type: SEQ, members }) as Rule<'link'>;
+	const optional = (content: Rule<'link'>): Rule<'link'> => ({ type: OPTIONAL, content }) as Rule<'link'>;
+	const run = (): Rule<'link'> => ({ type: REPEAT, content: seqOf(comma, item) }) as Rule<'link'>;
+
+	it('lifts a nested list and its optional trailing separator to one repeat between the other members', () => {
+		const nested = { ...seqOf(item, run()), id: 'nested' } as Rule<'link'>;
+		expect(liftSeparators(seqOf(open, nested, optional(comma), close), ctx())).toEqual(
+			seqOf(open, { type: REPEAT1, id: 'nested', content: item, separator: { value: comma, trailing: 'optional', leading: undefined } } as Rule<'link'>, close)
+		);
+	});
+
+	it('lifts a list written flat among other members', () => {
+		expect(liftSeparators(seqOf(open, item, run(), close), ctx())).toEqual(
+			seqOf(open, { type: REPEAT1, content: item, separator: { value: comma, trailing: undefined, leading: undefined } } as Rule<'link'>, close)
+		);
+	});
+
+	it('lifts a list whose elements each end with the separator, with its optional last element', () => {
+		const suffix = { type: REPEAT, content: seqOf(item, comma) } as Rule<'link'>;
+		expect(liftSeparators(seqOf(open, suffix, optional(item), close), ctx())).toEqual(
+			seqOf(open, { type: REPEAT, content: item, separator: { value: comma, trailing: 'optional', leading: undefined } } as Rule<'link'>, close)
+		);
+	});
+
+	it('keeps a mandatory leading separator on a list that replaces its seq', () => {
+		expect(liftSeparators(seqOf(comma, item, run()), ctx())).toEqual({
+			type: REPEAT1,
+			content: item,
+			separator: { value: comma, trailing: undefined, leading: 'mandatory' }
+		});
+	});
+
+	it('leaves a repeat whose head element is a different rule as a stamped repeat', () => {
+		const other: Rule<'link'> = { type: SYMBOL, name: 'other' } as Rule<'link'>;
+		expect(liftSeparators(seqOf(other, run()), ctx())).toEqual(
+			seqOf(other, { type: REPEAT, content: item, separator: { value: comma, trailing: undefined, leading: 'mandatory' } } as Rule<'link'>)
+		);
+	});
+});
+
 describe('liftSeparators \u2014 flank absorption widened to structural rulesEqual', () => {
 	function makeCtx(): LinkCtx {
 		return new LinkCtx({

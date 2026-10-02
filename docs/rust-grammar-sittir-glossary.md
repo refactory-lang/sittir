@@ -544,8 +544,8 @@ context that accepts a turbofish.
 ```text
 				// ordered_field_declaration_list: 1 field(s)
 				// The original override had position 2 for `visibility_modifier`
-				// targeting `optional(',')` (trailing comma). After evaluate's
-				// `absorbTrailingSeparator` collapses the trailing comma into the
+				// targeting `optional(',')` (trailing comma). After link's
+				// `liftSeq` collapses the trailing comma into the
 				// repeat's `trailing: true` flag, position 2 becomes `)` — wrong.
 				// Also `visibility_modifier` is inside the per-element seq, not at
 				// the outer level, so the position 2 override was structurally
