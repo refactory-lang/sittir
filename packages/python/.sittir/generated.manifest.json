@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "9aa0713371aebe6ddeec693b3d8f7eee2ed7c957183c93a21ce0afbc7b717df5",
+  "source_hash": "7e4bf80ee332d189832424831afc51409e58ed010f607a967173c74966d5c452",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "79e843a7af65f2872c099bbca68def0c9e537ef798b567449e225c3b975449e5",
     "packages/python/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -23,12 +23,12 @@
     "packages/python/src/backend.ts": "9b53033e19957139e72ac323f2f8baa0ddab11ea9bee289f9f4ce9ead1ebe482",
     "packages/python/src/consts.ts": "73464b02111fe561753e1ac4856dd6d8251a21ad6b1655f89689e45dbbcc9c5e",
     "packages/python/src/factories/bundle.ts": "71830cb98a5c3487e52d99ff8455d13ede02a7a8a8d8d62ef6a5a4ccef3a5496",
-    "packages/python/src/factories/coerce.ts": "8cb57342e9a5398be8d395b2805707421163611f4a59ac82c61e70fabfe94568",
+    "packages/python/src/factories/coerce.ts": "7fa6b77632545b64a058bdf014c05c1ce02d43994c68242e5a78c08fc10eef15",
     "packages/python/src/factories/index.ts": "7f6f7c3638bed81f862665ce4d7831a2f7fa38d17ccd88b836820d76dc34312e",
     "packages/python/src/factories/overlays/polymorphs.ts": "7665116cad34f942ebd1d77a1dbfa37607dab4e31160d4a02e9d293dfcefda98",
     "packages/python/src/factories/overlays/refines.ts": "37f8a0f79f435a13a3261d39196ce8132ef459b4934501fbd452d65e7b9abdf0",
     "packages/python/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
-    "packages/python/src/factories/raw.ts": "a21b19b4e3920a42dd4024e224e8f4e51f4fcbccfb430b400bfaf13884971cd8",
+    "packages/python/src/factories/raw.ts": "8e1b51d29322a1b121526cff3ea61d2907697f818a0bc8c106b4365aed2cd538",
     "packages/python/src/hash.ts": "2a9dcf965440b0a3a202f6dd72c2eebb8470d9498bf9634781def8755cdfc403",
     "packages/python/src/index.ts": "39646144a045a6b7c7aecee0cb3f2766509e76d29e6a19c07f5645ddded32285",
     "packages/python/src/ir.ts": "d2f0e18dea0b2e6dec5411f71a8214e17e2ba1c9292ef6118dd85a8fae389d5f",

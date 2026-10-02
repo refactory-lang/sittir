@@ -72,6 +72,17 @@ export function admitAliasContent<T = unknown>(value: unknown, aliases: readonly
 	return (hit === undefined ? value : hit[1](value)) as T;
 }
 
+/**
+ * A strict slot's kind-id storage: absent stays absent, a kind id stays itself, and an array is
+ * read item by item with the absent ones dropped. Text is not read here; a string passes through
+ * unchanged for the slot's refusal.
+ */
+export function kindIdStorage<T = unknown>(value: unknown): T {
+	if (value === undefined || value === null) return undefined as T;
+	if (Array.isArray(value)) return value.map((item) => kindIdStorage(item)).filter((item) => item !== undefined) as T;
+	return value as T;
+}
+
 export function coerceMixedEnumStorage<T = unknown>(
 	value: unknown,
 	byText: readonly (readonly [string, number])[] = []

@@ -14,8 +14,7 @@ import {
 	restItems,
 	admitAliasContent,
 	coerceBooleanKeywordStorage,
-	coerceKindEnumStorage,
-	coerceMixedEnumStorage,
+	kindIdStorage,
 	numberText,
 	orDefault,
 	rejectBareText
@@ -165,10 +164,11 @@ export function buildLookaroundAssertion(
 }
 
 export function buildLookaheadAssertion(config: T.LookaheadAssertion.Config): T.LookaheadAssertion.Bound {
-	const _content = coerceKindEnumStorage<NonNullable<T.LookaheadAssertion['_content']>>(config.content, [
-		['=', TSKindId.Eq] as const,
-		['!', TSKindId.Bang] as const
-	]);
+	const _content = rejectBareText(
+		kindIdStorage<NonNullable<T.LookaheadAssertion['_content']>>(config.content),
+		'LookaheadAssertion.content',
+		'a kind id'
+	);
 	const _pattern = rejectBareText(config.pattern, 'LookaheadAssertion.pattern', 'a built Pattern');
 	const handle = currentHandle();
 	const node = {
@@ -198,10 +198,11 @@ export function buildLookaheadAssertion(config: T.LookaheadAssertion.Config): T.
 }
 
 export function buildLookbehindAssertion(config: T.LookbehindAssertion.Config): T.LookbehindAssertion.Bound {
-	const _content = coerceKindEnumStorage<NonNullable<T.LookbehindAssertion['_content']>>(config.content, [
-		['=', TSKindId.Eq] as const,
-		['!', TSKindId.Bang] as const
-	]);
+	const _content = rejectBareText(
+		kindIdStorage<NonNullable<T.LookbehindAssertion['_content']>>(config.content),
+		'LookbehindAssertion.content',
+		'a kind id'
+	);
 	const _pattern = rejectBareText(config.pattern, 'LookbehindAssertion.pattern', 'a built Pattern');
 	const handle = currentHandle();
 	const node = {
@@ -257,16 +258,18 @@ export function buildPatternCharacter(text: string): T.PatternCharacter.Bound {
 export function buildCharacterClass(): T.EmptyCharacterClass;
 export function buildCharacterClass(config?: Partial<T.CharacterClass.Config>): T.CharacterClass.Bound;
 export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {}): T.CharacterClass.Bound {
-	const _negation = coerceBooleanKeywordStorage(config.negation);
-	const _leading = coerceBooleanKeywordStorage(config.leading);
+	const _negation = coerceBooleanKeywordStorage(
+		rejectBareText(config.negation, 'CharacterClass.negation', 'a boolean')
+	);
+	const _leading = coerceBooleanKeywordStorage(rejectBareText(config.leading, 'CharacterClass.leading', 'a boolean'));
 	const _class_atoms = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.CharacterClass['_class_atoms']>>(config.classAtoms ?? [], [
-			['\\-', TSKindId.BslashDash] as const
-		]),
+		kindIdStorage<NonNullable<T.CharacterClass['_class_atoms']>>(config.classAtoms ?? []),
 		'CharacterClass.classAtoms',
 		'buildClassCharacter(…) / buildControlEscape(…) / buildControlLetterEscape(…)'
 	);
-	const _trailing = coerceBooleanKeywordStorage(config.trailing);
+	const _trailing = coerceBooleanKeywordStorage(
+		rejectBareText(config.trailing, 'CharacterClass.trailing', 'a boolean')
+	);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CharacterClass as const,
@@ -371,12 +374,12 @@ export function buildPosixClassName(text: string): T.PosixClassName.Bound {
 
 export function buildClassRange(config: T.ClassRange.Config): T.ClassRange.Bound {
 	const _start = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ClassRange['_start']>>(config.start, [['-', TSKindId.Dash] as const]),
+		kindIdStorage<NonNullable<T.ClassRange['_start']>>(config.start),
 		'ClassRange.start',
 		'buildClassCharacter(…) / buildControlEscape(…)'
 	);
 	const _end = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ClassRange['_end']>>(config.end, [['-', TSKindId.Dash] as const]),
+		kindIdStorage<NonNullable<T.ClassRange['_end']>>(config.end),
 		'ClassRange.end',
 		'buildClassCharacter(…) / buildControlEscape(…)'
 	);
@@ -476,10 +479,11 @@ function _buildAnonymousCapturingGroup(value: AdmitBound<T.Pattern, T.AdmittedNo
 }
 
 export function buildNamedCapturingGroup(config: T.NamedCapturingGroup.Config): T.NamedCapturingGroup.Bound {
-	const _content = coerceKindEnumStorage<NonNullable<T.NamedCapturingGroup['_content']>>(config.content, [
-		['(?<', TSKindId.LparenQmarkLt] as const,
-		['(?P<', TSKindId.LparenQmarkPLt] as const
-	]);
+	const _content = rejectBareText(
+		kindIdStorage<NonNullable<T.NamedCapturingGroup['_content']>>(config.content),
+		'NamedCapturingGroup.content',
+		'a kind id'
+	);
 	const _group_name = rejectBareText(config.groupName, 'NamedCapturingGroup.groupName', 'buildGroupName(…)');
 	const _pattern = rejectBareText(config.pattern, 'NamedCapturingGroup.pattern', 'a built Pattern');
 	const handle = currentHandle();
@@ -651,7 +655,7 @@ export function buildOptional(text: string): T.Optional.Bound {
 
 export function buildCountQuantifier(config: T.CountQuantifier.Config): T.CountQuantifier.Bound {
 	const _content = rejectBareText(config.content, 'CountQuantifier.content', 'buildDecimalDigits(…)');
-	const _lazy = coerceBooleanKeywordStorage(config.lazy);
+	const _lazy = coerceBooleanKeywordStorage(rejectBareText(config.lazy, 'CountQuantifier.lazy', 'a boolean'));
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CountQuantifier as const,
@@ -1032,13 +1036,7 @@ export function buildDecimalDigits(text: string | number | bigint): T.DecimalDig
 
 export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Bound {
 	const _content = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.TermGroup['_content']>>(config.content, [
-			['^', TSKindId.StartAssertion] as const,
-			['$', TSKindId.EndAssertion] as const,
-			['\\b', TSKindId.BoundaryAssertion] as const,
-			['\\B', TSKindId.NonBoundaryAssertion] as const,
-			['.', TSKindId.AnyCharacter] as const
-		]),
+		kindIdStorage<NonNullable<T.TermGroup['_content']>>(config.content),
 		'TermGroup.content',
 		'buildPatternCharacter(…) / buildDecimalEscape(…) / buildControlEscape(…) / buildControlLetterEscape(…)'
 	);
@@ -1413,9 +1411,10 @@ export const buildBlankline: TSKindId.Blankline = TSKindId.Blankline;
 export const buildDoubleBlankline: TSKindId.DoubleBlankline = TSKindId.DoubleBlankline;
 
 export function buildLazy(value?: AdmitBound<TSKindId.Qmark, T.AdmittedNodes>): T.Lazy.Bound {
-	const _content = coerceKindEnumStorage<NonNullable<T.Lazy['_content']>>(
-		orDefault(value, () => TSKindId.Qmark as const),
-		[['?', TSKindId.Qmark] as const]
+	const _content = rejectBareText(
+		kindIdStorage<NonNullable<T.Lazy['_content']>>(orDefault(value, () => TSKindId.Qmark as const)),
+		'Lazy.content',
+		'a kind id'
 	);
 	const handle = currentHandle();
 	const node = {

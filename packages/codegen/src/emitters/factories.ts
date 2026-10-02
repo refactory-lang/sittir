@@ -109,15 +109,18 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 			switch (storageInfo.kind) {
 				case 'boolean':
 					imports.add('coerceBooleanKeywordStorage');
+					imports.add('rejectBareText');
 					break;
 				case 'bitflag':
 					imports.add('coerceBitflagStorage');
 					break;
 				case 'kindEnum':
-					if (kindEntries) imports.add('coerceKindEnumStorage');
+					if (kindEntries) imports.add(slot.registeredOption === 'choice' ? 'coerceKindEnumStorage' : 'kindIdStorage');
+					if (kindEntries && slot.registeredOption !== 'choice') imports.add('rejectBareText');
 					break;
 				case 'mixedEnum':
-					if (kindEntries) imports.add('coerceMixedEnumStorage');
+					if (kindEntries) imports.add(slot.registeredOption === 'choice' ? 'coerceMixedEnumStorage' : 'kindIdStorage');
+					if (kindEntries && slot.registeredOption !== 'choice') imports.add('rejectBareText');
 					break;
 				case 'verbatim':
 					break;
@@ -222,8 +225,15 @@ export function textLeaves(f: AssembledNonterminal, nodeMap: NodeMap): Assembled
 	return [...leaves];
 }
 
-function bareTextRejection(f: AssembledNonterminal, expr: string, nodeMap: NodeMap, typeName: string): string {
-	const expected = strictNodeExpectation(f, nodeMap);
+function bareTextRejection(
+	f: AssembledNonterminal,
+	expr: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	typeName: string
+): string {
+	const kind = resolveFieldStorageInfo(f, nodeMap, kindEntries).kind;
+	const expected = strictNodeExpectation(f, nodeMap) ?? (kind === 'kindEnum' || kind === 'mixedEnum' ? 'a kind id' : undefined);
 	if (expected === undefined) return expr;
 	return `rejectBareText(${expr}, '${typeName}.${f.configKey}', ${JSON.stringify(expected)})`;
 }
@@ -522,7 +532,7 @@ function admittedSlotInput(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	typeName: string
 ): string {
-	const admitted = keywordTextRejection(f, bareTextRejection(f, expr, nodeMap, typeName), nodeMap, kindEntries, typeName);
+	const admitted = keywordTextRejection(f, bareTextRejection(f, expr, nodeMap, kindEntries, typeName), nodeMap, kindEntries, typeName);
 	return aliasContentAdmission(f, admitted, nodeMap, kindEntries, `NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>`);
 }
 
@@ -582,25 +592,48 @@ function storedSlotValueExpr(
 	valueExpr: string,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined,
-	typeName: string
+	typeName: string,
+	textInput = false
 ): string {
 	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
+	const stored = `NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>`;
 	switch (storageInfo.kind) {
 		case 'boolean':
-			return `coerceBooleanKeywordStorage(${valueExpr})`;
+			return textInput
+				? `coerceBooleanKeywordStorage(${valueExpr})`
+				: `coerceBooleanKeywordStorage(rejectBareText(${valueExpr}, '${typeName}.${f.configKey}', 'a boolean'))`;
 		case 'bitflag':
 			return `coerceBitflagStorage(${valueExpr}, ${bitflagTextsExpr(storageInfo.texts)})`;
 		case 'kindEnum':
-			return kindEntries
-				? `coerceKindEnumStorage<NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>>(${valueExpr}, ${kindEnumTextMapExpr(f, nodeMap, kindEntries)})`
-				: valueExpr;
+			if (!kindEntries) return valueExpr;
+			return textInput
+				? `coerceKindEnumStorage<${stored}>(${valueExpr}, ${kindEnumTextMapExpr(f, nodeMap, kindEntries)})`
+				: `kindIdStorage<${stored}>(${valueExpr})`;
 		case 'mixedEnum':
-			return kindEntries
-				? `coerceMixedEnumStorage<NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>>(${valueExpr}, ${kindEnumTextMapExpr(f, nodeMap, kindEntries)})`
-				: valueExpr;
+			if (!kindEntries) return valueExpr;
+			return textInput
+				? `coerceMixedEnumStorage<${stored}>(${valueExpr}, ${kindEnumTextMapExpr(f, nodeMap, kindEntries)})`
+				: `kindIdStorage<${stored}>(${valueExpr})`;
 		case 'verbatim':
 			return valueExpr;
 	}
+}
+
+function narrowedStorageExpr(
+	f: AssembledNonterminal,
+	literal: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	typeName: string
+): string {
+	const kind = resolveFieldStorageInfo(f, nodeMap, kindEntries).kind;
+	if (kind === 'boolean') return 'true as const';
+	if (kind === 'kindEnum' || kind === 'mixedEnum') {
+		const entry = kindEnumTextEntries(f, nodeMap, kindEntries).find((candidate) => candidate.text === literal);
+		if (entry === undefined) throw new Error(`refine form: '${typeName}.${f.name}' is narrowed to ${JSON.stringify(literal)}, which names no kind of the slot`);
+		return admittedSlotInput(f, `${entry.discriminant} as const`, nodeMap, kindEntries, typeName);
+	}
+	return slotStorageFromValueExpr(f, `${JSON.stringify(literal)} as const`, nodeMap, kindEntries, typeName);
 }
 
 function slotStorageExpr(
@@ -897,7 +930,7 @@ function registeredSlotSource(
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
 	if (slot.registeredOption === 'choice') {
-		return storedSlotValueExpr(slot, `options?.${slot.configKey}`, nodeMap, kindEntries, node.typeName);
+		return storedSlotValueExpr(slot, `options?.${slot.configKey}`, nodeMap, kindEntries, node.typeName, true);
 	}
 	const value = `options?.${slot.configKey} ?? ${JSON.stringify(slot.optionDefaultArm)}`;
 	const peers = hasConfig ? optionalGroupPeers(node, slot.name) : undefined;
@@ -1425,9 +1458,7 @@ function emitRefineFormFactory(
 	for (const f of allSlots) {
 		const narrowedLit = narrowed.get(f.name);
 		if (narrowedLit !== undefined) {
-			lines.push(
-				`  const ${f.storageKey} = ${slotStorageFromValueExpr(f, `${JSON.stringify(narrowedLit)} as const`, nodeMap, kindEntries, info.typeName)};`
-			);
+			lines.push(`  const ${f.storageKey} = ${narrowedStorageExpr(f, narrowedLit, nodeMap, kindEntries, info.typeName)};`);
 			continue;
 		}
 		if (registered.includes(f)) {

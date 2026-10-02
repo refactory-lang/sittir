@@ -16,8 +16,7 @@ import {
 	restItems,
 	admitAliasContent,
 	coerceBooleanKeywordStorage,
-	coerceKindEnumStorage,
-	coerceMixedEnumStorage,
+	kindIdStorage,
 	numberText,
 	orDefault,
 	rejectBareText,
@@ -350,9 +349,7 @@ export function buildImportFromStatement(config: T.ImportFromStatement.Config): 
 		'a built RelativeImport / DottedName'
 	);
 	const _content = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ImportFromStatement['_content']>>(config.content, [
-			['*', TSKindId.WildcardImport] as const
-		]),
+		kindIdStorage<NonNullable<T.ImportFromStatement['_content']>>(config.content),
 		'ImportFromStatement.content',
 		'a built ImportList / ParenthesizedImportList'
 	);
@@ -506,7 +503,7 @@ export function buildPrintStatement(
 
 export function buildChevron(value: AdmitBound<T.Expression, T.AdmittedNodes>): T.Chevron.Bound {
 	const _expression = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.Chevron['_expression']>>(value, []),
+		kindIdStorage<NonNullable<T.Chevron['_expression']>>(value),
 		'Chevron.expression',
 		'a built Expression'
 	);
@@ -569,7 +566,7 @@ export function buildExpressionStatement(
 	>
 ): T.ExpressionStatement.Bound {
 	const _content = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ExpressionStatement['_content']>>(value, []),
+		kindIdStorage<NonNullable<T.ExpressionStatement['_content']>>(value),
 		'ExpressionStatement.content',
 		'a built Expression / ExpressionStatementTuple / Assignment / AugmentedAssignment / Yield'
 	);
@@ -601,14 +598,7 @@ export function buildExpressionStatement(
 export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedExpression.Bound {
 	const _name = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.NamedExpression['_name']>>(config.name, [
-				['print', TSKindId.PrintKeyword] as const,
-				['exec', TSKindId.ExecKeyword] as const,
-				['async', TSKindId.AsyncKeyword] as const,
-				['await', TSKindId.AwaitKeyword] as const,
-				['type', TSKindId.TypeKeyword] as const,
-				['match', TSKindId.MatchKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.NamedExpression['_name']>>(config.name),
 			'NamedExpression.name',
 			'buildIdentifier(…)'
 		),
@@ -617,7 +607,7 @@ export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedE
 		['print', 'exec', 'async', 'await', 'type', 'match']
 	);
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.NamedExpression['_value']>>(config.value, []),
+		kindIdStorage<NonNullable<T.NamedExpression['_value']>>(config.value),
 		'NamedExpression.value',
 		'a built Expression'
 	);
@@ -653,7 +643,7 @@ export function buildReturnStatement(
 	value?: AdmitBound<T.Expression | T.ExpressionList, T.AdmittedNodes>
 ): T.ReturnStatement.Bound {
 	const _expressions = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ReturnStatement['_expressions']>>(value, []),
+		kindIdStorage<NonNullable<T.ReturnStatement['_expressions']>>(value),
 		'ReturnStatement.expressions',
 		'a built Expression / ExpressionList'
 	);
@@ -685,7 +675,7 @@ export function buildDeleteStatement(
 	value: AdmitBound<T.Expression | T.ExpressionList, T.AdmittedNodes>
 ): T.DeleteStatement.Bound {
 	const _expressions = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.DeleteStatement['_expressions']>>(value, []),
+		kindIdStorage<NonNullable<T.DeleteStatement['_expressions']>>(value),
 		'DeleteStatement.expressions',
 		'a built Expression / ExpressionList'
 	);
@@ -715,12 +705,12 @@ export function buildDeleteStatement(
 
 export function buildRaiseStatement(config: Partial<T.RaiseStatement.Config> = {}): T.RaiseStatement.Bound {
 	const _expressions = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.RaiseStatement['_expressions']>>(config.expressions, []),
+		kindIdStorage<NonNullable<T.RaiseStatement['_expressions']>>(config.expressions),
 		'RaiseStatement.expressions',
 		'a built Expression / ExpressionList'
 	);
 	const _cause = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.RaiseStatement['_cause']>>(config.cause, []),
+		kindIdStorage<NonNullable<T.RaiseStatement['_cause']>>(config.cause),
 		'RaiseStatement.cause',
 		'a built Expression'
 	);
@@ -760,7 +750,7 @@ export const buildContinueStatement: TSKindId.ContinueStatement = TSKindId.Conti
 
 export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bound {
 	const _condition = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.IfStatement['_condition']>>(config.condition, []),
+		kindIdStorage<NonNullable<T.IfStatement['_condition']>>(config.condition),
 		'IfStatement.condition',
 		'a built Expression'
 	);
@@ -803,7 +793,7 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bo
 
 export function buildElifClause(config: T.ElifClause.Config): T.ElifClause.Bound {
 	const _condition = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ElifClause['_condition']>>(config.condition, []),
+		kindIdStorage<NonNullable<T.ElifClause['_condition']>>(config.condition),
 		'ElifClause.condition',
 		'a built Expression'
 	);
@@ -946,10 +936,12 @@ export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Bound
 }
 
 export function buildForStatement(config: T.ForStatement.Config): T.ForStatement.Bound {
-	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
+	const _async_marker = coerceBooleanKeywordStorage(
+		rejectBareText(config.asyncMarker, 'ForStatement.asyncMarker', 'a boolean')
+	);
 	const _left = rejectBareText(config.left, 'ForStatement.left', 'a built Pattern / PatternList');
 	const _right = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ForStatement['_right']>>(config.right, []),
+		kindIdStorage<NonNullable<T.ForStatement['_right']>>(config.right),
 		'ForStatement.right',
 		'a built Expression / ExpressionList'
 	);
@@ -996,7 +988,7 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 
 export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileStatement.Bound {
 	const _condition = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.WhileStatement['_condition']>>(config.condition, []),
+		kindIdStorage<NonNullable<T.WhileStatement['_condition']>>(config.condition),
 		'WhileStatement.condition',
 		'a built Expression'
 	);
@@ -1080,7 +1072,9 @@ export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement
 }
 
 export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause.Bound {
-	const _star_marker = coerceBooleanKeywordStorage(config.starMarker);
+	const _star_marker = coerceBooleanKeywordStorage(
+		rejectBareText(config.starMarker, 'ExceptClause.starMarker', 'a boolean')
+	);
 	const _exception = rejectBareText(config.exception, 'ExceptClause.exception', 'a built ExceptClauseException');
 	const _suite = rejectBareText(config.suite, 'ExceptClause.suite', 'a built Suite');
 	const handle = currentHandle();
@@ -1140,7 +1134,9 @@ export function buildFinallyClause(value: AdmitBound<T.Suite, T.AdmittedNodes>):
 }
 
 export function buildWithStatement(config: T.WithStatement.Config): T.WithStatement.Bound {
-	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
+	const _async_marker = coerceBooleanKeywordStorage(
+		rejectBareText(config.asyncMarker, 'WithStatement.asyncMarker', 'a boolean')
+	);
 	const _with_clause = rejectBareText(config.withClause, 'WithStatement.withClause', 'a built WithClause');
 	const _body = rejectBareText(config.body, 'WithStatement.body', 'a built Suite');
 	const handle = currentHandle();
@@ -1176,7 +1172,7 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 
 export function buildWithItem(value: AdmitBound<T.Expression, T.AdmittedNodes>): T.WithItem.Bound {
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.WithItem['_value']>>(value, []),
+		kindIdStorage<NonNullable<T.WithItem['_value']>>(value),
 		'WithItem.value',
 		'a built Expression'
 	);
@@ -1204,7 +1200,9 @@ export function buildWithItem(value: AdmitBound<T.Expression, T.AdmittedNodes>):
 }
 
 export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.FunctionDefinition.Bound {
-	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
+	const _async_marker = coerceBooleanKeywordStorage(
+		rejectBareText(config.asyncMarker, 'FunctionDefinition.asyncMarker', 'a boolean')
+	);
 	const _name = rejectBareText(config.name, 'FunctionDefinition.name', 'buildIdentifier(…)');
 	const _type_parameters = rejectBareText(
 		config.typeParameters,
@@ -1389,7 +1387,7 @@ function _buildLambdaParameters(value: AdmitBound<T.ParametersElements, T.Admitt
 
 export function buildListSplat(value: AdmitBound<T.Expression, T.AdmittedNodes>): T.ListSplat.Bound {
 	const _expression = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ListSplat['_expression']>>(value, []),
+		kindIdStorage<NonNullable<T.ListSplat['_expression']>>(value),
 		'ListSplat.expression',
 		'a built Expression'
 	);
@@ -1418,7 +1416,7 @@ export function buildListSplat(value: AdmitBound<T.Expression, T.AdmittedNodes>)
 
 export function buildDictionarySplat(value: AdmitBound<T.Expression, T.AdmittedNodes>): T.DictionarySplat.Bound {
 	const _expression = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.DictionarySplat['_expression']>>(value, []),
+		kindIdStorage<NonNullable<T.DictionarySplat['_expression']>>(value),
 		'DictionarySplat.expression',
 		'a built Expression'
 	);
@@ -1504,7 +1502,7 @@ export function buildNonlocalStatement(
 export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatement.Bound {
 	const _code = rejectBareText(config.code, 'ExecStatement.code', 'buildIdentifier(…)');
 	const _in_clause = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ExecStatement['_in_clause']>>(config.inClause ?? [], []),
+		kindIdStorage<NonNullable<T.ExecStatement['_in_clause']>>(config.inClause ?? []),
 		'ExecStatement.inClause',
 		'a built Expression'
 	);
@@ -1804,7 +1802,7 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): 
 
 export function buildDecorator(value: AdmitBound<T.Expression, T.AdmittedNodes>): T.Decorator.Bound {
 	const _expression = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.Decorator['_expression']>>(value, []),
+		kindIdStorage<NonNullable<T.Decorator['_expression']>>(value),
 		'Decorator.expression',
 		'a built Expression'
 	);
@@ -1858,12 +1856,12 @@ export function buildBlock(...children: AdmitBound<T.Statement[], T.AdmittedNode
 
 export function buildExpressionList(config: T.ExpressionList.Config): T.ExpressionList.Bound {
 	const _expression = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ExpressionList['_expression']>>(config.expression, []),
+		kindIdStorage<NonNullable<T.ExpressionList['_expression']>>(config.expression),
 		'ExpressionList.expression',
 		'a built Expression'
 	);
 	const _tail = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ExpressionList['_tail']>>(config.tail, [[',', TSKindId.Comma] as const]),
+		kindIdStorage<NonNullable<T.ExpressionList['_tail']>>(config.tail),
 		'ExpressionList.tail',
 		'a built ExpressionListExpressions'
 	);
@@ -1979,12 +1977,7 @@ export function buildSimplePattern(
 	>
 ): T.SimplePattern.Bound {
 	const _content = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.SimplePattern['_content']>>(value, [
-			['True', TSKindId.True] as const,
-			['False', TSKindId.False] as const,
-			['None', TSKindId.None] as const,
-			['_', TSKindId.WildcardPattern] as const
-		]),
+		kindIdStorage<NonNullable<T.SimplePattern['_content']>>(value),
 		'SimplePattern.content',
 		'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / SimplePatternNegative / ComplexPattern / DottedName'
 	);
@@ -2195,12 +2188,7 @@ function _buildDictPattern(value?: AdmitBound<T.DictPatternElements, T.AdmittedN
 
 export function buildKeyValuePattern(config: T.KeyValuePattern.Config): T.KeyValuePattern.Bound {
 	const _key = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.KeyValuePattern['_key']>>(config.key, [
-			['True', TSKindId.True] as const,
-			['False', TSKindId.False] as const,
-			['None', TSKindId.None] as const,
-			['_', TSKindId.WildcardPattern] as const
-		]),
+		kindIdStorage<NonNullable<T.KeyValuePattern['_key']>>(config.key),
 		'KeyValuePattern.key',
 		'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / SimplePatternNegative / ComplexPattern / DottedName'
 	);
@@ -2235,12 +2223,7 @@ export function buildKeyValuePattern(config: T.KeyValuePattern.Config): T.KeyVal
 export function buildKeywordPattern(config: T.KeywordPattern.Config): T.KeywordPattern.Bound {
 	const _name = rejectBareText(config.name, 'KeywordPattern.name', 'buildIdentifier(…)');
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.KeywordPattern['_value']>>(config.value, [
-			['True', TSKindId.True] as const,
-			['False', TSKindId.False] as const,
-			['None', TSKindId.None] as const,
-			['_', TSKindId.WildcardPattern] as const
-		]),
+		kindIdStorage<NonNullable<T.KeywordPattern['_value']>>(config.value),
 		'KeywordPattern.value',
 		'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / SimplePatternNegative / ComplexPattern / DottedName'
 	);
@@ -2272,13 +2255,14 @@ export function buildKeywordPattern(config: T.KeywordPattern.Config): T.KeywordP
 }
 
 export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern.Bound {
-	const _operator = coerceKindEnumStorage<NonNullable<T.SplatPattern['_operator']>>(config.operator, [
-		['*', TSKindId.Star] as const,
-		['**', TSKindId.StarStar] as const
-	]);
+	const _operator = rejectBareText(
+		kindIdStorage<NonNullable<T.SplatPattern['_operator']>>(config.operator),
+		'SplatPattern.operator',
+		'a kind id'
+	);
 	const _name = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.SplatPattern['_name']>>(config.name, [['_', TSKindId.Underscore] as const]),
+			kindIdStorage<NonNullable<T.SplatPattern['_name']>>(config.name),
 			'SplatPattern.name',
 			'buildIdentifier(…)'
 		),
@@ -2349,12 +2333,13 @@ export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern
 }
 
 export function buildComplexPattern(config: T.ComplexPattern.Config): T.ComplexPattern.Bound {
-	const _sign = coerceBooleanKeywordStorage(config.sign);
+	const _sign = coerceBooleanKeywordStorage(rejectBareText(config.sign, 'ComplexPattern.sign', 'a boolean'));
 	const _real = rejectBareText(config.real, 'ComplexPattern.real', 'a built Integer / Float');
-	const _operator = coerceKindEnumStorage<NonNullable<T.ComplexPattern['_operator']>>(config.operator, [
-		['+', TSKindId.Plus] as const,
-		['-', TSKindId.Dash] as const
-	]);
+	const _operator = rejectBareText(
+		kindIdStorage<NonNullable<T.ComplexPattern['_operator']>>(config.operator),
+		'ComplexPattern.operator',
+		'a kind id'
+	);
 	const _imaginary = rejectBareText(config.imaginary, 'ComplexPattern.imaginary', 'a built Integer / Float');
 	const handle = currentHandle();
 	const node = {
@@ -2610,7 +2595,7 @@ function _buildListPattern(value?: AdmitBound<T.Patterns, T.AdmittedNodes>): T.L
 export function buildDefaultParameter(config: T.DefaultParameter.Config): T.DefaultParameter.Bound {
 	const _name = rejectBareText(config.name, 'DefaultParameter.name', 'buildIdentifier(…)');
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.DefaultParameter['_value']>>(config.value, []),
+		kindIdStorage<NonNullable<T.DefaultParameter['_value']>>(config.value),
 		'DefaultParameter.value',
 		'a built Expression'
 	);
@@ -2646,7 +2631,7 @@ export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Confi
 	const _name = rejectBareText(config.name, 'TypedDefaultParameter.name', 'buildIdentifier(…)');
 	const _type = rejectBareText(config.type, 'TypedDefaultParameter.type', 'a built Type');
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.TypedDefaultParameter['_value']>>(config.value, []),
+		kindIdStorage<NonNullable<T.TypedDefaultParameter['_value']>>(config.value),
 		'TypedDefaultParameter.value',
 		'a built Expression'
 	);
@@ -2697,14 +2682,7 @@ export function buildListSplatPattern(
 ): T.ListSplatPattern.Bound {
 	const _target = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.ListSplatPattern['_target']>>(value, [
-				['print', TSKindId.PrintKeyword] as const,
-				['exec', TSKindId.ExecKeyword] as const,
-				['async', TSKindId.AsyncKeyword] as const,
-				['await', TSKindId.AwaitKeyword] as const,
-				['type', TSKindId.TypeKeyword] as const,
-				['match', TSKindId.MatchKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.ListSplatPattern['_target']>>(value),
 			'ListSplatPattern.target',
 			'buildIdentifier(…)'
 		),
@@ -2763,14 +2741,7 @@ export function buildDictionarySplatPattern(
 ): T.DictionarySplatPattern.Bound {
 	const _target = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.DictionarySplatPattern['_target']>>(value, [
-				['print', TSKindId.PrintKeyword] as const,
-				['exec', TSKindId.ExecKeyword] as const,
-				['async', TSKindId.AsyncKeyword] as const,
-				['await', TSKindId.AwaitKeyword] as const,
-				['type', TSKindId.TypeKeyword] as const,
-				['match', TSKindId.MatchKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.DictionarySplatPattern['_target']>>(value),
 			'DictionarySplatPattern.target',
 			'buildIdentifier(…)'
 		),
@@ -2815,7 +2786,7 @@ export function buildDictionarySplatPattern(
 
 export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 	const _expression = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.AsPattern['_expression']>>(config.expression, []),
+		kindIdStorage<NonNullable<T.AsPattern['_expression']>>(config.expression),
 		'AsPattern.expression',
 		'a built Expression'
 	);
@@ -2861,7 +2832,7 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 
 export function buildNotOperator(value: AdmitBound<T.Expression, T.AdmittedNodes>): T.NotOperator.Bound {
 	const _argument = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.NotOperator['_argument']>>(value, []),
+		kindIdStorage<NonNullable<T.NotOperator['_argument']>>(value),
 		'NotOperator.argument',
 		'a built Expression'
 	);
@@ -2890,16 +2861,17 @@ export function buildNotOperator(value: AdmitBound<T.Expression, T.AdmittedNodes
 
 export function buildBooleanOperator(config: T.BooleanOperator.Config): T.BooleanOperator.Bound {
 	const _left = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.BooleanOperator['_left']>>(config.left, []),
+		kindIdStorage<NonNullable<T.BooleanOperator['_left']>>(config.left),
 		'BooleanOperator.left',
 		'a built Expression'
 	);
-	const _operator = coerceKindEnumStorage<NonNullable<T.BooleanOperator['_operator']>>(config.operator, [
-		['and', TSKindId.AndKeyword] as const,
-		['or', TSKindId.OrKeyword] as const
-	]);
+	const _operator = rejectBareText(
+		kindIdStorage<NonNullable<T.BooleanOperator['_operator']>>(config.operator),
+		'BooleanOperator.operator',
+		'a kind id'
+	);
 	const _right = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.BooleanOperator['_right']>>(config.right, []),
+		kindIdStorage<NonNullable<T.BooleanOperator['_right']>>(config.right),
 		'BooleanOperator.right',
 		'a built Expression'
 	);
@@ -2937,27 +2909,17 @@ export function buildBooleanOperator(config: T.BooleanOperator.Config): T.Boolea
 
 export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOperator.Bound {
 	const _left = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.BinaryOperator['_left']>>(config.left, []),
+		kindIdStorage<NonNullable<T.BinaryOperator['_left']>>(config.left),
 		'BinaryOperator.left',
 		'a built PrimaryExpression'
 	);
-	const _operator = coerceKindEnumStorage<NonNullable<T.BinaryOperator['_operator']>>(config.operator, [
-		['+', TSKindId.Plus] as const,
-		['-', TSKindId.Dash] as const,
-		['*', TSKindId.Star] as const,
-		['@', TSKindId.At] as const,
-		['/', TSKindId.Slash] as const,
-		['%', TSKindId.Percent] as const,
-		['//', TSKindId.SlashSlash] as const,
-		['**', TSKindId.StarStar] as const,
-		['|', TSKindId.Pipe] as const,
-		['&', TSKindId.Amp] as const,
-		['^', TSKindId.Caret] as const,
-		['<<', TSKindId.LtLt] as const,
-		['>>', TSKindId.GtGt] as const
-	]);
+	const _operator = rejectBareText(
+		kindIdStorage<NonNullable<T.BinaryOperator['_operator']>>(config.operator),
+		'BinaryOperator.operator',
+		'a kind id'
+	);
 	const _right = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.BinaryOperator['_right']>>(config.right, []),
+		kindIdStorage<NonNullable<T.BinaryOperator['_right']>>(config.right),
 		'BinaryOperator.right',
 		'a built PrimaryExpression'
 	);
@@ -2994,13 +2956,13 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOp
 }
 
 export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOperator.Bound {
-	const _operator = coerceKindEnumStorage<NonNullable<T.UnaryOperator['_operator']>>(config.operator, [
-		['+', TSKindId.Plus] as const,
-		['-', TSKindId.Dash] as const,
-		['~', TSKindId.Tilde] as const
-	]);
+	const _operator = rejectBareText(
+		kindIdStorage<NonNullable<T.UnaryOperator['_operator']>>(config.operator),
+		'UnaryOperator.operator',
+		'a kind id'
+	);
 	const _argument = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.UnaryOperator['_argument']>>(config.argument, []),
+		kindIdStorage<NonNullable<T.UnaryOperator['_argument']>>(config.argument),
 		'UnaryOperator.argument',
 		'a built PrimaryExpression'
 	);
@@ -3034,7 +2996,7 @@ export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOpera
 
 export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.ComparisonOperator.Bound {
 	const _left = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ComparisonOperator['_left']>>(config.left, []),
+		kindIdStorage<NonNullable<T.ComparisonOperator['_left']>>(config.left),
 		'ComparisonOperator.left',
 		'a built PrimaryExpression'
 	);
@@ -3072,7 +3034,7 @@ export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.
 export function buildLambda(config: T.Lambda.Config): T.Lambda.Bound {
 	const _parameters = rejectBareText(config.parameters, 'Lambda.parameters', 'a built LambdaParameters');
 	const _body = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.Lambda['_body']>>(config.body, []),
+		kindIdStorage<NonNullable<T.Lambda['_body']>>(config.body),
 		'Lambda.body',
 		'a built Expression'
 	);
@@ -3109,7 +3071,7 @@ export function buildLambdaWithinForInClause(
 		'a built LambdaParameters'
 	);
 	const _body = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.LambdaWithinForInClause['_body']>>(config.body, []),
+		kindIdStorage<NonNullable<T.LambdaWithinForInClause['_body']>>(config.body),
 		'LambdaWithinForInClause.body',
 		'a built Expression / LambdaWithinForInClause'
 	);
@@ -3140,23 +3102,13 @@ export function buildLambdaWithinForInClause(
 
 export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): T.AugmentedAssignment.Bound {
 	const _left = rejectBareText(config.left, 'AugmentedAssignment.left', 'a built Pattern / PatternList');
-	const _operator = coerceKindEnumStorage<NonNullable<T.AugmentedAssignment['_operator']>>(config.operator, [
-		['+=', TSKindId.PlusEq] as const,
-		['-=', TSKindId.DashEq] as const,
-		['*=', TSKindId.StarEq] as const,
-		['/=', TSKindId.SlashEq] as const,
-		['@=', TSKindId.AtEq] as const,
-		['//=', TSKindId.SlashSlashEq] as const,
-		['%=', TSKindId.PercentEq] as const,
-		['**=', TSKindId.StarStarEq] as const,
-		['>>=', TSKindId.GtGtEq] as const,
-		['<<=', TSKindId.LtLtEq] as const,
-		['&=', TSKindId.AmpEq] as const,
-		['^=', TSKindId.CaretEq] as const,
-		['|=', TSKindId.PipeEq] as const
-	]);
+	const _operator = rejectBareText(
+		kindIdStorage<NonNullable<T.AugmentedAssignment['_operator']>>(config.operator),
+		'AugmentedAssignment.operator',
+		'a kind id'
+	);
 	const _right = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.AugmentedAssignment['_right']>>(config.right, []),
+		kindIdStorage<NonNullable<T.AugmentedAssignment['_right']>>(config.right),
 		'AugmentedAssignment.right',
 		'a built Expression / ExpressionList / Assignment / AugmentedAssignment / PatternList / Yield'
 	);
@@ -3195,7 +3147,7 @@ export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): 
 export function buildPatternList(config: T.PatternList.Config): T.PatternList.Bound {
 	const _pattern = rejectBareText(config.pattern, 'PatternList.pattern', 'a built Pattern');
 	const _tail = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.PatternList['_tail']>>(config.tail, [[',', TSKindId.Comma] as const]),
+		kindIdStorage<NonNullable<T.PatternList['_tail']>>(config.tail),
 		'PatternList.tail',
 		'a built PatternListPatterns'
 	);
@@ -3227,7 +3179,7 @@ export function buildYield(
 	value?: AdmitBound<T.YieldFromClause | T.Expression | T.ExpressionList, T.AdmittedNodes>
 ): T.Yield.Bound {
 	const _content = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.Yield['_content']>>(value, []),
+		kindIdStorage<NonNullable<T.Yield['_content']>>(value),
 		'Yield.content',
 		'a built YieldFromClause / Expression / ExpressionList'
 	);
@@ -3257,7 +3209,7 @@ export function buildYield(
 
 export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 	const _object = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.Attribute['_object']>>(config.object, []),
+		kindIdStorage<NonNullable<T.Attribute['_object']>>(config.object),
 		'Attribute.object',
 		'a built PrimaryExpression'
 	);
@@ -3291,7 +3243,7 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 
 export function buildSubscript(config: T.Subscript.Config): T.Subscript.Bound {
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.Subscript['_value']>>(config.value, []),
+		kindIdStorage<NonNullable<T.Subscript['_value']>>(config.value),
 		'Subscript.value',
 		'a built PrimaryExpression'
 	);
@@ -3322,12 +3274,12 @@ export function buildSubscript(config: T.Subscript.Config): T.Subscript.Bound {
 
 export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound {
 	const _start = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.Slice['_start']>>(config.start, []),
+		kindIdStorage<NonNullable<T.Slice['_start']>>(config.start),
 		'Slice.start',
 		'a built Expression'
 	);
 	const _stop = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.Slice['_stop']>>(config.stop, []),
+		kindIdStorage<NonNullable<T.Slice['_stop']>>(config.stop),
 		'Slice.stop',
 		'a built Expression'
 	);
@@ -3369,7 +3321,7 @@ export const buildEllipsis: TSKindId.Ellipsis = TSKindId.Ellipsis;
 
 export function buildCall(config: T.Call.Config): T.Call.Bound {
 	const _function = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.Call['_function']>>(config.function, []),
+		kindIdStorage<NonNullable<T.Call['_function']>>(config.function),
 		'Call.function',
 		'a built PrimaryExpression'
 	);
@@ -3439,7 +3391,7 @@ export function buildType(
 	>
 ): T.Type.Bound {
 	const _content = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.Type['_content']>>(value, []),
+		kindIdStorage<NonNullable<T.Type['_content']>>(value),
 		'Type.content',
 		'a built Expression / SplatType / GenericType / UnionType / ConstrainedType / MemberType'
 	);
@@ -3469,10 +3421,11 @@ export function buildType(
 }
 
 export function buildSplatType(config: T.SplatType.Config): T.SplatType.Bound {
-	const _operator = coerceKindEnumStorage<NonNullable<T.SplatType['_operator']>>(config.operator, [
-		['*', TSKindId.Star] as const,
-		['**', TSKindId.StarStar] as const
-	]);
+	const _operator = rejectBareText(
+		kindIdStorage<NonNullable<T.SplatType['_operator']>>(config.operator),
+		'SplatType.operator',
+		'a kind id'
+	);
 	const _name = rejectBareText(config.name, 'SplatType.name', 'buildIdentifier(…)');
 	const handle = currentHandle();
 	const node = {
@@ -3504,9 +3457,7 @@ export function buildSplatType(config: T.SplatType.Config): T.SplatType.Bound {
 export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bound {
 	const _name = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.GenericType['_name']>>(config.name, [
-				['type', TSKindId.TypeKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.GenericType['_name']>>(config.name),
 			'GenericType.name',
 			'buildIdentifier(…)'
 		),
@@ -3629,14 +3580,7 @@ export function buildMemberType(config: T.MemberType.Config): T.MemberType.Bound
 export function buildKeywordArgument(config: T.KeywordArgument.Config): T.KeywordArgument.Bound {
 	const _name = rejectKeywordText(
 		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.KeywordArgument['_name']>>(config.name, [
-				['print', TSKindId.PrintKeyword] as const,
-				['exec', TSKindId.ExecKeyword] as const,
-				['async', TSKindId.AsyncKeyword] as const,
-				['await', TSKindId.AwaitKeyword] as const,
-				['type', TSKindId.TypeKeyword] as const,
-				['match', TSKindId.MatchKeyword] as const
-			]),
+			kindIdStorage<NonNullable<T.KeywordArgument['_name']>>(config.name),
 			'KeywordArgument.name',
 			'buildIdentifier(…)'
 		),
@@ -3645,7 +3589,7 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config): T.Keywor
 		['print', 'exec', 'async', 'await', 'type', 'match']
 	);
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.KeywordArgument['_value']>>(config.value, []),
+		kindIdStorage<NonNullable<T.KeywordArgument['_value']>>(config.value),
 		'KeywordArgument.value',
 		'a built Expression'
 	);
@@ -3931,13 +3875,9 @@ function _buildDictionary(value?: AdmitBound<T.DictionaryElements, T.AdmittedNod
 }
 
 export function buildPair(config: T.Pair.Config): T.Pair.Bound {
-	const _key = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.Pair['_key']>>(config.key, []),
-		'Pair.key',
-		'a built Expression'
-	);
+	const _key = rejectBareText(kindIdStorage<NonNullable<T.Pair['_key']>>(config.key), 'Pair.key', 'a built Expression');
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.Pair['_value']>>(config.value, []),
+		kindIdStorage<NonNullable<T.Pair['_value']>>(config.value),
 		'Pair.value',
 		'a built Expression'
 	);
@@ -3971,7 +3911,7 @@ export function buildPair(config: T.Pair.Config): T.Pair.Bound {
 
 export function buildListComprehension(config: T.ListComprehension.Config): T.ListComprehension.Bound {
 	const _body = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ListComprehension['_body']>>(config.body, []),
+		kindIdStorage<NonNullable<T.ListComprehension['_body']>>(config.body),
 		'ListComprehension.body',
 		'a built Expression'
 	);
@@ -4046,7 +3986,7 @@ export function buildDictionaryComprehension(
 
 export function buildSetComprehension(config: T.SetComprehension.Config): T.SetComprehension.Bound {
 	const _body = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.SetComprehension['_body']>>(config.body, []),
+		kindIdStorage<NonNullable<T.SetComprehension['_body']>>(config.body),
 		'SetComprehension.body',
 		'a built Expression'
 	);
@@ -4085,7 +4025,7 @@ export function buildSetComprehension(config: T.SetComprehension.Config): T.SetC
 
 export function buildGeneratorExpression(config: T.GeneratorExpression.Config): T.GeneratorExpression.Bound {
 	const _body = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.GeneratorExpression['_body']>>(config.body, []),
+		kindIdStorage<NonNullable<T.GeneratorExpression['_body']>>(config.body),
 		'GeneratorExpression.body',
 		'a built Expression'
 	);
@@ -4126,7 +4066,7 @@ export function buildParenthesizedExpression(
 	value: AdmitBound<T.Expression | T.Yield, T.AdmittedNodes>
 ): T.ParenthesizedExpression.Bound {
 	const _expression = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ParenthesizedExpression['_expression']>>(value, []),
+		kindIdStorage<NonNullable<T.ParenthesizedExpression['_expression']>>(value),
 		'ParenthesizedExpression.expression',
 		'a built Expression / Yield'
 	);
@@ -4219,14 +4159,16 @@ function _buildCollectionElements(
 }
 
 export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Bound {
-	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
+	const _async_marker = coerceBooleanKeywordStorage(
+		rejectBareText(config.asyncMarker, 'ForInClause.asyncMarker', 'a boolean')
+	);
 	const _left = rejectBareText(config.left, 'ForInClause.left', 'a built Pattern / PatternList');
 	const _right = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ForInClause['_right']>>(config.right ?? [], []),
+		kindIdStorage<NonNullable<T.ForInClause['_right']>>(config.right ?? []),
 		'ForInClause.right',
 		'a built Expression / LambdaWithinForInClause'
 	);
-	const _comma = coerceBooleanKeywordStorage(config.comma);
+	const _comma = coerceBooleanKeywordStorage(rejectBareText(config.comma, 'ForInClause.comma', 'a boolean'));
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ForInClause as const,
@@ -4265,7 +4207,7 @@ export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Bo
 
 export function buildIfClause(value: AdmitBound<T.Expression, T.AdmittedNodes>): T.IfClause.Bound {
 	const _condition = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.IfClause['_condition']>>(value, []),
+		kindIdStorage<NonNullable<T.IfClause['_condition']>>(value),
 		'IfClause.condition',
 		'a built Expression'
 	);
@@ -4294,17 +4236,17 @@ export function buildIfClause(value: AdmitBound<T.Expression, T.AdmittedNodes>):
 
 export function buildConditionalExpression(config: T.ConditionalExpression.Config): T.ConditionalExpression.Bound {
 	const _body = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ConditionalExpression['_body']>>(config.body, []),
+		kindIdStorage<NonNullable<T.ConditionalExpression['_body']>>(config.body),
 		'ConditionalExpression.body',
 		'a built Expression'
 	);
 	const _condition = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ConditionalExpression['_condition']>>(config.condition, []),
+		kindIdStorage<NonNullable<T.ConditionalExpression['_condition']>>(config.condition),
 		'ConditionalExpression.condition',
 		'a built Expression'
 	);
 	const _alternative = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ConditionalExpression['_alternative']>>(config.alternative, []),
+		kindIdStorage<NonNullable<T.ConditionalExpression['_alternative']>>(config.alternative),
 		'ConditionalExpression.alternative',
 		'a built Expression'
 	);
@@ -4440,11 +4382,13 @@ export function buildStringContent(
 
 export function buildInterpolation(config: T.Interpolation.Config): T.Interpolation.Bound {
 	const _expression = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.Interpolation['_expression']>>(config.expression, []),
+		kindIdStorage<NonNullable<T.Interpolation['_expression']>>(config.expression),
 		'Interpolation.expression',
 		'a built Expression / ExpressionList / PatternList / Yield'
 	);
-	const _eq_marker = coerceBooleanKeywordStorage(config.eqMarker);
+	const _eq_marker = coerceBooleanKeywordStorage(
+		rejectBareText(config.eqMarker, 'Interpolation.eqMarker', 'a boolean')
+	);
 	const _type_conversion = rejectBareText(
 		config.typeConversion,
 		'Interpolation.typeConversion',
@@ -4581,7 +4525,7 @@ export const buildNone: TSKindId.None = TSKindId.None;
 
 export function buildAwait(value: AdmitBound<T.PrimaryExpression, T.AdmittedNodes>): T.Await.Bound {
 	const _expression = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.Await['_expression']>>(value, []),
+		kindIdStorage<NonNullable<T.Await['_expression']>>(value),
 		'Await.expression',
 		'a built PrimaryExpression'
 	);
@@ -5326,7 +5270,7 @@ function _buildDictionaryElements(
 
 export function buildSliceGroup(value?: AdmitBound<T.Expression, T.AdmittedNodes>): T.SliceGroup.Bound {
 	const _expression = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.SliceGroup['_expression']>>(value, []),
+		kindIdStorage<NonNullable<T.SliceGroup['_expression']>>(value),
 		'SliceGroup.expression',
 		'a built Expression'
 	);
@@ -5380,12 +5324,12 @@ export function buildExceptClauseExceptionAs(
 	config: T.ExceptClauseExceptionAs.Config
 ): T.ExceptClauseExceptionAs.Bound {
 	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ExceptClauseExceptionAs['_value']>>(config.value, []),
+		kindIdStorage<NonNullable<T.ExceptClauseExceptionAs['_value']>>(config.value),
 		'ExceptClauseExceptionAs.value',
 		'a built Expression'
 	);
 	const _alias = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ExceptClauseExceptionAs['_alias']>>(config.alias, []),
+		kindIdStorage<NonNullable<T.ExceptClauseExceptionAs['_alias']>>(config.alias),
 		'ExceptClauseExceptionAs.alias',
 		'a built Expression'
 	);
@@ -5668,10 +5612,7 @@ function _buildPrintChevronArguments(
 export function buildPrintStatementChevron(config: T.PrintStatementChevron.Config): T.PrintStatementChevron.Bound {
 	const _chevron = rejectBareText(config.chevron, 'PrintStatementChevron.chevron', 'a built Chevron');
 	const _print_chevron_arguments = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.PrintStatementChevron['_print_chevron_arguments']>>(
-			config.printChevronArguments,
-			[[',', TSKindId.Comma] as const]
-		),
+		kindIdStorage<NonNullable<T.PrintStatementChevron['_print_chevron_arguments']>>(config.printChevronArguments),
 		'PrintStatementChevron.printChevronArguments',
 		'a built PrintChevronArguments'
 	);
@@ -6419,7 +6360,7 @@ export function buildLineContinuationNewline(text: string): T.LineContinuationNe
 export const buildLineContinuationNul: TSKindId.LineContinuationNul = TSKindId.LineContinuationNul;
 
 export function buildSimplePatternNegative(config: T.SimplePatternNegative.Config): T.SimplePatternNegative.Bound {
-	const _sign = coerceBooleanKeywordStorage(config.sign);
+	const _sign = coerceBooleanKeywordStorage(rejectBareText(config.sign, 'SimplePatternNegative.sign', 'a boolean'));
 	const _value = rejectBareText(config.value, 'SimplePatternNegative.value', 'a built Integer / Float');
 	const handle = currentHandle();
 	const node = {
@@ -6513,7 +6454,7 @@ export function buildExceptClauseException(
 export function buildAssignmentEq(config: T.AssignmentEq.Config): T.AssignmentEq.Bound {
 	const _left = rejectBareText(config.left, 'AssignmentEq.left', 'a built Pattern / PatternList');
 	const _right = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.AssignmentEq['_right']>>(config.right, []),
+		kindIdStorage<NonNullable<T.AssignmentEq['_right']>>(config.right),
 		'AssignmentEq.right',
 		'a built Expression / ExpressionList / Assignment / AugmentedAssignment / PatternList / Yield'
 	);
@@ -6579,7 +6520,7 @@ export function buildAssignmentTyped(config: T.AssignmentTyped.Config): T.Assign
 	const _left = rejectBareText(config.left, 'AssignmentTyped.left', 'a built Pattern / PatternList');
 	const _type = rejectBareText(config.type, 'AssignmentTyped.type', 'a built Type');
 	const _right = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.AssignmentTyped['_right']>>(config.right, []),
+		kindIdStorage<NonNullable<T.AssignmentTyped['_right']>>(config.right),
 		'AssignmentTyped.right',
 		'a built Expression / ExpressionList / Assignment / AugmentedAssignment / PatternList / Yield'
 	);
@@ -6838,9 +6779,10 @@ export function buildMatchBlockEmpty(...args: unknown[]) {
 		: _buildMatchBlockEmpty(buildNewline as TSKindId.Newline);
 }
 function _buildMatchBlockEmpty(value?: AdmitBound<TSKindId.Newline, T.AdmittedNodes>): T.MatchBlockEmpty.Bound {
-	const _newline = coerceKindEnumStorage<NonNullable<T.MatchBlockEmpty['_newline']>>(
-		orDefault(value, () => TSKindId.Newline as const),
-		[['\n', TSKindId.Newline] as const]
+	const _newline = rejectBareText(
+		kindIdStorage<NonNullable<T.MatchBlockEmpty['_newline']>>(orDefault(value, () => TSKindId.Newline as const)),
+		'MatchBlockEmpty.newline',
+		'a kind id'
 	);
 	const handle = currentHandle();
 	const node = {
@@ -6993,9 +6935,10 @@ export function buildSuiteEmpty(...args: unknown[]) {
 	return prebuilt ? _buildSuiteEmpty(args[0] as TSKindId.Newline) : _buildSuiteEmpty(buildNewline as TSKindId.Newline);
 }
 function _buildSuiteEmpty(value?: AdmitBound<TSKindId.Newline, T.AdmittedNodes>): T.SuiteEmpty.Bound {
-	const _newline = coerceKindEnumStorage<NonNullable<T.SuiteEmpty['_newline']>>(
-		orDefault(value, () => TSKindId.Newline as const),
-		[['\n', TSKindId.Newline] as const]
+	const _newline = rejectBareText(
+		kindIdStorage<NonNullable<T.SuiteEmpty['_newline']>>(orDefault(value, () => TSKindId.Newline as const)),
+		'SuiteEmpty.newline',
+		'a kind id'
 	);
 	const handle = currentHandle();
 	const node = {
@@ -7023,27 +6966,13 @@ function _buildSuiteEmpty(value?: AdmitBound<TSKindId.Newline, T.AdmittedNodes>)
 export function buildComparisonOperatorComparator(
 	config: T.ComparisonOperatorComparator.Config
 ): T.ComparisonOperatorComparator.Bound {
-	const _operators = coerceKindEnumStorage<NonNullable<T.ComparisonOperatorComparator['_operators']>>(
-		config.operators,
-		[
-			['<', TSKindId.Lt] as const,
-			['<=', TSKindId.LtEq] as const,
-			['==', TSKindId.EqEq] as const,
-			['!=', TSKindId.BangEq] as const,
-			['>=', TSKindId.GtEq] as const,
-			['>', TSKindId.Gt] as const,
-			['<>', TSKindId.LtGt] as const,
-			['in', TSKindId.InKeyword] as const,
-			['not in', TSKindId.NotIn] as const,
-			['is', TSKindId.IsKeyword] as const,
-			['is not', TSKindId.IsNot] as const
-		]
+	const _operators = rejectBareText(
+		kindIdStorage<NonNullable<T.ComparisonOperatorComparator['_operators']>>(config.operators),
+		'ComparisonOperatorComparator.operators',
+		'a kind id'
 	);
 	const _primary_expression = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ComparisonOperatorComparator['_primary_expression']>>(
-			config.primaryExpression,
-			[]
-		),
+		kindIdStorage<NonNullable<T.ComparisonOperatorComparator['_primary_expression']>>(config.primaryExpression),
 		'ComparisonOperatorComparator.primaryExpression',
 		'a built PrimaryExpression'
 	);
@@ -7077,7 +7006,7 @@ export function buildComparisonOperatorComparator(
 
 export function buildYieldFromClause(value: AdmitBound<T.Expression, T.AdmittedNodes>): T.YieldFromClause.Bound {
 	const _expression = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.YieldFromClause['_expression']>>(value, []),
+		kindIdStorage<NonNullable<T.YieldFromClause['_expression']>>(value),
 		'YieldFromClause.expression',
 		'a built Expression'
 	);
@@ -7275,7 +7204,7 @@ export function buildNames(value: AdmitBound<T.ImportList, T.AdmittedNodes>): T.
 
 export function buildAsPatternTarget(value: AdmitBound<T.Expression, T.AdmittedNodes>): T.AsPatternTarget.Bound {
 	const _content = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.AsPatternTarget['_content']>>(value, []),
+		kindIdStorage<NonNullable<T.AsPatternTarget['_content']>>(value),
 		'AsPatternTarget.content',
 		'a built Expression'
 	);

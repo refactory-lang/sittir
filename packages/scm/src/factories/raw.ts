@@ -13,8 +13,7 @@ import {
 	describeValue,
 	restItems,
 	coerceBooleanKeywordStorage,
-	coerceKindEnumStorage,
-	coerceMixedEnumStorage,
+	kindIdStorage,
 	rejectBareText
 } from '@sittir/common/utils';
 
@@ -441,7 +440,7 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 
 export function buildAnonymousNode(config: T.AnonymousNode.Config): T.AnonymousNode.Bound {
 	const _name = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.AnonymousNode['_name']>>(config.name, [['_', TSKindId.Underscore] as const]),
+		kindIdStorage<NonNullable<T.AnonymousNode['_name']>>(config.name),
 		'AnonymousNode.name',
 		'a built String'
 	);
@@ -547,15 +546,17 @@ function _buildNegatedField(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T
 }
 
 export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
-	const _prefix = coerceKindEnumStorage<NonNullable<T.Predicate['_prefix']>>(config.prefix, [
-		['#', TSKindId.Pound] as const,
-		['.', TSKindId.Dot] as const
-	]);
+	const _prefix = rejectBareText(
+		kindIdStorage<NonNullable<T.Predicate['_prefix']>>(config.prefix),
+		'Predicate.prefix',
+		'a kind id'
+	);
 	const _name = rejectBareText(config.name, 'Predicate.name', 'buildImmediateIdentifier(…)');
-	const _type = coerceKindEnumStorage<NonNullable<T.Predicate['_type']>>(config.type, [
-		['?', TSKindId.Qmark] as const,
-		['!', TSKindId.Bang] as const
-	]);
+	const _type = rejectBareText(
+		kindIdStorage<NonNullable<T.Predicate['_type']>>(config.type),
+		'Predicate.type',
+		'a kind id'
+	);
 	const _parameters = rejectBareText(config.parameters, 'Predicate.parameters', 'a built Parameters');
 	const handle = currentHandle();
 	const node = {
@@ -595,11 +596,11 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
 export function buildListElementQuantifier(
 	value: AdmitBound<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark, T.AdmittedNodes>
 ): T.ListElementQuantifier.Bound {
-	const _quantifier = coerceKindEnumStorage<NonNullable<T.ListElementQuantifier['_quantifier']>>(value, [
-		['*', TSKindId.Star] as const,
-		['+', TSKindId.Plus] as const,
-		['?', TSKindId.Qmark] as const
-	]);
+	const _quantifier = rejectBareText(
+		kindIdStorage<NonNullable<T.ListElementQuantifier['_quantifier']>>(value),
+		'ListElementQuantifier.quantifier',
+		'a kind id'
+	);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ListElementQuantifier as const,
@@ -700,7 +701,7 @@ export function buildGroupingGroup(config: T.GroupingGroup.Config): T.GroupingGr
 		'GroupingGroup.groupExpression',
 		'a built Definition / GroupExpressionArm'
 	);
-	const _anchor = coerceBooleanKeywordStorage(config.anchor);
+	const _anchor = coerceBooleanKeywordStorage(rejectBareText(config.anchor, 'GroupingGroup.anchor', 'a boolean'));
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.GroupingGroup as const,
@@ -756,7 +757,7 @@ export const buildAnchor: TSKindId.Anchor = TSKindId.Anchor;
 
 export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNodePlain.Bound {
 	const _name = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.NamedNodePlain['_name']>>(config.name, [['_', TSKindId.Underscore] as const]),
+		kindIdStorage<NonNullable<T.NamedNodePlain['_name']>>(config.name),
 		'NamedNodePlain.name',
 		'buildIdentifier(…)'
 	);
@@ -844,7 +845,9 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 }
 
 export function buildNamedNodeGroupChildren(config: T.NamedNodeGroupChildren.Config): T.NamedNodeGroupChildren.Bound {
-	const _anchor = coerceBooleanKeywordStorage(config.anchor);
+	const _anchor = coerceBooleanKeywordStorage(
+		rejectBareText(config.anchor, 'NamedNodeGroupChildren.anchor', 'a boolean')
+	);
 	const _named_node_expressions = rejectBareText(
 		config.namedNodeExpressions ?? [],
 		'NamedNodeGroupChildren.namedNodeExpressions',
@@ -883,7 +886,9 @@ export function buildNamedNodeGroupChildren(config: T.NamedNodeGroupChildren.Con
 export function buildNamedNodeGroupAnchoredLast(
 	config: T.NamedNodeGroupAnchoredLast.Config
 ): T.NamedNodeGroupAnchoredLast.Bound {
-	const _anchor = coerceBooleanKeywordStorage(config.anchor);
+	const _anchor = coerceBooleanKeywordStorage(
+		rejectBareText(config.anchor, 'NamedNodeGroupAnchoredLast.anchor', 'a boolean')
+	);
 	const _named_node_expressions = rejectBareText(
 		config.namedNodeExpressions ?? [],
 		'NamedNodeGroupAnchoredLast.namedNodeExpressions',

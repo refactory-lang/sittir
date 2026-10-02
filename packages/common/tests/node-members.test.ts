@@ -155,3 +155,14 @@ describe('withMethods still serves the old helpers through the same functions', 
 		expect(node.$trivia.leading(comment('// a'))).toBe(node);
 	});
 });
+
+describe('kindIdStorage', () => {
+	it('keeps absent and ids, reads arrays item by item, and leaves text for the slot to refuse', async () => {
+		const { kindIdStorage } = await import('../src/utils.ts');
+		expect(kindIdStorage(undefined)).toBeUndefined();
+		expect(kindIdStorage(null)).toBeUndefined();
+		expect(kindIdStorage(7)).toBe(7);
+		expect(kindIdStorage([1, undefined, 2])).toEqual([1, 2]);
+		expect(kindIdStorage('+')).toBe('+');
+	});
+});

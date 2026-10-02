@@ -322,3 +322,7 @@ A seated key's `$with` setter. Through a present group it writes the group's own
 ### `packages/common/src/transport-data.ts::isDataKey`
 
 Whether a key carries node data across the native boundary: a storage key (`_<slot>`, `$other`) or a `$` metadata key that is not a member (`$with`, `$trivia`, `$engine`, `$render`, `$toEdit`, `$replace`). A reader, a list index, `length` and a list option are members and so are not data. The boundary projection and every walker that visits a node's keys select by this, and read only the keys it selects, so a member that throws when read is never read.
+
+### `packages/common/src/runtime.ts::kindIdStorage`
+
+A strict builder's storage for a kind-enum or mixed slot: absent stays absent, a kind id stays itself, and an array is read item by item with the absent ones dropped. It reads no text: a string passes through unchanged and the slot's refusal (`rejectBareText`, naming a kind id or the built node the slot holds) rejects it. The loose coercers keep `coerceKindEnumStorage` and `coerceMixedEnumStorage`, whose tables map text.

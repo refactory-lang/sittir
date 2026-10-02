@@ -1672,6 +1672,7 @@ function _resolveManyBranch<T>(
 function _resolveBooleanKeyword<T>(v: _LooseFieldInput): T {
 	if (v === undefined || v === null) return v as T;
 	if (v === true || v === false) return v as T;
+	if (typeof v === 'string') return true as T;
 	if (isNode(v)) return v as T;
 	if (Array.isArray(v)) return v as T;
 	return v as T;

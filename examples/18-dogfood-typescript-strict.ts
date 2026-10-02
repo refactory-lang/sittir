@@ -66,7 +66,7 @@ function param(name: string, type: string) {
 /** `let <name> = <value>;` — the `;` is the terminator option's default. */
 function letStrict(name: string, value: string) {
 	return engine.build.lexicalDeclaration.strict({
-		kind: 'let',
+		kind: engine.kinds.LetKeyword,
 		declarators: [engine.build.variableDeclarator.plain.strict({ name: id(name), value: id(value) })],
 	});
 }
@@ -102,7 +102,7 @@ export function returnResultStrict() {
 
 /** `format.boundary` */
 export function formatBoundaryStrict() {
-	return engine.build.memberExpression.strict({ object: id('format'), separator: '.', property: id('boundary') });
+	return engine.build.memberExpression.strict({ object: id('format'), separator: engine.kinds.Dot, property: id('boundary') });
 }
 
 export function rebuildFormatStrict() {

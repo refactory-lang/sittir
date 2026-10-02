@@ -1855,6 +1855,7 @@ function emitResolverHelpers(
 	lines.push('function _resolveBooleanKeyword<T>(v: _LooseFieldInput): T {');
 	lines.push('  if (v === undefined || v === null) return v as T;');
 	lines.push('  if (v === true || v === false) return v as T;');
+	lines.push('  if (typeof v === "string") return true as T;');
 	lines.push('  if (isNode(v)) return v as T;');
 	lines.push('  if (Array.isArray(v)) return v as T;');
 	lines.push('  return v as T;');

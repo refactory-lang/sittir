@@ -16616,3 +16616,7 @@ The inner-trivia functions a grammar's builder module imports: none when no kind
 ### `packages/codegen/src/emitters/node-members.ts::withEntry`
 
 One `$with` setter line: the entry runs its rebuild through `rebuilt`, which scopes the rebuild in the node's engine and hands the node's trivia on to the result.
+
+### `packages/codegen/src/emitters/factories.ts::narrowedStorageExpr`
+
+The storage of a refine form's narrowed slot: the kind id the narrowing literal names (a missing one fails at emit time), `true` for a keyword-presence slot. A strict builder reads no text, so the literal is resolved here once instead of being mapped at run time.

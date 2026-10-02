@@ -487,7 +487,8 @@ export type LooseValue<V, Scalars = {}, Strings = {}, NsMap = {}> = AdmitBound<
  *
  * A keyword-presence slot (boolean keyword, bitflag, kind enum) admits an
  * explicit `undefined` only on a key the node declares optional; a required
- * key rejects it.
+ * key rejects it. A boolean-keyword slot takes a `boolean` and a kind-enum slot
+ * takes kind ids: a strict config never takes the text of a keyword or kind.
  *
  * Three shapes it produces:
  *
@@ -510,11 +511,11 @@ export type ConfigOf<T, NsMap = {}> = T extends unknown
 				[K in keyof FieldsOf<T> as EscapeReservedAccessor<CamelCase<K & string>>]: IsBooleanKeywordSlot<
 					FieldInputType<T, K>
 				> extends true
-					? boolean | BooleanKeywordSlotText<FieldInputType<T, K>> | UndefinedIfOptional<FieldsOf<T>, K>
+					? boolean | UndefinedIfOptional<FieldsOf<T>, K>
 					: IsBitflagSlot<FieldInputType<T, K>> extends true
 						? BitflagSlotEnum<FieldInputType<T, K>> | UndefinedIfOptional<FieldsOf<T>, K>
 						: IsKindEnumSlot<FieldInputType<T, K>> extends true
-							? AdmitBound<KindEnumSlotInput<FieldInputType<T, K>>, NodeLookup<NsMap>> | UndefinedIfOptional<FieldsOf<T>, K>
+							? AdmitBound<FieldInputType<T, K>, NodeLookup<NsMap>> | UndefinedIfOptional<FieldsOf<T>, K>
 							: AdmitBound<AdmitSlotInput<FieldInputType<T, K>>, NodeLookup<NsMap>>;
 			} &
 				// Child surface: polymorph variants with a single-child slot hoist
