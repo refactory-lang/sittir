@@ -3792,32 +3792,48 @@ tree has.
 // nothing common sticks out.
 ```
 
-### `packages/codegen/src/compiler/link.ts::findRepeatWithSeparator`
+### `packages/codegen/src/compiler/link.ts::liftSeq`
 
-```text
-/**
- * Locate the unique repeat-with-separator member in a seq's member list, or
- * `-1` when there is zero or more than one (not a commaSep shape). Matches
- * both `repeat` and `repeat1` — a nested `seq(x, repeat(seq(sep, x)))` member
- * already collapses to `repeat1` bottom-up (Case 1, above) before an
- * enclosing seq's own flank-absorption runs, so restricting this to `repeat`
- * alone would miss the already-lifted inner list entirely.
- */
-```
+Lifts a seq: every run of members that is a separated list becomes one repeat,
+and the members outside such a run are lifted on their own. Link holds no
+shape of its own for a list. `separatedListAt` asks the recognizer enrich
+uses, so the two phases cannot disagree about what a list is.
 
-### `packages/codegen/src/compiler/link.ts::liftSeqMembers`
+When a `head` list is the whole seq, the repeat replaces the seq and takes its
+position-carried attributes (`carrySeqAttrs`). Otherwise the repeat is a
+member of the seq, and the seq keeps its own `id`, field name and metadata.
 
-```text
-/**
- * Lift a seq's member list: try the `commaSep1` collapse first, then trailing-
- * separator absorption, else keep the seq unchanged. When the seq survives, the
- * original node is preserved via spread so its `id` / `fieldName` / `metadata`
- * (assigned by the time this runs in link — unlike at evaluate-construction
- * time) are NOT dropped. A `commaSep1` collapse to `repeat1` carries the seq's
- * own modifier attributes onto the replacement, since the repeat takes the
- * seq's structural position.
- */
-```
+This is the transform half of separated-list handling; the detection half is
+`dsl/rule-patterns.ts`. It runs in link, after wire and enrich, so every list
+is lifted from one place, whether the grammar wrote it or enrich synthesized
+it. Re-running it over a lifted tree changes nothing.
+
+### `packages/codegen/src/compiler/link.ts::separatedListAt`
+
+The separated list that starts at one member of a seq, if there is one: the
+longest run of members from that position that `separatedListBodyInfo` reads
+as a `head`, `leading` or `tail` list, built as the canonical repeat. It
+returns the repeat, the position after the run, and whether the run is a
+`head` list spanning the whole seq.
+
+The run is read from the seq's UNLIFTED members, because the recognizer reads
+each repeat's raw `seq(separator, element)` content; the element is lifted
+afterwards on its own. The separator's flanks come from the recognizer
+(`leading`, `trailing`):
+
+- `head`: a `repeat1` of the element. The head element merged into the list
+  is what makes the repeat's separator a between-separator, so no leading
+  flank remains unless a separator stands before the head. When the list was
+  written as a nested seq (`carrier`) inside a longer seq, the repeat takes
+  that nested seq's position-carried attributes.
+- `leading` and `tail`: the grammar's own repeat, kept as `repeat` or
+  `repeat1`, with the flank the neighbouring member adds. A `tail` list is
+  valid with no element (an empty `macro_rules! m {}` body), so it stays a
+  plain `repeat`; it is not `terminated`, because a lone element can be the
+  unterminated tail.
+
+The `terminated` form is not read here; it is lifted for a whole seq only, by
+`liftTerminatedList`.
 
 ### `packages/codegen/src/compiler/link.ts::carrySeqAttrs`
 
@@ -7462,62 +7478,6 @@ since the parser never mints the aliased node.
 // minted as a literal SYMBOL carrying both ids.
 ```
 
-### `packages/codegen/src/compiler/link.ts::absorbSuffixSeparatedList`
-
-```text
-/**
- * Merge a SUFFIX-style separated list with no standalone first element
- * (`(x sep)* x?` — each element trails its own separator, with an optional
- * final unterminated element) into one `repeat` node. `separatorOf` already
- * stamps a bare `repeat(seq(x, sep))` as `repeat(x){separator:{value:sep,
- * trailing:'mandatory'}}` during this same bottom-up walk — this pass
- * recognizes the window that also carries an unterminated final element
- * beside that already-stamped repeat:
- *
- *  - `[repeat(x){sep, trailing:'mandatory'}, optional(x)]` — the construct
- *    is valid with zero elements (e.g. an empty `macro_rules! m {}` body);
- *    stays a plain `repeat`.
- *
- * It relaxes `trailing` from `'mandatory'` (true only of the repeat's OWN
- * body in isolation) to `'optional'` (true of the whole merged list, once
- * the trailing unterminated element is accounted for) — the same relaxation
- * `liftCommaSep`'s prefix Case 2 performs for the mirror-image shape.
- */
-```
-
-The window is NOT stamped `terminated`: with no mandatory first element, a
-lone element can be the optional (unterminated) tail itself, so a single
-element does not require its separator. The list that does require it, the one
-whose first element carries its own separator, is `liftTerminatedList`'s.
-
-```text
-// ---------------------------------------------------------------------------
-// Separator-lift pass (moved from lift-separators.ts in that change
-// de-scatter).
-//
-// This is the TRANSFORM half of separated-list handling (the DETECTION half
-// lives in `dsl/rule-patterns.ts`). It rewrites the raw shapes tree-sitter
-// authors write into one canonical repeat node carrying `separator` /
-// `leading` / `trailing` markers.
-//
-// Why a link pass (not the evaluate constructors): the lift used to run at
-// DSL-call time, before wire/override callbacks and enrich-injected rules
-// existed. Running it here (post-wire, post-enrich) means every separated
-// list — authored or synthesized — is lifted from one place.
-//
-// Idempotent: re-running over an already-lifted tree is a no-op.
-// ---------------------------------------------------------------------------
-```
-
-```text
-/**
- * Merge adjacent `repeat`/`repeat1`(with separator) + `optional(sepLit)` pairs
- * inside a seq's member list by stamping `trailing: true` on the repeat and
- * dropping the optional. Returns the new member array if anything merged, else
- * `null`.
- */
-```
-
 ### `packages/codegen/src/compiler/link.ts::liftTerminatedList`
 
 Lifts a seq that is a `terminated` separated list (a list whose first element
@@ -8746,93 +8706,19 @@ every root rebuild so the assembled node still reads it.
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/compiler/link.ts::absorbTrailingSeparator`
-
-#### body
-
-```text
-// Structural comparison (not literal-string-only) so a choice-shaped
-// separator (e.g. `optional(choice(',', ';'))`) is absorbed the same
-// way a plain literal one is.
-```
-
-### `packages/codegen/src/compiler/link.ts::liftCommaSep`
-
-```text
-/**
- * Detect the `commaSep1` family inside a seq's member list and lift it to a
- * single `repeat1` node with `separator` plus optional `leading` / `trailing`
- * markers. Returns `null` if no lift applies. Relies on the inner
- * `repeat(seq(sep, x))` already carrying a lifted `separator` — guaranteed
- * when this runs bottom-up (children lifted first).
- */
-```
-
-#### body
-
-```text
-// Structural comparison (not literal-string-only) so a choice-shaped
-// separator (e.g. `optional(choice(',', ';'))`) is absorbed the same way
-// a plain literal one is.
-```
-
-#### body
-
-```text
-// Head absorption (Cases 1-2): the standalone head element is the
-// structural proof of BETWEEN-join semantics — each ex-repeat element's
-// prefix separator becomes a between-separator once the head merges into
-// the same list. Clear the positional `leading: 'mandatory'` the inner
-// sep-first repeat lift stamped; only a HEADLESS sep-first repeat (no
-// absorbable head in its rule, e.g. python `_expression_list_expressions`)
-// keeps it and renders the flank.
-// Case 1: [x, repeat(sep, x)]
-```
-
-#### body
-
-```text
-// Case 2: [x, repeat(sep, x), optional(sep)] — genuinely OPTIONAL
-// trailing (per-instance variability, needs runtime capture).
-```
-
-#### body
-
-```text
-// Case 3: [sep, x, repeat(sep, x)] — a MANDATORY leading separator
-// (bare, not `optional(...)`-wrapped): always present, no per-instance
-// variability. Stamped `leading: 'mandatory'` — a real, distinct
-// `DelimiterMode` value from Case 4's `'optional'`, not the same
-// boolean `true` both used to share (which is what let a genuinely
-// mandatory flank get misclassified as `'optional'` downstream, per
-// `AssembledList.leadingDelimiter`'s doc comment, node-map.ts).
-```
-
-#### body
-
-```text
-// Case 4: [optional(sep), repeat(sep, x)] or
-// [optional(sep), repeat(sep, x), optional(sep)] — genuinely OPTIONAL
-// leading separator (the flanking counterpart of Case 3's mandatory
-// form), also absorbing a trailing optional on the far side when
-// present. No case handled an OPTIONAL leading flank at all before this
-// widening (Case 3 only ever matched a bare, mandatory literal/
-// structural separator).
-```
-
 ### `packages/codegen/src/compiler/link.ts::liftSeparators`
 
 ```text
 /**
- * Lift every separated list in a rule tree, bottom-up. Children are lifted
- * first so an inner `repeat(seq(sep, x))` carries its separator before the
- * enclosing seq's commaSep1 detection runs — the same order the evaluate
- * constructors produced by lifting inner-to-outer at call time.
+ * Lift every separated list in a rule tree. A repeat that stands alone is
+ * stamped with its own separator; a seq hands its members to the list
+ * recognizer first.
  */
 ```
 
-A seq that is a `terminated` list is the exception to bottom-up: it is lifted
-whole, from its unlifted members, by `liftTerminatedList`.
+A seq is the exception to bottom-up: its lists are read from its unlifted
+members (`liftTerminatedList`, then `liftSeq`), and each list's element is
+lifted afterwards.
 
 #### body
 
@@ -8842,10 +8728,10 @@ whole, from its unlifted members, by `liftTerminatedList`.
 // within `repeat(seq(content, SEP))` — every iteration (including
 // the last) unconditionally emits `SEP`, no per-instance
 // omission possible. That is a genuinely MANDATORY trailing
-// flank, not the `optional` kind `liftCommaSep`'s Case 2/4 stamp
+// flank, not the `optional` kind a seq's list lift stamps
 // (this function, `liftSeparators`, is a separate, earlier lift
 // that never sees an `optional(sep)`-wrapped shape — that shape
-// only arises from the seq-of-3-members pattern `liftCommaSep`
+// only arises from the seq-level list forms `liftSeq`
 // handles downstream in link).
 // Symmetric positional stamp: sep-FIRST (`repeat(seq(SEP, X))`)
 // means every element is PREFIXED — a mandatory LEADING flank.
