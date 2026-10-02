@@ -181,12 +181,6 @@ them once each, in canonical flat order. The former per-arm kinds and their
 				// `body-pattern-zero-match`).
 ```
 
-### `arguments` (`packages/typescript/grammar.sittir.ts:448`)
-
-```text
-				// Naked-choice field names (was unresolvable `content` slots).
-```
-
 ### `class_body` (`packages/typescript/grammar.sittir.ts:471`)
 
 ```text
@@ -394,15 +388,15 @@ them once each, in canonical flat order. The former per-arm kinds and their
 				//                                          //         override_modifier; _kw_static_marker synthesized
 				//                                          //         here; add to inline: if parse drift emerges)
 				//   optional($.override_modifier),         // pos 2  (auto-promoted: override_modifier by enrich)
-				//   optional('readonly'),                  // pos 3  →  '3/0'  (readonly_marker)
-				//   optional('async'),                     // pos 4  →  '4/0'  (async_marker)
+				//   optional('readonly'),                  // pos 3  (auto-promoted: readonly_marker by enrich)
+				//   optional('async'),                     // pos 4  (auto-promoted: async_marker by enrich)
 				//   optional(choice('get','set','*')),    // pos 5  →  '5/0'  (accessor_kind, choice-of-strings)
 				//   field('name', $._property_name),       // pos 6
 				//   optional('?'),                         // pos 7  →  '7/0'  (optional_marker)
 				//   $._call_signature,                     // pos 8
 				//   field('body', $.statement_block)))    // pos 9
-				// Field-promotion wave 3 (016 task #25): label `async`, the
-				// accessor `get`/`set`/`*`, and trailing `?` so render preserves
+				// Field-promotion wave 3 (016 task #25): label the
+				// accessor `get`/`set`/`*` and trailing `?` so render preserves
 				// `async get foo?(): T {}` shapes. Naming follows `<token>_marker`
 				// (016 task #30); enrich's CHOICE-form-of-optional path doesn't
 				// fire on tree-sitter-evaluated rules so these positions are
@@ -451,12 +445,6 @@ them once each, in canonical flat order. The former per-arm kinds and their
 				// non_null_expression: 1 field(s)
 ```
 
-### `program` (`packages/typescript/grammar.sittir.ts:693`)
-
-```text
-				// program: 2 field(s)
-```
-
 ### `property_signature` (`packages/typescript/grammar.sittir.ts:699`)
 
 ```text
@@ -489,7 +477,7 @@ them once each, in canonical flat order. The former per-arm kinds and their
 ### `statement_block` (`packages/typescript/grammar.sittir.ts:724`)
 
 ```text
-				// statement_block: 2 field(s)
+				// statement_block: 1 field(s)
 ```
 
 ### `type_assertion` (`packages/typescript/grammar.sittir.ts:730`)
@@ -565,12 +553,9 @@ land in one slot.
 
 `function_expression`, `function_declaration`, `generator_function`, and
 `generator_function_declaration` all start with `optional('async')` at
-position 0, and each labels `0/0` as `async_marker` so render preserves
-`async function …` / `async function* …` shapes.
-
-They need hand-promotion because all four are wrapped in `prec(…)`, and
-enrich's optional-keyword pass doesn't descend through `prec`. `arrow_function`
-is a bare seq, so enrich auto-promotes it and needs no entry.
+position 0. Enrich's optional-keyword pass fields it as `async_marker`, the
+same as `arrow_function`, so render preserves `async function …` /
+`async function* …` shapes; no `patches:` entry names it.
 
 The promotion only works because `_kw_async_marker` is inlined at every
 reference site (see `inline:`). Un-inlined, the synthesized hidden rule's
@@ -653,20 +638,16 @@ The same rule governs the other standalone optional-punct markers
 
 ```text
 				// constructor_type: prec.left(seq(
-				//   optional('abstract'),  // pos 0  →  '0/0'  (abstract_marker)
+				//   optional('abstract'),  // pos 0  (auto-promoted: abstract_marker by enrich)
 				//   'new', type_parameters?, parameters, '=>', type))
-				// prec.left wrapper hides the seq from enrich; hand-promoted here.
 ```
 
 ### `enum_declaration` (`packages/typescript/grammar.sittir.ts:906`)
 
 ```text
 				// enum_declaration: seq(
-				//   optional('const'),  // pos 0  →  '0/0'  (const_marker)
+				//   optional('const'),  // pos 0  (auto-promoted: const_marker by enrich)
 				//   'enum', name, body)
-				// Kept hand-promoted because the factoryRoundtrip AST match fails
-				// when only enrich auto-promotes (synthesized `_kw_const_marker`
-				// content shape diverges).
 ```
 
 ### `function_signature` (`packages/typescript/grammar.sittir.ts:916`)
@@ -688,9 +669,8 @@ The same rule governs the other standalone optional-punct markers
 
 ```text
 				// assignment_expression: prec.right('assign', seq(
-				//   optional('using'),  // pos 0  →  '0/0'  (using_marker)
+				//   optional('using'),  // pos 0  (auto-promoted: using_marker by enrich)
 				//   field('left', ...), '=', field('right', ...)))
-				// prec.right wrapper hides the seq from enrich; hand-promoted here.
 ```
 
 ### `export_specifier` (`packages/typescript/grammar.sittir.ts:938`)

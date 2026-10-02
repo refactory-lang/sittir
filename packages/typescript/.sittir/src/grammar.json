@@ -18,7 +18,7 @@
                 "name": "hash_bang_line"
               },
               "metadata": {
-                "fieldSource": "override"
+                "fieldSource": "enriched"
               }
             },
             {
@@ -37,7 +37,7 @@
             }
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         }
       ]
@@ -990,7 +990,7 @@
               }
             },
             "metadata": {
-              "fieldSource": "override"
+              "fieldSource": "enriched"
             }
           },
           {
@@ -4834,7 +4834,7 @@
                   "name": "_kw_async_marker"
                 },
                 "metadata": {
-                  "fieldSource": "override"
+                  "fieldSource": "enriched"
                 }
               },
               {
@@ -4894,7 +4894,7 @@
                   "name": "_kw_async_marker"
                 },
                 "metadata": {
-                  "fieldSource": "override"
+                  "fieldSource": "enriched"
                 }
               },
               {
@@ -4963,7 +4963,7 @@
                   "name": "_kw_async_marker"
                 },
                 "metadata": {
-                  "fieldSource": "override"
+                  "fieldSource": "enriched"
                 }
               },
               {
@@ -5027,7 +5027,7 @@
                   "name": "_kw_async_marker"
                 },
                 "metadata": {
-                  "fieldSource": "override"
+                  "fieldSource": "enriched"
                 }
               },
               {
@@ -5775,7 +5775,7 @@
                   "name": "_kw_using_marker"
                 },
                 "metadata": {
-                  "fieldSource": "override"
+                  "fieldSource": "enriched"
                 }
               },
               {
@@ -7894,7 +7894,7 @@
             ]
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         },
         {
@@ -8273,7 +8273,7 @@
                   "name": "_kw_static_marker"
                 },
                 "metadata": {
-                  "fieldSource": "override"
+                  "fieldSource": "enriched"
                 }
               },
               {
@@ -8311,7 +8311,7 @@
                   "name": "_kw_readonly_marker"
                 },
                 "metadata": {
-                  "fieldSource": "override"
+                  "fieldSource": "enriched"
                 }
               },
               {
@@ -8330,7 +8330,7 @@
                   "name": "_kw_async_marker"
                 },
                 "metadata": {
-                  "fieldSource": "override"
+                  "fieldSource": "enriched"
                 }
               },
               {
@@ -9236,7 +9236,7 @@
                 "name": "_kw_static_marker"
               },
               "metadata": {
-                "fieldSource": "override"
+                "fieldSource": "enriched"
               }
             },
             {
@@ -10316,7 +10316,7 @@
                 "name": "_kw_const_marker"
               },
               "metadata": {
-                "fieldSource": "override"
+                "fieldSource": "enriched"
               }
             },
             {
@@ -11102,7 +11102,7 @@
                   "name": "_kw_abstract_marker"
                 },
                 "metadata": {
-                  "fieldSource": "override"
+                  "fieldSource": "enriched"
                 }
               },
               {
@@ -12393,7 +12393,7 @@
                 "name": "_kw_static_marker"
               },
               "metadata": {
-                "fieldSource": "override"
+                "fieldSource": "enriched"
               }
             },
             {

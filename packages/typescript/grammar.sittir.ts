@@ -198,9 +198,6 @@ export default sittirGrammar(base, {
 		binary_expression: {
 			24: variant('in')
 		},
-		arguments: {
-			1: field('elements')
-		},
 		object: {
 			1: field('properties')
 		},
@@ -322,26 +319,16 @@ export default sittirGrammar(base, {
 		},
 
 		method_definition: {
-			1: field('static_marker'),
-			'3/0': field('readonly_marker'),
-			'4/0': field('async_marker'),
 			'5/0': field('accessor_kind'),
 			'7/0': field('optional_marker')
 		},
 
 		method_signature: {
-			1: field('static_marker'),
 			'5/0': field('accessor_kind'),
 			'7/0': field('optional_marker')
 		},
 
-		program: {
-			0: field('hash_bang_line'),
-			1: field('statements')
-		},
-
 		property_signature: {
-			1: field('static_marker'),
 			'5/0': field('optional_marker')
 		},
 
@@ -350,7 +337,6 @@ export default sittirGrammar(base, {
 		},
 
 		statement_block: {
-			1: field('statements'),
 			3: field('automatic_semicolon')
 		},
 
@@ -389,22 +375,6 @@ export default sittirGrammar(base, {
 			2: field('terminator')
 		},
 
-		function_expression: {
-			'0/0': field('async_marker')
-		},
-
-		function_declaration: {
-			'0/0': field('async_marker')
-		},
-
-		generator_function: {
-			'0/0': field('async_marker')
-		},
-
-		generator_function_declaration: {
-			'0/0': field('async_marker')
-		},
-
 		break_statement: {
 			2: field('terminator')
 		},
@@ -421,20 +391,8 @@ export default sittirGrammar(base, {
 			4: field('terminator')
 		},
 
-		constructor_type: {
-			'0/0': field('abstract_marker')
-		},
-
-		enum_declaration: {
-			'0/0': field('const_marker')
-		},
-
 		function_signature: {
 			4: field('terminator')
-		},
-
-		assignment_expression: {
-			'0/0': field('using_marker')
 		},
 
 		export_specifier: {

@@ -5310,7 +5310,7 @@
                   "name": "_kw_async_marker"
                 },
                 "metadata": {
-                  "fieldSource": "override"
+                  "fieldSource": "enriched"
                 }
               },
               {

@@ -193,15 +193,6 @@ export default sittirGrammar(base, {
 		lambda_parameters: {
 			'.': alias('parameters_elements')
 		},
-		tuple_pattern: {
-			'1/0': alias('patterns')
-		},
-		list_pattern: {
-			'1/0': alias('patterns')
-		},
-		list: {
-			'1/0': alias('collection_elements')
-		},
 		set: {
 			1: alias('collection_elements')
 		},
@@ -261,7 +252,6 @@ export default sittirGrammar(base, {
 		},
 
 		for_in_clause: {
-			'0/0': field('async_marker'),
 			'5/0': field('comma')
 		},
 
