@@ -10948,6 +10948,18 @@ Only the factory, wrap, template and render-module emitters take the
  */
 ```
 
+### `packages/codegen/src/emitters/engine.ts::spelledTriviaBuilders`
+
+The rows of the model's spelled-trivia table as the generated api writes them: one per opening and closing text of each kind, with the builder that takes text spelled so. An own-text leaf (`ownTextLeaf`) is built by its raw builder with the `affix` toggle off, since that is its spelled form; any other kind, a polymorph parent among them, by its coercer, which reads the spelled form itself. Empty when the grammar has no table.
+
+### `packages/codegen/src/emitters/engine.ts::triviaHook`
+
+The `trivia` member of the language hooks: the generated facts, the default comment kind's coercer as `comment`, and the spelled-trivia rows as `spelled`, in the model's match order. The bare facts object when there is neither.
+
+### `packages/codegen/src/emitters/engine.ts::triviaImports`
+
+The factory imports the trivia hook needs, one line per module: raw builders for own-text leaves, coercers for the default comment kind and for kinds built through their coercer.
+
 ### `packages/codegen/src/emitters/engine.ts::EmitEngineConfig.rootTypeName`
 
 ```text

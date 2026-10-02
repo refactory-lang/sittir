@@ -171,6 +171,8 @@ export type FactoryShape = import('../../codegen/src/emitters/factory-map.ts').F
 export type FactorySlotMeta = import('../../codegen/src/emitters/factory-map.ts').FactorySlotMeta;
 export type RawNodeEntry = import('../../codegen/src/validate/node-types-loader.ts').RawNodeEntry;
 export type OpaqueFacts = import('../../codegen/src/compiler/opaque-facts.ts').OpaqueFacts;
+export type SpelledTriviaForm = import('../../codegen/src/compiler/model/trivia.ts').SpelledTriviaForm;
+export type SpelledTriviaTable = import('../../codegen/src/compiler/model/trivia.ts').SpelledTriviaTable;
 
 // ---------------------------------------------------------------------------
 // Convenience: the canonical evaluate → link → normalize → assemble walk.
