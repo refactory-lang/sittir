@@ -2052,9 +2052,9 @@ export const simpleStatement: {
 	readonly return: typeof B.returnStatement;
 	readonly delete: typeof B.deleteStatement;
 	readonly raise: typeof B.raiseStatement;
-	readonly pass: { strict: typeof F.buildPassStatement; coerce: typeof C.coerceToPassStatement };
-	readonly break: { strict: typeof F.buildBreakStatement; coerce: typeof C.coerceToBreakStatement };
-	readonly continue: { strict: typeof F.buildContinueStatement; coerce: typeof C.coerceToContinueStatement };
+	readonly pass: typeof F.buildPassStatement;
+	readonly break: typeof F.buildBreakStatement;
+	readonly continue: typeof F.buildContinueStatement;
 	readonly global: typeof B.globalStatement;
 	readonly nonlocal: typeof B.nonlocalStatement;
 	readonly exec: typeof B.execStatement;
@@ -2069,9 +2069,9 @@ export const simpleStatement: {
 	return: B.returnStatement,
 	delete: B.deleteStatement,
 	raise: B.raiseStatement,
-	pass: bundle(F.buildPassStatement, C.coerceToPassStatement, { key: 'simpleStatement.pass', max: 1 }),
-	break: bundle(F.buildBreakStatement, C.coerceToBreakStatement, { key: 'simpleStatement.break', max: 1 }),
-	continue: bundle(F.buildContinueStatement, C.coerceToContinueStatement, { key: 'simpleStatement.continue', max: 1 }),
+	pass: F.buildPassStatement,
+	break: F.buildBreakStatement,
+	continue: F.buildContinueStatement,
 	global: B.globalStatement,
 	nonlocal: B.nonlocalStatement,
 	exec: B.execStatement,
@@ -2119,33 +2119,24 @@ export const suite: {
 });
 
 export const parameter: {
-	readonly identifier: { strict: typeof F.buildIdentifier; coerce: typeof C.coerceToIdentifier };
+	readonly identifier: typeof F.buildIdentifier;
 	readonly typed: typeof B.typedParameter;
 	readonly default: typeof B.defaultParameter;
 	readonly typedDefault: typeof B.typedDefaultParameter;
 	readonly listSplat: typeof B.listSplatPattern;
 	readonly tuple: typeof B.tuplePattern;
-	readonly keywordSeparator: { strict: typeof F.buildKeywordSeparator; coerce: typeof C.coerceToKeywordSeparator };
-	readonly positionalSeparator: {
-		strict: typeof F.buildPositionalSeparator;
-		coerce: typeof C.coerceToPositionalSeparator;
-	};
+	readonly keywordSeparator: typeof F.buildKeywordSeparator;
+	readonly positionalSeparator: typeof F.buildPositionalSeparator;
 	readonly dictionarySplat: typeof B.dictionarySplatPattern;
 } = Object.freeze({
-	identifier: bundle(F.buildIdentifier, C.coerceToIdentifier, { key: 'parameter.identifier', max: 1 }),
+	identifier: F.buildIdentifier,
 	typed: B.typedParameter,
 	default: B.defaultParameter,
 	typedDefault: B.typedDefaultParameter,
 	listSplat: B.listSplatPattern,
 	tuple: B.tuplePattern,
-	keywordSeparator: bundle(F.buildKeywordSeparator, C.coerceToKeywordSeparator, {
-		key: 'parameter.keywordSeparator',
-		max: 1
-	}),
-	positionalSeparator: bundle(F.buildPositionalSeparator, C.coerceToPositionalSeparator, {
-		key: 'parameter.positionalSeparator',
-		max: 1
-	}),
+	keywordSeparator: F.buildKeywordSeparator,
+	positionalSeparator: F.buildPositionalSeparator,
 	dictionarySplat: B.dictionarySplatPattern
 });
 
@@ -2213,46 +2204,34 @@ export const float: {
 
 export const lineContinuation: {
 	readonly strict: typeof F.buildLineContinuationNewline;
-	readonly coerce: typeof C.coerceToLineContinuationNewline;
-	readonly newline: { strict: typeof F.buildLineContinuationNewline; coerce: typeof C.coerceToLineContinuationNewline };
-	readonly nul: { strict: typeof F.buildLineContinuationNul; coerce: typeof C.coerceToLineContinuationNul };
+	readonly newline: typeof F.buildLineContinuationNewline;
+	readonly nul: typeof F.buildLineContinuationNul;
 } = Object.freeze({
-	...bundle(F.buildLineContinuationNewline, C.coerceToLineContinuationNewline, { key: 'lineContinuation', max: 1 }),
-	newline: bundle(F.buildLineContinuationNewline, C.coerceToLineContinuationNewline, {
-		key: 'lineContinuation.newline',
-		max: 1
-	}),
-	nul: bundle(F.buildLineContinuationNul, C.coerceToLineContinuationNul, { key: 'lineContinuation.nul', max: 1 })
+	...bundle(F.buildLineContinuationNewline, undefined, { key: 'lineContinuation', max: 1 }),
+	newline: F.buildLineContinuationNewline,
+	nul: F.buildLineContinuationNul
 });
 
 export const integerDecimal: {
 	readonly strict: typeof F.buildIntegerDecimalPlain;
-	readonly coerce: typeof C.coerceToIntegerDecimalPlain;
-	readonly long: { strict: typeof F.buildIntegerDecimalLong; coerce: typeof C.coerceToIntegerDecimalLong };
-	readonly imaginary: {
-		strict: typeof F.buildIntegerDecimalImaginary;
-		coerce: typeof C.coerceToIntegerDecimalImaginary;
-	};
-	readonly plain: { strict: typeof F.buildIntegerDecimalPlain; coerce: typeof C.coerceToIntegerDecimalPlain };
+	readonly long: typeof F.buildIntegerDecimalLong;
+	readonly imaginary: typeof F.buildIntegerDecimalImaginary;
+	readonly plain: typeof F.buildIntegerDecimalPlain;
 } = Object.freeze({
-	...bundle(F.buildIntegerDecimalPlain, C.coerceToIntegerDecimalPlain, { key: 'integerDecimal', max: 1 }),
-	long: bundle(F.buildIntegerDecimalLong, C.coerceToIntegerDecimalLong, { key: 'integerDecimal.long', max: 1 }),
-	imaginary: bundle(F.buildIntegerDecimalImaginary, C.coerceToIntegerDecimalImaginary, {
-		key: 'integerDecimal.imaginary',
-		max: 1
-	}),
-	plain: bundle(F.buildIntegerDecimalPlain, C.coerceToIntegerDecimalPlain, { key: 'integerDecimal.plain', max: 1 })
+	...bundle(F.buildIntegerDecimalPlain, undefined, { key: 'integerDecimal', max: 1 }),
+	long: F.buildIntegerDecimalLong,
+	imaginary: F.buildIntegerDecimalImaginary,
+	plain: F.buildIntegerDecimalPlain
 });
 
 export const integer: {
 	readonly strict: typeof F.buildIntegerDecimalPlain;
-	readonly coerce: typeof C.coerceToIntegerDecimalPlain;
 	readonly hex: { strict: typeof F.buildIntegerHex; coerce: typeof C.coerceToIntegerHex };
 	readonly octal: { strict: typeof F.buildIntegerOctal; coerce: typeof C.coerceToIntegerOctal };
 	readonly binary: { strict: typeof F.buildIntegerBinary; coerce: typeof C.coerceToIntegerBinary };
 	readonly decimal: typeof integerDecimal;
 } = Object.freeze({
-	...bundle(F.buildIntegerDecimalPlain, C.coerceToIntegerDecimalPlain, { key: 'integer', max: 1 }),
+	...bundle(F.buildIntegerDecimalPlain, undefined, { key: 'integer', max: 1 }),
 	hex: bundle(F.buildIntegerHex, C.coerceToIntegerHex, { key: 'integer.hex', max: 2 }),
 	octal: bundle(F.buildIntegerOctal, C.coerceToIntegerOctal, { key: 'integer.octal', max: 2 }),
 	binary: bundle(F.buildIntegerBinary, C.coerceToIntegerBinary, { key: 'integer.binary', max: 2 }),

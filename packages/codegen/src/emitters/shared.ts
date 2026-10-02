@@ -4,6 +4,7 @@ import { SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
 import {
 	AssembledAlias,
+	concreteKindsOf,
 	isWordOrBuilderTextLeaf,
 	isBuilderTextLeaf,
 	isBuilderlessPunctuationLeaf,
@@ -144,6 +145,20 @@ export function slotKindNames(slot: { values: readonly NodeOrTerminal[] }): stri
 		out.push(name);
 	}
 	return out;
+}
+
+export function holdsOwnKind(node: AssembledNode | undefined, nodeMap: NodeMap): boolean {
+	if (!(node instanceof AbstractAssembledCompound)) return false;
+	const slot = node.soleSlot;
+	if (slot === undefined) return false;
+	const heldBy = (held: AssembledNonterminal): string[] => slotKindNames(held).flatMap((kind) => concreteKindsOf(kind, nodeMap));
+	const held = heldBy(slot);
+	if (held.includes(node.kind)) return true;
+	return held.some((kind) => {
+		const list = nodeMap.nodes.get(kind);
+		const element = list instanceof AssembledList ? list.soleSlot : undefined;
+		return element !== undefined && heldBy(element).includes(node.kind);
+	});
 }
 
 export function slotLiteralValues(slot: { values: readonly NodeOrTerminal[] }): string[] {

@@ -138,15 +138,27 @@ function referrersOf(nodeMap: NodeMap): ReadonlyMap<string, ReadonlySet<string>>
 	return out;
 }
 
+export function hasOneSurface(node: AssembledNode): boolean {
+	return isBuilderTextLeaf(node) || node instanceof AssembledPattern;
+}
+
 export function isFlatLeafOrKeyword(
 	kind: string,
 	node: AssembledNode,
 	kindEntries: ReturnType<typeof collectKindEntries> | undefined
 ): boolean {
 	if (!node.userFacing || node.factoryInline) return false;
-	if (isBuilderTextLeaf(node) ? node.surfaceHidden : !(node instanceof AssembledPattern)) return false;
+	if (!hasOneSurface(node) || (isBuilderTextLeaf(node) && node.surfaceHidden)) return false;
 	if (!node.irKey || !node.rawFactoryName || !isValidIdent(node.irKey)) return false;
 	return !kindEntries || hasCatalogEntry(kindEntries, kind);
+}
+
+export function hasFlatEntry(
+	kind: string,
+	node: AssembledNode,
+	kindEntries: ReturnType<typeof collectKindEntries> | undefined
+): boolean {
+	return isFlatLeafOrKeyword(kind, node, kindEntries) && node.annotations?.tokenForm !== true;
 }
 
 function flatLeafKindByKey(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): ReadonlyMap<string, string> {

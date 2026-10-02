@@ -12,7 +12,7 @@ import { isValidIdent, irNamespacesChildFactory, lexedContentSlot, isDeclaredSup
 import { supertypeMemberName } from '../dsl/arm-names.ts';
 import { lowerCamelCase } from '../compiler/model/casing.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry } from './kind-discriminant.ts';
-import { bundleEntries, flattenedVariantParents, isFlatLeafOrKeyword } from './overlays/module.ts';
+import { bundleEntries, flattenedVariantParents, hasFlatEntry, isFlatLeafOrKeyword } from './overlays/module.ts';
 import type { GrammarRoles, Role } from '../scm/extract-roles.ts';
 
 export interface EmitIrConfig {
@@ -170,12 +170,7 @@ export function emitIr(config: EmitIrConfig): string {
 
 	irValueLines.push('  // Keyword factories');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (
-			!isBuilderTextLeaf(node) ||
-			!isFlatLeafOrKeyword(kind, node, kindEntries) ||
-			node.annotations?.tokenForm === true
-		)
-			continue;
+		if (!isBuilderTextLeaf(node) || !hasFlatEntry(kind, node, kindEntries)) continue;
 		if (usedGroupNames.has(node.irKey!)) continue;
 		irValueLines.push(`  ${node.irKey}: F.${node.rawFactoryName},`);
 		irTypeMembers.push(`  readonly ${node.irKey}: typeof F.${node.rawFactoryName};`);
@@ -184,8 +179,7 @@ export function emitIr(config: EmitIrConfig): string {
 
 	irValueLines.push('  // Leaf node factories');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!(node instanceof AssembledPattern) || node.annotations?.tokenForm === true) continue;
-		if (!isFlatLeafOrKeyword(kind, node, kindEntries)) continue;
+		if (!(node instanceof AssembledPattern) || !hasFlatEntry(kind, node, kindEntries)) continue;
 		if (usedGroupNames.has(node.irKey!)) continue;
 		irValueLines.push(`  ${node.irKey}: F.${node.rawFactoryName},`);
 		irTypeMembers.push(`  readonly ${node.irKey}: typeof F.${node.rawFactoryName};`);

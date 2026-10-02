@@ -9608,6 +9608,8 @@ The two modules `emitTypesModules` produces: `types`, the public type surface th
 
 Emits the types module and its internal sibling in one pass. A declared supertype's union alias and namespace go to `types`; an undeclared one goes to `internal`, and `types` imports it back for the interfaces and hints that name it (a type-only import cycle). Which module a supertype lands in is `isDeclaredSupertype`, with no second predicate.
 
+Given `entryRows`, the internal module also declares `SubBuilderRowKind`: each `ir` sub-builder path with the kind whose `LooseArgs` row declares that entry. It is not public; the per-grammar type test reads it to compare every sub-builder with its row.
+
 ### `packages/codegen/src/emitters/types.ts::internalModule`
 
 The internal types module: everything `types` exports (`export type *`) plus the undeclared supertypes' aliases and namespaces, importing only the public names its aliases use. Consumers that resolve `T.<Name>` for any supertype alias import this module; the package index never re-exports it, so the public type surface has no alias for an undeclared hidden choice.
@@ -12388,6 +12390,23 @@ A supertype gets an ir namespace if and only if the grammar declares it (`Assemb
  *  leaf keys `flattenedVariantParents` checks its parent keys against. */
 ```
 
+
+### `packages/codegen/src/emitters/overlays/module.ts::hasOneSurface`
+
+```text
+A kind with one builder and no strict/coerce pair: a pattern leaf, whose builder takes its text, or a
+kind stored as its id (a keyword or fixed-text token), whose entry is the constant. Every place such a
+kind is exposed uses the same raw entry — at the top of `ir`, in a supertype group, and under a parent
+as a variant route — so the kind has one entry form wherever it is reached.
+```
+
+### `packages/codegen/src/emitters/overlays/module.ts::hasFlatEntry`
+
+```text
+Does this leaf or keyword get its own flat `ir.<irKey>` entry: `isFlatLeafOrKeyword`, and not a
+token form. The predicate of ir's two flat emission loops.
+```
+
 ### `packages/codegen/src/emitters/ir.ts::emitIr`
 
 No emitted code attaches properties to a factory: a factory is shared under
@@ -15149,6 +15168,23 @@ not depend on the order the derivation listed the arms in. A host that
 appears after an arm it hosts (python `case_pattern`'s `negative` after the
 `integer` and `float` it hosts) still receives them.
 
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::entryRowsByIrPath`
+
+```text
+Rewrites the paths recorded during emission, which start at an emitted const's name, as paths from
+the public `ir` namespace. An emitted set referenced under another path (a nested parent, a child's
+own sub-factory set) is reachable under every path that references it, so its entries repeat under
+each; a set with no `ir` key of its own (a hoisted compound's private set) is reachable only that way.
+```
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::variantChildAt`
+
+```text
+The kind a path of variant or alias names leads to, starting from a kind, or undefined when a step is
+neither. Read from the same route and alias facts the overlay emits from.
+```
+
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatBearing`
 
 Whether a child must be reached through its own overlay entry rather than its
@@ -15411,6 +15447,10 @@ It imports the grammar types as `T` when any emitted block names `T.`.
 Every table the overlay emits (a wired parent, a private set, a flattened variant parent) is frozen where it is built, and so is a route pair it builds for a variant child; the pairs a sub-factory method emits are consumed by hoisting, which builds a frozen callable from them.
 
 Alias routes, variant routes and a flattened parent's default pair are built through `bundle` with the variant child's `entryArity` as their stamp, keyed by their dotted route path; alias paths are recorded in `routes` like arm paths.
+
+A route to a kind with one surface (`hasOneSurface`) is the kind's raw entry itself (`empty: F.buildCharLiteralEmpty`, `pass: F.buildPassStatement`), never a bundle: the same function or constant the top of `ir` holds. A default route to a pattern leaf binds the parent's call to that builder with no coercer; a kind stored as its id cannot be a default, since there is nothing to call, and throws. A forwarding sub-factory that reaches such a kind through a path (`nonSpecialToken.char.empty`) reads the kind's builder and coercer directly (`variantChildAt`), because the routed entry has no `.strict` / `.coerce` to read; it still fills the parent's slot, so its coerce flavor keeps accepting a built leaf.
+
+The return carries, beside the module text, `entryRows`: every `ir` path whose entry is a kind's own entry, mapped to that kind (`entryRowsByIrPath`), recorded at the one place a route is resolved (`variantRouteOf`) and for a parent's default call. `forwardingPaths` are the remaining routed paths: sub-factories that build the parent. Their argument type is spelled from the parent's and the child's builders (`paramFor(parent, child) => ReturnType<parent>`), so no kind's row declares them and nothing compares them.
 
 ### `packages/codegen/src/emitters/options.ts::kindIdArmType`
 
@@ -16377,6 +16417,19 @@ Emits `TOKEN_INTERIORS`, the runtime table (`regex`, `slots`) of every lexed kin
 Emits `INNER_GAPS`: for every compound with inner gaps, the gap keys in render order, from the node map's `innerGaps` rows (the same rows the Rust crate's `inner_gap_key` reads). `$trivia.inner` writes to the first key, and `$trivia.innerAt(key)` to a named one; a kind with no row has no inner position.
 
 The table and each row's key list are frozen.
+
+### `packages/codegen/src/emitters/shared.ts::holdsOwnKind`
+
+```text
+Can the kind's one config slot hold the kind itself: its own kind is among the kinds the slot holds,
+expanded through supertypes, or the slot holds a list whose elements admit it (`tuple` through
+`collection_elements`). For such a kind a single argument of its own kind is ambiguous between the
+node itself and a value of the slot, so its coercer has no own-node short circuit and no re-spread of
+the node's elements: the argument is resolved as the slot's value, and the call wraps it
+(`await(awaitNode)` is `await await x`, `array(arr)` is `[[…]]`). A list that cannot contain itself
+(`arguments`) is not selected and keeps taking its own node as its elements. A kind with several
+config slots is not selected either: its argument is a config object, which a node is not.
+```
 
 ### `packages/codegen/src/emitters/shared.ts::lexedContentSlot`
 

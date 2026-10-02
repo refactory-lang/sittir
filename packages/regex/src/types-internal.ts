@@ -8,7 +8,8 @@ import type {
 	ClassCharacter,
 	ControlEscape,
 	ControlLetterEscape,
-	BslashDash
+	BslashDash,
+	TSKindId
 } from './types.js';
 export type * from './types.js';
 
@@ -30,4 +31,11 @@ export namespace ClassAtom {
 
 export namespace CharacterEscape {
 	export type Kind = '_character_escape';
+}
+
+export interface SubBuilderRowKind {
+	'inlineFlagsGroup.disable': TSKindId.InlineFlagsGroupDisable;
+	'inlineFlagsGroup.enable': TSKindId.InlineFlagsGroupEnable;
+	'inlineFlagsGroup.toggle': TSKindId.InlineFlagsGroupToggle;
+	'term.group': TSKindId.TermGroup;
 }

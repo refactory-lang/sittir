@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "1001f86c50fd0842a6291e3771845a99bfb306a07cc6cbb14fa6b9c0dd4fca41",
+  "source_hash": "2d9c9a72a36115cec7786c4e3e9b1f8e531781adf928cf8784f33c282241327e",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "acad5cd6981a84e11fd8dd678598285ca53f14f63456b0e7bc6132feaa762af9",
     "packages/typescript/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -23,9 +23,9 @@
     "packages/typescript/src/backend.ts": "533ee0e4e0e7f3f7badd2cd4193fc7a72aef46a6a0c0d3da01236aebf2d21fc3",
     "packages/typescript/src/consts.ts": "4eddd5f2ba3016aed3e994e9ce39d5c785437f144a5bc74440c726d45fcb14b0",
     "packages/typescript/src/factories/bundle.ts": "a151349349326c2ffe8af27044eb1276728ce5f9c169ab48ab3495efdc006cbd",
-    "packages/typescript/src/factories/coerce.ts": "b6b8a86742f708331289786dca672810eab82d0f3d50ff86677ceb968fc06557",
+    "packages/typescript/src/factories/coerce.ts": "bc0a56b48295455203bf6cdd9c111a18f4f64c4254780d271af4889752bdb1b7",
     "packages/typescript/src/factories/index.ts": "93e75dfea21bbb1f6655dd1654aeb9f7394a611862748c1de544c3a08655e8ce",
-    "packages/typescript/src/factories/overlays/polymorphs.ts": "d870227fd6b677466f6df337b34dea1ad7e3e495f70147b0b66e448d36817e90",
+    "packages/typescript/src/factories/overlays/polymorphs.ts": "cdfeec98e6bf52a5d07d816a8c68de6c35e515b20e10be9ac6c9506b33d35f40",
     "packages/typescript/src/factories/overlays/refines.ts": "121edf03c79b298f5538cf8ada0dab00301ba4ea7df771772441bd83ca2d84fa",
     "packages/typescript/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
     "packages/typescript/src/factories/raw.ts": "b45a5095ebbb1a69da3e483d6c9ddcc0223c4b3584742e4966fb9c0b9f3e4856",
@@ -36,7 +36,7 @@
     "packages/typescript/src/node-model.json5": "e217a9e0cb432ea7522df553056445b5f19f979e70a3082c0eaad5dc72021a4a",
     "packages/typescript/src/options.ts": "3349821d8f25f026619053fddf55927c2fdd1f88910d74441d64c77b75d15a62",
     "packages/typescript/src/render-engine.ts": "61f3cb3cae417dff81d18bb00e1ceef461e80a75ffab4b41a1593e48e4ca9d68",
-    "packages/typescript/src/types-internal.ts": "c6bcb67616b5568e09bf9644fb11352449401580f127ba25f657781c628ffb94",
+    "packages/typescript/src/types-internal.ts": "6da1f83f91b96788788d7d16dcdc2b228a10c1400e4373efb120e5f32381831e",
     "packages/typescript/src/types.ts": "d7f668f45931714a3fdf82e3fd380c057e2fca669ab021f02752578baa75e545",
     "packages/typescript/src/utils.ts": "3693d01ddd0ea269f2e109785811ddfc74424bfe7cf7ab97ef1cd84317cbcabb",
     "packages/typescript/src/wrap.ts": "48de5b032f953ef4ab4b138db3f434523db7b701d45fb4aa0e178a0ad29a3127",

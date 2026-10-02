@@ -6854,20 +6854,11 @@ export const comment: {
 });
 
 export const metaProperty: {
-	readonly newTarget: { strict: typeof F.buildMetaPropertyNewTarget; coerce: typeof C.coerceToMetaPropertyNewTarget };
-	readonly importMeta: {
-		strict: typeof F.buildMetaPropertyImportMeta;
-		coerce: typeof C.coerceToMetaPropertyImportMeta;
-	};
+	readonly newTarget: typeof F.buildMetaPropertyNewTarget;
+	readonly importMeta: typeof F.buildMetaPropertyImportMeta;
 } = Object.freeze({
-	newTarget: bundle(F.buildMetaPropertyNewTarget, C.coerceToMetaPropertyNewTarget, {
-		key: 'metaProperty.newTarget',
-		max: 1
-	}),
-	importMeta: bundle(F.buildMetaPropertyImportMeta, C.coerceToMetaPropertyImportMeta, {
-		key: 'metaProperty.importMeta',
-		max: 1
-	})
+	newTarget: F.buildMetaPropertyNewTarget,
+	importMeta: F.buildMetaPropertyImportMeta
 });
 
 export const pattern: {
@@ -6906,7 +6897,7 @@ export const classBodyMember: {
 		strict: typeof F.buildClassBodyMemberDeclaration;
 		coerce: typeof C.coerceToClassBodyMemberDeclaration;
 	};
-	readonly empty: { strict: typeof F.buildEmptyMember; coerce: typeof C.coerceToEmptyMember };
+	readonly empty: typeof F.buildEmptyMember;
 } = Object.freeze({
 	method: bundle(F.buildClassBodyMemberMethod, C.coerceToClassBodyMemberMethod, {
 		key: 'classBodyMember.method',
@@ -6921,7 +6912,7 @@ export const classBodyMember: {
 		key: 'classBodyMember.declaration',
 		max: 2
 	}),
-	empty: bundle(F.buildEmptyMember, C.coerceToEmptyMember, { key: 'classBodyMember.empty', max: 1 })
+	empty: F.buildEmptyMember
 });
 
 export const enumBodyElement: {
@@ -7265,7 +7256,7 @@ export const statement: {
 	readonly continue: typeof B.continueStatement;
 	readonly return: typeof B.returnStatement;
 	readonly throw: typeof B.throwStatement;
-	readonly empty: { strict: typeof F.buildEmptyStatement; coerce: typeof C.coerceToEmptyStatement };
+	readonly empty: typeof F.buildEmptyStatement;
 	readonly labeled: typeof B.labeledStatement;
 } = Object.freeze({
 	export: exportStatement,
@@ -7286,13 +7277,12 @@ export const statement: {
 	continue: B.continueStatement,
 	return: B.returnStatement,
 	throw: B.throwStatement,
-	empty: bundle(F.buildEmptyStatement, C.coerceToEmptyStatement, { key: 'statement.empty', max: 1 }),
+	empty: F.buildEmptyStatement,
 	labeled: B.labeledStatement
 });
 
 export const number: {
 	readonly strict: typeof F.buildNumberDecimal;
-	readonly coerce: typeof C.coerceToNumberDecimal;
 	readonly hex: { strict: typeof F.buildNumberHex; coerce: typeof C.coerceToNumberHex };
 	readonly floatPoint: { strict: typeof F.buildNumberFloatPoint; coerce: typeof C.coerceToNumberFloatPoint };
 	readonly floatLeadingPoint: {
@@ -7303,12 +7293,12 @@ export const number: {
 		strict: typeof F.buildNumberFloatScientific;
 		coerce: typeof C.coerceToNumberFloatScientific;
 	};
-	readonly decimal: { strict: typeof F.buildNumberDecimal; coerce: typeof C.coerceToNumberDecimal };
+	readonly decimal: typeof F.buildNumberDecimal;
 	readonly binary: { strict: typeof F.buildNumberBinary; coerce: typeof C.coerceToNumberBinary };
 	readonly octal: { strict: typeof F.buildNumberOctal; coerce: typeof C.coerceToNumberOctal };
 	readonly bigint: typeof numberBigint;
 } = Object.freeze({
-	...bundle(F.buildNumberDecimal, C.coerceToNumberDecimal, { key: 'number', max: 1 }),
+	...bundle(F.buildNumberDecimal, undefined, { key: 'number', max: 1 }),
 	hex: bundle(F.buildNumberHex, C.coerceToNumberHex, { key: 'number.hex', max: 2 }),
 	floatPoint: bundle(F.buildNumberFloatPoint, C.coerceToNumberFloatPoint, { key: 'number.floatPoint', max: 2 }),
 	floatLeadingPoint: bundle(F.buildNumberFloatLeadingPoint, C.coerceToNumberFloatLeadingPoint, {
@@ -7319,7 +7309,7 @@ export const number: {
 		key: 'number.floatScientific',
 		max: 2
 	}),
-	decimal: bundle(F.buildNumberDecimal, C.coerceToNumberDecimal, { key: 'number.decimal', max: 1 }),
+	decimal: F.buildNumberDecimal,
 	binary: bundle(F.buildNumberBinary, C.coerceToNumberBinary, { key: 'number.binary', max: 2 }),
 	octal: bundle(F.buildNumberOctal, C.coerceToNumberOctal, { key: 'number.octal', max: 2 }),
 	bigint: numberBigint
