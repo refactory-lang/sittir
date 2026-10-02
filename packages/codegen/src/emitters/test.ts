@@ -21,7 +21,6 @@ import {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import {
-	DELIMITER_IMPORT,
 	isValidIdent,
 	resolveDirectFactorySlot,
 	testConstructsWithChildren,
@@ -115,7 +114,6 @@ export function emitTests(config: EmitTestsConfig): string {
 		`const { ${kindEntries ? 'build: ir, kinds: TSKindId' : 'build: ir'} } = await createEngine(language);`
 	];
 	lines.push('');
-	let usesDelimiter = false;
 
 	for (const [kind, node] of nodeMap.nodes) {
 		if (node.surfaceHidden) continue;
@@ -142,7 +140,7 @@ export function emitTests(config: EmitTestsConfig): string {
 			case 'supertype':
 				break;
 			case 'list':
-				usesDelimiter = emitSeparatedListTest(target, node, kind, key, kindEntries, nodeMap) || usesDelimiter;
+				emitSeparatedListTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
 			case 'pattern':
 				if (node.annotations?.tokenForm !== true) emitLeafTest(target, node, kind, key, kindEntries, nodeMap);
@@ -163,7 +161,6 @@ export function emitTests(config: EmitTestsConfig): string {
 		}
 	}
 
-	if (usesDelimiter) lines.splice(lines.indexOf(''), 0, DELIMITER_IMPORT);
 	return lines.join('\n');
 }
 
@@ -580,13 +577,12 @@ function emitSeparatedListTest(
 	key: string,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
-): boolean {
-	if (node.modelType !== 'list') return false;
+): void {
+	if (node.modelType !== 'list') return;
 
 	const contentSlot = buildSeparatedListContentSlot(node);
 	const elementsArg = `[${dummyValueForField(contentSlot, nodeMap, kindEntries, 0, new Set())}]`;
-	const trailing = node instanceof AssembledList && node.singleElementNeedsTrailing;
-	const callArgs = trailing ? `{ delimiter: Delimiter.Trailing }, ...${elementsArg}` : `...${elementsArg}`;
+	const callArgs = `...${elementsArg}`;
 
 	lines.push(`describe('${kind}', () => {`);
 	lines.push(`  it('factory produces correct type', () => {`);
@@ -600,7 +596,6 @@ function emitSeparatedListTest(
 	lines.push('  });');
 	lines.push('});');
 	lines.push('');
-	return trailing;
 }
 
 function emitLeafTest(
