@@ -21,8 +21,9 @@ function listSetters(grammar: string): ListSetter[] {
 		if (withAt < 0) continue;
 		const setters = body
 			.slice(withAt)
-			.matchAll(/(\w+): \((\.\.\.)?\w+: [^=]*?\) =>\s*wrap\w+\(\s*\{\s*\.\.\.\$edited\(data\),\s*(_\w+):/gs);
-		for (const [, setter, rest, key] of setters) {
+			.matchAll(/\((\.\.\.)?\w+: [^=]*?\) =>\s*(?:rebuilt\(node, handle, \(\) =>\s*)?wrap\w+\(\s*\{\s*\.\.\.\$edited\(data\),\s*(_\w+):/gs);
+		for (const [, rest, key] of setters) {
+			const setter = key;
 			const stored = new RegExp(`\\b${key}: storeExpanded\\(\\s*([^.]{0,200})data\\.`, 's').exec(body)?.[1] ?? '';
 			if (rest !== undefined || /normalizeRepeatedWrapSlot|splitElidedWrapSlot/.test(stored)) {
 				found.push({ node, setter: setter!, rest: rest !== undefined });

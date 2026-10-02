@@ -3,6 +3,7 @@ import { isStub } from '@sittir/common/utils';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
 import { nativeShownKindId } from '../validate/shown-kind.ts';
+import { accessorCandidatesForStorageKey } from '../validate/common.ts';
 
 interface CommonModule {
 	loadLanguageForGrammar(grammar: string): Promise<{
@@ -65,13 +66,15 @@ function resolveKindName(node: WalkNode, kindNameFromId: ((id: number) => string
 	return typeof shown === 'number' ? (kindNameFromId?.(shown) ?? String(shown)) : shown;
 }
 
-function collectChildren(node: WalkNode): unknown[] {
+export function collectChildren(node: WalkNode): unknown[] {
 	const children: unknown[] = [];
-	for (const [key, value] of Object.entries(node)) {
-		if (key.startsWith('$') || key.startsWith('_')) continue;
-		if (typeof value !== 'function' || value.length !== 0) continue;
+	const members = node as unknown as Record<string, unknown>;
+	const readers = new Set(Object.keys(members).flatMap((key) => accessorCandidatesForStorageKey(key)));
+	for (const name of readers) {
+		const reader = members[name];
+		if (typeof reader !== 'function' || reader.length !== 0) continue;
 		try {
-			children.push(value.call(node));
+			children.push(reader.call(node));
 		} catch {
 			// Ignore hydration failures; traversal is best-effort diagnostic output.
 		}

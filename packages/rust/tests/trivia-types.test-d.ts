@@ -28,3 +28,9 @@ if (rs.isEmptyNode(parsed)) parsed.$trivia.inner(rs.build.lineComment(' TODO')) 
 
 // @ts-expect-error a kind that never realizes empty has no isEmptyNode overload
 rs.isEmptyNode(rs.build.functionItem({ name: 'f', parameters: rs.build.parameters(), body: rs.build.block() }));
+
+// @ts-expect-error $trivia is its positions; the node is not callable
+rs.build.identifier('a').$trivia(rs.build.lineComment(' c'));
+
+// @ts-expect-error a kind with no inner gap has no inner position
+rs.build.identifier('a').$trivia.inner();

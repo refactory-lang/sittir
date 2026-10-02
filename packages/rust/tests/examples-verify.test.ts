@@ -159,19 +159,19 @@ describe('dogfoodContract helper', () => {
 
 describe('structuralShape trivia handling', () => {
 	it("keeps a bare leaf's $text alongside its $_trivia", () => {
-		const leaf = rs.build.synonym.identifier('main').$trivia(rs.build.lineComment.regular('c'));
+		const leaf = rs.build.synonym.identifier('main').$trivia.leading(rs.build.lineComment.regular('c'));
 		const shape = structuralShape(leaf) as Record<string, unknown>;
 		expect(shape.$text).toBe('main');
 		expect(shape.$_trivia).toBeDefined();
 	});
 	it('differs when only the comment text differs', () => {
-		const alpha = rs.build.synonym.identifier('main').$trivia(rs.build.lineComment.regular('alpha'));
-		const beta = rs.build.synonym.identifier('main').$trivia(rs.build.lineComment.regular('beta'));
+		const alpha = rs.build.synonym.identifier('main').$trivia.leading(rs.build.lineComment.regular('alpha'));
+		const beta = rs.build.synonym.identifier('main').$trivia.leading(rs.build.lineComment.regular('beta'));
 		expect(JSON.stringify(structuralShape(alpha))).not.toBe(JSON.stringify(structuralShape(beta)));
 	});
 	it('differs when the same comment is leading vs. trailing', () => {
-		const leading = rs.build.synonym.identifier('main').$trivia({ leading: [rs.build.lineComment.regular('c')] });
-		const trailing = rs.build.synonym.identifier('main').$trivia({ trailing: [rs.build.lineComment.regular('c')] });
+		const leading = rs.build.synonym.identifier('main').$trivia.leading(rs.build.lineComment.regular('c'));
+		const trailing = rs.build.synonym.identifier('main').$trivia.trailing(rs.build.lineComment.regular('c'));
 		expect(JSON.stringify(structuralShape(leading))).not.toBe(JSON.stringify(structuralShape(trailing)));
 	});
 });

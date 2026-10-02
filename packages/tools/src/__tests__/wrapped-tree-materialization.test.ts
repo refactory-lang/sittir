@@ -56,7 +56,11 @@ async function loadFreshWrapWitnessModule(): Promise<{
 	const source = emitWrap({ grammar: 'synth', nodeMap: makeNodeMapWith(nodes) });
 	const stubbedSource = [
 		'const readUntypedNode = () => { throw new Error("unused"); };',
-		'const withMethods = (node) => node;',
+		'const currentHandle = () => undefined;',
+		'const rebuilt = (node, handle, build) => build();',
+		'const renderText = () => "";',
+		'const toEditAt = () => ({});',
+		'const triviaSide = () => undefined;',
 		'const methodsEngine = {};',
 		'const _factories = new Proxy({}, { get: () => () => { throw new Error("unused"); } });',
 		source.replace(/^import .*;\n/gm, '')

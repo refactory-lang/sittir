@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { GrammarTypeMap } from '@sittir/types';
 import { inEngine } from '../src/engine-scope.ts';
+import { withMembers } from './support/members.ts';
 import { liveHandle } from './support/fake-engine.ts';
 import {
 	admitAliasContent,
@@ -23,15 +24,15 @@ describe('bindRuntime', () => {
 		expect(runtime.isNode({ kind: 'leaf' })).toBe(false);
 	});
 
-	it('withMethods renders through the engine in scope', () => {
+	it('members render through the engine in scope', () => {
 		const render = vi.fn(() => 'rendered');
-		const node = inEngine(liveHandle({ render }), () => runtime.withMethods({ $type: 2, $source: 2 }));
+		const node = inEngine(liveHandle({ render }), () => withMembers({ $type: 2, $source: 2 }));
 		expect(node.$render()).toBe('rendered');
 		expect(render).toHaveBeenCalledWith(node);
 	});
 
-	it('withMethods on a node built outside any engine cannot render', () => {
-		const node = runtime.withMethods({ $type: 2, $source: 2 });
+	it('members on a node built outside any engine cannot render', () => {
+		const node = withMembers({ $type: 2, $source: 2 });
 		expect(() => node.$render()).toThrow(/no engine.*engine\.render\(node\)/);
 	});
 });

@@ -13,6 +13,12 @@ type InnerSetter<N> = {
 const innerOf = <N extends { $trivia: object }>(node: N): InnerSetter<N> => node.$trivia as unknown as InnerSetter<N>;
 
 describe('$trivia getters, inner and refusals', () => {
+	it('is its positions: an object whose position returns the node', () => {
+		const node = rs.build.identifier('a');
+		expect(typeof node.$trivia).toBe('object');
+		expect(node.$trivia.leading(rs.build.comment(' lead'))).toBe(node);
+	});
+
 	it('reads back what each position was set to, [] where nothing was', () => {
 		const a = rs.build.identifier('a').$trivia.leading(rs.build.comment(' lead')).$trivia.trailing(rs.build.comment(' tail'));
 		expect(a.$trivia.leading().map((entry) => (typeof entry === 'number' ? entry : entry.$type))).toEqual([rs.kinds.LineComment]);
@@ -31,12 +37,15 @@ describe('$trivia getters, inner and refusals', () => {
 		expect(() => innerOf(block).inner(rs.build.comment(' x'))).toThrow(/not empty; attach to a child with leading\/trailing/);
 	});
 
-	it('refuses inner on a kind with no inner gap', () => {
-		expect(() => innerOf(rs.build.identifier('a')).inner(rs.build.comment(' x'))).toThrow(/no inner gap/);
+	it('has no inner position on a kind with no inner gap', () => {
+		const identifier = rs.build.identifier('a');
+		expect(identifier.$trivia).not.toHaveProperty('inner');
+		expect(() => innerOf(identifier).inner(rs.build.comment(' x'))).toThrow(TypeError);
 	});
 
-	it('refuses a gap the kind does not have', () => {
-		expect(() => innerOf(rs.build.block()).innerAt('nope', rs.build.comment(' x'))).toThrow(/no gap 'nope'/);
+	it('has innerAt only where the grammar keys its gaps', () => {
+		expect(rs.build.block().$trivia).toHaveProperty('inner');
+		expect(rs.build.block().$trivia).not.toHaveProperty('innerAt');
 	});
 
 	it('refuses adding a child to a node that holds inner comments', () => {

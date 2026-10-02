@@ -65,14 +65,14 @@ describe('wrap emitter — separatedList', () => {
 
 		expect(emitted).toContain('_member:');
 		expect(emitted).toContain('member() {');
-		expect(emitted).toContain('_separator:');
-		expect(emitted).toContain('_delimiter:');
+		expect(emitted).toContain('const _separator = ');
+		expect(emitted).toContain('_delimiter,');
 		expect(emitted).toContain('"leading"');
 		expect(emitted).toContain('"trailing"');
-		expect(emitted).toContain('_separator: _separatorKindOf(data, [TSKindId.Comma, TSKindId.Semi]) ?? TSKindId.Semi,');
+		expect(emitted).toContain('const _separator = _separatorKindOf(data, [TSKindId.Comma, TSKindId.Semi]) ?? TSKindId.Semi;');
 		const undeclared = makeMemberNodeMap(rule, { separatorRule: sepChoice });
 		expect(emitWrap({ grammar: 'test', nodeMap: undeclared, kindEntries: KIND_ENTRIES })).toContain(
-			'_separator: _separatorKindOf(data, [TSKindId.Comma, TSKindId.Semi]),'
+			'const _separator = _separatorKindOf(data, [TSKindId.Comma, TSKindId.Semi]);'
 		);
 	});
 
@@ -87,8 +87,8 @@ describe('wrap emitter — separatedList', () => {
 		const emitted = emitWrap({ grammar: 'test', nodeMap, kindEntries: KIND_ENTRIES });
 
 		expect(emitted).toContain('_member:');
-		expect(emitted).not.toContain('_separator:');
-		expect(emitted).toContain('_delimiter:');
+		expect(emitted).not.toContain('const _separator');
+		expect(emitted).toContain('_delimiter,');
 		// Only the trailing bit contributes — no leading term in the flag.
 		expect(emitted).not.toContain('? Delimiter.Leading');
 		expect(emitted).toContain('? Delimiter.Trailing : Delimiter.None');

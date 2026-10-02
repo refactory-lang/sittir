@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { storedSlotReader, withGroupSeat } from '../src/utils.ts';
+import { STORED_SLOT_READERS, groupField, seatWith, storedSlotReader } from '../src/utils.ts';
 
 interface Group {
 	readonly $type: 7;
@@ -33,14 +33,7 @@ const seated: (Group | undefined)[] = [];
 const made: unknown[] = [];
 
 const parent = (inner: Group | undefined): Seated => {
-	const base: Parent = {
-		$type: 1,
-		_seat: inner,
-		left: () => 'own',
-		seat: () => inner,
-		$with: { seat: (value) => (seated.push(value), 'rebuilt') }
-	};
-	return withGroupSeat(base, {
+	const spec = {
 		slot: 'seat',
 		stored: '_seat',
 		kind: 7,
@@ -51,10 +44,27 @@ const parent = (inner: Group | undefined): Seated => {
 			{ name: 'seatLeft', field: 'left', rest: false, required: true },
 			{ name: 'right', rest: false }
 		]
-	}) as Seated;
+	};
+	const readGroup = () => inner;
+	const setSeat = (value?: Group) => (seated.push(value), 'rebuilt');
+	const node = {
+		$type: 1,
+		_seat: inner,
+		left: () => 'own',
+		seat: () => inner,
+		$with: {
+			seat: setSeat,
+			seatLeft: (...args: unknown[]) => seatWith(spec, 'seatLeft', args, setSeat, () => readGroup()),
+			right: (...args: unknown[]) => seatWith(spec, 'right', args, setSeat, () => readGroup())
+		},
+		seatLeft: inner === undefined ? undefined : () => groupField(readGroup(), 'left'),
+		right: inner === undefined ? undefined : () => groupField(readGroup(), 'right'),
+		[STORED_SLOT_READERS]: { seat: readGroup }
+	};
+	return node as unknown as Seated;
 };
 
-describe('withGroupSeat', () => {
+describe('a group seat written in the literal', () => {
 	it('reads a prefixed key from the group field it names, and leaves the parent slot of that name alone', () => {
 		const node = parent(group('a', 'b'));
 		expect(node.seatLeft?.()).toBe('a');

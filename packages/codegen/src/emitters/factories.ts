@@ -1,4 +1,5 @@
 import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
+import { groupSeatParts, innerPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, spelledGroupSlots, triviaInnerImports, type SetterEntry } from './node-members.ts';
 import { findOwnKindEntry, reservedWordset } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -112,15 +113,18 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 			switch (storageInfo.kind) {
 				case 'boolean':
 					imports.add('coerceBooleanKeywordStorage');
+					imports.add('rejectBareText');
 					break;
 				case 'bitflag':
 					imports.add('coerceBitflagStorage');
 					break;
 				case 'kindEnum':
-					if (kindEntries) imports.add('coerceKindEnumStorage');
+					if (kindEntries) imports.add(slot.registeredOption === 'choice' ? 'coerceKindEnumStorage' : 'kindIdStorage');
+					if (kindEntries && slot.registeredOption !== 'choice') imports.add('rejectBareText');
 					break;
 				case 'mixedEnum':
-					if (kindEntries) imports.add('coerceMixedEnumStorage');
+					if (kindEntries) imports.add(slot.registeredOption === 'choice' ? 'coerceMixedEnumStorage' : 'kindIdStorage');
+					if (kindEntries && slot.registeredOption !== 'choice') imports.add('rejectBareText');
 					break;
 				case 'verbatim':
 					break;
@@ -130,7 +134,6 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 			if (seatedKeywordTexts(slot, nodeMap, kindEntries).length > 0) imports.add('rejectKeywordText');
 			if (kindEntries !== undefined && slotAliases(slot, nodeMap).length > 0) imports.add('admitAliasContent');
 		}
-		for (const seat of seatRuntimes(node, nodeMap, kindEntries)) imports.add(seat.helper);
 		if (kindEntries !== undefined && node instanceof AssembledList && slotAliases(buildSeparatedListContentSlot(node), nodeMap).length > 0)
 			imports.add('admitAliasContent');
 	}
@@ -226,8 +229,15 @@ export function textLeaves(f: AssembledNonterminal, nodeMap: NodeMap): Assembled
 	return [...leaves];
 }
 
-function bareTextRejection(f: AssembledNonterminal, expr: string, nodeMap: NodeMap, typeName: string): string {
-	const expected = strictNodeExpectation(f, nodeMap);
+function bareTextRejection(
+	f: AssembledNonterminal,
+	expr: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	typeName: string
+): string {
+	const kind = resolveFieldStorageInfo(f, nodeMap, kindEntries).kind;
+	const expected = strictNodeExpectation(f, nodeMap) ?? (kind === 'kindEnum' || kind === 'mixedEnum' ? 'a kind id' : undefined);
 	if (expected === undefined) return expr;
 	return `rejectBareText(${expr}, '${typeName}.${f.configKey}', ${JSON.stringify(expected)})`;
 }
@@ -526,7 +536,7 @@ function admittedSlotInput(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	typeName: string
 ): string {
-	const admitted = keywordTextRejection(f, bareTextRejection(f, expr, nodeMap, typeName), nodeMap, kindEntries, typeName);
+	const admitted = keywordTextRejection(f, bareTextRejection(f, expr, nodeMap, kindEntries, typeName), nodeMap, kindEntries, typeName);
 	return aliasContentAdmission(f, admitted, nodeMap, kindEntries, `NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>`);
 }
 
@@ -586,25 +596,48 @@ function storedSlotValueExpr(
 	valueExpr: string,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined,
-	typeName: string
+	typeName: string,
+	textInput = false
 ): string {
 	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
+	const stored = `NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>`;
 	switch (storageInfo.kind) {
 		case 'boolean':
-			return `coerceBooleanKeywordStorage(${valueExpr})`;
+			return textInput
+				? `coerceBooleanKeywordStorage(${valueExpr})`
+				: `coerceBooleanKeywordStorage(rejectBareText(${valueExpr}, '${typeName}.${f.configKey}', 'a boolean'))`;
 		case 'bitflag':
 			return `coerceBitflagStorage(${valueExpr}, ${bitflagTextsExpr(storageInfo.texts)})`;
 		case 'kindEnum':
-			return kindEntries
-				? `coerceKindEnumStorage<NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>>(${valueExpr}, ${kindEnumTextMapExpr(f, nodeMap, kindEntries)})`
-				: valueExpr;
+			if (!kindEntries) return valueExpr;
+			return textInput
+				? `coerceKindEnumStorage<${stored}>(${valueExpr}, ${kindEnumTextMapExpr(f, nodeMap, kindEntries)})`
+				: `kindIdStorage<${stored}>(${valueExpr})`;
 		case 'mixedEnum':
-			return kindEntries
-				? `coerceMixedEnumStorage<NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>>(${valueExpr}, ${kindEnumTextMapExpr(f, nodeMap, kindEntries)})`
-				: valueExpr;
+			if (!kindEntries) return valueExpr;
+			return textInput
+				? `coerceMixedEnumStorage<${stored}>(${valueExpr}, ${kindEnumTextMapExpr(f, nodeMap, kindEntries)})`
+				: `kindIdStorage<${stored}>(${valueExpr})`;
 		case 'verbatim':
 			return valueExpr;
 	}
+}
+
+function narrowedStorageExpr(
+	f: AssembledNonterminal,
+	literal: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	typeName: string
+): string {
+	const kind = resolveFieldStorageInfo(f, nodeMap, kindEntries).kind;
+	if (kind === 'boolean') return 'true as const';
+	if (kind === 'kindEnum' || kind === 'mixedEnum') {
+		const entry = kindEnumTextEntries(f, nodeMap, kindEntries).find((candidate) => candidate.text === literal);
+		if (entry === undefined) throw new Error(`refine form: '${typeName}.${f.name}' is narrowed to ${JSON.stringify(literal)}, which names no kind of the slot`);
+		return admittedSlotInput(f, `${entry.discriminant} as const`, nodeMap, kindEntries, typeName);
+	}
+	return slotStorageFromValueExpr(f, `${JSON.stringify(literal)} as const`, nodeMap, kindEntries, typeName);
 }
 
 function slotStorageExpr(
@@ -958,7 +991,7 @@ function registeredSlotSource(
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
 	if (slot.registeredOption === 'choice') {
-		return storedSlotValueExpr(slot, `options?.${slot.configKey}`, nodeMap, kindEntries, node.typeName);
+		return storedSlotValueExpr(slot, `options?.${slot.configKey}`, nodeMap, kindEntries, node.typeName, true);
 	}
 	const value = `options?.${slot.configKey} ?? ${JSON.stringify(slot.optionDefaultArm)}`;
 	const peers = hasConfig ? optionalGroupPeers(node, slot.name) : undefined;
@@ -1229,20 +1262,24 @@ function emitFieldCarryingFactory(
 	const configType = surface.configType ?? `T.${node.typeName}.Config`;
 	const signature = `${exportKw}function ${fn}(${surface.params}): ${builtName} {`;
 	let valueSourceFor: (f: AssembledNonterminal) => string;
-	let withLines: string[];
 	let slotsToEmit: readonly AssembledNonterminal[] = slots;
 	const registered = registeredSlots(node);
 	const registeredSet = new Set(registered);
 	const forwardTarget = forwardedConstructorTarget(node, nodeMap, kindEntries);
-	const spellingWith = (rebuild: (patch: string) => string): string[] =>
-		registered.map((f) => `      ${f.propertyName}: (spelling: ${constructionFieldElementType(f, nodeMap, kindEntries)}) => ${rebuild(`{ ...options, ${f.configKey}: spelling }`)},`);
+	const spellingWith = (rebuild: (patch: string) => string): SetterEntry[] =>
+		registered.map((f) => ({
+			name: f.propertyName,
+			params: `spelling: ${constructionFieldElementType(f, nodeMap, kindEntries)}`,
+			body: rebuild(`{ ...options, ${f.configKey}: spelling }`)
+		}));
+	let setters: SetterEntry[];
 
 	if (spreadFacts) {
 		slotsToEmit = [spreadFacts.slot];
 		const elementType = surface.elementType!;
 		const setter = spreadFacts.slot.propertyName;
 		valueSourceFor = (f) => (f === spreadFacts.slot ? admittedSlotInput(f, 'children', nodeMap, kindEntries, node.typeName) : '');
-		withLines = [`    $with: { ${setter}: (...vs: ${elementType}[]) => ${fn}(...restItems(${JSON.stringify(setter)}, vs)) },`];
+		setters = [{ name: setter, params: `...vs: ${elementType}[]`, body: `${fn}(...restItems(${JSON.stringify(setter)}, vs))` }];
 	} else if (singleField) {
 		const elemType = surface.directParamType!;
 		valueSourceFor = (f) =>
@@ -1251,32 +1288,32 @@ function emitFieldCarryingFactory(
 		const setterSig = setterValueSignature(singleField, setterType);
 		const direct = forwardTarget === null ? fn : `_${fn}`;
 		const rebuildDirect = (options: string): string => `${direct}(value, ${options})`;
-		withLines = [
-			'    $with: {',
-			`      ${singleField.propertyName}: (${setterSig}) => ${registered.length === 0 ? `${direct}(value)` : `${direct}(value, options)`},`,
-			...spellingWith(rebuildDirect),
-			'    },'
+		setters = [
+			{ name: singleField.propertyName, params: setterSig, body: registered.length === 0 ? `${direct}(value)` : `${direct}(value, options)` },
+			...spellingWith(rebuildDirect)
 		];
 	} else {
 		const configAccess = 'config';
 		valueSourceFor = (f) => slotStorageExpr(f, configAccess, nodeMap, kindEntries, node.typeName);
-		withLines = ['    $with: {'];
+		setters = [];
 		const optionsArg = registered.length === 0 ? '' : ', options';
 		for (const f of slots) {
 			if (registeredSet.has(f)) continue;
 			const method = f.propertyName;
 			const restType = restSetterType(f, configType, nodeMap, kindEntries);
 			if (restType !== undefined) {
-				withLines.push(
-					`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.configKey}: restItems(${JSON.stringify(method)}, values) }${optionsArg}),`
-				);
+				setters.push({
+					name: method,
+					params: `...values: ${restType}`,
+					body: `${fn}({ ...${configAccess}, ${f.configKey}: restItems(${JSON.stringify(method)}, values) }${optionsArg})`
+				});
 			} else {
 				const elemType = setterElemType(f, constructionFieldElementType(f, nodeMap, kindEntries), configType, nodeMap);
 				const setterSig = setterValueSignature(f, elemType);
-				withLines.push(`      ${method}: (${setterSig}) => ${fn}({ ...${configAccess}, ${f.configKey}: value }${optionsArg}),`);
+				setters.push({ name: method, params: setterSig, body: `${fn}({ ...${configAccess}, ${f.configKey}: value }${optionsArg})` });
 			}
 		}
-		withLines.push(...spellingWith((patch) => `${fn}(${configAccess}, ${patch})`), '    },');
+		setters.push(...spellingWith((patch) => `${fn}(${configAccess}, ${patch})`));
 	}
 
 	const ownText = ownTextLeaf(node);
@@ -1309,21 +1346,31 @@ function emitFieldCarryingFactory(
 			);
 		}
 	}
-	const seats = seatRuntimes(node, nodeMap, kindEntries);
-	lines.push(`  return withMethods(${seatOpening(seats)}withAccessors({`);
+	const plan = seatPlanOf(node, nodeMap, kindEntries);
+	const owner = plan.viewPlan?.owner;
+	const view = plan.viewPlan === undefined || owner === undefined ? undefined : ownerViewParts(plan.viewPlan, owner.storage, owner.accessor, 'factory');
+	const groups = groupSeatParts(plan, (slot) => `() => ${slotsToEmit.find((f) => f.propertyName === slot)!.storageKey}`);
+	const spelled = spelledGroupSlots(plan);
+	lines.push(...(view?.prelude ?? []), ...groups.prelude);
+	lines.push('  const handle = currentHandle();');
+	lines.push('  const node = {');
 	lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
 	for (const f of slotsToEmit) {
 		lines.push(`    ${f.storageKey},`);
 	}
-	lines.push(...withLines);
-	lines.push('  }, {');
-	for (const f of slotsToEmit) {
-		const propName = f.propertyName;
-		lines.push(`    ${propName}: () => ${f.storageKey},`);
-	}
-	lines.push(`  })${seatClosing(seats)}) as unknown as ${builtName};`);
+	lines.push(
+		...nodeMemberLines({
+			setters: seatedSetters(setters, plan),
+			accessors: slotsToEmit.filter((f) => !spelled.has(f.propertyName)).map((f) => ({ name: f.propertyName, read: f.storageKey })),
+			extra: [...(view?.members ?? []), ...groups.members],
+			inner: innerPositionsOf(typeKind, nodeMap)
+		})
+	);
+	lines.push('  };');
+	lines.push(...(view?.postlude ?? []));
+	lines.push(`  return node as unknown as ${builtName};`);
 	lines.push('}');
 
 	const { directParamType, directParamOptional } = surface;
@@ -1474,9 +1521,7 @@ function emitRefineFormFactory(
 	for (const f of allSlots) {
 		const narrowedLit = narrowed.get(f.name);
 		if (narrowedLit !== undefined) {
-			lines.push(
-				`  const ${f.storageKey} = ${slotStorageFromValueExpr(f, `${JSON.stringify(narrowedLit)} as const`, nodeMap, kindEntries, info.typeName)};`
-			);
+			lines.push(`  const ${f.storageKey} = ${narrowedStorageExpr(f, narrowedLit, nodeMap, kindEntries, info.typeName)};`);
 			continue;
 		}
 		if (registered.includes(f)) {
@@ -1485,46 +1530,48 @@ function emitRefineFormFactory(
 		}
 		lines.push(`  const ${f.storageKey} = ${slotStorageExpr(f, `config${opt}`, nodeMap, kindEntries, info.typeName)};`);
 	}
-	lines.push('  return withMethods(withAccessors({');
+	const formSetters: SetterEntry[] = [];
+	for (const f of slots) {
+		if (narrowed.has(f.name)) continue;
+		const method = f.propertyName;
+		const restType = restSetterType(f, formConfigType, nodeMap, kindEntries);
+		if (restType !== undefined) {
+			formSetters.push({
+				name: method,
+				params: `...values: ${restType}`,
+				body: `${formFn}({ ...config, ${f.configKey}: restItems(${JSON.stringify(method)}, values) }${optionsArg})`
+			});
+		} else {
+			const elemType = setterElemType(f, constructionFieldElementType(f, nodeMap, kindEntries), formConfigType, nodeMap);
+			const setterSig = setterValueSignature(f, elemType);
+			formSetters.push({ name: method, params: setterSig, body: `${formFn}({ ...config, ${f.configKey}: value }${optionsArg})` });
+		}
+	}
+	for (const f of registered) {
+		if (narrowed.has(f.name)) continue;
+		formSetters.push({
+			name: f.propertyName,
+			params: `spelling: ${constructionFieldElementType(f, nodeMap, kindEntries)}`,
+			body: `${formFn}(config, { ...options, ${f.configKey}: spelling })`
+		});
+	}
+	lines.push('  const handle = currentHandle();');
+	lines.push('  const node = {');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
 	for (const f of allSlots) {
 		lines.push(`    ${f.storageKey},`);
 	}
-	lines.push('    $with: {');
-	for (const f of slots) {
-		if (narrowed.has(f.name)) continue;
-		const method = f.propertyName;
-		const restType = restSetterType(f, formConfigType, nodeMap, kindEntries);
-		if (restType !== undefined) {
-			lines.push(
-				`      ${method}: (...values: ${restType}) => ${formFn}({ ...config, ${f.configKey}: restItems(${JSON.stringify(method)}, values) }${optionsArg}),`
-			);
-		} else {
-			const elemType = setterElemType(
-				f,
-				constructionFieldElementType(f, nodeMap, kindEntries),
-				formConfigType,
-				nodeMap
-			);
-			const setterSig = setterValueSignature(f, elemType);
-			lines.push(`      ${method}: (${setterSig}) => ${formFn}({ ...config, ${f.configKey}: value }${optionsArg}),`);
-		}
-	}
-	for (const f of registered) {
-		if (narrowed.has(f.name)) continue;
-		lines.push(
-			`      ${f.propertyName}: (spelling: ${constructionFieldElementType(f, nodeMap, kindEntries)}) => ${formFn}(config, { ...options, ${f.configKey}: spelling }),`
-		);
-	}
-	lines.push('    },');
-	lines.push('  }, {');
-	for (const f of allSlots) {
-		const propName = f.propertyName;
-		lines.push(`    ${propName}: () => ${f.storageKey},`);
-	}
-	lines.push(`  })) as unknown as ${formBuiltName};`);
+	lines.push(
+		...nodeMemberLines({
+			setters: formSetters,
+			accessors: allSlots.map((f) => ({ name: f.propertyName, read: f.storageKey })),
+			inner: innerPositionsOf(node.kind, nodeMap)
+		})
+	);
+	lines.push('  };');
+	lines.push(`  return node as unknown as ${formBuiltName};`);
 	lines.push('}');
 	return renameUnusedConfigParam(lines);
 }
@@ -1815,28 +1862,32 @@ export function listViewOwners(nodeMap: NodeMap): readonly AssembledNode[] {
 	return [...nodeMap.nodes.values()].filter((node) => listViewTarget(node, nodeMap)?.owner !== undefined);
 }
 
-export function listViewRuntimeSpec(
+export interface ListViewPlan {
+	readonly owner?: { readonly accessor: string; readonly storage: string };
+	readonly elements: string;
+	readonly count: string;
+	readonly options: readonly { readonly key: string; readonly default: string }[];
+	readonly wrapper?: string;
+}
+
+export function listViewPlanOf(
 	node: AssembledNode,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
-): string | undefined {
+): ListViewPlan | undefined {
 	const target = listViewTarget(node, nodeMap);
 	if (target === undefined) return undefined;
-	const options = listOptionDefaults(target.list, nodeMap, kindEntries)
-		.map((option) => `{ key: ${JSON.stringify(option.key)}, default: ${option.default} }`)
-		.join(', ');
 	const wrapper = separatedListSurface(target.list, nodeMap, kindEntries).wrapper;
-	const wrapperSpec =
-		wrapper === undefined
-			? ''
-			: `, wrapper: { kind: TSKindId.${wrapper.member}, content: ${JSON.stringify(wrapper.contentProperty)}, decorations: ${JSON.stringify(wrapper.decorationKeys)} }`;
 	const elements = canonicalSeparatedListField(target.list);
-	const list =
-		target.owner === undefined
-			? ''
-			: `list: { accessor: ${JSON.stringify(target.owner.propertyName)}, storage: ${JSON.stringify(target.owner.storageKey)} }, `;
-	const optionsSpec = options === '' ? '' : `, options: [${options}]`;
-	return `{ ${list}elements: ${JSON.stringify(elements.propertyName)}, count: ${JSON.stringify(elements.storageKey)}${optionsSpec}${wrapperSpec} }`;
+	return {
+		...(target.owner === undefined ? {} : { owner: { accessor: target.owner.propertyName, storage: target.owner.storageKey } }),
+		elements: elements.propertyName,
+		count: elements.storageKey,
+		options: listOptionDefaults(target.list, nodeMap, kindEntries),
+		...(wrapper === undefined
+			? {}
+			: { wrapper: `{ kind: TSKindId.${wrapper.member}, content: ${JSON.stringify(wrapper.contentProperty)}, decorations: ${JSON.stringify(wrapper.decorationKeys)} }` })
+	};
 }
 
 function listSlotTargets(
@@ -1867,53 +1918,53 @@ export function listSlotHints(
 	}));
 }
 
-function listSlotsRuntimeSpec(
+function listSlotSpecs(
 	node: AssembledNode,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	factoryScope: string
-): string | undefined {
-	const targets = listSlotTargets(node, nodeMap);
-	if (targets.length === 0) return undefined;
-	const specs = targets.map(
-		({ slot, kind }) =>
-			`{ slot: ${JSON.stringify(slot.propertyName)}, kind: ${factoryTypeDiscriminant(kind.kind, nodeMap, kindEntries)}, optional: ${!isRequired(slot)}, make: ${factoryScope}${kind.rawFactoryName}${elementSpecOf(kind, nodeMap, factoryScope)} }`
-	);
-	return `[${specs.join(', ')}]`;
+): readonly { readonly slot: string; readonly spec: string }[] {
+	return listSlotTargets(node, nodeMap).map(({ slot, kind }) => ({
+		slot: slot.propertyName,
+		spec: `kind: ${factoryTypeDiscriminant(kind.kind, nodeMap, kindEntries)}, optional: ${!isRequired(slot)}, make: ${factoryScope}${kind.rawFactoryName}${elementSpecOf(kind, nodeMap, factoryScope)}`
+	}));
 }
 
-export interface SeatRuntime {
-	readonly helper: 'withListView' | 'withListSlots' | 'withGroupSeat' | 'withElementsSeat';
-	readonly spec: string;
+export interface SeatPlan {
+	readonly viewPlan: ListViewPlan | undefined;
+	readonly slots: readonly { readonly slot: string; readonly spec: string }[];
+	readonly groups: readonly { readonly hint: GroupSeatHint; readonly spec: string }[];
+	readonly elements: readonly { readonly slot: string; readonly spec: string }[];
 }
 
-export function seatRuntimes(
+export function seatPlanOf(
 	node: AssembledNode,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined,
-	factoryScope = '',
-	tree?: string
-): readonly SeatRuntime[] {
-	const view = listViewRuntimeSpec(node, nodeMap, kindEntries);
-	const slots = listSlotsRuntimeSpec(node, nodeMap, kindEntries, factoryScope);
-	const groups = groupSeatRuntimeSpecs(node, nodeMap, kindEntries, factoryScope);
-	return [
-		...(view === undefined ? [] : [{ helper: 'withListView' as const, spec: tree === undefined ? view : `${view}, ${tree}` }]),
-		...(slots === undefined ? [] : [{ helper: 'withListSlots' as const, spec: slots }]),
-		...groups.map((spec) => ({ helper: 'withGroupSeat' as const, spec })),
-		...elementConfigsOf(node, nodeMap).map((fact) => ({
-			helper: 'withElementsSeat' as const,
-			spec: `{ slot: ${JSON.stringify(fact.slot)}, ${elementConfigFields(fact, factoryScope)} }`
-		}))
-	];
+	factoryScope = ''
+): SeatPlan {
+	const specs = groupSeatRuntimeSpecs(node, nodeMap, kindEntries, factoryScope);
+	return {
+		viewPlan: listViewPlanOf(node, nodeMap, kindEntries),
+		slots: listSlotSpecs(node, nodeMap, kindEntries, factoryScope),
+		groups: groupSeatHints(node, nodeMap, kindEntries).map((hint, index) => ({ hint, spec: specs[index]! })),
+		elements: elementConfigsOf(node, nodeMap).map((fact) => ({ slot: fact.slot, spec: elementConfigFields(fact, factoryScope) }))
+	};
 }
 
-export function seatOpening(seats: readonly SeatRuntime[]): string {
-	return seats.map((seat) => `${seat.helper}(`).join('');
-}
-
-export function seatClosing(seats: readonly SeatRuntime[]): string {
-	return [...seats].reverse().map((seat) => `, ${seat.spec})`).join('');
+export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): readonly string[] {
+	const names = new Set<string>();
+	for (const node of nodeMap.nodes.values()) {
+		const plan = seatPlanOf(node, nodeMap, kindEntries);
+		if (plan.slots.length > 0) names.add('listSlotWith');
+		if (plan.elements.length > 0) names.add('elementsWith');
+		if (plan.groups.length > 0) for (const name of ['seatWith', 'groupField', 'STORED_SLOT_READERS']) names.add(name);
+		if (plan.viewPlan !== undefined) {
+			const names_ = plan.viewPlan.owner === undefined ? ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'storedElements', 'defineListIndices'] : ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'ownerView', 'ownerElements', 'listOption', 'readStubLength', 'unreadableStubItems'];
+			for (const name of names_) names.add(name);
+		}
+	}
+	return [...names];
 }
 
 export function separatedListSurface(
@@ -2102,29 +2153,40 @@ function emitSeparatedListFactory(
 		lines.push(`  const _delimiter = options.delimiter ?? ${delimiterDefault};`);
 	}
 
-	const seats = seatRuntimes(node, nodeMap, kindEntries);
-	lines.push(`  return withMethods(${seatOpening(seats)}withAccessors({`);
-	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
-	lines.push('    $source: 2 as const,');
-	lines.push('    $named: true as const,');
-	lines.push(`    ${contentStorageKey},`);
-	if (hasSeparatorKindOption) lines.push('    _separator,');
-	if (hasDelimiterOption) lines.push('    _delimiter,');
-	lines.push('    $with: {');
-	const optionsArg = hasOptions ? 'options, ' : '';
-	lines.push(`      ${contentAccessorName}: (...vs: ${elementsType}) => ${fn}(${optionsArg}...vs),`);
-	if (hasSeparatorKindOption) {
-		lines.push(`      separator: (v: ${separatorKindUnion}) => ${fn}({ ...options, separator: v }, ...elements),`);
+	const plan = seatPlanOf(node, nodeMap, kindEntries);
+	{
+		const view = listSelfViewParts(plan.viewPlan!, contentStorageKey, contentAccessorName, 'factory');
+		const optionsArg = hasOptions ? 'options, ' : '';
+		const setters: SetterEntry[] = [{ name: contentAccessorName, params: `...vs: ${elementsType}`, body: `${fn}(${optionsArg}...vs)` }];
+		if (hasSeparatorKindOption) {
+			setters.push({ name: 'separator', params: `v: ${separatorKindUnion}`, body: `${fn}({ ...options, separator: v }, ...elements)` });
+		}
+		if (hasDelimiterOption) {
+			setters.push({ name: 'delimiter', params: `v?: ${delimiterUnion}`, body: `${fn}({ ...options, delimiter: v }, ...elements)` });
+		}
+		lines.push(...view.prelude);
+		lines.push('  const handle = currentHandle();');
+		lines.push('  const node = {');
+		lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
+		lines.push('    $source: 2 as const,');
+		lines.push('    $named: true as const,');
+		lines.push(`    ${contentStorageKey},`);
+		if (hasSeparatorKindOption) lines.push('    _separator,');
+		if (hasDelimiterOption) lines.push('    _delimiter,');
+		lines.push(
+			...nodeMemberLines({
+				setters: seatedSetters(setters, plan),
+				accessors: [{ name: contentAccessorName, read: contentStorageKey }],
+				extra: view.members,
+				inner: innerPositionsOf(node.kind, nodeMap)
+			})
+		);
+		lines.push('  };');
+		lines.push(...view.postlude);
+		lines.push(`  return node as unknown as ${listBuiltName};`);
+		lines.push('}');
+		return lines.join('\n');
 	}
-	if (hasDelimiterOption) {
-		lines.push(`      delimiter: (v?: ${delimiterUnion}) => ${fn}({ ...options, delimiter: v }, ...elements),`);
-	}
-	lines.push('    },');
-	lines.push('  }, {');
-	lines.push(`    ${contentAccessorName}: () => ${contentStorageKey},`);
-	lines.push(`  })${seatClosing(seats)}) as unknown as ${listBuiltName};`);
-	lines.push('}');
-	return lines.join('\n');
 }
 
 interface TextFactoryNode {
@@ -2165,12 +2227,15 @@ function emitTextFactory(
 	const body: string[] = [`export function ${fn}${typeParams}(${params}): T.${node.typeName}.Bound {`];
 	if (guard) body.push(`  ${guard}`);
 	body.push(
-		'  return withMethods({',
+		'  const handle = currentHandle();',
+		'  const node = {',
 		`    $type: ${typeExpr},`,
 		`    $source: 2 as const,`,
 		'    $named: true as const,',
 		`    $text: ${textExpr},`,
-		'  });',
+		...nodeMemberLines({ accessors: [], inner: nodeMap === undefined ? { inner: false, keyed: false } : innerPositionsOf(node.kind, nodeMap) }),
+		'  };',
+		`  return node as unknown as T.${node.typeName}.Bound;`,
 		'}'
 	);
 	return body.join('\n');
@@ -2217,9 +2282,8 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		lines.push(
-			`import { ${['withAccessors', 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
+			`import { ${['currentHandle', ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'toEditAt', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
 		);
-		lines.push(`import { withMethods } from '../utils.js';`);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());
 		lines.push(...emitNonEmptyAssertHelper());

@@ -53,10 +53,10 @@ describe('a list owner', () => {
 		expect(typeof ps.$with).toBe('object');
 		expect(typeof ps.$with.parametersElements).toBe('function');
 	});
-	it('spreads and serialises as before: the list-owner members are not enumerable', () => {
+	it('writes its members as enumerable own properties; the index getters of a parsed owner stay off the keys', () => {
 		const ps = fnOf('fn f(a: u8) {}\n').parameters();
-		expect(Object.keys(ps)).not.toContain('length');
-		expect(Object.keys(ps)).not.toContain('delimiter');
-		expect(Object.getOwnPropertySymbols({ ...ps })).not.toContain(Symbol.iterator);
+		expect(Object.keys(ps)).toEqual(expect.arrayContaining(['length', 'delimiter', 'map']));
+		expect(Object.keys(ps)).not.toContain('0');
+		expect(Object.getOwnPropertySymbols({ ...ps })).toContain(Symbol.iterator);
 	});
 });

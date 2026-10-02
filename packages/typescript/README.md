@@ -57,7 +57,7 @@ const iface = engine.build.interfaceDeclaration({
 	body: engine.build.objectType.curly()
 });
 
-iface.$trivia('// the user').$render(); // "// the user\ninterface User {}"
+iface.$trivia.leading('// the user').$render(); // "// the user\ninterface User {}"
 ```
 
 ## Guards
