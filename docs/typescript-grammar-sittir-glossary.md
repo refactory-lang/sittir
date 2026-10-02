@@ -232,7 +232,7 @@ them once each, in canonical flat order. The former per-arm kinds and their
 				//   field('name', $._property_name),        // pos 4
 				//   optional('?'),                          // pos 5  →  '5/0'  (optional)
 				//   $._call_signature)                      // pos 6
-				// Field-promotion wave 3 (016 task #25): symmetric to
+				// Symmetric to
 				// method_definition / method_signature for the trailing `?` plus
 				// the accessor keyword. NOTE: no readonly — `'abstract'` is
 				// a required literal at pos 1, not optional.
@@ -390,9 +390,8 @@ them once each, in canonical flat order. The former per-arm kinds and their
 ```text
 				// method_definition: prec.left(seq(
 				//   optional($.accessibility_modifier),    // pos 0  (auto-promoted: accessibility_modifier by enrich)
-				//   optional('static'),                    // pos 1  →  'static' (T048: was wrongly labeled
-				//                                          //         override_modifier; _kw_static synthesized
-				//                                          //         here; add to inline: if parse drift emerges)
+				//   optional('static'),                    // pos 1  →  'static' (_kw_static synthesized here;
+				//                                          //         add to inline: if parse drift emerges)
 				//   optional($.override_modifier),         // pos 2  (auto-promoted: override_modifier by enrich)
 				//   optional('readonly'),                  // pos 3  →  '3/0'  (readonly)
 				//   optional('async'),                     // pos 4  →  '4/0'  (async)
@@ -401,18 +400,18 @@ them once each, in canonical flat order. The former per-arm kinds and their
 				//   optional('?'),                         // pos 7  →  '7/0'  (optional)
 				//   $._call_signature,                     // pos 8
 				//   field('body', $.statement_block)))    // pos 9
-				// Field-promotion wave 3 (016 task #25): label `async`, the
+				// Label `async`, the
 				// accessor `get`/`set`/`*`, and trailing `?` so render preserves
-				// `async get foo?(): T {}` shapes. Naming follows `<token>`
-				// (016 task #30); enrich's CHOICE-form-of-optional path doesn't
+				// `async get foo?(): T {}` shapes. Naming follows `<token>`;
+				// enrich's CHOICE-form-of-optional path doesn't
 				// fire on tree-sitter-evaluated rules so these positions are
-				// hand-promoted. Wave-3 follow-up (016 task #28): `readonly`
-				// was deferred in wave 3 because the synthesized
+				// hand-promoted. `readonly`
+				// is promoted too, with one extra step: the synthesized
 				// `_kw_readonly` hidden symbol's parse precedence diverges
 				// from the bare `'readonly'` token in sibling rules — `class Foo
-				// { readonly bar?(): T {} }` regressed to ERROR (parser took
+				// { readonly bar?(): T {} }` would otherwise parse as ERROR (the parser takes
 				// `readonly` as the property identifier instead of the marker).
-				// Resolved by adding `_kw_readonly` to the top-level
+				// Hence `_kw_readonly` is in the top-level
 				// `inline:` array (see above), which folds the hidden rule's body
 				// into every reference site at LR-table generation while preserving
 				// the FIELD wrapper for the parse tree.
@@ -423,8 +422,7 @@ them once each, in canonical flat order. The former per-arm kinds and their
 ```text
 				// method_signature: seq(
 				//   optional($.accessibility_modifier),    // pos 0  (auto-promoted: accessibility_modifier by enrich)
-				//   optional('static'),                    // pos 1  →  'static' (T048: was wrongly labeled
-				//                                          //         override_modifier; pos 2 override_modifier
+				//   optional('static'),                    // pos 1  →  'static' (pos 2 override_modifier is
 				//                                          //         auto-promoted by enrich)
 				//   optional($.override_modifier),         // pos 2  (auto-promoted: override_modifier by enrich)
 				//   optional('readonly'),                  // pos 3  (auto-promoted: readonly by enrich)
@@ -462,8 +460,7 @@ them once each, in canonical flat order. The former per-arm kinds and their
 ```text
 				// property_signature: seq(
 				//   optional($.accessibility_modifier),  // pos 0  (auto-promoted: accessibility_modifier by enrich)
-				//   optional('static'),                   // pos 1  →  'static' (T048: was wrongly labeled
-				//                                         //         override_modifier; pos 2 override_modifier
+				//   optional('static'),                   // pos 1  →  'static' (pos 2 override_modifier is
 				//                                         //         auto-promoted by enrich)
 				//   optional($.override_modifier),         // pos 2  (auto-promoted: override_modifier by enrich)
 				//   optional('readonly'),                  // pos 3  (auto-promoted: readonly by enrich)
