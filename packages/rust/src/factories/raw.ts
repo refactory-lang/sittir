@@ -7850,9 +7850,6 @@ function _buildTupleExpressionElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.TupleExpressionElements.Bound {
 	_assertNonEmpty(elements, 'tuple_expression_elements.elements');
-	if (elements.length === 1 && ((options.delimiter ?? Delimiter.None) & Delimiter.Trailing) === 0) {
-		throw new Error('tuple_expression_elements: a single element requires a trailing delimiter (delimiter: 2)');
-	}
 	const _element = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(

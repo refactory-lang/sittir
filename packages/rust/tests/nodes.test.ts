@@ -2,7 +2,6 @@
 import { describe, it, expect } from 'vitest';
 import { createEngine } from '@sittir/common';
 import language from '../src/index.ts';
-import { Delimiter } from '@sittir/common/utils';
 
 const { build: ir, kinds: TSKindId } = await createEngine(language);
 
@@ -3674,7 +3673,6 @@ describe('tuple_type_elements', () => {
 describe('tuple_expression_elements', () => {
 	it('factory produces correct type', () => {
 		const node = ir.tupleExpressionElements(
-			{ delimiter: Delimiter.Trailing },
 			...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 		);
 		expect(node.$type).toBe(TSKindId.TupleExpressionElements);
@@ -3682,7 +3680,6 @@ describe('tuple_expression_elements', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.tupleExpressionElements(
-			{ delimiter: Delimiter.Trailing },
 			...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 		);
 		expect(node.$render!().length).toBeGreaterThan(0);

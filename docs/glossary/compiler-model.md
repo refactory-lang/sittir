@@ -3097,10 +3097,14 @@ all read it.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.singleElementNeedsTrailing`
 
-A terminated list whose trailing delimiter is optional: one element is valid
-only with `delimiter: Delimiter.Trailing`. The list factory asserts it, and
-the generated list test passes that option when it builds one element, so
-both read this one fact.
+A terminated list whose trailing delimiter is optional: the grammar puts a
+required separator after the first element, so one element is that kind only
+with its trailing separator (`(x,)` is a tuple, `(x)` is not). The render
+module compiles it into the list's trailing condition: exactly one element
+renders the separator whatever the `delimiter` option says, for a built list
+and for a parsed one cut down to one element alike. With more elements the
+option decides. Nothing else reads the fact, and the factory accepts one
+element without the option.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::LeftImmediateCtx`
 

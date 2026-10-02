@@ -4,7 +4,7 @@ import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import type { NodeMap } from '../types.ts';
-import type { AssembledNode } from '../model/node-map.ts';
+import { AssembledList, type AssembledNode } from '../model/node-map.ts';
 import {
 	factoryTakesSpreadChildren,
 	wrapExposesChildren,
@@ -145,17 +145,20 @@ describe('factory field metadata', () => {
 });
 
 describe('terminated separated lists', () => {
-	it('rust tuple_expression_elements asserts the single-element trailing delimiter (terminated-list invariant)', () => {
-		const src = emitFactories({ grammar: 'rust', nodeMap });
-		const fnStart = src.indexOf('function _buildTupleExpressionElements(');
-		expect(fnStart).toBeGreaterThan(-1);
-		const body = src.slice(fnStart, src.indexOf('\n}\n', fnStart));
-		expect(body).toContain(
-			'elements.length === 1 && ((options.delimiter ?? Delimiter.None) & Delimiter.Trailing) === 0'
-		);
-		expect(body).toContain('requires a trailing delimiter');
-		// A prefix-style list (optional trailing comma, no mandatory head) must NOT carry the assert.
-		const tt = src.indexOf('function _buildTupleTypeElements(');
-		expect(src.slice(tt, src.indexOf('\n}\n', tt))).not.toContain('requires a trailing delimiter');
+	const needsTrailing = (kind: string): boolean => {
+		const node = nodeMap.nodes.get(kind);
+		return node instanceof AssembledList && node.singleElementNeedsTrailing;
+	};
+
+	it('a list whose first element carries a required separator needs it when it has one element', () => {
+		expect(needsTrailing('tuple_expression_elements')).toBe(true);
+	});
+
+	it('a list with an optional trailing separator and no required one does not', () => {
+		expect(needsTrailing('tuple_type_elements')).toBe(false);
+	});
+
+	it('the factory accepts one element; the requirement is the render template\'s', () => {
+		expect(emitFactories({ grammar: 'rust', nodeMap })).not.toContain('requires a trailing delimiter');
 	});
 });
