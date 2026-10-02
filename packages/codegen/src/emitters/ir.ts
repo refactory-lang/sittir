@@ -12,7 +12,7 @@ import { isValidIdent, irNamespacesChildFactory, lexedContentSlot, isDeclaredSup
 import { supertypeMemberName } from '../dsl/arm-names.ts';
 import { lowerCamelCase } from '../compiler/model/casing.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry } from './kind-discriminant.ts';
-import { bundleEntries, flattenedVariantParents, isFlatLeafOrKeyword } from './overlays/module.ts';
+import { bundleEntries, flattenedVariantParents, hasFlatEntry, hasOneSurface, isFlatLeafOrKeyword, ownTextEntries } from './overlays/module.ts';
 import type { GrammarRoles, Role } from '../scm/extract-roles.ts';
 
 export interface EmitIrConfig {
@@ -71,7 +71,8 @@ export function emitIr(config: EmitIrConfig): string {
 		}
 	}
 
-	const flatKeys = new Set(bundleEntries(nodeMap, generatedIdTables).map((entry) => entry.key));
+	const ownText = ownTextEntries(nodeMap, generatedIdTables);
+	const flatKeys = new Set([...bundleEntries(nodeMap, generatedIdTables), ...ownText].map((entry) => entry.key));
 	for (const [kind, node] of nodeMap.nodes) if (isFlatLeafOrKeyword(kind, node, kindEntries)) flatKeys.add(node.irKey!);
 	const flattenedParents = flattenedVariantParents(nodeMap, generatedIdTables);
 	const flattenedKinds = new Set(flattenedParents.map((parent) => parent.node.kind));
@@ -102,22 +103,21 @@ export function emitIr(config: EmitIrConfig): string {
 			if (sub.factoryInline) continue;
 			if (!sub.rawFactoryName) continue;
 			if (sub instanceof AssembledSupertype || isBuilderlessPunctuationLeaf(sub)) continue;
-			if ((sub instanceof AbstractAssembledCompound || sub instanceof AssembledList) && !bundleKeyByKind.has(subKind))
+			if ((sub instanceof AbstractAssembledCompound || sub instanceof AssembledList) && !hasOneSurface(sub) && !bundleKeyByKind.has(subKind))
 				continue;
 			if (kindEntries && !hasCatalogEntry(kindEntries, subKind)) continue;
 			const memberKey = memberKeyFor(subKind, kind);
 			if (!isValidIdent(memberKey) || usedMemberKeys.has(memberKey)) continue;
 			usedMemberKeys.add(memberKey);
 
-			if (sub instanceof AbstractAssembledCompound || sub instanceof AssembledList) {
+			if (hasOneSurface(sub)) {
+				memberEntries.push(`  ${memberKey}: F.${sub.rawFactoryName},`);
+				memberTypeEntries.push(`  readonly ${memberKey}: typeof F.${sub.rawFactoryName};`);
+			} else if (sub instanceof AbstractAssembledCompound || sub instanceof AssembledList) {
 				if (!sub.fromFunctionName) continue;
 				const ref = bundleRef(sub);
 				memberEntries.push(`  ${memberKey}: ${ref},`);
 				memberTypeEntries.push(`  readonly ${memberKey}: typeof ${ref};`);
-			} else if (isBuilderTextLeaf(sub) || sub instanceof AssembledPattern) {
-				if (!sub.rawFactoryName) continue;
-				memberEntries.push(`  ${memberKey}: F.${sub.rawFactoryName},`);
-				memberTypeEntries.push(`  readonly ${memberKey}: typeof F.${sub.rawFactoryName};`);
 			}
 		}
 		if (memberEntries.length === 0) continue;
@@ -170,22 +170,24 @@ export function emitIr(config: EmitIrConfig): string {
 
 	irValueLines.push('  // Keyword factories');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (
-			!isBuilderTextLeaf(node) ||
-			!isFlatLeafOrKeyword(kind, node, kindEntries) ||
-			node.annotations?.tokenForm === true
-		)
-			continue;
+		if (!isBuilderTextLeaf(node) || !hasFlatEntry(kind, node, kindEntries)) continue;
 		if (usedGroupNames.has(node.irKey!)) continue;
 		irValueLines.push(`  ${node.irKey}: F.${node.rawFactoryName},`);
 		irTypeMembers.push(`  readonly ${node.irKey}: typeof F.${node.rawFactoryName};`);
 	}
 	irValueLines.push('');
 
+	irValueLines.push('  // Leaves whose one slot is their own text');
+	for (const { key, node } of ownText) {
+		if (usedGroupNames.has(key)) continue;
+		irValueLines.push(`  ${key}: F.${node.rawFactoryName},`);
+		irTypeMembers.push(`  readonly ${key}: typeof F.${node.rawFactoryName};`);
+	}
+	irValueLines.push('');
+
 	irValueLines.push('  // Leaf node factories');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!(node instanceof AssembledPattern) || node.annotations?.tokenForm === true) continue;
-		if (!isFlatLeafOrKeyword(kind, node, kindEntries)) continue;
+		if (!(node instanceof AssembledPattern) || !hasFlatEntry(kind, node, kindEntries)) continue;
 		if (usedGroupNames.has(node.irKey!)) continue;
 		irValueLines.push(`  ${node.irKey}: F.${node.rawFactoryName},`);
 		irTypeMembers.push(`  readonly ${node.irKey}: typeof F.${node.rawFactoryName};`);
@@ -269,7 +271,7 @@ function isLeafFactory(node: AssembledNode): boolean {
 }
 
 function factoryRef(node: AssembledNode): string {
-	return lexedContentSlot(node) === undefined ? `F.${node.rawFactoryName}` : `F.${node.factoryName}`;
+	return lexedContentSlot(node) === undefined || hasOneSurface(node) ? `F.${node.rawFactoryName}` : `F.${node.factoryName}`;
 }
 
 function returnTypeExpr(node: AssembledNode): string {

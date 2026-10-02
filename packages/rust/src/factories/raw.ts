@@ -37,7 +37,8 @@ import {
 	numberText,
 	orDefault,
 	rejectBareText,
-	rejectKeywordText
+	rejectKeywordText,
+	unaffixed
 } from '@sittir/common/utils';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
@@ -6856,7 +6857,10 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 	return node as unknown as T.Identifier.Bound;
 }
 
-export function buildShebang(value: AdmitBound<string, T.AdmittedNodes>): T.Shebang.Bound {
+export function buildShebang(content: string, affix?: true): T.Shebang.Bound;
+export function buildShebang(text: `#!${string}\n`, affix: false): T.Shebang.Bound;
+export function buildShebang(input: string, affix: boolean = true): T.Shebang.Bound {
+	const value = affix ? input : unaffixed(String(input), '#!', '\n', 'shebang');
 	const _content = value;
 	if (!_slotRe_buildShebang_content.test(_content))
 		throw new Error(`shebang.content: text does not match pattern: ${describeValue(_content)}`);
@@ -6889,7 +6893,10 @@ export const buildSuper: TSKindId.Super = TSKindId.Super;
 
 export const buildCrate: TSKindId.Crate = TSKindId.Crate;
 
-export function buildMetavariable(value: AdmitBound<string, T.AdmittedNodes>): T.Metavariable.Bound {
+export function buildMetavariable(content: string, affix?: true): T.Metavariable.Bound;
+export function buildMetavariable(text: `$${string}`, affix: false): T.Metavariable.Bound;
+export function buildMetavariable(input: string, affix: boolean = true): T.Metavariable.Bound {
+	const value = affix ? input : unaffixed(String(input), '$', '', 'metavariable');
 	const _name = value;
 	if (!_slotRe_buildMetavariable_name.test(_name))
 		throw new Error(`metavariable.name: text does not match pattern: ${describeValue(_name)}`);
@@ -9193,7 +9200,10 @@ export function buildCharLiteralEscapedHex(config: T.CharLiteralEscapedHex.Confi
 	return node as unknown as T.CharLiteralEscapedHex.Bound;
 }
 
-export function buildEscapeSequenceSimple(value: AdmitBound<string, T.AdmittedNodes>): T.EscapeSequenceSimple.Bound {
+export function buildEscapeSequenceSimple(content: string, affix?: true): T.EscapeSequenceSimple.Bound;
+export function buildEscapeSequenceSimple(text: `\\${string}`, affix: false): T.EscapeSequenceSimple.Bound;
+export function buildEscapeSequenceSimple(input: string, affix: boolean = true): T.EscapeSequenceSimple.Bound {
+	const value = affix ? input : unaffixed(String(input), '\\', '', 'escape_sequence_simple');
 	const _content = value;
 	if (!_slotRe_buildEscapeSequenceSimple_content.test(_content))
 		throw new Error(`escape_sequence_simple.content: text does not match pattern: ${describeValue(_content)}`);
@@ -9220,9 +9230,13 @@ export function buildEscapeSequenceSimple(value: AdmitBound<string, T.AdmittedNo
 	return node as unknown as T.EscapeSequenceSimple.Bound;
 }
 
+export function buildEscapeSequenceUnicodeFixed(content: string, affix?: true): T.EscapeSequenceUnicodeFixed.Bound;
+export function buildEscapeSequenceUnicodeFixed(text: `\\${string}`, affix: false): T.EscapeSequenceUnicodeFixed.Bound;
 export function buildEscapeSequenceUnicodeFixed(
-	value: AdmitBound<string, T.AdmittedNodes>
+	input: string,
+	affix: boolean = true
 ): T.EscapeSequenceUnicodeFixed.Bound {
+	const value = affix ? input : unaffixed(String(input), '\\', '', 'escape_sequence_unicode_fixed');
 	const _content = value;
 	if (!_slotRe_buildEscapeSequenceUnicodeFixed_content.test(_content))
 		throw new Error(`escape_sequence_unicode_fixed.content: text does not match pattern: ${describeValue(_content)}`);
@@ -9249,9 +9263,16 @@ export function buildEscapeSequenceUnicodeFixed(
 	return node as unknown as T.EscapeSequenceUnicodeFixed.Bound;
 }
 
+export function buildEscapeSequenceUnicodeBraced(content: string, affix?: true): T.EscapeSequenceUnicodeBraced.Bound;
 export function buildEscapeSequenceUnicodeBraced(
-	value: AdmitBound<string, T.AdmittedNodes>
+	text: `\\${string}`,
+	affix: false
+): T.EscapeSequenceUnicodeBraced.Bound;
+export function buildEscapeSequenceUnicodeBraced(
+	input: string,
+	affix: boolean = true
 ): T.EscapeSequenceUnicodeBraced.Bound {
+	const value = affix ? input : unaffixed(String(input), '\\', '', 'escape_sequence_unicode_braced');
 	const _content = value;
 	if (!_slotRe_buildEscapeSequenceUnicodeBraced_content.test(_content))
 		throw new Error(`escape_sequence_unicode_braced.content: text does not match pattern: ${describeValue(_content)}`);
@@ -9278,7 +9299,10 @@ export function buildEscapeSequenceUnicodeBraced(
 	return node as unknown as T.EscapeSequenceUnicodeBraced.Bound;
 }
 
-export function buildEscapeSequenceHex(value: AdmitBound<string, T.AdmittedNodes>): T.EscapeSequenceHex.Bound {
+export function buildEscapeSequenceHex(content: string, affix?: true): T.EscapeSequenceHex.Bound;
+export function buildEscapeSequenceHex(text: `\\${string}`, affix: false): T.EscapeSequenceHex.Bound;
+export function buildEscapeSequenceHex(input: string, affix: boolean = true): T.EscapeSequenceHex.Bound {
+	const value = affix ? input : unaffixed(String(input), '\\', '', 'escape_sequence_hex');
 	const _content = value;
 	if (!_slotRe_buildEscapeSequenceHex_content.test(_content))
 		throw new Error(`escape_sequence_hex.content: text does not match pattern: ${describeValue(_content)}`);

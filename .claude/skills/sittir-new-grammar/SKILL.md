@@ -105,8 +105,7 @@ git diff --stat -- packages/{rust,typescript,python} rust/crates   # only expect
 pnpm exec tsx packages/cli/src/cli.ts validate counts && pnpm run validate:history
 ```
 
-Expected churn is limited to what the change explains (e.g. `generated.manifest.json` source
-hashes when a grammar `package.json` changes). Any other generated diff is a finding — stop and
+Expected churn is limited to what the change explains. Any other generated diff is a finding — stop and
 review it, never revert it away. Run the unit suite as its own Bash call.
 
 A new grammar is promoted by adding `"sittir": { "stable": true }` to its `package.json` once it

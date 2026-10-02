@@ -26,6 +26,7 @@ const ctx: PrintContext = {
 		listDefaults: {},
 		listElementKinds: {},
 		hoistedKinds: new Set(),
+		oneSurfaceKinds: new Set<string>(),
 		kindIdOfName: () => undefined
 	},
 	kindNameFromId: (id) =>

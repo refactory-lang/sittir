@@ -1,7 +1,7 @@
 //! The napi engine every grammar crate exposes, defined once.
 //!
-//! [`napi_engine!`] emits the `SittirEngine` class: parse, read, render,
-//! edits, and the live-tree table behind them. A grammar crate supplies only
+//! [`napi_engine!`] emits the `SittirEngine` class (parse, read, render,
+//! edits) and the addon's live-tree table behind it. A grammar crate supplies only
 //! what is actually grammar-specific — its parser hook, its transport root
 //! type, and its template hash — so a change to the state machine lands in one
 //! place instead of once per grammar.
@@ -13,12 +13,22 @@
 //! Those handles stay live for as long as the caller holds any node, so an
 //! engine that kept only the newest parse would answer a held tree's handles
 //! out of a different tree — and, because handles are dense indices that
-//! restart at 0, would do it silently. The engine therefore keeps every parsed
-//! tree in `trees`, keyed by the id its handles carry.
+//! restart at 0, would do it silently. Every parsed tree is therefore kept,
+//! keyed by the id its handles carry.
+//!
+//! ## The table belongs to the addon, not to an engine
+//!
+//! A coordinate names a tree, not the engine that parsed it, so the table is
+//! one per grammar addon: every engine of a language resolves every tree of
+//! that language, and a tree outlives the engine that parsed it. It is a
+//! `thread_local!`, because tree ids are minted from `globalThis` and each
+//! JavaScript thread has its own — a table shared across threads would meet
+//! the same id twice.
 //!
 //! Trees are dropped when JavaScript drops its side: the boundary registers
-//! each tree with a `FinalizationRegistry` and calls `disposeTree` once the
-//! last node referring to it is collected. `dispose` drops all of them at once.
+//! each tree with a `FinalizationRegistry` and calls the addon's `disposeTree`
+//! once the last object naming it is collected. An engine's `dispose` leaves
+//! them alone. A thread that ends takes its table with it.
 
 /// Emit the `SittirEngine` napi class for one grammar.
 ///
@@ -41,13 +51,52 @@ macro_rules! napi_engine {
             pub options: Option<$options>,
         }
 
+        ::std::thread_local! {
+            /// Every tree of this language still reachable from this
+            /// JavaScript thread, keyed by the id its handles carry. Entries
+            /// leave only via `dispose_tree`.
+            static LIVE_TREES: ::std::cell::RefCell<
+                ::std::collections::HashMap<u32, $crate::ParsedTree<$grammar>>,
+            > = ::std::cell::RefCell::new(::std::collections::HashMap::new());
+        }
+
+        /// Drop one tree. Called from the boundary's `FinalizationRegistry`
+        /// once JavaScript has collected the last object naming it.
+        /// Unknown ids are not an error — a tree can only be dropped once,
+        /// and the registry has no way to know whether it already was.
+        #[::napi_derive::napi]
+        pub fn dispose_tree(tree_id: f64) {
+            // Checked for the same reason `read_untyped_node` checks its handle:
+            // `as` saturates, so `NaN` and every negative arrive as 0 —
+            // and 0 is the first tree, so an unchecked cast would let a
+            // nonsense id drop a live tree. Invalid input is a no-op
+            // rather than an error: this is called from a finalizer,
+            // where nothing is positioned to handle a throw, and
+            // disposing an id that names no tree is already a no-op.
+            let Ok(tree_id) = $crate::napi_engine::checked_index(tree_id, "treeId") else {
+                return;
+            };
+            let Ok(tree_id) = u32::try_from(tree_id) else {
+                return;
+            };
+            LIVE_TREES.with(|trees| {
+                trees.borrow_mut().remove(&tree_id);
+            });
+        }
+
+        /// Number of trees still held on this thread. Diagnostics only — the
+        /// boundary's disposal is driven by GC, so this is the way a test can
+        /// observe that trees are actually being released.
+        #[::napi_derive::napi]
+        pub fn live_tree_count() -> u32 {
+            LIVE_TREES.with(|trees| trees.borrow().len() as u32)
+        }
+
         #[::napi_derive::napi]
         pub struct SittirEngine {
             engine: $crate::engine::Engine<$grammar>,
-            /// Every tree still reachable from JavaScript, keyed by the id its
-            /// handles carry. Entries leave only via `disposeTree`/`dispose`.
-            trees: ::std::collections::HashMap<u32, $crate::ParsedTree<$grammar>>,
-            /// Newest parse, for `render` calls that do not name a tree.
+            /// Newest parse by this engine, for `render` calls that do not
+            /// name a tree.
             last_tree_id: Option<u32>,
         }
 
@@ -78,7 +127,6 @@ macro_rules! napi_engine {
                         table,
                     )
                     .map_err(::napi::Error::from_reason)?,
-                    trees: ::std::collections::HashMap::new(),
                     last_tree_id: None,
                 })
             }
@@ -153,7 +201,9 @@ macro_rules! napi_engine {
                         .map_err(|e| {
                             ::napi::Error::from_reason(format!("serialize ParseResult failed: {e}"))
                         })?;
-                        self.trees.insert(tree_id, parsed);
+                        LIVE_TREES.with(|trees| {
+                            trees.borrow_mut().insert(tree_id, parsed);
+                        });
                         self.last_tree_id = Some(tree_id);
                         Ok(json)
                     }
@@ -167,7 +217,7 @@ macro_rules! napi_engine {
             /// Hydrate one child of the node named by `handle`.
             ///
             /// The handle names its own tree, so a handle from a tree that has
-            /// been disposed — or one never minted here — is refused rather
+            /// been released — or one never minted on this thread — is refused rather
             /// than answered out of whichever tree happens to be present.
             /// `depth` counts the levels read, as for `parse_and_read`.
             #[::napi_derive::napi]
@@ -180,20 +230,24 @@ macro_rules! napi_engine {
                 let handle = $crate::napi_engine::checked_index(handle, "handle")?;
                 let child_index = $crate::napi_engine::checked_index(child_index, "childIndex")?;
                 let (tree_id, _) = $crate::engine::decode_handle(handle);
-                let parsed = self.trees.get_mut(&tree_id).ok_or_else(|| {
-                    ::napi::Error::from_reason(format!(
-                        "handle {handle} names tree {tree_id}, which is not live \
-                         (never parsed, or already disposed)"
-                    ))
-                })?;
                 let child_index = u16::try_from(child_index).map_err(|_| {
                     ::napi::Error::from_reason(format!(
                         "childIndex {child_index} exceeds the per-node child limit"
                     ))
                 })?;
-                parsed
-                    .read_at(handle, child_index, $crate::napi_engine::depth_from_wire(depth)?)
-                    .map_err(::napi::Error::from_reason)
+                let depth = $crate::napi_engine::depth_from_wire(depth)?;
+                LIVE_TREES.with(|trees| {
+                    let mut trees = trees.borrow_mut();
+                    let parsed = trees.get_mut(&tree_id).ok_or_else(|| {
+                        ::napi::Error::from_reason(format!(
+                            "handle {handle} names tree {tree_id}, which is not live \
+                             (never parsed on this thread, or already released)"
+                        ))
+                    })?;
+                    parsed
+                        .read_at(handle, child_index, depth)
+                        .map_err(::napi::Error::from_reason)
+                })
             }
 
             /// Read the root of a live tree again, `depth` levels down, so a
@@ -207,19 +261,22 @@ macro_rules! napi_engine {
                     ::napi::Error::from_reason(format!("treeId {tree_id} names no tree"))
                 })?;
                 let depth = $crate::napi_engine::depth_from_wire(depth)?;
-                let parsed = self.trees.get_mut(&tree_id).ok_or_else(|| {
-                    ::napi::Error::from_reason(format!(
-                        "tree {tree_id} is not live (never parsed, or already disposed)"
-                    ))
-                })?;
-                let data = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| {
-                    parsed.read_root(depth)
-                }))
-                .map_err(|payload| {
-                    ::napi::Error::from_reason($crate::panic_msg(payload, "read_root panicked"))
-                })?;
-                ::serde_json::to_string(&data).map_err(|e| {
-                    ::napi::Error::from_reason(format!("serialize root failed: {e}"))
+                LIVE_TREES.with(|trees| {
+                    let mut trees = trees.borrow_mut();
+                    let parsed = trees.get_mut(&tree_id).ok_or_else(|| {
+                        ::napi::Error::from_reason(format!(
+                            "tree {tree_id} is not live (never parsed on this thread, or already released)"
+                        ))
+                    })?;
+                    let data = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| {
+                        parsed.read_root(depth)
+                    }))
+                    .map_err(|payload| {
+                        ::napi::Error::from_reason($crate::panic_msg(payload, "read_root panicked"))
+                    })?;
+                    ::serde_json::to_string(&data).map_err(|e| {
+                        ::napi::Error::from_reason(format!("serialize root failed: {e}"))
+                    })
                 })
             }
 
@@ -243,31 +300,36 @@ macro_rules! napi_engine {
                     }
                     None => self.engine.options(),
                 };
-                let ctx = $crate::prepare::RenderContext {
-                    options: table,
-                    sources: &self.trees,
-                };
-                let (source, canonical) = $render_parts(transport, &ctx).map_err(|e| {
-                    ::napi::Error::from_reason(format!("render_transport failed: {e}"))
-                })?;
-                // A node knows which tree it came from, but the wrap layer
-                // does not thread that through yet, so an unnamed render still
-                // resolves against the newest parse — the pre-slab behaviour.
-                // Nodes rendered through an engine that has since parsed
-                // something else therefore still borrow the wrong format; that
-                // is a separate defect from tree identity and is fixed by
-                // passing `treeId` at every render call site.
-                let tree_format = tree_id
-                    .map(|id| id as u32)
-                    .or(self.last_tree_id)
-                    .and_then(|id| self.trees.get(&id))
-                    .and_then(|pt| pt.format());
-                Ok($crate::apply_render_format(
-                    source,
-                    canonical,
-                    self.engine.engine_format(),
-                    tree_format,
-                ))
+                // No JavaScript runs while the table is borrowed, so the
+                // borrow cannot be re-entered.
+                LIVE_TREES.with(|trees| {
+                    let trees = trees.borrow();
+                    let ctx = $crate::prepare::RenderContext {
+                        options: table,
+                        sources: &*trees,
+                    };
+                    let (source, canonical) = $render_parts(transport, &ctx).map_err(|e| {
+                        ::napi::Error::from_reason(format!("render_transport failed: {e}"))
+                    })?;
+                    // A node knows which tree it came from, but the wrap layer
+                    // does not thread that through yet, so an unnamed render still
+                    // resolves against the newest parse — the pre-slab behaviour.
+                    // Nodes rendered through an engine that has since parsed
+                    // something else therefore still borrow the wrong format; that
+                    // is a separate defect from tree identity and is fixed by
+                    // passing `treeId` at every render call site.
+                    let tree_format = tree_id
+                        .map(|id| id as u32)
+                        .or(self.last_tree_id)
+                        .and_then(|id| trees.get(&id))
+                        .and_then(|pt| pt.format());
+                    Ok($crate::apply_render_format(
+                        source,
+                        canonical,
+                        self.engine.engine_format(),
+                        tree_format,
+                    ))
+                })
             }
 
             #[::napi_derive::napi]
@@ -295,42 +357,10 @@ macro_rules! napi_engine {
                     .map_err(::napi::Error::from_reason)
             }
 
-            /// Drop one tree. Called from the boundary's `FinalizationRegistry`
-            /// once JavaScript has collected the last node reading from it.
-            /// Unknown ids are not an error — a tree can only be dropped once,
-            /// and the registry has no way to know whether it already was.
-            #[::napi_derive::napi]
-            pub fn dispose_tree(&mut self, tree_id: f64) {
-                // Checked for the same reason `read_untyped_node` checks its handle:
-                // `as` saturates, so `NaN` and every negative arrive as 0 —
-                // and 0 is the first tree, so an unchecked cast would let a
-                // nonsense id drop a live tree. Invalid input is a no-op
-                // rather than an error: this is called from a finalizer,
-                // where nothing is positioned to handle a throw, and
-                // disposing an id that names no tree is already a no-op.
-                let Ok(tree_id) = $crate::napi_engine::checked_index(tree_id, "treeId") else {
-                    return;
-                };
-                let Ok(tree_id) = u32::try_from(tree_id) else {
-                    return;
-                };
-                self.trees.remove(&tree_id);
-                if self.last_tree_id == Some(tree_id) {
-                    self.last_tree_id = None;
-                }
-            }
-
-            /// Number of trees still held. Diagnostics only — the boundary's
-            /// disposal is driven by GC, so this is the way a test can observe
-            /// that trees are actually being released.
-            #[::napi_derive::napi(getter)]
-            pub fn live_tree_count(&self) -> u32 {
-                self.trees.len() as u32
-            }
-
+            /// Free this engine's own state. The trees it parsed stay in the
+            /// addon's table: they belong to whoever still names them.
             #[::napi_derive::napi]
             pub fn dispose(&mut self) {
-                self.trees.clear();
                 self.last_tree_id = None;
             }
         }

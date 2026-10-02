@@ -13,7 +13,7 @@ pnpm run bootstrap
 ```
 
 `bootstrap` installs dependencies, installs the tracked git hooks from
-`.githooks/` (the manifest pre-commit gate, and a post-checkout hook), and
+`.githooks/` (the generated-output pre-commit gate, and a post-checkout hook), and
 builds every grammar's native binding. Git never copies hooks into a clone, so
 a fresh clone runs it once by hand; after that, every new worktree bootstraps
 itself on checkout when its commit is already on a local or origin branch. A
@@ -23,7 +23,7 @@ have reviewed the code and run `pnpm run bootstrap` yourself. Set
 `pnpm run bootstrap` by hand after pulling a lockfile or native crate change.
 An existing hook sittir does not manage is kept as `<name>.pre-sittir`.
 
-`pnpm exec tsx packages/cli/src/cli.ts tool sync-base [--base origin/master]` brings a branch up to date with its base: it merges, and when the only conflicts are generated files (manifests included) it takes the base's side; after any merge it verifies every grammar's manifest and regenerates the grammars whose files conflicted or went stale, then commits the merge. Any other conflict, or a regeneration that changes a file outside the generated roots, stops it for review.
+`pnpm exec tsx packages/cli/src/cli.ts tool sync-base [--base origin/master]` brings a branch up to date with its base: it merges, and when the only conflicts are generated files it takes the base's side; after any merge it verifies every grammar and regenerates the grammars whose files conflicted or went stale, then commits the merge. Any other conflict, or a regeneration that changes a file outside the generated roots, stops it for review.
 
 ## Everyday commands
 
@@ -59,6 +59,22 @@ pnpm run regen:all            # regenerate all three grammars
 # One grammar via the unified sittir CLI
 pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
 ```
+
+### The local generated-output check
+
+Validators, probes and the pre-commit hook refuse to run on generated files
+that did not come from the current source. Nothing about this is committed.
+`gen` records what it produced in
+`node_modules/.cache/sittir/generated-manifest/<grammar>.json`: a hash per
+generated file and the last eight (source, output) pairs it has seen. The
+check passes when the tree is one of those pairs, or when its source inputs
+and generated files equal HEAD (or, during a merge, the commit being merged;
+both must equal the same one). So a fresh clone, a branch switch, and a merge
+of a base that regenerated all pass without regenerating. Editing codegen
+source, a grammar, or a generated file by hand does not, until you regenerate.
+
+The file is per worktree and survives `pnpm install`. Deleting it, or
+`node_modules`, loses nothing: the tree is compared with HEAD instead.
 
 ### The CI drift check
 

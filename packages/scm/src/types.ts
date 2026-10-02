@@ -1723,8 +1723,8 @@ export namespace EscapeSequence {
 	}
 	export type Loose = LooseFor<TSKindId.EscapeSequence>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequence>;
-	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.EscapeSequence.Loose];
+	export type BuildArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
+	export type LooseArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
 	export type Kind = TSKindId.EscapeSequence;
 }
 export namespace Capture {
@@ -1829,8 +1829,8 @@ export namespace Comment {
 	}
 	export type Loose = LooseFor<TSKindId.Comment>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Comment>;
-	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.Comment.Loose];
+	export type BuildArgs = [content: string, affix?: true] | [text: `;${string}`, affix: false];
+	export type LooseArgs = [content: string, affix?: true] | [text: `;${string}`, affix: false];
 	export type Kind = TSKindId.Comment;
 }
 export namespace List {

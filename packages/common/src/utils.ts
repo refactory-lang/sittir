@@ -564,12 +564,14 @@ export { toEditAt } from './edit.ts';
 export { currentHandle } from './engine-scope.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toTransportData, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots } from './transport-data.ts';
+export { toTransportData, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree } from './transport-data.ts';
+export { carryTree, treeTokenOf, type TreeToken } from './tree-token.ts';
 export {
 	projectInterior,
 	lexedConfig,
 	spelledForm,
 	spelledInterior,
+	unaffixed,
 	refuseSiblingLead,
 	type TokenInterior,
 	type InteriorSlot,

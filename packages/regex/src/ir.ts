@@ -45,7 +45,6 @@ export const ir: {
 	readonly namedGroupBackreference: typeof F.namedGroupBackreference;
 	readonly characterClassEscape: typeof F.characterClassEscape;
 	readonly unicodePropertyValueExpression: typeof F.unicodePropertyValueExpression;
-	readonly identityEscape: typeof F.identityEscape;
 	readonly termGroup: typeof F.termGroup;
 	readonly inlineFlagsGroup: typeof F.inlineFlagsGroup;
 	readonly anyCharacter: typeof F.buildAnyCharacter;
@@ -54,6 +53,7 @@ export const ir: {
 	readonly boundaryAssertion: typeof F.buildBoundaryAssertion;
 	readonly nonBoundaryAssertion: typeof F.buildNonBoundaryAssertion;
 	readonly negation: typeof F.buildNegation;
+	readonly identityEscape: typeof F.buildIdentityEscape;
 	readonly patternCharacter: typeof F.buildPatternCharacter;
 	readonly posixClassName: typeof F.buildPosixClassName;
 	readonly classCharacter: typeof F.buildClassCharacter;
@@ -90,7 +90,6 @@ export const ir: {
 	namedGroupBackreference: F.namedGroupBackreference,
 	characterClassEscape: F.characterClassEscape,
 	unicodePropertyValueExpression: F.unicodePropertyValueExpression,
-	identityEscape: F.identityEscape,
 	termGroup: F.termGroup,
 	inlineFlagsGroup: F.inlineFlagsGroup,
 
@@ -101,6 +100,9 @@ export const ir: {
 	boundaryAssertion: F.buildBoundaryAssertion,
 	nonBoundaryAssertion: F.buildNonBoundaryAssertion,
 	negation: F.buildNegation,
+
+	// Leaves whose one slot is their own text
+	identityEscape: F.buildIdentityEscape,
 
 	// Leaf node factories
 	patternCharacter: F.buildPatternCharacter,

@@ -1,6 +1,7 @@
 import v8 from 'node:v8';
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import { isDataKey, treeTokenOf } from '@sittir/common/utils';
 import rust from '../../rust/src/index.ts';
 import typescript from '../../typescript/src/index.ts';
 import python from '../../python/src/index.ts';
@@ -38,6 +39,26 @@ const classes: Record<string, () => object> = {
 	'python text leaf': () => py.build.identifier('x'),
 	'python group seat': () => py.build.slice({})
 };
+
+describe('a built node carries no member that crosses the boundary as data', () => {
+	for (const [label, make] of Object.entries(classes)) {
+		it(label, () => {
+			const node = make() as Record<string, unknown>;
+			const members = Object.keys(node).filter((key) => typeof node[key] === 'function');
+			expect(members.length).toBeGreaterThan(0);
+			expect(members.filter(isDataKey)).toEqual([]);
+		});
+	}
+});
+
+describe('a wrapped node holds its tree token', () => {
+	const source = 'fn f(a: i32) { let x = g(a, a + 1); match x { 1 => 1, _ => 2 } }\n';
+	it('on every node of a parse', () => {
+		const nodes = typedNodesOf(rs.parse(source));
+		expect(nodes.length).toBeGreaterThan(10);
+		expect(nodes.filter((node) => treeTokenOf(node) === undefined)).toEqual([]);
+	});
+});
 
 describe('a built node keeps fast properties', () => {
 	for (const [label, make] of Object.entries(classes)) {

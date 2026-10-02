@@ -18908,8 +18908,8 @@ export namespace HashBangLine {
 	}
 	export type Loose = LooseFor<TSKindId.HashBangLine>;
 	export type LooseConfig = LooseConfigFor<TSKindId.HashBangLine>;
-	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.HashBangLine.Loose];
+	export type BuildArgs = [content: string, affix?: true] | [text: `#!${string}`, affix: false];
+	export type LooseArgs = [content: string, affix?: true] | [text: `#!${string}`, affix: false];
 	export type Kind = TSKindId.HashBangLine;
 }
 export namespace NamespaceExport {
@@ -20211,8 +20211,8 @@ export namespace EscapeSequence {
 	}
 	export type Loose = LooseFor<TSKindId.EscapeSequence>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequence>;
-	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.EscapeSequence.Loose];
+	export type BuildArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
+	export type LooseArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
 	export type Kind = TSKindId.EscapeSequence;
 }
 export namespace TemplateString {
@@ -20287,8 +20287,8 @@ export namespace PrivatePropertyIdentifier {
 	}
 	export type Loose = LooseFor<TSKindId.PrivatePropertyIdentifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PrivatePropertyIdentifier>;
-	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.PrivatePropertyIdentifier.Loose];
+	export type BuildArgs = [content: string, affix?: true] | [text: `#${string}`, affix: false];
+	export type LooseArgs = [content: string, affix?: true] | [text: `#${string}`, affix: false];
 	export type Kind = TSKindId.PrivatePropertyIdentifier;
 }
 export namespace Arguments {
@@ -22532,8 +22532,8 @@ export namespace CommentLine {
 	}
 	export type Loose = LooseFor<TSKindId.CommentLine>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CommentLine>;
-	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.CommentLine.Loose];
+	export type BuildArgs = [content: string, affix?: true] | [text: `//${string}`, affix: false];
+	export type LooseArgs = [content: string, affix?: true] | [text: `//${string}`, affix: false];
 	export type Kind = TSKindId.CommentLine;
 }
 export namespace CommentBlock {
@@ -22548,8 +22548,8 @@ export namespace CommentBlock {
 	}
 	export type Loose = LooseFor<TSKindId.CommentBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CommentBlock>;
-	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.CommentBlock.Loose];
+	export type BuildArgs = [content: string, affix?: true] | [text: `/*${string}*/`, affix: false];
+	export type LooseArgs = [content: string, affix?: true] | [text: `/*${string}*/`, affix: false];
 	export type Kind = TSKindId.CommentBlock;
 }
 export namespace LiteralTypeNegativeNumber {
@@ -22770,8 +22770,8 @@ export namespace NumberBigintHex {
 		| number
 		| bigint;
 	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberBigintHex>, { content: number | bigint }>;
-	export type BuildArgs = [value: AdmitBound<string | number | bigint, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.NumberBigintHex.Loose];
+	export type BuildArgs = [content: string | number | bigint, affix?: true] | [text: `${string}n`, affix: false];
+	export type LooseArgs = [content: string | number | bigint, affix?: true] | [text: `${string}n`, affix: false];
 	export type Kind = TSKindId.NumberBigintHex;
 }
 export namespace NumberBigintBinary {
@@ -22790,8 +22790,8 @@ export namespace NumberBigintBinary {
 		| number
 		| bigint;
 	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberBigintBinary>, { content: number | bigint }>;
-	export type BuildArgs = [value: AdmitBound<string | number | bigint, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.NumberBigintBinary.Loose];
+	export type BuildArgs = [content: string | number | bigint, affix?: true] | [text: `${string}n`, affix: false];
+	export type LooseArgs = [content: string | number | bigint, affix?: true] | [text: `${string}n`, affix: false];
 	export type Kind = TSKindId.NumberBigintBinary;
 }
 export namespace NumberBigintOctal {
@@ -22810,8 +22810,8 @@ export namespace NumberBigintOctal {
 		| number
 		| bigint;
 	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberBigintOctal>, { content: number | bigint }>;
-	export type BuildArgs = [value: AdmitBound<string | number | bigint, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.NumberBigintOctal.Loose];
+	export type BuildArgs = [content: string | number | bigint, affix?: true] | [text: `${string}n`, affix: false];
+	export type LooseArgs = [content: string | number | bigint, affix?: true] | [text: `${string}n`, affix: false];
 	export type Kind = TSKindId.NumberBigintOctal;
 }
 export namespace NumberBigintDecimal {
@@ -22830,8 +22830,8 @@ export namespace NumberBigintDecimal {
 		| number
 		| bigint;
 	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberBigintDecimal>, { content: number | bigint }>;
-	export type BuildArgs = [value: AdmitBound<string | number | bigint, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.NumberBigintDecimal.Loose];
+	export type BuildArgs = [content: string | number | bigint, affix?: true] | [text: `${string}n`, affix: false];
+	export type LooseArgs = [content: string | number | bigint, affix?: true] | [text: `${string}n`, affix: false];
 	export type Kind = TSKindId.NumberBigintDecimal;
 }
 export namespace BinaryExpressionIn {

@@ -164,7 +164,6 @@ export const stringContent: Hoisted<typeof O.stringContent> = hoistAs<typeof O.s
 export const interpolation: Hoisted<typeof O.interpolation> = hoistAs<typeof O.interpolation>(O.interpolation);
 export const formatSpecifier: Hoisted<typeof O.formatSpecifier> = hoistAs<typeof O.formatSpecifier>(O.formatSpecifier);
 export const await_: Hoisted<typeof O.await_> = hoistAs<typeof O.await_>(O.await_);
-export const comment: Hoisted<typeof O.comment> = hoistAs<typeof O.comment>(O.comment);
 export const simpleStatementsElements: Hoisted<typeof O.simpleStatementsElements> = hoistAs<
 	typeof O.simpleStatementsElements
 >(O.simpleStatementsElements);

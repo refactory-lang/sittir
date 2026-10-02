@@ -184,7 +184,7 @@ describe('emitPolymorphsOverlay', () => {
 
 	it('emits one method per sub-factory, applied to the strict and coerce pairs', () => {
 		const nodeMap = polymorphNodeMap();
-		const text = emitPolymorphsOverlay({ nodeMap });
+		const text = emitPolymorphsOverlay({ nodeMap }).text;
 
 		expect(text).toContain("import * as B from './refines.js';");
 		expect(text).toContain("import * as F from '../raw.js';");
@@ -212,7 +212,7 @@ describe('emitPolymorphsOverlay', () => {
 	});
 
 	it('seats a keyword arm\'s stored text instead of asking the caller for the keyword child', () => {
-		const text = emitPolymorphsOverlay({ nodeMap: parameterlessArmNodeMap() });
+		const text = emitPolymorphsOverlay({ nodeMap: parameterlessArmNodeMap() }).text;
 
 		expect(text).toContain("\t(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>");
 		expect(text).toContain('{ ...config, content: value }');
@@ -256,7 +256,7 @@ describe('a single hoisted group flattens onto its parent', () => {
 			}
 		});
 		const seatKey = nodeMap.nodes.get('clause')!.slots.find((s) => s.values.length === 1)!.configKey;
-		const out = emitPolymorphsOverlay({ nodeMap });
+		const out = emitPolymorphsOverlay({ nodeMap }).text;
 		expect(out).toContain(`const clause$flatten$${seatKey} =`);
 		expect(out).toContain('const clause$seated: (...args: T.Clause.BuildArgs) => ReturnType<typeof F.buildClause> =');
 		const groupKeys = `OmitEach<NonNullable<T.ClauseGroup.Config>, '${seatKey}' | '$type'>`;
@@ -300,7 +300,7 @@ describe('a repeated hoisted group seats as an array of its configs', () => {
 				annotations: { hoisted: true }
 			}
 		});
-		const out = emitPolymorphsOverlay({ nodeMap });
+		const out = emitPolymorphsOverlay({ nodeMap }).text;
 		expect(out).toContain('const comparison$comparators =');
 		expect(out).toContain("comparators: seat.map((e) => (isConfig(e) ? _c(child)(e) : e))");
 		expect(out).toContain('= comparison$comparators(F.buildComparison, F.buildComparisonComparator);');
@@ -339,7 +339,7 @@ describe('a repeated hoisted group on a spread-shaped parent seats through the r
 			},
 			literal: { type: PATTERN, value: '[0-9]+' }
 		});
-		const out = emitPolymorphsOverlay({ nodeMap });
+		const out = emitPolymorphsOverlay({ nodeMap }).text;
 		expect(out).toContain('const union$patterns =');
 		expect(out).toContain('_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)))');
 	});
@@ -379,7 +379,7 @@ describe('a mount route carries the seats of its own parent', () => {
 			},
 			literal: { type: PATTERN, value: '[0-9]+' }
 		});
-		const out = emitPolymorphsOverlay({ nodeMap });
+		const out = emitPolymorphsOverlay({ nodeMap }).text;
 		expect(out).toContain('const clause$seated');
 		expect(out).toContain('clause$block(clause$seated,');
 		expect(out).not.toContain('clause$block(F.buildClause,');
@@ -416,7 +416,7 @@ describe('a visible wrapper declared flattened seats on its parent', () => {
 		const out = emitPolymorphsOverlay({
 			nodeMap: wrapperGrammar(),
 			generatedIdTables: { kindIds: { root: 1, arm: 2, wrapper: 3 }, sourceArtifact: 'test' }
-		});
+		}).text;
 		expect(out).toContain('const arm$flatten$pattern =');
 		expect(out).toContain('(parent: PF, child: CF, wrapperId: number) =>');
 		expect(out).toContain('const own = _o(config)["pattern"];');
@@ -500,7 +500,7 @@ describe('a list takes its rest parameter by cardinality and options', () => {
 			},
 			literal: { type: PATTERN, value: '[0-9]+' }
 		});
-		const out = emitPolymorphsOverlay({ nodeMap }).split('\n');
+		const out = emitPolymorphsOverlay({ nodeMap }).text.split('\n');
 		const seat = out.find((line) => line.startsWith('const items$seatedCoerce: '));
 		expect(seat).toContain('(...args: T.Items.LooseArgs) =>');
 		const row = builtTypeSurfaceOf(nodeMap.nodes.get('items')!, nodeMap, undefined)!.looseArgs;
@@ -531,7 +531,7 @@ describe('a keyword literal arm named by its text', () => {
 			},
 			{ kindIds: { and_keyword: keyword(3, 'and_keyword', 'and'), or_keyword: keyword(4, 'or_keyword', 'or') }, sourceArtifact: 'test' }
 		);
-		const out = emitPolymorphsOverlay({ nodeMap });
+		const out = emitPolymorphsOverlay({ nodeMap }).text;
 		expect(out).toContain("const junction$and$strict = junction$and(F.buildJunction, 'and');");
 		expect(out).toContain("const junction$or$strict = junction$or(F.buildJunction, 'or');");
 	});
@@ -553,7 +553,7 @@ describe('a keyword literal arm named by its text', () => {
 			{ kindIds: { and_keyword: keyword(3, 'and_keyword', 'and') }, sourceArtifact: 'test' }
 		);
 		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-		const out = emitPolymorphsOverlay({ nodeMap });
+		const out = emitPolymorphsOverlay({ nodeMap }).text;
 		expect(warn).toHaveBeenCalledWith(expect.stringMatching(/^\[codegen\] junction: sub-factory and skipped \(ambiguous\)/));
 		expect(out).not.toContain('junction$and');
 		warn.mockRestore();

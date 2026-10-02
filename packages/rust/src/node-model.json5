@@ -3907,6 +3907,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\" as const",
       "text": "\n\n",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -3918,6 +3919,7 @@
       "hidden": false,
       "pattern": "[^]*",
       "leafPattern": "/^(?:(?:[^]*))$/u",
+      "oneSurface": true,
       "factoryShape": "text"
     },
     {
@@ -3974,6 +3976,7 @@
       "isParameterless": true,
       "stampExpression": "\"﷑\\n\" as const",
       "text": "﷑\n",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -3999,6 +4002,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\\n\" as const",
       "text": "\n\n\n",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -4007,7 +4011,8 @@
       "typeName": "ErrorSentinel",
       "factoryName": "errorSentinel",
       "irKey": "errorSentinel",
-      "hidden": false
+      "hidden": false,
+      "oneSurface": true
     },
     {
       "kind": "_expression",
@@ -4179,6 +4184,7 @@
       "isParameterless": true,
       "stampExpression": "\"unsafe\" as const",
       "text": "unsafe",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -4191,6 +4197,7 @@
       "isParameterless": true,
       "stampExpression": "\"﷐\\n\" as const",
       "text": "﷐\n",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -4312,6 +4319,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
       "text": "\n",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -4430,6 +4438,7 @@
       "isParameterless": true,
       "stampExpression": "\" \" as const",
       "text": " ",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -4475,6 +4484,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\t\" as const",
       "text": "\t",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -4487,6 +4497,7 @@
       "isParameterless": true,
       "stampExpression": "\"\" as const",
       "text": "",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -6914,6 +6925,7 @@
       "hidden": false,
       "pattern": "[^]*",
       "leafPattern": "/^(?:(?:[^]*))$/u",
+      "oneSurface": true,
       "factoryShape": "text"
     },
     {
@@ -7734,6 +7746,7 @@
         "hoisted": true
       },
       "leafPattern": "/^(?:(?:b)?'')$/u",
+      "oneSurface": true,
       "factoryShape": "text"
     },
     {
@@ -8953,6 +8966,7 @@
       "isParameterless": true,
       "stampExpression": "\"crate\" as const",
       "text": "crate",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -9205,6 +9219,7 @@
       "hidden": false,
       "pattern": ".*\\n?",
       "leafPattern": "/^(?:(?:.*\\n?))$/u",
+      "oneSurface": true,
       "factoryShape": "text"
     },
     {
@@ -9453,6 +9468,7 @@
       "isParameterless": true,
       "stampExpression": "\";\" as const",
       "text": ";",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -9866,6 +9882,7 @@
           ]
         }
       },
+      "oneSurface": true,
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -9931,6 +9948,7 @@
           ]
         }
       },
+      "oneSurface": true,
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -9996,6 +10014,7 @@
           ]
         }
       },
+      "oneSurface": true,
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -10061,6 +10080,7 @@
           ]
         }
       },
+      "oneSurface": true,
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -11346,6 +11366,7 @@
       "hidden": false,
       "pattern": "[0-9][0-9_]*(?:\\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?",
       "leafPattern": "/^(?:(?:[0-9][0-9_]*(?:\\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?))$/u",
+      "oneSurface": true,
       "factoryShape": "text"
     },
     {
@@ -12812,6 +12833,7 @@
       "hidden": false,
       "pattern": "(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*",
       "leafPattern": "/^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$/u",
+      "oneSurface": true,
       "factoryShape": "text"
     },
     {
@@ -13473,6 +13495,7 @@
       "isParameterless": true,
       "stampExpression": "\"!\" as const",
       "text": "!",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -13485,6 +13508,7 @@
       "isParameterless": true,
       "stampExpression": "\"!\" as const",
       "text": "!",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -14865,6 +14889,7 @@
         "hoisted": true
       },
       "leafPattern": "/^(?:(?:\\/\\/)(?:.*))$/u",
+      "oneSurface": true,
       "factoryShape": "text"
     },
     {
@@ -14876,6 +14901,7 @@
       "hidden": false,
       "pattern": ".*",
       "leafPattern": "/^(?:(?:.*))$/u",
+      "oneSurface": true,
       "factoryShape": "text"
     },
     {
@@ -15998,6 +16024,7 @@
           ]
         }
       },
+      "oneSurface": true,
       "factoryShape": "direct",
       "factoryFields": [
         "name"
@@ -16283,6 +16310,7 @@
       "isParameterless": true,
       "stampExpression": "\"mut\" as const",
       "text": "mut",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -16343,6 +16371,7 @@
       "isParameterless": true,
       "stampExpression": "\"!\" as const",
       "text": "!",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -16881,6 +16910,7 @@
       "isParameterless": true,
       "stampExpression": "\"*\" as const",
       "text": "*",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -16893,6 +16923,7 @@
       "isParameterless": true,
       "stampExpression": "\"/\" as const",
       "text": "/",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -18602,6 +18633,7 @@
       "isParameterless": true,
       "stampExpression": "\"..\" as const",
       "text": "..",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -18931,6 +18963,7 @@
       "hidden": false,
       "pattern": "[\\s\\S]*",
       "leafPattern": "/^(?:(?:[\\s\\S]*))$/u",
+      "oneSurface": true,
       "factoryShape": "text"
     },
     {
@@ -18942,6 +18975,7 @@
       "hidden": false,
       "pattern": "\"#*",
       "leafPattern": "/^(?:(?:\"#*))$/u",
+      "oneSurface": true,
       "factoryShape": "text"
     },
     {
@@ -18953,6 +18987,7 @@
       "hidden": false,
       "pattern": "[bc]?r#*\"",
       "leafPattern": "/^(?:(?:[bc]?r#*\"))$/u",
+      "oneSurface": true,
       "factoryShape": "text"
     },
     {
@@ -19738,6 +19773,7 @@
       "isParameterless": true,
       "stampExpression": "\"..\" as const",
       "text": "..",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -20855,6 +20891,7 @@
       "isParameterless": true,
       "stampExpression": "\"self\" as const",
       "text": "self",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -20999,6 +21036,7 @@
           ]
         }
       },
+      "oneSurface": true,
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -21508,6 +21546,7 @@
       "hidden": false,
       "pattern": "[^\"\\\\]+",
       "leafPattern": "/^(?:(?:[^\"\\\\]+))$/u",
+      "oneSurface": true,
       "factoryShape": "text"
     },
     {
@@ -21581,6 +21620,7 @@
       "hidden": false,
       "pattern": "[bc]?\"",
       "leafPattern": "/^(?:(?:[bc]?\"))$/u",
+      "oneSurface": true,
       "factoryShape": "text"
     },
     {
@@ -22105,6 +22145,7 @@
       "isParameterless": true,
       "stampExpression": "\"super\" as const",
       "text": "super",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -22392,6 +22433,7 @@
       "hidden": false,
       "pattern": "[^+*?]+",
       "leafPattern": "/^(?:(?:[^+*?]+))$/u",
+      "oneSurface": true,
       "factoryShape": "text"
     },
     {
@@ -24840,6 +24882,7 @@
       "isParameterless": true,
       "stampExpression": "\"()\" as const",
       "text": "()",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -24852,6 +24895,7 @@
       "isParameterless": true,
       "stampExpression": "\"()\" as const",
       "text": "()",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -26538,6 +26582,7 @@
       "isParameterless": true,
       "stampExpression": "\"_\" as const",
       "text": "_",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {

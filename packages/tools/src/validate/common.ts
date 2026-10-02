@@ -3,6 +3,7 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createEngine, detachCoordinates, dumpMetrics, sliceSpan } from '@sittir/common';
+import { holdTree, treeTokenOf } from '@sittir/common/utils';
 import {
 	hydrateStub,
 	isStub,
@@ -701,6 +702,7 @@ export interface LoadedNodeModel {
 	readonly modelTypes: Record<string, string>;
 	readonly leafPatterns: Record<string, RegExp>;
 	readonly hoistedKinds: ReadonlySet<string>;
+	readonly oneSurfaceKinds: ReadonlySet<string>;
 	readonly seats: SeatTable;
 	readonly slotKinds: Record<string, Record<string, readonly string[]>>;
 	readonly slotStorage: Record<string, Record<string, string>>;
@@ -746,6 +748,7 @@ interface ParsedNodeModel {
 		}>;
 		elementSeats?: readonly Seat[];
 		elementKinds?: readonly string[];
+		oneSurface?: boolean;
 		factoryShape?: FactoryShape;
 		factoryFields?: readonly string[];
 		subtypes?: readonly string[];
@@ -769,6 +772,7 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	modelTypes: {},
 	leafPatterns: {},
 	hoistedKinds: new Set(),
+	oneSurfaceKinds: new Set(),
 	seats: {},
 	slotKinds: {},
 	slotStorage: {},
@@ -814,6 +818,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	const modelTypes: Record<string, string> = {};
 	const leafPatterns: Record<string, RegExp> = {};
 	const hoistedKinds = new Set<string>();
+	const oneSurfaceKinds = new Set<string>();
 	const seats: SeatTable = {};
 	const seatAt = (kind: string, slot: string, seat: Seat): void => {
 		((seats[kind] ??= {})[slot] ??= {})[seat.kind] = seat;
@@ -837,6 +842,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		if (node.modelType !== undefined) modelTypes[node.kind] = node.modelType;
 		if (node.leafPattern !== undefined) leafPatterns[node.kind] = regexOfLiteral(node.leafPattern);
 		if (node.annotations?.hoisted === true) hoistedKinds.add(node.kind);
+		if (node.oneSurface === true) oneSurfaceKinds.add(node.kind);
 		for (const seat of node.elementSeats ?? []) seatAt(node.kind, '*', seat);
 		if (node.slots !== undefined) {
 			for (const slot of node.slots) {
@@ -874,6 +880,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		modelTypes,
 		leafPatterns,
 		hoistedKinds,
+		oneSurfaceKinds,
 		seats,
 		slotKinds,
 		slotStorage,
@@ -932,7 +939,30 @@ export function materializeDetached(
 	root: unknown,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): AnyUntypedNode {
-	return detachCoordinates(materialize(root, onAccessorThrow));
+	return holdingTreeOf(root, detachCoordinates(materialize(root, onAccessorThrow)));
+}
+
+/**
+ * Make `copy` hold the tree `original` holds, and return it. A copy made by
+ * string keys, by JSON or by `detachCoordinates` holds no tree, and its
+ * coordinates are refused at render; a tool that copies read data and still
+ * renders it passes the tree on here.
+ */
+export function holdingTreeOf<T>(original: unknown, copy: T): T {
+	const token = original !== null && typeof original === 'object' ? treeTokenOf(original) : undefined;
+	if (token !== undefined) holdTree(copy, token);
+	return copy;
+}
+
+/**
+ * Detach `node` in place and keep it holding its tree, so the text-only
+ * coordinates the detach leaves still render.
+ */
+export function detachedHoldingTree<T>(node: T): T {
+	const token = node !== null && typeof node === 'object' ? treeTokenOf(node) : undefined;
+	const detached = detachCoordinates(node);
+	if (token !== undefined) holdTree(detached, token);
+	return detached;
 }
 
 export interface AccessorThrowRecord {

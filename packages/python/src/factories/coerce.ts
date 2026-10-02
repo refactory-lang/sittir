@@ -3185,8 +3185,6 @@ export function resolveParenthesizedListSplat_content(
 export function coerceToParenthesizedListSplat(
 	input: T.ParenthesizedListSplat.Loose
 ): ReturnType<typeof F.buildParenthesizedListSplat> {
-	if (isNodeOfKind(input, TSKindId.ParenthesizedListSplat))
-		return input as unknown as ReturnType<typeof F.buildParenthesizedListSplat>;
 	return F.buildParenthesizedListSplat(
 		_requireField(
 			'parenthesized_list_splat',
@@ -3497,51 +3495,6 @@ export function coerceToCaseAsPattern(input: T.CaseAsPattern.Loose): ReturnType<
 }
 
 export function coerceToUnionPattern(...input: T.UnionPattern.LooseArgs): ReturnType<typeof F.buildUnionPattern> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.UnionPattern)) {
-		const data = input[0];
-		const stored = (data as unknown as { _patterns?: unknown })._patterns;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildUnionPattern(
-			...((children == null ? [] : Array.isArray(children) ? children : [children])
-				.map(
-					(_e: _LooseFieldInput) =>
-						_keywordOf(_e, [
-							['True', TSKindId.True] as const,
-							['False', TSKindId.False] as const,
-							['None', TSKindId.None] as const,
-							['_', TSKindId.WildcardPattern] as const
-						]) ??
-						coerceMixedEnumStorage(
-							_resolveKindEnum(_e, () =>
-								_resolveOne<
-									| T.ClassPattern
-									| T.SplatPattern
-									| T.UnionPattern
-									| T.CaseListPattern
-									| T.CaseTuplePattern
-									| T.DictPattern
-									| T.String
-									| T.ConcatenatedString
-									| 'True'
-									| 'False'
-									| 'None'
-									| T.SimplePatternNegative
-									| T.ComplexPattern
-									| T.DottedName
-									| '_'
-								>(_e, _K19, _K20)
-							),
-							[
-								['True', TSKindId.True] as const,
-								['False', TSKindId.False] as const,
-								['None', TSKindId.None] as const,
-								['_', TSKindId.WildcardPattern] as const
-							]
-						)
-				)
-				.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildUnionPattern>)
-		);
-	}
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -3891,8 +3844,6 @@ export function coerceToTuplePattern(input?: T.TuplePattern.Loose): ReturnType<t
 export function coerceToTuplePattern(...args: unknown[]): ReturnType<typeof F.buildTuplePattern> {
 	if (args.length > 1) return F.buildTuplePattern(coerceToPatterns(...(args as Parameters<typeof coerceToPatterns>)));
 	const input = args[0] as T.TuplePattern.Loose | undefined;
-	if (input !== undefined && isNodeOfKind(input, TSKindId.TuplePattern))
-		return input as unknown as ReturnType<typeof F.buildTuplePattern>;
 	return F.buildTuplePattern(
 		_resolveOneBranch<T.Patterns>(
 			configFieldOr(input, 'patterns', () => input),
@@ -3913,8 +3864,6 @@ export function coerceToListPattern(input?: T.ListPattern.Loose): ReturnType<typ
 export function coerceToListPattern(...args: unknown[]): ReturnType<typeof F.buildListPattern> {
 	if (args.length > 1) return F.buildListPattern(coerceToPatterns(...(args as Parameters<typeof coerceToPatterns>)));
 	const input = args[0] as T.ListPattern.Loose | undefined;
-	if (input !== undefined && isNodeOfKind(input, TSKindId.ListPattern))
-		return input as unknown as ReturnType<typeof F.buildListPattern>;
 	return F.buildListPattern(
 		_resolveOneBranch<T.Patterns>(
 			configFieldOr(input, 'patterns', () => input),
@@ -4163,7 +4112,6 @@ export function resolveNotOperator_argument(value: T.NotOperator.LooseConfig['ar
 }
 
 export function coerceToNotOperator(input: T.NotOperator.Loose): ReturnType<typeof F.buildNotOperator> {
-	if (isNodeOfKind(input, TSKindId.NotOperator)) return input as unknown as ReturnType<typeof F.buildNotOperator>;
 	return F.buildNotOperator(
 		_requireField(
 			'not_operator',
@@ -4779,8 +4727,6 @@ export function coerceToList(...args: unknown[]): ReturnType<typeof F.buildList>
 	if (args.length > 1)
 		return F.buildList(coerceToCollectionElements(...(args as Parameters<typeof coerceToCollectionElements>)));
 	const input = args[0] as T.List.Loose | undefined;
-	if (input !== undefined && isNodeOfKind(input, TSKindId.List))
-		return input as unknown as ReturnType<typeof F.buildList>;
 	return F.buildList(
 		_resolveOneBranch<T.CollectionElements>(
 			configFieldOr(input, 'collectionElements', () => input),
@@ -4803,7 +4749,6 @@ export function coerceToSet(...args: unknown[]): ReturnType<typeof F.buildSet> {
 	if (args.length > 1)
 		return F.buildSet(coerceToCollectionElements(...(args as Parameters<typeof coerceToCollectionElements>)));
 	const input = args[0] as T.Set.Loose;
-	if (isNodeOfKind(input, TSKindId.Set)) return input as unknown as ReturnType<typeof F.buildSet>;
 	return F.buildSet(
 		_requireField(
 			'set',
@@ -4829,8 +4774,6 @@ export function coerceToTuple(...args: unknown[]): ReturnType<typeof F.buildTupl
 	if (args.length > 1)
 		return F.buildTuple(coerceToCollectionElements(...(args as Parameters<typeof coerceToCollectionElements>)));
 	const input = args[0] as T.Tuple.Loose | undefined;
-	if (input !== undefined && isNodeOfKind(input, TSKindId.Tuple))
-		return input as unknown as ReturnType<typeof F.buildTuple>;
 	return F.buildTuple(
 		_resolveOneBranch<T.CollectionElements>(
 			configFieldOr(input, 'collectionElements', () => input),
@@ -5001,8 +4944,6 @@ export function resolveParenthesizedExpression_expression(
 export function coerceToParenthesizedExpression(
 	input: T.ParenthesizedExpression.Loose
 ): ReturnType<typeof F.buildParenthesizedExpression> {
-	if (isNodeOfKind(input, TSKindId.ParenthesizedExpression))
-		return input as unknown as ReturnType<typeof F.buildParenthesizedExpression>;
 	return F.buildParenthesizedExpression(
 		_requireField(
 			'parenthesized_expression',
@@ -5400,7 +5341,6 @@ export function resolveAwait_expression(value: T.Await.LooseConfig['expression']
 }
 
 export function coerceToAwait(input: T.Await.Loose): ReturnType<typeof F.buildAwait> {
-	if (isNodeOfKind(input, TSKindId.Await)) return input as unknown as ReturnType<typeof F.buildAwait>;
 	return F.buildAwait(
 		_requireField(
 			'await',

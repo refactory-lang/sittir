@@ -31,8 +31,8 @@ describe('typescript text-leaf factories always run their guard', () => {
 		expect(() => ts.build.comment.block(' unterminated */ ')).toThrow(/comment_block.content: text does not match/);
 	});
 
-	it('takes a structured token as its content or spelled in full', () => {
-		expect(ts.build.privatePropertyIdentifier('#x').$render!()).toBe('#x');
+	it('takes a structured token as its content, or spelled in full when told so', () => {
+		expect(ts.build.privatePropertyIdentifier('#x', false).$render!()).toBe('#x');
 		expect(ts.build.escapeSequence('n').$render!()).toBe('\\n');
 	});
 });

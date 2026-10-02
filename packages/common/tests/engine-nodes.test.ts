@@ -132,14 +132,15 @@ describe('rendering through an engine what another engine parsed', () => {
 		expect(built.$render()).toBe('A:>:3');
 	});
 
-	it('renders through the one engine that parsed its children, with the calling engine options', async () => {
+	it('renders through the calling engine what another engine parsed', async () => {
 		const fake = fakeLanguage('fake');
 		const a = await engineOf(fake, '>');
 		const b = await engineOf(fake, '<');
 		const built = a.build.group(b.parse('src'));
-		expect(String(a.render(built))).toBe('B:>:3');
-		expect(built.$render()).toBe('B:>:3');
-		expect(String(a.render(built, { indent: '!' }))).toBe('B:!:3');
+		expect(String(a.render(built))).toBe('A:>:3');
+		expect(built.$render()).toBe('A:>:3');
+		expect(String(a.render(built, { indent: '!' }))).toBe('A:!:3');
+		expect(String(b.render(built))).toBe('B:<:3');
 	});
 
 	it('renders through the calling engine when it parsed the children itself', async () => {
@@ -148,34 +149,23 @@ describe('rendering through an engine what another engine parsed', () => {
 		expect(built.$render()).toBe('A:>:3');
 	});
 
-	it('throws, naming the engines, when the parsed children come from several', async () => {
+	it('renders parsed children of several engines', async () => {
 		const fake = fakeLanguage('fake');
-		const a = await engineOf(fake);
+		const a = await engineOf(fake, '>');
 		const b = await engineOf(fake);
 		const c = await engineOf(fake);
 		const built = a.build.group(b.parse('src'), c.parse('src'));
-		expect(() => a.render(built)).toThrow(/several engines \(fake#\d+, fake#\d+\)/);
-		expect(() => built.$render()).toThrow(/several engines/);
+		expect(String(a.render(built))).toBe('A:>:3');
+		expect(built.$render()).toBe('A:>:3');
 	});
 
-	it('names a disposed reader by its serial', async () => {
+	it('renders what a disposed engine parsed', async () => {
 		const fake = fakeLanguage('fake');
-		const a = await engineOf(fake);
-		const b = await engineOf(fake);
-		const c = await engineOf(fake);
-		const built = a.build.group(b.parse('src'), c.parse('src'));
-		b.dispose();
-		c.dispose();
-		expect(() => a.render(built)).toThrow(/several engines \(fake#\d+, fake#\d+\)/);
-	});
-
-	it('throws when a parsing engine is disposed', async () => {
-		const fake = fakeLanguage('fake');
-		const a = await engineOf(fake);
+		const a = await engineOf(fake, '>');
 		const b = await engineOf(fake);
 		const built = a.build.group(b.parse('src'));
 		b.dispose();
-		expect(() => a.render(built)).toThrow(/engine disposed/);
+		expect(String(a.render(built))).toBe('A:>:3');
 	});
 
 	it('refuses a node of another language, naming both', async () => {

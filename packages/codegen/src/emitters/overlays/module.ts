@@ -17,7 +17,7 @@ import {
 import { collectCatalogKinds, collectKindEntries, hasCatalogEntry } from '../kind-discriminant.ts';
 import { lowerCamelCase } from '../../compiler/model/casing.ts';
 import { polymorphVisibleName } from '../../dsl/arm-names.ts';
-import { classifyFromEmission, isValidIdent } from '../shared.ts';
+import { classifyFromEmission, isValidIdent, ownTextLeaf } from '../shared.ts';
 import { builtTypeSurfaceOf } from '../factories.ts';
 
 export const OVERLAY_CHAIN = ['refines', 'polymorphs', 'supertypes'] as const;
@@ -70,6 +70,14 @@ export interface BundleEntry {
 }
 
 export function bundleEntries(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): BundleEntry[] {
+	return keyedEntries(nodeMap, generatedIdTables).filter((entry) => !hasOneSurface(entry.node));
+}
+
+export function ownTextEntries(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): BundleEntry[] {
+	return keyedEntries(nodeMap, generatedIdTables).filter((entry) => hasOneSurface(entry.node));
+}
+
+function keyedEntries(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): BundleEntry[] {
 	const kindEntries = generatedIdTables
 		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
 		: undefined;
@@ -138,15 +146,27 @@ function referrersOf(nodeMap: NodeMap): ReadonlyMap<string, ReadonlySet<string>>
 	return out;
 }
 
+export function hasOneSurface(node: AssembledNode): boolean {
+	return isBuilderTextLeaf(node) || node instanceof AssembledPattern || ownTextLeaf(node) !== undefined;
+}
+
 export function isFlatLeafOrKeyword(
 	kind: string,
 	node: AssembledNode,
 	kindEntries: ReturnType<typeof collectKindEntries> | undefined
 ): boolean {
 	if (!node.userFacing || node.factoryInline) return false;
-	if (isBuilderTextLeaf(node) ? node.surfaceHidden : !(node instanceof AssembledPattern)) return false;
+	if (!hasOneSurface(node) || (isBuilderTextLeaf(node) && node.surfaceHidden)) return false;
 	if (!node.irKey || !node.rawFactoryName || !isValidIdent(node.irKey)) return false;
 	return !kindEntries || hasCatalogEntry(kindEntries, kind);
+}
+
+export function hasFlatEntry(
+	kind: string,
+	node: AssembledNode,
+	kindEntries: ReturnType<typeof collectKindEntries> | undefined
+): boolean {
+	return isFlatLeafOrKeyword(kind, node, kindEntries) && node.annotations?.tokenForm !== true;
 }
 
 function flatLeafKindByKey(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): ReadonlyMap<string, string> {

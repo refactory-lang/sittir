@@ -1341,6 +1341,16 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
 
 A wrapped tree as plain data with no coordinates: `materialize` resolves every accessor, then `detachCoordinates` drops what would tie the data to the tree it was read from. It is the input for a render that must not slice that tree: the probe's trace, read-render-parse's deep mode and the detached-render tests.
 
+Detaching removes the hold on the tree with the coordinates, and a leaf whose slots are projected from its text keeps a text-only coordinate that a render still slices. The result is therefore given the tree of the root it was made from (`holdingTreeOf`), so it renders for as long as it is held.
+
+### `packages/tools/src/validate/common.ts::holdingTreeOf`
+
+Makes a copy hold the tree its original holds, through slots and trivia, and returns the copy. A parsed object holds its tree under a member only `@sittir/common` can write, which a spread copies and nothing that copies by string keys does (JSON, `Object.entries`, `detachCoordinates`). A coordinate that holds no tree is refused at render, so each tool that copies read data and still renders the copy passes the tree on here: `materializeDetached`, and the probe's JSON copy.
+
+### `packages/tools/src/validate/common.ts::detachedHoldingTree`
+
+Detaches read data in place and gives it back the tree it held. `detachCoordinates` releases the hold on every node, so the token is read first and held again after. The probe's deep reads use it before a render.
+
 ### `packages/tools/src/validate/common.ts::armRouteOf`
 
 ```text
@@ -1735,6 +1745,10 @@ The rows and summary for one grammar's whole corpus. Entries that parse with err
 ### `packages/tools/src/validate/common.ts::LoadedNodeModel.fullForms`
 
 Each kind's `fullForm` from the node model: the literal delimiters around its one text content.
+
+### `packages/tools/src/validate/common.ts::LoadedNodeModel.oneSurfaceKinds`
+
+The kinds the node model stamps `oneSurface`: one builder, no `.strict` or `.coerce` member. The factory-source printer spells their call as the bare path.
 
 ### `packages/tools/src/validate/common.ts::LoadedNodeModel.root`
 

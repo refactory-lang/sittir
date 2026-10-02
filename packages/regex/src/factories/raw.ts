@@ -17,7 +17,8 @@ import {
 	kindIdStorage,
 	numberText,
 	orDefault,
-	rejectBareText
+	rejectBareText,
+	unaffixed
 } from '@sittir/common/utils';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
@@ -960,7 +961,10 @@ export function buildControlLetterEscape(text: string): T.ControlLetterEscape.Bo
 	return node as unknown as T.ControlLetterEscape.Bound;
 }
 
-export function buildIdentityEscape(value: AdmitBound<string, T.AdmittedNodes>): T.IdentityEscape.Bound {
+export function buildIdentityEscape(content: string, affix?: true): T.IdentityEscape.Bound;
+export function buildIdentityEscape(text: `\\${string}`, affix: false): T.IdentityEscape.Bound;
+export function buildIdentityEscape(input: string, affix: boolean = true): T.IdentityEscape.Bound {
+	const value = affix ? input : unaffixed(String(input), '\\', '', 'identity_escape');
 	const _content = value;
 	if (!_slotRe_buildIdentityEscape_content.test(_content))
 		throw new Error(`identity_escape.content: text does not match pattern: ${describeValue(_content)}`);

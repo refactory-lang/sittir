@@ -53,10 +53,13 @@ for (const grammar of ['rust', 'typescript', 'python'] as const) {
 			const engine = tryLoadNativeEngine(grammar);
 			if (!engine) return;
 
-			// Well-formed, but names tree 1 — nothing has been parsed, so no
-			// tree by that name exists. Distinct from a malformed argument.
-			const handleIntoTreeOne = 2 ** 32;
-			expect(() => engine.readUntypedNode(handleIntoTreeOne, 0)).toThrow(/names tree 1, which is not live/);
+			// Well-formed, but names a tree id this thread has not minted. The
+			// table is the language's, not this engine's, so a low id may name
+			// a tree another engine parsed. Distinct from a malformed argument.
+			const unmintedTreeId = 2 ** 20;
+			expect(() => engine.readUntypedNode(unmintedTreeId * 2 ** 32, 0)).toThrow(
+				/names tree 1048576, which is not live/
+			);
 		});
 	});
 }

@@ -12,8 +12,7 @@ describe('a bare number resolves to the number arm its text fits', () => {
 });
 
 describe('a number given to a number arm is written in the arm base', () => {
-	it('strict and loose alike', () => {
-		expect(ts.build.number.decimal.strict(255).$render()).toBe('255');
+	it('strict and loose alike, and a leaf arm through its one builder', () => {
 		expect(ts.build.number.decimal(255).$render()).toBe('255');
 		expect(ts.build.number.hex.strict(255).$render()).toBe('0xff');
 		expect(ts.build.number.hex(255).$render()).toBe('0xff');

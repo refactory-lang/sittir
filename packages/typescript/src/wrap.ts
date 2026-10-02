@@ -9,6 +9,7 @@ import {
 	isTypedNode,
 	holdsSlots,
 	markEdited as $edited,
+	carryTree,
 	treeHandleOf,
 	mapTriviaEntries,
 	projectInterior,
@@ -969,10 +970,9 @@ function _wrapKindNameOf(entry: unknown): string | undefined {
 // (a reference to a literal — the grammar-agnostic reader still emits it)
 // never enters a wrapped node.
 function _keepModelledSlots<T extends object>(data: T, keys: readonly string[]): T {
-	const out: Record<string, unknown> = {};
-	for (const key of Object.keys(data)) {
-		if (key.charCodeAt(0) === 95 /* `_` */ && !keys.includes(key)) continue;
-		out[key] = (data as Record<string, unknown>)[key];
+	const out: Record<string, unknown> = { ...(data as Record<string, unknown>) };
+	for (const key of Object.keys(out)) {
+		if (key.charCodeAt(0) === 95 /* `_` */ && !keys.includes(key)) delete out[key];
 	}
 	return out as T;
 }
@@ -20301,7 +20301,7 @@ function _aliasEnvelope(data: _UntypedNode, tree: TreeHandle): _UntypedNode {
 	}
 	const full = (isStub(shown) ? readUntypedNode(tree, shown.$parentHandle, shown.$childIndex) : shown) as Wire;
 	const { $displayType: _display, $_trivia, $childIndex: _childIndex, ...storage } = full;
-	return {
+	return carryTree(full, {
 		$type: envelope,
 		$source: shown.$source,
 		$named: shown.$named,
@@ -20312,7 +20312,7 @@ function _aliasEnvelope(data: _UntypedNode, tree: TreeHandle): _UntypedNode {
 		$childIndex: shown.$childIndex,
 		$_trivia: shown.$_trivia ?? _wrapTrivia($_trivia, tree),
 		_content: storage
-	} as unknown as _UntypedNode;
+	}) as unknown as _UntypedNode;
 }
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */

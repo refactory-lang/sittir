@@ -384,10 +384,9 @@ function _wrapKindNameOf(entry: unknown): string | undefined {
 // (a reference to a literal — the grammar-agnostic reader still emits it)
 // never enters a wrapped node.
 function _keepModelledSlots<T extends object>(data: T, keys: readonly string[]): T {
-	const out: Record<string, unknown> = {};
-	for (const key of Object.keys(data)) {
-		if (key.charCodeAt(0) === 95 /* `_` */ && !keys.includes(key)) continue;
-		out[key] = (data as Record<string, unknown>)[key];
+	const out: Record<string, unknown> = { ...(data as Record<string, unknown>) };
+	for (const key of Object.keys(out)) {
+		if (key.charCodeAt(0) === 95 /* `_` */ && !keys.includes(key)) delete out[key];
 	}
 	return out as T;
 }
