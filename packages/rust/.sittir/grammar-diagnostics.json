@@ -4,18 +4,6 @@
     "grammar": "rust",
     "code": "rule-reauthored-without-cause",
     "severity": "error",
-    "ownerKind": "tuple_type",
-    "message": "rules: 'tuple_type' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
-    "canProceed": false,
-    "details": {
-      "cause": "alias-shape"
-    }
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "rule-reauthored-without-cause",
-    "severity": "error",
     "ownerKind": "_non_special_token",
     "message": "rules: '_non_special_token' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
     "canProceed": false,

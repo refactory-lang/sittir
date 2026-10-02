@@ -330,10 +330,10 @@ describe('render options on transports', () => {
 	it('a separated-list transport carries its own spacing and flank fields, named by the site key', async () => {
 		const src = await getTypescriptTransportRs();
 		const body = extractStructBody(src, 'FormalParametersElementsTransport');
-		expect(body).toContain('napi(js_name = "_formal_parameter_separator_space_before")');
-		expect(body).toContain('pub formal_parameter_separator_space_before: Option<u16>,');
-		expect(body).toContain('napi(js_name = "_formal_parameter_separator_space_after")');
-		expect(body).toContain('pub formal_parameter_separator_space_after: Option<u16>,');
+		expect(body).toContain('napi(js_name = "_item_separator_space_before")');
+		expect(body).toContain('pub item_separator_space_before: Option<u16>,');
+		expect(body).toContain('napi(js_name = "_item_separator_space_after")');
+		expect(body).toContain('pub item_separator_space_after: Option<u16>,');
 		expect(body).toContain('pub delimiter: Option<u8>,');
 		expect(src).not.toContain('ListSpacing');
 	});
@@ -345,17 +345,17 @@ describe('render options on transports', () => {
 		);
 		const listFill = listImpl.slice(0, listImpl.indexOf('\n}\n'));
 		expect(listFill).toContain(
-			'self.formal_parameter_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_BEFORE].arm);'
+			'self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);'
 		);
 		expect(listFill).toContain(
-			'self.formal_parameter_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_AFTER].arm);'
+			'self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);'
 		);
 		expect(listFill).toContain(
-			'self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER]);'
+			'self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM]);'
 		);
 		const ownerImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for FormalParametersTransport {'));
 		const ownerFill = ownerImpl.slice(0, ownerImpl.indexOf('\n}\n'));
-		expect(ownerFill).toContain('self.formal_parameters_elements.prepare(ctx)?;');
+		expect(ownerFill).toContain('self.elements.prepare(ctx)?;');
 		expect(ownerFill).not.toContain('SEPARATOR_SPACE');
 		expect(ownerFill).not.toContain('lparen_after');
 	});
@@ -364,8 +364,8 @@ describe('render options on transports', () => {
 		const src = await getTypescriptTransportRs();
 		const fn = src.slice(src.indexOf('fn render_formal_parameters_elements('));
 		const view = fn.slice(0, fn.indexOf('\n}\n'));
-		expect(view).toContain('before: node.formal_parameter_separator_space_before.unwrap_or(0),');
-		expect(view).toContain('after: node.formal_parameter_separator_space_after.unwrap_or(0),');
+		expect(view).toContain('before: node.item_separator_space_before.unwrap_or(0),');
+		expect(view).toContain('after: node.item_separator_space_after.unwrap_or(0),');
 		expect(view).toMatch(/token: (match node\.separator_kind \{|",",)/);
 		expect(src).not.toMatch(/ListView \{[^}]*\bseparator: /);
 	});
@@ -462,15 +462,15 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		// the classification precedes every `get_or_insert` fill of the same site.
 		expect(body.indexOf('classify_list_gaps')).toBeLessThan(body.indexOf('.get_or_insert(ctx.options.spacing['));
 		expect(body).toContain(
-			'if self.element_separator_space_before.is_none() { self.element_separator_space_before = gaps.before; }'
+			'if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }'
 		);
 		expect(body).toContain(
-			'if self.element_separator_space_after.is_none() { self.element_separator_space_after = gaps.after; }'
+			'if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }'
 		);
 		// The seat loop reads the same per-pair classification: a pair is left
 		// to the source only when its gap classified.
-		expect(body).toContain('let separated_element = {');
-		expect(body).toContain('options::SEATS_ARGUMENTS_ELEMENTS_ELEMENT, &separated_element, ctx);');
+		expect(body).toContain('let separated_item = {');
+		expect(body).toContain('options::SEATS_ARGUMENTS_ELEMENTS_ITEM, &separated_item, ctx);');
 	});
 	it('renders through the typed sink and writes no mark character', async () => {
 		const transportRs = await getRustTemplatesRs();

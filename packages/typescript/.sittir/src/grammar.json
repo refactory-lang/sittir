@@ -18,7 +18,7 @@
                 "name": "hash_bang_line"
               },
               "metadata": {
-                "fieldSource": "override"
+                "fieldSource": "enriched"
               }
             },
             {
@@ -37,7 +37,7 @@
             }
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         }
       ]
@@ -990,7 +990,7 @@
               }
             },
             "metadata": {
-              "fieldSource": "override"
+              "fieldSource": "enriched"
             }
           },
           {
@@ -4834,7 +4834,7 @@
                   "name": "_kw_async"
                 },
                 "metadata": {
-                  "fieldSource": "override"
+                  "fieldSource": "enriched"
                 }
               },
               {
@@ -4894,7 +4894,7 @@
                   "name": "_kw_async"
                 },
                 "metadata": {
-                  "fieldSource": "override"
+                  "fieldSource": "enriched"
                 }
               },
               {
@@ -4963,7 +4963,7 @@
                   "name": "_kw_async"
                 },
                 "metadata": {
-                  "fieldSource": "override"
+                  "fieldSource": "enriched"
                 }
               },
               {
@@ -5027,7 +5027,7 @@
                   "name": "_kw_async"
                 },
                 "metadata": {
-                  "fieldSource": "override"
+                  "fieldSource": "enriched"
                 }
               },
               {
@@ -5775,7 +5775,7 @@
                   "name": "_kw_using"
                 },
                 "metadata": {
-                  "fieldSource": "override"
+                  "fieldSource": "enriched"
                 }
               },
               {
@@ -7894,7 +7894,7 @@
             ]
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         },
         {
@@ -8129,10 +8129,17 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "formal_parameters_elements",
+              "type": "FIELD",
+              "name": "elements",
+              "content": {
+                "type": "SYMBOL",
+                "name": "formal_parameters_elements",
+                "metadata": {
+                  "symbolSource": "group-lift"
+                }
+              },
               "metadata": {
-                "symbolSource": "group-lift"
+                "fieldSource": "enriched"
               }
             },
             {
@@ -8266,7 +8273,7 @@
                   "name": "_kw_static"
                 },
                 "metadata": {
-                  "fieldSource": "override"
+                  "fieldSource": "enriched"
                 }
               },
               {
@@ -8304,7 +8311,7 @@
                   "name": "_kw_readonly"
                 },
                 "metadata": {
-                  "fieldSource": "override"
+                  "fieldSource": "enriched"
                 }
               },
               {
@@ -8323,7 +8330,7 @@
                   "name": "_kw_async"
                 },
                 "metadata": {
-                  "fieldSource": "override"
+                  "fieldSource": "enriched"
                 }
               },
               {
@@ -9236,7 +9243,7 @@
                 "name": "_kw_static"
               },
               "metadata": {
-                "fieldSource": "override"
+                "fieldSource": "enriched"
               }
             },
             {
@@ -10316,7 +10323,7 @@
                 "name": "_kw_const"
               },
               "metadata": {
-                "fieldSource": "override"
+                "fieldSource": "enriched"
               }
             },
             {
@@ -10357,14 +10364,17 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "enum_body_elements",
-              "metadata": {
-                "symbolSource": "group-lift"
+              "type": "FIELD",
+              "name": "elements",
+              "content": {
+                "type": "SYMBOL",
+                "name": "enum_body_elements",
+                "metadata": {
+                  "symbolSource": "group-lift"
+                }
               },
-              "annotations": {
-                "variant": "elements",
-                "variantOf": "enum_body"
+              "metadata": {
+                "fieldSource": "enriched"
               }
             },
             {
@@ -11106,7 +11116,7 @@
                   "name": "_kw_abstract"
                 },
                 "metadata": {
-                  "fieldSource": "override"
+                  "fieldSource": "enriched"
                 }
               },
               {
@@ -12404,7 +12414,7 @@
                 "name": "_kw_static"
               },
               "metadata": {
-                "fieldSource": "override"
+                "fieldSource": "enriched"
               }
             },
             {
@@ -12503,10 +12513,17 @@
           "value": "<"
         },
         {
-          "type": "SYMBOL",
-          "name": "type_parameters_elements",
+          "type": "FIELD",
+          "name": "elements",
+          "content": {
+            "type": "SYMBOL",
+            "name": "type_parameters_elements",
+            "metadata": {
+              "symbolSource": "group-lift"
+            }
+          },
           "metadata": {
-            "symbolSource": "group-lift"
+            "fieldSource": "enriched"
           }
         },
         {
@@ -12989,7 +13006,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "export_specifier",
+          "name": "item",
           "content": {
             "type": "SYMBOL",
             "name": "export_specifier"
@@ -13009,7 +13026,7 @@
               },
               {
                 "type": "FIELD",
-                "name": "export_specifier",
+                "name": "item",
                 "content": {
                   "type": "SYMBOL",
                   "name": "export_specifier"
@@ -13063,7 +13080,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "import_specifier",
+          "name": "item",
           "content": {
             "type": "SYMBOL",
             "name": "import_specifier"
@@ -13083,7 +13100,7 @@
               },
               {
                 "type": "FIELD",
-                "name": "import_specifier",
+                "name": "item",
                 "content": {
                   "type": "SYMBOL",
                   "name": "import_specifier"
@@ -13176,7 +13193,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "formal_parameter",
+          "name": "item",
           "content": {
             "type": "SYMBOL",
             "name": "_formal_parameter"
@@ -13196,7 +13213,7 @@
               },
               {
                 "type": "FIELD",
-                "name": "formal_parameter",
+                "name": "item",
                 "content": {
                   "type": "SYMBOL",
                   "name": "_formal_parameter"
@@ -13268,7 +13285,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "element",
+          "name": "item",
           "content": {
             "type": "SYMBOL",
             "name": "_enum_body_element",
@@ -13291,7 +13308,7 @@
               },
               {
                 "type": "FIELD",
-                "name": "element",
+                "name": "item",
                 "content": {
                   "type": "SYMBOL",
                   "name": "_enum_body_element",
@@ -13371,7 +13388,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "type",
+          "name": "item",
           "content": {
             "type": "SYMBOL",
             "name": "type"
@@ -13391,7 +13408,7 @@
               },
               {
                 "type": "FIELD",
-                "name": "type",
+                "name": "item",
                 "content": {
                   "type": "SYMBOL",
                   "name": "type"
@@ -13425,7 +13442,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "type_parameter",
+          "name": "item",
           "content": {
             "type": "SYMBOL",
             "name": "type_parameter"
@@ -13445,7 +13462,7 @@
               },
               {
                 "type": "FIELD",
-                "name": "type_parameter",
+                "name": "item",
                 "content": {
                   "type": "SYMBOL",
                   "name": "type_parameter"
@@ -13520,7 +13537,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "tuple_type_member",
+          "name": "item",
           "content": {
             "type": "SYMBOL",
             "name": "_tuple_type_member"
@@ -13540,7 +13557,7 @@
               },
               {
                 "type": "FIELD",
-                "name": "tuple_type_member",
+                "name": "item",
                 "content": {
                   "type": "SYMBOL",
                   "name": "_tuple_type_member"
@@ -13882,7 +13899,7 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "members",
+              "name": "item",
               "content": {
                 "type": "CHOICE",
                 "members": [
@@ -13936,7 +13953,7 @@
                   },
                   {
                     "type": "FIELD",
-                    "name": "members",
+                    "name": "item",
                     "content": {
                       "type": "CHOICE",
                       "members": [

@@ -19,7 +19,7 @@ describe('an argument of the builder\'s own kind', () => {
 
 	it('is one element of a list that can hold itself', () => {
 		const inner = rs.build.tuplePattern(x, y);
-		expect(rs.build.tuplePattern(inner).elements()?.elements()).toEqual([inner]);
+		expect(rs.build.tuplePattern(inner).elements()?.items()).toEqual([inner]);
 	});
 
 	it('is one element of a spread kind', () => {

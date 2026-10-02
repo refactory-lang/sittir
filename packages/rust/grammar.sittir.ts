@@ -59,12 +59,12 @@ export default sittirGrammar(base, {
 		body: { before: preference('indent'), after: preference('dedent') },
 		gap: { separator: preference('newline') },
 		field_declaration_list_elements: {
-			'element:/separator/","/after': preference('newline'),
-			'element:/delimiter': preference('Delimiter.Trailing')
+			'item:/separator/","/after': preference('newline'),
+			'item:/delimiter': preference('Delimiter.Trailing')
 		},
 		enum_variant_list_elements: {
-			'element:/separator/","/after': preference('newline'),
-			'element:/delimiter': preference('Delimiter.Trailing')
+			'item:/separator/","/after': preference('newline'),
+			'item:/delimiter': preference('Delimiter.Trailing')
 		},
 
 		_: {
@@ -115,7 +115,7 @@ export default sittirGrammar(base, {
 		},
 
 		struct_pattern: { '"{"/before': preference('space') },
-		struct_pattern_elements: { 'element:/start': preference('space'), 'element:/end': preference('space') },
+		struct_pattern_elements: { 'item:/start': preference('space'), 'item:/end': preference('space') },
 		macro_invocation: { '"!"/after': preference('tight') },
 		visibility_modifier_pub: { '"pub"/after': preference('tight') },
 		self_parameter: { 'reference:/after': preference('tight') },
@@ -190,13 +190,7 @@ export default sittirGrammar(base, {
 		comment: { 0: arm.default },
 		// See docs/rust-grammar-sittir-glossary.md::tuple_expression
 		tuple_expression: {
-			1: field('attributes'),
-			2: alias('tuple_expression_elements')
-		},
-		_tuple_expression_elements: {
-			'0/0': field('element'),
-			'1/0/0': field('element'),
-			'2/0': field('element')
+			1: field('attributes')
 		},
 		bracketed_type: { 1: field('type') },
 		else_clause: { 1: field('body') },
@@ -542,24 +536,10 @@ export default sittirGrammar(base, {
 			'_non_special_token',
 			'_primitive_type',
 			'impl_item',
-			'reference_expression',
-			'tuple_type'
+			'reference_expression'
 		]
 	},
 	rules: {
-		// tuple_type's separated list realized as its own kind — the
-		// delimiter is a fact of the list, so the list is a top-level
-		// rule carrying it (hidden rule + visible alias, matching the
-		// `*_elements` family). Every element position is fielded so
-		// the extracted rule classifies separatedList and enrich's
-		// separated-list field wrap has nothing left to target.
-		_tuple_type_elements: vocabulary(($) =>
-			seq(field('type', $._type), repeat(seq(',', field('type', $._type))), optional(','))
-		),
-		tuple_type: reauthored('alias-shape', ($) =>
-			seq('(', alias($._tuple_type_elements, $.tuple_type_elements), ')')
-		),
-
 		_token_tree_punctuation: vocabulary(($) =>
 			choice(
 				'+',

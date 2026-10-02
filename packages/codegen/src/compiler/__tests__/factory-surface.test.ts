@@ -151,7 +151,7 @@ describe('terminated separated lists', () => {
 	};
 
 	it('a list whose first element carries a required separator needs it when it has one element', () => {
-		expect(needsTrailing('tuple_expression_elements')).toBe(true);
+		expect(needsTrailing('expressions')).toBe(true);
 	});
 
 	it('the same list written as a choice after the first element needs it too', () => {
@@ -160,7 +160,7 @@ describe('terminated separated lists', () => {
 	});
 
 	it('a list with an optional trailing separator and no required one does not', () => {
-		expect(needsTrailing('tuple_type_elements')).toBe(false);
+		expect(needsTrailing('types')).toBe(false);
 	});
 
 	it('the factory accepts one element; the requirement is the render template\'s', () => {

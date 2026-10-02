@@ -43,7 +43,7 @@ describe('a list owner and its list node read as a ReadonlyArray of the items', 
 
 	it('reads the list node as the same items, and the owner keeps the list options', () => {
 		const params = functionOf('fn f(a: i32, b: i32,) {}\n').parameters();
-		const list = params.parametersElements()!;
+		const list = params.elements()!;
 		expect(list.$type).toBe(kinds.ParametersElements);
 		expect(texts(list)).toEqual(texts(params));
 		expect(params.delimiter).toBe(Delimiter.Trailing);
@@ -52,9 +52,9 @@ describe('a list owner and its list node read as a ReadonlyArray of the items', 
 
 	it('arrives with its list node already read, so sizing the view reads nothing more', () => {
 		const params = functionOf('fn f(a: i32, b: i32) {}\n').parameters() as unknown as Record<string, unknown>;
-		const list = params._parameters_elements as Record<string, unknown>;
+		const list = params._elements as Record<string, unknown>;
 		expect(list.$parentHandle).toBeUndefined();
-		expect(list._element).toHaveLength(2);
+		expect(list._item).toHaveLength(2);
 	});
 
 	it('reads an absent list as empty', () => {
@@ -69,7 +69,7 @@ describe('a list owner and its list node read as a ReadonlyArray of the items', 
 		const keys = Object.keys(params);
 		for (const member of ['length', 'map', 'delimiter']) expect(keys).toContain(member);
 		expect(keys).not.toContain('0');
-		const list = params.parametersElements()!;
+		const list = params.elements()!;
 		expect(Object.keys(list)).not.toContain('0');
 	});
 });
@@ -87,7 +87,7 @@ describe('a slot that holds a list takes its builder arguments', () => {
 	it('sets the list slot of the owner itself the same way', () => {
 		const params = functionOf('fn f(a: i32, b: i32) {}\n').parameters();
 		const [a, b] = params;
-		expect(params.$with.parametersElements(b!, a!).$render()).toBe('(b: i32, a: i32)');
-		expect(params.$with.parametersElements().$render()).toBe('()');
+		expect(params.$with.elements(b!, a!).$render()).toBe('(b: i32, a: i32)');
+		expect(params.$with.elements().$render()).toBe('()');
 	});
 });

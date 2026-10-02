@@ -63,12 +63,12 @@ describe('an expression list', () => {
 		['a = x, y,\n', ['x', 'y']]
 	])('reads %j as one flat list and renders it unchanged', (source, elements) => {
 		const list = parsedList<ExpressionList>(source, is.expressionList);
-		expect(list.expressions().map((element) => String(engine.render(element)))).toEqual(elements);
+		expect(list.items().map((element) => String(engine.render(element)))).toEqual(elements);
 		expect(engine.parse(source).$render()).toBe(source);
 	});
 
 	it('keeps the separator when a parsed list of two is cut down to one', () => {
-		const [first] = parsedList<ExpressionList>('a = x, y\n', is.expressionList).expressions();
+		const [first] = parsedList<ExpressionList>('a = x, y\n', is.expressionList).items();
 		expect(build.expressionList(first).$render()).toBe('x,');
 	});
 });
@@ -91,7 +91,7 @@ describe('a pattern list', () => {
 		['x, y, = a\n', ['x', 'y']]
 	])('reads %j as one flat list and renders it unchanged', (source, elements) => {
 		const list = parsedList<PatternList>(source, is.patternList);
-		expect(list.patterns().map((element) => String(engine.render(element)))).toEqual(elements);
+		expect(list.items().map((element) => String(engine.render(element)))).toEqual(elements);
 		expect(engine.parse(source).$render()).toBe(source);
 	});
 });

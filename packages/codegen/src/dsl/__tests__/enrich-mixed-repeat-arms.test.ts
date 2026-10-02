@@ -179,9 +179,10 @@ describe('scm variant names declared under the shared element supertype', () => 
 });
 
 describe('a list group whose element choice became a supertype', () => {
-	it('is still labelled a variant of its parent, so the parent keeps the route that mounts it', () => {
+	it('is mounted by the field its parent gives it, and carries no variant label', () => {
 		const { rules } = typescript;
-		const group = nodes(rules['enum_body'] as Node).find((n) => n.type === 'SYMBOL' && n.name === 'enum_body_elements');
-		expect(group?.annotations).toMatchObject({ variant: 'elements', variantOf: 'enum_body' });
+		const slot = nodes(rules['enum_body'] as Node).find((n) => n.type === 'FIELD' && n.name === 'elements');
+		expect(slot?.content).toMatchObject({ type: 'SYMBOL', name: 'enum_body_elements' });
+		expect(slot?.content?.annotations?.variant).toBeUndefined();
 	});
 });

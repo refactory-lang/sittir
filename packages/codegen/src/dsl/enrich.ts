@@ -24,7 +24,25 @@ import {
 	typeEq
 } from '../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../types/runtime-shapes.ts';
-import { CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
+import {
+	ALIAS,
+	CHOICE,
+	DEDENT,
+	FIELD,
+	IMMEDIATE_TOKEN,
+	INDENT,
+	NEWLINE,
+	OPTIONAL,
+	PATTERN,
+	REPEAT,
+	REPEAT1,
+	SEQ,
+	STRING,
+	SUPERTYPE,
+	SYMBOL,
+	TOKEN
+} from '../types/rule-types.ts'; // @rule-type-consts
+import { assertNever } from '../polymorph-variant.ts';
 import { dslArmStage, isTopologyMixed, partitionChoiceArms } from './choice-arm-partition.ts';
 
 function withContent(node: object, content: Rule): Rule {
@@ -174,7 +192,8 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 	}
 	const hoistCtx = ctx.withHoist({
 		separatedListNameCounts: collectSeparatedListNameProposals(enrichedRules, ctx.sourceSymbols),
-		hiddenListPromotionNames: new Map()
+		hiddenListPromotionNames: new Map(),
+		ownerPrefixedListSlots: new Map()
 	});
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
@@ -186,6 +205,13 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 			supertypeNames,
 			elementChoices: elementChoiceSlots(rule, authored.fieldSites?.get(name) ?? [], ruleOrigins)
 		});
+	}
+	for (const owners of [enrichedRules, clauseGroupRules]) {
+		for (const name of Object.keys(owners)) {
+			const rule = owners[name];
+			if (!rule) continue;
+			owners[name] = fieldOwnerPrefixedLists(name, rule, hoistCtx.hoist?.ownerPrefixedListSlots ?? new Map(), authored.fieldSites?.get(name) ?? []);
+		}
 	}
 	for (const groupName of Object.keys(clauseGroupRules)) {
 		const groupBody = clauseGroupRules[groupName];
@@ -754,6 +780,7 @@ function separatedListTail(members: readonly Rule[], i: number, symbols: SymbolS
 function fieldTerminatedListElements(
 	seqRule: Rule,
 	info: SeparatedListBodyInfo,
+	site: 'list' | 'separated',
 	reserve: (base: string) => string,
 	symbols: SymbolSource,
 	ruleOrigins: ReadonlyMap<string, EnrichRuleOrigin>
@@ -763,12 +790,13 @@ function fieldTerminatedListElements(
 	const unfielded = sites.filter((site) => !isFieldType((site as { type: string }).type));
 	if (unfielded.length === 0) return null;
 	const fielded = sites.find((site) => isFieldType((site as { type: string }).type)) as { name?: string } | undefined;
-	const fieldName = fielded?.name ?? reserve(elementSlotName(info.element, true, ruleOrigins));
+	const fieldName = fielded?.name ?? reserve(elementSlotName(info.element, site, ruleOrigins));
 	return mapTerminatedListElements(seqRule, symbols, (site) => (unfielded.includes(site) ? makeField(fieldName, site) : site));
 }
 
 function fieldSeparatedListElements(
 	seqRule: Rule,
+	site: 'list' | 'separated',
 	reserve: (base: string) => string,
 	symbols: SymbolSource,
 	ruleOrigins: ReadonlyMap<string, EnrichRuleOrigin>
@@ -776,14 +804,14 @@ function fieldSeparatedListElements(
 	const members = (seqRule as unknown as { members?: Rule[] }).members;
 	if (!Array.isArray(members)) return null;
 	const info = separatedListBodyInfo(seqRule, symbols);
-	if (info?.form === 'terminated') return fieldTerminatedListElements(seqRule, info, reserve, symbols, ruleOrigins);
+	if (info?.form === 'terminated') return fieldTerminatedListElements(seqRule, info, site, reserve, symbols, ruleOrigins);
 	for (let i = 0; i < members.length - 1; i++) {
 		const leading = members[i]!;
 		if (isFieldType((leading as { type: string }).type)) continue;
 		const tail = separatedListTail(members, i, symbols);
 		if (!tail) continue;
 		const { repeatCursor, inner, innerElement, outerPrecStack, innerPrecStack } = tail;
-		const fieldName = reserve(elementSlotName(leading, true, ruleOrigins));
+		const fieldName = reserve(elementSlotName(leading, site, ruleOrigins));
 
 		const innerMembers = (inner as unknown as { members: Rule[] }).members;
 		const newInnerMembers = innerMembers.slice();
@@ -804,6 +832,12 @@ function fieldSeparatedListElements(
 		return { ...(seqRule as object), members: newMembers } as Rule;
 	}
 	return null;
+}
+
+function listKindBodySeqs(seqRule: Rule, symbols: SymbolSource): readonly Rule[] {
+	if (separatedListBodyInfo(seqRule, symbols)?.flankCarrying !== true) return [];
+	const members = (seqRule as unknown as { members: readonly Rule[] }).members;
+	return [seqRule, ...members.filter((member) => isSeqType((member as { type: string }).type))];
 }
 
 function applyNodeChoiceFieldWrap(ruleName: string, rule: Rule, mergedRules: Record<string, Rule>, ctx: EnrichCtx): Rule {
@@ -846,6 +880,8 @@ function applyNodeChoiceFieldWrap(ruleName: string, rule: Rule, mergedRules: Rec
 		}
 	};
 	countEligibleRefs(rule);
+
+	const listBodySeqs = new Set<Rule>();
 
 	const visit = (r: Rule, suppressed: boolean, scope: Set<string>): Rule => {
 		if (isFieldType((r as { type: string }).type) || isLexedBoundary(r)) return r;
@@ -892,14 +928,15 @@ function applyNodeChoiceFieldWrap(ruleName: string, rule: Rule, mergedRules: Rec
 			}
 			if (isChoiceType((visitedInner as { type: string }).type) && isAllArmsNodeShaped(visitedInner)) {
 				changed = true;
-				return makeField(reserve(elementSlotName(visitedInner, false, ctx.ruleOrigins), scope), rebuildRepeat(visitedInner));
+				return makeField(reserve(elementSlotName(visitedInner, 'repeat', ctx.ruleOrigins), scope), rebuildRepeat(visitedInner));
 			}
 			if (visitedInner === inner) return r;
 			return rebuildRepeat(visitedInner);
 		}
 
 		if (isSeqType((r as { type: string }).type)) {
-			const sepListRewrite = fieldSeparatedListElements(r, (base) => reserve(base, scope), ctx.sourceSymbols, ctx.ruleOrigins);
+			for (const body of listKindBodySeqs(r, ctx.sourceSymbols)) listBodySeqs.add(body);
+			const sepListRewrite = fieldSeparatedListElements(r, listBodySeqs.has(r) ? 'list' : 'separated', (base) => reserve(base, scope), ctx.sourceSymbols, ctx.ruleOrigins);
 			if (sepListRewrite) {
 				changed = true;
 				r = sepListRewrite;
@@ -2086,15 +2123,18 @@ function visibleGroupSynthName(
 		const nameFree = (n: string) =>
 			!(n in rulesBag) && !(`_${n}` in rulesBag) && !(n in clauseGroupRules) && !(`_${n}` in clauseGroupRules);
 		const bare = listKindElementPlural(listInfo, ctx.ruleOrigins);
-		const candidates: string[] = [];
-		if (bare !== null && separatedListNameCounts!.get(bare) === 1) candidates.push(bare);
-		if (bare !== null && base !== bare && !base.endsWith(`_${bare}`)) candidates.push(`${base}_${bare}`);
-		if (bare !== `${base}_elements`) candidates.push(base.endsWith('_elements') ? base : `${base}_elements`);
+		const candidates: { name: string; ownerSlot?: string }[] = [];
+		if (bare !== null && separatedListNameCounts!.get(bare) === 1) candidates.push({ name: bare });
+		if (bare !== null && base !== bare && !base.endsWith(`_${bare}`)) candidates.push({ name: `${base}_${bare}`, ownerSlot: bare });
+		if (bare !== `${base}_elements`) {
+			candidates.push(base.endsWith('_elements') ? { name: base } : { name: `${base}_elements`, ownerSlot: 'elements' });
+		}
 		const flatBody = { ...content, members: listInfo.flatMembers } as Rule;
 		const registeredFlat = ambientPrec ? withContent(ambientPrec, flatBody) : flatBody;
-		for (const candidate of candidates) {
-			if (!nameFree(candidate)) continue;
-			return register(candidate, registeredFlat);
+		for (const { name, ownerSlot } of candidates) {
+			if (!nameFree(name)) continue;
+			if (ownerSlot !== undefined) ctx.hoist?.ownerPrefixedListSlots.set(name, ownerSlot);
+			return register(name, registeredFlat);
 		}
 	}
 	if (enclosingFieldName !== undefined) {
@@ -2244,8 +2284,9 @@ function listKindElementPlural(info: SeparatedListBodyInfo, ruleOrigins: Readonl
 	return pluralizeFieldName(info.elementName);
 }
 
-function elementSlotName(element: Rule, separated: boolean, ruleOrigins: ReadonlyMap<string, EnrichRuleOrigin>): string {
-	return elementSupertypeOrigin(element, ruleOrigins)?.slot ?? (separated ? deriveElementFieldName(element) : 'elements');
+function elementSlotName(element: Rule, site: 'list' | 'separated' | 'repeat', ruleOrigins: ReadonlyMap<string, EnrichRuleOrigin>): string {
+	if (site === 'list') return 'item';
+	return elementSupertypeOrigin(element, ruleOrigins)?.slot ?? (site === 'separated' ? deriveElementFieldName(element) : 'elements');
 }
 
 function elementChoiceSlots(
@@ -2265,7 +2306,7 @@ function elementChoiceSlots(
 			case CHOICE:
 				if (repeat !== undefined && isTopologyMixed(partitionChoiceArms(node, dslArmStage))) {
 					const authored = authoredAt(repeat.path) ?? authoredAt([...repeat.path, 0]);
-					const found: ElementSlot = { slot: authored ?? elementSlotName(node as Rule, repeat.separated, ruleOrigins), authoredSlot: authored !== undefined };
+					const found: ElementSlot = { slot: authored ?? elementSlotName(node as Rule, repeat.separated ? 'separated' : 'repeat', ruleOrigins), authoredSlot: authored !== undefined };
 					const key = ruleKey(node as RuntimeRule);
 					const known = slots.get(key);
 					if (known !== undefined && known.slot !== found.slot) {
@@ -2333,6 +2374,67 @@ function mintFieldRoutedArm(
 
 function coveredByAuthoredGroup(body: Rule, ctx: EnrichCtx): boolean {
 	return ctx.authoredGroupBodies.some((pattern) => rulesEqual(unwrapPrec(body) as RuntimeRule, pattern));
+}
+
+type BlankRule = { readonly type: 'BLANK' };
+
+function fieldOwnerPrefixedLists(
+	owner: string,
+	rule: Rule,
+	slots: ReadonlyMap<string, string>,
+	authoredSites: readonly AuthoredFieldSite[]
+): Rule {
+	if (slots.size === 0) return rule;
+	const taken = new Set(authoredSites.map((site) => site.name));
+	collectAllFieldNamesDeep(rule, taken);
+	const authoredAbove = (path: readonly number[]): boolean =>
+		authoredSites.some((site) => site.path.length <= path.length && site.path.every((step, i) => step === path[i]));
+	const walk = (node: AnyRule | BlankRule, path: readonly number[]): AnyRule | BlankRule => {
+		switch (node.type) {
+			case 'PREC':
+			case 'PREC_LEFT':
+			case 'PREC_RIGHT':
+			case 'PREC_DYNAMIC': {
+				const walked = walk(node.content, path);
+				return walked === node.content ? node : (withContent(node as object, walked as Rule) as AnyRule);
+			}
+			case SYMBOL: {
+				const slot = slots.get(node.name);
+				if (slot === undefined || authoredAbove(path)) return node;
+				if (taken.has(slot)) {
+					reportSkip('list-slot-name', owner, `'${slot}' is already a slot of the owner; the reference to '${node.name}' keeps the name its kind gives it`);
+					return node;
+				}
+				return makeField(slot, node as Rule) as AnyRule;
+			}
+			case CHOICE:
+			case SEQ: {
+				const members = node.members.map((member, i) => walk(member, [...path, i]));
+				return members.every((member, i) => member === node.members[i]) ? node : ({ ...node, members } as AnyRule);
+			}
+			case REPEAT:
+			case REPEAT1:
+			case OPTIONAL: {
+				const walked = walk(node.content, [...path, 0]);
+				return walked === node.content ? node : (withContent(node as object, walked as Rule) as AnyRule);
+			}
+			case FIELD:
+			case ALIAS:
+			case TOKEN:
+			case IMMEDIATE_TOKEN:
+			case STRING:
+			case PATTERN:
+			case SUPERTYPE:
+			case INDENT:
+			case DEDENT:
+			case NEWLINE:
+			case 'BLANK':
+				return node;
+			default:
+				return assertNever(node);
+		}
+	};
+	return walk(rule as AnyRule, []) as Rule;
 }
 
 function makeGroupLiftSymbol(_referenceRule: Rule, name: string): Rule {

@@ -99,7 +99,12 @@ export function diagnoseGrammar(cfg: DiagnoseGrammarConfig): GrammarDiagnosis {
 	const evaluatedRecords = evaluateRecords(evaluated);
 	const evaluateDiagnostics = [
 		...evaluatedRecords,
-		...diagnoseRuleCauses({ grammar, raw: evaluated, enriched: stages?.enriched }),
+		...diagnoseRuleCauses({
+			grammar,
+			raw: evaluated,
+			enriched: stages?.enriched,
+			upstreamRules: evaluated.stages?.raw.grammar.rules
+		}),
 		...conflictRecords(evaluated),
 		...dynamicPrecedenceRecords(evaluated)
 	];
