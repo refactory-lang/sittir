@@ -1,38 +1,35 @@
 /**
- * Type-level pin: a kind's `LooseArgs` row is the argument list its public
- * builder takes. Every kind that has a row and an exported builder is
+ * Type-level pin: a kind's `LooseArgs` row is the argument list of its entry
+ * in the public `ir` namespace. Every kind with a row and an `ir` key is
  * compared, so a row that drifts from its call is a compile error here.
  *
- * A kind built through sub-builders only has no call of its own and no row;
- * its sub-builders are kinds with rows and are compared like any other. The
- * second pin says no row-bearing kind is left out for want of a call.
+ * An entry that is a constant (a kind with no content to supply) takes no
+ * call; its row is the empty list.
+ *
+ * Kinds with a row and no `ir` key of their own are not compared: they are
+ * reached through a parent's sub-builder or have no public call.
  *
  * Compile-time only: `pnpm --filter @sittir/typescript type-check`.
  */
 
 import type { ArgsOf } from '@sittir/types';
-import type * as F from '../src/factories/index.ts';
+import type { ir } from '../src/ir.ts';
 import type * as T from '../src/types.ts';
 
-type Build = typeof F;
+type Build = typeof ir;
+type Call = (...args: never[]) => unknown;
 type Equals<A, B> = [A] extends [B] ? ([B] extends [A] ? true : false) : false;
 declare function expectTrue<X extends true>(): X;
 
-type RowId = {
-	[Id in keyof T.IrKeyOf & keyof T.NamespaceMap]: T.IrKeyOf[Id] extends keyof Build ? Id : never;
-}[keyof T.IrKeyOf & keyof T.NamespaceMap];
-type BuilderOf<Id extends RowId> = Build[T.IrKeyOf[Id] & keyof Build];
-type CallableId = { [Id in RowId]: BuilderOf<Id> extends (...args: never[]) => unknown ? Id : never }[RowId];
+type RowId = keyof T.IrKeyOf & keyof T.NamespaceMap;
+type PublicId = { [Id in RowId]: T.IrKeyOf[Id] extends keyof Build ? Id : never }[RowId];
+type EntryOf<Id extends PublicId> = Build[T.IrKeyOf[Id] & keyof Build];
+type CallOf<Id extends PublicId> = EntryOf<Id> extends Call ? ArgsOf<EntryOf<Id>> : [];
 
 type RowDiffersFromCall = {
-	[Id in CallableId]: Equals<ArgsOf<BuilderOf<Id>>, T.NamespaceMap[Id]['LooseArgs']> extends true ? never : T.IrKeyOf[Id];
-}[CallableId];
-type RowWithoutCall = { [Id in Exclude<RowId, CallableId>]: T.IrKeyOf[Id] }[Exclude<RowId, CallableId>];
+	[Id in PublicId]: Equals<CallOf<Id>, T.NamespaceMap[Id]['LooseArgs']> extends true ? never : T.IrKeyOf[Id];
+}[PublicId];
 
-export function everyBuilderTakesItsRow(): void {
+export function everyEntryTakesItsRow(): void {
 	expectTrue<Equals<RowDiffersFromCall, never>>();
-}
-
-export function everyRowHasACall(): void {
-	expectTrue<Equals<RowWithoutCall, never>>();
 }
