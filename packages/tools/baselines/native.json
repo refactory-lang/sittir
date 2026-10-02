@@ -3,6 +3,7 @@
     "commit": "e04292d",
     "grammars": {
         "python": {
+            "hoistedKindCount": 47,
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
@@ -41,6 +42,7 @@
             }
         },
         "regex": {
+            "hoistedKindCount": 7,
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
@@ -79,6 +81,7 @@
             }
         },
         "rust": {
+            "hoistedKindCount": 96,
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
@@ -122,6 +125,7 @@
             }
         },
         "scm": {
+            "hoistedKindCount": 5,
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
@@ -160,6 +164,7 @@
             }
         },
         "typescript": {
+            "hoistedKindCount": 60,
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
