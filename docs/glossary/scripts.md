@@ -427,13 +427,13 @@ A tree found equal to a trusted commit has its pair recorded, so that a later ha
 
 When neither holds, what is reported depends on what is known locally. With a manifest, the files are compared with the hashes it holds (`modified`, `missing`, `extra`) and `sourceChanged` says the source hash is not the one of the last recorded generation. With none, there is nothing to compare file by file, so `differs` lists the paths that differ from HEAD.
 
-Host binaries are checked for staleness only in a checkout, since binaries are never part of a commit.
+Host binaries are checked for staleness only in a checkout, and in that checkout, since binaries are never part of a commit.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::differencesFromTrustedCommit`
 
 The source inputs and generated files that keep the tree from equalling a trusted commit; empty when it equals one. The trusted commits are HEAD and, while a merge is in progress, MERGE_HEAD (`trustedCommits`): each has passed, or will have to pass, the CI check that regenerates and compares. Source inputs and generated roots must equal the same commit. Source from one parent with output from the other is a combination no check has seen, and it does not pass. A commit being rebased or cherry-picked is deliberately not trusted: its source lands on a different base, which is a new combination and needs a regenerate.
 
-The comparison is git's (`git diff --name-only <commit>`, with `--cached` for an index snapshot, plus untracked files in a checkout), filtered to the paths that matter: the source inputs the source hash reads (`isCodegenSourceInput` and the grammar's entry and `package.json`) and the generated roots, less the files that land on their own cadence (`landsOnItsOwnCadence`). Editing a codegen test therefore never fails verification. When the tree equals neither commit, the paths returned are the differences from HEAD.
+The comparison is git's (`git diff --name-only --no-renames <commit>`, with `--cached` for an index snapshot, plus untracked files in a checkout; without `--no-renames` a source input renamed into a test directory would be reported only under its new path and go unseen), filtered to the paths that matter: the source inputs the source hash reads (`isCodegenSourceInput` and the grammar's entry and `package.json`) and the generated roots, less the files that land on their own cadence (`landsOnItsOwnCadence`). Editing a codegen test therefore never fails verification. When the tree equals neither commit, the paths returned are the differences from HEAD.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::isCodegenSourceInput`
 

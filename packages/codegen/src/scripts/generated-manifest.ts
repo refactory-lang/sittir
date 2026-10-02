@@ -193,7 +193,7 @@ function differencesFromTrustedCommit(grammar: GrammarName, src: ManifestSource)
 		: [];
 	const tree = isCheckout(src) ? [] : ['--cached'];
 	const perCommit = trustedCommits(src.checkout).map((commit) =>
-		[...untracked, ...gitPaths(src.checkout, ['diff', '--name-only', '-z', ...tree, commit, '--', ...pathspecs])].filter(matters)
+		[...untracked, ...gitPaths(src.checkout, ['diff', '--name-only', '--no-renames', '-z', ...tree, commit, '--', ...pathspecs])].filter(matters)
 	);
 	if (perCommit.some((differences) => differences.length === 0)) return [];
 	return perCommit[0] ?? untracked.filter(matters);
@@ -292,7 +292,7 @@ export function verifyManifestForGrammar(grammar: GrammarName, src: ManifestSour
 	}
 
 	if (isCheckout(src)) {
-		for (const b of hostBinaryFreshnessFor(REPO_ROOT, grammar)) {
+		for (const b of hostBinaryFreshnessFor(src.checkout, grammar)) {
 			if (b.stale) result.stale.push(`${b.rel} (older than ${b.newestInputRel})`);
 		}
 	}

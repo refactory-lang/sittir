@@ -157,6 +157,12 @@ describe('whether the source is the one the generated output came from', () => {
 		expect(verify()).toMatchObject({ ok: false, differs: [GRAMMAR_SOURCE] });
 	});
 
+	it('fails with no stamp when a source input is renamed into a path that is not one', () => {
+		dropStamp();
+		git('mv', CODEGEN_SOURCE, 'packages/codegen/src/__tests__/emit-moved.ts');
+		expect(verify()).toMatchObject({ ok: false, differs: [CODEGEN_SOURCE] });
+	});
+
 	it('holds when only a codegen test file is edited', () => {
 		dropStamp();
 		write(CODEGEN_TEST, 'test two');
@@ -226,6 +232,12 @@ describe('the staged tree', () => {
 		regenerate();
 		git('add', 'packages/python');
 		expect(await verifyStaged()).toMatchObject({ ok: false, sourceChanged: true });
+	});
+
+	it('is not vouched for when a staged rename takes a source input out of the inputs', async () => {
+		dropStamp();
+		git('mv', CODEGEN_SOURCE, 'packages/codegen/src/__tests__/emit-moved.ts');
+		expect(await verifyStaged()).toMatchObject({ ok: false, differs: [CODEGEN_SOURCE] });
 	});
 
 	it('holds when the source edit is staged with its output', async () => {
