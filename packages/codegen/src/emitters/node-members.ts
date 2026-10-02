@@ -1,6 +1,6 @@
 import { emptyForms, innerGapsKeyed } from '../compiler/model/trivia.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import type { SeatPlan } from './factories.ts';
+import type { ListViewPlan, SeatPlan } from './factories.ts';
 
 export interface SetterEntry {
 	readonly name: string;
@@ -70,4 +70,47 @@ export function seatedSetters(setters: readonly SetterEntry[], plan: SeatPlan): 
 		}
 		return entry;
 	});
+}
+
+export interface ListViewParts {
+	readonly prelude: string[];
+	readonly members: string[];
+	readonly postlude: string[];
+}
+
+export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: string, environment: 'factory' | 'wrap'): ListViewParts {
+	const wrapper = plan.wrapper ?? 'undefined';
+	const options = plan.options.map(
+		(option) => `    ${option.key}: listOption(listView.list, ${JSON.stringify(option.key)}, ${option.default}),`
+	);
+	const shared = [
+		'    ...LIST_METHODS,',
+		'    [Symbol.iterator]: listIterator,',
+		'    [Symbol.isConcatSpreadable]: true,',
+		'    [Symbol.unscopables]: Array.prototype[Symbol.unscopables],',
+		...options
+	];
+	if (environment === 'factory') {
+		return {
+			prelude: [
+				`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)});`,
+				`  const listedItems = listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, ${JSON.stringify(plan.elements)}), ${wrapper});`
+			],
+			members: ['    length: listedItems?.length,', '    [LIST_ITEMS]: listedItems,', ...shared],
+			postlude: [
+				`  if (listedItems === undefined) readStubLength(node, ${JSON.stringify(storage)});`,
+				'  else for (let index = 0; index < listedItems.length; index++) (node as Record<number, unknown>)[index] = listedItems[index];'
+			]
+		};
+	}
+	return {
+		prelude: [`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)}, tree);`],
+		members: [
+			'    length: listView.stored?.length,',
+			'    [LIST_ITEMS]: undefined,',
+			`    [LIST_READ]: () => listItems(ownerElements(node.${accessor}(), ${JSON.stringify(plan.elements)}), ${wrapper}),`,
+			...shared
+		],
+		postlude: ['  defineListIndices(node, listView.stored?.length ?? 0);']
+	};
 }

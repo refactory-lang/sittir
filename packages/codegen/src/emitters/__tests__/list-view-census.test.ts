@@ -44,7 +44,8 @@ describe('every kind that reads as a list is stamped, wired and typed from one f
 				expect(compact(interfaceBlock(types, node.typeName)), `${node.kind} view element`).toContain(`$listView:ListViewHint<${element}`);
 			}
 			for (const file of ['wrap.ts', 'factories/raw.ts']) {
-				expect([...read(grammar, file).matchAll(/withListView\(\s*(?:withAccessors|withListSlots|withGroupSeat|withElementsSeat|\{)/g)], file).toHaveLength(views.length);
+				const installed = [...read(grammar, file).matchAll(/withListView\(|\[LIST_ITEMS\]: /g)];
+				expect(installed, file).toHaveLength(views.length);
 			}
 		});
 

@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "e426c518b13dbb565cc9baaa2acec7bcc01b06fa9406ea91111a1f2fd6a0564b",
+  "source_hash": "2e5742a098dc253e9cca72b1b51e60c6ad849ea59d58e8330db62b0486441bbd",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "acad5cd6981a84e11fd8dd678598285ca53f14f63456b0e7bc6132feaa762af9",
     "packages/typescript/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -28,7 +28,7 @@
     "packages/typescript/src/factories/overlays/polymorphs.ts": "149a67ce07c2f9c151fb7185b538f1109a9571a51ea172ba860e211e5901f65e",
     "packages/typescript/src/factories/overlays/refines.ts": "121edf03c79b298f5538cf8ada0dab00301ba4ea7df771772441bd83ca2d84fa",
     "packages/typescript/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
-    "packages/typescript/src/factories/raw.ts": "cbb5ee058435e20d1426685276b32b8094dac2418d4997efd776156db48600df",
+    "packages/typescript/src/factories/raw.ts": "7b9ab811eb6488e9c19a1a940c62f88906b5c73feb34718c9697a92e678123fc",
     "packages/typescript/src/hash.ts": "e616bc058b1fb77757e32a3c561b072a7561187fc67dc5295fbd23e2b82f5c6b",
     "packages/typescript/src/index.ts": "840b667abbe4750eabbc3abb77c5d5a21bd467dcdd50469cfe7365694f56aee1",
     "packages/typescript/src/ir.ts": "0c97fa8dc3af6796608a14381ba215221b502bc74d30958c1567f7b515a12fef",
@@ -39,7 +39,7 @@
     "packages/typescript/src/types-internal.ts": "c6bcb67616b5568e09bf9644fb11352449401580f127ba25f657781c628ffb94",
     "packages/typescript/src/types.ts": "52c52caf469b80685ca81666ff3c538b2bdc621a1daa714111cbf03b1e9055d9",
     "packages/typescript/src/utils.ts": "3693d01ddd0ea269f2e109785811ddfc74424bfe7cf7ab97ef1cd84317cbcabb",
-    "packages/typescript/src/wrap.ts": "dc8880ed2d67bc100b25a72aeb4624f4b211a752dd1b890c2b7fbf0a1b47f8e0",
+    "packages/typescript/src/wrap.ts": "36efc9542514ad74cdef199909922798d1b48effe9be7011a93cc9ca6dafe104",
     "rust/crates/sittir-typescript/src/lib.rs": "a820c7f45fef68ab1fef9159a58d3a141ea237377b6db1e0263b9758f3af8672",
     "rust/crates/sittir-typescript/src/render/hash.rs": "bec977784fb5e882e0839024ebcd824bf0bef923d5e2a8680cea8eaca671a932",
     "rust/crates/sittir-typescript/src/render/kind_ids.rs": "808877ec3a51aec8570b0900ac3db087cfd95690dde6d701fed089786122398d",

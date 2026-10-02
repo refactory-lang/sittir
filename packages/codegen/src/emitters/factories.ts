@@ -1,5 +1,5 @@
 import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
-import { innerPositionsOf, nodeMemberLines, seatedSetters, triviaInnerImports, type SetterEntry } from './node-members.ts';
+import { innerPositionsOf, nodeMemberLines, ownerViewParts, seatedSetters, triviaInnerImports, type SetterEntry } from './node-members.ts';
 import { findOwnKindEntry, reservedWordset } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -131,7 +131,7 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 			if (kindEntries !== undefined && slotAliases(slot, nodeMap).length > 0) imports.add('admitAliasContent');
 		}
 		const seatPlan = seatPlanOf(node, nodeMap, kindEntries);
-		if (seatPlan.view !== undefined || seatPlan.groups.length > 0) {
+		if (!convertsToLiteral(seatPlan)) {
 			for (const seat of seatRuntimes(node, nodeMap, kindEntries)) imports.add(seat.helper);
 		}
 		if (kindEntries !== undefined && node instanceof AssembledList && slotAliases(buildSeparatedListContentSlot(node), nodeMap).length > 0)
@@ -1279,7 +1279,10 @@ function emitFieldCarryingFactory(
 	}
 	const seats = seatRuntimes(node, nodeMap, kindEntries);
 	const plan = seatPlanOf(node, nodeMap, kindEntries);
-	if (plan.view === undefined && plan.groups.length === 0) {
+	if (convertsToLiteral(plan)) {
+		const owner = plan.viewPlan?.owner;
+		const view = plan.viewPlan === undefined || owner === undefined ? undefined : ownerViewParts(plan.viewPlan, owner.storage, owner.accessor, 'factory');
+		lines.push(...(view?.prelude ?? []));
 		lines.push('  const handle = currentHandle();');
 		lines.push('  const node = {');
 		lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
@@ -1292,10 +1295,12 @@ function emitFieldCarryingFactory(
 			...nodeMemberLines({
 				setters: seatedSetters(setters, plan),
 				accessors: slotsToEmit.map((f) => ({ name: f.propertyName, read: f.storageKey })),
+				extra: view?.members,
 				inner: innerPositionsOf(typeKind, nodeMap)
 			})
 		);
 		lines.push('  };');
+		lines.push(...(view?.postlude ?? []));
 		lines.push(`  return node as unknown as ${builtName};`);
 	} else {
 		lines.push(`  return withMethods(${seatOpening(seats)}withAccessors({`);
@@ -1803,28 +1808,47 @@ export function listViewOwners(nodeMap: NodeMap): readonly AssembledNode[] {
 	return [...nodeMap.nodes.values()].filter((node) => listViewTarget(node, nodeMap)?.owner !== undefined);
 }
 
+export interface ListViewPlan {
+	readonly owner?: { readonly accessor: string; readonly storage: string };
+	readonly elements: string;
+	readonly count: string;
+	readonly options: readonly { readonly key: string; readonly default: string }[];
+	readonly wrapper?: string;
+}
+
+export function listViewPlanOf(
+	node: AssembledNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): ListViewPlan | undefined {
+	const target = listViewTarget(node, nodeMap);
+	if (target === undefined) return undefined;
+	const wrapper = separatedListSurface(target.list, nodeMap, kindEntries).wrapper;
+	const elements = canonicalSeparatedListField(target.list);
+	return {
+		...(target.owner === undefined ? {} : { owner: { accessor: target.owner.propertyName, storage: target.owner.storageKey } }),
+		elements: elements.propertyName,
+		count: elements.storageKey,
+		options: listOptionDefaults(target.list, nodeMap, kindEntries),
+		...(wrapper === undefined
+			? {}
+			: { wrapper: `{ kind: TSKindId.${wrapper.member}, content: ${JSON.stringify(wrapper.contentProperty)}, decorations: ${JSON.stringify(wrapper.decorationKeys)} }` })
+	};
+}
+
 export function listViewRuntimeSpec(
 	node: AssembledNode,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string | undefined {
-	const target = listViewTarget(node, nodeMap);
-	if (target === undefined) return undefined;
-	const options = listOptionDefaults(target.list, nodeMap, kindEntries)
-		.map((option) => `{ key: ${JSON.stringify(option.key)}, default: ${option.default} }`)
-		.join(', ');
-	const wrapper = separatedListSurface(target.list, nodeMap, kindEntries).wrapper;
-	const wrapperSpec =
-		wrapper === undefined
-			? ''
-			: `, wrapper: { kind: TSKindId.${wrapper.member}, content: ${JSON.stringify(wrapper.contentProperty)}, decorations: ${JSON.stringify(wrapper.decorationKeys)} }`;
-	const elements = canonicalSeparatedListField(target.list);
+	const plan = listViewPlanOf(node, nodeMap, kindEntries);
+	if (plan === undefined) return undefined;
+	const options = plan.options.map((option) => `{ key: ${JSON.stringify(option.key)}, default: ${option.default} }`).join(', ');
+	const wrapperSpec = plan.wrapper === undefined ? '' : `, wrapper: ${plan.wrapper}`;
 	const list =
-		target.owner === undefined
-			? ''
-			: `list: { accessor: ${JSON.stringify(target.owner.propertyName)}, storage: ${JSON.stringify(target.owner.storageKey)} }, `;
+		plan.owner === undefined ? '' : `list: { accessor: ${JSON.stringify(plan.owner.accessor)}, storage: ${JSON.stringify(plan.owner.storage)} }, `;
 	const optionsSpec = options === '' ? '' : `, options: [${options}]`;
-	return `{ ${list}elements: ${JSON.stringify(elements.propertyName)}, count: ${JSON.stringify(elements.storageKey)}${optionsSpec}${wrapperSpec} }`;
+	return `{ ${list}elements: ${JSON.stringify(plan.elements)}, count: ${JSON.stringify(plan.count)}${optionsSpec}${wrapperSpec} }`;
 }
 
 function listSlotTargets(
@@ -1874,6 +1898,7 @@ export interface SeatRuntime {
 
 export interface SeatPlan {
 	readonly view: string | undefined;
+	readonly viewPlan: ListViewPlan | undefined;
 	readonly slots: readonly { readonly slot: string; readonly spec: string }[];
 	readonly groups: readonly { readonly hint: GroupSeatHint; readonly spec: string }[];
 	readonly elements: readonly { readonly slot: string; readonly spec: string }[];
@@ -1890,19 +1915,27 @@ export function seatPlanOf(
 	const specs = groupSeatRuntimeSpecs(node, nodeMap, kindEntries, factoryScope);
 	return {
 		view: view === undefined ? undefined : tree === undefined ? view : `${view}, ${tree}`,
+		viewPlan: listViewPlanOf(node, nodeMap, kindEntries),
 		slots: listSlotSpecs(node, nodeMap, kindEntries, factoryScope),
 		groups: groupSeatHints(node, nodeMap, kindEntries).map((hint, index) => ({ hint, spec: specs[index]! })),
 		elements: elementConfigsOf(node, nodeMap).map((fact) => ({ slot: fact.slot, spec: elementConfigFields(fact, factoryScope) }))
 	};
 }
 
+export function convertsToLiteral(plan: SeatPlan): boolean {
+	return plan.groups.length === 0 && (plan.viewPlan === undefined || plan.viewPlan.owner !== undefined);
+}
+
 export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): readonly string[] {
 	const names = new Set<string>();
 	for (const node of nodeMap.nodes.values()) {
 		const plan = seatPlanOf(node, nodeMap, kindEntries);
-		if (plan.view !== undefined || plan.groups.length > 0) continue;
+		if (!convertsToLiteral(plan)) continue;
 		if (plan.slots.length > 0) names.add('listSlotWith');
 		if (plan.elements.length > 0) names.add('elementsWith');
+		if (plan.viewPlan !== undefined) {
+			for (const name of ['LIST_ITEMS', 'LIST_METHODS', 'listIterator', 'listItems', 'ownerView', 'ownerElements', 'listOption', 'readStubLength']) names.add(name);
+		}
 	}
 	return [...names];
 }

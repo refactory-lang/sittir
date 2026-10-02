@@ -344,21 +344,82 @@ export function listItems(elements: readonly unknown[], wrapper: ListViewWrapper
 	return Object.freeze(elements.map((element) => collapseWrapper(element, wrapper)));
 }
 
-type ListItemsHolder = { readonly [LIST_ITEMS]: readonly unknown[] };
+/** The key a wrapped list node keeps its reader of the items under: it hydrates them on the first read. */
+export const LIST_READ: unique symbol = Symbol('sittir.listRead');
+
+type ListItemsHolder = { [LIST_ITEMS]?: readonly unknown[]; readonly [LIST_READ]?: () => readonly unknown[] };
+
+/** The items of a list node: the ones it holds, or, for a wrapped list, the ones its reader hydrates and keeps on the first read. */
+export function listItemsOf(node: ListItemsHolder): readonly unknown[] {
+	return (node[LIST_ITEMS] ??= node[LIST_READ]!());
+}
 
 /** The `ReadonlyArray` methods of a list node, written once; each reads the items the node holds under `LIST_ITEMS`. */
 export const LIST_METHODS = Object.fromEntries(
 	READONLY_ARRAY_METHODS.map((name) => [
 		name,
 		function (this: ListItemsHolder, ...args: unknown[]): unknown {
-			return (this[LIST_ITEMS] as unknown as Members)[name]!(...args);
+			return (listItemsOf(this) as unknown as Members)[name]!(...args);
 		}
 	])
 ) as Readonly<Record<(typeof READONLY_ARRAY_METHODS)[number], (this: ListItemsHolder, ...args: unknown[]) => unknown>>;
 
 /** The iterator member of a list node. */
 export function listIterator(this: ListItemsHolder): IterableIterator<unknown> {
-	return this[LIST_ITEMS][Symbol.iterator]();
+	return listItemsOf(this)[Symbol.iterator]();
+}
+
+/** What an owner knows of the list it holds: the list itself, hydrated when it is a read stub and a tree is given, and its stored elements (undefined while the stub cannot be read). */
+export interface OwnerView {
+	readonly list: Record<string, unknown> | undefined;
+	readonly stored: readonly unknown[] | undefined;
+}
+
+export function ownerView(stored: unknown, count: string, tree?: TreeHandle): OwnerView {
+	const list = stored as (object & Partial<AnyUntypedNode>) | null | undefined;
+	if (list == null) return { list: undefined, stored: [] };
+	const source = count in list || !isStub(list) ? list : tree === undefined ? undefined : hydrateStub(list, tree);
+	if (source === undefined) return { list: undefined, stored: undefined };
+	const elements = (source as Record<string, unknown>)[count];
+	return {
+		list: source as Record<string, unknown>,
+		stored: Array.isArray(elements) ? elements : elements == null ? [] : [elements]
+	};
+}
+
+/** The elements a list reads through its own reader, none for an absent list. */
+export function ownerElements(list: unknown, reader: string): readonly unknown[] {
+	if (list == null) return [];
+	const read = (list as Record<string, unknown>)[reader] as ((this: object) => readonly unknown[] | undefined) | undefined;
+	return read?.call(list) ?? [];
+}
+
+/** A list option the owner reads from its list, or the option's default. */
+export function listOption(list: unknown, key: string, fallback: unknown): unknown {
+	return (list as Record<string, unknown> | null | undefined)?.[`_${key}`] ?? fallback;
+}
+
+const INDEX_GETTERS: ((this: ListItemsHolder) => unknown)[] = [];
+
+/** One getter per index position, shared by every wrapped list: an index reads the item the list hydrates on first use. */
+export function defineListIndices(node: object, count: number): void {
+	for (let index = 0; index < count; index++) {
+		INDEX_GETTERS[index] ??= function (this: ListItemsHolder) {
+			return listItemsOf(this)[index];
+		};
+		Object.defineProperty(node, index, { get: INDEX_GETTERS[index], enumerable: false, configurable: true });
+	}
+}
+
+/** The `length` of an owner built over a read stub with no tree: it cannot count its items, so reading it throws. */
+export function readStubLength(node: object, storage: string): void {
+	Object.defineProperty(node, 'length', {
+		get(): never {
+			throw new Error(`list view: ${storage} is a read stub, which a node built without its tree cannot count`);
+		},
+		enumerable: false,
+		configurable: true
+	});
 }
 
 const defineHidden = (node: object, key: PropertyKey, descriptor: PropertyDescriptor): void => {

@@ -8,6 +8,14 @@ import {
 	withAccessors,
 	currentHandle,
 	listSlotWith,
+	LIST_ITEMS,
+	LIST_METHODS,
+	listIterator,
+	listItems,
+	ownerView,
+	ownerElements,
+	listOption,
+	readStubLength,
 	rebuilt,
 	renderText,
 	toEditAt,
@@ -25,7 +33,6 @@ import {
 	rejectKeywordText,
 	withElementsSeat,
 	withGroupSeat,
-	withListSlots,
 	withListView
 } from '@sittir/common/utils';
 import { withMethods } from '../utils.js';
@@ -1011,42 +1018,60 @@ function _buildEnumVariantList(
 		'EnumVariantList.enumVariantListElements',
 		'a built EnumVariantListElements'
 	);
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.EnumVariantList as const,
-						$source: 2 as const,
-						$named: true as const,
-						_enum_variant_list_elements,
-						$with: {
-							enumVariantListElements: (value?: T.EnumVariantListElements) => _buildEnumVariantList(value)
-						}
-					},
-					{
-						enumVariantListElements: () => _enum_variant_list_elements
-					}
-				),
-				[
-					{
-						slot: 'enumVariantListElements',
-						kind: TSKindId.EnumVariantListElements as const,
-						optional: true,
-						make: buildEnumVariantListElements,
-						element: { keys: ['attributeItem', 'enumVariant'], make: buildAttributedEnumVariant }
-					}
-				]
-			),
-			{
-				list: { accessor: 'enumVariantListElements', storage: '_enum_variant_list_elements' },
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
-				wrapper: { kind: TSKindId.AttributedEnumVariant, content: 'enumVariant', decorations: ['_attribute_item'] }
-			}
-		)
-	) as unknown as T.EnumVariantList.Bound;
+	const listView = ownerView(_enum_variant_list_elements, '_element');
+	const listedItems =
+		listView.stored === undefined
+			? undefined
+			: listItems(ownerElements(listView.list, 'elements'), {
+					kind: TSKindId.AttributedEnumVariant,
+					content: 'enumVariant',
+					decorations: ['_attribute_item']
+				});
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.EnumVariantList as const,
+		$source: 2 as const,
+		$named: true as const,
+		_enum_variant_list_elements,
+		$with: {
+			enumVariantListElements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.EnumVariantListElements as const,
+							optional: true,
+							make: buildEnumVariantListElements,
+							element: { keys: ['attributeItem', 'enumVariant'], make: buildAttributedEnumVariant }
+						},
+						(value?: T.EnumVariantListElements) => _buildEnumVariantList(value)
+					)
+				)
+		},
+		enumVariantListElements: () => _enum_variant_list_elements,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.Trailing),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_enum_variant_list_elements');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.EnumVariantList.Bound;
 }
 
 export function buildEnumVariant(config: T.EnumVariant.Config): T.EnumVariant.Bound {
@@ -1135,47 +1160,60 @@ function _buildFieldDeclarationList(
 		'FieldDeclarationList.fieldDeclarationListElements',
 		'a built FieldDeclarationListElements'
 	);
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.FieldDeclarationList as const,
-						$source: 2 as const,
-						$named: true as const,
-						_field_declaration_list_elements,
-						$with: {
-							fieldDeclarationListElements: (value?: T.FieldDeclarationListElements) =>
-								_buildFieldDeclarationList(value)
-						}
-					},
-					{
-						fieldDeclarationListElements: () => _field_declaration_list_elements
-					}
-				),
-				[
-					{
-						slot: 'fieldDeclarationListElements',
-						kind: TSKindId.FieldDeclarationListElements as const,
-						optional: true,
-						make: buildFieldDeclarationListElements,
-						element: { keys: ['attributeItem', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
-					}
-				]
-			),
-			{
-				list: { accessor: 'fieldDeclarationListElements', storage: '_field_declaration_list_elements' },
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
-				wrapper: {
+	const listView = ownerView(_field_declaration_list_elements, '_element');
+	const listedItems =
+		listView.stored === undefined
+			? undefined
+			: listItems(ownerElements(listView.list, 'elements'), {
 					kind: TSKindId.AttributedFieldDeclaration,
 					content: 'fieldDeclaration',
 					decorations: ['_attribute_item']
-				}
-			}
-		)
-	) as unknown as T.FieldDeclarationList.Bound;
+				});
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FieldDeclarationList as const,
+		$source: 2 as const,
+		$named: true as const,
+		_field_declaration_list_elements,
+		$with: {
+			fieldDeclarationListElements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.FieldDeclarationListElements as const,
+							optional: true,
+							make: buildFieldDeclarationListElements,
+							element: { keys: ['attributeItem', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
+						},
+						(value?: T.FieldDeclarationListElements) => _buildFieldDeclarationList(value)
+					)
+				)
+		},
+		fieldDeclarationListElements: () => _field_declaration_list_elements,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.Trailing),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_field_declaration_list_elements');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.FieldDeclarationList.Bound;
 }
 
 export function buildFieldDeclaration(config: T.FieldDeclaration.Config): T.FieldDeclaration.Bound {
@@ -1264,46 +1302,60 @@ function _buildOrderedFieldDeclarationList(
 		'OrderedFieldDeclarationList.attributes',
 		'a built OrderedFieldDeclarationListElements'
 	);
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.OrderedFieldDeclarationList as const,
-						$source: 2 as const,
-						$named: true as const,
-						_attributes,
-						$with: {
-							attributes: (value?: T.OrderedFieldDeclarationListElements) => _buildOrderedFieldDeclarationList(value)
-						}
-					},
-					{
-						attributes: () => _attributes
-					}
-				),
-				[
-					{
-						slot: 'attributes',
-						kind: TSKindId.OrderedFieldDeclarationListElements as const,
-						optional: true,
-						make: buildOrderedFieldDeclarationListElements,
-						element: { keys: ['attributeItem', 'visibilityModifier', 'type'], make: buildAttributedOrderedField }
-					}
-				]
-			),
-			{
-				list: { accessor: 'attributes', storage: '_attributes' },
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				wrapper: {
+	const listView = ownerView(_attributes, '_element');
+	const listedItems =
+		listView.stored === undefined
+			? undefined
+			: listItems(ownerElements(listView.list, 'elements'), {
 					kind: TSKindId.AttributedOrderedField,
 					content: 'type',
 					decorations: ['_attribute_item', '_visibility_modifier']
-				}
-			}
-		)
-	) as unknown as T.OrderedFieldDeclarationList.Bound;
+				});
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.OrderedFieldDeclarationList as const,
+		$source: 2 as const,
+		$named: true as const,
+		_attributes,
+		$with: {
+			attributes: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.OrderedFieldDeclarationListElements as const,
+							optional: true,
+							make: buildOrderedFieldDeclarationListElements,
+							element: { keys: ['attributeItem', 'visibilityModifier', 'type'], make: buildAttributedOrderedField }
+						},
+						(value?: T.OrderedFieldDeclarationListElements) => _buildOrderedFieldDeclarationList(value)
+					)
+				)
+		},
+		attributes: () => _attributes,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_attributes');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.OrderedFieldDeclarationList.Bound;
 }
 
 export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Config): T.ExternCrateDeclaration.Bound {
@@ -1842,40 +1894,48 @@ export function buildWhereClause(...args: unknown[]) {
 }
 function _buildWhereClause(value?: AdmitBound<T.WherePredicates, T.AdmittedNodes>): T.WhereClause.Bound {
 	const _where_predicates = rejectBareText(value, 'WhereClause.wherePredicates', 'a built WherePredicates');
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.WhereClause as const,
-						$source: 2 as const,
-						$named: true as const,
-						_where_predicates,
-						$with: {
-							wherePredicates: (value?: T.WherePredicates) => _buildWhereClause(value)
-						}
-					},
-					{
-						wherePredicates: () => _where_predicates
-					}
-				),
-				[
-					{
-						slot: 'wherePredicates',
-						kind: TSKindId.WherePredicates as const,
-						optional: true,
-						make: buildWherePredicates
-					}
-				]
-			),
-			{
-				list: { accessor: 'wherePredicates', storage: '_where_predicates' },
-				elements: 'wherePredicates',
-				count: '_where_predicate',
-				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
-		)
-	) as unknown as T.WhereClause.Bound;
+	const listView = ownerView(_where_predicates, '_where_predicate');
+	const listedItems =
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'wherePredicates'), undefined);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.WhereClause as const,
+		$source: 2 as const,
+		$named: true as const,
+		_where_predicates,
+		$with: {
+			wherePredicates: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.WherePredicates as const, optional: true, make: buildWherePredicates },
+						(value?: T.WherePredicates) => _buildWhereClause(value)
+					)
+				)
+		},
+		wherePredicates: () => _where_predicates,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_where_predicates');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.WhereClause.Bound;
 }
 
 export function buildWherePredicate(config: T.WherePredicate.Config): T.WherePredicate.Bound {
@@ -2227,42 +2287,59 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 		'TypeParameters.typeParametersElements',
 		'a built TypeParametersElements'
 	);
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.TypeParameters as const,
-						$source: 2 as const,
-						$named: true as const,
-						_type_parameters_elements,
-						$with: {
-							typeParametersElements: (value: T.TypeParametersElements) => _buildTypeParameters(value)
-						}
-					},
-					{
-						typeParametersElements: () => _type_parameters_elements
-					}
-				),
-				[
-					{
-						slot: 'typeParametersElements',
-						kind: TSKindId.TypeParametersElements as const,
-						optional: false,
-						make: buildTypeParametersElements,
-						element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
-					}
-				]
-			),
-			{
-				list: { accessor: 'typeParametersElements', storage: '_type_parameters_elements' },
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['_attribute_item'] }
-			}
-		)
-	) as unknown as T.TypeParameters.Bound;
+	const listView = ownerView(_type_parameters_elements, '_element');
+	const listedItems =
+		listView.stored === undefined
+			? undefined
+			: listItems(ownerElements(listView.list, 'elements'), {
+					kind: TSKindId.AttributedTypeParameter,
+					content: 'content',
+					decorations: ['_attribute_item']
+				});
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeParameters as const,
+		$source: 2 as const,
+		$named: true as const,
+		_type_parameters_elements,
+		$with: {
+			typeParametersElements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeParametersElements as const,
+							optional: false,
+							make: buildTypeParametersElements,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+						},
+						(value: T.TypeParametersElements) => _buildTypeParameters(value)
+					)
+				)
+		},
+		typeParametersElements: () => _type_parameters_elements,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_type_parameters_elements');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.TypeParameters.Bound;
 }
 
 export function buildConstParameter(config: T.ConstParameter.Config): T.ConstParameter.Bound {
@@ -2683,33 +2760,49 @@ export function buildUseList(...args: unknown[]) {
 }
 function _buildUseList(value?: AdmitBound<T.UseClauses, T.AdmittedNodes>): T.UseList.Bound {
 	const _use_clauses = rejectBareText(value, 'UseList.useClauses', 'a built UseClauses');
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.UseList as const,
-						$source: 2 as const,
-						$named: true as const,
-						_use_clauses,
-						$with: {
-							useClauses: (value?: T.UseClauses) => _buildUseList(value)
-						}
-					},
-					{
-						useClauses: () => _use_clauses
-					}
-				),
-				[{ slot: 'useClauses', kind: TSKindId.UseClauses as const, optional: true, make: buildUseClauses }]
-			),
-			{
-				list: { accessor: 'useClauses', storage: '_use_clauses' },
-				elements: 'useClauses',
-				count: '_use_clause',
-				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
-		)
-	) as unknown as T.UseList.Bound;
+	const listView = ownerView(_use_clauses, '_use_clause');
+	const listedItems =
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'useClauses'), undefined);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.UseList as const,
+		$source: 2 as const,
+		$named: true as const,
+		_use_clauses,
+		$with: {
+			useClauses: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.UseClauses as const, optional: true, make: buildUseClauses },
+						(value?: T.UseClauses) => _buildUseList(value)
+					)
+				)
+		},
+		useClauses: () => _use_clauses,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_use_clauses');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.UseList.Bound;
 }
 
 export function buildUseAsClause(config: T.UseAsClause.Config): T.UseAsClause.Bound {
@@ -2895,42 +2988,60 @@ export function buildParameters(...args: unknown[]) {
 }
 function _buildParameters(value?: AdmitBound<T.ParametersElements, T.AdmittedNodes>): T.Parameters.Bound {
 	const _parameters_elements = rejectBareText(value, 'Parameters.parametersElements', 'a built ParametersElements');
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.Parameters as const,
-						$source: 2 as const,
-						$named: true as const,
-						_parameters_elements,
-						$with: {
-							parametersElements: (value?: T.ParametersElements) => _buildParameters(value)
-						}
-					},
-					{
-						parametersElements: () => _parameters_elements
-					}
-				),
-				[
-					{
-						slot: 'parametersElements',
-						kind: TSKindId.ParametersElements as const,
-						optional: true,
-						make: buildParametersElements,
-						element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
-					}
-				]
-			),
-			{
-				list: { accessor: 'parametersElements', storage: '_parameters_elements' },
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				wrapper: { kind: TSKindId.AttributedParameter, content: 'content', decorations: ['_attribute_item'] }
-			}
-		)
-	) as unknown as T.Parameters.Bound;
+	const listView = ownerView(_parameters_elements, '_element');
+	const listedItems =
+		listView.stored === undefined
+			? undefined
+			: listItems(ownerElements(listView.list, 'elements'), {
+					kind: TSKindId.AttributedParameter,
+					content: 'content',
+					decorations: ['_attribute_item']
+				});
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.Parameters as const,
+		$source: 2 as const,
+		$named: true as const,
+		_parameters_elements,
+		$with: {
+			parametersElements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.ParametersElements as const,
+							optional: true,
+							make: buildParametersElements,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+						},
+						(value?: T.ParametersElements) => _buildParameters(value)
+					)
+				)
+		},
+		parametersElements: () => _parameters_elements,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_parameters_elements');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.Parameters.Bound;
 }
 
 export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {}): T.SelfParameter.Bound {
@@ -3315,33 +3426,48 @@ export function buildForLifetimes(...args: unknown[]) {
 }
 function _buildForLifetimes(value: AdmitBound<T.Lifetimes, T.AdmittedNodes>): T.ForLifetimes.Bound {
 	const _lifetimes = rejectBareText(value, 'ForLifetimes.lifetimes', 'a built Lifetimes');
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.ForLifetimes as const,
-						$source: 2 as const,
-						$named: true as const,
-						_lifetimes,
-						$with: {
-							lifetimes: (value: T.Lifetimes) => _buildForLifetimes(value)
-						}
-					},
-					{
-						lifetimes: () => _lifetimes
-					}
-				),
-				[{ slot: 'lifetimes', kind: TSKindId.Lifetimes as const, optional: false, make: buildLifetimes }]
-			),
-			{
-				list: { accessor: 'lifetimes', storage: '_lifetimes' },
-				elements: 'lifetimes',
-				count: '_lifetime',
-				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
-		)
-	) as unknown as T.ForLifetimes.Bound;
+	const listView = ownerView(_lifetimes, '_lifetime');
+	const listedItems =
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'lifetimes'), undefined);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ForLifetimes as const,
+		$source: 2 as const,
+		$named: true as const,
+		_lifetimes,
+		$with: {
+			lifetimes: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.Lifetimes as const, optional: false, make: buildLifetimes },
+						(value: T.Lifetimes) => _buildForLifetimes(value)
+					)
+				)
+		},
+		lifetimes: () => _lifetimes,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_lifetimes');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.ForLifetimes.Bound;
 }
 
 export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType.Bound {
@@ -3442,40 +3568,48 @@ export function buildTupleType(...args: unknown[]) {
 }
 function _buildTupleType(value: AdmitBound<T.TupleTypeElements, T.AdmittedNodes>): T.TupleType.Bound {
 	const _tuple_type_elements = rejectBareText(value, 'TupleType.tupleTypeElements', 'a built TupleTypeElements');
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.TupleType as const,
-						$source: 2 as const,
-						$named: true as const,
-						_tuple_type_elements,
-						$with: {
-							tupleTypeElements: (value: T.TupleTypeElements) => _buildTupleType(value)
-						}
-					},
-					{
-						tupleTypeElements: () => _tuple_type_elements
-					}
-				),
-				[
-					{
-						slot: 'tupleTypeElements',
-						kind: TSKindId.TupleTypeElements as const,
-						optional: false,
-						make: buildTupleTypeElements
-					}
-				]
-			),
-			{
-				list: { accessor: 'tupleTypeElements', storage: '_tuple_type_elements' },
-				elements: 'types',
-				count: '_type',
-				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
-		)
-	) as unknown as T.TupleType.Bound;
+	const listView = ownerView(_tuple_type_elements, '_type');
+	const listedItems =
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'types'), undefined);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TupleType as const,
+		$source: 2 as const,
+		$named: true as const,
+		_tuple_type_elements,
+		$with: {
+			tupleTypeElements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TupleTypeElements as const, optional: false, make: buildTupleTypeElements },
+						(value: T.TupleTypeElements) => _buildTupleType(value)
+					)
+				)
+		},
+		tupleTypeElements: () => _tuple_type_elements,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_tuple_type_elements');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.TupleType.Bound;
 }
 
 export const buildUnitType: TSKindId.UnitType = TSKindId.UnitType;
@@ -3697,33 +3831,49 @@ export function buildUseBounds(...args: unknown[]) {
 }
 function _buildUseBounds(value?: AdmitBound<T.UseBoundsElements, T.AdmittedNodes>): T.UseBounds.Bound {
 	const _bounds = rejectBareText(value, 'UseBounds.bounds', 'a built UseBoundsElements');
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.UseBounds as const,
-						$source: 2 as const,
-						$named: true as const,
-						_bounds,
-						$with: {
-							bounds: (value?: T.UseBoundsElements) => _buildUseBounds(value)
-						}
-					},
-					{
-						bounds: () => _bounds
-					}
-				),
-				[{ slot: 'bounds', kind: TSKindId.UseBoundsElements as const, optional: true, make: buildUseBoundsElements }]
-			),
-			{
-				list: { accessor: 'bounds', storage: '_bounds' },
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
-		)
-	) as unknown as T.UseBounds.Bound;
+	const listView = ownerView(_bounds, '_element');
+	const listedItems =
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'elements'), undefined);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.UseBounds as const,
+		$source: 2 as const,
+		$named: true as const,
+		_bounds,
+		$with: {
+			bounds: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.UseBoundsElements as const, optional: true, make: buildUseBoundsElements },
+						(value?: T.UseBoundsElements) => _buildUseBounds(value)
+					)
+				)
+		},
+		bounds: () => _bounds,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_bounds');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.UseBounds.Bound;
 }
 
 export function buildTypeArguments(
@@ -3767,42 +3917,59 @@ function _buildTypeArguments(value: AdmitBound<T.TypeArgumentsElements, T.Admitt
 		'TypeArguments.typeArgumentsElements',
 		'a built TypeArgumentsElements'
 	);
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.TypeArguments as const,
-						$source: 2 as const,
-						$named: true as const,
-						_type_arguments_elements,
-						$with: {
-							typeArgumentsElements: (value: T.TypeArgumentsElements) => _buildTypeArguments(value)
-						}
-					},
-					{
-						typeArgumentsElements: () => _type_arguments_elements
-					}
-				),
-				[
-					{
-						slot: 'typeArgumentsElements',
-						kind: TSKindId.TypeArgumentsElements as const,
-						optional: false,
-						make: buildTypeArgumentsElements,
-						element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
-					}
-				]
-			),
-			{
-				list: { accessor: 'typeArgumentsElements', storage: '_type_arguments_elements' },
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				wrapper: { kind: TSKindId.TypeArgument, content: 'content', decorations: ['_trait_bounds'] }
-			}
-		)
-	) as unknown as T.TypeArguments.Bound;
+	const listView = ownerView(_type_arguments_elements, '_element');
+	const listedItems =
+		listView.stored === undefined
+			? undefined
+			: listItems(ownerElements(listView.list, 'elements'), {
+					kind: TSKindId.TypeArgument,
+					content: 'content',
+					decorations: ['_trait_bounds']
+				});
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TypeArguments as const,
+		$source: 2 as const,
+		$named: true as const,
+		_type_arguments_elements,
+		$with: {
+			typeArgumentsElements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeArgumentsElements as const,
+							optional: false,
+							make: buildTypeArgumentsElements,
+							element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
+						},
+						(value: T.TypeArgumentsElements) => _buildTypeArguments(value)
+					)
+				)
+		},
+		typeArgumentsElements: () => _type_arguments_elements,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_type_arguments_elements');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.TypeArguments.Bound;
 }
 
 export function buildTypeBinding(config: T.TypeBinding.Config): T.TypeBinding.Bound {
@@ -4679,42 +4846,60 @@ export function buildArguments(...args: unknown[]) {
 }
 function _buildArguments(value?: AdmitBound<T.ArgumentsElements, T.AdmittedNodes>): T.Arguments.Bound {
 	const _arguments_elements = rejectBareText(value, 'Arguments.argumentsElements', 'a built ArgumentsElements');
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.Arguments as const,
-						$source: 2 as const,
-						$named: true as const,
-						_arguments_elements,
-						$with: {
-							argumentsElements: (value?: T.ArgumentsElements) => _buildArguments(value)
-						}
-					},
-					{
-						argumentsElements: () => _arguments_elements
-					}
-				),
-				[
-					{
-						slot: 'argumentsElements',
-						kind: TSKindId.ArgumentsElements as const,
-						optional: true,
-						make: buildArgumentsElements,
-						element: { keys: ['attributeItem', 'expression'], make: buildAttributedArgument }
-					}
-				]
-			),
-			{
-				list: { accessor: 'argumentsElements', storage: '_arguments_elements' },
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				wrapper: { kind: TSKindId.AttributedArgument, content: 'expression', decorations: ['_attribute_item'] }
-			}
-		)
-	) as unknown as T.Arguments.Bound;
+	const listView = ownerView(_arguments_elements, '_element');
+	const listedItems =
+		listView.stored === undefined
+			? undefined
+			: listItems(ownerElements(listView.list, 'elements'), {
+					kind: TSKindId.AttributedArgument,
+					content: 'expression',
+					decorations: ['_attribute_item']
+				});
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.Arguments as const,
+		$source: 2 as const,
+		$named: true as const,
+		_arguments_elements,
+		$with: {
+			argumentsElements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.ArgumentsElements as const,
+							optional: true,
+							make: buildArgumentsElements,
+							element: { keys: ['attributeItem', 'expression'], make: buildAttributedArgument }
+						},
+						(value?: T.ArgumentsElements) => _buildArguments(value)
+					)
+				)
+		},
+		argumentsElements: () => _arguments_elements,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_arguments_elements');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.Arguments.Bound;
 }
 
 export function buildParenthesizedExpression(
@@ -4882,40 +5067,53 @@ function _buildFieldInitializerList(
 		'FieldInitializerList.initializers',
 		'a built FieldInitializerListElements'
 	);
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.FieldInitializerList as const,
-						$source: 2 as const,
-						$named: true as const,
-						_initializers,
-						$with: {
-							initializers: (value?: T.FieldInitializerListElements) => _buildFieldInitializerList(value)
-						}
-					},
-					{
-						initializers: () => _initializers
-					}
-				),
-				[
-					{
-						slot: 'initializers',
-						kind: TSKindId.FieldInitializerListElements as const,
-						optional: true,
-						make: buildFieldInitializerListElements
-					}
-				]
-			),
-			{
-				list: { accessor: 'initializers', storage: '_initializers' },
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
-		)
-	) as unknown as T.FieldInitializerList.Bound;
+	const listView = ownerView(_initializers, '_element');
+	const listedItems =
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'elements'), undefined);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FieldInitializerList as const,
+		$source: 2 as const,
+		$named: true as const,
+		_initializers,
+		$with: {
+			initializers: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.FieldInitializerListElements as const,
+							optional: true,
+							make: buildFieldInitializerListElements
+						},
+						(value?: T.FieldInitializerListElements) => _buildFieldInitializerList(value)
+					)
+				)
+		},
+		initializers: () => _initializers,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_initializers');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.FieldInitializerList.Bound;
 }
 
 export function buildShorthandFieldInitializer(
@@ -6048,40 +6246,49 @@ export function buildTuplePattern(...args: unknown[]) {
 }
 function _buildTuplePattern(value?: AdmitBound<T.TuplePatternElements, T.AdmittedNodes>): T.TuplePattern.Bound {
 	const _elements = rejectBareText(value, 'TuplePattern.elements', 'a built TuplePatternElements');
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.TuplePattern as const,
-						$source: 2 as const,
-						$named: true as const,
-						_elements,
-						$with: {
-							elements: (value?: T.TuplePatternElements) => _buildTuplePattern(value)
-						}
-					},
-					{
-						elements: () => _elements
-					}
-				),
-				[
-					{
-						slot: 'elements',
-						kind: TSKindId.TuplePatternElements as const,
-						optional: true,
-						make: buildTuplePatternElements
-					}
-				]
-			),
-			{
-				list: { accessor: 'elements', storage: '_elements' },
-				elements: 'elements',
-				count: '_element',
-				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
-		)
-	) as unknown as T.TuplePattern.Bound;
+	const listView = ownerView(_elements, '_element');
+	const listedItems =
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'elements'), undefined);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TuplePattern as const,
+		$source: 2 as const,
+		$named: true as const,
+		_elements,
+		$with: {
+			elements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TuplePatternElements as const, optional: true, make: buildTuplePatternElements },
+						(value?: T.TuplePatternElements) => _buildTuplePattern(value)
+					)
+				)
+		},
+		elements: () => _elements,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_elements');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.TuplePattern.Bound;
 }
 
 export function buildSlicePattern(): T.EmptySlicePattern;
@@ -6110,33 +6317,49 @@ export function buildSlicePattern(...args: unknown[]) {
 }
 function _buildSlicePattern(value?: AdmitBound<T.Patterns, T.AdmittedNodes>): T.SlicePattern.Bound {
 	const _patterns = rejectBareText(value, 'SlicePattern.patterns', 'a built Patterns');
-	return withMethods(
-		withListView(
-			withListSlots(
-				withAccessors(
-					{
-						$type: TSKindId.SlicePattern as const,
-						$source: 2 as const,
-						$named: true as const,
-						_patterns,
-						$with: {
-							patterns: (value?: T.Patterns) => _buildSlicePattern(value)
-						}
-					},
-					{
-						patterns: () => _patterns
-					}
-				),
-				[{ slot: 'patterns', kind: TSKindId.Patterns as const, optional: true, make: buildPatterns }]
-			),
-			{
-				list: { accessor: 'patterns', storage: '_patterns' },
-				elements: 'patterns',
-				count: '_pattern',
-				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
-		)
-	) as unknown as T.SlicePattern.Bound;
+	const listView = ownerView(_patterns, '_pattern');
+	const listedItems =
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'patterns'), undefined);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.SlicePattern as const,
+		$source: 2 as const,
+		$named: true as const,
+		_patterns,
+		$with: {
+			patterns: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.Patterns as const, optional: true, make: buildPatterns },
+						(value?: T.Patterns) => _buildSlicePattern(value)
+					)
+				)
+		},
+		patterns: () => _patterns,
+		length: listedItems?.length,
+		[LIST_ITEMS]: listedItems,
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	if (listedItems === undefined) readStubLength(node, '_patterns');
+	else
+		for (let index = 0; index < listedItems.length; index++)
+			(node as Record<number, unknown>)[index] = listedItems[index];
+	return node as unknown as T.SlicePattern.Bound;
 }
 
 export function buildTupleStructPattern(config: T.TupleStructPattern.Config): T.TupleStructPattern.Bound {

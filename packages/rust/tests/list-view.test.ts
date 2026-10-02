@@ -64,10 +64,11 @@ describe('a list owner and its list node read as a ReadonlyArray of the items', 
 		expect([...params]).toEqual([]);
 	});
 
-	it('keeps the view off the enumerable keys, so spreading and serialising are unchanged', () => {
+	it('writes the view as enumerable members, with the index getters of a parsed owner off the keys', () => {
 		const params = functionOf('fn f(a: i32) {}\n').parameters();
 		const keys = Object.keys(params);
-		for (const member of ['0', 'length', 'map', 'delimiter']) expect(keys).not.toContain(member);
+		for (const member of ['length', 'map', 'delimiter']) expect(keys).toContain(member);
+		expect(keys).not.toContain('0');
 		const list = params.parametersElements()!;
 		expect(Object.keys(list)).not.toContain('0');
 	});

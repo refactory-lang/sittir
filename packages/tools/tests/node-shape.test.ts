@@ -42,7 +42,6 @@ const classes: Record<string, () => object> = {
 const pending = new Set([
 	'rust group seat, group present',
 	'rust group seat, group absent',
-	'rust list owner',
 	'typescript group seat',
 	'python group seat',
 	'parsed'
