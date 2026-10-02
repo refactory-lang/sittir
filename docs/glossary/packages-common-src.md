@@ -344,3 +344,7 @@ The value a seated key reads: the group's own reader of that field, or `undefine
 ### `packages/common/src/utils.ts::STORED_SLOT_READERS`
 
 The key a node keeps the readers of its seated slots under, by accessor name, for the case where a flattened key spells its slot and so replaces that slot's own accessor. `storedSlotReader` reads it.
+
+### `packages/common/src/utils.ts::unreadableStubItems`
+
+The items reader of a built owner over a read stub with no tree. Every list member reads the items through it, so each throws the stub error instead of failing on a missing reader.

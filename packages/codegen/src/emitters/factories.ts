@@ -1933,7 +1933,7 @@ export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly Kind
 		if (plan.elements.length > 0) names.add('elementsWith');
 		if (plan.groups.length > 0) for (const name of ['seatWith', 'groupField', 'STORED_SLOT_READERS']) names.add(name);
 		if (plan.viewPlan !== undefined) {
-			const names_ = plan.viewPlan.owner === undefined ? ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'storedElements', 'defineListIndices'] : ['LIST_ITEMS', 'LIST_METHODS', 'listIterator', 'listItems', 'ownerView', 'ownerElements', 'listOption', 'readStubLength'];
+			const names_ = plan.viewPlan.owner === undefined ? ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'storedElements', 'defineListIndices'] : ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'ownerView', 'ownerElements', 'listOption', 'readStubLength', 'unreadableStubItems'];
 			for (const name of names_) names.add(name);
 		}
 	}

@@ -11,7 +11,8 @@ import {
 	listOption,
 	ownerElements,
 	ownerView,
-	readStubLength
+	readStubLength,
+	unreadableStubItems
 } from '../src/utils.ts';
 
 const wrapperSpec = { kind: 5, content: 'content', decorations: ['_attribute'] };
@@ -49,7 +50,7 @@ const wrappedOwner = (list: object | undefined, wrapper?: typeof wrapperSpec, tr
 const builtOwner = (list: object | undefined, storage = '_items') => {
 	const view = ownerView(list, '_element');
 	const items = view.stored === undefined ? undefined : listItems(ownerElements(view.list, 'elements'), undefined);
-	const node: Record<PropertyKey, unknown> = { $type: 1, _items: list, length: items?.length, [LIST_ITEMS]: items, ...sharedMembers(view) };
+	const node: Record<PropertyKey, unknown> = { $type: 1, _items: list, length: items?.length, [LIST_ITEMS]: items, [LIST_READ]: items === undefined ? () => unreadableStubItems(storage) : undefined, ...sharedMembers(view) };
 	if (items === undefined) readStubLength(node, storage);
 	else for (let index = 0; index < items.length; index++) node[index] = items[index];
 	return node as any;
@@ -117,6 +118,8 @@ describe('a list owner', () => {
 	it('built over a read stub no tree can read, refuses to count it', () => {
 		const node = builtOwner({ $type: 9, $parentHandle: 4, $childIndex: 1 });
 		expect(() => node.length).toThrow(/read stub/);
+		expect(() => [...node]).toThrow(/read stub/);
+		expect(() => node.map((item: unknown) => item)).toThrow(/read stub/);
 		expect(node[0]).toBeUndefined();
 	});
 

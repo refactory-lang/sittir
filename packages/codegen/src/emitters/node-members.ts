@@ -130,7 +130,12 @@ export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: st
 				`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)});`,
 				`  const listedItems = listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, ${JSON.stringify(plan.elements)}), ${wrapper});`
 			],
-			members: ['    length: listedItems?.length,', '    [LIST_ITEMS]: listedItems,', ...shared],
+			members: [
+				'    length: listedItems?.length,',
+				'    [LIST_ITEMS]: listedItems,',
+				`    [LIST_READ]: listedItems === undefined ? () => unreadableStubItems(${JSON.stringify(storage)}) : undefined,`,
+				...shared
+			],
 			postlude: [
 				`  if (listedItems === undefined) readStubLength(node, ${JSON.stringify(storage)});`,
 				'  else for (let index = 0; index < listedItems.length; index++) (node as Record<number, unknown>)[index] = listedItems[index];'

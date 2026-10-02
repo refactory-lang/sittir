@@ -322,6 +322,11 @@ export function defineListIndices(node: object, count: number): void {
 	}
 }
 
+/** The items reader of an owner built over a read stub with no tree: it cannot read them, so it throws and names the stub. */
+export function unreadableStubItems(storage: string): never {
+	throw new Error(`list view: ${storage} is a read stub, which a node built without its tree cannot read`);
+}
+
 /** The `length` of an owner built over a read stub with no tree: it cannot count its items, so reading it throws. */
 export function readStubLength(node: object, storage: string): void {
 	Object.defineProperty(node, 'length', {
