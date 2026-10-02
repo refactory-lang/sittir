@@ -2273,7 +2273,9 @@ export namespace AnonymousCapturingGroup {
 	}
 	export type Loose = LooseFor<TSKindId.AnonymousCapturingGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AnonymousCapturingGroup>;
-	export type BuildArgs = [value: AdmitBound<T.Pattern, T.AdmittedNodes>];
+	export type BuildArgs =
+		| [value: AdmitBound<T.Pattern, T.AdmittedNodes>]
+		| [value: AdmitBound<T.Alternation | T.Term, T.AdmittedNodes>];
 	export type LooseArgs = [value: T.AnonymousCapturingGroup.Loose];
 	export type Kind = TSKindId.AnonymousCapturingGroup;
 }
@@ -2305,7 +2307,9 @@ export namespace NonCapturingGroup {
 	}
 	export type Loose = LooseFor<TSKindId.NonCapturingGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NonCapturingGroup>;
-	export type BuildArgs = [value: AdmitBound<T.Pattern, T.AdmittedNodes>];
+	export type BuildArgs =
+		| [value: AdmitBound<T.Pattern, T.AdmittedNodes>]
+		| [value: AdmitBound<T.Alternation | T.Term, T.AdmittedNodes>];
 	export type LooseArgs = [value: T.NonCapturingGroup.Loose];
 	export type Kind = TSKindId.NonCapturingGroup;
 }
@@ -2486,7 +2490,9 @@ export namespace UnicodePropertyValueExpressionGroup {
 	}
 	export type Loose = LooseFor<TSKindId.UnicodePropertyValueExpressionGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnicodePropertyValueExpressionGroup>;
-	export type BuildArgs = [value: AdmitBound<T.UnicodePropertyName | T.UnicodePropertyName.Types, T.AdmittedNodes>];
+	export type BuildArgs =
+		| [value: AdmitBound<T.UnicodePropertyName | T.UnicodePropertyName.Types, T.AdmittedNodes>]
+		| [value: AdmitBound<T.UnicodePropertyValue, T.AdmittedNodes>];
 	export type LooseArgs = [value: T.UnicodePropertyValueExpressionGroup.Loose];
 	export type Kind = TSKindId.UnicodePropertyValueExpressionGroup;
 }

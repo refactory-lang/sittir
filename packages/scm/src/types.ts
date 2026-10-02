@@ -1755,7 +1755,9 @@ export namespace String {
 	}
 	export type Loose = LooseFor<TSKindId.String>;
 	export type LooseConfig = LooseConfigFor<TSKindId.String>;
-	export type BuildArgs = [value?: AdmitBound<T.StringContent, T.AdmittedNodes>];
+	export type BuildArgs =
+		| [value?: AdmitBound<T.StringContent, T.AdmittedNodes>]
+		| [...children: AdmitBound<(T.StringContentText | T.EscapeSequence)[], T.AdmittedNodes>];
 	export type LooseArgs = [value?: T.String.Loose];
 	export type Kind = TSKindId.String;
 }
@@ -1771,7 +1773,9 @@ export namespace ImmediateString {
 	}
 	export type Loose = LooseFor<TSKindId.ImmediateString>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImmediateString>;
-	export type BuildArgs = [value?: AdmitBound<T.StringContent, T.AdmittedNodes>];
+	export type BuildArgs =
+		| [value?: AdmitBound<T.StringContent, T.AdmittedNodes>]
+		| [...children: AdmitBound<(T.StringContentText | T.EscapeSequence)[], T.AdmittedNodes>];
 	export type LooseArgs = [value?: T.ImmediateString.Loose];
 	export type Kind = TSKindId.ImmediateString;
 }

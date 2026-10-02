@@ -155,9 +155,13 @@ export function holdsOwnKind(node: AssembledNode | undefined, nodeMap: NodeMap):
 	const heldBy = (held: AssembledNonterminal): string[] => slotKindNames(held).flatMap((kind) => concreteKindsOf(kind, nodeMap));
 	const held = heldBy(slot);
 	if (held.includes(node.kind)) return true;
+	const forwarded = forwardedTargetKind(node, nodeMap);
 	return held.some((kind) => {
-		const list = nodeMap.nodes.get(kind);
-		const element = list instanceof AssembledList ? list.soleSlot : undefined;
+		const child = nodeMap.nodes.get(kind);
+		const takesItsElements =
+			child instanceof AssembledList ||
+			(child instanceof AbstractAssembledCompound && kind === forwarded && classifyFactoryShape(child, nodeMap) === 'spread');
+		const element = takesItsElements ? child.soleSlot : undefined;
 		return element !== undefined && heldBy(element).includes(node.kind);
 	});
 }

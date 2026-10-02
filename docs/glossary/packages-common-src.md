@@ -131,7 +131,7 @@ Binds the runtime to a grammar's type map. `isNode` is the shared implementation
 
 ### `packages/common/src/runtime.ts::rejectBareText`
 
-`rejectBareText(value, where, expected)` is the strict surface's bare-text guard: a string throws `<where>: a strict factory takes a built node, not a string; expected <expected>, or use .coerce`. Arrays are checked element-wise and every other value passes through unchanged. The loose surface (`.coerce`) is where text becomes a node. A slot that stores only kind ids (a kind enum with no node value) takes no guard: its strict input is one of its declared fixed values, not a leaf's text, so `coerceKindEnumStorage` maps a matching string to its id.
+`rejectBareText(value, where, expected)` is the strict surface's bare-text guard: a string or a bigint throws `<where>: a strict factory takes a built node, not a string; expected <expected>, or use .coerce` (naming which it was). Arrays are checked element-wise and every other value passes through unchanged. A number passes, because a slot that also holds fixed-text kinds stores their kind ids as numbers and the guard cannot tell a kind id from a scalar; where the slot holds no such kind, the native render refuses the number, naming the slot (`renders from a node, not a kind id`). A bigint is never a kind id, and the transport would drop it without a word, so it is refused here. The loose surface (`.coerce`) is where text becomes a node. A slot that stores only kind ids (a kind enum with no node value) takes no guard: its strict input is one of its declared fixed values, not a leaf's text, so `coerceKindEnumStorage` maps a matching string to its id.
 
 ### `packages/common/src/runtime.ts::rejectKeywordText`
 

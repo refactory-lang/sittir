@@ -43,6 +43,8 @@ describe('grammar-free runtime helpers', () => {
 		expect(rejectBareText(built, 'f', 'a leaf')).toBe(built);
 		expect(() => rejectBareText('x', 'f', 'a leaf')).toThrow('f: a strict factory takes a built node');
 		expect(() => rejectBareText([built, 'x'], 'f', 'a leaf')).toThrow('expected a leaf, or use .coerce');
+		expect(() => rejectBareText(1n, 'f', 'a leaf')).toThrow('f: a strict factory takes a built node, not a bigint');
+		expect(rejectBareText(7, 'f', 'a leaf')).toBe(7);
 	});
 
 	it("rejectKeywordText refuses a word leaf spelling the slot's keyword", () => {

@@ -24,6 +24,13 @@ describe('an argument of the builder\'s own kind', () => {
 		expect(ts.build.array(ts.build.array(x)).$render()).toBe('[[x]]');
 	});
 
+	it('is one element of the child whose elements the builder takes', () => {
+		const inner = ts.build.parenthesizedExpression.sequence.strict(x, ts.build.identifier('y'));
+		expect(inner.$render()).toBe('(x, y)');
+		expect(ts.build.parenthesizedExpression.sequence(inner).$render()).toBe('((x, y))');
+		expect(ts.build.parenthesizedExpression.sequence.strict(inner).$render()).toBe('((x, y))');
+	});
+
 	it('is still the elements of a list that cannot hold itself', () => {
 		expect(ts.build.arguments(ts.build.arguments(x)).$render()).toBe('(x)');
 	});
