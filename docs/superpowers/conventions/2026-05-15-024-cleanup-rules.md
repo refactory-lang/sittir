@@ -38,7 +38,8 @@ Sections marked **Invariant** must hold at every commit. Sections marked **Workf
 
 - `source_hash` — SHA256 of the inputs that drove this generation: `packages/<grammar>/overrides.ts`, `packages/<grammar>/package.json` (pins upstream tree-sitter version), and a content hash of `packages/codegen/src/**`. This catches "you edited the inputs but didn't regen" — the cross-layer synchronicity guarantee.
 - `files` — SHA256 of every cross-platform generated file (sittir js, parser.wasm, factory-map, Rust crate src/templates/test-fixtures, napi `index.d.ts` / `index.js`).
-- `host_files` — SHA256 of platform-specific binaries (`*.node`). Verified only when the file exists on the current host; missing-locally is tolerated for cross-platform commits.
+
+The manifest holds nothing that depends on the host that generated it: native binaries (`*.node`) are not recorded, and their staleness is judged by modification time against the crate sources.
 
 The codegen CLI rewrites the manifest at the end of every successful regen (always, not gated by any flag). There is intentionally no separate "write manifest" command — the manifest cannot drift from generated content unless someone hand-edits it.
 
@@ -46,7 +47,6 @@ Verification fires automatically inside `loadLanguageForGrammar(grammar)` in `pa
 
 - **`source_hash` mismatch** (overrides.ts, package.json, or codegen source edited since last regen) → throws "SOURCE INPUTS CHANGED" with the regen command.
 - **`files` mismatch** (any cross-platform generated file modified, missing, or extra) → throws with the offending path.
-- **`host_files` mismatch** (this host's `.node` binary diverges from the recorded hash, e.g. someone ran `cargo build` directly) → throws with the path. Files in `host_files` that don't exist locally are skipped (probably committed by another platform).
 - **Manifest missing** → throws "MANIFEST MISSING" with the regen command. Previously a warn-and-continue "bootstrap mode" but that turned out to be a verification-bypass surface (any caller wanting to skip verification could just delete the manifest file). The legitimate bootstrap path is "run codegen first" — codegen's own internal validators bypass via `SITTIR_INTERNAL_CODEGEN_RUN=1` (see below), and codegen writes the manifest at the end of its run. After that initial run, the manifest exists and external runs verify normally.
 
 **Codegen-internal bypass.** When `SITTIR_INTERNAL_CODEGEN_RUN=1` is set, verification is skipped. This env is set ONLY by `packages/codegen/src/cli.ts` for its own internal validator runs (e.g. `extractParityFixtures` calls `validateReadRenderParse` to harvest fixtures BEFORE the manifest is rewritten at codegen's end — verifying mid-write would check the codegen process against its own incomplete output). External callers (validator CLI, probe-validate, etc.) never set this env and always get full verification.
@@ -59,7 +59,6 @@ Verification fires automatically inside `loadLanguageForGrammar(grammar)` in `pa
 | sittir js (`packages/<grammar>/src/*`) | `files` | hand-edit |
 | Rust crate source (`rust/crates/sittir-<grammar>/src/*`) | `files` | hand-edit |
 | napi JS surface (`index.d.ts`, `index.js`) | `files` | hand-edit, napi rebuild without codegen |
-| napi binary (`*.node`) | `host_files` | direct `cargo build`, partial rebuild |
 | **Inputs that drove the generation** | **`source_hash`** | **edits without regen** |
 
 **Limit worth knowing:** a coordinated commit that updates the file AND its manifest entry AND the source_hash to match passes verification. The manifest catches honest hand-edits and forgotten-regen situations (the realistic threats in this codebase); a CI gate that reruns codegen and diffs the on-disk content is the additional layer if adversarial-level integrity is needed.

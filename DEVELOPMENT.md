@@ -60,6 +60,20 @@ pnpm run regen:all            # regenerate all three grammars
 pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
 ```
 
+### The CI drift check
+
+The `generated output drift` job regenerates every grammar and fails when the
+tree differs from the commit: a changed generated file, or an untracked one.
+So a pull request that changes codegen source or a grammar must commit its
+regenerated output. Regeneration is deterministic across platforms, so output
+generated on macOS matches the Linux runner.
+
+The job runs on pull requests against the merge result, and on master after
+each merge. Two pull requests that each change generated output can merge
+cleanly and still leave master stale for the combined source; the master run
+catches that. A red master run is fixed by a pull request that regenerates.
+CI never commits.
+
 ## Validation
 
 ```bash
