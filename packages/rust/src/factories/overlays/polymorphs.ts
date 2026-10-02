@@ -2061,29 +2061,16 @@ export const integerLiteral: {
 
 export const escapeSequence: {
 	readonly strict: typeof F.buildEscapeSequenceSimple;
-	readonly coerce: typeof C.coerceToEscapeSequenceSimple;
-	readonly simple: { strict: typeof F.buildEscapeSequenceSimple; coerce: typeof C.coerceToEscapeSequenceSimple };
-	readonly unicodeFixed: {
-		strict: typeof F.buildEscapeSequenceUnicodeFixed;
-		coerce: typeof C.coerceToEscapeSequenceUnicodeFixed;
-	};
-	readonly unicodeBraced: {
-		strict: typeof F.buildEscapeSequenceUnicodeBraced;
-		coerce: typeof C.coerceToEscapeSequenceUnicodeBraced;
-	};
-	readonly hex: { strict: typeof F.buildEscapeSequenceHex; coerce: typeof C.coerceToEscapeSequenceHex };
+	readonly simple: typeof F.buildEscapeSequenceSimple;
+	readonly unicodeFixed: typeof F.buildEscapeSequenceUnicodeFixed;
+	readonly unicodeBraced: typeof F.buildEscapeSequenceUnicodeBraced;
+	readonly hex: typeof F.buildEscapeSequenceHex;
 } = Object.freeze({
-	...bundle(F.buildEscapeSequenceSimple, C.coerceToEscapeSequenceSimple, { key: 'escapeSequence', max: 1 }),
-	simple: bundle(F.buildEscapeSequenceSimple, C.coerceToEscapeSequenceSimple, { key: 'escapeSequence.simple', max: 1 }),
-	unicodeFixed: bundle(F.buildEscapeSequenceUnicodeFixed, C.coerceToEscapeSequenceUnicodeFixed, {
-		key: 'escapeSequence.unicodeFixed',
-		max: 1
-	}),
-	unicodeBraced: bundle(F.buildEscapeSequenceUnicodeBraced, C.coerceToEscapeSequenceUnicodeBraced, {
-		key: 'escapeSequence.unicodeBraced',
-		max: 1
-	}),
-	hex: bundle(F.buildEscapeSequenceHex, C.coerceToEscapeSequenceHex, { key: 'escapeSequence.hex', max: 1 })
+	...bundle(F.buildEscapeSequenceSimple, undefined, { key: 'escapeSequence', max: 2 }),
+	simple: F.buildEscapeSequenceSimple,
+	unicodeFixed: F.buildEscapeSequenceUnicodeFixed,
+	unicodeBraced: F.buildEscapeSequenceUnicodeBraced,
+	hex: F.buildEscapeSequenceHex
 });
 
 export const comment: {

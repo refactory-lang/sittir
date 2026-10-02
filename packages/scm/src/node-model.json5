@@ -448,6 +448,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\" as const",
       "text": "\n\n",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -460,6 +461,7 @@
       "isParameterless": true,
       "stampExpression": "\"﷑\\n\" as const",
       "text": "﷑\n",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -472,6 +474,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\\n\" as const",
       "text": "\n\n\n",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -495,6 +498,7 @@
       "hidden": false,
       "pattern": "[a-zA-Z0-9\\-_][a-zA-Z0-9.\\-_]*",
       "leafPattern": "/^(?:(?:[a-zA-Z0-9\\-_][a-zA-Z0-9.\\-_]*))$/u",
+      "oneSurface": true,
       "factoryShape": "text"
     },
     {
@@ -507,6 +511,7 @@
       "isParameterless": true,
       "stampExpression": "\"﷐\\n\" as const",
       "text": "﷐\n",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -544,6 +549,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
       "text": "\n",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -567,6 +573,7 @@
       "isParameterless": true,
       "stampExpression": "\" \" as const",
       "text": " ",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -579,6 +586,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\t\" as const",
       "text": "\t",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -591,6 +599,7 @@
       "isParameterless": true,
       "stampExpression": "\"\" as const",
       "text": "",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -621,6 +630,7 @@
       "isParameterless": true,
       "stampExpression": "\".\" as const",
       "text": ".",
+      "oneSurface": true,
       "factoryShape": "constant"
     },
     {
@@ -819,6 +829,7 @@
           ]
         }
       },
+      "oneSurface": true,
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -916,6 +927,7 @@
           ]
         }
       },
+      "oneSurface": true,
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -1171,6 +1183,7 @@
       "hidden": false,
       "pattern": "[a-zA-Z0-9\\-_][a-zA-Z0-9.\\-_]*",
       "leafPattern": "/^(?:(?:[a-zA-Z0-9\\-_][a-zA-Z0-9.\\-_]*))$/u",
+      "oneSurface": true,
       "factoryShape": "text"
     },
     {
@@ -2292,6 +2305,7 @@
       "hidden": false,
       "pattern": "[^\"\\\\\\n]+",
       "leafPattern": "/^(?:(?:[^\"\\\\\\n]+))$/u",
+      "oneSurface": true,
       "factoryShape": "text"
     },
     {

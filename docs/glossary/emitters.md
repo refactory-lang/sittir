@@ -11068,6 +11068,10 @@ Only the factory, wrap, template and render-module emitters take the
 	 *  this kind's factory forwards (see buildFactoryMap.forwardsTo). */
 ```
 
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.oneSurface`
+
+Set on a kind with one builder and no strict/coerce pair (`hasOneSurface`). The predicate is the emitter's own, stamped here so a tool that spells calls reads it and does not re-derive it from the kind's shape.
+
 ### `packages/codegen/src/emitters/node-model.ts::serializeNode`
 
 #### body
@@ -11705,7 +11709,7 @@ Reads a `RowParam` off a kind's factory surface: the row types as `paramsToTuple
 
 ### `packages/codegen/src/emitters/factories.ts::fieldCarryingBuiltTypeSurface`
 
-The construction surface of a field-carrying kind, from its factory surface: the `$with` setters, and the `BuildArgs` / `LooseArgs` tuples from the surface's row parameters. A kind with a `listSpreadTarget` unions its tuples with the target's own (`… | T.<Target>.BuildArgs`), by name, so the spread form is the list's derivation rather than a copy; its `maxArgs` is then unbounded.
+The construction surface of a field-carrying kind, from its factory surface: the `$with` setters, and the `BuildArgs` / `LooseArgs` tuples from the surface's row parameters. An own-text leaf (`ownTextLeaf`) has one row for both, `ownTextArgs`, and takes at most two arguments. A kind with a `listSpreadTarget` unions its tuples with the target's own (`… | T.<Target>.BuildArgs`), by name, so the spread form is the list's derivation rather than a copy; its `maxArgs` is then unbounded.
 
 ### `packages/codegen/src/emitters/factories.ts::constructorSurface`
 
@@ -12394,11 +12398,26 @@ A supertype gets an ir namespace if and only if the grammar declares it (`Assemb
 ### `packages/codegen/src/emitters/overlays/module.ts::hasOneSurface`
 
 ```text
-A kind with one builder and no strict/coerce pair: a pattern leaf, whose builder takes its text, or a
+A kind with one builder and no strict/coerce pair: a pattern leaf, whose builder takes its text, a
+lexed kind whose one slot is its own text (`ownTextLeaf`), whose builder takes that text, or a
 kind stored as its id (a keyword or fixed-text token), whose entry is the constant. Every place such a
 kind is exposed uses the same raw entry — at the top of `ir`, in a supertype group, and under a parent
 as a variant route — so the kind has one entry form wherever it is reached.
 ```
+
+### `packages/codegen/src/emitters/overlays/module.ts::ownTextEntries`
+
+The keyed kinds that have one surface: the complement of `bundleEntries` over the same derivation (`keyedEntries`). They have a raw factory, a coercer for the slots that hold them, and a catalog entry, and get a flat `ir` entry that is the raw factory instead of a bundle.
+
+### `packages/codegen/src/emitters/shared.ts::ownTextLeaf`
+
+The facts of a lexed kind that is nothing but its own text between two fixed affixes, or `undefined` for any other kind: the content slot, the opening and closing text, and the template-literal type of the text spelled in full (`\`<open>${string}<close>\``). The kind qualifies when it has a lexed content slot, that slot is its only slot, and it has a full form. A kind whose affix is a spelled slot or a choice of texts has no single spelled type and is a compile-time error here, so the classification cannot drift from what the builder can type.
+
+Such a kind is a leaf. Its builder takes text only and has one surface. It never reads the text to decide whether the affixes are present: detection lives only on a coercion surface, and a leaf has none. The caller says which it gave, with the `affix` argument. A slot that holds the kind keeps its coercer, which still detects either form (`spelledInterior`); a kind with a second slot, and a polymorph parent, keep their coercing entry and its detection.
+
+### `packages/codegen/src/emitters/factories.ts::ownTextArgs`
+
+The argument row of an own-text leaf, as both its `BuildArgs` and its `LooseArgs`: `[content: T, affix?: true] | [text: <spelled type>, affix: false]`. `T` is `ownTextContentType`, the content slot's storage type widened by what its storage coercion accepts (a numeric content also takes `number | bigint`). With `affix` true or absent the first argument is the content, and the builder adds the affixes; with `affix: false` it is the token spelled in full, typed by the kind's affixes, and the builder removes them (`unaffixed`), refusing text that lacks either. Text that carries the affixes passed without `affix: false` is content like any other: it is refused when the content pattern excludes it, and renders with the affixes doubled when the pattern admits it.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::hasFlatEntry`
 
@@ -14686,6 +14705,8 @@ The strict/coerce expression pair for a parent builder; `coerce` is absent when 
 
 The strict/coerce expression pair for an arm: a direct child uses its own factories (strict builder doubling as the coerce seat when no coercer exists); a flattened arm references the decorated child const emitted above (`<childKey>.<path>.strict` / `.coerce`).
 
+A child with one surface is forwarded as that surface on both sides. `builderRefs` gives the pair for a direct child: the raw builder, and the coercer only when the child is not an own-text leaf, since that leaf's coercer detects the spelled form and takes one argument where the entry takes the `affix` toggle. `coerceSideOf` names which member of a child's namespace is its coercing side: it follows the default variant of each flattened parent down to the kind the bare call builds, and answers `strict` when that kind has one surface, because the namespace then has no `coerce` member.
+
 Given the wires, the refs also carry the child's arity, `max`: a route reference reads `routeArity`, a supertype or seated child's key reads `entryArity`, and a direct child reads `surfaceArity`. An arm that forwards the child's arguments takes this `max` as its own.
 
 A flattened arm through a hoisted child references that child's private
@@ -16471,7 +16492,7 @@ A kind with a full form serializes it (`fullForm`, its literal `open` and `close
 ### `packages/codegen/src/emitters/ir.ts::factoryRef`
 
 ```text
-A text leaf is called through its raw builder; a lexed kind through its hoisted factory, which coerces the bare content.
+A text leaf is called through its raw builder, and so is any other kind with one surface; a lexed kind with a coercing entry is called through its hoisted factory, which coerces the bare content.
 ```
 
 ### `packages/codegen/src/emitters/test.ts::patternSlotDummy`

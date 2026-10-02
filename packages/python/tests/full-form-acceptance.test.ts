@@ -4,9 +4,9 @@ import { createEngine } from '@sittir/common';
 
 const py = await createEngine(python);
 
-describe('builders accept their kind spelled in full', () => {
-	it('strips the literal delimiters around a pattern content', () => {
-		expect(py.build.escapeSequence.hex('\\x41').$render()).toBe('\\x41');
+describe('builders and their kind spelled in full', () => {
+	it('takes the delimiters in the text only when told they are there', () => {
+		expect(py.build.escapeSequence.hex('\\x41', false).$render()).toBe('\\x41');
 		expect(py.build.escapeSequence.hex('x41').$render()).toBe('\\x41');
 	});
 
@@ -27,13 +27,14 @@ describe('builders accept their kind spelled in full', () => {
 		expect([typed, defaulted, chosen, unknown]).toEqual(['0X', '0x', '0x', '0X']);
 	});
 
-	it('takes the full form first where the delimiter can also begin the content', () => {
-		expect(py.build.comment('# x').$render()).toBe('# x\n');
+	it('takes text as content when not told otherwise, where the delimiter can also begin the content', () => {
+		expect(py.build.comment('# x').$render()).toBe('## x\n');
+		expect(py.build.comment('# x', false).$render()).toBe('# x\n');
 	});
 
 	it('reads a delimiter that is itself a valid interior as the interior', () => {
 		expect(py.build.escapeSequence.simple('\\').$render()).toBe('\\\\');
-		expect(py.build.escapeSequence.simple('\\\\').$render()).toBe('\\\\');
+		expect(py.build.escapeSequence.simple('\\\\', false).$render()).toBe('\\\\');
 		expect(py.build.escapeSequence.simple('n').$render()).toBe('\\n');
 	});
 

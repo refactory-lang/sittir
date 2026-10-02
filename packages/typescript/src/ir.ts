@@ -233,7 +233,6 @@ export const statement: typeof F.statement = F.statement;
 
 export const ir: {
 	readonly program: typeof F.program;
-	readonly hashBangLine: typeof F.hashBangLine;
 	readonly namespaceExport: typeof F.namespaceExport;
 	readonly exportClause: typeof F.exportClause;
 	readonly exportSpecifier: typeof F.exportSpecifier;
@@ -294,11 +293,9 @@ export const ir: {
 	readonly binaryExpression: typeof F.binaryExpression;
 	readonly unaryExpression: typeof F.unaryExpression;
 	readonly sequenceExpression: typeof F.sequenceExpression;
-	readonly escapeSequence: typeof F.escapeSequence;
 	readonly templateString: typeof F.templateString;
 	readonly templateSubstitution: typeof F.templateSubstitution;
 	readonly regex: typeof F.regex;
-	readonly privatePropertyIdentifier: typeof F.privatePropertyIdentifier;
 	readonly arguments: typeof F.arguments_;
 	readonly decorator: typeof F.decorator;
 	readonly decoratorMemberExpression: typeof F.decoratorMemberExpression;
@@ -429,6 +426,9 @@ export const ir: {
 	readonly metaPropertyImportMeta: typeof F.buildMetaPropertyImportMeta;
 	readonly automaticSemicolon: typeof F.buildAutomaticSemicolon;
 	readonly functionSignatureAutomaticSemicolon: typeof F.buildFunctionSignatureAutomaticSemicolon;
+	readonly hashBangLine: typeof F.buildHashBangLine;
+	readonly escapeSequence: typeof F.buildEscapeSequence;
+	readonly privatePropertyIdentifier: typeof F.buildPrivatePropertyIdentifier;
 	readonly unescapedDoubleStringFragment: typeof F.buildUnescapedDoubleStringFragment;
 	readonly unescapedSingleStringFragment: typeof F.buildUnescapedSingleStringFragment;
 	readonly regexPattern: typeof F.buildRegexPattern;
@@ -451,7 +451,6 @@ export const ir: {
 } = Object.freeze({
 	// Node factories
 	program: F.program,
-	hashBangLine: F.hashBangLine,
 	namespaceExport: F.namespaceExport,
 	exportClause: F.exportClause,
 	exportSpecifier: F.exportSpecifier,
@@ -512,11 +511,9 @@ export const ir: {
 	binaryExpression: F.binaryExpression,
 	unaryExpression: F.unaryExpression,
 	sequenceExpression: F.sequenceExpression,
-	escapeSequence: F.escapeSequence,
 	templateString: F.templateString,
 	templateSubstitution: F.templateSubstitution,
 	regex: F.regex,
-	privatePropertyIdentifier: F.privatePropertyIdentifier,
 	arguments: F.arguments_,
 	decorator: F.decorator,
 	decoratorMemberExpression: F.decoratorMemberExpression,
@@ -649,6 +646,11 @@ export const ir: {
 	metaPropertyImportMeta: F.buildMetaPropertyImportMeta,
 	automaticSemicolon: F.buildAutomaticSemicolon,
 	functionSignatureAutomaticSemicolon: F.buildFunctionSignatureAutomaticSemicolon,
+
+	// Leaves whose one slot is their own text
+	hashBangLine: F.buildHashBangLine,
+	escapeSequence: F.buildEscapeSequence,
+	privatePropertyIdentifier: F.buildPrivatePropertyIdentifier,
 
 	// Leaf node factories
 	unescapedDoubleStringFragment: F.buildUnescapedDoubleStringFragment,

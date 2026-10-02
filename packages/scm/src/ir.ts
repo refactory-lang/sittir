@@ -41,13 +41,11 @@ export const definition: typeof F.definition = F.definition;
 
 export const ir: {
 	readonly program: typeof F.program;
-	readonly escapeSequence: typeof F.escapeSequence;
 	readonly capture: typeof F.capture;
 	readonly string: typeof F.string;
 	readonly immediateString: typeof F.immediateString;
 	readonly stringContent: typeof F.stringContent;
 	readonly parameters: typeof F.parameters;
-	readonly comment: typeof F.comment;
 	readonly list: typeof F.list;
 	readonly grouping: typeof F.grouping;
 	readonly missingNode: typeof F.missingNode;
@@ -61,6 +59,8 @@ export const ir: {
 	readonly namedNode: typeof F.namedNode;
 	readonly namedNodeGroup: typeof F.namedNodeGroup;
 	readonly anchor: typeof F.buildAnchor;
+	readonly escapeSequence: typeof F.buildEscapeSequence;
+	readonly comment: typeof F.buildComment;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly immediateIdentifier: typeof F.buildImmediateIdentifier;
 	readonly stringContentText: typeof F.buildStringContentText;
@@ -70,13 +70,11 @@ export const ir: {
 } = Object.freeze({
 	// Node factories
 	program: F.program,
-	escapeSequence: F.escapeSequence,
 	capture: F.capture,
 	string: F.string,
 	immediateString: F.immediateString,
 	stringContent: F.stringContent,
 	parameters: F.parameters,
-	comment: F.comment,
 	list: F.list,
 	grouping: F.grouping,
 	missingNode: F.missingNode,
@@ -92,6 +90,10 @@ export const ir: {
 
 	// Keyword factories
 	anchor: F.buildAnchor,
+
+	// Leaves whose one slot is their own text
+	escapeSequence: F.buildEscapeSequence,
+	comment: F.buildComment,
 
 	// Leaf node factories
 	identifier: F.buildIdentifier,

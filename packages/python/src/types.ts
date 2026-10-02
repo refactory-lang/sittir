@@ -12812,8 +12812,8 @@ export namespace Comment {
 	}
 	export type Loose = LooseFor<TSKindId.Comment>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Comment>;
-	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.Comment.Loose];
+	export type BuildArgs = [content: string, affix?: true] | [text: `#${string}`, affix: false];
+	export type LooseArgs = [content: string, affix?: true] | [text: `#${string}`, affix: false];
 	export type Kind = TSKindId.Comment;
 }
 export namespace SimpleStatementsElements {
@@ -13761,8 +13761,8 @@ export namespace EscapeSequenceUnicodeFixed {
 	}
 	export type Loose = LooseFor<TSKindId.EscapeSequenceUnicodeFixed>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceUnicodeFixed>;
-	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.EscapeSequenceUnicodeFixed.Loose];
+	export type BuildArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
+	export type LooseArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
 	export type Kind = TSKindId.EscapeSequenceUnicodeFixed;
 }
 export namespace EscapeSequenceUnicodeWide {
@@ -13777,8 +13777,8 @@ export namespace EscapeSequenceUnicodeWide {
 	}
 	export type Loose = LooseFor<TSKindId.EscapeSequenceUnicodeWide>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceUnicodeWide>;
-	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.EscapeSequenceUnicodeWide.Loose];
+	export type BuildArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
+	export type LooseArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
 	export type Kind = TSKindId.EscapeSequenceUnicodeWide;
 }
 export namespace EscapeSequenceHex {
@@ -13793,8 +13793,8 @@ export namespace EscapeSequenceHex {
 	}
 	export type Loose = LooseFor<TSKindId.EscapeSequenceHex>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceHex>;
-	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.EscapeSequenceHex.Loose];
+	export type BuildArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
+	export type LooseArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
 	export type Kind = TSKindId.EscapeSequenceHex;
 }
 export namespace EscapeSequenceOctal {
@@ -13813,8 +13813,8 @@ export namespace EscapeSequenceOctal {
 		| number
 		| bigint;
 	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.EscapeSequenceOctal>, { content: number | bigint }>;
-	export type BuildArgs = [value: AdmitBound<string | number | bigint, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.EscapeSequenceOctal.Loose];
+	export type BuildArgs = [content: string | number | bigint, affix?: true] | [text: `\\${string}`, affix: false];
+	export type LooseArgs = [content: string | number | bigint, affix?: true] | [text: `\\${string}`, affix: false];
 	export type Kind = TSKindId.EscapeSequenceOctal;
 }
 export namespace EscapeSequenceLineBreak {
@@ -13829,8 +13829,8 @@ export namespace EscapeSequenceLineBreak {
 	}
 	export type Loose = LooseFor<TSKindId.EscapeSequenceLineBreak>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceLineBreak>;
-	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.EscapeSequenceLineBreak.Loose];
+	export type BuildArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
+	export type LooseArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
 	export type Kind = TSKindId.EscapeSequenceLineBreak;
 }
 export namespace EscapeSequenceSimple {
@@ -13845,8 +13845,8 @@ export namespace EscapeSequenceSimple {
 	}
 	export type Loose = LooseFor<TSKindId.EscapeSequenceSimple>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceSimple>;
-	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.EscapeSequenceSimple.Loose];
+	export type BuildArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
+	export type LooseArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
 	export type Kind = TSKindId.EscapeSequenceSimple;
 }
 export namespace EscapeSequenceNamed {
@@ -13861,8 +13861,8 @@ export namespace EscapeSequenceNamed {
 	}
 	export type Loose = LooseFor<TSKindId.EscapeSequenceNamed>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceNamed>;
-	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.EscapeSequenceNamed.Loose];
+	export type BuildArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
+	export type LooseArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
 	export type Kind = TSKindId.EscapeSequenceNamed;
 }
 export namespace SimplePatternNegative {

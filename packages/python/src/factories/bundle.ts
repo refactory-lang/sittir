@@ -233,7 +233,6 @@ export const stringContent = bundle(F.buildStringContent, C.coerceToStringConten
 export const interpolation = bundle(F.buildInterpolation, C.coerceToInterpolation, { key: 'interpolation', max: 1 });
 export const formatSpecifier = bundle(F.buildFormatSpecifier, C.coerceToFormatSpecifier);
 export const await_ = bundle(F.buildAwait, C.coerceToAwait, { key: 'await_', max: 1 });
-export const comment = bundle(F.buildComment, C.coerceToComment, { key: 'comment', max: 1 });
 export const simpleStatementsElements = bundle(F.buildSimpleStatementsElements, C.coerceToSimpleStatementsElements);
 export const subjects = bundle(F.buildSubjects, C.coerceToSubjects);
 export const casePatterns = bundle(F.buildCasePatterns, C.coerceToCasePatterns);

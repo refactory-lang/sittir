@@ -92,6 +92,7 @@ const facts: ModelFacts = {
 	listDefaults: { arguments: 'Delimiter.None', elements: 'Delimiter.None', args: 'Delimiter.None' },
 	listElementKinds: { arguments: ['identifier'], elements: ['identifier'], args: ['attributed'] },
 	hoistedKinds: new Set(),
+	oneSurfaceKinds: new Set<string>(),
 	kindIdOfName: (kind) => ids[kind]
 };
 

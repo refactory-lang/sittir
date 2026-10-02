@@ -2152,41 +2152,22 @@ export const assignment: {
 
 export const escapeSequence: {
 	readonly strict: typeof F.buildEscapeSequenceSimple;
-	readonly coerce: typeof C.coerceToEscapeSequenceSimple;
-	readonly unicodeFixed: {
-		strict: typeof F.buildEscapeSequenceUnicodeFixed;
-		coerce: typeof C.coerceToEscapeSequenceUnicodeFixed;
-	};
-	readonly unicodeWide: {
-		strict: typeof F.buildEscapeSequenceUnicodeWide;
-		coerce: typeof C.coerceToEscapeSequenceUnicodeWide;
-	};
-	readonly hex: { strict: typeof F.buildEscapeSequenceHex; coerce: typeof C.coerceToEscapeSequenceHex };
-	readonly octal: { strict: typeof F.buildEscapeSequenceOctal; coerce: typeof C.coerceToEscapeSequenceOctal };
-	readonly lineBreak: {
-		strict: typeof F.buildEscapeSequenceLineBreak;
-		coerce: typeof C.coerceToEscapeSequenceLineBreak;
-	};
-	readonly simple: { strict: typeof F.buildEscapeSequenceSimple; coerce: typeof C.coerceToEscapeSequenceSimple };
-	readonly named: { strict: typeof F.buildEscapeSequenceNamed; coerce: typeof C.coerceToEscapeSequenceNamed };
+	readonly unicodeFixed: typeof F.buildEscapeSequenceUnicodeFixed;
+	readonly unicodeWide: typeof F.buildEscapeSequenceUnicodeWide;
+	readonly hex: typeof F.buildEscapeSequenceHex;
+	readonly octal: typeof F.buildEscapeSequenceOctal;
+	readonly lineBreak: typeof F.buildEscapeSequenceLineBreak;
+	readonly simple: typeof F.buildEscapeSequenceSimple;
+	readonly named: typeof F.buildEscapeSequenceNamed;
 } = Object.freeze({
-	...bundle(F.buildEscapeSequenceSimple, C.coerceToEscapeSequenceSimple, { key: 'escapeSequence', max: 1 }),
-	unicodeFixed: bundle(F.buildEscapeSequenceUnicodeFixed, C.coerceToEscapeSequenceUnicodeFixed, {
-		key: 'escapeSequence.unicodeFixed',
-		max: 1
-	}),
-	unicodeWide: bundle(F.buildEscapeSequenceUnicodeWide, C.coerceToEscapeSequenceUnicodeWide, {
-		key: 'escapeSequence.unicodeWide',
-		max: 1
-	}),
-	hex: bundle(F.buildEscapeSequenceHex, C.coerceToEscapeSequenceHex, { key: 'escapeSequence.hex', max: 1 }),
-	octal: bundle(F.buildEscapeSequenceOctal, C.coerceToEscapeSequenceOctal, { key: 'escapeSequence.octal', max: 1 }),
-	lineBreak: bundle(F.buildEscapeSequenceLineBreak, C.coerceToEscapeSequenceLineBreak, {
-		key: 'escapeSequence.lineBreak',
-		max: 1
-	}),
-	simple: bundle(F.buildEscapeSequenceSimple, C.coerceToEscapeSequenceSimple, { key: 'escapeSequence.simple', max: 1 }),
-	named: bundle(F.buildEscapeSequenceNamed, C.coerceToEscapeSequenceNamed, { key: 'escapeSequence.named', max: 1 })
+	...bundle(F.buildEscapeSequenceSimple, undefined, { key: 'escapeSequence', max: 2 }),
+	unicodeFixed: F.buildEscapeSequenceUnicodeFixed,
+	unicodeWide: F.buildEscapeSequenceUnicodeWide,
+	hex: F.buildEscapeSequenceHex,
+	octal: F.buildEscapeSequenceOctal,
+	lineBreak: F.buildEscapeSequenceLineBreak,
+	simple: F.buildEscapeSequenceSimple,
+	named: F.buildEscapeSequenceNamed
 });
 
 export const float: {

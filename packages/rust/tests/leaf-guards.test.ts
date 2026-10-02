@@ -28,8 +28,9 @@ describe('rust text-leaf factories always run their guard', () => {
 		expect(() => rs.build.identifier('1x')).toThrow(/does not match/);
 	});
 
-	it('takes a token spelled in full only when its delimiters are fixed members', () => {
+	it('takes a token spelled in full only when told its delimiters are in the text', () => {
 		expect(() => rs.build.charLiteral("'a'")).toThrow(/char_literal_plain.content: text does not match/);
-		expect(rs.build.metavariable('$x').$render!()).toBe('$x');
+		expect(rs.build.metavariable('$x', false).$render!()).toBe('$x');
+		expect(() => rs.build.metavariable('$x')).toThrow(/metavariable.name: text does not match/);
 	});
 });

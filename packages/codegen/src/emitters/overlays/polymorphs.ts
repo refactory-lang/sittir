@@ -3,13 +3,14 @@ import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
 import { AbstractAssembledCompound, AssembledList, AssembledSupertype, isKindIdStored, isRequired, separatorRequired, type AssembledNode } from '../../compiler/model/node-map.ts';
 import {
 	classifyFactoryEmission,
+	classifyFactoryShape,
 	classifyFromEmission,
 	compareOrdinal,
 	isSlotBearingCompound,
 	isValidIdent,
+	ownTextLeaf,
 	resolveDirectFactorySlot,
 	resolveFieldStorageInfo,
-	classifyFactoryShape,
 	withEmptyOverload
 } from '../shared.ts';
 import { emptyForms } from '../../compiler/model/trivia.ts';
@@ -80,17 +81,30 @@ function childRefs(
 		const base = `${childKey}.${spelled.join('.')}`;
 		const target = wires === undefined ? undefined : variantChildAt(child.kind, spelled, wires);
 		if (target !== undefined && hasOneSurface(target)) {
-			const strict = `F.${target.rawFactoryName}`;
-			return { strict, coerce: coerceEmitted(target) ? `C.${target.fromFunctionName}` : strict, ...maxOf(routeArity(base, wires!)) };
+			return { ...builderRefs(target, coerceEmitted), ...maxOf(routeArity(base, wires!)) };
 		}
-		return { strict: `${base}.strict`, coerce: `${base}.coerce`, set: child.kind, ...(wires === undefined ? {} : maxOf(routeArity(base, wires))) };
+		return { strict: `${base}.strict`, coerce: `${base}.${coerceSideOf(target, wires)}`, set: child.kind, ...(wires === undefined ? {} : maxOf(routeArity(base, wires))) };
 	}
 	const childKey = keyByKind.get(child.kind);
 	if (childKey !== undefined && (child instanceof AssembledSupertype || seated?.(child.kind) === true)) {
-		return { strict: `${childKey}.strict`, coerce: `${childKey}.coerce`, set: child.kind, ...(wires === undefined ? {} : maxOf(entryArity(child.kind, wires))) };
+		return { strict: `${childKey}.strict`, coerce: `${childKey}.${coerceSideOf(child, wires)}`, set: child.kind, ...(wires === undefined ? {} : maxOf(entryArity(child.kind, wires))) };
 	}
-	const strict = `F.${child.rawFactoryName}`;
-	return { strict, coerce: coerceEmitted(child) ? `C.${child.fromFunctionName}` : strict, ...(wires === undefined ? {} : maxOf(surfaceArity(child, wires))) };
+	return { ...builderRefs(child, coerceEmitted), ...(wires === undefined ? {} : maxOf(surfaceArity(child, wires))) };
+}
+
+function builderRefs(node: AssembledNode, coerceEmitted: CoerceEmitted): { strict: string; coerce: string } {
+	const strict = `F.${node.rawFactoryName}`;
+	return { strict, coerce: coerceEmitted(node) && ownTextLeaf(node) === undefined ? `C.${node.fromFunctionName}` : strict };
+}
+
+function coerceSideOf(node: AssembledNode | undefined, wires: PolymorphWires | undefined): 'strict' | 'coerce' {
+	let at = node;
+	while (at !== undefined && wires !== undefined) {
+		const next = wires.flattened.get(at.kind)?.variants.find((route) => route.default)?.child;
+		if (next === undefined) break;
+		at = next;
+	}
+	return at !== undefined && hasOneSurface(at) ? 'strict' : 'coerce';
 }
 
 function variantChildAt(kind: string, path: readonly string[], wires: PolymorphWires): AssembledNode | undefined {

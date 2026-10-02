@@ -2406,8 +2406,8 @@ export namespace IdentityEscape {
 	}
 	export type Loose = LooseFor<TSKindId.IdentityEscape>;
 	export type LooseConfig = LooseConfigFor<TSKindId.IdentityEscape>;
-	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: T.IdentityEscape.Loose];
+	export type BuildArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
+	export type LooseArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
 	export type Kind = TSKindId.IdentityEscape;
 }
 export namespace TermGroup {

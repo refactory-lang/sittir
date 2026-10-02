@@ -646,6 +646,7 @@ export {
 	lexedConfig,
 	spelledForm,
 	spelledInterior,
+	unaffixed,
 	refuseSiblingLead,
 	type TokenInterior,
 	type InteriorSlot,

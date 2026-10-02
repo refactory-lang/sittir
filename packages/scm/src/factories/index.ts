@@ -5,13 +5,11 @@ import { hoistAs } from '@sittir/common/utils';
 export * from './overlays/supertypes.js';
 
 export const program: Hoisted<typeof O.program> = hoistAs<typeof O.program>(O.program);
-export const escapeSequence: Hoisted<typeof O.escapeSequence> = hoistAs<typeof O.escapeSequence>(O.escapeSequence);
 export const capture: Hoisted<typeof O.capture> = hoistAs<typeof O.capture>(O.capture);
 export const string: Hoisted<typeof O.string> = hoistAs<typeof O.string>(O.string);
 export const immediateString: Hoisted<typeof O.immediateString> = hoistAs<typeof O.immediateString>(O.immediateString);
 export const stringContent: Hoisted<typeof O.stringContent> = hoistAs<typeof O.stringContent>(O.stringContent);
 export const parameters: Hoisted<typeof O.parameters> = hoistAs<typeof O.parameters>(O.parameters);
-export const comment: Hoisted<typeof O.comment> = hoistAs<typeof O.comment>(O.comment);
 export const list: Hoisted<typeof O.list> = hoistAs<typeof O.list>(O.list);
 export const grouping: Hoisted<typeof O.grouping> = hoistAs<typeof O.grouping>(O.grouping);
 export const missingNode: Hoisted<typeof O.missingNode> = hoistAs<typeof O.missingNode>(O.missingNode);

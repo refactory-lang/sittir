@@ -9,9 +9,9 @@ export * from './refines.js';
 
 export const stringContent = Object.freeze({
 	...B.stringContent,
-	escapeSequence: B.escapeSequence
+	escapeSequence: F.buildEscapeSequence
 }) as unknown as typeof B.stringContent & {
-	escapeSequence: typeof B.escapeSequence;
+	escapeSequence: typeof F.buildEscapeSequence;
 };
 
 // Erased applications, centralized: TS cannot infer a Cfg type parameter
