@@ -60,7 +60,7 @@ Gate numbers are **necessary but not sufficient**: when the dispatcher names a c
 ## Hooks you will meet (why a commit or edit can be refused)
 
 - **Principle #14 ratchet** (`propose-14`): a new pipeline function in a compiler module that is not `(target, ctx: *Ctx)`-shaped raises that module's non-conforming count above its baseline and the commit is refused. Inline a one-liner instead of adding a helper; sweep rows may lower a baseline, never raise it.
-- **Manifest consistency**: generated artifacts must match the manifest's `source_hash` — regenerate after the last source edit.
+- **Generated-output consistency**: the staged source inputs and generated artifacts must be a pair a local `gen` produced, or equal to HEAD — regenerate after the last source edit.
 - **Provenance comments** and **generated-artifact edits** are blocked as described above.
 - **A failed gate stops the work for review — never auto-revert.** Preserve the failing working tree intact and report which files diffed, with excerpts.
 

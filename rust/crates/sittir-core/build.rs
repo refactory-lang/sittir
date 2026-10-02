@@ -14,8 +14,8 @@
 //! tmp folder, and `Edit`/`Span` silently vanish from
 //! `packages/{rust,typescript,python}/native/index.d.ts` —
 //! nondeterministically, per whichever grammar build lost the race.
-//! `assertGeneratedManifestsClean` then fails CI with
-//! `MODIFIED: packages/<grammar>/native/index.d.ts`.
+//! The generated-output drift check then fails CI on
+//! `packages/<grammar>/native/index.d.ts`.
 //!
 //! Emitting the two markers directly (rather than pulling in the full
 //! `napi-build` crate) avoids `setup()`'s cdylib linker flags, which don't
