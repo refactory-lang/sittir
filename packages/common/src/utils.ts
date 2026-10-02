@@ -7,6 +7,7 @@ import { currentHandle, inEngine, isLive, type EngineHandle } from './engine-sco
 import { toEditAt } from './edit.ts';
 import { Delimiter } from './delimiter.ts';
 import { hydrateStub, isStub, readUntypedNode, type TreeHandle } from './readUntypedNode.ts';
+import { spelledForm } from './interior.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { Source };
@@ -177,9 +178,7 @@ function textEntryOf(text: string, facts: TriviaFacts): TriviaEntry {
 	}
 	if (!('comment' in facts)) throw new Error(`trivia: ${JSON.stringify(text)} is text, and this grammar has no ir.comment`);
 	if (facts.comment === undefined) throw new Error(`trivia: ${JSON.stringify(text)} is text, and ir.comment is bound when the factories load; import the factories`);
-	const spelled = facts.spelled?.find(
-		(form) => text.length >= form.open.length + form.close.length && text.startsWith(form.open) && text.endsWith(form.close)
-	);
+	const spelled = facts.spelled?.find((form) => spelledForm(text, [form.open], [form.close]) !== undefined);
 	return spelled === undefined ? facts.comment(text) : spelled.build(text);
 }
 

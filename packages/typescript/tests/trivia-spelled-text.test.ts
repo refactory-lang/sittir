@@ -17,11 +17,13 @@ describe('trivia given as text', () => {
 	});
 
 	it('builds the kind\'s node, with the content between its affixes', () => {
-		type Comment = { readonly $type: number; content(): string };
-		const [block] = statement().$trivia.trailing('/* x */').$trivia.trailing() as unknown as [Comment];
-		expect([block.$type, block.content()]).toEqual([engine.kinds.CommentBlock, ' x ']);
-		const [line] = statement().$trivia.trailing('// x').$trivia.trailing() as unknown as [Comment];
-		expect([line.$type, line.content()]).toEqual([engine.kinds.CommentLine, ' x']);
+		const built = (text: string) => {
+			const [entry] = statement().$trivia.trailing(text).$trivia.trailing();
+			if (entry === undefined || !engine.is.comment(entry)) throw new Error(`${text} did not build a comment`);
+			return [entry.$type, entry.content()];
+		};
+		expect(built('/* x */')).toEqual([engine.kinds.CommentBlock, ' x ']);
+		expect(built('// x')).toEqual([engine.kinds.CommentLine, ' x']);
 	});
 
 	it('takes any other text as the content of the default comment kind', () => {
