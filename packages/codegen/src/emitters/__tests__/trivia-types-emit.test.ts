@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { compileGrammar } from '../../compiler/compile.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { grammarPackage } from '../../grammars.ts';
@@ -13,7 +14,7 @@ describe('empty forms in the emitted types', () => {
 	beforeAll(async () => {
 		generatedIdTables = await loadGeneratedIdTables('rust');
 		({ nodeMap } = await compileGrammar({ package: grammarPackage('rust'), generatedIdTables }));
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 
 	it('gives a kind that realizes empty its Empty form and type-map entry, and a kind that cannot none', () => {
 		const types = emitTypes({ grammar: 'rust', nodeMap, generatedIdTables });

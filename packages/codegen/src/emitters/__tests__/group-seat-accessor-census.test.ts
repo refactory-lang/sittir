@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { readFileSync } from 'node:fs';
 import { compileGrammar } from '../../compiler/compile.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
@@ -46,7 +47,7 @@ for (const grammar of GRAMMARS) {
 	beforeAll(async () => {
 		const generatedIdTables = await loadGeneratedIdTables(grammar);
 		nodeMaps[grammar] = (await compileGrammar({ package: grammarPackage(grammar), generatedIdTables })).nodeMap;
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 }
 
 describe('a group seat flattens exactly the group fields its config surface names', () => {

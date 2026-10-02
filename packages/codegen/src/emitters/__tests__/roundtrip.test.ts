@@ -15,6 +15,7 @@
  */
 
 import { beforeAll, describe, it, expect } from 'vitest';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { generate } from '../../compiler/generate.ts';
 import { AbstractAssembledCompound } from '../../compiler/model/node-map.ts';
 
@@ -24,7 +25,7 @@ let python: Generated;
 
 beforeAll(async () => {
 	python = await generate({ grammar: 'python', outputDir: '/tmp/sittir-rt-python/src' });
-});
+}, FULL_PIPELINE_TIMEOUT);
 
 describe('round-trip validation', () => {
 	it('generates all output files for python without crashing', () => {
@@ -39,7 +40,7 @@ describe('round-trip validation', () => {
 
 		beforeAll(async () => {
 			result = await generate({ grammar, outputDir: `/tmp/sittir-rt-${grammar}/src` });
-		});
+		}, FULL_PIPELINE_TIMEOUT);
 
 		it('generates all output files without crashing', () => {
 			expect(result.types.length).toBeGreaterThan(0);

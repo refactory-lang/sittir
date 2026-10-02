@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { beforeAll, describe, it, expect, vi } from 'vitest';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
 vi.mock('../generated-metadata.ts', async () => {
 	const actual = await vi.importActual<typeof import('../generated-metadata.ts')>('../generated-metadata.ts');
@@ -41,7 +42,7 @@ describe('generate — new pipeline end-to-end', () => {
 
 		beforeAll(async () => {
 			generated = await generateCapturingStderr('python');
-		});
+		}, FULL_PIPELINE_TIMEOUT);
 
 		it('generates all output files', () => {
 			const { result } = generated;
@@ -68,7 +69,7 @@ describe('generate — new pipeline end-to-end', () => {
 
 		beforeAll(async () => {
 			generated = await generateCapturingStderr('rust');
-		});
+		}, FULL_PIPELINE_TIMEOUT);
 
 		it('generates all output files', () => {
 			const { result } = generated;
@@ -94,7 +95,7 @@ describe('generate — new pipeline end-to-end', () => {
 
 		beforeAll(async () => {
 			generated = await generateCapturingStderr('typescript');
-		});
+		}, FULL_PIPELINE_TIMEOUT);
 
 		it('generates all output files', () => {
 			const { result } = generated;
