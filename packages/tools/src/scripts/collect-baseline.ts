@@ -37,7 +37,8 @@ import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts'
 import { validateFrom } from '../validate/from.ts';
 import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 import { validateTemplateCoverage } from '../validate/template-coverage.ts';
-import { loadNativeRender } from '../validate/common.ts';
+import { loadNativeRender, readNodeModelFile } from '../validate/common.ts';
+import { hoistedKindCount, type CensusModel } from '../census/hoisted.ts';
 import { load } from '../codegen-surface.ts';
 import { REPO_ROOT, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 
@@ -102,6 +103,14 @@ export interface GrammarEntry {
 	 * rose, not by how much, so the true pre-existing count doesn't matter).
 	 */
 	supertypeKindCount?: number;
+	/**
+	 * Hoisted kinds of the grammar's node model, list kinds included. The
+	 * regression checker uses a FALL here the way it uses a rise in
+	 * `supertypeKindCount`: a hoisted kind that leaves takes its own cases
+	 * with it. A fall needs both counts, so a base that never recorded the
+	 * fact explains no drop.
+	 */
+	hoistedKindCount?: number;
 }
 
 export interface BackendBaseline {
@@ -349,12 +358,23 @@ function computeSupertypeKindCount(grammar: GrammarName): number {
 	return loadRawEntries(grammar).filter((e) => e.named && (e.subtypes?.length ?? 0) > 0).length;
 }
 
+function computeHoistedKindCount(grammar: GrammarName): number {
+	const raw = readNodeModelFile(grammar);
+	if (raw === undefined) throw new Error(`collect-baseline: no node-model.json5 for grammar '${grammar}'`);
+	return hoistedKindCount(JSON.parse(raw) as CensusModel);
+}
+
 async function collectGrammarEntry(grammar: GrammarName, backend: Backend): Promise<GrammarEntry> {
 	const [validators, parityFixtures] = await Promise.all([
 		collectValidatorsForGrammar(grammar, backend),
 		collectParityFixtures(grammar, backend)
 	]);
-	return { validators, parityFixtures, supertypeKindCount: computeSupertypeKindCount(grammar) };
+	return {
+		validators,
+		parityFixtures,
+		supertypeKindCount: computeSupertypeKindCount(grammar),
+		hoistedKindCount: computeHoistedKindCount(grammar)
+	};
 }
 
 export async function collectBaseline(): Promise<BackendBaseline> {
