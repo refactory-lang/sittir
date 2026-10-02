@@ -41,7 +41,7 @@ import {
 	OVERLAY_CHAIN
 } from './overlays/module.ts';
 import { emitRefinesOverlay } from './overlays/refines.ts';
-import { emitPolymorphsOverlay } from './overlays/polymorphs.ts';
+import { collectPolymorphWires, emitPolymorphsOverlay } from './overlays/polymorphs.ts';
 import type { OverlayName } from './overlays/module.ts';
 
 export interface EmitAllConfig {
@@ -180,7 +180,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const templates = templateEmitter.finalize();
 	const renderModule = renderModuleEmitterInst?.finalize(templates);
 
-	const { types, internal: typesInternal } = emitTypesModules({ grammar, nodeMap, generatedIdTables, sites: sitePreferences, addresses: addressTables, triviaKinds });
+	const wires = collectPolymorphWires(nodeMap, generatedIdTables);
+	const { types, internal: typesInternal } = emitTypesModules({ grammar, nodeMap, generatedIdTables, sites: sitePreferences, addresses: addressTables, triviaKinds, wires });
 	const consts = emitConsts({ grammar, nodeMap });
 	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables }) : renderOptionsModule({ indentChars: indentChars(nodeMap) });
 	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
@@ -190,7 +191,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 
 	const overlays: Record<OverlayName, string> = {
 		refines: emitRefinesOverlay({ nodeMap, generatedIdTables }),
-		polymorphs: emitPolymorphsOverlay({ nodeMap, generatedIdTables }),
+		polymorphs: emitPolymorphsOverlay({ nodeMap, generatedIdTables, wires }),
 		supertypes: overlayFrame(overlayImportPath(2), []).join('\n')
 	};
 	const factoriesBundle = emitBundleModule({ nodeMap, generatedIdTables });

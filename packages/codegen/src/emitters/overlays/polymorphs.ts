@@ -1033,9 +1033,9 @@ function emitSub(
 	};
 }
 
-export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTables?: GeneratedIdTables }): string {
+export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTables?: GeneratedIdTables; wires?: PolymorphWires }): string {
 	const { nodeMap, generatedIdTables } = config;
-	const wires = collectPolymorphWires(nodeMap, generatedIdTables);
+	const wires = config.wires ?? collectPolymorphWires(nodeMap, generatedIdTables);
 
 	const chunks: OverlayChunk[] = [];
 	let usesKindId = false;
