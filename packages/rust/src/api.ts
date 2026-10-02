@@ -14,7 +14,7 @@ import {
 } from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { triviaFacts } from './utils.js';
-import { coerceToLineComment } from './factories/coerce.js';
+import { coerceToLineComment, coerceToBlockComment } from './factories/coerce.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type SourceFileRoot } from './render-engine.js';
 import { wrapNode, type SourceFileTree } from './wrap.js';
@@ -39,7 +39,14 @@ export const hooks: LanguageHooks<RustAPI> = Object.freeze<LanguageHooks<RustAPI
 	build: ir,
 	is,
 	kinds: TSKindId,
-	trivia: Object.freeze({ ...triviaFacts, comment: coerceToLineComment }),
+	trivia: Object.freeze({
+		...triviaFacts,
+		comment: coerceToLineComment,
+		spelled: Object.freeze([
+			{ open: '/*', close: '*/', build: (text: string) => coerceToBlockComment(text) },
+			{ open: '//', close: '', build: (text: string) => coerceToLineComment(text) }
+		])
+	}),
 	createNative: (options) => nativeLanguageEngine<RustAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as SourceFileRoot & ParsedRoot, tree as TreeHandle)
 });

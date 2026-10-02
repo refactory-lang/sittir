@@ -2001,45 +2001,16 @@
     "type": "expression_list",
     "named": true,
     "fields": {
-      "tail": {
-        "multiple": false,
+      "expression": {
+        "multiple": true,
         "required": true,
         "types": [
           {
-            "type": ",",
-            "named": false
-          },
-          {
-            "type": "expression_list_expressions",
+            "type": "expression",
             "named": true
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "expression_list_expressions",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "expression",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -3349,45 +3320,16 @@
     "type": "pattern_list",
     "named": true,
     "fields": {
-      "tail": {
-        "multiple": false,
+      "pattern": {
+        "multiple": true,
         "required": true,
         "types": [
           {
-            "type": ",",
-            "named": false
-          },
-          {
-            "type": "pattern_list_patterns",
+            "type": "pattern",
             "named": true
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "pattern",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "pattern_list_patterns",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "pattern",
-          "named": true
-        }
-      ]
     }
   },
   {

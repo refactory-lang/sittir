@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { readFileSync } from 'node:fs';
 import { compileGrammar } from '../../compiler/compile.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
@@ -39,11 +40,20 @@ const flatStamps = (source: string): ReadonlyMap<string, readonly string[]> =>
 		})
 	);
 
+const GRAMMARS = ['rust', 'python', 'typescript'] as const;
+const nodeMaps: Record<string, Awaited<ReturnType<typeof compileGrammar>>['nodeMap']> = {};
+
+for (const grammar of GRAMMARS) {
+	beforeAll(async () => {
+		const generatedIdTables = await loadGeneratedIdTables(grammar);
+		nodeMaps[grammar] = (await compileGrammar({ package: grammarPackage(grammar), generatedIdTables })).nodeMap;
+	}, FULL_PIPELINE_TIMEOUT);
+}
+
 describe('a group seat flattens exactly the group fields its config surface names', () => {
-	for (const grammar of ['rust', 'python', 'typescript'] as const) {
-		it(`${grammar}: the seats the model finds are the interfaces stamped $flat and the nodes that seat one`, async () => {
-			const generatedIdTables = await loadGeneratedIdTables(grammar);
-			const { nodeMap } = await compileGrammar({ package: grammarPackage(grammar), generatedIdTables });
+	for (const grammar of GRAMMARS) {
+		it(`${grammar}: the seats the model finds are the interfaces stamped $flat and the nodes that seat one`, () => {
+			const nodeMap = nodeMaps[grammar]!;
 			const seated = [...nodeMap.nodes.values()].flatMap((node) => {
 				const hints = groupSeatHints(node, nodeMap, undefined);
 				return hints.length === 0 ? [] : [{ node, hints }];
@@ -80,10 +90,9 @@ describe('a group seat flattens exactly the group fields its config surface name
 });
 
 describe('an elements seat sets the element config objects its config surface takes', () => {
-	for (const grammar of ['rust', 'python', 'typescript'] as const) {
-		it(`${grammar}: every seat is stamped on its slot hint and applied where its setter is built`, async () => {
-			const generatedIdTables = await loadGeneratedIdTables(grammar);
-			const { nodeMap } = await compileGrammar({ package: grammarPackage(grammar), generatedIdTables });
+	for (const grammar of GRAMMARS) {
+		it(`${grammar}: every seat is stamped on its slot hint and applied where its setter is built`, () => {
+			const nodeMap = nodeMaps[grammar]!;
 			const types = typeSources(grammar);
 			const seats = [...nodeMap.nodes.values()].flatMap((node) =>
 				elementConfigsOf(node, nodeMap).map((fact) => ({ node, fact }))
@@ -98,9 +107,8 @@ describe('an elements seat sets the element config objects its config surface ta
 			expect(seatCalls('wrap.ts')).toBe(seats.filter(({ node }) => !(node instanceof AssembledList)).length);
 		});
 
-		it(`${grammar}: every slot that holds a list carries its list's element config`, async () => {
-			const generatedIdTables = await loadGeneratedIdTables(grammar);
-			const { nodeMap } = await compileGrammar({ package: grammarPackage(grammar), generatedIdTables });
+		it(`${grammar}: every slot that holds a list carries its list's element config`, () => {
+			const nodeMap = nodeMaps[grammar]!;
 			const types = typeSources(grammar).replace(/\s+/g, '');
 			const carried = [...nodeMap.nodes.values()]
 				.flatMap((node) => listSlotHints(node, nodeMap, undefined))

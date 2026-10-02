@@ -550,20 +550,13 @@ export interface ExecStatementTransport {
   _in_clause_separator_space_after?: number
 }
 
-export interface ExpressionListExpressionsTransport {
+export interface ExpressionListTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _expression: Array<SlotValue<ExpressionTransport>>
   _delimiter?: number
   _expression_separator_space_before?: number
   _expression_separator_space_after?: number
-}
-
-export interface ExpressionListTransport {
-  '$_trivia'?: TransportTrivia
-  '$_edges'?: Edges
-  _tail: SlotValue<ExpressionListTailTransportSlot>
-  _expression: SlotValue<Box<ExpressionTransport>>
 }
 
 export interface ExpressionStatementTransport {
@@ -950,20 +943,13 @@ export interface ParenthesizedListSplatTransport {
   _content: SlotValue<Box<ParenthesizedListSplatContentTransportSlot>>
 }
 
-export interface PatternListPatternsTransport {
+export interface PatternListTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _pattern: Array<SlotValue<PatternTransport>>
   _delimiter?: number
   _pattern_separator_space_before?: number
   _pattern_separator_space_after?: number
-}
-
-export interface PatternListTransport {
-  '$_trivia'?: TransportTrivia
-  '$_edges'?: Edges
-  _tail: SlotValue<PatternListTailTransportSlot>
-  _pattern: SlotValue<PatternTransport>
 }
 
 export interface PatternsTransport {

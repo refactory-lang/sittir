@@ -147,7 +147,10 @@ describe('the tree table across threads and processes', () => {
 			workerData: { addon: fileURLToPath(new URL('../native/index.cjs', import.meta.url)) }
 		});
 		expect(await reply(worker)).toEqual({ before: 0, after: 1, treeId: 0 });
-		expect(native.liveTreeCount()).toBe(held);
+		// Trees of earlier cases may be collected while the worker runs, so
+		// this thread's count can fall; the worker's tree must not raise it.
+		expect(native.liveTreeCount()).toBeLessThanOrEqual(held);
+		expect(native.liveTreeCount()).toBeGreaterThanOrEqual(1);
 		native.disposeTree(mine);
 	});
 

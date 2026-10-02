@@ -176,17 +176,11 @@ export const types: Hoisted<typeof O.types> = hoistAs<typeof O.types>(O.types);
 export const argumentListElements: Hoisted<typeof O.argumentListElements> = hoistAs<typeof O.argumentListElements>(
 	O.argumentListElements
 );
-export const expressionListExpressions: Hoisted<typeof O.expressionListExpressions> = hoistAs<
-	typeof O.expressionListExpressions
->(O.expressionListExpressions);
 export const listPatternCasePatterns: Hoisted<typeof O.listPatternCasePatterns> = hoistAs<
 	typeof O.listPatternCasePatterns
 >(O.listPatternCasePatterns);
 export const dictPatternElements: Hoisted<typeof O.dictPatternElements> = hoistAs<typeof O.dictPatternElements>(
 	O.dictPatternElements
-);
-export const patternListPatterns: Hoisted<typeof O.patternListPatterns> = hoistAs<typeof O.patternListPatterns>(
-	O.patternListPatterns
 );
 export const subscripts: Hoisted<typeof O.subscripts> = hoistAs<typeof O.subscripts>(O.subscripts);
 export const dictionaryElements: Hoisted<typeof O.dictionaryElements> = hoistAs<typeof O.dictionaryElements>(

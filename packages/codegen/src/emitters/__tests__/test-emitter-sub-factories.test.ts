@@ -7,6 +7,7 @@ import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import { stampAutomaticVariants } from '../../dsl/automatic-variants.ts';
+import { predictedSymbolSourceOf } from '../../dsl/symbol-table.ts';
 import { emitTests } from '../test.ts';
 import { slot, text, tokenSeam } from '../render-body.ts';
 
@@ -18,7 +19,13 @@ import { slot, text, tokenSeam } from '../render-body.ts';
 
 function labelArms(rules: Record<string, Rule<'evaluate'>>): Record<string, Rule<'evaluate'>> {
 	const stamped = { ...rules } as Record<string, Rule>;
-	stampAutomaticVariants(stamped, new Set(), new Set(), new Set());
+	stampAutomaticVariants(
+		stamped,
+		new Set(),
+		new Set(),
+		new Set(),
+		predictedSymbolSourceOf({ rules: stamped as never, externals: [], inline: [], supertypes: [], extras: [], word: null })
+	);
 	return stamped as Record<string, Rule<'evaluate'>>;
 }
 

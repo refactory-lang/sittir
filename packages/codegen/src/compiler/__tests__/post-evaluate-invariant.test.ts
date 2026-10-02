@@ -21,7 +21,7 @@
  * shapes reach Link.
  */
 
-import { describe, it, expect } from 'vitest';
+import { beforeAll, describe, it, expect } from 'vitest';
 import { stableGrammars } from '../../grammars.ts';
 import { expectCompleteCatalog, serializeCatalog } from '../../__tests__/helpers/rule-catalog.ts';
 import { evaluatePackage } from '../evaluate-package.ts';
@@ -56,9 +56,15 @@ const KNOWN_RULE_TYPES = new Set([
 const GRAMMARS = stableGrammars();
 
 describe('post-evaluate invariant', () => {
+	const evaluated: Record<string, Awaited<ReturnType<typeof evaluatePackage>>> = {};
+
 	for (const grammar of GRAMMARS) {
-		it(`${grammar}: rule tree contains only known rule types`, async () => {
-			const raw = await evaluatePackage(grammarPackage(grammar));
+		beforeAll(async () => {
+			evaluated[grammar] = await evaluatePackage(grammarPackage(grammar));
+		});
+
+		it(`${grammar}: rule tree contains only known rule types`, () => {
+			const raw = evaluated[grammar]!;
 
 			const violations: string[] = [];
 			for (const [ruleName, rule] of Object.entries(raw.rules)) {
@@ -77,8 +83,8 @@ describe('post-evaluate invariant', () => {
 			expect(violations, violations.join('\n')).toEqual([]);
 		});
 
-		it(`${grammar}: rule tree contains no sittir placeholders`, async () => {
-			const raw = await evaluatePackage(grammarPackage(grammar));
+		it(`${grammar}: rule tree contains no sittir placeholders`, () => {
+			const raw = evaluated[grammar]!;
 
 			const violations: string[] = [];
 			for (const [ruleName, rule] of Object.entries(raw.rules)) {
@@ -97,7 +103,7 @@ describe('post-evaluate invariant', () => {
 			expect(violations, violations.join('\n')).toEqual([]);
 		});
 
-		it(`${grammar}: no desugar divergences`, async () => {
+		it(`${grammar}: no desugar divergences`, () => {
 			// enrich() runs on the base grammar BEFORE this evaluate() call
 			// (grammar.sittir.ts: `enrich(base)`), so it already pre-generate
 			// hoists shapes like upstream tree-sitter-rust's
@@ -105,12 +111,12 @@ describe('post-evaluate invariant', () => {
 			// this stays 0 on the actual shipped pipeline even though the
 			// SAME check against the raw, un-enriched base grammar (see
 			// real-grammar.test.ts) is not representative of it.
-			const raw = await evaluatePackage(grammarPackage(grammar));
+			const raw = evaluated[grammar]!;
 			expect(raw.desugarDivergences ?? []).toEqual([]);
 		});
 
-		it(`${grammar}: top-level RawGrammar shape is the documented sidecar set`, async () => {
-			const raw = await evaluatePackage(grammarPackage(grammar));
+		it(`${grammar}: top-level RawGrammar shape is the documented sidecar set`, () => {
+			const raw = evaluated[grammar]!;
 
 			// Allowed top-level fields. Anything else is a leaked
 			// sittir-only payload that the pipeline doesn't expect.
@@ -194,14 +200,14 @@ describe('post-evaluate invariant', () => {
 			expect(extra, `unexpected RawGrammar fields: ${extra.join(', ')}`).toEqual([]);
 		});
 
-		it(`${grammar}: rule catalog covers every evaluated rule occurrence`, async () => {
-			const raw = await evaluatePackage(grammarPackage(grammar));
+		it(`${grammar}: rule catalog covers every evaluated rule occurrence`, () => {
+			const raw = evaluated[grammar]!;
 
 			expectCompleteCatalog(raw.rules, raw.ruleCatalog);
 		});
 
 		it(`${grammar}: unchanged evaluation has deterministic catalog identity`, async () => {
-			const first = await evaluatePackage(grammarPackage(grammar));
+			const first = evaluated[grammar]!;
 			const second = await evaluatePackage(grammarPackage(grammar));
 
 			expect(serializeCatalog(second.ruleCatalog)).toEqual(serializeCatalog(first.ruleCatalog));

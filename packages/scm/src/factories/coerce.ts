@@ -615,7 +615,12 @@ export function resolveString_stringContent(value: T.String.LooseConfig['stringC
 	return _resolveOneBranch<T.StringContent>(value, 'string_content', undefined, true);
 }
 
-export function coerceToString(input?: T.String.Loose): ReturnType<typeof F.buildString> {
+export function coerceToString(...input: T.StringContent.LooseArgs): ReturnType<typeof F.buildString>;
+export function coerceToString(input?: T.String.Loose): ReturnType<typeof F.buildString>;
+export function coerceToString(...args: unknown[]): ReturnType<typeof F.buildString> {
+	if (args.length > 1)
+		return F.buildString(coerceToStringContent(...(args as Parameters<typeof coerceToStringContent>)));
+	const input = args[0] as T.String.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.String))
 		return input as unknown as ReturnType<typeof F.buildString>;
 	return F.buildString(
@@ -634,7 +639,12 @@ export function resolveImmediateString_stringContent(
 	return _resolveOneBranch<T.StringContent>(value, 'string_content', undefined, true);
 }
 
-export function coerceToImmediateString(input?: T.ImmediateString.Loose): ReturnType<typeof F.buildImmediateString> {
+export function coerceToImmediateString(...input: T.StringContent.LooseArgs): ReturnType<typeof F.buildImmediateString>;
+export function coerceToImmediateString(input?: T.ImmediateString.Loose): ReturnType<typeof F.buildImmediateString>;
+export function coerceToImmediateString(...args: unknown[]): ReturnType<typeof F.buildImmediateString> {
+	if (args.length > 1)
+		return F.buildImmediateString(coerceToStringContent(...(args as Parameters<typeof coerceToStringContent>)));
+	const input = args[0] as T.ImmediateString.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.ImmediateString))
 		return input as unknown as ReturnType<typeof F.buildImmediateString>;
 	return F.buildImmediateString(

@@ -1,10 +1,68 @@
 import { grammarTypePrefix, languageApiName } from '../grammars.ts';
+import { spelledTriviaTable } from '../compiler/model/trivia.ts';
+import type { NodeMap } from '../compiler/types.ts';
+import { ownTextLeaf } from './shared.ts';
 
 export interface EmitEngineConfig {
 	grammar: string;
 	rootTypeName: string;
 	rootTreeTypeName: string;
 	commentCoercer?: string;
+	spelledTrivia?: readonly SpelledTriviaBuilder[];
+}
+
+export interface SpelledTriviaBuilder {
+	readonly open: string;
+	readonly close: string;
+	readonly module: 'raw' | 'coerce';
+	readonly builder: string;
+	readonly spelledType?: string;
+}
+
+export function spelledTriviaBuilders(nodeMap: NodeMap): SpelledTriviaBuilder[] {
+	const table = spelledTriviaTable(nodeMap);
+	if (table === undefined || 'reason' in table) return [];
+	return table.forms.flatMap((form) => {
+		const node = nodeMap.nodes.get(form.kind)!;
+		const leaf = form.opens.length === 1 && form.closes.length === 1 ? ownTextLeaf(node) : undefined;
+		const builder: Pick<SpelledTriviaBuilder, 'module' | 'builder' | 'spelledType'> =
+			leaf === undefined
+				? { module: 'coerce', builder: node.fromFunctionName! }
+				: { module: 'raw', builder: node.rawFactoryName!, spelledType: leaf.spelledType };
+		return form.opens.flatMap((open) => form.closes.map((close) => ({ open, close, ...builder })));
+	});
+}
+
+function triviaHook(config: EmitEngineConfig): string {
+	const members = [
+		'...triviaFacts',
+		...(config.commentCoercer === undefined ? [] : [`comment: ${config.commentCoercer}`]),
+		...(config.spelledTrivia === undefined || config.spelledTrivia.length === 0
+			? []
+			: [
+					`spelled: Object.freeze([${config.spelledTrivia
+						.map(
+							(form) =>
+								`{ open: ${JSON.stringify(form.open)}, close: ${JSON.stringify(form.close)}, build: (text: string) => ${
+									form.spelledType === undefined ? `${form.builder}(text)` : `${form.builder}(text as ${form.spelledType}, false)`
+								} }`
+						)
+						.join(', ')}])`
+				])
+	];
+	return members.length === 1 ? 'triviaFacts' : `Object.freeze({ ${members.join(', ')} })`;
+}
+
+function triviaImports(config: EmitEngineConfig): string {
+	const names = (module: 'raw' | 'coerce'): string[] => [
+		...new Set([
+			...(module === 'coerce' && config.commentCoercer !== undefined ? [config.commentCoercer] : []),
+			...(config.spelledTrivia ?? []).filter((form) => form.module === module).map((form) => form.builder)
+		])
+	];
+	return (['raw', 'coerce'] as const)
+		.flatMap((module) => (names(module).length === 0 ? [] : [`import { ${names(module).join(', ')} } from './factories/${module}.js';\n`]))
+		.join('');
 }
 
 export function emitRenderEngine(config: EmitEngineConfig): string {
@@ -75,7 +133,7 @@ import { is } from './is.js';
 import { TSKindId, type FixedTextKindId, type IrKeyOf, type NamespaceMap, type ${grammarTypePrefix(grammar)}Node, type ${grammarTypeMapName(grammar)} } from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { triviaFacts } from './utils.js';
-${config.commentCoercer === undefined ? '' : `import { ${config.commentCoercer} } from './factories/coerce.js';\n`}import { RENDER_MODULE_HASH } from './hash.js';
+${triviaImports(config)}import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ${rootTypeName}Root } from './render-engine.js';
 import { wrapNode, type ${rootTreeTypeName} } from './wrap.js';
 
@@ -99,7 +157,7 @@ export const hooks: LanguageHooks<${api}> = Object.freeze<LanguageHooks<${api}>>
 	build: ir,
 	is,
 	kinds: TSKindId,
-	trivia: ${config.commentCoercer === undefined ? 'triviaFacts' : `Object.freeze({ ...triviaFacts, comment: ${config.commentCoercer} })`},
+	trivia: ${triviaHook(config)},
 	createNative: (options) => nativeLanguageEngine<${api}, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ${rootTypeName}Root & ParsedRoot, tree as TreeHandle)
 });

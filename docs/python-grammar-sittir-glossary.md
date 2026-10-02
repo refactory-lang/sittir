@@ -186,20 +186,15 @@ would fail to compile.
 				// parenthesized_expression | keyword_argument
 ```
 
-### `expression_list` (`packages/python/grammar.sittir.ts:228`)
+### `expression_list` / `pattern_list` (`packages/python/grammar.sittir.ts`)
 
-```text
-				// expression_list / pattern_list: `seq(member, choice(',',
-				// <enrich-lifted group>))` — the tail position is an UNNAMED
-				// mixed row (anon-literal | named-node). The single-element
-				// `c,` case parses the tail as a bare anonymous ',' token that
-				// lands in $other where the derived slot can't reach it, while
-				// the multi-element case parses the visible group node. Field
-				// the position so tree-sitter keys BOTH arms — the
-				// class_body_member / function_signature precedent; the
-				// id-first transport arms dispatch the anon comma, and the
-				// headless group renders via its captured leading flank.
-```
+Nothing is authored for either rule. Upstream writes them as
+`seq(member, choice(',', seq(repeat1(seq(',', member)), optional(','))))`: one
+member is the list only with its comma, and from two members on the trailing
+comma is optional. Enrich reads the whole rule as a `terminated` separated
+list, fields every member (`expression` / `pattern`) and mints no kind for the
+choice's arm, so the parser keeps upstream's flat shape. Link lifts the rule to
+one repeat, and the render keeps the comma after a single member.
 
 ### `complex_pattern` (`packages/python/grammar.sittir.ts:256`)
 

@@ -863,9 +863,6 @@ export namespace Expression {
 			export interface Bare<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Collection.Tuple<G>>> {
 				// claimed by p
 				readonly kind: 'expression.collection.tuple.bare';
-				readonly expression: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
-				readonly tail: V.Unmapped<'python:expression_list_expressions'> | ',';
-				// unmapped: <python:expression_list_expressions>
 			}
 			export type Any<G extends GrammarContext> =
 				| V.Expression.Collection.Tuple<G>

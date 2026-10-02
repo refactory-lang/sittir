@@ -611,11 +611,11 @@ export enum TSKindId {
 	StructPatternElements = 357,
 	UseWildcardGroup = 358,
 	TupleTypeElements = 359,
-	TupleExpressionElements = 360,
-	TokenTreePunctuation = 361,
-	TokenKeywords = 362,
-	_RangeExpressionBare = 363,
-	ImplItemUnsafeMarker = 364,
+	TokenTreePunctuation = 360,
+	TokenKeywords = 361,
+	_RangeExpressionBare = 362,
+	ImplItemUnsafeMarker = 363,
+	TupleExpressionElements = 364,
 	CharLiteralEscaped = 365,
 	ArrayExpressionSemi = 366,
 	ArrayExpressionList = 367,
@@ -1086,11 +1086,11 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[357, 'struct_pattern_elements'],
 	[358, 'use_wildcard_group'],
 	[359, 'tuple_type_elements'],
-	[360, 'tuple_expression_elements'],
-	[361, 'token_tree_punctuation'],
-	[362, '_token_keywords'],
-	[363, '_range_expression_bare'],
-	[364, '_impl_item_unsafe_marker'],
+	[360, 'token_tree_punctuation'],
+	[361, '_token_keywords'],
+	[362, '_range_expression_bare'],
+	[363, '_impl_item_unsafe_marker'],
+	[364, 'tuple_expression_elements'],
 	[365, 'char_literal_escaped'],
 	[366, 'array_expression_semi'],
 	[367, 'array_expression_list'],
@@ -1559,11 +1559,11 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[357, 'struct_pattern_elements'],
 	[358, 'use_wildcard_group'],
 	[359, 'tuple_type_elements'],
-	[360, 'tuple_expression_elements'],
-	[361, 'token_tree_punctuation'],
-	[362, '_token_keywords'],
-	[363, '_range_expression_bare'],
-	[364, '_impl_item_unsafe_marker'],
+	[360, 'token_tree_punctuation'],
+	[361, '_token_keywords'],
+	[362, '_range_expression_bare'],
+	[363, '_impl_item_unsafe_marker'],
+	[364, 'tuple_expression_elements'],
 	[365, 'char_literal_escaped'],
 	[366, 'array_expression_semi'],
 	[367, 'array_expression_list'],
@@ -2393,8 +2393,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.UseWildcardGroup;
 		case 'tuple_type_elements':
 			return TSKindId.TupleTypeElements;
-		case 'tuple_expression_elements':
-			return TSKindId.TupleExpressionElements;
 		case 'token_tree_punctuation':
 			return TSKindId.TokenTreePunctuation;
 		case '_token_keywords':
@@ -2403,6 +2401,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId._RangeExpressionBare;
 		case '_impl_item_unsafe_marker':
 			return TSKindId.ImplItemUnsafeMarker;
+		case 'tuple_expression_elements':
+			return TSKindId.TupleExpressionElements;
 		case 'char_literal_escaped':
 			return TSKindId.CharLiteralEscaped;
 		case 'array_expression_semi':
@@ -23937,21 +23937,8 @@ export namespace FunctionTypeFnForm {
 	}
 	export type Loose = LooseFor<TSKindId.FunctionTypeFnForm>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FunctionTypeFnForm>;
-	export type BuildArgs =
-		| [value?: AdmitBound<T.FunctionModifiers, T.AdmittedNodes>]
-		| [
-				...children: AdmitBound<
-					(
-						| TSKindId.AsyncKeyword
-						| TSKindId.DefaultKeyword
-						| TSKindId.ConstKeyword
-						| TSKindId.UnsafeKeyword
-						| T.ExternModifier
-					)[],
-					T.AdmittedNodes
-				>
-		  ];
-	export type LooseArgs = [value?: T.FunctionTypeFnForm.Loose];
+	export type BuildArgs = [value?: AdmitBound<T.FunctionModifiers, T.AdmittedNodes>] | T.FunctionModifiers.BuildArgs;
+	export type LooseArgs = [value?: T.FunctionTypeFnForm.Loose] | T.FunctionModifiers.LooseArgs;
 	export type Kind = TSKindId.FunctionTypeFnForm;
 }
 export namespace ModItemExternal {

@@ -1598,24 +1598,6 @@
 	],
 	"expression_list": [
 		{
-			"kind": "seam",
-			"field": "expression_list_before"
-		},
-		{
-			"kind": "slot",
-			"name": "expression"
-		},
-		{
-			"kind": "slot",
-			"name": "tail"
-		},
-		{
-			"kind": "seam",
-			"field": "expression_list_after"
-		}
-	],
-	"expression_list_expressions": [
-		{
 			"kind": "slot",
 			"name": "expression"
 		}
@@ -3293,24 +3275,6 @@
 		}
 	],
 	"pattern_list": [
-		{
-			"kind": "seam",
-			"field": "pattern_list_before"
-		},
-		{
-			"kind": "slot",
-			"name": "pattern"
-		},
-		{
-			"kind": "slot",
-			"name": "tail"
-		},
-		{
-			"kind": "seam",
-			"field": "pattern_list_after"
-		}
-	],
-	"pattern_list_patterns": [
 		{
 			"kind": "slot",
 			"name": "pattern"

@@ -7,6 +7,17 @@ export interface TriviaFacts {
 	readonly innerGaps: { readonly [kind: string]: readonly string[] };
 	readonly whitespace?: { readonly run: RegExp; readonly kindIdByText: { readonly [text: string]: number } };
 	readonly comment?: ((text: string) => AnyUntypedNode) | undefined;
+	readonly spelled?: readonly SpelledTrivia[];
+}
+
+/**
+ * One way a comment kind is spelled in full: the fixed text it opens and
+ * closes with, and the builder of that kind from text spelled so.
+ */
+export interface SpelledTrivia {
+	readonly open: string;
+	readonly close: string;
+	readonly build: (text: string) => AnyUntypedNode;
 }
 
 /** Options of one parse. */

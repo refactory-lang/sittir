@@ -183,11 +183,11 @@ pub enum AnyTransport {
     TokenRepetitionPatternText(TokenRepetitionPatternTextTransport),
     StringOpen(StringOpenTransport),
     TupleTypeElements(TupleTypeElementsTransport),
-    TupleExpressionElements(TupleExpressionElementsTransport),
     TokenTreePunctuation(TokenTreePunctuationEnum),
     TokenKeywords(TokenKeywordsEnum),
     _RangeExpressionBare(_RangeExpressionBareTransport),
     ImplItemUnsafeMarker(ImplItemUnsafeMarkerTransport),
+    TupleExpressionElements(TupleExpressionElementsTransport),
     IntegerLiteralDecimal(IntegerLiteralDecimalTransport),
     IntegerLiteralHex(IntegerLiteralHexTransport),
     IntegerLiteralBinary(IntegerLiteralBinaryTransport),
@@ -720,11 +720,11 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::TokenRepetitionPatternText(t) => t.prepare(ctx),
             AnyTransport::StringOpen(t) => t.prepare(ctx),
             AnyTransport::TupleTypeElements(t) => t.prepare(ctx),
-            AnyTransport::TupleExpressionElements(t) => t.prepare(ctx),
             AnyTransport::TokenTreePunctuation(t) => t.prepare(ctx),
             AnyTransport::TokenKeywords(t) => t.prepare(ctx),
             AnyTransport::_RangeExpressionBare(t) => t.prepare(ctx),
             AnyTransport::ImplItemUnsafeMarker(t) => t.prepare(ctx),
+            AnyTransport::TupleExpressionElements(t) => t.prepare(ctx),
             AnyTransport::IntegerLiteralDecimal(t) => t.prepare(ctx),
             AnyTransport::IntegerLiteralHex(t) => t.prepare(ctx),
             AnyTransport::IntegerLiteralBinary(t) => t.prepare(ctx),
@@ -1754,25 +1754,25 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 359 => Ok(AnyTransport::TupleTypeElements(
                     TupleTypeElementsTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: tuple_expression_elements (TUPLE_EXPRESSION_ELEMENTS)
-                360 => Ok(AnyTransport::TupleExpressionElements(
-                    TupleExpressionElementsTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: token_tree_punctuation (TOKEN_TREE_PUNCTUATION)
-                361 => Ok(AnyTransport::TokenTreePunctuation(
+                360 => Ok(AnyTransport::TokenTreePunctuation(
                     TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                 )),
                 // kind: _token_keywords (_TOKEN_KEYWORDS)
-                362 => Ok(AnyTransport::TokenKeywords(
+                361 => Ok(AnyTransport::TokenKeywords(
                     TokenKeywordsEnum::from_napi_value(env, napi_val)?
                 )),
                 // kind: _range_expression_bare (_RANGE_EXPRESSION_BARE)
-                363 => Ok(AnyTransport::_RangeExpressionBare(
+                362 => Ok(AnyTransport::_RangeExpressionBare(
                     _RangeExpressionBareTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _impl_item_unsafe_marker (_IMPL_ITEM_UNSAFE_MARKER)
-                364 => Ok(AnyTransport::ImplItemUnsafeMarker(
+                363 => Ok(AnyTransport::ImplItemUnsafeMarker(
                     ImplItemUnsafeMarkerTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: tuple_expression_elements (TUPLE_EXPRESSION_ELEMENTS)
+                364 => Ok(AnyTransport::TupleExpressionElements(
+                    TupleExpressionElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: integer_literal_decimal (INTEGER_LITERAL_DECIMAL)
                 141 => Ok(AnyTransport::IntegerLiteralDecimal(
@@ -52596,81 +52596,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TupleTypeElementsTransport> {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct TupleExpressionElementsTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
-    pub element: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
-    pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
-    pub element_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_after"))]
-    pub element_separator_space_after: Option<u16>,
-}
-
-impl ::sittir_core::view::KindOf for TupleExpressionElementsTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(360)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::options::Edged for TupleExpressionElementsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(360) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for TupleExpressionElementsTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(360)), render_tuple_expression_elements(self, w))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for TupleExpressionElementsTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
-        ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_element = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.element_separator_space_before.is_none() { self.element_separator_space_before = gaps.before; }
-            if self.element_separator_space_after.is_none() { self.element_separator_space_after = gaps.after; }
-            gaps.separated
-        };
-        self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE].arm);
-        self.element_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.element.iter_mut().map(Some), options::SEATS_TUPLE_EXPRESSION_ELEMENTS_ELEMENT, &separated_element, ctx);
-        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_TUPLE_EXPRESSION_ELEMENTS_ELEMENT]);
-        self.element.prepare(ctx)?;
-        Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TupleExpressionElementsTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        TupleExpressionElementsTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TupleExpressionElementsTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        TupleExpressionElementsTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TokenTreePunctuationEnum {
     Plus,
@@ -53408,7 +53333,7 @@ pub struct _RangeExpressionBareTransport {
 
 impl ::sittir_core::view::KindOf for _RangeExpressionBareTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(363)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(362)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -53420,7 +53345,7 @@ impl ::sittir_core::options::Edged for _RangeExpressionBareTransport {
 
 impl ::sittir_core::render::Render for _RangeExpressionBareTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(363)), w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(362)), w.text(&self.text))
     }
 }
 
@@ -53512,19 +53437,19 @@ pub struct ImplItemUnsafeMarkerTransport {
 
 impl ::sittir_core::view::KindOf for ImplItemUnsafeMarkerTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(364)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(363)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ImplItemUnsafeMarkerTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(364) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(363) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ImplItemUnsafeMarkerTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(364)), w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(363)), w.text(&self.text))
     }
 }
 
@@ -53631,6 +53556,81 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImplItemUnsafeMarkerTransport>
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ImplItemUnsafeMarkerTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct TupleExpressionElementsTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
+    pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
+    pub element: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
+    pub delimiter: Option<u8>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
+    pub element_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_after"))]
+    pub element_separator_space_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for TupleExpressionElementsTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(364)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for TupleExpressionElementsTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(364) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+}
+
+impl ::sittir_core::render::Render for TupleExpressionElementsTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(364)), render_tuple_expression_elements(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for TupleExpressionElementsTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
+        ::sittir_core::prepare::prepare_edges(self, ctx);
+        let separated_element = {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.element_separator_space_before.is_none() { self.element_separator_space_before = gaps.before; }
+            if self.element_separator_space_after.is_none() { self.element_separator_space_after = gaps.after; }
+            gaps.separated
+        };
+        self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE].arm);
+        self.element_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.element.iter_mut().map(Some), options::SEATS_TUPLE_EXPRESSION_ELEMENTS_ELEMENT, &separated_element, ctx);
+        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_TUPLE_EXPRESSION_ELEMENTS_ELEMENT]);
+        self.element.prepare(ctx)?;
+        Ok(())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TupleExpressionElementsTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        TupleExpressionElementsTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TupleExpressionElementsTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        TupleExpressionElementsTransport::to_napi_value(env, *val)
     }
 }
 
@@ -79942,24 +79942,6 @@ fn render_tuple_type_elements(node: &TupleTypeElementsTransport, w: &mut dyn ::s
     Ok(())
 }
 
-fn render_tuple_expression_elements(node: &TupleExpressionElementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let element = ListView {
-        items: &node.element,
-        template: "{}",
-        token: ",",
-        before: node.element_separator_space_before.unwrap_or(0),
-        after: node.element_separator_space_after.unwrap_or(0),
-        leading: false,
-        trailing: (&node.element).len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: Some(options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_START),
-        tail: Some(options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_END),
-    };
-    w.edge(::sittir_core::types::KindId(360), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    element.render(w)?;
-    w.edge(::sittir_core::types::KindId(360), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
-    Ok(())
-}
-
 fn render_token_tree_punctuation(t: &TokenTreePunctuationEnum, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     t.render(w)
 }
@@ -79974,6 +79956,24 @@ fn render__range_expression_bare(t: &_RangeExpressionBareTransport, w: &mut dyn 
 
 fn render_impl_item_unsafe_marker(t: &ImplItemUnsafeMarkerTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
+}
+
+fn render_tuple_expression_elements(node: &TupleExpressionElementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let element = ListView {
+        items: &node.element,
+        template: "{}",
+        token: ",",
+        before: node.element_separator_space_before.unwrap_or(0),
+        after: node.element_separator_space_after.unwrap_or(0),
+        leading: false,
+        trailing: (&node.element).len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        head: Some(options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_START),
+        tail: Some(options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_END),
+    };
+    w.edge(::sittir_core::types::KindId(364), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    element.render(w)?;
+    w.edge(::sittir_core::types::KindId(364), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    Ok(())
 }
 
 fn render_integer_literal_decimal(node: &IntegerLiteralDecimalTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -82348,11 +82348,11 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::TokenRepetitionPatternText(inner) => inner.kind_in(kinds),
             Self::StringOpen(inner) => inner.kind_in(kinds),
             Self::TupleTypeElements(inner) => inner.kind_in(kinds),
-            Self::TupleExpressionElements(inner) => inner.kind_in(kinds),
             Self::TokenTreePunctuation(inner) => inner.kind_in(kinds),
             Self::TokenKeywords(inner) => inner.kind_in(kinds),
             Self::_RangeExpressionBare(inner) => inner.kind_in(kinds),
             Self::ImplItemUnsafeMarker(inner) => inner.kind_in(kinds),
+            Self::TupleExpressionElements(inner) => inner.kind_in(kinds),
             Self::IntegerLiteralDecimal(inner) => inner.kind_in(kinds),
             Self::IntegerLiteralHex(inner) => inner.kind_in(kinds),
             Self::IntegerLiteralBinary(inner) => inner.kind_in(kinds),
@@ -82755,11 +82755,11 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::TokenRepetitionPatternText(t) => t.render(w),
             AnyTransport::StringOpen(t) => t.render(w),
             AnyTransport::TupleTypeElements(t) => t.render(w),
-            AnyTransport::TupleExpressionElements(t) => t.render(w),
             AnyTransport::TokenTreePunctuation(t) => t.render(w),
             AnyTransport::TokenKeywords(t) => t.render(w),
             AnyTransport::_RangeExpressionBare(t) => t.render(w),
             AnyTransport::ImplItemUnsafeMarker(t) => t.render(w),
+            AnyTransport::TupleExpressionElements(t) => t.render(w),
             AnyTransport::IntegerLiteralDecimal(t) => t.render(w),
             AnyTransport::IntegerLiteralHex(t) => t.render(w),
             AnyTransport::IntegerLiteralBinary(t) => t.render(w),

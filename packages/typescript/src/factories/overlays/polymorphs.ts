@@ -6826,10 +6826,7 @@ export const parenthesizedExpression: {
 		...parenthesizedExpressionTyped
 	}),
 	sequence: Object.freeze({
-		...bundle(F.buildParenthesizedExpressionSequence, C.coerceToParenthesizedExpressionSequence, {
-			key: 'parenthesizedExpression.sequence',
-			max: 1
-		}),
+		...bundle(F.buildParenthesizedExpressionSequence, C.coerceToParenthesizedExpressionSequence),
 		...parenthesizedExpressionSequence
 	})
 });
