@@ -40,16 +40,16 @@ const classes: Record<string, () => object> = {
 	'python group seat': () => py.build.slice({})
 };
 
-const MEMBERS = new Set(['$with', '$trivia', '$engine', '$render', '$toEdit', '$replace']);
+const TRANSPORT_METADATA = new Set(['$type', '$source', '$named', '$text', '$other', '$span', '$textOnly', '$treeHandle', '$format', '$_trivia', '$slotOrder']);
 
 const offenders = (value: unknown, path = '$'): string[] => {
 	if (typeof value === 'function') return [`${path} is a function`];
 	if (Array.isArray(value)) return value.flatMap((entry, index) => offenders(entry, `${path}[${index}]`));
 	if (value === null || typeof value !== 'object') return [];
-	const isNode = typeof (value as { $type?: unknown }).$type === 'number';
+	const isNode = ['number', 'string'].includes(typeof (value as { $type?: unknown }).$type);
 	return Object.entries(value).flatMap(([key, entry]) => {
 		const stray =
-			!isNode || isStorageKey(key) || (key.startsWith('$') && !MEMBERS.has(key)) ? [] : [`${path}.${key} is neither storage nor $ metadata`];
+			!isNode || isStorageKey(key) || TRANSPORT_METADATA.has(key) ? [] : [`${path}.${key} is neither storage nor $ metadata`];
 		return [...stray, ...offenders(entry, `${path}.${key}`)];
 	});
 };
