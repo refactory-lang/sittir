@@ -125,9 +125,10 @@ describe('rendering parts parsed by other engines of the language', () => {
 	});
 });
 
-describe('the tree table across threads', () => {
+describe('the tree table across threads and processes', () => {
 	const fixture = (name: string): string =>
 		fileURLToPath(new URL(`../../common/tests/fixtures/${name}`, import.meta.url));
+	const REFUSAL = /another tree table.*parse the source on this thread/;
 	const reply = <T>(worker: Worker): Promise<T> =>
 		new Promise((resolve, reject) => {
 			worker.once('message', resolve);
@@ -155,7 +156,24 @@ describe('the tree table across threads', () => {
 		});
 		const message = await reply<{ rendered?: string; error?: string }>(worker);
 		expect(message.rendered).toBeUndefined();
-		expect(message.error).toMatch(/another thread's tree table.*parse the source on this thread/);
+		expect(message.error).toMatch(REFUSAL);
+	}, 60_000);
+
+	it('refuses read data copied in from another process', () => {
+		// Every process counts its tree ids from 0 and its main thread is
+		// thread 0, so both match between the two child processes here.
+		const run = (name: string, ...args: string[]): string =>
+			execFileSync(process.execPath, ['--import', 'tsx', fixture(name), ...args], {
+				cwd: fileURLToPath(new URL('..', import.meta.url)),
+				encoding: 'utf8',
+				env: { ...process.env, SITTIR_BACKEND: 'native' }
+			})
+				.trim()
+				.split('\n')
+				.at(-1) ?? '';
+		const leaf = run('tree-leaf-process.mts');
+		const message = JSON.parse(run('tree-leaf-receiver.mts', leaf)) as { rendered?: string; error?: string };
+		expect(message.rendered).toBeUndefined();
+		expect(message.error).toMatch(REFUSAL);
 	}, 60_000);
 });
-

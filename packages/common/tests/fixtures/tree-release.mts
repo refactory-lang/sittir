@@ -41,17 +41,16 @@ await settle(base + 1);
 report.droppedCount = native.liveTreeCount() - base;
 
 // A tree outlives a disposed engine, and is released once its node is gone.
-let orphan: unknown = await (async () => {
+const holder: { orphan?: unknown } = {};
+await (async () => {
 	const short = await createEngine(rust);
-	const node = short.parse('fn orphan() {}\n').statements()[0];
+	holder.orphan = short.parse('fn orphan() {}\n').statements()[0];
 	short.dispose();
-	return node;
 })();
 await settle(base + 2);
 report.orphanCount = native.liveTreeCount() - base;
-orphan = undefined;
+delete holder.orphan;
 await settle(base + 1);
 report.afterOrphanCount = native.liveTreeCount() - base;
-void orphan;
 
 console.log(JSON.stringify(report));

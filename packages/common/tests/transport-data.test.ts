@@ -294,9 +294,9 @@ describe('the tree token a parsed object holds', () => {
 		});
 	});
 
-	it('is refused at the projection when another thread minted it, on a coordinate and on a trivia entry', () => {
-		const foreign = { ...token, thread: token.thread + 1 };
-		const refusal = /another thread's tree table.*parse the source on this thread/;
+	it('is refused at the projection when another table minted it, on a coordinate and on a trivia entry', () => {
+		const foreign = { ...token, table: 'the table of another thread or process' };
+		const refusal = /another tree table.*parse the source on this thread/;
 		const coordinate = { $type: 5, $span: { start: 1, end: 2 }, $handle: 9, $tree: foreign };
 		expect(() => toTransportData(coordinate as never)).toThrow(refusal);
 		expect(() => toTransportData({ $type: 1, _child: coordinate } as never)).toThrow(refusal);

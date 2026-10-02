@@ -77,8 +77,8 @@ pub trait SourceTable {
 /// handle is the only thing that names that tree.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CoordinateError {
-    /// The handle's tag names no tree this engine holds: read elsewhere,
-    /// already disposed, or never parsed.
+    /// The handle's tag names no tree in this language's table on this
+    /// thread: never parsed here, or already released.
     UnknownTree {
         handle: u64,
         tree_id: u32,
