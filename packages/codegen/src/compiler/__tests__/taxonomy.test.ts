@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
@@ -16,7 +17,7 @@ beforeAll(async () => {
 	nodeMap = assemble(AssembleCtx.from(normalized));
 	// Mirror the generate() pipeline: determined slots leave the record
 	// before any classification runs.
-});
+}, FULL_PIPELINE_TIMEOUT);
 
 describe('soleSlotFacts — the structural sole slot', () => {
 	it('is null for a kind with 2+ slots', () => {

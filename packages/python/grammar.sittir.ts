@@ -213,13 +213,6 @@ export default sittirGrammar(base, {
 			1: field('arguments')
 		},
 
-		expression_list: {
-			1: field('tail')
-		},
-		pattern_list: {
-			1: field('tail')
-		},
-
 		class_pattern: {
 			0: field('name'),
 			2: field('arguments')

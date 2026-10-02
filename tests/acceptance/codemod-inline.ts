@@ -20,10 +20,10 @@ import { loadLanguageForGrammar } from '../../packages/tools/src/validate/common
 
 /** A function_item match marked for inlining. */
 interface InlineMatch {
-	/** Byte offset of the first character of the function (or its
+	/** String index of the first character of the function (or its
 	 *  first existing attribute, if any). The `#[inline]\n` is
 	 *  spliced in here. */
-	startByte: number;
+	startIndex: number;
 	/** Indentation prefix preceding the function on its line, used so
 	 *  the inserted attribute sits on its own at the same indent. */
 	indent: string;
@@ -56,8 +56,8 @@ export async function runCodemodOnSource(source: string): Promise<{ output: stri
 	tree.delete();
 	if (matches.length === 0) return { output: source, insertions: 0 };
 	const output = [...matches]
-		.sort((a, b) => b.startByte - a.startByte)
-		.reduce((text, m) => `${text.slice(0, m.startByte)}#[inline]\n${m.indent}${text.slice(m.startByte)}`, source);
+		.sort((a, b) => b.startIndex - a.startIndex)
+		.reduce((text, m) => `${text.slice(0, m.startIndex)}#[inline]\n${m.indent}${text.slice(m.startIndex)}`, source);
 	return { output, insertions: matches.length };
 }
 
@@ -132,14 +132,14 @@ function considerFunction(node: any, source: string): InlineMatch | null {
 	}
 
 	const anchorNode = siblings[firstAttrIdx];
-	const startByte = anchorNode.startIndex;
+	const startIndex = anchorNode.startIndex;
 	// Indent = whitespace from the start of the line containing
 	// anchorNode up to its first column. Lets the inserted attribute
 	// align with the function (top-level functions get '', nested
 	// ones inside an impl block get the impl's indentation).
-	const lineStart = source.lastIndexOf('\n', startByte - 1) + 1;
-	const indent = source.slice(lineStart, startByte);
-	return { startByte, indent };
+	const lineStart = source.lastIndexOf('\n', startIndex - 1) + 1;
+	const indent = source.slice(lineStart, startIndex);
+	return { startIndex, indent };
 }
 
 /**

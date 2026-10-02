@@ -597,7 +597,7 @@ The no-argument call of a config-shaped node whose config printed empty.
 
 ### `packages/tools/src/emit/factory-source.ts::emitFactorySourceText`
 
-The generated file binds the engine once to a variable named by `engineBinding`, `const rs = await createEngine(rust);`, and calls through it: every printed factory path is `<engine>.build.<path>` and every kind id `<engine>.kinds.<Member>` (`buildPath`, `kindsPath`, read by the kind-id printer, the loose kind tag and the path resolver). A body that uses neither awaits the engine unbound. The call that creates the engine is printed by `engineCall` alone, so a different entry point is one change there.
+The generated file binds the engine once to a variable named by `engineBinding`, `const rs = await rust.createEngine();`, and calls through it: every printed factory path is `<engine>.build.<path>` and every kind id `<engine>.kinds.<Member>` (`buildPath`, `kindsPath`, read by the kind-id printer, the loose kind tag and the path resolver). A body that uses neither awaits the engine unbound. The call that creates the engine is printed by `engineCall` alone, so a different entry point is one change there.
 
 Both surfaces print from the same `ModelFacts`; `PrintContext.surface` decides only what the surface itself differs in: the `.strict` call spelling, and the coercions the loose contract admits (bare text, dropped single-slot wrappers, bare arrays, `$type`-tagged seat configs). Hoisting is not a loose coercion, so it reads the facts on both: a seat element that sets one required slot is that value (`hoistSeatElement`), an options bag restating the list's default delimiter is dropped (`listOptionsAreDefault`), and an owner takes its list's arguments (`ownedListArgs`).
 

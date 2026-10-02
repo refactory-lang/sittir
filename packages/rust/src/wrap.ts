@@ -2243,7 +2243,7 @@ export function wrapNonSpecialToken(data: T.NonSpecialToken, tree: TreeHandle): 
 					while: 104
 				},
 				undefined,
-				[336, 341, 361, 362]
+				[336, 341, 360, 361]
 			),
 			tree
 		),
@@ -16666,7 +16666,7 @@ export function wrapRangeExpressionBare(data: T.RangeExpressionBare, tree: TreeH
 				{ tree, nodeType: data.$type, slotName: 'range_expression_bare', span: (data as _UntypedNode).$span }
 			),
 			{ '..': 100 },
-			{ 363: 100 }
+			{ 362: 100 }
 		),
 
 		rangeExpressionBare() {
@@ -19596,11 +19596,11 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	}),
 	[TSKindId.StringOpen]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.StringOpen as const }),
 	[TSKindId.TupleTypeElements]: (d, t) => wrapTupleTypeElements(d as unknown as T.TupleTypeElements, t),
-	[TSKindId.TupleExpressionElements]: (d, t) =>
-		wrapTupleExpressionElements(d as unknown as T.TupleExpressionElements, t),
 	[TSKindId.TokenTreePunctuation]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.TokenTreePunctuation as const }),
 	[TSKindId.TokenKeywords]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.TokenKeywords as const }),
 	[TSKindId.ImplItemUnsafeMarker]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.ImplItemUnsafeMarker as const }),
+	[TSKindId.TupleExpressionElements]: (d, t) =>
+		wrapTupleExpressionElements(d as unknown as T.TupleExpressionElements, t),
 	[TSKindId.IntegerLiteralDecimal]: (d, t) => wrapIntegerLiteralDecimal(d as unknown as T.IntegerLiteralDecimal, t),
 	[TSKindId.IntegerLiteralHex]: (d, t) => wrapIntegerLiteralHex(d as unknown as T.IntegerLiteralHex, t),
 	[TSKindId.IntegerLiteralBinary]: (d, t) => wrapIntegerLiteralBinary(d as unknown as T.IntegerLiteralBinary, t),
@@ -19792,7 +19792,7 @@ function _wrapTrivia(trivia: _UntypedNode['$_trivia'], tree: TreeHandle): _Untyp
 const _ALIAS_ENVELOPES: ReadonlySet<_UntypedNode['$type']> = new Set([465, 467, 468]);
 const _HIDDEN_KINDS: ReadonlySet<_UntypedNode['$type']> = new Set([
 	165, 167, 168, 169, 170, 171, 172, 173, 174, 175, 177, 180, 182, 183, 187, 193, 194, 196, 213, 225, 236, 253, 257,
-	258, 260, 261, 262, 266, 269, 278, 289, 290, 294, 301, 314, 320, 323, 327, 328, 329, 331, 334, 335, 362, 363, 364,
+	258, 260, 261, 262, 266, 269, 278, 289, 290, 294, 301, 314, 320, 323, 327, 328, 329, 331, 334, 335, 361, 362, 363,
 	365, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456,
 	457, 458, 459, 460, 461, 462, 463, 464
 ]);

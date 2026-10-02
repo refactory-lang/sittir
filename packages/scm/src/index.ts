@@ -5,7 +5,12 @@ import type { ScmAPI } from './api.js';
 
 export type { ScmAPI } from './api.js';
 
-const scm: Language<ScmAPI> = { name: 'scm', fileTypes: ['scm'], load: () => import('./api.js').then((m) => m.hooks) };
+const scm: Language<ScmAPI> = {
+	name: 'scm',
+	fileTypes: ['scm'],
+	load: () => import('./api.js').then((m) => m.hooks),
+	createEngine: (options) => import('@sittir/common').then((m) => m.createEngine(scm, options))
+};
 export default scm;
 
 export type * from './types.js';

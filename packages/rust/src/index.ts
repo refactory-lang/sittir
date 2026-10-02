@@ -8,7 +8,8 @@ export type { RustAPI } from './api.js';
 const rust: Language<RustAPI> = {
 	name: 'rust',
 	fileTypes: ['rs'],
-	load: () => import('./api.js').then((m) => m.hooks)
+	load: () => import('./api.js').then((m) => m.hooks),
+	createEngine: (options) => import('@sittir/common').then((m) => m.createEngine(rust, options))
 };
 export default rust;
 

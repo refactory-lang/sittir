@@ -37,7 +37,7 @@ export interface ParseOptions {
 }
 
 export interface EngineIdentity<API extends LanguageAPI = LanguageAPI> {
-	readonly language: Language<API>;
+	readonly language: LanguageIdentity<API>;
 	readonly renderModuleHash: string;
 	readonly options: API['options'] | undefined;
 	readonly trivia: TriviaFacts;
@@ -78,11 +78,29 @@ export interface LanguageAPI {
 	readonly empty: GrammarTypeMap['empty'];
 }
 
+/** What names a language and what an engine records of it: a `Language` without its engine constructor. Unlike `Language`, it is assignable across `LanguageAPI`s. */
+export type LanguageIdentity<API extends LanguageAPI> = Omit<Language<API>, 'createEngine'>;
+
+/** The options `createEngine` takes: the engine options, with the `render` block checked against the language's render options. */
+export type CreateEngineOptions<API extends LanguageAPI, R = API['options']> = EngineOptions<API> & {
+	readonly render?: R & RenderOptionsCheck<API, R>;
+};
+
 export interface Language<API extends LanguageAPI> {
 	readonly name: API['name'];
 	readonly fileTypes: readonly string[];
 	load(): Promise<LanguageHooks<API>>;
 	readonly __api?: API;
+	/**
+	 * Creates an engine for this language, the same as `createEngine(language, options)` from
+	 * `@sittir/common`. The implementation loads on the first call; importing the descriptor does not.
+	 *
+	 * @param options - Engine options. `render` sets the engine's render options and is checked
+	 * against this language's options: an unknown key or a mistyped value is a type error.
+	 * @returns The engine, once the language has loaded.
+	 * @throws When an option the engine does not implement yet is set, or the language fails to load.
+	 */
+	createEngine<const R extends API['options'] = API['options']>(options?: CreateEngineOptions<API, R>): Promise<Engine<API>>;
 }
 
 export interface NativeEngineOptions<O extends object = Readonly<Record<string, unknown>>> {
@@ -249,4 +267,4 @@ export type NodeOfNamespaces<NsMap extends object> = Extract<
 >;
 
 export type Types<E> = E extends Engine<infer API, ApiSurface> ? API['types'] : never;
-export type ApiOf<L> = L extends Language<infer API> ? API : never;
+export type ApiOf<L> = L extends LanguageIdentity<infer API> ? API : never;

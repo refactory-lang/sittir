@@ -3501,79 +3501,46 @@ export function wrapBlock(data: T.Block, tree: TreeHandle): T.Block.Parsed {
 	return node as unknown as T.Block.Parsed;
 }
 
-export function wrapExpressionList(data: T.ExpressionList, tree: TreeHandle): T.ExpressionList.Parsed {
-	data = _keepModelledSlots(data, ['_expression', '_tail']);
+export function wrapExpressionList(
+	data: T.ExpressionList & {
+		readonly $other?: _UntypedNode['$other'];
+		readonly $span?: { start: number; end: number };
+	},
+	tree: TreeHandle
+): T.ExpressionList.Parsed {
+	data = _keepModelledSlots(data, ['_expression']);
 	const handle = currentHandle();
-	if (_isReadTextLeaf(data)) {
-		const node = {
-			...data,
-			$type: TSKindId.ExpressionList as const,
-			$render: () => renderText(handle, node),
-			$trivia: {
-				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-			},
-			$engine: handle && (() => handle.current)
-		};
-		return node as unknown as T.ExpressionList.Parsed;
-	}
+	const _content = storeExpanded(
+		normalizeRepeatedWrapSlot(data._expression, true, 'expression', {
+			tree,
+			nodeType: data.$type,
+			slotName: 'expression',
+			span: (data as _UntypedNode).$span
+		}),
+		tree
+	);
+	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+		? Delimiter.Trailing
+		: Delimiter.None;
+	const listedStored = storedElements(_content);
 	const node = {
 		...data,
 		$type: TSKindId.ExpressionList as const,
-		_expression: storeExpanded(
-			projectMixedEnumStorage(
-				normalizeSingularWrapSlot(
-					data._expression ??
-						readTerminalFromOther<T.Expression>(data, [
-							TSKindId.True,
-							TSKindId.False,
-							TSKindId.None,
-							TSKindId.Ellipsis
-						]),
-					'expression',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _UntypedNode).$span }
-				),
-				{ True: 70, False: 71, None: 72, '...': 64 }
-			),
-			tree
-		),
-		_tail: storeExpanded(
-			projectMixedEnumStorage(
-				normalizeSingularWrapSlot(data._tail, 'tail', true, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'tail',
-					span: (data as _UntypedNode).$span
-				}),
-				{ ',': 6 }
-			),
-			tree
-		),
+		_expression: _content,
+		_delimiter,
 
-		expression() {
-			return hydrateChild<T.Expression>(this._expression, tree);
+		expressions() {
+			return hydrateChildren<T.Expression>(this._expression as readonly T.Expression[] | undefined, tree);
 		},
-		tail() {
-			return hydrateChild<TSKindId.Comma | T.ExpressionListExpressions>(this._tail, tree);
-		},
-		$with: {
-			expression: (v: NonNullable<T.ExpressionList['_expression']>) =>
-				rebuilt(node, handle, () => wrapExpressionList({ ...$edited(data), _expression: v }, tree)),
-			tail: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{
-							kind: TSKindId.ExpressionListExpressions as const,
-							optional: false,
-							make: RAW.buildExpressionListExpressions
-						},
-						(v: NonNullable<T.ExpressionList['_tail']>) => wrapExpressionList({ ...$edited(data), _tail: v }, tree)
-					)
-				)
-		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'expressions'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3581,6 +3548,7 @@ export function wrapExpressionList(data: T.ExpressionList, tree: TreeHandle): T.
 		},
 		$engine: handle && (() => handle.current)
 	};
+	defineListIndices(node, listedStored.length);
 	return node as unknown as T.ExpressionList.Parsed;
 }
 
@@ -3697,8 +3665,8 @@ export function wrapSimplePattern(data: T.SimplePattern, tree: TreeHandle): T.Si
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
 				),
-				{ True: 70, False: 71, None: 72, _: 279 },
-				{ 48: 279 }
+				{ True: 70, False: 71, None: 72, _: 277 },
+				{ 48: 277 }
 			),
 			tree
 		),
@@ -3811,8 +3779,8 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle): T.Unio
 					'patterns',
 					{ tree, nodeType: data.$type, slotName: 'patterns', span: (data as _UntypedNode).$span }
 				),
-				{ True: 70, False: 71, None: 72, _: 279 },
-				{ 48: 279 }
+				{ True: 70, False: 71, None: 72, _: 277 },
+				{ 48: 277 }
 			),
 			tree
 		),
@@ -3958,8 +3926,8 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle): 
 					slotName: 'key',
 					span: (data as _UntypedNode).$span
 				}),
-				{ True: 70, False: 71, None: 72, _: 279 },
-				{ 48: 279 }
+				{ True: 70, False: 71, None: 72, _: 277 },
+				{ 48: 277 }
 			),
 			tree
 		),
@@ -4047,8 +4015,8 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle): T.
 					slotName: 'value',
 					span: (data as _UntypedNode).$span
 				}),
-				{ True: 70, False: 71, None: 72, _: 279 },
-				{ 48: 279 }
+				{ True: 70, False: 71, None: 72, _: 277 },
+				{ 48: 277 }
 			),
 			tree
 		),
@@ -5971,65 +5939,43 @@ export function wrapAugmentedAssignment(data: T.AugmentedAssignment, tree: TreeH
 	return node as unknown as T.AugmentedAssignment.Parsed;
 }
 
-export function wrapPatternList(data: T.PatternList, tree: TreeHandle): T.PatternList.Parsed {
-	data = _keepModelledSlots(data, ['_pattern', '_tail']);
+export function wrapPatternList(
+	data: T.PatternList & { readonly $other?: _UntypedNode['$other']; readonly $span?: { start: number; end: number } },
+	tree: TreeHandle
+): T.PatternList.Parsed {
+	data = _keepModelledSlots(data, ['_pattern']);
 	const handle = currentHandle();
-	if (_isReadTextLeaf(data)) {
-		const node = {
-			...data,
-			$type: TSKindId.PatternList as const,
-			$render: () => renderText(handle, node),
-			$trivia: {
-				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-			},
-			$engine: handle && (() => handle.current)
-		};
-		return node as unknown as T.PatternList.Parsed;
-	}
+	const _content = storeExpanded(
+		normalizeRepeatedWrapSlot(data._pattern, true, 'pattern', {
+			tree,
+			nodeType: data.$type,
+			slotName: 'pattern',
+			span: (data as _UntypedNode).$span
+		}),
+		tree
+	);
+	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+		? Delimiter.Trailing
+		: Delimiter.None;
+	const listedStored = storedElements(_content);
 	const node = {
 		...data,
 		$type: TSKindId.PatternList as const,
-		_pattern: storeExpanded(
-			normalizeSingularWrapSlot(data._pattern, 'pattern', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'pattern',
-				span: (data as _UntypedNode).$span
-			}),
-			tree
-		),
-		_tail: storeExpanded(
-			projectMixedEnumStorage(
-				normalizeSingularWrapSlot(data._tail, 'tail', true, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'tail',
-					span: (data as _UntypedNode).$span
-				}),
-				{ ',': 6 }
-			),
-			tree
-		),
+		_pattern: _content,
+		_delimiter,
 
-		pattern() {
-			return hydrateChild<T.Pattern>(this._pattern, tree);
+		patterns() {
+			return hydrateChildren<T.Pattern>(this._pattern as readonly T.Pattern[] | undefined, tree);
 		},
-		tail() {
-			return hydrateChild<TSKindId.Comma | T.PatternListPatterns>(this._tail, tree);
-		},
-		$with: {
-			pattern: (v: NonNullable<T.PatternList['_pattern']>) =>
-				rebuilt(node, handle, () => wrapPatternList({ ...$edited(data), _pattern: v }, tree)),
-			tail: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.PatternListPatterns as const, optional: false, make: RAW.buildPatternListPatterns },
-						(v: NonNullable<T.PatternList['_tail']>) => wrapPatternList({ ...$edited(data), _tail: v }, tree)
-					)
-				)
-		},
+		$with: {},
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'patterns'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6037,6 +5983,7 @@ export function wrapPatternList(data: T.PatternList, tree: TreeHandle): T.Patter
 		},
 		$engine: handle && (() => handle.current)
 	};
+	defineListIndices(node, listedStored.length);
 	return node as unknown as T.PatternList.Parsed;
 }
 
@@ -8678,57 +8625,6 @@ export function wrapArgumentListElements(
 	return node as unknown as T.ArgumentListElements.Parsed;
 }
 
-export function wrapExpressionListExpressions(
-	data: T.ExpressionListExpressions & {
-		readonly $other?: _UntypedNode['$other'];
-		readonly $span?: { start: number; end: number };
-	},
-	tree: TreeHandle
-): T.ExpressionListExpressions.Parsed {
-	data = _keepModelledSlots(data, ['_expression']);
-	const handle = currentHandle();
-	const _content = storeExpanded(
-		normalizeRepeatedWrapSlot(data._expression, true, 'expression', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'expression',
-			span: (data as _UntypedNode).$span
-		}),
-		tree
-	);
-	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 1)
-		? Delimiter.Trailing
-		: Delimiter.None;
-	const listedStored = storedElements(_content);
-	const node = {
-		...data,
-		$type: TSKindId.ExpressionListExpressions as const,
-		_expression: _content,
-		_delimiter,
-
-		expressions() {
-			return hydrateChildren<T.Expression>(this._expression as readonly T.Expression[] | undefined, tree);
-		},
-		$with: {},
-		length: listedStored.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'expressions'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
-		$render: () => renderText(handle, node),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	defineListIndices(node, listedStored.length);
-	return node as unknown as T.ExpressionListExpressions.Parsed;
-}
-
 export function wrapListPatternCasePatterns(
 	data: T.ListPatternCasePatterns & {
 		readonly $other?: _UntypedNode['$other'];
@@ -8832,57 +8728,6 @@ export function wrapDictPatternElements(
 	};
 	defineListIndices(node, listedStored.length);
 	return node as unknown as T.DictPatternElements.Parsed;
-}
-
-export function wrapPatternListPatterns(
-	data: T.PatternListPatterns & {
-		readonly $other?: _UntypedNode['$other'];
-		readonly $span?: { start: number; end: number };
-	},
-	tree: TreeHandle
-): T.PatternListPatterns.Parsed {
-	data = _keepModelledSlots(data, ['_pattern']);
-	const handle = currentHandle();
-	const _content = storeExpanded(
-		normalizeRepeatedWrapSlot(data._pattern, true, 'pattern', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'pattern',
-			span: (data as _UntypedNode).$span
-		}),
-		tree
-	);
-	const _delimiter = _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 1)
-		? Delimiter.Trailing
-		: Delimiter.None;
-	const listedStored = storedElements(_content);
-	const node = {
-		...data,
-		$type: TSKindId.PatternListPatterns as const,
-		_pattern: _content,
-		_delimiter,
-
-		patterns() {
-			return hydrateChildren<T.Pattern>(this._pattern as readonly T.Pattern[] | undefined, tree);
-		},
-		$with: {},
-		length: listedStored.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'patterns'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
-		$render: () => renderText(handle, node),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	defineListIndices(node, listedStored.length);
-	return node as unknown as T.PatternListPatterns.Parsed;
 }
 
 export function wrapSubscripts(
@@ -11308,12 +11153,9 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.WithClauseWithItems]: (d, t) => wrapWithClauseWithItems(d as unknown as T.WithClauseWithItems, t),
 	[TSKindId.Types]: (d, t) => wrapTypes(d as unknown as T.Types, t),
 	[TSKindId.ArgumentListElements]: (d, t) => wrapArgumentListElements(d as unknown as T.ArgumentListElements, t),
-	[TSKindId.ExpressionListExpressions]: (d, t) =>
-		wrapExpressionListExpressions(d as unknown as T.ExpressionListExpressions, t),
 	[TSKindId.ListPatternCasePatterns]: (d, t) =>
 		wrapListPatternCasePatterns(d as unknown as T.ListPatternCasePatterns, t),
 	[TSKindId.DictPatternElements]: (d, t) => wrapDictPatternElements(d as unknown as T.DictPatternElements, t),
-	[TSKindId.PatternListPatterns]: (d, t) => wrapPatternListPatterns(d as unknown as T.PatternListPatterns, t),
 	[TSKindId.Subscripts]: (d, t) => wrapSubscripts(d as unknown as T.Subscripts, t),
 	[TSKindId.DictionaryElements]: (d, t) => wrapDictionaryElements(d as unknown as T.DictionaryElements, t),
 	[TSKindId.SliceGroup]: (d, t) => wrapSliceGroup(d as unknown as T.SliceGroup, t),
@@ -11449,11 +11291,11 @@ function _wrapTrivia(trivia: _UntypedNode['$_trivia'], tree: TreeHandle): _Untyp
 	);
 }
 
-const _ALIAS_ENVELOPES: ReadonlySet<_UntypedNode['$type']> = new Set([334, 335, 336]);
+const _ALIAS_ENVELOPES: ReadonlySet<_UntypedNode['$type']> = new Set([330, 331, 332]);
 const _HIDDEN_KINDS: ReadonlySet<_UntypedNode['$type']> = new Set([
 	116, 117, 122, 123, 124, 125, 126, 128, 129, 143, 162, 183, 194, 195, 203, 204, 205, 215, 218, 250, 251, 254, 255,
-	282, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320,
-	321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333
+	280, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318,
+	319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329
 ]);
 function _displayOf(entry: _UntypedNode): _UntypedNode['$type'] {
 	return (entry as { readonly $displayType?: _UntypedNode['$type'] }).$displayType ?? entry.$type;
@@ -11468,7 +11310,7 @@ function _withoutDisplay(data: _UntypedNode): _UntypedNode {
 }
 
 const _RECLAIMS_ANONYMOUS: ReadonlySet<_UntypedNode['$type']> = new Set([
-	134, 141, 144, 145, 146, 180, 183, 219, 225, 248, 265, 271, 277, 293, 296, 297, 298
+	134, 141, 144, 145, 146, 183, 219, 225, 248, 269, 275, 291, 294, 295, 296
 ]);
 function _spellingTokens(data: _UntypedNode): readonly _UntypedNode[] | undefined {
 	const { $other, ...node } = data;

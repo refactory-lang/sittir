@@ -7466,29 +7466,29 @@ since the parser never mints the aliased node.
 
 ```text
 /**
- * Merge a SUFFIX-style separated list (`(x sep)+ x?` — each element trails
- * its own separator, with an optional final unterminated element) into one
- * `repeat`/`repeat1` node. Mirrors `liftCommaSep`'s PREFIX-style cases
- * (`x (sep x)*`) for the opposite separator orientation; `separatorOf`
- * already stamps a bare `repeat(seq(x, sep))` as `repeat(x){separator:{value:sep,
- * trailing:'mandatory'}}` during this same bottom-up walk — this pass only
- * needs to recognize the two windows that ALSO carry a standalone head and/or
- * an unterminated final element beside that already-stamped repeat:
+ * Merge a SUFFIX-style separated list with no standalone first element
+ * (`(x sep)* x?` — each element trails its own separator, with an optional
+ * final unterminated element) into one `repeat` node. `separatorOf` already
+ * stamps a bare `repeat(seq(x, sep))` as `repeat(x){separator:{value:sep,
+ * trailing:'mandatory'}}` during this same bottom-up walk — this pass
+ * recognizes the window that also carries an unterminated final element
+ * beside that already-stamped repeat:
  *
- *  - `[seq(x, sep), repeat(x){sep, trailing:'mandatory'}, optional(x)]` — a
- *    mandatory first element (needed to disambiguate the construct, e.g.
- *    rust's `(x,)` single-element tuple) absorbs into the repeat's own
- *    minimum, promoting it to `repeat1`.
- *  - `[repeat(x){sep, trailing:'mandatory'}, optional(x)]` — no standalone
- *    head (the construct is valid with zero elements, e.g. an empty
- *    `macro_rules! m {}` body); stays a plain `repeat`.
+ *  - `[repeat(x){sep, trailing:'mandatory'}, optional(x)]` — the construct
+ *    is valid with zero elements (e.g. an empty `macro_rules! m {}` body);
+ *    stays a plain `repeat`.
  *
- * Both windows relax `trailing` from `'mandatory'` (true only of the repeat's
- * OWN body in isolation) to `'optional'` (true of the whole merged list, once
+ * It relaxes `trailing` from `'mandatory'` (true only of the repeat's OWN
+ * body in isolation) to `'optional'` (true of the whole merged list, once
  * the trailing unterminated element is accounted for) — the same relaxation
  * `liftCommaSep`'s prefix Case 2 performs for the mirror-image shape.
  */
 ```
+
+The window is NOT stamped `terminated`: with no mandatory first element, a
+lone element can be the optional (unterminated) tail itself, so a single
+element does not require its separator. The list that does require it, the one
+whose first element carries its own separator, is `liftTerminatedList`'s.
 
 ```text
 // ---------------------------------------------------------------------------
@@ -7518,20 +7518,20 @@ since the parser never mints the aliased node.
  */
 ```
 
-#### body
+### `packages/codegen/src/compiler/link.ts::liftTerminatedList`
 
-```text
-// 3-window: standalone head + repeat + optional tail.
-```
+Lifts a seq that is a `terminated` separated list (a list whose first element
+carries a required separator) to one `repeat1` with
+`separator: { value, trailing: 'optional', terminated: true }`, kept as the
+sole member of the seq. The form is read from `separatedListBodyInfo`, the same
+recognizer enrich used on the same body, so it matches either spelling (the
+suffix one and the choice one) and link holds no window of its own for it.
 
-#### body
-
-```text
-// 2-window: repeat + optional tail, no standalone head. NOT stamped
-// `terminated` — with no mandatory head, a lone element can be the
-// optional (unterminated) tail itself, so a single element does not
-// require its separator the way the 3-window's mandatory head does.
-```
+It runs on the seq BEFORE its members are lifted: the recognizer reads each
+repeat's unstamped `seq(element, separator)` content, which the bottom-up walk
+would otherwise have replaced with a stamped repeat. The element is lifted on
+its own afterwards. `terminated` is what `AssembledList.terminatedSeparator`
+reads, and through it the render keeps the separator after a single element.
 
 ### `packages/codegen/src/compiler/variant-structural.ts::module`
 
@@ -8830,6 +8830,9 @@ every root rebuild so the assembled node still reads it.
  * constructors produced by lifting inner-to-outer at call time.
  */
 ```
+
+A seq that is a `terminated` list is the exception to bottom-up: it is lifted
+whole, from its unlifted members, by `liftTerminatedList`.
 
 #### body
 

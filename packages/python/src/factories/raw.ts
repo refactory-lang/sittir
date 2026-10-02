@@ -1836,42 +1836,58 @@ export function buildBlock(...children: AdmitBound<T.Statement[], T.AdmittedNode
 	return node as unknown as T.Block.Bound;
 }
 
-export function buildExpressionList(config: T.ExpressionList.Config): T.ExpressionList.Bound {
-	const _expression = rejectBareText(
-		kindIdStorage<NonNullable<T.ExpressionList['_expression']>>(config.expression),
-		'ExpressionList.expression',
-		'a built Expression'
-	);
-	const _tail = rejectBareText(
-		kindIdStorage<NonNullable<T.ExpressionList['_tail']>>(config.tail),
-		'ExpressionList.tail',
-		'a built ExpressionListExpressions'
-	);
+export function buildExpressionList(
+	...elements: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>
+): ReturnType<typeof _buildExpressionList>;
+export function buildExpressionList(
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	...elements: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>
+): ReturnType<typeof _buildExpressionList>;
+export function buildExpressionList(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | AdmitBound<T.Expression, T.AdmittedNodes>)[]
+) {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		AdmitBound<T.Expression, T.AdmittedNodes>
+	>;
+	return _buildExpressionList(elements, options);
+}
+function _buildExpressionList(
+	elements: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.ExpressionList.Bound {
+	_assertNonEmpty(elements, 'expression_list.elements');
+	const _expression = elements;
+	const _delimiter = options.delimiter ?? Delimiter.None;
+	const listedStored = storedElements(_expression);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExpressionList as const,
 		$source: 2 as const,
 		$named: true as const,
 		_expression,
-		_tail,
+		_delimiter,
 		$with: {
-			expression: (value: NonNullable<T.ExpressionList.Config>['expression']) =>
-				rebuilt(node, handle, () => buildExpressionList({ ...config, expression: value })),
-			tail: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{
-							kind: TSKindId.ExpressionListExpressions as const,
-							optional: false,
-							make: buildExpressionListExpressions
-						},
-						(value: NonNullable<T.ExpressionList.Config>['tail']) => buildExpressionList({ ...config, tail: value })
-					)
-				)
+			expressions: (...vs: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildExpressionList(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildExpressionList({ ...options, delimiter: v }, ...elements))
 		},
-		expression: () => _expression,
-		tail: () => _tail,
+		expressions: () => _expression,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1879,6 +1895,7 @@ export function buildExpressionList(config: T.ExpressionList.Config): T.Expressi
 		},
 		$engine: handle && (() => handle.current)
 	};
+	defineListIndices(node, listedStored.length);
 	return node as unknown as T.ExpressionList.Bound;
 }
 
@@ -3152,33 +3169,58 @@ export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): 
 	return node as unknown as T.AugmentedAssignment.Bound;
 }
 
-export function buildPatternList(config: T.PatternList.Config): T.PatternList.Bound {
-	const _pattern = rejectBareText(config.pattern, 'PatternList.pattern', 'a built Pattern');
-	const _tail = rejectBareText(
-		kindIdStorage<NonNullable<T.PatternList['_tail']>>(config.tail),
-		'PatternList.tail',
-		'a built PatternListPatterns'
-	);
+export function buildPatternList(
+	...elements: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>
+): ReturnType<typeof _buildPatternList>;
+export function buildPatternList(
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	...elements: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>
+): ReturnType<typeof _buildPatternList>;
+export function buildPatternList(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | AdmitBound<T.Pattern, T.AdmittedNodes>)[]
+) {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		AdmitBound<T.Pattern, T.AdmittedNodes>
+	>;
+	return _buildPatternList(elements, options);
+}
+function _buildPatternList(
+	elements: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.PatternList.Bound {
+	_assertNonEmpty(elements, 'pattern_list.elements');
+	const _pattern = elements;
+	const _delimiter = options.delimiter ?? Delimiter.None;
+	const listedStored = storedElements(_pattern);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.PatternList as const,
 		$source: 2 as const,
 		$named: true as const,
 		_pattern,
-		_tail,
+		_delimiter,
 		$with: {
-			pattern: (value: T.Pattern) => rebuilt(node, handle, () => buildPatternList({ ...config, pattern: value })),
-			tail: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.PatternListPatterns as const, optional: false, make: buildPatternListPatterns },
-						(value: NonNullable<T.PatternList.Config>['tail']) => buildPatternList({ ...config, tail: value })
-					)
-				)
+			patterns: (...vs: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildPatternList(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildPatternList({ ...options, delimiter: v }, ...elements))
 		},
-		pattern: () => _pattern,
-		tail: () => _tail,
+		patterns: () => _pattern,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3186,6 +3228,7 @@ export function buildPatternList(config: T.PatternList.Config): T.PatternList.Bo
 		},
 		$engine: handle && (() => handle.current)
 	};
+	defineListIndices(node, listedStored.length);
 	return node as unknown as T.PatternList.Bound;
 }
 
@@ -4986,69 +5029,6 @@ function _buildArgumentListElements(
 	return node as unknown as T.ArgumentListElements.Bound;
 }
 
-export function buildExpressionListExpressions(
-	...elements: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>
-): ReturnType<typeof _buildExpressionListExpressions>;
-export function buildExpressionListExpressions(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>
-): ReturnType<typeof _buildExpressionListExpressions>;
-export function buildExpressionListExpressions(
-	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | AdmitBound<T.Expression, T.AdmittedNodes>)[]
-) {
-	const _optsFirst =
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		!Array.isArray(args[0]) &&
-		!('$type' in (args[0] as object)) &&
-		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		AdmitBound<T.Expression, T.AdmittedNodes>
-	>;
-	return _buildExpressionListExpressions(elements, options);
-}
-function _buildExpressionListExpressions(
-	elements: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>,
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.ExpressionListExpressions.Bound {
-	_assertNonEmpty(elements, 'expression_list_expressions.elements');
-	const _expression = elements;
-	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_expression);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.ExpressionListExpressions as const,
-		$source: 2 as const,
-		$named: true as const,
-		_expression,
-		_delimiter,
-		$with: {
-			expressions: (...vs: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>) =>
-				rebuilt(node, handle, () => buildExpressionListExpressions(options, ...vs)),
-			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => buildExpressionListExpressions({ ...options, delimiter: v }, ...elements))
-		},
-		expressions: () => _expression,
-		length: listedStored.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(listedStored, undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
-		$render: () => renderText(handle, node),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	defineListIndices(node, listedStored.length);
-	return node as unknown as T.ExpressionListExpressions.Bound;
-}
-
 export function buildListPatternCasePatterns(
 	...elements: NonEmptyArray<AdmitBound<T.CasePattern, T.AdmittedNodes>>
 ): ReturnType<typeof _buildListPatternCasePatterns>;
@@ -5176,69 +5156,6 @@ function _buildDictPatternElements(
 	};
 	defineListIndices(node, listedStored.length);
 	return node as unknown as T.DictPatternElements.Bound;
-}
-
-export function buildPatternListPatterns(
-	...elements: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>
-): ReturnType<typeof _buildPatternListPatterns>;
-export function buildPatternListPatterns(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>
-): ReturnType<typeof _buildPatternListPatterns>;
-export function buildPatternListPatterns(
-	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | AdmitBound<T.Pattern, T.AdmittedNodes>)[]
-) {
-	const _optsFirst =
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		!Array.isArray(args[0]) &&
-		!('$type' in (args[0] as object)) &&
-		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		AdmitBound<T.Pattern, T.AdmittedNodes>
-	>;
-	return _buildPatternListPatterns(elements, options);
-}
-function _buildPatternListPatterns(
-	elements: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>,
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.PatternListPatterns.Bound {
-	_assertNonEmpty(elements, 'pattern_list_patterns.elements');
-	const _pattern = elements;
-	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_pattern);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.PatternListPatterns as const,
-		$source: 2 as const,
-		$named: true as const,
-		_pattern,
-		_delimiter,
-		$with: {
-			patterns: (...vs: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>) =>
-				rebuilt(node, handle, () => buildPatternListPatterns(options, ...vs)),
-			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => buildPatternListPatterns({ ...options, delimiter: v }, ...elements))
-		},
-		patterns: () => _pattern,
-		length: listedStored.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(listedStored, undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
-		$render: () => renderText(handle, node),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	defineListIndices(node, listedStored.length);
-	return node as unknown as T.PatternListPatterns.Bound;
 }
 
 export function buildSubscripts(
@@ -7481,10 +7398,8 @@ export type FluentKindMap = {
 	with_clause_with_items: T.WithClauseWithItems.Bound;
 	types: T.Types.Bound;
 	argument_list_elements: T.ArgumentListElements.Bound;
-	expression_list_expressions: T.ExpressionListExpressions.Bound;
 	list_pattern_case_patterns: T.ListPatternCasePatterns.Bound;
 	dict_pattern_elements: T.DictPatternElements.Bound;
-	pattern_list_patterns: T.PatternListPatterns.Bound;
 	subscripts: T.Subscripts.Bound;
 	dictionary_elements: T.DictionaryElements.Bound;
 	slice_group: T.SliceGroup.Bound;
@@ -7680,10 +7595,8 @@ export const _factoryMap = {
 	with_clause_with_items: buildWithClauseWithItems,
 	types: buildTypes,
 	argument_list_elements: buildArgumentListElements,
-	expression_list_expressions: buildExpressionListExpressions,
 	list_pattern_case_patterns: buildListPatternCasePatterns,
 	dict_pattern_elements: buildDictPatternElements,
-	pattern_list_patterns: buildPatternListPatterns,
 	subscripts: buildSubscripts,
 	dictionary_elements: buildDictionaryElements,
 	slice_group: buildSliceGroup,

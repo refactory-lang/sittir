@@ -11,6 +11,19 @@ import { readFileSync } from 'node:fs';
 beforeAll(() => installFakeDsl());
 afterAll(() => restoreFakeDsl());
 
+type Evaluated = Awaited<ReturnType<typeof evaluatePackage>>;
+
+let scm: Evaluated;
+let typescript: Evaluated;
+
+beforeAll(async () => {
+	scm = await evaluatePackage(grammarPackage('scm'));
+});
+
+beforeAll(async () => {
+	typescript = await evaluatePackage(grammarPackage('typescript'));
+});
+
 const sym = (name: string) => ({ type: 'SYMBOL', name });
 const str = (value: string) => ({ type: 'STRING', value });
 const seq = (...members: unknown[]) => ({ type: 'SEQ', members });
@@ -105,8 +118,8 @@ describe('the element choice of a repeat with a lifted arm', () => {
 });
 
 describe('the scm suffix element', () => {
-	it('is one shared supertype with one quantifier kind, referenced by every suffix owner', async () => {
-		const { rules } = await evaluatePackage(grammarPackage('scm'));
+	it('is one shared supertype with one quantifier kind, referenced by every suffix owner', () => {
+		const { rules } = scm;
 		const refersTo = (rule: unknown, name: string): boolean => JSON.stringify(rule).includes(`"name":"${name}"`);
 		expect(rules['list_element_quantifier']).toMatchObject({ type: 'FIELD', name: 'quantifier' });
 		const owners = ['list', 'grouping', 'missing_node', 'anonymous_node', 'named_node_plain', 'named_node_supertyped'];
@@ -115,7 +128,7 @@ describe('the scm suffix element', () => {
 			'_list_element',
 			'list_element_quantifier'
 		]);
-	}, 120_000);
+	});
 });
 
 describe('a variant() name declared under both the owner and its element supertype', () => {
@@ -125,7 +138,7 @@ describe('a variant() name declared under both the owner and its element superty
 		const parserRules = Object.keys(
 			(JSON.parse(readFileSync(new URL('../../../../typescript/.sittir/src/grammar.json', import.meta.url), 'utf8')) as { rules: object }).rules
 		);
-		const { rules } = await evaluatePackage(grammarPackage('typescript'));
+		const { rules } = typescript;
 		const tables = await loadGeneratedIdTables('typescript');
 		if (tables === undefined) throw new Error('no generated id tables for typescript');
 		const catalog = JSON.stringify(collectCatalogKinds(tables));
@@ -139,7 +152,7 @@ describe('a variant() name declared under both the owner and its element superty
 			expect(Object.keys(rules)).toContain(name);
 			expect(catalog).toContain(`"${name}"`);
 		}
-	}, 120_000);
+	});
 });
 
 describe('scm variant names declared under the shared element supertype', () => {
@@ -148,7 +161,7 @@ describe('scm variant names declared under the shared element supertype', () => 
 		const parserRules = Object.keys(
 			(JSON.parse(readFileSync(new URL('../../../../scm/.sittir/src/grammar.json', import.meta.url), 'utf8')) as { rules: object }).rules
 		);
-		const { rules } = await evaluatePackage(grammarPackage('scm'));
+		const { rules } = scm;
 		const tables = await loadGeneratedIdTables('scm');
 		if (tables === undefined) throw new Error('no generated id tables for scm');
 		const catalog = JSON.stringify(collectCatalogKinds(tables));
@@ -162,13 +175,13 @@ describe('scm variant names declared under the shared element supertype', () => 
 			expect(Object.keys(rules)).toContain(name);
 			expect(catalog).toContain(`"${name}"`);
 		}
-	}, 120_000);
+	});
 });
 
 describe('a list group whose element choice became a supertype', () => {
-	it('is still labelled a variant of its parent, so the parent keeps the route that mounts it', async () => {
-		const { rules } = await evaluatePackage(grammarPackage('typescript'));
+	it('is still labelled a variant of its parent, so the parent keeps the route that mounts it', () => {
+		const { rules } = typescript;
 		const group = nodes(rules['enum_body'] as Node).find((n) => n.type === 'SYMBOL' && n.name === 'enum_body_elements');
 		expect(group?.annotations).toMatchObject({ variant: 'elements', variantOf: 'enum_body' });
-	}, 120_000);
+	});
 });

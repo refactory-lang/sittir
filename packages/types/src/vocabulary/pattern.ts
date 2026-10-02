@@ -357,9 +357,6 @@ export namespace Pattern {
 		export interface Bare<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Tuple<G>>> {
 			// claimed by p
 			readonly kind: 'pattern.tuple.bare';
-			readonly pattern: G['expression'] | G['identifier'] | G['pattern'];
-			readonly tail: V.Unmapped<'python:pattern_list_patterns'> | ',';
-			// unmapped: <python:pattern_list_patterns>
 		}
 		export interface Struct<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Tuple<G>>> {
 			// claimed by r

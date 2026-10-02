@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { readFileSync } from 'node:fs';
 import { compileGrammar } from '../../compiler/compile.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
@@ -26,11 +27,20 @@ const factoryElement = (raw: string, factory: string): string | undefined => {
 	return element === null ? undefined : compact(element[1]!).replace(/^\|/, '');
 };
 
+const GRAMMARS = allGrammars();
+const nodeMaps: Record<string, Awaited<ReturnType<typeof compileGrammar>>['nodeMap']> = {};
+
+for (const grammar of GRAMMARS) {
+	beforeAll(async () => {
+		const generatedIdTables = await loadGeneratedIdTables(grammar);
+		nodeMaps[grammar] = (await compileGrammar({ package: grammarPackage(grammar), generatedIdTables })).nodeMap;
+	}, FULL_PIPELINE_TIMEOUT);
+}
+
 describe('every kind that reads as a list is stamped, wired and typed from one fact', () => {
-	for (const grammar of allGrammars()) {
-		it(`${grammar}: the list views the model finds are the interfaces stamped $listView and the nodes that install one`, async () => {
-			const generatedIdTables = await loadGeneratedIdTables(grammar);
-			const { nodeMap } = await compileGrammar({ package: grammarPackage(grammar), generatedIdTables });
+	for (const grammar of GRAMMARS) {
+		it(`${grammar}: the list views the model finds are the interfaces stamped $listView and the nodes that install one`, () => {
+			const nodeMap = nodeMaps[grammar]!;
 			const types = typeSources(grammar);
 			const raw = read(grammar, 'factories/raw.ts');
 			const views = [...nodeMap.nodes.values()].filter((node) => listViewHint(node, nodeMap, undefined) !== undefined);
@@ -49,9 +59,8 @@ describe('every kind that reads as a list is stamped, wired and typed from one f
 			}
 		});
 
-		it(`${grammar}: every slot that holds a list is stamped with its list's items and wired to its builder`, async () => {
-			const generatedIdTables = await loadGeneratedIdTables(grammar);
-			const { nodeMap } = await compileGrammar({ package: grammarPackage(grammar), generatedIdTables });
+		it(`${grammar}: every slot that holds a list is stamped with its list's items and wired to its builder`, () => {
+			const nodeMap = nodeMaps[grammar]!;
 			const types = typeSources(grammar);
 			const parents = [...nodeMap.nodes.values()].filter((node) => listSlotHints(node, nodeMap, undefined).length > 0);
 			if (['rust', 'python', 'typescript'].includes(grammar)) expect(parents.length).toBeGreaterThan(0);

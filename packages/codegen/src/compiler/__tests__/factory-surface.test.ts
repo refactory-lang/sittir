@@ -145,13 +145,18 @@ describe('factory field metadata', () => {
 });
 
 describe('terminated separated lists', () => {
-	const needsTrailing = (kind: string): boolean => {
-		const node = nodeMap.nodes.get(kind);
+	const needsTrailing = (kind: string, map: NodeMap = nodeMap): boolean => {
+		const node = map.nodes.get(kind);
 		return node instanceof AssembledList && node.singleElementNeedsTrailing;
 	};
 
 	it('a list whose first element carries a required separator needs it when it has one element', () => {
 		expect(needsTrailing('tuple_expression_elements')).toBe(true);
+	});
+
+	it('the same list written as a choice after the first element needs it too', () => {
+		expect(needsTrailing('expression_list', pythonNodeMap)).toBe(true);
+		expect(needsTrailing('pattern_list', pythonNodeMap)).toBe(true);
 	});
 
 	it('a list with an optional trailing separator and no required one does not', () => {
