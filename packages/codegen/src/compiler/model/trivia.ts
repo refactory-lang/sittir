@@ -66,6 +66,45 @@ export function defaultTriviaForm(nodeMap: NodeMap): TriviaForm | undefined {
 	};
 }
 
+export interface SpelledTriviaForm {
+	readonly kind: string;
+	readonly opens: readonly string[];
+	readonly closes: readonly string[];
+}
+
+export type SpelledTriviaTable = { readonly forms: readonly SpelledTriviaForm[] } | { readonly reason: string };
+
+export function spelledTriviaTable(nodeMap: NodeMap): SpelledTriviaTable | undefined {
+	const comment = [...nodeMap.nodes.values()].find((node) => node.irKey === COMMENT_IR_KEY);
+	if (comment === undefined) return undefined;
+	if (!(comment instanceof AssembledSupertype)) return { reason: `ir.${COMMENT_IR_KEY} is one kind, '${comment.kind}'` };
+	const forms = comment.subtypes.filter(isNodeRef).flatMap((ref): SpelledTriviaForm[] => {
+		const arm = nodeMap.nodes.get(storageKindOfRef(ref.node));
+		const form = arm instanceof AbstractAssembledCompound ? arm.fullForm : undefined;
+		if (arm === undefined || form === undefined) return [];
+		return [{ kind: arm.kind, opens: form.open.texts, closes: form.close.texts }];
+	});
+	if (forms.length < 2) return { reason: `fewer than two kinds of ir.${COMMENT_IR_KEY} have a fixed spelling` };
+	const clash = spelledFormsClash(forms);
+	if (clash !== undefined) return { reason: clash };
+	const longest = (form: SpelledTriviaForm): number => Math.max(...form.opens.map((open) => open.length));
+	return { forms: [...forms].sort((a, b) => longest(b) - longest(a) || (a.kind < b.kind ? -1 : 1)) };
+}
+
+export function spelledFormsClash(forms: readonly SpelledTriviaForm[]): string | undefined {
+	for (const [index, a] of forms.entries()) {
+		for (const b of forms.slice(index + 1)) {
+			for (const open of a.opens) {
+				const other = b.opens.find((text) => open === '' || text === '' || open.startsWith(text) || text.startsWith(open));
+				if (other !== undefined) {
+					return `'${a.kind}' (${JSON.stringify(open)}) and '${b.kind}' (${JSON.stringify(other)}) are not told apart by how they open`;
+				}
+			}
+		}
+	}
+	return undefined;
+}
+
 export function siblingLeads(nodeMap: NodeMap, node: AssembledNode): TriviaSibling[] {
 	if (!(node instanceof AssembledPolymorph)) return [];
 	return node.arms.flatMap((ref) => {

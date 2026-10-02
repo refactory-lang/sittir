@@ -26,8 +26,8 @@ describe('$trivia on the typescript surface', () => {
 		expect(trailing(ts.build.comment.line(' c')).$render()).toBe('a;\n// c\n\nb;\n');
 	});
 
-	it('reads a loose block spelling as line-comment text, never as a block comment', () => {
-		expect(makeFn('f').$trivia.leading('/* x */').$render()).toBe('///* x */\nfunction f() {}');
+	it('reads a block comment spelled in full as a block comment', () => {
+		expect(makeFn('f').$trivia.leading('/* x */').$render()).toBe('/* x */\nfunction f() {}');
 	});
 
 	it('leading rest arguments render before the node', () => {

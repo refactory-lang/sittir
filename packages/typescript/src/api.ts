@@ -14,6 +14,7 @@ import {
 } from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { triviaFacts } from './utils.js';
+import { buildCommentBlock, buildCommentLine } from './factories/raw.js';
 import { coerceToCommentLine } from './factories/coerce.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ProgramRoot } from './render-engine.js';
@@ -39,7 +40,14 @@ export const hooks: LanguageHooks<TypescriptAPI> = Object.freeze<LanguageHooks<T
 	build: ir,
 	is,
 	kinds: TSKindId,
-	trivia: Object.freeze({ ...triviaFacts, comment: coerceToCommentLine }),
+	trivia: Object.freeze({
+		...triviaFacts,
+		comment: coerceToCommentLine,
+		spelled: Object.freeze([
+			{ open: '/*', close: '*/', build: (text: string) => buildCommentBlock(text as `/*${string}*/`, false) },
+			{ open: '//', close: '', build: (text: string) => buildCommentLine(text as `//${string}`, false) }
+		])
+	}),
 	createNative: (options) => nativeLanguageEngine<TypescriptAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ProgramRoot & ParsedRoot, tree as TreeHandle)
 });

@@ -37,6 +37,7 @@ const EXPECTED = [
 	'sync-base',
 	'test-history',
 	'text-kind-overlap',
+	'spelled-trivia',
 	'trivia-placement',
 	'uncovered-content',
 	'variant-derivation-probe',

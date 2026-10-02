@@ -164,7 +164,11 @@ function triviaEntryOf(item: unknown, facts: TriviaFacts): TriviaEntry {
 	return item;
 }
 
-/** Loose text: whitespace text names the whitespace kind spelled exactly so; any other text is a comment's. */
+/**
+ * Loose text: whitespace text names the whitespace kind spelled exactly so; any other text is a comment's.
+ * Where the grammar has several comment kinds told apart by how they open, text spelled in full is the
+ * kind it opens as; any other text is the default comment kind's, as its content.
+ */
 function textEntryOf(text: string, facts: TriviaFacts): TriviaEntry {
 	if (facts.whitespace?.run.test(text) === true) {
 		const kindId = facts.whitespace.kindIdByText[text];
@@ -173,7 +177,10 @@ function textEntryOf(text: string, facts: TriviaFacts): TriviaEntry {
 	}
 	if (!('comment' in facts)) throw new Error(`trivia: ${JSON.stringify(text)} is text, and this grammar has no ir.comment`);
 	if (facts.comment === undefined) throw new Error(`trivia: ${JSON.stringify(text)} is text, and ir.comment is bound when the factories load; import the factories`);
-	return facts.comment(text);
+	const spelled = facts.spelled?.find(
+		(form) => text.length >= form.open.length + form.close.length && text.startsWith(form.open) && text.endsWith(form.close)
+	);
+	return spelled === undefined ? facts.comment(text) : spelled.build(text);
 }
 
 interface ListViewWrapper {

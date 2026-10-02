@@ -470,6 +470,7 @@
     }
   },
   "innerGapsKeyed": false,
+  "spelledTrivia": null,
   "nodes": [
     {
       "kind": "_blankline",
