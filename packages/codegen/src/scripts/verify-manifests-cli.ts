@@ -9,7 +9,7 @@ try {
 			...allGrammars().flatMap((g) => [`packages/${g}`, nativeCrateRelDir(g)])
 		];
 		await withIndexSnapshot(REPO_ROOT, pathspecs, ({ root, visible }) =>
-			assertGeneratedManifestsClean(stableGrammars(), { root, visible, hostBinaries: false })
+			assertGeneratedManifestsClean(stableGrammars(), { root, visible, checkout: REPO_ROOT })
 		);
 	} else {
 		assertGeneratedManifestsClean();
