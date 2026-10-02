@@ -13,6 +13,7 @@
  */
 
 import { beforeAll, describe, it, expect } from 'vitest';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { generate } from '../generate.ts';
 
 describe('leaf factory guards', () => {
@@ -20,7 +21,7 @@ describe('leaf factory guards', () => {
 
 	beforeAll(async () => {
 		factories = (await generate({ grammar: 'rust', outputDir: '/tmp/rust-leaf-guards' })).factories;
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 
 	it('hoists leaf pattern checks to module-level regex consts', () => {
 		// Identifier / metavariable / shebang all carry grammar patterns.
