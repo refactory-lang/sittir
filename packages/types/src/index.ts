@@ -212,6 +212,14 @@ export type ElementsOf<F> = F extends (...args: infer A extends readonly unknown
 		: never;
 
 export type OmitEach<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+/** A config that names none of `T`'s keys. */
+export type NoneOf<T> = { [K in keyof T]?: never };
+/**
+ * `P` naming none of the group `G`'s keys: a flattened group is present as a
+ * whole or absent as a whole. A built node is not a config and passes as it
+ * is; its accessors may share the group's key names.
+ */
+export type WithoutGroup<P, G> = P extends undefined | { readonly $type: string | number } ? P : P & NoneOf<G>;
 export type RenameKeys<T, M extends { readonly [From: string]: string }> = T extends unknown
 	? { [K in keyof T as K extends keyof M ? M[K] : K]: T[K] }
 	: never;

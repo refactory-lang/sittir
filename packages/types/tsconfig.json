@@ -11,7 +11,8 @@
 		"tests/render-options-check.test-d.ts",
 		"tests/node-surface.test-d.ts",
 		"tests/narrow-to.test-d.ts",
-		"tests/keyword-slot-config.test-d.ts"
+		"tests/keyword-slot-config.test-d.ts",
+		"tests/row-is-the-call.test-d.ts"
 	],
 	"exclude": ["node_modules", "dist"]
 }
