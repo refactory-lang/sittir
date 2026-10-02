@@ -1884,7 +1884,7 @@
           }
         ]
       },
-      "star": {
+      "group": {
         "multiple": false,
         "required": false,
         "types": [
@@ -2202,7 +2202,7 @@
     "type": "format_expression",
     "named": true,
     "fields": {
-      "eq": {
+      "debug": {
         "multiple": false,
         "required": false,
         "types": [
@@ -2573,7 +2573,7 @@
     "type": "interpolation",
     "named": true,
     "fields": {
-      "eq": {
+      "debug": {
         "multiple": false,
         "required": false,
         "types": [

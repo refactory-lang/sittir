@@ -300,7 +300,7 @@ export namespace Type {
 		// claimed by r
 		readonly kind: 'type.reference';
 		readonly lifetime?: V.Identifier.Lifetime<G>;
-		readonly mutableSpecifier?: boolean;
+		readonly mutable?: boolean;
 		readonly type: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
 	}
 	export interface Rest<G extends GrammarContext> extends Simplify<SubKindOf<V.Type<G>>> {

@@ -64,7 +64,7 @@ export function rebuildSpliceGenerated() {
 				}), rs.build.parameter.strict({
 					name: rs.build.identifier("f"),
 					type: rs.build.referenceType.strict({
-						mutableSpecifier: true,
+						mutable: true,
 						type: rs.build.genericType.strict({
 							type: rs.build.scopedTypeIdentifier.strict({
 								path: rs.build.scopedIdentifier.strict({
@@ -173,7 +173,7 @@ export function rebuildSpliceGenerated() {
 					type: rs.kinds.StrKeyword,
 				}),
 			}), rs.build.parameter.strict({
-				mutableSpecifier: true,
+				mutable: true,
 				name: rs.build.identifier("edits"),
 				type: rs.build.genericType.strict({
 					type: rs.build.identifier("Vec"),
@@ -373,7 +373,7 @@ export function rebuildSpliceGenerated() {
 						}),
 					})),
 				})).$trivia.leading(rs.build.lineComment.strict(rs.build.lineCommentRegular(" Sort descending by start_pos. Ties broken by end_pos descending —")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" with identical start positions, the longer replacement applies")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" first so the shorter doesn't overwrite its tail. (Tie-breaking is")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" documented consumer-visible behavior; overlap detection is still")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" theirs.)"))), rs.build.letDeclaration.strict({
-					mutableSpecifier: true,
+					mutable: true,
 					pattern: rs.build.identifier("buf"),
 					value: rs.build.callExpression.strict({
 						function: rs.build.scopedIdentifier.strict({

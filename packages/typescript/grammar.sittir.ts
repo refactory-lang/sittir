@@ -240,6 +240,7 @@ export default sittirGrammar(base, {
 		],
 
 		abstract_method_signature: {
+			'2/0': field('override'),
 			'3/0': field('accessor_kind'),
 			'5/0': field('optional')
 		},
@@ -323,6 +324,7 @@ export default sittirGrammar(base, {
 
 		method_definition: {
 			1: field('static'),
+			'2/0': field('override'),
 			'3/0': field('readonly'),
 			'4/0': field('async'),
 			'5/0': field('accessor_kind'),
@@ -331,6 +333,7 @@ export default sittirGrammar(base, {
 
 		method_signature: {
 			1: field('static'),
+			'2/0': field('override'),
 			'5/0': field('accessor_kind'),
 			'7/0': field('optional')
 		},
@@ -342,6 +345,7 @@ export default sittirGrammar(base, {
 
 		property_signature: {
 			1: field('static'),
+			'2/0': field('override'),
 			'5/0': field('optional')
 		},
 
@@ -365,7 +369,7 @@ export default sittirGrammar(base, {
 		},
 
 		yield_expression: [{ '1/0': variant('delegate') }, { 1: field('expression') }],
-		_type_query_subscript_expression: { '1/0': alias('optional_chain_marker') },
+		_type_query_subscript_expression: [{ '1/0': alias('optional_chain_marker') }, { '1/0': field('optional_chain') }],
 
 		expression_statement: {
 			0: field('expression'),
@@ -451,8 +455,10 @@ export default sittirGrammar(base, {
 			// permutation arms.
 			'1/0/0/1/0': field('accessibility_modifier'),
 			'1/0/1/0': field('accessibility_modifier'),
+			'2/0/1/0': field('override'),
 			'4/0': field('optionality')
 		},
+		_parameter_name: { '2/0': field('override') },
 
 		parenthesized_expression: {
 			'1/0': variant('typed'),

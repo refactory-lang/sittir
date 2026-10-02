@@ -1269,7 +1269,7 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "star",
+              "name": "group",
               "content": {
                 "type": "TOKEN",
                 "content": {
@@ -5561,10 +5561,10 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "eq",
+              "name": "debug",
               "content": {
                 "type": "SYMBOL",
-                "name": "_kw_eq"
+                "name": "_kw_debug"
               },
               "metadata": {
                 "fieldSource": "override"
@@ -8155,7 +8155,7 @@
         "value": ","
       }
     },
-    "_kw_eq": {
+    "_kw_debug": {
       "type": "STRING",
       "value": "="
     },
@@ -8734,7 +8734,7 @@
     "_kw_async",
     "_augmented_assignment_operator",
     "_kw_comma",
-    "_kw_eq"
+    "_kw_debug"
   ],
   "supertypes": [
     "_simple_statement",

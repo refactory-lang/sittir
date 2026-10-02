@@ -593,7 +593,7 @@
       }
     },
     "except_clause": {
-      "star": {
+      "group": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1747,7 +1747,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "eq": {
+      "debug": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -7491,9 +7491,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "star",
-          "propertyName": "star",
-          "paramName": "star",
+          "name": "group",
+          "propertyName": "group",
+          "paramName": "group",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -7557,7 +7557,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "star",
+        "group",
         "exception",
         "suite"
       ]
@@ -10221,9 +10221,9 @@
           ]
         },
         {
-          "name": "eq",
-          "propertyName": "eq",
-          "paramName": "eq",
+          "name": "debug",
+          "propertyName": "debug",
+          "paramName": "debug",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -10282,7 +10282,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "expression",
-        "eq",
+        "debug",
         "type_conversion",
         "format_specifier"
       ]

@@ -7559,7 +7559,7 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
 	data = _keepModelledSlots(data, [
 		'_accessibility_modifier',
 		'_static',
-		'_override_modifier',
+		'_override',
 		'_readonly',
 		'_async',
 		'_accessor_kind',
@@ -7604,11 +7604,11 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_override_modifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
+		_override: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._override, 'override', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'override_modifier',
+				slotName: 'override',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -7723,8 +7723,8 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
 		static() {
 			return this._static;
 		},
-		overrideModifier() {
-			return this._override_modifier;
+		override() {
+			return this._override;
 		},
 		readonly() {
 			return this._readonly;
@@ -7789,8 +7789,8 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
 				rebuilt(node, handle, () => wrapMethodDefinition({ ...$edited(data), _accessibility_modifier: v }, tree)),
 			static: (v: NonNullable<T.MethodDefinition['_static']>) =>
 				rebuilt(node, handle, () => wrapMethodDefinition({ ...$edited(data), _static: v }, tree)),
-			overrideModifier: (v: NonNullable<T.MethodDefinition['_override_modifier']>) =>
-				rebuilt(node, handle, () => wrapMethodDefinition({ ...$edited(data), _override_modifier: v }, tree)),
+			override: (v: NonNullable<T.MethodDefinition['_override']>) =>
+				rebuilt(node, handle, () => wrapMethodDefinition({ ...$edited(data), _override: v }, tree)),
 			readonly: (v: NonNullable<T.MethodDefinition['_readonly']>) =>
 				rebuilt(node, handle, () => wrapMethodDefinition({ ...$edited(data), _readonly: v }, tree)),
 			async: (v: NonNullable<T.MethodDefinition['_async']>) =>
@@ -8203,10 +8203,10 @@ export function wrapPublicFieldDefinition(
 		'_declare',
 		'_accessibility_modifier',
 		'_static',
+		'_override',
 		'_readonly',
 		'_abstract',
 		'_accessor',
-		'_override_modifier',
 		'_name',
 		'_optionality',
 		'_type',
@@ -8263,6 +8263,14 @@ export function wrapPublicFieldDefinition(
 				span: (data as _UntypedNode).$span
 			})
 		),
+		_override: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._override, 'override', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'override',
+				span: (data as _UntypedNode).$span
+			})
+		),
 		_readonly: coerceBooleanKeywordStorage(
 			normalizeSingularWrapSlot(data._readonly, 'readonly', false, data.$type, {
 				tree,
@@ -8284,14 +8292,6 @@ export function wrapPublicFieldDefinition(
 				tree,
 				nodeType: data.$type,
 				slotName: 'accessor',
-				span: (data as _UntypedNode).$span
-			})
-		),
-		_override_modifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'override_modifier',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -8373,6 +8373,9 @@ export function wrapPublicFieldDefinition(
 		static() {
 			return this._static;
 		},
+		override() {
+			return this._override;
+		},
 		readonly() {
 			return this._readonly;
 		},
@@ -8381,9 +8384,6 @@ export function wrapPublicFieldDefinition(
 		},
 		accessor() {
 			return this._accessor;
-		},
-		overrideModifier() {
-			return this._override_modifier;
 		},
 		name() {
 			return hydrateChild<
@@ -8436,14 +8436,14 @@ export function wrapPublicFieldDefinition(
 				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _accessibility_modifier: v }, tree)),
 			static: (v: NonNullable<T.PublicFieldDefinition['_static']>) =>
 				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _static: v }, tree)),
+			override: (v: NonNullable<T.PublicFieldDefinition['_override']>) =>
+				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _override: v }, tree)),
 			readonly: (v: NonNullable<T.PublicFieldDefinition['_readonly']>) =>
 				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _readonly: v }, tree)),
 			abstract: (v: NonNullable<T.PublicFieldDefinition['_abstract']>) =>
 				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _abstract: v }, tree)),
 			accessor: (v: NonNullable<T.PublicFieldDefinition['_accessor']>) =>
 				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _accessor: v }, tree)),
-			overrideModifier: (v: NonNullable<T.PublicFieldDefinition['_override_modifier']>) =>
-				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _override_modifier: v }, tree)),
 			name: (v: NonNullable<T.PublicFieldDefinition['_name']>) =>
 				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _name: v }, tree)),
 			optionality: (v: NonNullable<T.PublicFieldDefinition['_optionality']>) =>
@@ -8534,7 +8534,7 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle): 
 	data = _keepModelledSlots(data, [
 		'_accessibility_modifier',
 		'_static',
-		'_override_modifier',
+		'_override',
 		'_readonly',
 		'_async',
 		'_accessor_kind',
@@ -8578,11 +8578,11 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle): 
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_override_modifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
+		_override: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._override, 'override', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'override_modifier',
+				slotName: 'override',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -8688,8 +8688,8 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle): 
 		static() {
 			return this._static;
 		},
-		overrideModifier() {
-			return this._override_modifier;
+		override() {
+			return this._override;
 		},
 		readonly() {
 			return this._readonly;
@@ -8751,8 +8751,8 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle): 
 				rebuilt(node, handle, () => wrapMethodSignature({ ...$edited(data), _accessibility_modifier: v }, tree)),
 			static: (v: NonNullable<T.MethodSignature['_static']>) =>
 				rebuilt(node, handle, () => wrapMethodSignature({ ...$edited(data), _static: v }, tree)),
-			overrideModifier: (v: NonNullable<T.MethodSignature['_override_modifier']>) =>
-				rebuilt(node, handle, () => wrapMethodSignature({ ...$edited(data), _override_modifier: v }, tree)),
+			override: (v: NonNullable<T.MethodSignature['_override']>) =>
+				rebuilt(node, handle, () => wrapMethodSignature({ ...$edited(data), _override: v }, tree)),
 			readonly: (v: NonNullable<T.MethodSignature['_readonly']>) =>
 				rebuilt(node, handle, () => wrapMethodSignature({ ...$edited(data), _readonly: v }, tree)),
 			async: (v: NonNullable<T.MethodSignature['_async']>) =>
@@ -8800,7 +8800,7 @@ export function wrapAbstractMethodSignature(
 ): T.AbstractMethodSignature.Parsed {
 	data = _keepModelledSlots(data, [
 		'_accessibility_modifier',
-		'_override_modifier',
+		'_override',
 		'_accessor_kind',
 		'_name',
 		'_optional',
@@ -8834,11 +8834,11 @@ export function wrapAbstractMethodSignature(
 			}),
 			{ public: 32, private: 33, protected: 34 }
 		),
-		_override_modifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
+		_override: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._override, 'override', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'override_modifier',
+				slotName: 'override',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -8925,8 +8925,8 @@ export function wrapAbstractMethodSignature(
 		accessibilityModifier() {
 			return this._accessibility_modifier;
 		},
-		overrideModifier() {
-			return this._override_modifier;
+		override() {
+			return this._override;
 		},
 		accessorKind() {
 			return this._accessor_kind;
@@ -8982,8 +8982,8 @@ export function wrapAbstractMethodSignature(
 				rebuilt(node, handle, () =>
 					wrapAbstractMethodSignature({ ...$edited(data), _accessibility_modifier: v }, tree)
 				),
-			overrideModifier: (v: NonNullable<T.AbstractMethodSignature['_override_modifier']>) =>
-				rebuilt(node, handle, () => wrapAbstractMethodSignature({ ...$edited(data), _override_modifier: v }, tree)),
+			override: (v: NonNullable<T.AbstractMethodSignature['_override']>) =>
+				rebuilt(node, handle, () => wrapAbstractMethodSignature({ ...$edited(data), _override: v }, tree)),
 			accessorKind: (v: NonNullable<T.AbstractMethodSignature['_accessor_kind']>) =>
 				rebuilt(node, handle, () => wrapAbstractMethodSignature({ ...$edited(data), _accessor_kind: v }, tree)),
 			name: (v: NonNullable<T.AbstractMethodSignature['_name']>) =>
@@ -10502,7 +10502,7 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
 	data = _keepModelledSlots(data, [
 		'_decorator',
 		'_accessibility_modifier',
-		'_override_modifier',
+		'_override',
 		'_readonly',
 		'_pattern',
 		'_type',
@@ -10549,11 +10549,11 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
 			),
 			{ public: 32, private: 33, protected: 34 }
 		),
-		_override_modifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
+		_override: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._override, 'override', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'override_modifier',
+				slotName: 'override',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -10605,8 +10605,8 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
 		accessibilityModifier() {
 			return this._accessibility_modifier;
 		},
-		overrideModifier() {
-			return this._override_modifier;
+		override() {
+			return this._override;
 		},
 		readonly() {
 			return this._readonly;
@@ -10627,8 +10627,8 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
 				),
 			accessibilityModifier: (v: NonNullable<T.RequiredParameter['_accessibility_modifier']>) =>
 				rebuilt(node, handle, () => wrapRequiredParameter({ ...$edited(data), _accessibility_modifier: v }, tree)),
-			overrideModifier: (v: NonNullable<T.RequiredParameter['_override_modifier']>) =>
-				rebuilt(node, handle, () => wrapRequiredParameter({ ...$edited(data), _override_modifier: v }, tree)),
+			override: (v: NonNullable<T.RequiredParameter['_override']>) =>
+				rebuilt(node, handle, () => wrapRequiredParameter({ ...$edited(data), _override: v }, tree)),
 			readonly: (v: NonNullable<T.RequiredParameter['_readonly']>) =>
 				rebuilt(node, handle, () => wrapRequiredParameter({ ...$edited(data), _readonly: v }, tree)),
 			pattern: (v: NonNullable<T.RequiredParameter['_pattern']>) =>
@@ -10652,7 +10652,7 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
 	data = _keepModelledSlots(data, [
 		'_decorator',
 		'_accessibility_modifier',
-		'_override_modifier',
+		'_override',
 		'_readonly',
 		'_pattern',
 		'_type',
@@ -10699,11 +10699,11 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
 			),
 			{ public: 32, private: 33, protected: 34 }
 		),
-		_override_modifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
+		_override: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._override, 'override', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'override_modifier',
+				slotName: 'override',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -10755,8 +10755,8 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
 		accessibilityModifier() {
 			return this._accessibility_modifier;
 		},
-		overrideModifier() {
-			return this._override_modifier;
+		override() {
+			return this._override;
 		},
 		readonly() {
 			return this._readonly;
@@ -10777,8 +10777,8 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
 				),
 			accessibilityModifier: (v: NonNullable<T.OptionalParameter['_accessibility_modifier']>) =>
 				rebuilt(node, handle, () => wrapOptionalParameter({ ...$edited(data), _accessibility_modifier: v }, tree)),
-			overrideModifier: (v: NonNullable<T.OptionalParameter['_override_modifier']>) =>
-				rebuilt(node, handle, () => wrapOptionalParameter({ ...$edited(data), _override_modifier: v }, tree)),
+			override: (v: NonNullable<T.OptionalParameter['_override']>) =>
+				rebuilt(node, handle, () => wrapOptionalParameter({ ...$edited(data), _override: v }, tree)),
 			readonly: (v: NonNullable<T.OptionalParameter['_readonly']>) =>
 				rebuilt(node, handle, () => wrapOptionalParameter({ ...$edited(data), _readonly: v }, tree)),
 			pattern: (v: NonNullable<T.OptionalParameter['_pattern']>) =>
@@ -12452,7 +12452,7 @@ export function wrapTypeQuerySubscriptExpression(
 	data: T.TypeQuerySubscriptExpression,
 	tree: TreeHandle
 ): T.TypeQuerySubscriptExpression.Parsed {
-	data = _keepModelledSlots(data, ['_object', '_optional_chain_marker', '_index']);
+	data = _keepModelledSlots(data, ['_object', '_optional_chain', '_index']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -12482,11 +12482,11 @@ export function wrapTypeQuerySubscriptExpression(
 			),
 			tree
 		),
-		_optional_chain_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._optional_chain_marker, 'optional_chain_marker', false, data.$type, {
+		_optional_chain: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._optional_chain, 'optional_chain', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'optional_chain_marker',
+				slotName: 'optional_chain',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -12525,8 +12525,8 @@ export function wrapTypeQuerySubscriptExpression(
 				| T.TypeQueryCallExpression
 			>(this._object, tree);
 		},
-		optionalChainMarker() {
-			return this._optional_chain_marker;
+		optionalChain() {
+			return this._optional_chain;
 		},
 		index() {
 			return hydrateChild<
@@ -12547,10 +12547,8 @@ export function wrapTypeQuerySubscriptExpression(
 		$with: {
 			object: (v: NonNullable<T.TypeQuerySubscriptExpression['_object']>) =>
 				rebuilt(node, handle, () => wrapTypeQuerySubscriptExpression({ ...$edited(data), _object: v }, tree)),
-			optionalChainMarker: (v: NonNullable<T.TypeQuerySubscriptExpression['_optional_chain_marker']>) =>
-				rebuilt(node, handle, () =>
-					wrapTypeQuerySubscriptExpression({ ...$edited(data), _optional_chain_marker: v }, tree)
-				),
+			optionalChain: (v: NonNullable<T.TypeQuerySubscriptExpression['_optional_chain']>) =>
+				rebuilt(node, handle, () => wrapTypeQuerySubscriptExpression({ ...$edited(data), _optional_chain: v }, tree)),
 			index: (v: NonNullable<T.TypeQuerySubscriptExpression['_index']>) =>
 				rebuilt(node, handle, () => wrapTypeQuerySubscriptExpression({ ...$edited(data), _index: v }, tree))
 		},
@@ -13370,7 +13368,7 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
 	data = _keepModelledSlots(data, [
 		'_accessibility_modifier',
 		'_static',
-		'_override_modifier',
+		'_override',
 		'_readonly',
 		'_name',
 		'_optional',
@@ -13410,11 +13408,11 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_override_modifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
+		_override: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._override, 'override', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'override_modifier',
+				slotName: 'override',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -13485,8 +13483,8 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
 		static() {
 			return this._static;
 		},
-		overrideModifier() {
-			return this._override_modifier;
+		override() {
+			return this._override;
 		},
 		readonly() {
 			return this._readonly;
@@ -13533,8 +13531,8 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
 				rebuilt(node, handle, () => wrapPropertySignature({ ...$edited(data), _accessibility_modifier: v }, tree)),
 			static: (v: NonNullable<T.PropertySignature['_static']>) =>
 				rebuilt(node, handle, () => wrapPropertySignature({ ...$edited(data), _static: v }, tree)),
-			overrideModifier: (v: NonNullable<T.PropertySignature['_override_modifier']>) =>
-				rebuilt(node, handle, () => wrapPropertySignature({ ...$edited(data), _override_modifier: v }, tree)),
+			override: (v: NonNullable<T.PropertySignature['_override']>) =>
+				rebuilt(node, handle, () => wrapPropertySignature({ ...$edited(data), _override: v }, tree)),
 			readonly: (v: NonNullable<T.PropertySignature['_readonly']>) =>
 				rebuilt(node, handle, () => wrapPropertySignature({ ...$edited(data), _readonly: v }, tree)),
 			name: (v: NonNullable<T.PropertySignature['_name']>) =>

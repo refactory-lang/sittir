@@ -1599,13 +1599,13 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "mutable_specifier",
+              "name": "mutable",
               "content": {
                 "type": "SYMBOL",
                 "name": "mutable_specifier"
               },
               "metadata": {
-                "fieldSource": "enriched"
+                "fieldSource": "override"
               }
             },
             {
@@ -2633,13 +2633,13 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "mutable_specifier",
+              "name": "mutable",
               "content": {
                 "type": "SYMBOL",
                 "name": "mutable_specifier"
               },
               "metadata": {
-                "fieldSource": "enriched"
+                "fieldSource": "override"
               }
             },
             {
@@ -2975,13 +2975,13 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "mutable_specifier",
+              "name": "mutable",
               "content": {
                 "type": "SYMBOL",
                 "name": "mutable_specifier"
               },
               "metadata": {
-                "fieldSource": "enriched"
+                "fieldSource": "override"
               }
             },
             {
@@ -3010,13 +3010,13 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "mutable_specifier",
+              "name": "mutable",
               "content": {
                 "type": "SYMBOL",
                 "name": "mutable_specifier"
               },
               "metadata": {
-                "fieldSource": "enriched"
+                "fieldSource": "override"
               }
             },
             {
@@ -3053,13 +3053,13 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "mutable_specifier",
+              "name": "mutable",
               "content": {
                 "type": "SYMBOL",
                 "name": "mutable_specifier"
               },
               "metadata": {
-                "fieldSource": "enriched"
+                "fieldSource": "override"
               }
             },
             {
@@ -3902,13 +3902,13 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "mutable_specifier",
+              "name": "mutable",
               "content": {
                 "type": "SYMBOL",
                 "name": "mutable_specifier"
               },
               "metadata": {
-                "fieldSource": "enriched"
+                "fieldSource": "override"
               }
             },
             {
@@ -7706,13 +7706,13 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "mutable_specifier",
+              "name": "mutable",
               "content": {
                 "type": "SYMBOL",
                 "name": "mutable_specifier"
               },
               "metadata": {
-                "fieldSource": "enriched"
+                "fieldSource": "override"
               }
             },
             {
@@ -13479,13 +13479,13 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "mutable_specifier",
+              "name": "mutable",
               "content": {
                 "type": "SYMBOL",
                 "name": "mutable_specifier"
               },
               "metadata": {
-                "fieldSource": "enriched"
+                "fieldSource": "override"
               }
             },
             {
@@ -13541,13 +13541,13 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "mutable_specifier",
+              "name": "mutable",
               "content": {
                 "type": "SYMBOL",
                 "name": "mutable_specifier"
               },
               "metadata": {
-                "fieldSource": "enriched"
+                "fieldSource": "override"
               }
             },
             {

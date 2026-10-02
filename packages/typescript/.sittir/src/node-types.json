@@ -839,7 +839,7 @@
           }
         ]
       },
-      "override_modifier": {
+      "override": {
         "multiple": false,
         "required": false,
         "types": [
@@ -5157,7 +5157,7 @@
           }
         ]
       },
-      "override_modifier": {
+      "override": {
         "multiple": false,
         "required": false,
         "types": [
@@ -5305,7 +5305,7 @@
           }
         ]
       },
-      "override_modifier": {
+      "override": {
         "multiple": false,
         "required": false,
         "types": [
@@ -5805,6 +5805,16 @@
           }
         ]
       },
+      "override": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "override_modifier",
+            "named": true
+          }
+        ]
+      },
       "pattern": {
         "multiple": false,
         "required": true,
@@ -5851,15 +5861,11 @@
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
       "types": [
         {
           "type": "accessibility_modifier",
-          "named": true
-        },
-        {
-          "type": "override_modifier",
           "named": true
         }
       ]
@@ -6139,7 +6145,7 @@
           }
         ]
       },
-      "override_modifier": {
+      "override": {
         "multiple": false,
         "required": false,
         "types": [
@@ -6275,6 +6281,16 @@
           }
         ]
       },
+      "override": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "override_modifier",
+            "named": true
+          }
+        ]
+      },
       "readonly": {
         "multiple": false,
         "required": false,
@@ -6315,16 +6331,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "override_modifier",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -6383,6 +6389,16 @@
           }
         ]
       },
+      "override": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "override_modifier",
+            "named": true
+          }
+        ]
+      },
       "pattern": {
         "multiple": false,
         "required": true,
@@ -6429,15 +6445,11 @@
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
       "types": [
         {
           "type": "accessibility_modifier",
-          "named": true
-        },
-        {
-          "type": "override_modifier",
           "named": true
         }
       ]
@@ -7561,17 +7573,17 @@
             "named": true
           }
         ]
+      },
+      "optional_chain": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "optional_chain_marker",
+            "named": true
+          }
+        ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "optional_chain_marker",
-          "named": true
-        }
-      ]
     }
   },
   {

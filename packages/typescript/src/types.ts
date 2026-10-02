@@ -5726,7 +5726,7 @@ export interface MethodDefinition {
 	readonly $type: TSKindId.MethodDefinition;
 	readonly _accessibility_modifier?: number;
 	readonly _static?: boolean;
-	readonly _override_modifier?: boolean;
+	readonly _override?: boolean;
 	readonly _readonly?: boolean;
 	readonly _async?: boolean;
 	readonly _accessor_kind?: number;
@@ -5769,7 +5769,7 @@ export interface MethodDefinition {
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
 		>;
 		readonly static?: BaseBooleanKeyword<'static'>;
-		readonly override_modifier?: BaseBooleanKeyword<'override'>;
+		readonly override?: BaseBooleanKeyword<'override'>;
 		readonly readonly?: BaseBooleanKeyword<'readonly'>;
 		readonly async?: BaseBooleanKeyword<'async'>;
 		readonly accessor_kind?: KindEnum<'get' | 'set' | '*', TSKindId.GetKeyword | TSKindId.SetKeyword | TSKindId.Star>;
@@ -5828,14 +5828,14 @@ export interface MethodDefinition {
 		readonly optional?: BaseBooleanKeyword<'?'>;
 	};
 	readonly __looseHints__?: {
-		readonly override_modifier?: 'override' | 'override';
+		readonly override?: 'override' | 'override';
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
 	readonly __slotHints__?: {
 		readonly accessibilityModifier: SlotHint<NonNullable<T.MethodDefinition.Config>['accessibilityModifier'], true>;
 		readonly static: SlotHint<NonNullable<T.MethodDefinition.Config>['static'], true>;
-		readonly overrideModifier: SlotHint<NonNullable<T.MethodDefinition.Config>['overrideModifier'], true>;
+		readonly override: SlotHint<NonNullable<T.MethodDefinition.Config>['override'], true>;
 		readonly readonly: SlotHint<NonNullable<T.MethodDefinition.Config>['readonly'], true>;
 		readonly async: SlotHint<NonNullable<T.MethodDefinition.Config>['async'], true>;
 		readonly accessorKind: SlotHint<NonNullable<T.MethodDefinition.Config>['accessorKind'], true>;
@@ -5858,7 +5858,7 @@ export interface MethodDefinition {
 	};
 	accessibilityModifier(): number | undefined;
 	static(): boolean | undefined;
-	overrideModifier(): boolean | undefined;
+	override(): boolean | undefined;
 	readonly(): boolean | undefined;
 	async(): boolean | undefined;
 	accessorKind(): number | undefined;
@@ -6166,10 +6166,10 @@ export interface PublicFieldDefinition {
 	readonly _declare?: boolean;
 	readonly _accessibility_modifier?: number;
 	readonly _static?: boolean;
+	readonly _override?: boolean;
 	readonly _readonly?: boolean;
 	readonly _abstract?: boolean;
 	readonly _accessor?: boolean;
-	readonly _override_modifier?: boolean;
 	readonly _name:
 		| PropertyIdentifier
 		| TSKindId.DeclareKeyword
@@ -6208,10 +6208,10 @@ export interface PublicFieldDefinition {
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
 		>;
 		readonly static?: BaseBooleanKeyword<'static'>;
+		readonly override?: BaseBooleanKeyword<'override'>;
 		readonly readonly?: BaseBooleanKeyword<'readonly'>;
 		readonly abstract?: BaseBooleanKeyword<'abstract'>;
 		readonly accessor?: BaseBooleanKeyword<'accessor'>;
-		readonly override_modifier?: BaseBooleanKeyword<'override'>;
 		readonly name:
 			| KindEnum<
 					| 'declare'
@@ -6273,7 +6273,7 @@ export interface PublicFieldDefinition {
 			| Expression;
 	};
 	readonly __looseHints__?: {
-		readonly override_modifier?: 'override' | 'override';
+		readonly override?: 'override' | 'override';
 		readonly type?: readonly Type[];
 	};
 	readonly __slotHints__?: {
@@ -6284,10 +6284,10 @@ export interface PublicFieldDefinition {
 			true
 		>;
 		readonly static: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['static'], true>;
+		readonly override: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['override'], true>;
 		readonly readonly: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['readonly'], true>;
 		readonly abstract: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['abstract'], true>;
 		readonly accessor: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['accessor'], true>;
-		readonly overrideModifier: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['overrideModifier'], true>;
 		readonly name: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['name']>;
 		readonly optionality: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['optionality'], true>;
 		readonly type: SlotHint<T.TypeAnnotation, true>;
@@ -6297,10 +6297,10 @@ export interface PublicFieldDefinition {
 	declare(): boolean | undefined;
 	accessibilityModifier(): number | undefined;
 	static(): boolean | undefined;
+	override(): boolean | undefined;
 	readonly(): boolean | undefined;
 	abstract(): boolean | undefined;
 	accessor(): boolean | undefined;
-	overrideModifier(): boolean | undefined;
 	name():
 		| PropertyIdentifier
 		| TSKindId.DeclareKeyword
@@ -6355,7 +6355,7 @@ export interface MethodSignature {
 	readonly $type: TSKindId.MethodSignature;
 	readonly _accessibility_modifier?: number;
 	readonly _static?: boolean;
-	readonly _override_modifier?: boolean;
+	readonly _override?: boolean;
 	readonly _readonly?: boolean;
 	readonly _async?: boolean;
 	readonly _accessor_kind?: number;
@@ -6397,7 +6397,7 @@ export interface MethodSignature {
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
 		>;
 		readonly static?: BaseBooleanKeyword<'static'>;
-		readonly override_modifier?: BaseBooleanKeyword<'override'>;
+		readonly override?: BaseBooleanKeyword<'override'>;
 		readonly readonly?: BaseBooleanKeyword<'readonly'>;
 		readonly async?: BaseBooleanKeyword<'async'>;
 		readonly accessor_kind?: KindEnum<'get' | 'set' | '*', TSKindId.GetKeyword | TSKindId.SetKeyword | TSKindId.Star>;
@@ -6456,14 +6456,14 @@ export interface MethodSignature {
 		readonly optional?: BaseBooleanKeyword<'?'>;
 	};
 	readonly __looseHints__?: {
-		readonly override_modifier?: 'override' | 'override';
+		readonly override?: 'override' | 'override';
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
 	readonly __slotHints__?: {
 		readonly accessibilityModifier: SlotHint<NonNullable<T.MethodSignature.Config>['accessibilityModifier'], true>;
 		readonly static: SlotHint<NonNullable<T.MethodSignature.Config>['static'], true>;
-		readonly overrideModifier: SlotHint<NonNullable<T.MethodSignature.Config>['overrideModifier'], true>;
+		readonly override: SlotHint<NonNullable<T.MethodSignature.Config>['override'], true>;
 		readonly readonly: SlotHint<NonNullable<T.MethodSignature.Config>['readonly'], true>;
 		readonly async: SlotHint<NonNullable<T.MethodSignature.Config>['async'], true>;
 		readonly accessorKind: SlotHint<NonNullable<T.MethodSignature.Config>['accessorKind'], true>;
@@ -6485,7 +6485,7 @@ export interface MethodSignature {
 	};
 	accessibilityModifier(): number | undefined;
 	static(): boolean | undefined;
-	overrideModifier(): boolean | undefined;
+	override(): boolean | undefined;
 	readonly(): boolean | undefined;
 	async(): boolean | undefined;
 	accessorKind(): number | undefined;
@@ -6526,7 +6526,7 @@ export interface MethodSignature {
 export interface AbstractMethodSignature {
 	readonly $type: TSKindId.AbstractMethodSignature;
 	readonly _accessibility_modifier?: number;
-	readonly _override_modifier?: boolean;
+	readonly _override?: boolean;
 	readonly _accessor_kind?: number;
 	readonly _name:
 		| PropertyIdentifier
@@ -6565,7 +6565,7 @@ export interface AbstractMethodSignature {
 			'public' | 'private' | 'protected',
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
 		>;
-		readonly override_modifier?: BaseBooleanKeyword<'override'>;
+		readonly override?: BaseBooleanKeyword<'override'>;
 		readonly accessor_kind?: KindEnum<'get' | 'set' | '*', TSKindId.GetKeyword | TSKindId.SetKeyword | TSKindId.Star>;
 		readonly name:
 			| KindEnum<
@@ -6622,7 +6622,7 @@ export interface AbstractMethodSignature {
 		readonly optional?: BaseBooleanKeyword<'?'>;
 	};
 	readonly __looseHints__?: {
-		readonly override_modifier?: 'override' | 'override';
+		readonly override?: 'override' | 'override';
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
@@ -6631,7 +6631,7 @@ export interface AbstractMethodSignature {
 			NonNullable<T.AbstractMethodSignature.Config>['accessibilityModifier'],
 			true
 		>;
-		readonly overrideModifier: SlotHint<NonNullable<T.AbstractMethodSignature.Config>['overrideModifier'], true>;
+		readonly override: SlotHint<NonNullable<T.AbstractMethodSignature.Config>['override'], true>;
 		readonly accessorKind: SlotHint<NonNullable<T.AbstractMethodSignature.Config>['accessorKind'], true>;
 		readonly name: SlotHint<NonNullable<T.AbstractMethodSignature.Config>['name']>;
 		readonly optional: SlotHint<NonNullable<T.AbstractMethodSignature.Config>['optional'], true>;
@@ -6650,7 +6650,7 @@ export interface AbstractMethodSignature {
 		};
 	};
 	accessibilityModifier(): number | undefined;
-	overrideModifier(): boolean | undefined;
+	override(): boolean | undefined;
 	accessorKind(): number | undefined;
 	name():
 		| PropertyIdentifier
@@ -7349,7 +7349,7 @@ export interface RequiredParameter {
 	readonly $type: TSKindId.RequiredParameter;
 	readonly _decorator?: readonly Decorator[];
 	readonly _accessibility_modifier?: number;
-	readonly _override_modifier?: boolean;
+	readonly _override?: boolean;
 	readonly _readonly?: boolean;
 	readonly _pattern: Pattern | TSKindId.This;
 	readonly _type?: TypeAnnotation;
@@ -7359,7 +7359,7 @@ export interface RequiredParameter {
 			'public' | 'private' | 'protected',
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
 		>;
-		readonly override_modifier?: BaseBooleanKeyword<'override'>;
+		readonly override?: BaseBooleanKeyword<'override'>;
 		readonly readonly?: BaseBooleanKeyword<'readonly'>;
 		readonly pattern: KindEnum<'this', TSKindId.This> | Pattern;
 		readonly value?:
@@ -7370,13 +7370,13 @@ export interface RequiredParameter {
 			| Expression;
 	};
 	readonly __looseHints__?: {
-		readonly override_modifier?: 'override' | 'override';
+		readonly override?: 'override' | 'override';
 		readonly type?: readonly Type[];
 	};
 	readonly __slotHints__?: {
 		readonly decorators: SlotHint<T.Decorator[], true, true>;
 		readonly accessibilityModifier: SlotHint<NonNullable<T.RequiredParameter.Config>['accessibilityModifier'], true>;
-		readonly overrideModifier: SlotHint<NonNullable<T.RequiredParameter.Config>['overrideModifier'], true>;
+		readonly override: SlotHint<NonNullable<T.RequiredParameter.Config>['override'], true>;
 		readonly readonly: SlotHint<NonNullable<T.RequiredParameter.Config>['readonly'], true>;
 		readonly pattern: SlotHint<NonNullable<T.RequiredParameter.Config>['pattern']>;
 		readonly type: SlotHint<T.TypeAnnotation, true>;
@@ -7384,7 +7384,7 @@ export interface RequiredParameter {
 	};
 	decorators(): readonly Decorator[];
 	accessibilityModifier(): number | undefined;
-	overrideModifier(): boolean | undefined;
+	override(): boolean | undefined;
 	readonly(): boolean | undefined;
 	pattern(): Pattern | TSKindId.This;
 	type(): TypeAnnotation | undefined;
@@ -7395,7 +7395,7 @@ export interface OptionalParameter {
 	readonly $type: TSKindId.OptionalParameter;
 	readonly _decorator?: readonly Decorator[];
 	readonly _accessibility_modifier?: number;
-	readonly _override_modifier?: boolean;
+	readonly _override?: boolean;
 	readonly _readonly?: boolean;
 	readonly _pattern: Pattern | TSKindId.This;
 	readonly _type?: TypeAnnotation;
@@ -7405,7 +7405,7 @@ export interface OptionalParameter {
 			'public' | 'private' | 'protected',
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
 		>;
-		readonly override_modifier?: BaseBooleanKeyword<'override'>;
+		readonly override?: BaseBooleanKeyword<'override'>;
 		readonly readonly?: BaseBooleanKeyword<'readonly'>;
 		readonly pattern: KindEnum<'this', TSKindId.This> | Pattern;
 		readonly value?:
@@ -7416,13 +7416,13 @@ export interface OptionalParameter {
 			| Expression;
 	};
 	readonly __looseHints__?: {
-		readonly override_modifier?: 'override' | 'override';
+		readonly override?: 'override' | 'override';
 		readonly type?: readonly Type[];
 	};
 	readonly __slotHints__?: {
 		readonly decorators: SlotHint<T.Decorator[], true, true>;
 		readonly accessibilityModifier: SlotHint<NonNullable<T.OptionalParameter.Config>['accessibilityModifier'], true>;
-		readonly overrideModifier: SlotHint<NonNullable<T.OptionalParameter.Config>['overrideModifier'], true>;
+		readonly override: SlotHint<NonNullable<T.OptionalParameter.Config>['override'], true>;
 		readonly readonly: SlotHint<NonNullable<T.OptionalParameter.Config>['readonly'], true>;
 		readonly pattern: SlotHint<NonNullable<T.OptionalParameter.Config>['pattern']>;
 		readonly type: SlotHint<T.TypeAnnotation, true>;
@@ -7430,7 +7430,7 @@ export interface OptionalParameter {
 	};
 	decorators(): readonly Decorator[];
 	accessibilityModifier(): number | undefined;
-	overrideModifier(): boolean | undefined;
+	override(): boolean | undefined;
 	readonly(): boolean | undefined;
 	pattern(): Pattern | TSKindId.This;
 	type(): TypeAnnotation | undefined;
@@ -8191,7 +8191,7 @@ export interface TypeQuerySubscriptExpression {
 		| TypeQuerySubscriptExpression
 		| TypeQueryMemberExpression
 		| TypeQueryCallExpression;
-	readonly _optional_chain_marker?: boolean;
+	readonly _optional_chain?: boolean;
 	readonly _index:
 		| TSKindId.AnyKeyword
 		| TSKindId.NumberKeyword
@@ -8212,7 +8212,7 @@ export interface TypeQuerySubscriptExpression {
 			| TypeQuerySubscriptExpression
 			| TypeQueryMemberExpression
 			| TypeQueryCallExpression;
-		readonly optional_chain_marker?: BaseBooleanKeyword<'?.'>;
+		readonly optional_chain?: BaseBooleanKeyword<'?.'>;
 		readonly index:
 			| KindEnum<
 					| 'any'
@@ -8241,10 +8241,7 @@ export interface TypeQuerySubscriptExpression {
 	};
 	readonly __slotHints__?: {
 		readonly object: SlotHint<NonNullable<T.TypeQuerySubscriptExpression.Config>['object']>;
-		readonly optionalChainMarker: SlotHint<
-			NonNullable<T.TypeQuerySubscriptExpression.Config>['optionalChainMarker'],
-			true
-		>;
+		readonly optionalChain: SlotHint<NonNullable<T.TypeQuerySubscriptExpression.Config>['optionalChain'], true>;
 		readonly index: SlotHint<NonNullable<T.TypeQuerySubscriptExpression.Config>['index']>;
 	};
 	object():
@@ -8253,7 +8250,7 @@ export interface TypeQuerySubscriptExpression {
 		| TypeQuerySubscriptExpression
 		| TypeQueryMemberExpression
 		| TypeQueryCallExpression;
-	optionalChainMarker(): boolean | undefined;
+	optionalChain(): boolean | undefined;
 	index():
 		| TSKindId.AnyKeyword
 		| TSKindId.NumberKeyword
@@ -8748,7 +8745,7 @@ export interface PropertySignature {
 	readonly $type: TSKindId.PropertySignature;
 	readonly _accessibility_modifier?: number;
 	readonly _static?: boolean;
-	readonly _override_modifier?: boolean;
+	readonly _override?: boolean;
 	readonly _readonly?: boolean;
 	readonly _name:
 		| PropertyIdentifier
@@ -8786,7 +8783,7 @@ export interface PropertySignature {
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
 		>;
 		readonly static?: BaseBooleanKeyword<'static'>;
-		readonly override_modifier?: BaseBooleanKeyword<'override'>;
+		readonly override?: BaseBooleanKeyword<'override'>;
 		readonly readonly?: BaseBooleanKeyword<'readonly'>;
 		readonly name:
 			| KindEnum<
@@ -8843,13 +8840,13 @@ export interface PropertySignature {
 		readonly optional?: BaseBooleanKeyword<'?'>;
 	};
 	readonly __looseHints__?: {
-		readonly override_modifier?: 'override' | 'override';
+		readonly override?: 'override' | 'override';
 		readonly type?: readonly Type[];
 	};
 	readonly __slotHints__?: {
 		readonly accessibilityModifier: SlotHint<NonNullable<T.PropertySignature.Config>['accessibilityModifier'], true>;
 		readonly static: SlotHint<NonNullable<T.PropertySignature.Config>['static'], true>;
-		readonly overrideModifier: SlotHint<NonNullable<T.PropertySignature.Config>['overrideModifier'], true>;
+		readonly override: SlotHint<NonNullable<T.PropertySignature.Config>['override'], true>;
 		readonly readonly: SlotHint<NonNullable<T.PropertySignature.Config>['readonly'], true>;
 		readonly name: SlotHint<NonNullable<T.PropertySignature.Config>['name']>;
 		readonly optional: SlotHint<NonNullable<T.PropertySignature.Config>['optional'], true>;
@@ -8857,7 +8854,7 @@ export interface PropertySignature {
 	};
 	accessibilityModifier(): number | undefined;
 	static(): boolean | undefined;
-	overrideModifier(): boolean | undefined;
+	override(): boolean | undefined;
 	readonly(): boolean | undefined;
 	name():
 		| PropertyIdentifier
@@ -13124,7 +13121,7 @@ export namespace MethodDefinition {
 			readonly asyncKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly before?: WhitespaceArm;
 			readonly optional?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly overrideModifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly overrideKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly readonlyKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly staticKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
@@ -13200,7 +13197,7 @@ export namespace MethodSignature {
 			readonly asyncKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly before?: WhitespaceArm;
 			readonly optional?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly overrideModifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly overrideKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly readonlyKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly staticKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
@@ -13216,7 +13213,7 @@ export namespace AbstractMethodSignature {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
 			readonly optional?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly overrideModifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly overrideKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -13504,6 +13501,7 @@ export namespace RequiredParameter {
 				readonly start?: WhitespaceArm;
 			};
 			readonly eq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly overrideKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly readonlyKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
@@ -13521,6 +13519,7 @@ export namespace OptionalParameter {
 				readonly start?: WhitespaceArm;
 			};
 			readonly eq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly overrideKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly qmark?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly readonlyKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
@@ -13849,7 +13848,7 @@ export namespace PropertySignature {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
 			readonly optional?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly overrideModifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly overrideKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly readonlyKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly staticKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};

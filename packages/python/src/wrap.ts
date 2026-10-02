@@ -2433,7 +2433,7 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle): T.TryS
 }
 
 export function wrapExceptClause(data: T.ExceptClause, tree: TreeHandle): T.ExceptClause.Parsed {
-	data = _keepModelledSlots(data, ['_star', '_exception', '_suite']);
+	data = _keepModelledSlots(data, ['_group', '_exception', '_suite']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -2451,11 +2451,11 @@ export function wrapExceptClause(data: T.ExceptClause, tree: TreeHandle): T.Exce
 	const node = {
 		...data,
 		$type: TSKindId.ExceptClause as const,
-		_star: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._star, 'star', false, data.$type, {
+		_group: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._group, 'group', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'star',
+				slotName: 'group',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -2478,8 +2478,8 @@ export function wrapExceptClause(data: T.ExceptClause, tree: TreeHandle): T.Exce
 			tree
 		),
 
-		star() {
-			return this._star;
+		group() {
+			return this._group;
 		},
 		exception() {
 			return hydrateChild<T.ExceptClauseException | undefined>(this._exception, tree);
@@ -2488,8 +2488,8 @@ export function wrapExceptClause(data: T.ExceptClause, tree: TreeHandle): T.Exce
 			return hydrateChild<T.Suite>(this._suite, tree);
 		},
 		$with: {
-			star: (v: NonNullable<T.ExceptClause['_star']>) =>
-				rebuilt(node, handle, () => wrapExceptClause({ ...$edited(data), _star: v }, tree)),
+			group: (v: NonNullable<T.ExceptClause['_group']>) =>
+				rebuilt(node, handle, () => wrapExceptClause({ ...$edited(data), _group: v }, tree)),
 			exception: (v: NonNullable<T.ExceptClause['_exception']>) =>
 				rebuilt(node, handle, () => wrapExceptClause({ ...$edited(data), _exception: v }, tree)),
 			suite: (v: NonNullable<T.ExceptClause['_suite']>) =>
@@ -7806,7 +7806,7 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.St
 }
 
 export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle): T.Interpolation.Parsed {
-	data = _keepModelledSlots(data, ['_expression', '_eq', '_type_conversion', '_format_specifier']);
+	data = _keepModelledSlots(data, ['_expression', '_debug', '_type_conversion', '_format_specifier']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -7836,11 +7836,11 @@ export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle): T.In
 			),
 			tree
 		),
-		_eq: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._eq, 'eq', false, data.$type, {
+		_debug: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._debug, 'debug', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'eq',
+				slotName: 'debug',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -7866,8 +7866,8 @@ export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle): T.In
 		expression() {
 			return hydrateChild<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(this._expression, tree);
 		},
-		eq() {
-			return this._eq;
+		debug() {
+			return this._debug;
 		},
 		typeConversion() {
 			return hydrateChild<T.TypeConversion | undefined>(this._type_conversion, tree);
@@ -7878,8 +7878,8 @@ export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle): T.In
 		$with: {
 			expression: (v: NonNullable<T.Interpolation['_expression']>) =>
 				rebuilt(node, handle, () => wrapInterpolation({ ...$edited(data), _expression: v }, tree)),
-			eq: (v: NonNullable<T.Interpolation['_eq']>) =>
-				rebuilt(node, handle, () => wrapInterpolation({ ...$edited(data), _eq: v }, tree)),
+			debug: (v: NonNullable<T.Interpolation['_debug']>) =>
+				rebuilt(node, handle, () => wrapInterpolation({ ...$edited(data), _debug: v }, tree)),
 			typeConversion: (v: NonNullable<T.Interpolation['_type_conversion']>) =>
 				rebuilt(node, handle, () => wrapInterpolation({ ...$edited(data), _type_conversion: v }, tree)),
 			formatSpecifier: (v: NonNullable<T.Interpolation['_format_specifier']>) =>

@@ -12412,19 +12412,19 @@ impl ::sittir_core::render::Render for StaticItemRefTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum StaticItemMutableSpecifierTransportSlot {
+pub enum StaticItemMutableTransportSlot {
     Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
 }
 
-impl ::sittir_core::prepare::Prepare for StaticItemMutableSpecifierTransportSlot {
+impl ::sittir_core::prepare::Prepare for StaticItemMutableTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            StaticItemMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => Ok(()),
+            StaticItemMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => Ok(()),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for StaticItemMutableSpecifierTransportSlot {
+impl ::sittir_core::view::KindOf for StaticItemMutableTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k)),
@@ -12433,7 +12433,7 @@ impl ::sittir_core::view::KindOf for StaticItemMutableSpecifierTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for StaticItemMutableSpecifierTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for StaticItemMutableTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -12443,73 +12443,67 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticItemMutableSpecifierTransp
                 match u16::from_napi_value(env, napi_val)? {
                     57 => Ok(Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in StaticItemMutableSpecifierTransportSlot",
+                        "unknown kind id {other} in StaticItemMutableTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in StaticItemMutableSpecifierTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in StaticItemMutableTransportSlot")
                 )?;
                 match kind_id {
                     57 => Ok(Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in StaticItemMutableSpecifierTransportSlot",
+                        "unknown kind id {other} in StaticItemMutableTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("StaticItemMutableSpecifierTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("StaticItemMutableTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for StaticItemMutableSpecifierTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for StaticItemMutableTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("StaticItemMutableSpecifierTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("StaticItemMutableTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<StaticItemMutableSpecifierTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<StaticItemMutableTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        StaticItemMutableSpecifierTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        StaticItemMutableTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<StaticItemMutableSpecifierTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<StaticItemMutableTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        StaticItemMutableSpecifierTransportSlot::to_napi_value(env, *val)
+        StaticItemMutableTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn static_item_mutable_specifier_transport_slot_to_any(t: StaticItemMutableSpecifierTransportSlot) -> AnyTransport {
+fn static_item_mutable_transport_slot_to_any(t: StaticItemMutableTransportSlot) -> AnyTransport {
     match t {
-        StaticItemMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => AnyTransport::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
+        StaticItemMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => AnyTransport::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
     }
 }
 
-impl ::sittir_core::render::Render for StaticItemMutableSpecifierTransportSlot {
+impl ::sittir_core::render::Render for StaticItemMutableTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            StaticItemMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => {
-                w.site_at(options::SITE_STATIC_ITEM_MUTABLE_SPECIFIER_BEFORE);
-                let written = w.text("mut");
-                written?;
-                w.site_at(options::SITE_STATIC_ITEM_MUTABLE_SPECIFIER_AFTER);
-                Ok(())
-            }
+            StaticItemMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => w.text("mut"),
         }
     }
 }
@@ -14372,19 +14366,19 @@ impl ::sittir_core::render::Render for ConstParameterValueTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum LetDeclarationMutableSpecifierTransportSlot {
+pub enum LetDeclarationMutableTransportSlot {
     Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
 }
 
-impl ::sittir_core::prepare::Prepare for LetDeclarationMutableSpecifierTransportSlot {
+impl ::sittir_core::prepare::Prepare for LetDeclarationMutableTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            LetDeclarationMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => Ok(()),
+            LetDeclarationMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => Ok(()),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for LetDeclarationMutableSpecifierTransportSlot {
+impl ::sittir_core::view::KindOf for LetDeclarationMutableTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k)),
@@ -14393,7 +14387,7 @@ impl ::sittir_core::view::KindOf for LetDeclarationMutableSpecifierTransportSlot
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LetDeclarationMutableSpecifierTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for LetDeclarationMutableTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -14403,73 +14397,67 @@ impl ::napi::bindgen_prelude::FromNapiValue for LetDeclarationMutableSpecifierTr
                 match u16::from_napi_value(env, napi_val)? {
                     57 => Ok(Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in LetDeclarationMutableSpecifierTransportSlot",
+                        "unknown kind id {other} in LetDeclarationMutableTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in LetDeclarationMutableSpecifierTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in LetDeclarationMutableTransportSlot")
                 )?;
                 match kind_id {
                     57 => Ok(Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in LetDeclarationMutableSpecifierTransportSlot",
+                        "unknown kind id {other} in LetDeclarationMutableTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("LetDeclarationMutableSpecifierTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("LetDeclarationMutableTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LetDeclarationMutableSpecifierTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for LetDeclarationMutableTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("LetDeclarationMutableSpecifierTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("LetDeclarationMutableTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LetDeclarationMutableSpecifierTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<LetDeclarationMutableTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        LetDeclarationMutableSpecifierTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        LetDeclarationMutableTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LetDeclarationMutableSpecifierTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<LetDeclarationMutableTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        LetDeclarationMutableSpecifierTransportSlot::to_napi_value(env, *val)
+        LetDeclarationMutableTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn let_declaration_mutable_specifier_transport_slot_to_any(t: LetDeclarationMutableSpecifierTransportSlot) -> AnyTransport {
+fn let_declaration_mutable_transport_slot_to_any(t: LetDeclarationMutableTransportSlot) -> AnyTransport {
     match t {
-        LetDeclarationMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => AnyTransport::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
+        LetDeclarationMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => AnyTransport::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
     }
 }
 
-impl ::sittir_core::render::Render for LetDeclarationMutableSpecifierTransportSlot {
+impl ::sittir_core::render::Render for LetDeclarationMutableTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            LetDeclarationMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => {
-                w.site_at(options::SITE_LET_DECLARATION_MUTABLE_SPECIFIER_BEFORE);
-                let written = w.text("mut");
-                written?;
-                w.site_at(options::SITE_LET_DECLARATION_MUTABLE_SPECIFIER_AFTER);
-                Ok(())
-            }
+            LetDeclarationMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => w.text("mut"),
         }
     }
 }
@@ -15495,19 +15483,19 @@ impl ::sittir_core::render::Render for SelfParameterReferenceTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum SelfParameterMutableSpecifierTransportSlot {
+pub enum SelfParameterMutableTransportSlot {
     Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
 }
 
-impl ::sittir_core::prepare::Prepare for SelfParameterMutableSpecifierTransportSlot {
+impl ::sittir_core::prepare::Prepare for SelfParameterMutableTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            SelfParameterMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => Ok(()),
+            SelfParameterMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => Ok(()),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for SelfParameterMutableSpecifierTransportSlot {
+impl ::sittir_core::view::KindOf for SelfParameterMutableTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k)),
@@ -15516,7 +15504,7 @@ impl ::sittir_core::view::KindOf for SelfParameterMutableSpecifierTransportSlot 
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for SelfParameterMutableSpecifierTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for SelfParameterMutableTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -15526,91 +15514,85 @@ impl ::napi::bindgen_prelude::FromNapiValue for SelfParameterMutableSpecifierTra
                 match u16::from_napi_value(env, napi_val)? {
                     57 => Ok(Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in SelfParameterMutableSpecifierTransportSlot",
+                        "unknown kind id {other} in SelfParameterMutableTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in SelfParameterMutableSpecifierTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in SelfParameterMutableTransportSlot")
                 )?;
                 match kind_id {
                     57 => Ok(Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in SelfParameterMutableSpecifierTransportSlot",
+                        "unknown kind id {other} in SelfParameterMutableTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("SelfParameterMutableSpecifierTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("SelfParameterMutableTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for SelfParameterMutableSpecifierTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for SelfParameterMutableTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("SelfParameterMutableSpecifierTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("SelfParameterMutableTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<SelfParameterMutableSpecifierTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SelfParameterMutableTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        SelfParameterMutableSpecifierTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        SelfParameterMutableTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<SelfParameterMutableSpecifierTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SelfParameterMutableTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        SelfParameterMutableSpecifierTransportSlot::to_napi_value(env, *val)
+        SelfParameterMutableTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn self_parameter_mutable_specifier_transport_slot_to_any(t: SelfParameterMutableSpecifierTransportSlot) -> AnyTransport {
+fn self_parameter_mutable_transport_slot_to_any(t: SelfParameterMutableTransportSlot) -> AnyTransport {
     match t {
-        SelfParameterMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => AnyTransport::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
+        SelfParameterMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => AnyTransport::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
     }
 }
 
-impl ::sittir_core::render::Render for SelfParameterMutableSpecifierTransportSlot {
+impl ::sittir_core::render::Render for SelfParameterMutableTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            SelfParameterMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => {
-                w.site_at(options::SITE_SELF_PARAMETER_MUTABLE_SPECIFIER_BEFORE);
-                let written = w.text("mut");
-                written?;
-                w.site_at(options::SITE_SELF_PARAMETER_MUTABLE_SPECIFIER_AFTER);
-                Ok(())
-            }
+            SelfParameterMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => w.text("mut"),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub enum VariadicParameterMutableSpecifierTransportSlot {
+pub enum VariadicParameterMutableTransportSlot {
     Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
 }
 
-impl ::sittir_core::prepare::Prepare for VariadicParameterMutableSpecifierTransportSlot {
+impl ::sittir_core::prepare::Prepare for VariadicParameterMutableTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            VariadicParameterMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => Ok(()),
+            VariadicParameterMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => Ok(()),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for VariadicParameterMutableSpecifierTransportSlot {
+impl ::sittir_core::view::KindOf for VariadicParameterMutableTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k)),
@@ -15619,7 +15601,7 @@ impl ::sittir_core::view::KindOf for VariadicParameterMutableSpecifierTransportS
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for VariadicParameterMutableSpecifierTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for VariadicParameterMutableTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -15629,90 +15611,85 @@ impl ::napi::bindgen_prelude::FromNapiValue for VariadicParameterMutableSpecifie
                 match u16::from_napi_value(env, napi_val)? {
                     57 => Ok(Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in VariadicParameterMutableSpecifierTransportSlot",
+                        "unknown kind id {other} in VariadicParameterMutableTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in VariadicParameterMutableSpecifierTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in VariadicParameterMutableTransportSlot")
                 )?;
                 match kind_id {
                     57 => Ok(Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in VariadicParameterMutableSpecifierTransportSlot",
+                        "unknown kind id {other} in VariadicParameterMutableTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("VariadicParameterMutableSpecifierTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("VariadicParameterMutableTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for VariadicParameterMutableSpecifierTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for VariadicParameterMutableTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("VariadicParameterMutableSpecifierTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("VariadicParameterMutableTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<VariadicParameterMutableSpecifierTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<VariadicParameterMutableTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        VariadicParameterMutableSpecifierTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        VariadicParameterMutableTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<VariadicParameterMutableSpecifierTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<VariadicParameterMutableTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        VariadicParameterMutableSpecifierTransportSlot::to_napi_value(env, *val)
+        VariadicParameterMutableTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn variadic_parameter_mutable_specifier_transport_slot_to_any(t: VariadicParameterMutableSpecifierTransportSlot) -> AnyTransport {
+fn variadic_parameter_mutable_transport_slot_to_any(t: VariadicParameterMutableTransportSlot) -> AnyTransport {
     match t {
-        VariadicParameterMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => AnyTransport::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
+        VariadicParameterMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => AnyTransport::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
     }
 }
 
-impl ::sittir_core::render::Render for VariadicParameterMutableSpecifierTransportSlot {
+impl ::sittir_core::render::Render for VariadicParameterMutableTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            VariadicParameterMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => {
-                let written = w.text("mut");
-                written?;
-                w.site_at(options::SITE_VARIADIC_PARAMETER_MUTABLE_SPECIFIER_AFTER);
-                Ok(())
-            }
+            VariadicParameterMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => w.text("mut"),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub enum ParameterMutableSpecifierTransportSlot {
+pub enum ParameterMutableTransportSlot {
     Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
 }
 
-impl ::sittir_core::prepare::Prepare for ParameterMutableSpecifierTransportSlot {
+impl ::sittir_core::prepare::Prepare for ParameterMutableTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ParameterMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => Ok(()),
+            ParameterMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => Ok(()),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for ParameterMutableSpecifierTransportSlot {
+impl ::sittir_core::view::KindOf for ParameterMutableTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k)),
@@ -15721,7 +15698,7 @@ impl ::sittir_core::view::KindOf for ParameterMutableSpecifierTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ParameterMutableSpecifierTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ParameterMutableTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -15731,72 +15708,67 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterMutableSpecifierTranspo
                 match u16::from_napi_value(env, napi_val)? {
                     57 => Ok(Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ParameterMutableSpecifierTransportSlot",
+                        "unknown kind id {other} in ParameterMutableTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ParameterMutableSpecifierTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ParameterMutableTransportSlot")
                 )?;
                 match kind_id {
                     57 => Ok(Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ParameterMutableSpecifierTransportSlot",
+                        "unknown kind id {other} in ParameterMutableTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ParameterMutableSpecifierTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("ParameterMutableTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ParameterMutableSpecifierTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ParameterMutableTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ParameterMutableSpecifierTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ParameterMutableTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ParameterMutableSpecifierTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ParameterMutableTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ParameterMutableSpecifierTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ParameterMutableTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ParameterMutableSpecifierTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ParameterMutableTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ParameterMutableSpecifierTransportSlot::to_napi_value(env, *val)
+        ParameterMutableTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn parameter_mutable_specifier_transport_slot_to_any(t: ParameterMutableSpecifierTransportSlot) -> AnyTransport {
+fn parameter_mutable_transport_slot_to_any(t: ParameterMutableTransportSlot) -> AnyTransport {
     match t {
-        ParameterMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => AnyTransport::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
+        ParameterMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => AnyTransport::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
     }
 }
 
-impl ::sittir_core::render::Render for ParameterMutableSpecifierTransportSlot {
+impl ::sittir_core::render::Render for ParameterMutableTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ParameterMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => {
-                let written = w.text("mut");
-                written?;
-                w.site_at(options::SITE_PARAMETER_MUTABLE_SPECIFIER_AFTER);
-                Ok(())
-            }
+            ParameterMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => w.text("mut"),
         }
     }
 }
@@ -18456,19 +18428,19 @@ impl ::sittir_core::render::Render for BoundedTypeRightTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ReferenceTypeMutableSpecifierTransportSlot {
+pub enum ReferenceTypeMutableTransportSlot {
     Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
 }
 
-impl ::sittir_core::prepare::Prepare for ReferenceTypeMutableSpecifierTransportSlot {
+impl ::sittir_core::prepare::Prepare for ReferenceTypeMutableTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ReferenceTypeMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => Ok(()),
+            ReferenceTypeMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => Ok(()),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for ReferenceTypeMutableSpecifierTransportSlot {
+impl ::sittir_core::view::KindOf for ReferenceTypeMutableTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k)),
@@ -18477,7 +18449,7 @@ impl ::sittir_core::view::KindOf for ReferenceTypeMutableSpecifierTransportSlot 
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ReferenceTypeMutableSpecifierTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ReferenceTypeMutableTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -18487,73 +18459,67 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReferenceTypeMutableSpecifierTra
                 match u16::from_napi_value(env, napi_val)? {
                     57 => Ok(Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ReferenceTypeMutableSpecifierTransportSlot",
+                        "unknown kind id {other} in ReferenceTypeMutableTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ReferenceTypeMutableSpecifierTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ReferenceTypeMutableTransportSlot")
                 )?;
                 match kind_id {
                     57 => Ok(Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ReferenceTypeMutableSpecifierTransportSlot",
+                        "unknown kind id {other} in ReferenceTypeMutableTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ReferenceTypeMutableSpecifierTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("ReferenceTypeMutableTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ReferenceTypeMutableSpecifierTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ReferenceTypeMutableTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ReferenceTypeMutableSpecifierTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ReferenceTypeMutableTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ReferenceTypeMutableSpecifierTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ReferenceTypeMutableTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ReferenceTypeMutableSpecifierTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ReferenceTypeMutableTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ReferenceTypeMutableSpecifierTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ReferenceTypeMutableTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ReferenceTypeMutableSpecifierTransportSlot::to_napi_value(env, *val)
+        ReferenceTypeMutableTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn reference_type_mutable_specifier_transport_slot_to_any(t: ReferenceTypeMutableSpecifierTransportSlot) -> AnyTransport {
+fn reference_type_mutable_transport_slot_to_any(t: ReferenceTypeMutableTransportSlot) -> AnyTransport {
     match t {
-        ReferenceTypeMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => AnyTransport::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
+        ReferenceTypeMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => AnyTransport::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
     }
 }
 
-impl ::sittir_core::render::Render for ReferenceTypeMutableSpecifierTransportSlot {
+impl ::sittir_core::render::Render for ReferenceTypeMutableTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ReferenceTypeMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => {
-                w.site_at(options::SITE_REFERENCE_TYPE_MUTABLE_SPECIFIER_BEFORE);
-                let written = w.text("mut");
-                written?;
-                w.site_at(options::SITE_REFERENCE_TYPE_MUTABLE_SPECIFIER_AFTER);
-                Ok(())
-            }
+            ReferenceTypeMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => w.text("mut"),
         }
     }
 }
@@ -29046,19 +29012,19 @@ impl ::sittir_core::render::Render for StructPatternTypeTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ReferencePatternMutableSpecifierTransportSlot {
+pub enum ReferencePatternMutableTransportSlot {
     Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
 }
 
-impl ::sittir_core::prepare::Prepare for ReferencePatternMutableSpecifierTransportSlot {
+impl ::sittir_core::prepare::Prepare for ReferencePatternMutableTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ReferencePatternMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => Ok(()),
+            ReferencePatternMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => Ok(()),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for ReferencePatternMutableSpecifierTransportSlot {
+impl ::sittir_core::view::KindOf for ReferencePatternMutableTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k)),
@@ -29067,7 +29033,7 @@ impl ::sittir_core::view::KindOf for ReferencePatternMutableSpecifierTransportSl
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ReferencePatternMutableSpecifierTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ReferencePatternMutableTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -29077,73 +29043,67 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReferencePatternMutableSpecifier
                 match u16::from_napi_value(env, napi_val)? {
                     57 => Ok(Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ReferencePatternMutableSpecifierTransportSlot",
+                        "unknown kind id {other} in ReferencePatternMutableTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ReferencePatternMutableSpecifierTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ReferencePatternMutableTransportSlot")
                 )?;
                 match kind_id {
                     57 => Ok(Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ReferencePatternMutableSpecifierTransportSlot",
+                        "unknown kind id {other} in ReferencePatternMutableTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ReferencePatternMutableSpecifierTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("ReferencePatternMutableTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ReferencePatternMutableSpecifierTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ReferencePatternMutableTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ReferencePatternMutableSpecifierTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ReferencePatternMutableTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ReferencePatternMutableSpecifierTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ReferencePatternMutableTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ReferencePatternMutableSpecifierTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ReferencePatternMutableTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ReferencePatternMutableSpecifierTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ReferencePatternMutableTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ReferencePatternMutableSpecifierTransportSlot::to_napi_value(env, *val)
+        ReferencePatternMutableTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn reference_pattern_mutable_specifier_transport_slot_to_any(t: ReferencePatternMutableSpecifierTransportSlot) -> AnyTransport {
+fn reference_pattern_mutable_transport_slot_to_any(t: ReferencePatternMutableTransportSlot) -> AnyTransport {
     match t {
-        ReferencePatternMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => AnyTransport::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
+        ReferencePatternMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => AnyTransport::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
     }
 }
 
-impl ::sittir_core::render::Render for ReferencePatternMutableSpecifierTransportSlot {
+impl ::sittir_core::render::Render for ReferencePatternMutableTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ReferencePatternMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => {
-                w.site_at(options::SITE_REFERENCE_PATTERN_MUTABLE_SPECIFIER_BEFORE);
-                let written = w.text("mut");
-                written?;
-                w.site_at(options::SITE_REFERENCE_PATTERN_MUTABLE_SPECIFIER_AFTER);
-                Ok(())
-            }
+            ReferencePatternMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => w.text("mut"),
         }
     }
 }
@@ -37477,19 +37437,19 @@ impl ::sittir_core::render::Render for FieldPatternShorthandRefTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum FieldPatternShorthandMutableSpecifierTransportSlot {
+pub enum FieldPatternShorthandMutableTransportSlot {
     Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
 }
 
-impl ::sittir_core::prepare::Prepare for FieldPatternShorthandMutableSpecifierTransportSlot {
+impl ::sittir_core::prepare::Prepare for FieldPatternShorthandMutableTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            FieldPatternShorthandMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => Ok(()),
+            FieldPatternShorthandMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => Ok(()),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for FieldPatternShorthandMutableSpecifierTransportSlot {
+impl ::sittir_core::view::KindOf for FieldPatternShorthandMutableTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k)),
@@ -37498,7 +37458,7 @@ impl ::sittir_core::view::KindOf for FieldPatternShorthandMutableSpecifierTransp
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FieldPatternShorthandMutableSpecifierTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for FieldPatternShorthandMutableTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37508,73 +37468,67 @@ impl ::napi::bindgen_prelude::FromNapiValue for FieldPatternShorthandMutableSpec
                 match u16::from_napi_value(env, napi_val)? {
                     57 => Ok(Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in FieldPatternShorthandMutableSpecifierTransportSlot",
+                        "unknown kind id {other} in FieldPatternShorthandMutableTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in FieldPatternShorthandMutableSpecifierTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in FieldPatternShorthandMutableTransportSlot")
                 )?;
                 match kind_id {
                     57 => Ok(Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in FieldPatternShorthandMutableSpecifierTransportSlot",
+                        "unknown kind id {other} in FieldPatternShorthandMutableTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("FieldPatternShorthandMutableSpecifierTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("FieldPatternShorthandMutableTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FieldPatternShorthandMutableSpecifierTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for FieldPatternShorthandMutableTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("FieldPatternShorthandMutableSpecifierTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("FieldPatternShorthandMutableTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FieldPatternShorthandMutableSpecifierTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FieldPatternShorthandMutableTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        FieldPatternShorthandMutableSpecifierTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        FieldPatternShorthandMutableTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FieldPatternShorthandMutableSpecifierTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FieldPatternShorthandMutableTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        FieldPatternShorthandMutableSpecifierTransportSlot::to_napi_value(env, *val)
+        FieldPatternShorthandMutableTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn field_pattern_shorthand_mutable_specifier_transport_slot_to_any(t: FieldPatternShorthandMutableSpecifierTransportSlot) -> AnyTransport {
+fn field_pattern_shorthand_mutable_transport_slot_to_any(t: FieldPatternShorthandMutableTransportSlot) -> AnyTransport {
     match t {
-        FieldPatternShorthandMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => AnyTransport::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
+        FieldPatternShorthandMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => AnyTransport::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
     }
 }
 
-impl ::sittir_core::render::Render for FieldPatternShorthandMutableSpecifierTransportSlot {
+impl ::sittir_core::render::Render for FieldPatternShorthandMutableTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            FieldPatternShorthandMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => {
-                w.site_at(options::SITE_FIELD_PATTERN_SHORTHAND_MUTABLE_SPECIFIER_BEFORE);
-                let written = w.text("mut");
-                written?;
-                w.site_at(options::SITE_FIELD_PATTERN_SHORTHAND_MUTABLE_SPECIFIER_AFTER);
-                Ok(())
-            }
+            FieldPatternShorthandMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => w.text("mut"),
         }
     }
 }
@@ -37677,19 +37631,19 @@ impl ::sittir_core::render::Render for FieldPatternNamedRefTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum FieldPatternNamedMutableSpecifierTransportSlot {
+pub enum FieldPatternNamedMutableTransportSlot {
     Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
 }
 
-impl ::sittir_core::prepare::Prepare for FieldPatternNamedMutableSpecifierTransportSlot {
+impl ::sittir_core::prepare::Prepare for FieldPatternNamedMutableTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            FieldPatternNamedMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => Ok(()),
+            FieldPatternNamedMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => Ok(()),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for FieldPatternNamedMutableSpecifierTransportSlot {
+impl ::sittir_core::view::KindOf for FieldPatternNamedMutableTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k)),
@@ -37698,7 +37652,7 @@ impl ::sittir_core::view::KindOf for FieldPatternNamedMutableSpecifierTransportS
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FieldPatternNamedMutableSpecifierTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for FieldPatternNamedMutableTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37708,73 +37662,67 @@ impl ::napi::bindgen_prelude::FromNapiValue for FieldPatternNamedMutableSpecifie
                 match u16::from_napi_value(env, napi_val)? {
                     57 => Ok(Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in FieldPatternNamedMutableSpecifierTransportSlot",
+                        "unknown kind id {other} in FieldPatternNamedMutableTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in FieldPatternNamedMutableSpecifierTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in FieldPatternNamedMutableTransportSlot")
                 )?;
                 match kind_id {
                     57 => Ok(Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in FieldPatternNamedMutableSpecifierTransportSlot",
+                        "unknown kind id {other} in FieldPatternNamedMutableTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("FieldPatternNamedMutableSpecifierTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("FieldPatternNamedMutableTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FieldPatternNamedMutableSpecifierTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for FieldPatternNamedMutableTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("FieldPatternNamedMutableSpecifierTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("FieldPatternNamedMutableTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FieldPatternNamedMutableSpecifierTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FieldPatternNamedMutableTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        FieldPatternNamedMutableSpecifierTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        FieldPatternNamedMutableTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FieldPatternNamedMutableSpecifierTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FieldPatternNamedMutableTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        FieldPatternNamedMutableSpecifierTransportSlot::to_napi_value(env, *val)
+        FieldPatternNamedMutableTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn field_pattern_named_mutable_specifier_transport_slot_to_any(t: FieldPatternNamedMutableSpecifierTransportSlot) -> AnyTransport {
+fn field_pattern_named_mutable_transport_slot_to_any(t: FieldPatternNamedMutableTransportSlot) -> AnyTransport {
     match t {
-        FieldPatternNamedMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => AnyTransport::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
+        FieldPatternNamedMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => AnyTransport::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72,
     }
 }
 
-impl ::sittir_core::render::Render for FieldPatternNamedMutableSpecifierTransportSlot {
+impl ::sittir_core::render::Render for FieldPatternNamedMutableTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            FieldPatternNamedMutableSpecifierTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => {
-                w.site_at(options::SITE_FIELD_PATTERN_NAMED_MUTABLE_SPECIFIER_BEFORE);
-                let written = w.text("mut");
-                written?;
-                w.site_at(options::SITE_FIELD_PATTERN_NAMED_MUTABLE_SPECIFIER_AFTER);
-                Ok(())
-            }
+            FieldPatternNamedMutableTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => w.text("mut"),
         }
     }
 }
@@ -42996,8 +42944,8 @@ pub struct StaticItemTransport {
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ref"))]
     pub ref_: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable_specifier"))]
-    pub mutable_specifier: Option<::sittir_core::SlotValue<MutableSpecifierTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable"))]
+    pub mutable: Option<::sittir_core::SlotValue<MutableSpecifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
@@ -43030,7 +42978,7 @@ impl ::sittir_core::prepare::Prepare for StaticItemTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.visibility_modifier.prepare(ctx)?;
         self.ref_.prepare(ctx)?;
-        self.mutable_specifier.prepare(ctx)?;
+        self.mutable.prepare(ctx)?;
         self.name.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -44061,8 +44009,8 @@ pub struct LetDeclarationTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable_specifier"))]
-    pub mutable_specifier: Option<::sittir_core::SlotValue<MutableSpecifierTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable"))]
+    pub mutable: Option<::sittir_core::SlotValue<MutableSpecifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: ::sittir_core::SlotValue<PatternTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
@@ -44095,7 +44043,7 @@ impl ::sittir_core::prepare::Prepare for LetDeclarationTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.mutable_specifier.prepare(ctx)?;
+        self.mutable.prepare(ctx)?;
         self.pattern.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -44492,8 +44440,8 @@ pub struct SelfParameterTransport {
     pub reference: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lifetime"))]
     pub lifetime: Option<::sittir_core::SlotValue<LifetimeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable_specifier"))]
-    pub mutable_specifier: Option<::sittir_core::SlotValue<MutableSpecifierTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable"))]
+    pub mutable: Option<::sittir_core::SlotValue<MutableSpecifierTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for SelfParameterTransport {
@@ -44520,7 +44468,7 @@ impl ::sittir_core::prepare::Prepare for SelfParameterTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.reference.prepare(ctx)?;
         self.lifetime.prepare(ctx)?;
-        self.mutable_specifier.prepare(ctx)?;
+        self.mutable.prepare(ctx)?;
         Ok(())
     }
 }
@@ -44552,8 +44500,8 @@ pub struct VariadicParameterTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable_specifier"))]
-    pub mutable_specifier: Option<::sittir_core::SlotValue<MutableSpecifierTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable"))]
+    pub mutable: Option<::sittir_core::SlotValue<MutableSpecifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: Option<::sittir_core::SlotValue<PatternTransport>>,
 }
@@ -44580,7 +44528,7 @@ impl ::sittir_core::prepare::Prepare for VariadicParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.mutable_specifier.prepare(ctx)?;
+        self.mutable.prepare(ctx)?;
         self.pattern.prepare(ctx)?;
         Ok(())
     }
@@ -44613,8 +44561,8 @@ pub struct ParameterTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable_specifier"))]
-    pub mutable_specifier: Option<::sittir_core::SlotValue<MutableSpecifierTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable"))]
+    pub mutable: Option<::sittir_core::SlotValue<MutableSpecifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<ParameterNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
@@ -44643,7 +44591,7 @@ impl ::sittir_core::prepare::Prepare for ParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.mutable_specifier.prepare(ctx)?;
+        self.mutable.prepare(ctx)?;
         self.name.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         Ok(())
@@ -45743,8 +45691,8 @@ pub struct ReferenceTypeTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lifetime"))]
     pub lifetime: Option<::sittir_core::SlotValue<LifetimeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable_specifier"))]
-    pub mutable_specifier: Option<::sittir_core::SlotValue<MutableSpecifierTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable"))]
+    pub mutable: Option<::sittir_core::SlotValue<MutableSpecifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<Box<TypeTransport>>,
 }
@@ -45772,7 +45720,7 @@ impl ::sittir_core::prepare::Prepare for ReferenceTypeTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.lifetime.prepare(ctx)?;
-        self.mutable_specifier.prepare(ctx)?;
+        self.mutable.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         Ok(())
     }
@@ -49647,8 +49595,8 @@ pub struct ReferencePatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable_specifier"))]
-    pub mutable_specifier: Option<::sittir_core::SlotValue<MutableSpecifierTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable"))]
+    pub mutable: Option<::sittir_core::SlotValue<MutableSpecifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: ::sittir_core::SlotValue<Box<PatternTransport>>,
 }
@@ -49675,7 +49623,7 @@ impl ::sittir_core::prepare::Prepare for ReferencePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.mutable_specifier.prepare(ctx)?;
+        self.mutable.prepare(ctx)?;
         self.pattern.prepare(ctx)?;
         Ok(())
     }
@@ -57751,8 +57699,8 @@ pub struct FieldPatternShorthandTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ref"))]
     pub ref_: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable_specifier"))]
-    pub mutable_specifier: Option<::sittir_core::SlotValue<MutableSpecifierTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable"))]
+    pub mutable: Option<::sittir_core::SlotValue<MutableSpecifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<ShorthandFieldIdentifierTransport>,
 }
@@ -57780,7 +57728,7 @@ impl ::sittir_core::prepare::Prepare for FieldPatternShorthandTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.ref_.prepare(ctx)?;
-        self.mutable_specifier.prepare(ctx)?;
+        self.mutable.prepare(ctx)?;
         self.name.prepare(ctx)?;
         Ok(())
     }
@@ -57815,8 +57763,8 @@ pub struct FieldPatternNamedTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ref"))]
     pub ref_: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable_specifier"))]
-    pub mutable_specifier: Option<::sittir_core::SlotValue<MutableSpecifierTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable"))]
+    pub mutable: Option<::sittir_core::SlotValue<MutableSpecifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<FieldIdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
@@ -57846,7 +57794,7 @@ impl ::sittir_core::prepare::Prepare for FieldPatternNamedTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.ref_.prepare(ctx)?;
-        self.mutable_specifier.prepare(ctx)?;
+        self.mutable.prepare(ctx)?;
         self.name.prepare(ctx)?;
         self.pattern.prepare(ctx)?;
         Ok(())
@@ -77959,7 +77907,7 @@ fn render_const_item(node: &ConstItemTransport, w: &mut dyn ::sittir_core::rende
 }
 
 fn render_static_item(node: &StaticItemTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let mutable_specifier = View::new(&node.mutable_specifier, "{}");
+    let mutable = View::new(&node.mutable, "{}");
     let name = &node.name;
     let ref_ = View::new(&node.ref_, "ref");
     let type_ = &node.type_;
@@ -77975,10 +77923,10 @@ fn render_static_item(node: &StaticItemTransport, w: &mut dyn ::sittir_core::ren
         ref_.render(w)?;
         w.site_at(options::SITE_STATIC_ITEM_REF_AFTER);
     }
-    if mutable_specifier.is_present() {
-        w.site_at(options::SITE_STATIC_ITEM_MUTABLE_SPECIFIER_BEFORE);
-        mutable_specifier.render(w)?;
-        w.site_at(options::SITE_STATIC_ITEM_MUTABLE_SPECIFIER_AFTER);
+    if mutable.is_present() {
+        w.site_at(options::SITE_STATIC_ITEM_MUTABLE_BEFORE);
+        mutable.render(w)?;
+        w.site_at(options::SITE_STATIC_ITEM_MUTABLE_AFTER);
     }
     name.render(w)?;
     w.site_at(options::SITE_STATIC_ITEM_COLON_BEFORE);
@@ -78272,17 +78220,17 @@ fn render_lifetime_parameter(node: &LifetimeParameterTransport, w: &mut dyn ::si
 
 fn render_let_declaration(node: &LetDeclarationTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alternative = View::new(&node.alternative, "{}");
-    let mutable_specifier = View::new(&node.mutable_specifier, "{}");
+    let mutable = View::new(&node.mutable, "{}");
     let pattern = &node.pattern;
     let type_ = View::new(&node.type_, "{}");
     let value = View::new(&node.value, "{}");
     w.edge(::sittir_core::types::KindId(223), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("let")?;
     w.site_at(options::SITE_LET_DECLARATION_LET_KEYWORD_AFTER);
-    if mutable_specifier.is_present() {
-        w.site_at(options::SITE_LET_DECLARATION_MUTABLE_SPECIFIER_BEFORE);
-        mutable_specifier.render(w)?;
-        w.site_at(options::SITE_LET_DECLARATION_MUTABLE_SPECIFIER_AFTER);
+    if mutable.is_present() {
+        w.site_at(options::SITE_LET_DECLARATION_MUTABLE_BEFORE);
+        mutable.render(w)?;
+        w.site_at(options::SITE_LET_DECLARATION_MUTABLE_AFTER);
     }
     pattern.render(w)?;
     if type_.is_present() {
@@ -78388,7 +78336,7 @@ fn render_parameters(node: &ParametersTransport, w: &mut dyn ::sittir_core::rend
 
 fn render_self_parameter(node: &SelfParameterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let lifetime = View::new(&node.lifetime, "{}");
-    let mutable_specifier = View::new(&node.mutable_specifier, "{}");
+    let mutable = View::new(&node.mutable, "{}");
     let reference = View::new(&node.reference, "&");
     w.edge(::sittir_core::types::KindId(231), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     if reference.is_present() {
@@ -78396,10 +78344,10 @@ fn render_self_parameter(node: &SelfParameterTransport, w: &mut dyn ::sittir_cor
         w.site_at(options::SITE_SELF_PARAMETER_REFERENCE_AFTER);
     }
     lifetime.render(w)?;
-    if mutable_specifier.is_present() {
-        w.site_at(options::SITE_SELF_PARAMETER_MUTABLE_SPECIFIER_BEFORE);
-        mutable_specifier.render(w)?;
-        w.site_at(options::SITE_SELF_PARAMETER_MUTABLE_SPECIFIER_AFTER);
+    if mutable.is_present() {
+        w.site_at(options::SITE_SELF_PARAMETER_MUTABLE_BEFORE);
+        mutable.render(w)?;
+        w.site_at(options::SITE_SELF_PARAMETER_MUTABLE_AFTER);
     }
     w.site_at(options::SITE_SELF_PARAMETER_SELF_BEFORE);
     w.text("self")?;
@@ -78408,12 +78356,12 @@ fn render_self_parameter(node: &SelfParameterTransport, w: &mut dyn ::sittir_cor
 }
 
 fn render_variadic_parameter(node: &VariadicParameterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let mutable_specifier = View::new(&node.mutable_specifier, "{}");
+    let mutable = View::new(&node.mutable, "{}");
     let pattern = View::new(&node.pattern, "{}");
     w.edge(::sittir_core::types::KindId(232), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    if mutable_specifier.is_present() {
-        mutable_specifier.render(w)?;
-        w.site_at(options::SITE_VARIADIC_PARAMETER_MUTABLE_SPECIFIER_AFTER);
+    if mutable.is_present() {
+        mutable.render(w)?;
+        w.site_at(options::SITE_VARIADIC_PARAMETER_MUTABLE_AFTER);
     }
     if pattern.is_present() {
         pattern.render(w)?;
@@ -78428,13 +78376,13 @@ fn render_variadic_parameter(node: &VariadicParameterTransport, w: &mut dyn ::si
 }
 
 fn render_parameter(node: &ParameterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let mutable_specifier = View::new(&node.mutable_specifier, "{}");
+    let mutable = View::new(&node.mutable, "{}");
     let name = &node.name;
     let type_ = &node.type_;
     w.edge(::sittir_core::types::KindId(233), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    if mutable_specifier.is_present() {
-        mutable_specifier.render(w)?;
-        w.site_at(options::SITE_PARAMETER_MUTABLE_SPECIFIER_AFTER);
+    if mutable.is_present() {
+        mutable.render(w)?;
+        w.site_at(options::SITE_PARAMETER_MUTABLE_AFTER);
     }
     name.render(w)?;
     w.site_at(options::SITE_PARAMETER_COLON_BEFORE);
@@ -78659,16 +78607,16 @@ fn render_type_binding(node: &TypeBindingTransport, w: &mut dyn ::sittir_core::r
 
 fn render_reference_type(node: &ReferenceTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let lifetime = View::new(&node.lifetime, "{}");
-    let mutable_specifier = View::new(&node.mutable_specifier, "{}");
+    let mutable = View::new(&node.mutable, "{}");
     let type_ = &node.type_;
     w.edge(::sittir_core::types::KindId(252), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("&")?;
     w.site_at(options::SITE_REFERENCE_TYPE_AMP_AFTER);
     lifetime.render(w)?;
-    if mutable_specifier.is_present() {
-        w.site_at(options::SITE_REFERENCE_TYPE_MUTABLE_SPECIFIER_BEFORE);
-        mutable_specifier.render(w)?;
-        w.site_at(options::SITE_REFERENCE_TYPE_MUTABLE_SPECIFIER_AFTER);
+    if mutable.is_present() {
+        w.site_at(options::SITE_REFERENCE_TYPE_MUTABLE_BEFORE);
+        mutable.render(w)?;
+        w.site_at(options::SITE_REFERENCE_TYPE_MUTABLE_AFTER);
     }
     type_.render(w)?;
     w.edge(::sittir_core::types::KindId(252), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -79489,15 +79437,15 @@ fn render_captured_pattern(node: &CapturedPatternTransport, w: &mut dyn ::sittir
 }
 
 fn render_reference_pattern(node: &ReferencePatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let mutable_specifier = View::new(&node.mutable_specifier, "{}");
+    let mutable = View::new(&node.mutable, "{}");
     let pattern = &node.pattern;
     w.edge(::sittir_core::types::KindId(326), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("&")?;
     w.site_at(options::SITE_REFERENCE_PATTERN_AMP_AFTER);
-    if mutable_specifier.is_present() {
-        w.site_at(options::SITE_REFERENCE_PATTERN_MUTABLE_SPECIFIER_BEFORE);
-        mutable_specifier.render(w)?;
-        w.site_at(options::SITE_REFERENCE_PATTERN_MUTABLE_SPECIFIER_AFTER);
+    if mutable.is_present() {
+        w.site_at(options::SITE_REFERENCE_PATTERN_MUTABLE_BEFORE);
+        mutable.render(w)?;
+        w.site_at(options::SITE_REFERENCE_PATTERN_MUTABLE_AFTER);
     }
     pattern.render(w)?;
     w.edge(::sittir_core::types::KindId(326), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -80870,7 +80818,7 @@ fn render_delim_token_tree_brace(node: &DelimTokenTreeBraceTransport, w: &mut dy
 }
 
 fn render_field_pattern_shorthand(node: &FieldPatternShorthandTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let mutable_specifier = View::new(&node.mutable_specifier, "{}");
+    let mutable = View::new(&node.mutable, "{}");
     let name = &node.name;
     let ref_ = View::new(&node.ref_, "ref");
     w.edge(::sittir_core::types::KindId(414), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
@@ -80878,10 +80826,10 @@ fn render_field_pattern_shorthand(node: &FieldPatternShorthandTransport, w: &mut
         ref_.render(w)?;
         w.site_at(options::SITE_FIELD_PATTERN_SHORTHAND_REF_AFTER);
     }
-    if mutable_specifier.is_present() {
-        w.site_at(options::SITE_FIELD_PATTERN_SHORTHAND_MUTABLE_SPECIFIER_BEFORE);
-        mutable_specifier.render(w)?;
-        w.site_at(options::SITE_FIELD_PATTERN_SHORTHAND_MUTABLE_SPECIFIER_AFTER);
+    if mutable.is_present() {
+        w.site_at(options::SITE_FIELD_PATTERN_SHORTHAND_MUTABLE_BEFORE);
+        mutable.render(w)?;
+        w.site_at(options::SITE_FIELD_PATTERN_SHORTHAND_MUTABLE_AFTER);
     }
     name.render(w)?;
     w.edge(::sittir_core::types::KindId(414), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -80889,7 +80837,7 @@ fn render_field_pattern_shorthand(node: &FieldPatternShorthandTransport, w: &mut
 }
 
 fn render_field_pattern_named(node: &FieldPatternNamedTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let mutable_specifier = View::new(&node.mutable_specifier, "{}");
+    let mutable = View::new(&node.mutable, "{}");
     let name = &node.name;
     let pattern = &node.pattern;
     let ref_ = View::new(&node.ref_, "ref");
@@ -80898,10 +80846,10 @@ fn render_field_pattern_named(node: &FieldPatternNamedTransport, w: &mut dyn ::s
         ref_.render(w)?;
         w.site_at(options::SITE_FIELD_PATTERN_NAMED_REF_AFTER);
     }
-    if mutable_specifier.is_present() {
-        w.site_at(options::SITE_FIELD_PATTERN_NAMED_MUTABLE_SPECIFIER_BEFORE);
-        mutable_specifier.render(w)?;
-        w.site_at(options::SITE_FIELD_PATTERN_NAMED_MUTABLE_SPECIFIER_AFTER);
+    if mutable.is_present() {
+        w.site_at(options::SITE_FIELD_PATTERN_NAMED_MUTABLE_BEFORE);
+        mutable.render(w)?;
+        w.site_at(options::SITE_FIELD_PATTERN_NAMED_MUTABLE_AFTER);
     }
     name.render(w)?;
     w.site_at(options::SITE_FIELD_PATTERN_NAMED_COLON_BEFORE);

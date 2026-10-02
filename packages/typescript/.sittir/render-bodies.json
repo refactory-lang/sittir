@@ -118,19 +118,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "override_modifier",
+					"test": "override",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "override_modifier_before"
+							"field": "override_before"
 						},
 						{
 							"kind": "slot",
-							"name": "override_modifier"
+							"name": "override"
 						},
 						{
 							"kind": "seam",
-							"field": "override_modifier_after"
+							"field": "override_after"
 						}
 					]
 				}
@@ -4872,19 +4872,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "override_modifier",
+					"test": "override",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "override_modifier_before"
+							"field": "override_before"
 						},
 						{
 							"kind": "slot",
-							"name": "override_modifier"
+							"name": "override"
 						},
 						{
 							"kind": "seam",
-							"field": "override_modifier_after"
+							"field": "override_after"
 						}
 					]
 				}
@@ -5110,19 +5110,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "override_modifier",
+					"test": "override",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "override_modifier_before"
+							"field": "override_before"
 						},
 						{
 							"kind": "slot",
-							"name": "override_modifier"
+							"name": "override"
 						},
 						{
 							"kind": "seam",
-							"field": "override_modifier_after"
+							"field": "override_after"
 						}
 					]
 				}
@@ -6079,11 +6079,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "override_modifier",
+					"test": "override",
 					"body": [
 						{
+							"kind": "seam",
+							"field": "override_before"
+						},
+						{
 							"kind": "slot",
-							"name": "override_modifier"
+							"name": "override"
+						},
+						{
+							"kind": "seam",
+							"field": "override_after"
 						}
 					]
 				}
@@ -6494,19 +6502,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "override_modifier",
+					"test": "override",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "override_modifier_before"
+							"field": "override_before"
 						},
 						{
 							"kind": "slot",
-							"name": "override_modifier"
+							"name": "override"
 						},
 						{
 							"kind": "seam",
-							"field": "override_modifier_after"
+							"field": "override_after"
 						}
 					]
 				}
@@ -6650,11 +6658,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "override_modifier",
+					"test": "override",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "override_modifier"
+							"name": "override"
 						}
 					]
 				}
@@ -6868,11 +6876,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "override_modifier",
+					"test": "override",
 					"body": [
 						{
+							"kind": "seam",
+							"field": "override_before"
+						},
+						{
 							"kind": "slot",
-							"name": "override_modifier"
+							"name": "override"
+						},
+						{
+							"kind": "seam",
+							"field": "override_after"
 						}
 					]
 				}
@@ -8125,7 +8141,7 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "optional_chain_marker",
+					"test": "optional_chain",
 					"body": [
 						{
 							"kind": "seam",
@@ -8133,7 +8149,7 @@
 						},
 						{
 							"kind": "slot",
-							"name": "optional_chain_marker"
+							"name": "optional_chain"
 						},
 						{
 							"kind": "seam",

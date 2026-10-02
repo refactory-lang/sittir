@@ -392,7 +392,7 @@ them once each, in canonical flat order. The former per-arm kinds and their
 				//   optional($.accessibility_modifier),    // pos 0  (auto-promoted: accessibility_modifier by enrich)
 				//   optional('static'),                    // pos 1  →  'static' (_kw_static synthesized here;
 				//                                          //         add to inline: if parse drift emerges)
-				//   optional($.override_modifier),         // pos 2  (auto-promoted: override_modifier by enrich)
+				//   optional($.override_modifier),         // pos 2  →  'override' (field patch; kind stays override_modifier)
 				//   optional('readonly'),                  // pos 3  →  '3/0'  (readonly)
 				//   optional('async'),                     // pos 4  →  '4/0'  (async)
 				//   optional(choice('get','set','*')),    // pos 5  →  '5/0'  (accessor_kind, choice-of-strings)
@@ -422,9 +422,8 @@ them once each, in canonical flat order. The former per-arm kinds and their
 ```text
 				// method_signature: seq(
 				//   optional($.accessibility_modifier),    // pos 0  (auto-promoted: accessibility_modifier by enrich)
-				//   optional('static'),                    // pos 1  →  'static' (pos 2 override_modifier is
-				//                                          //         auto-promoted by enrich)
-				//   optional($.override_modifier),         // pos 2  (auto-promoted: override_modifier by enrich)
+				//   optional('static'),                    // pos 1  →  'static'
+				//   optional($.override_modifier),         // pos 2  →  'override' (field patch; kind stays override_modifier)
 				//   optional('readonly'),                  // pos 3  (auto-promoted: readonly by enrich)
 				//   optional('async'),                     // pos 4  (auto-promoted: async by enrich)
 				//   optional(choice('get','set','*')),    // pos 5  →  '5/0'  (accessor_kind, choice-of-strings)
@@ -460,9 +459,8 @@ them once each, in canonical flat order. The former per-arm kinds and their
 ```text
 				// property_signature: seq(
 				//   optional($.accessibility_modifier),  // pos 0  (auto-promoted: accessibility_modifier by enrich)
-				//   optional('static'),                   // pos 1  →  'static' (pos 2 override_modifier is
-				//                                         //         auto-promoted by enrich)
-				//   optional($.override_modifier),         // pos 2  (auto-promoted: override_modifier by enrich)
+				//   optional('static'),                   // pos 1  →  'static'
+				//   optional($.override_modifier),         // pos 2  →  'override' (field patch; kind stays override_modifier)
 				//   optional('readonly'),                  // pos 3  (auto-promoted: readonly by enrich)
 				//   field('name', $._property_name),       // pos 4
 				//   optional('?'),                         // pos 5  →  '5/0'  (optional)
@@ -737,19 +735,19 @@ The same rule governs the other standalone optional-punct markers
 				// collide on the `accessibility_modifier` storage key.
 ```
 
-### `_type_query_subscript_expression` — deferred promotion (`packages/typescript/grammar.sittir.ts`)
+### `_type_query_subscript_expression` (`packages/typescript/grammar.sittir.ts`)
 
 Tree-sitter aliases this hidden rule to the public `subscript_expression` kind
 via `alias($._type_query_subscript_expression, $.subscript_expression)`, and
 the base JS `subscript_expression` already labels its `?.` with
 `optional(field('optional_chain', $.optional_chain))`.
 
-Adding `optional_chain_marker` on the hidden alias source would extend the
-merged kind's field set, but the merged template (emitted from the canonical
-`subscript_expression` rule) only references `optional_chain` — so the coverage
-validator flags the unreferenced `optional_chain_marker` field. Promoting at
-the alias source needs either coalescing both field names downstream, or
-overriding the canonical rule too.
+This rule's `?.` is a bare literal. It is aliased `optional_chain_marker` to
+give it a kind, and fielded `optional_chain` so its slot is `optionalChain`,
+the same as `subscript_expression`'s. The alias kind keeps its own name:
+`optional_chain` is already the kind of the canonical rule's `?.`. The alias
+and the field are two patch sets on the same position, because a position
+takes one patch per set.
 
 ### `parenthesized_expression` (`packages/typescript/grammar.sittir.ts:1001`)
 

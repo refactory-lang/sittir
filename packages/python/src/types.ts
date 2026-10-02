@@ -2650,21 +2650,21 @@ export interface TryStatement {
 
 export interface ExceptClause {
 	readonly $type: TSKindId.ExceptClause;
-	readonly _star?: boolean;
+	readonly _group?: boolean;
 	readonly _exception?: ExceptClauseException;
 	readonly _suite: Suite;
 	readonly __inputHints__?: {
-		readonly star?: BaseBooleanKeyword<'*'>;
+		readonly group?: BaseBooleanKeyword<'*'>;
 	};
 	readonly __looseHints__?: {
 		readonly exception?: readonly (ExceptClauseExceptionAs | ExceptClauseExceptionList)[];
 	};
 	readonly __slotHints__?: {
-		readonly star: SlotHint<NonNullable<T.ExceptClause.Config>['star'], true>;
+		readonly group: SlotHint<NonNullable<T.ExceptClause.Config>['group'], true>;
 		readonly exception: SlotHint<T.ExceptClauseException, true>;
 		readonly suite: SlotHint<T.Suite>;
 	};
-	star(): boolean | undefined;
+	group(): boolean | undefined;
 	exception(): ExceptClauseException | undefined;
 	suite(): Suite;
 }
@@ -4411,7 +4411,7 @@ export interface StringContent {
 export interface Interpolation {
 	readonly $type: TSKindId.Interpolation;
 	readonly _expression: Expression | ExpressionList | PatternList | Yield;
-	readonly _eq?: boolean;
+	readonly _debug?: boolean;
 	readonly _type_conversion?: TypeConversion;
 	readonly _format_specifier?: FormatSpecifier;
 	readonly __inputHints__?: {
@@ -4421,19 +4421,19 @@ export interface Interpolation {
 			| ExpressionList
 			| PatternList
 			| Yield;
-		readonly eq?: BaseBooleanKeyword<'='>;
+		readonly debug?: BaseBooleanKeyword<'='>;
 	};
 	readonly __looseHints__?: {
 		readonly format_specifier?: readonly (FormatSpecifierText | FormatExpression)[];
 	};
 	readonly __slotHints__?: {
 		readonly expression: SlotHint<NonNullable<T.Interpolation.Config>['expression']>;
-		readonly eq: SlotHint<NonNullable<T.Interpolation.Config>['eq'], true>;
+		readonly debug: SlotHint<NonNullable<T.Interpolation.Config>['debug'], true>;
 		readonly typeConversion: SlotHint<T.TypeConversion, true>;
 		readonly formatSpecifier: SlotHint<T.FormatSpecifier, true>;
 	};
 	expression(): Expression | ExpressionList | PatternList | Yield;
-	eq(): boolean | undefined;
+	debug(): boolean | undefined;
 	typeConversion(): TypeConversion | undefined;
 	formatSpecifier(): FormatSpecifier | undefined;
 }
@@ -5911,7 +5911,7 @@ export namespace ExceptClause {
 			readonly before?: SpacingArm;
 			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 			readonly exceptKeyword?: { readonly after?: SpacingArm };
-			readonly star?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly group?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 		};
 	}
 }
@@ -6836,7 +6836,7 @@ export namespace Interpolation {
 		readonly __optionsHint__?: {
 			readonly after?: SpacingArm;
 			readonly before?: SpacingArm;
-			readonly eq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly debug?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 			readonly lbrace?: { readonly after?: SpacingArm };
 			readonly rbrace?: { readonly before?: SpacingArm };
 		};

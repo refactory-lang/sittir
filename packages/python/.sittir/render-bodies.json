@@ -1433,19 +1433,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "star",
+					"test": "group",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "star_before"
+							"field": "group_before"
 						},
 						{
 							"kind": "slot",
-							"name": "star"
+							"name": "group"
 						},
 						{
 							"kind": "seam",
-							"field": "star_after"
+							"field": "group_after"
 						}
 					]
 				}
@@ -2487,19 +2487,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "eq",
+					"test": "debug",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "eq_before"
+							"field": "debug_before"
 						},
 						{
 							"kind": "slot",
-							"name": "eq"
+							"name": "debug"
 						},
 						{
 							"kind": "seam",
-							"field": "eq_after"
+							"field": "debug_after"
 						}
 					]
 				}

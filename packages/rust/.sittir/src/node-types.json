@@ -2845,7 +2845,7 @@
     "type": "field_pattern_named",
     "named": true,
     "fields": {
-      "mutable_specifier": {
+      "mutable": {
         "multiple": false,
         "required": false,
         "types": [
@@ -2891,7 +2891,7 @@
     "type": "field_pattern_shorthand",
     "named": true,
     "fields": {
-      "mutable_specifier": {
+      "mutable": {
         "multiple": false,
         "required": false,
         "types": [
@@ -3931,7 +3931,7 @@
           }
         ]
       },
-      "mutable_specifier": {
+      "mutable": {
         "multiple": false,
         "required": false,
         "types": [
@@ -4766,7 +4766,7 @@
     "type": "parameter",
     "named": true,
     "fields": {
-      "mutable_specifier": {
+      "mutable": {
         "multiple": false,
         "required": false,
         "types": [
@@ -5318,7 +5318,7 @@
     "type": "reference_pattern",
     "named": true,
     "fields": {
-      "mutable_specifier": {
+      "mutable": {
         "multiple": false,
         "required": false,
         "types": [
@@ -5354,7 +5354,7 @@
           }
         ]
       },
-      "mutable_specifier": {
+      "mutable": {
         "multiple": false,
         "required": false,
         "types": [
@@ -5639,7 +5639,7 @@
           }
         ]
       },
-      "mutable_specifier": {
+      "mutable": {
         "multiple": false,
         "required": false,
         "types": [
@@ -5743,7 +5743,7 @@
     "type": "static_item",
     "named": true,
     "fields": {
-      "mutable_specifier": {
+      "mutable": {
         "multiple": false,
         "required": false,
         "types": [
@@ -7312,7 +7312,7 @@
     "type": "variadic_parameter",
     "named": true,
     "fields": {
-      "mutable_specifier": {
+      "mutable": {
         "multiple": false,
         "required": false,
         "types": [

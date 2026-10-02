@@ -105,7 +105,7 @@ export interface AbstractMethodSignatureTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
-  _override_modifier?: SlotValue<OverrideModifierTransport>
+  _override?: SlotValue<OverrideModifierTransport>
   _accessor_kind?: SlotValue<Box<AnyTransport>>
   _name: SlotValue<AbstractMethodSignatureNameTransportSlot>
   _optional?: boolean
@@ -1054,7 +1054,7 @@ export interface MethodDefinitionTransport {
   '$_edges'?: Edges
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
   _static?: boolean
-  _override_modifier?: SlotValue<OverrideModifierTransport>
+  _override?: SlotValue<OverrideModifierTransport>
   _readonly?: boolean
   _async?: boolean
   _accessor_kind?: SlotValue<Box<AnyTransport>>
@@ -1071,7 +1071,7 @@ export interface MethodSignatureTransport {
   '$_edges'?: Edges
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
   _static?: boolean
-  _override_modifier?: SlotValue<OverrideModifierTransport>
+  _override?: SlotValue<OverrideModifierTransport>
   _readonly?: boolean
   _async?: boolean
   _accessor_kind?: SlotValue<Box<AnyTransport>>
@@ -1265,12 +1265,12 @@ export interface OptionalParameterTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _decorator?: Array<SlotValue<DecoratorTransport>>
+  _override?: SlotValue<OverrideModifierTransport>
   _readonly?: boolean
   _pattern: SlotValue<OptionalParameterPatternTransportSlot>
   _type?: SlotValue<TypeAnnotationTransport>
   _value?: SlotValue<ExpressionTransport>
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
-  _override_modifier?: SlotValue<OverrideModifierTransport>
   _decorator_separator_space?: number
 }
 
@@ -1345,7 +1345,7 @@ export interface PropertySignatureTransport {
   '$_edges'?: Edges
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
   _static?: boolean
-  _override_modifier?: SlotValue<OverrideModifierTransport>
+  _override?: SlotValue<OverrideModifierTransport>
   _readonly?: boolean
   _name: SlotValue<PropertySignatureNameTransportSlot>
   _optional?: boolean
@@ -1359,6 +1359,7 @@ export interface PublicFieldDefinitionTransport {
   _declare?: boolean
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
   _static?: boolean
+  _override?: SlotValue<OverrideModifierTransport>
   _readonly?: boolean
   _abstract?: boolean
   _accessor?: boolean
@@ -1366,7 +1367,6 @@ export interface PublicFieldDefinitionTransport {
   _optionality?: SlotValue<Box<AnyTransport>>
   _type?: SlotValue<TypeAnnotationTransport>
   _value?: SlotValue<ExpressionTransport>
-  _override_modifier?: SlotValue<OverrideModifierTransport>
   _decorator_separator_space?: number
 }
 
@@ -1387,12 +1387,12 @@ export interface RequiredParameterTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _decorator?: Array<SlotValue<DecoratorTransport>>
+  _override?: SlotValue<OverrideModifierTransport>
   _readonly?: boolean
   _pattern: SlotValue<RequiredParameterPatternTransportSlot>
   _type?: SlotValue<TypeAnnotationTransport>
   _value?: SlotValue<ExpressionTransport>
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
-  _override_modifier?: SlotValue<OverrideModifierTransport>
   _decorator_separator_space?: number
 }
 
@@ -1691,8 +1691,8 @@ export interface TypeQuerySubscriptExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _object: SlotValue<Box<TypeQuerySubscriptExpressionObjectTransportSlot>>
+  _optional_chain?: SlotValue<OptionalChainMarkerTransport>
   _index: SlotValue<TypeQuerySubscriptExpressionIndexTransportSlot>
-  _optional_chain_marker?: SlotValue<OptionalChainMarkerTransport>
 }
 
 export interface TypeQueryTransport {

@@ -136,7 +136,7 @@ export function displayImplStrict() {
 						engine.build.parameter.strict({
 							name: id('f'),
 							type: engine.build.referenceType.strict({
-								mutableSpecifier: true,
+								mutable: true,
 								type: engine.build.genericType.strict({
 									type: scopedTy(ns('std', 'fmt'), 'Formatter'),
 									typeArguments: engine.build.typeArguments.strict(engine.build.lifetime('_')),
@@ -190,7 +190,7 @@ export function applyEditsFnStrict() {
 		parameters: engine.build.parameters.strict(
 			engine.build.parameter.strict({ name: id('source'), type: engine.build.referenceType.strict({ type: id('str') }) }),
 			engine.build.parameter.strict({
-				mutableSpecifier: true,
+				mutable: true,
 				name: id('edits'),
 				type: engine.build.genericType.strict({ type: id('Vec'), typeArguments: engine.build.typeArguments.strict(id('Edit')) }),
 			})

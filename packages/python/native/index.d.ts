@@ -520,7 +520,7 @@ export interface ExceptClauseExceptionTransport {
 export interface ExceptClauseTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _star?: boolean
+  _group?: boolean
   _exception?: SlotValue<ExceptClauseExceptionTransport>
   _suite: SlotValue<SuiteTransport>
 }
@@ -727,7 +727,7 @@ export interface InterpolationTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _expression: SlotValue<InterpolationExpressionTransportSlot>
-  _eq?: boolean
+  _debug?: boolean
   _type_conversion?: SlotValue<TypeConversionTransport>
   _format_specifier?: SlotValue<FormatSpecifierTransport>
 }

@@ -3753,8 +3753,8 @@ export function buildMethodDefinition(config: T.MethodDefinition.Config): T.Meth
 		'a kind id'
 	);
 	const _static = coerceBooleanKeywordStorage(rejectBareText(config.static, 'MethodDefinition.static', 'a boolean'));
-	const _override_modifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.overrideModifier, 'MethodDefinition.overrideModifier', 'a boolean')
+	const _override = coerceBooleanKeywordStorage(
+		rejectBareText(config.override, 'MethodDefinition.override', 'a boolean')
 	);
 	const _readonly = coerceBooleanKeywordStorage(
 		rejectBareText(config.readonly, 'MethodDefinition.readonly', 'a boolean')
@@ -3803,7 +3803,7 @@ export function buildMethodDefinition(config: T.MethodDefinition.Config): T.Meth
 		$named: true as const,
 		_accessibility_modifier,
 		_static,
-		_override_modifier,
+		_override,
 		_readonly,
 		_async,
 		_accessor_kind,
@@ -3818,8 +3818,8 @@ export function buildMethodDefinition(config: T.MethodDefinition.Config): T.Meth
 				rebuilt(node, handle, () => buildMethodDefinition({ ...config, accessibilityModifier: value })),
 			static: (value?: NonNullable<T.MethodDefinition.Config>['static']) =>
 				rebuilt(node, handle, () => buildMethodDefinition({ ...config, static: value })),
-			overrideModifier: (value?: NonNullable<T.MethodDefinition.Config>['overrideModifier']) =>
-				rebuilt(node, handle, () => buildMethodDefinition({ ...config, overrideModifier: value })),
+			override: (value?: NonNullable<T.MethodDefinition.Config>['override']) =>
+				rebuilt(node, handle, () => buildMethodDefinition({ ...config, override: value })),
 			readonly: (value?: NonNullable<T.MethodDefinition.Config>['readonly']) =>
 				rebuilt(node, handle, () => buildMethodDefinition({ ...config, readonly: value })),
 			async: (value?: NonNullable<T.MethodDefinition.Config>['async']) =>
@@ -3852,7 +3852,7 @@ export function buildMethodDefinition(config: T.MethodDefinition.Config): T.Meth
 		},
 		accessibilityModifier: () => _accessibility_modifier,
 		static: () => _static,
-		overrideModifier: () => _override_modifier,
+		override: () => _override,
 		readonly: () => _readonly,
 		async: () => _async,
 		accessorKind: () => _accessor_kind,
@@ -3987,6 +3987,9 @@ export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Confi
 	const _static = coerceBooleanKeywordStorage(
 		rejectBareText(config.static, 'PublicFieldDefinition.static', 'a boolean')
 	);
+	const _override = coerceBooleanKeywordStorage(
+		rejectBareText(config.override, 'PublicFieldDefinition.override', 'a boolean')
+	);
 	const _readonly = coerceBooleanKeywordStorage(
 		rejectBareText(config.readonly, 'PublicFieldDefinition.readonly', 'a boolean')
 	);
@@ -3995,9 +3998,6 @@ export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Confi
 	);
 	const _accessor = coerceBooleanKeywordStorage(
 		rejectBareText(config.accessor, 'PublicFieldDefinition.accessor', 'a boolean')
-	);
-	const _override_modifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.overrideModifier, 'PublicFieldDefinition.overrideModifier', 'a boolean')
 	);
 	const _name = admitAliasContent<NonNullable<T.PublicFieldDefinition['_name']>>(
 		rejectBareText(
@@ -4027,10 +4027,10 @@ export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Confi
 		_declare,
 		_accessibility_modifier,
 		_static,
+		_override,
 		_readonly,
 		_abstract,
 		_accessor,
-		_override_modifier,
 		_name,
 		_optionality,
 		_type,
@@ -4046,14 +4046,14 @@ export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Confi
 				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, accessibilityModifier: value })),
 			static: (value?: NonNullable<T.PublicFieldDefinition.Config>['static']) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, static: value })),
+			override: (value?: NonNullable<T.PublicFieldDefinition.Config>['override']) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, override: value })),
 			readonly: (value?: NonNullable<T.PublicFieldDefinition.Config>['readonly']) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, readonly: value })),
 			abstract: (value?: NonNullable<T.PublicFieldDefinition.Config>['abstract']) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, abstract: value })),
 			accessor: (value?: NonNullable<T.PublicFieldDefinition.Config>['accessor']) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, accessor: value })),
-			overrideModifier: (value?: NonNullable<T.PublicFieldDefinition.Config>['overrideModifier']) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, overrideModifier: value })),
 			name: (value: NonNullable<T.PublicFieldDefinition.Config>['name']) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, name: value })),
 			optionality: (value?: NonNullable<T.PublicFieldDefinition.Config>['optionality']) =>
@@ -4067,10 +4067,10 @@ export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Confi
 		declare: () => _declare,
 		accessibilityModifier: () => _accessibility_modifier,
 		static: () => _static,
+		override: () => _override,
 		readonly: () => _readonly,
 		abstract: () => _abstract,
 		accessor: () => _accessor,
-		overrideModifier: () => _override_modifier,
 		name: () => _name,
 		optionality: () => _optionality,
 		type: () => _type,
@@ -4118,8 +4118,8 @@ export function buildMethodSignature(config: T.MethodSignature.Config): T.Method
 		'a kind id'
 	);
 	const _static = coerceBooleanKeywordStorage(rejectBareText(config.static, 'MethodSignature.static', 'a boolean'));
-	const _override_modifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.overrideModifier, 'MethodSignature.overrideModifier', 'a boolean')
+	const _override = coerceBooleanKeywordStorage(
+		rejectBareText(config.override, 'MethodSignature.override', 'a boolean')
 	);
 	const _readonly = coerceBooleanKeywordStorage(
 		rejectBareText(config.readonly, 'MethodSignature.readonly', 'a boolean')
@@ -4163,7 +4163,7 @@ export function buildMethodSignature(config: T.MethodSignature.Config): T.Method
 		$named: true as const,
 		_accessibility_modifier,
 		_static,
-		_override_modifier,
+		_override,
 		_readonly,
 		_async,
 		_accessor_kind,
@@ -4177,8 +4177,8 @@ export function buildMethodSignature(config: T.MethodSignature.Config): T.Method
 				rebuilt(node, handle, () => buildMethodSignature({ ...config, accessibilityModifier: value })),
 			static: (value?: NonNullable<T.MethodSignature.Config>['static']) =>
 				rebuilt(node, handle, () => buildMethodSignature({ ...config, static: value })),
-			overrideModifier: (value?: NonNullable<T.MethodSignature.Config>['overrideModifier']) =>
-				rebuilt(node, handle, () => buildMethodSignature({ ...config, overrideModifier: value })),
+			override: (value?: NonNullable<T.MethodSignature.Config>['override']) =>
+				rebuilt(node, handle, () => buildMethodSignature({ ...config, override: value })),
 			readonly: (value?: NonNullable<T.MethodSignature.Config>['readonly']) =>
 				rebuilt(node, handle, () => buildMethodSignature({ ...config, readonly: value })),
 			async: (value?: NonNullable<T.MethodSignature.Config>['async']) =>
@@ -4210,7 +4210,7 @@ export function buildMethodSignature(config: T.MethodSignature.Config): T.Method
 		},
 		accessibilityModifier: () => _accessibility_modifier,
 		static: () => _static,
-		overrideModifier: () => _override_modifier,
+		override: () => _override,
 		readonly: () => _readonly,
 		async: () => _async,
 		accessorKind: () => _accessor_kind,
@@ -4237,8 +4237,8 @@ export function buildAbstractMethodSignature(
 		'AbstractMethodSignature.accessibilityModifier',
 		'a kind id'
 	);
-	const _override_modifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.overrideModifier, 'AbstractMethodSignature.overrideModifier', 'a boolean')
+	const _override = coerceBooleanKeywordStorage(
+		rejectBareText(config.override, 'AbstractMethodSignature.override', 'a boolean')
 	);
 	const _accessor_kind = rejectBareText(
 		kindIdStorage<NonNullable<T.AbstractMethodSignature['_accessor_kind']>>(config.accessorKind),
@@ -4277,7 +4277,7 @@ export function buildAbstractMethodSignature(
 		$source: 2 as const,
 		$named: true as const,
 		_accessibility_modifier,
-		_override_modifier,
+		_override,
 		_accessor_kind,
 		_name,
 		_optional,
@@ -4287,8 +4287,8 @@ export function buildAbstractMethodSignature(
 		$with: {
 			accessibilityModifier: (value?: NonNullable<T.AbstractMethodSignature.Config>['accessibilityModifier']) =>
 				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, accessibilityModifier: value })),
-			overrideModifier: (value?: NonNullable<T.AbstractMethodSignature.Config>['overrideModifier']) =>
-				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, overrideModifier: value })),
+			override: (value?: NonNullable<T.AbstractMethodSignature.Config>['override']) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, override: value })),
 			accessorKind: (value?: NonNullable<T.AbstractMethodSignature.Config>['accessorKind']) =>
 				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, accessorKind: value })),
 			name: (value: NonNullable<T.AbstractMethodSignature.Config>['name']) =>
@@ -4315,7 +4315,7 @@ export function buildAbstractMethodSignature(
 				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, returnType: value }))
 		},
 		accessibilityModifier: () => _accessibility_modifier,
-		overrideModifier: () => _override_modifier,
+		override: () => _override,
 		accessorKind: () => _accessor_kind,
 		name: () => _name,
 		optional: () => _optional,
@@ -5250,8 +5250,8 @@ export function buildRequiredParameter(config: T.RequiredParameter.Config): T.Re
 		'RequiredParameter.accessibilityModifier',
 		'a kind id'
 	);
-	const _override_modifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.overrideModifier, 'RequiredParameter.overrideModifier', 'a boolean')
+	const _override = coerceBooleanKeywordStorage(
+		rejectBareText(config.override, 'RequiredParameter.override', 'a boolean')
 	);
 	const _readonly = coerceBooleanKeywordStorage(
 		rejectBareText(config.readonly, 'RequiredParameter.readonly', 'a boolean')
@@ -5274,7 +5274,7 @@ export function buildRequiredParameter(config: T.RequiredParameter.Config): T.Re
 		$named: true as const,
 		_decorator,
 		_accessibility_modifier,
-		_override_modifier,
+		_override,
 		_readonly,
 		_pattern,
 		_type,
@@ -5284,8 +5284,8 @@ export function buildRequiredParameter(config: T.RequiredParameter.Config): T.Re
 				rebuilt(node, handle, () => buildRequiredParameter({ ...config, decorator: restItems('decorators', values) })),
 			accessibilityModifier: (value?: NonNullable<T.RequiredParameter.Config>['accessibilityModifier']) =>
 				rebuilt(node, handle, () => buildRequiredParameter({ ...config, accessibilityModifier: value })),
-			overrideModifier: (value?: NonNullable<T.RequiredParameter.Config>['overrideModifier']) =>
-				rebuilt(node, handle, () => buildRequiredParameter({ ...config, overrideModifier: value })),
+			override: (value?: NonNullable<T.RequiredParameter.Config>['override']) =>
+				rebuilt(node, handle, () => buildRequiredParameter({ ...config, override: value })),
 			readonly: (value?: NonNullable<T.RequiredParameter.Config>['readonly']) =>
 				rebuilt(node, handle, () => buildRequiredParameter({ ...config, readonly: value })),
 			pattern: (value: NonNullable<T.RequiredParameter.Config>['pattern']) =>
@@ -5297,7 +5297,7 @@ export function buildRequiredParameter(config: T.RequiredParameter.Config): T.Re
 		},
 		decorators: () => _decorator,
 		accessibilityModifier: () => _accessibility_modifier,
-		overrideModifier: () => _override_modifier,
+		override: () => _override,
 		readonly: () => _readonly,
 		pattern: () => _pattern,
 		type: () => _type,
@@ -5319,8 +5319,8 @@ export function buildOptionalParameter(config: T.OptionalParameter.Config): T.Op
 		'OptionalParameter.accessibilityModifier',
 		'a kind id'
 	);
-	const _override_modifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.overrideModifier, 'OptionalParameter.overrideModifier', 'a boolean')
+	const _override = coerceBooleanKeywordStorage(
+		rejectBareText(config.override, 'OptionalParameter.override', 'a boolean')
 	);
 	const _readonly = coerceBooleanKeywordStorage(
 		rejectBareText(config.readonly, 'OptionalParameter.readonly', 'a boolean')
@@ -5343,7 +5343,7 @@ export function buildOptionalParameter(config: T.OptionalParameter.Config): T.Op
 		$named: true as const,
 		_decorator,
 		_accessibility_modifier,
-		_override_modifier,
+		_override,
 		_readonly,
 		_pattern,
 		_type,
@@ -5353,8 +5353,8 @@ export function buildOptionalParameter(config: T.OptionalParameter.Config): T.Op
 				rebuilt(node, handle, () => buildOptionalParameter({ ...config, decorator: restItems('decorators', values) })),
 			accessibilityModifier: (value?: NonNullable<T.OptionalParameter.Config>['accessibilityModifier']) =>
 				rebuilt(node, handle, () => buildOptionalParameter({ ...config, accessibilityModifier: value })),
-			overrideModifier: (value?: NonNullable<T.OptionalParameter.Config>['overrideModifier']) =>
-				rebuilt(node, handle, () => buildOptionalParameter({ ...config, overrideModifier: value })),
+			override: (value?: NonNullable<T.OptionalParameter.Config>['override']) =>
+				rebuilt(node, handle, () => buildOptionalParameter({ ...config, override: value })),
 			readonly: (value?: NonNullable<T.OptionalParameter.Config>['readonly']) =>
 				rebuilt(node, handle, () => buildOptionalParameter({ ...config, readonly: value })),
 			pattern: (value: NonNullable<T.OptionalParameter.Config>['pattern']) =>
@@ -5366,7 +5366,7 @@ export function buildOptionalParameter(config: T.OptionalParameter.Config): T.Op
 		},
 		decorators: () => _decorator,
 		accessibilityModifier: () => _accessibility_modifier,
-		overrideModifier: () => _override_modifier,
+		override: () => _override,
 		readonly: () => _readonly,
 		pattern: () => _pattern,
 		type: () => _type,
@@ -6189,8 +6189,8 @@ export function buildTypeQuerySubscriptExpression(
 		TSKindId.Identifier,
 		['this']
 	);
-	const _optional_chain_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.optionalChainMarker, 'TypeQuerySubscriptExpression.optionalChainMarker', 'a boolean')
+	const _optional_chain = coerceBooleanKeywordStorage(
+		rejectBareText(config.optionalChain, 'TypeQuerySubscriptExpression.optionalChain', 'a boolean')
 	);
 	const _index = rejectBareText(
 		kindIdStorage<NonNullable<T.TypeQuerySubscriptExpression['_index']>>(config.index),
@@ -6203,18 +6203,18 @@ export function buildTypeQuerySubscriptExpression(
 		$source: 2 as const,
 		$named: true as const,
 		_object,
-		_optional_chain_marker,
+		_optional_chain,
 		_index,
 		$with: {
 			object: (value: NonNullable<T.TypeQuerySubscriptExpression.Config>['object']) =>
 				rebuilt(node, handle, () => buildTypeQuerySubscriptExpression({ ...config, object: value })),
-			optionalChainMarker: (value?: NonNullable<T.TypeQuerySubscriptExpression.Config>['optionalChainMarker']) =>
-				rebuilt(node, handle, () => buildTypeQuerySubscriptExpression({ ...config, optionalChainMarker: value })),
+			optionalChain: (value?: NonNullable<T.TypeQuerySubscriptExpression.Config>['optionalChain']) =>
+				rebuilt(node, handle, () => buildTypeQuerySubscriptExpression({ ...config, optionalChain: value })),
 			index: (value: NonNullable<T.TypeQuerySubscriptExpression.Config>['index']) =>
 				rebuilt(node, handle, () => buildTypeQuerySubscriptExpression({ ...config, index: value }))
 		},
 		object: () => _object,
-		optionalChainMarker: () => _optional_chain_marker,
+		optionalChain: () => _optional_chain,
 		index: () => _index,
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -6837,8 +6837,8 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 		'a kind id'
 	);
 	const _static = coerceBooleanKeywordStorage(rejectBareText(config.static, 'PropertySignature.static', 'a boolean'));
-	const _override_modifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.overrideModifier, 'PropertySignature.overrideModifier', 'a boolean')
+	const _override = coerceBooleanKeywordStorage(
+		rejectBareText(config.override, 'PropertySignature.override', 'a boolean')
 	);
 	const _readonly = coerceBooleanKeywordStorage(
 		rejectBareText(config.readonly, 'PropertySignature.readonly', 'a boolean')
@@ -6862,7 +6862,7 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 		$named: true as const,
 		_accessibility_modifier,
 		_static,
-		_override_modifier,
+		_override,
 		_readonly,
 		_name,
 		_optional,
@@ -6872,8 +6872,8 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 				rebuilt(node, handle, () => buildPropertySignature({ ...config, accessibilityModifier: value })),
 			static: (value?: NonNullable<T.PropertySignature.Config>['static']) =>
 				rebuilt(node, handle, () => buildPropertySignature({ ...config, static: value })),
-			overrideModifier: (value?: NonNullable<T.PropertySignature.Config>['overrideModifier']) =>
-				rebuilt(node, handle, () => buildPropertySignature({ ...config, overrideModifier: value })),
+			override: (value?: NonNullable<T.PropertySignature.Config>['override']) =>
+				rebuilt(node, handle, () => buildPropertySignature({ ...config, override: value })),
 			readonly: (value?: NonNullable<T.PropertySignature.Config>['readonly']) =>
 				rebuilt(node, handle, () => buildPropertySignature({ ...config, readonly: value })),
 			name: (value: NonNullable<T.PropertySignature.Config>['name']) =>
@@ -6885,7 +6885,7 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 		},
 		accessibilityModifier: () => _accessibility_modifier,
 		static: () => _static,
-		overrideModifier: () => _override_modifier,
+		override: () => _override,
 		readonly: () => _readonly,
 		name: () => _name,
 		optional: () => _optional,

@@ -9453,19 +9453,19 @@ impl ::sittir_core::render::Render for ForStatementRightTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ExceptClauseStarTransportSlot {
+pub enum ExceptClauseGroupTransportSlot {
     Literal7_73_74_61_72,
 }
 
-impl ::sittir_core::prepare::Prepare for ExceptClauseStarTransportSlot {
+impl ::sittir_core::prepare::Prepare for ExceptClauseGroupTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ExceptClauseStarTransportSlot::Literal7_73_74_61_72 => Ok(()),
+            ExceptClauseGroupTransportSlot::Literal7_73_74_61_72 => Ok(()),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for ExceptClauseStarTransportSlot {
+impl ::sittir_core::view::KindOf for ExceptClauseGroupTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Literal7_73_74_61_72 => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
@@ -9474,7 +9474,7 @@ impl ::sittir_core::view::KindOf for ExceptClauseStarTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseStarTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseGroupTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -9484,73 +9484,67 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseStarTransportSlot {
                 match u16::from_napi_value(env, napi_val)? {
                     8 => Ok(Self::Literal7_73_74_61_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExceptClauseStarTransportSlot",
+                        "unknown kind id {other} in ExceptClauseGroupTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ExceptClauseStarTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ExceptClauseGroupTransportSlot")
                 )?;
                 match kind_id {
                     8 => Ok(Self::Literal7_73_74_61_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExceptClauseStarTransportSlot",
+                        "unknown kind id {other} in ExceptClauseGroupTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ExceptClauseStarTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("ExceptClauseGroupTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ExceptClauseStarTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ExceptClauseGroupTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ExceptClauseStarTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ExceptClauseGroupTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptClauseStarTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptClauseGroupTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ExceptClauseStarTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ExceptClauseGroupTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseStarTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseGroupTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExceptClauseStarTransportSlot::to_napi_value(env, *val)
+        ExceptClauseGroupTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn except_clause_star_transport_slot_to_any(t: ExceptClauseStarTransportSlot) -> AnyTransport {
+fn except_clause_group_transport_slot_to_any(t: ExceptClauseGroupTransportSlot) -> AnyTransport {
     match t {
-        ExceptClauseStarTransportSlot::Literal7_73_74_61_72 => AnyTransport::Literal7_73_74_61_72,
+        ExceptClauseGroupTransportSlot::Literal7_73_74_61_72 => AnyTransport::Literal7_73_74_61_72,
     }
 }
 
-impl ::sittir_core::render::Render for ExceptClauseStarTransportSlot {
+impl ::sittir_core::render::Render for ExceptClauseGroupTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ExceptClauseStarTransportSlot::Literal7_73_74_61_72 => {
-                w.site_at(options::SITE_EXCEPT_CLAUSE_STAR_BEFORE);
-                let written = w.text("*");
-                written?;
-                w.site_at(options::SITE_EXCEPT_CLAUSE_STAR_AFTER);
-                Ok(())
-            }
+            ExceptClauseGroupTransportSlot::Literal7_73_74_61_72 => w.text("*"),
         }
     }
 }
@@ -19845,19 +19839,19 @@ impl ::sittir_core::render::Render for InterpolationExpressionTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum InterpolationEqTransportSlot {
+pub enum InterpolationDebugTransportSlot {
     Literal43_65_71,
 }
 
-impl ::sittir_core::prepare::Prepare for InterpolationEqTransportSlot {
+impl ::sittir_core::prepare::Prepare for InterpolationDebugTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            InterpolationEqTransportSlot::Literal43_65_71 => Ok(()),
+            InterpolationDebugTransportSlot::Literal43_65_71 => Ok(()),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for InterpolationEqTransportSlot {
+impl ::sittir_core::view::KindOf for InterpolationDebugTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Literal43_65_71 => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
@@ -19866,7 +19860,7 @@ impl ::sittir_core::view::KindOf for InterpolationEqTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for InterpolationEqTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for InterpolationDebugTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -19876,73 +19870,67 @@ impl ::napi::bindgen_prelude::FromNapiValue for InterpolationEqTransportSlot {
                 match u16::from_napi_value(env, napi_val)? {
                     40 => Ok(Self::Literal43_65_71),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in InterpolationEqTransportSlot",
+                        "unknown kind id {other} in InterpolationDebugTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in InterpolationEqTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in InterpolationDebugTransportSlot")
                 )?;
                 match kind_id {
                     40 => Ok(Self::Literal43_65_71),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in InterpolationEqTransportSlot",
+                        "unknown kind id {other} in InterpolationDebugTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("InterpolationEqTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("InterpolationDebugTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for InterpolationEqTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for InterpolationDebugTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("InterpolationEqTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("InterpolationDebugTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<InterpolationEqTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<InterpolationDebugTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        InterpolationEqTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        InterpolationDebugTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<InterpolationEqTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<InterpolationDebugTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        InterpolationEqTransportSlot::to_napi_value(env, *val)
+        InterpolationDebugTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn interpolation_eq_transport_slot_to_any(t: InterpolationEqTransportSlot) -> AnyTransport {
+fn interpolation_debug_transport_slot_to_any(t: InterpolationDebugTransportSlot) -> AnyTransport {
     match t {
-        InterpolationEqTransportSlot::Literal43_65_71 => AnyTransport::Literal43_65_71,
+        InterpolationDebugTransportSlot::Literal43_65_71 => AnyTransport::Literal43_65_71,
     }
 }
 
-impl ::sittir_core::render::Render for InterpolationEqTransportSlot {
+impl ::sittir_core::render::Render for InterpolationDebugTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            InterpolationEqTransportSlot::Literal43_65_71 => {
-                w.site_at(options::SITE_INTERPOLATION_EQ_BEFORE);
-                let written = w.text("=");
-                written?;
-                w.site_at(options::SITE_INTERPOLATION_EQ_AFTER);
-                Ok(())
-            }
+            InterpolationDebugTransportSlot::Literal43_65_71 => w.text("="),
         }
     }
 }
@@ -27002,8 +26990,8 @@ pub struct ExceptClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star"))]
-    pub star: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_group"))]
+    pub group: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exception"))]
     pub exception: Option<::sittir_core::SlotValue<ExceptClauseExceptionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_suite"))]
@@ -27032,7 +27020,7 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.star.prepare(ctx)?;
+        self.group.prepare(ctx)?;
         self.exception.prepare(ctx)?;
         self.suite.prepare(ctx)?;
         Ok(())
@@ -32121,8 +32109,8 @@ pub struct InterpolationTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<InterpolationExpressionTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq"))]
-    pub eq: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_debug"))]
+    pub debug: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_conversion"))]
     pub type_conversion: Option<::sittir_core::SlotValue<TypeConversionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_format_specifier"))]
@@ -32152,7 +32140,7 @@ impl ::sittir_core::prepare::Prepare for InterpolationTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
-        self.eq.prepare(ctx)?;
+        self.debug.prepare(ctx)?;
         self.type_conversion.prepare(ctx)?;
         self.format_specifier.prepare(ctx)?;
         Ok(())
@@ -50135,15 +50123,15 @@ fn render_try_statement(node: &TryStatementTransport, w: &mut dyn ::sittir_core:
 
 fn render_except_clause(node: &ExceptClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let exception = View::new(&node.exception, "{}");
-    let star = View::new(&node.star, "*");
+    let group = View::new(&node.group, "*");
     let suite = &node.suite;
     w.edge(::sittir_core::types::KindId(159), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("except")?;
     w.site_at(options::SITE_EXCEPT_CLAUSE_EXCEPT_KEYWORD_AFTER);
-    if star.is_present() {
-        w.site_at(options::SITE_EXCEPT_CLAUSE_STAR_BEFORE);
-        star.render(w)?;
-        w.site_at(options::SITE_EXCEPT_CLAUSE_STAR_AFTER);
+    if group.is_present() {
+        w.site_at(options::SITE_EXCEPT_CLAUSE_GROUP_BEFORE);
+        group.render(w)?;
+        w.site_at(options::SITE_EXCEPT_CLAUSE_GROUP_AFTER);
     }
     exception.render(w)?;
     w.site_at(options::SITE_EXCEPT_CLAUSE_COLON_BEFORE);
@@ -51292,7 +51280,7 @@ fn render_string_content(node: &StringContentTransport, w: &mut dyn ::sittir_cor
 }
 
 fn render_interpolation(node: &InterpolationTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let eq = View::new(&node.eq, "=");
+    let debug = View::new(&node.debug, "=");
     let expression = &node.expression;
     let format_specifier = View::new(&node.format_specifier, "{}");
     let type_conversion = View::new(&node.type_conversion, "{}");
@@ -51300,10 +51288,10 @@ fn render_interpolation(node: &InterpolationTransport, w: &mut dyn ::sittir_core
     w.text("{")?;
     w.site_at(options::SITE_INTERPOLATION_LBRACE_AFTER);
     expression.render(w)?;
-    if eq.is_present() {
-        w.site_at(options::SITE_INTERPOLATION_EQ_BEFORE);
-        eq.render(w)?;
-        w.site_at(options::SITE_INTERPOLATION_EQ_AFTER);
+    if debug.is_present() {
+        w.site_at(options::SITE_INTERPOLATION_DEBUG_BEFORE);
+        debug.render(w)?;
+        w.site_at(options::SITE_INTERPOLATION_DEBUG_AFTER);
     }
     type_conversion.render(w)?;
     format_specifier.render(w)?;

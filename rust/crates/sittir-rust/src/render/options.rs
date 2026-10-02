@@ -402,15 +402,15 @@ pub const SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE: u
 pub const SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER: usize = 394;
 pub const SITE_FIELD_INITIALIZER_LIST_ELEMENTS_FIELD_INITIALIZER_LIST_ELEMENTS_BEFORE: usize = 395;
 pub const SITE_FIELD_INITIALIZER_LIST_ELEMENTS_FIELD_INITIALIZER_LIST_ELEMENTS_AFTER: usize = 396;
-pub const SITE_FIELD_PATTERN_NAMED_MUTABLE_SPECIFIER_BEFORE: usize = 397;
-pub const SITE_FIELD_PATTERN_NAMED_MUTABLE_SPECIFIER_AFTER: usize = 398;
+pub const SITE_FIELD_PATTERN_NAMED_MUTABLE_BEFORE: usize = 397;
+pub const SITE_FIELD_PATTERN_NAMED_MUTABLE_AFTER: usize = 398;
 pub const SITE_FIELD_PATTERN_NAMED_COLON_BEFORE: usize = 399;
 pub const SITE_FIELD_PATTERN_NAMED_COLON_AFTER: usize = 400;
 pub const SITE_FIELD_PATTERN_NAMED_REF_AFTER: usize = 401;
 pub const SITE_FIELD_PATTERN_NAMED_FIELD_PATTERN_NAMED_BEFORE: usize = 402;
 pub const SITE_FIELD_PATTERN_NAMED_FIELD_PATTERN_NAMED_AFTER: usize = 403;
-pub const SITE_FIELD_PATTERN_SHORTHAND_MUTABLE_SPECIFIER_BEFORE: usize = 404;
-pub const SITE_FIELD_PATTERN_SHORTHAND_MUTABLE_SPECIFIER_AFTER: usize = 405;
+pub const SITE_FIELD_PATTERN_SHORTHAND_MUTABLE_BEFORE: usize = 404;
+pub const SITE_FIELD_PATTERN_SHORTHAND_MUTABLE_AFTER: usize = 405;
 pub const SITE_FIELD_PATTERN_SHORTHAND_REF_AFTER: usize = 406;
 pub const SITE_FIELD_PATTERN_SHORTHAND_FIELD_PATTERN_SHORTHAND_BEFORE: usize = 407;
 pub const SITE_FIELD_PATTERN_SHORTHAND_FIELD_PATTERN_SHORTHAND_AFTER: usize = 408;
@@ -582,8 +582,8 @@ pub const SITE_LET_CONDITION_EQ_AFTER: usize = 573;
 pub const SITE_LET_CONDITION_LET_KEYWORD_AFTER: usize = 574;
 pub const SITE_LET_CONDITION_LET_CONDITION_BEFORE: usize = 575;
 pub const SITE_LET_CONDITION_LET_CONDITION_AFTER: usize = 576;
-pub const SITE_LET_DECLARATION_MUTABLE_SPECIFIER_BEFORE: usize = 577;
-pub const SITE_LET_DECLARATION_MUTABLE_SPECIFIER_AFTER: usize = 578;
+pub const SITE_LET_DECLARATION_MUTABLE_BEFORE: usize = 577;
+pub const SITE_LET_DECLARATION_MUTABLE_AFTER: usize = 578;
 pub const SITE_LET_DECLARATION_COLON_BEFORE: usize = 579;
 pub const SITE_LET_DECLARATION_COLON_AFTER: usize = 580;
 pub const SITE_LET_DECLARATION_SEMI_BEFORE: usize = 581;
@@ -721,7 +721,7 @@ pub const SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_B
 pub const SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER: usize = 713;
 pub const SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_BEFORE: usize = 714;
 pub const SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_AFTER: usize = 715;
-pub const SITE_PARAMETER_MUTABLE_SPECIFIER_AFTER: usize = 716;
+pub const SITE_PARAMETER_MUTABLE_AFTER: usize = 716;
 pub const SITE_PARAMETER_COLON_BEFORE: usize = 717;
 pub const SITE_PARAMETER_COLON_AFTER: usize = 718;
 pub const SITE_PARAMETER_PARAMETER_BEFORE: usize = 719;
@@ -823,13 +823,13 @@ pub const SITE_REFERENCE_EXPRESSION_RAW_MUT_RAW_KEYWORD_BEFORE: usize = 814;
 pub const SITE_REFERENCE_EXPRESSION_RAW_MUT_RAW_KEYWORD_AFTER: usize = 815;
 pub const SITE_REFERENCE_EXPRESSION_RAW_MUT_REFERENCE_EXPRESSION_RAW_MUT_BEFORE: usize = 816;
 pub const SITE_REFERENCE_EXPRESSION_RAW_MUT_REFERENCE_EXPRESSION_RAW_MUT_AFTER: usize = 817;
-pub const SITE_REFERENCE_PATTERN_MUTABLE_SPECIFIER_BEFORE: usize = 818;
-pub const SITE_REFERENCE_PATTERN_MUTABLE_SPECIFIER_AFTER: usize = 819;
+pub const SITE_REFERENCE_PATTERN_MUTABLE_BEFORE: usize = 818;
+pub const SITE_REFERENCE_PATTERN_MUTABLE_AFTER: usize = 819;
 pub const SITE_REFERENCE_PATTERN_AMP_AFTER: usize = 820;
 pub const SITE_REFERENCE_PATTERN_REFERENCE_PATTERN_BEFORE: usize = 821;
 pub const SITE_REFERENCE_PATTERN_REFERENCE_PATTERN_AFTER: usize = 822;
-pub const SITE_REFERENCE_TYPE_MUTABLE_SPECIFIER_BEFORE: usize = 823;
-pub const SITE_REFERENCE_TYPE_MUTABLE_SPECIFIER_AFTER: usize = 824;
+pub const SITE_REFERENCE_TYPE_MUTABLE_BEFORE: usize = 823;
+pub const SITE_REFERENCE_TYPE_MUTABLE_AFTER: usize = 824;
 pub const SITE_REFERENCE_TYPE_AMP_AFTER: usize = 825;
 pub const SITE_REFERENCE_TYPE_REFERENCE_TYPE_BEFORE: usize = 826;
 pub const SITE_REFERENCE_TYPE_REFERENCE_TYPE_AFTER: usize = 827;
@@ -855,8 +855,8 @@ pub const SITE_SCOPED_USE_LIST_COLON_COLON_BEFORE: usize = 846;
 pub const SITE_SCOPED_USE_LIST_COLON_COLON_AFTER: usize = 847;
 pub const SITE_SCOPED_USE_LIST_SCOPED_USE_LIST_BEFORE: usize = 848;
 pub const SITE_SCOPED_USE_LIST_SCOPED_USE_LIST_AFTER: usize = 849;
-pub const SITE_SELF_PARAMETER_MUTABLE_SPECIFIER_BEFORE: usize = 850;
-pub const SITE_SELF_PARAMETER_MUTABLE_SPECIFIER_AFTER: usize = 851;
+pub const SITE_SELF_PARAMETER_MUTABLE_BEFORE: usize = 850;
+pub const SITE_SELF_PARAMETER_MUTABLE_AFTER: usize = 851;
 pub const SITE_SELF_PARAMETER_REFERENCE_AFTER: usize = 852;
 pub const SITE_SELF_PARAMETER_SELF_BEFORE: usize = 853;
 pub const SITE_SELF_PARAMETER_SELF_PARAMETER_BEFORE: usize = 854;
@@ -915,8 +915,8 @@ pub const SITE_SOURCE_FILE_STATEMENTS_START: usize = 906;
 pub const SITE_SOURCE_FILE_STATEMENTS_SEPARATOR_SPACE: usize = 907;
 pub const SITE_SOURCE_FILE_SOURCE_FILE_BEFORE: usize = 908;
 pub const SITE_SOURCE_FILE_SOURCE_FILE_AFTER: usize = 909;
-pub const SITE_STATIC_ITEM_MUTABLE_SPECIFIER_BEFORE: usize = 910;
-pub const SITE_STATIC_ITEM_MUTABLE_SPECIFIER_AFTER: usize = 911;
+pub const SITE_STATIC_ITEM_MUTABLE_BEFORE: usize = 910;
+pub const SITE_STATIC_ITEM_MUTABLE_AFTER: usize = 911;
 pub const SITE_STATIC_ITEM_COLON_BEFORE: usize = 912;
 pub const SITE_STATIC_ITEM_COLON_AFTER: usize = 913;
 pub const SITE_STATIC_ITEM_SEMI_BEFORE: usize = 914;
@@ -1477,7 +1477,7 @@ pub const SITE_USE_WILDCARD_USE_WILDCARD_AFTER: usize = 1468;
 pub const SITE_USE_WILDCARD_GROUP_COLON_COLON_BEFORE: usize = 1469;
 pub const SITE_USE_WILDCARD_GROUP_USE_WILDCARD_GROUP_BEFORE: usize = 1470;
 pub const SITE_USE_WILDCARD_GROUP_USE_WILDCARD_GROUP_AFTER: usize = 1471;
-pub const SITE_VARIADIC_PARAMETER_MUTABLE_SPECIFIER_AFTER: usize = 1472;
+pub const SITE_VARIADIC_PARAMETER_MUTABLE_AFTER: usize = 1472;
 pub const SITE_VARIADIC_PARAMETER_DOT_DOT_DOT_BEFORE: usize = 1473;
 pub const SITE_VARIADIC_PARAMETER_COLON_BEFORE: usize = 1474;
 pub const SITE_VARIADIC_PARAMETER_COLON_AFTER: usize = 1475;
@@ -1932,15 +1932,15 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("field_initializer_list_elements", "element_separator_space_after", "comma_separator_space_after", &[168, 169, 170, 171, 172, 173]),
     ("field_initializer_list_elements", "field_initializer_list_elements_before", "field_initializer_list_elements_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("field_initializer_list_elements", "field_initializer_list_elements_after", "field_initializer_list_elements_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("field_pattern_named", "mutable_specifier_before", "mutable_specifier_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("field_pattern_named", "mutable_specifier_after", "mutable_specifier_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("field_pattern_named", "mutable_before", "mutable_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("field_pattern_named", "mutable_after", "mutable_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("field_pattern_named", "colon_before", "colon_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("field_pattern_named", "colon_after", "colon_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("field_pattern_named", "ref_after", "ref_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("field_pattern_named", "field_pattern_named_before", "field_pattern_named_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("field_pattern_named", "field_pattern_named_after", "field_pattern_named_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("field_pattern_shorthand", "mutable_specifier_before", "mutable_specifier_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("field_pattern_shorthand", "mutable_specifier_after", "mutable_specifier_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("field_pattern_shorthand", "mutable_before", "mutable_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("field_pattern_shorthand", "mutable_after", "mutable_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("field_pattern_shorthand", "ref_after", "ref_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("field_pattern_shorthand", "field_pattern_shorthand_before", "field_pattern_shorthand_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("field_pattern_shorthand", "field_pattern_shorthand_after", "field_pattern_shorthand_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
@@ -2112,8 +2112,8 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("let_condition", "let_keyword_after", "let_keyword_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("let_condition", "let_condition_before", "let_condition_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("let_condition", "let_condition_after", "let_condition_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("let_declaration", "mutable_specifier_before", "mutable_specifier_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("let_declaration", "mutable_specifier_after", "mutable_specifier_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("let_declaration", "mutable_before", "mutable_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("let_declaration", "mutable_after", "mutable_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("let_declaration", "colon_before", "colon_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("let_declaration", "colon_after", "colon_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("let_declaration", "semi_before", "semi_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
@@ -2251,7 +2251,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("ordered_field_declaration_list_elements", "element_separator_space_after", "comma_separator_space_after", &[168, 169, 170, 171, 172, 173]),
     ("ordered_field_declaration_list_elements", "ordered_field_declaration_list_elements_before", "ordered_field_declaration_list_elements_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("ordered_field_declaration_list_elements", "ordered_field_declaration_list_elements_after", "ordered_field_declaration_list_elements_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("parameter", "mutable_specifier_after", "mutable_specifier_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("parameter", "mutable_after", "mutable_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("parameter", "colon_before", "colon_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("parameter", "colon_after", "colon_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("parameter", "parameter_before", "parameter_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
@@ -2353,13 +2353,13 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("reference_expression_raw_mut", "raw_keyword_after", "raw_keyword_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("reference_expression_raw_mut", "reference_expression_raw_mut_before", "reference_expression_raw_mut_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("reference_expression_raw_mut", "reference_expression_raw_mut_after", "reference_expression_raw_mut_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("reference_pattern", "mutable_specifier_before", "mutable_specifier_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("reference_pattern", "mutable_specifier_after", "mutable_specifier_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("reference_pattern", "mutable_before", "mutable_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("reference_pattern", "mutable_after", "mutable_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("reference_pattern", "amp_after", "amp_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("reference_pattern", "reference_pattern_before", "reference_pattern_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("reference_pattern", "reference_pattern_after", "reference_pattern_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("reference_type", "mutable_specifier_before", "mutable_specifier_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("reference_type", "mutable_specifier_after", "mutable_specifier_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("reference_type", "mutable_before", "mutable_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("reference_type", "mutable_after", "mutable_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("reference_type", "amp_after", "amp_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("reference_type", "reference_type_before", "reference_type_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("reference_type", "reference_type_after", "reference_type_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
@@ -2385,8 +2385,8 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("scoped_use_list", "colon_colon_after", "colon_colon_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("scoped_use_list", "scoped_use_list_before", "scoped_use_list_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("scoped_use_list", "scoped_use_list_after", "scoped_use_list_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("self_parameter", "mutable_specifier_before", "mutable_specifier_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("self_parameter", "mutable_specifier_after", "mutable_specifier_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("self_parameter", "mutable_before", "mutable_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("self_parameter", "mutable_after", "mutable_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("self_parameter", "reference_after", "reference_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("self_parameter", "self_before", "self_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("self_parameter", "self_parameter_before", "self_parameter_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
@@ -2445,8 +2445,8 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("source_file", "statements_separator_space", "empty_separator_space", &[168, 169, 170, 171, 172, 173]),
     ("source_file", "source_file_before", "source_file_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("source_file", "source_file_after", "source_file_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("static_item", "mutable_specifier_before", "mutable_specifier_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("static_item", "mutable_specifier_after", "mutable_specifier_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("static_item", "mutable_before", "mutable_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("static_item", "mutable_after", "mutable_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("static_item", "colon_before", "colon_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("static_item", "colon_after", "colon_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("static_item", "semi_before", "semi_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
@@ -3007,7 +3007,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("use_wildcard_group", "colon_colon_before", "colon_colon_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("use_wildcard_group", "use_wildcard_group_before", "use_wildcard_group_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("use_wildcard_group", "use_wildcard_group_after", "use_wildcard_group_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
-    ("variadic_parameter", "mutable_specifier_after", "mutable_specifier_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
+    ("variadic_parameter", "mutable_after", "mutable_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("variadic_parameter", "dot_dot_dot_before", "dot_dot_dot_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("variadic_parameter", "colon_before", "colon_before", &[168, 169, 170, 171, 172, 173, 174, 175]),
     ("variadic_parameter", "colon_after", "colon_after", &[168, 169, 170, 171, 172, 173, 174, 175]),
@@ -7308,9 +7308,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_NAMED_COLON_AFTER, path: "(field_pattern_named)/\":\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_NAMED_COLON_BEFORE, path: "(field_pattern_named)/\":\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "mutableSpecifier", path: "(field_pattern_named)/mutable_specifier:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_NAMED_MUTABLE_SPECIFIER_AFTER, path: "(field_pattern_named)/mutable_specifier:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_NAMED_MUTABLE_SPECIFIER_BEFORE, path: "(field_pattern_named)/mutable_specifier:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "mutable", path: "(field_pattern_named)/mutable:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_NAMED_MUTABLE_AFTER, path: "(field_pattern_named)/mutable:/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_NAMED_MUTABLE_BEFORE, path: "(field_pattern_named)/mutable:/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "refKeyword", path: "(field_pattern_named)/\"ref\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_NAMED_REF_AFTER, path: "(field_pattern_named)/\"ref\"/after" }] },
@@ -7319,9 +7319,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "fieldPatternShorthand", path: "(field_pattern_shorthand)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_SHORTHAND_FIELD_PATTERN_SHORTHAND_AFTER, path: "(field_pattern_shorthand)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_SHORTHAND_FIELD_PATTERN_SHORTHAND_BEFORE, path: "(field_pattern_shorthand)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "mutableSpecifier", path: "(field_pattern_shorthand)/mutable_specifier:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_SHORTHAND_MUTABLE_SPECIFIER_AFTER, path: "(field_pattern_shorthand)/mutable_specifier:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_SHORTHAND_MUTABLE_SPECIFIER_BEFORE, path: "(field_pattern_shorthand)/mutable_specifier:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "mutable", path: "(field_pattern_shorthand)/mutable:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_SHORTHAND_MUTABLE_AFTER, path: "(field_pattern_shorthand)/mutable:/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_SHORTHAND_MUTABLE_BEFORE, path: "(field_pattern_shorthand)/mutable:/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "refKeyword", path: "(field_pattern_shorthand)/\"ref\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_SHORTHAND_REF_AFTER, path: "(field_pattern_shorthand)/\"ref\"/after" }] },
@@ -7756,9 +7756,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ::sittir_core::options::AddressNode::Branch { key: "letKeyword", path: "(let_declaration)/\"let\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_DECLARATION_LET_KEYWORD_AFTER, path: "(let_declaration)/\"let\"/after" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "mutableSpecifier", path: "(let_declaration)/mutable_specifier:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_DECLARATION_MUTABLE_SPECIFIER_AFTER, path: "(let_declaration)/mutable_specifier:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_DECLARATION_MUTABLE_SPECIFIER_BEFORE, path: "(let_declaration)/mutable_specifier:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "mutable", path: "(let_declaration)/mutable:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_DECLARATION_MUTABLE_AFTER, path: "(let_declaration)/mutable:/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_DECLARATION_MUTABLE_BEFORE, path: "(let_declaration)/mutable:/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "semi", path: "(let_declaration)/\";\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_DECLARATION_SEMI_BEFORE, path: "(let_declaration)/\";\"/before" }] },
@@ -8057,8 +8057,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETER_COLON_AFTER, path: "(parameter)/\":\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETER_COLON_BEFORE, path: "(parameter)/\":\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "mutableSpecifier", path: "(parameter)/mutable_specifier:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETER_MUTABLE_SPECIFIER_AFTER, path: "(parameter)/mutable_specifier:/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "mutable", path: "(parameter)/mutable:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETER_MUTABLE_AFTER, path: "(parameter)/mutable:/after" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "parameters", path: "(parameters)", children: &[
@@ -8306,9 +8306,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_PATTERN_AMP_AFTER, path: "(reference_pattern)/\"&\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_PATTERN_REFERENCE_PATTERN_BEFORE, path: "(reference_pattern)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "mutableSpecifier", path: "(reference_pattern)/mutable_specifier:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_PATTERN_MUTABLE_SPECIFIER_AFTER, path: "(reference_pattern)/mutable_specifier:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_PATTERN_MUTABLE_SPECIFIER_BEFORE, path: "(reference_pattern)/mutable_specifier:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "mutable", path: "(reference_pattern)/mutable:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_PATTERN_MUTABLE_AFTER, path: "(reference_pattern)/mutable:/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_PATTERN_MUTABLE_BEFORE, path: "(reference_pattern)/mutable:/before" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "referenceType", path: "(reference_type)", children: &[
@@ -8317,9 +8317,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_TYPE_AMP_AFTER, path: "(reference_type)/\"&\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_TYPE_REFERENCE_TYPE_BEFORE, path: "(reference_type)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "mutableSpecifier", path: "(reference_type)/mutable_specifier:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_TYPE_MUTABLE_SPECIFIER_AFTER, path: "(reference_type)/mutable_specifier:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_TYPE_MUTABLE_SPECIFIER_BEFORE, path: "(reference_type)/mutable_specifier:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "mutable", path: "(reference_type)/mutable:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_TYPE_MUTABLE_AFTER, path: "(reference_type)/mutable:/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_TYPE_MUTABLE_BEFORE, path: "(reference_type)/mutable:/before" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "removedTraitBound", path: "(removed_trait_bound)", children: &[
@@ -8371,9 +8371,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "selfParameter", path: "(self_parameter)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SELF_PARAMETER_SELF_PARAMETER_AFTER, path: "(self_parameter)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SELF_PARAMETER_SELF_PARAMETER_BEFORE, path: "(self_parameter)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "mutableSpecifier", path: "(self_parameter)/mutable_specifier:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SELF_PARAMETER_MUTABLE_SPECIFIER_AFTER, path: "(self_parameter)/mutable_specifier:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SELF_PARAMETER_MUTABLE_SPECIFIER_BEFORE, path: "(self_parameter)/mutable_specifier:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "mutable", path: "(self_parameter)/mutable:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SELF_PARAMETER_MUTABLE_AFTER, path: "(self_parameter)/mutable:/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SELF_PARAMETER_MUTABLE_BEFORE, path: "(self_parameter)/mutable:/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "reference", path: "(self_parameter)/reference:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SELF_PARAMETER_REFERENCE_AFTER, path: "(self_parameter)/reference:/after" }] },
@@ -8541,9 +8541,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_EQ_AFTER, path: "(static_item)/\"=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_EQ_BEFORE, path: "(static_item)/\"=\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "mutableSpecifier", path: "(static_item)/mutable_specifier:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_MUTABLE_SPECIFIER_AFTER, path: "(static_item)/mutable_specifier:/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_MUTABLE_SPECIFIER_BEFORE, path: "(static_item)/mutable_specifier:/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "mutable", path: "(static_item)/mutable:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_MUTABLE_AFTER, path: "(static_item)/mutable:/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_MUTABLE_BEFORE, path: "(static_item)/mutable:/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "refKeyword", path: "(static_item)/\"ref\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_REF_AFTER, path: "(static_item)/\"ref\"/after" }] },
@@ -9894,8 +9894,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ::sittir_core::options::AddressNode::Branch { key: "dotDotDot", path: "(variadic_parameter)/\"...\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_VARIADIC_PARAMETER_DOT_DOT_DOT_BEFORE, path: "(variadic_parameter)/\"...\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "mutableSpecifier", path: "(variadic_parameter)/mutable_specifier:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_VARIADIC_PARAMETER_MUTABLE_SPECIFIER_AFTER, path: "(variadic_parameter)/mutable_specifier:/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "mutable", path: "(variadic_parameter)/mutable:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_VARIADIC_PARAMETER_MUTABLE_AFTER, path: "(variadic_parameter)/mutable:/after" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "visibilityModifierPub", path: "(visibility_modifier_pub)", children: &[

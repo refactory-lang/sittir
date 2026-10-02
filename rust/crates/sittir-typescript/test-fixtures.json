@@ -76887,7 +76887,7 @@
                   "$type": 285,
                   "$source": 0,
                   "$named": true,
-                  "_override_modifier": true,
+                  "_override": true,
                   "_name": {
                     "$type": 461,
                     "$source": 0,
@@ -76941,7 +76941,7 @@
                     "_statements": []
                   },
                   "$slotOrder": [
-                    "override_modifier",
+                    "override",
                     "name",
                     "parameters",
                     "body"
@@ -77007,7 +77007,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "abstract class Foo {\n  abstract baz(): void ;\n}\n\nclass Bar extends Foo {\n  override baz() {}\n}\n",
-    "expectedReparseTree": "(program statements: (abstract_class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))))) statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body members: (class_body_member_method (method_definition override_modifier: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (abstract_class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))))) statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body members: (class_body_member_method (method_definition override: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "abstract class Foo {\n  abstract baz(): void ;\n}\n\nclass Bar extends Foo {\n  override baz() {}\n}\n",
     "wrappedOffset": 0
   },
@@ -77371,7 +77371,7 @@
             "$type": 285,
             "$source": 0,
             "$named": true,
-            "_override_modifier": true,
+            "_override": true,
             "_name": {
               "$type": 461,
               "$source": 0,
@@ -77425,7 +77425,7 @@
               "_statements": []
             },
             "$slotOrder": [
-              "override_modifier",
+              "override",
               "name",
               "parameters",
               "body"
@@ -77469,7 +77469,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{\n  override baz() {}\n}",
-    "expectedReparseTree": "(class_body members: (class_body_member_method (method_definition override_modifier: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(class_body members: (class_body_member_method (method_definition override: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon)))",
     "wrappedText": "class _C {\n  override baz() {}\n}",
     "wrappedOffset": 9
   },
@@ -77640,7 +77640,7 @@
               "$type": 285,
               "$source": 0,
               "$named": true,
-              "_override_modifier": true,
+              "_override": true,
               "_name": {
                 "$type": 461,
                 "$source": 0,
@@ -77694,7 +77694,7 @@
                 "_statements": []
               },
               "$slotOrder": [
-                "override_modifier",
+                "override",
                 "name",
                 "parameters",
                 "body"
@@ -77758,7 +77758,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class Bar extends Foo {\n  override baz() {}\n}\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body members: (class_body_member_method (method_definition override_modifier: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body members: (class_body_member_method (method_definition override: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class Bar extends Foo {\n  override baz() {}\n}\n",
     "wrappedOffset": 0
   },

@@ -1042,7 +1042,7 @@ export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement
 }
 
 export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause.Bound {
-	const _star = coerceBooleanKeywordStorage(rejectBareText(config.star, 'ExceptClause.star', 'a boolean'));
+	const _group = coerceBooleanKeywordStorage(rejectBareText(config.group, 'ExceptClause.group', 'a boolean'));
 	const _exception = rejectBareText(config.exception, 'ExceptClause.exception', 'a built ExceptClauseException');
 	const _suite = rejectBareText(config.suite, 'ExceptClause.suite', 'a built Suite');
 	const handle = currentHandle();
@@ -1050,17 +1050,17 @@ export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause
 		$type: TSKindId.ExceptClause as const,
 		$source: 2 as const,
 		$named: true as const,
-		_star,
+		_group,
 		_exception,
 		_suite,
 		$with: {
-			star: (value?: NonNullable<T.ExceptClause.Config>['star']) =>
-				rebuilt(node, handle, () => buildExceptClause({ ...config, star: value })),
+			group: (value?: NonNullable<T.ExceptClause.Config>['group']) =>
+				rebuilt(node, handle, () => buildExceptClause({ ...config, group: value })),
 			exception: (value?: T.ExceptClauseException) =>
 				rebuilt(node, handle, () => buildExceptClause({ ...config, exception: value })),
 			suite: (value: T.Suite) => rebuilt(node, handle, () => buildExceptClause({ ...config, suite: value }))
 		},
-		star: () => _star,
+		group: () => _group,
 		exception: () => _exception,
 		suite: () => _suite,
 		$render: () => renderText(handle, node),
@@ -4431,7 +4431,7 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 		'Interpolation.expression',
 		'a built Expression / ExpressionList / PatternList / Yield'
 	);
-	const _eq = coerceBooleanKeywordStorage(rejectBareText(config.eq, 'Interpolation.eq', 'a boolean'));
+	const _debug = coerceBooleanKeywordStorage(rejectBareText(config.debug, 'Interpolation.debug', 'a boolean'));
 	const _type_conversion = rejectBareText(
 		config.typeConversion,
 		'Interpolation.typeConversion',
@@ -4448,21 +4448,21 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 		$source: 2 as const,
 		$named: true as const,
 		_expression,
-		_eq,
+		_debug,
 		_type_conversion,
 		_format_specifier,
 		$with: {
 			expression: (value: NonNullable<T.Interpolation.Config>['expression']) =>
 				rebuilt(node, handle, () => buildInterpolation({ ...config, expression: value })),
-			eq: (value?: NonNullable<T.Interpolation.Config>['eq']) =>
-				rebuilt(node, handle, () => buildInterpolation({ ...config, eq: value })),
+			debug: (value?: NonNullable<T.Interpolation.Config>['debug']) =>
+				rebuilt(node, handle, () => buildInterpolation({ ...config, debug: value })),
 			typeConversion: (value?: T.TypeConversion) =>
 				rebuilt(node, handle, () => buildInterpolation({ ...config, typeConversion: value })),
 			formatSpecifier: (value?: T.FormatSpecifier) =>
 				rebuilt(node, handle, () => buildInterpolation({ ...config, formatSpecifier: value }))
 		},
 		expression: () => _expression,
-		eq: () => _eq,
+		debug: () => _debug,
 		typeConversion: () => _type_conversion,
 		formatSpecifier: () => _format_specifier,
 		$render: () => renderText(handle, node),

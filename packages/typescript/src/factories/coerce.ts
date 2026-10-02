@@ -5933,9 +5933,9 @@ export function resolveMethodDefinition_static(
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveMethodDefinition_overrideModifier(
-	value: T.MethodDefinition.LooseConfig['overrideModifier']
-): T.MethodDefinition['_override_modifier'] {
+export function resolveMethodDefinition_override(
+	value: T.MethodDefinition.LooseConfig['override']
+): T.MethodDefinition['_override'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -6086,7 +6086,7 @@ export function coerceToMethodDefinition(input: T.MethodDefinition.Loose): Retur
 	return F.buildMethodDefinition({
 		accessibilityModifier: resolveMethodDefinition_accessibilityModifier(input.accessibilityModifier),
 		static: resolveMethodDefinition_static(input.static),
-		overrideModifier: resolveMethodDefinition_overrideModifier(input.overrideModifier),
+		override: resolveMethodDefinition_override(input.override),
 		readonly: resolveMethodDefinition_readonly(input.readonly),
 		async: resolveMethodDefinition_async(input.async),
 		accessorKind: resolveMethodDefinition_accessorKind(input.accessorKind),
@@ -6370,6 +6370,12 @@ export function resolvePublicFieldDefinition_static(
 	return _resolveBooleanKeyword(value);
 }
 
+export function resolvePublicFieldDefinition_override(
+	value: T.PublicFieldDefinition.LooseConfig['override']
+): T.PublicFieldDefinition['_override'] {
+	return _resolveBooleanKeyword(value);
+}
+
 export function resolvePublicFieldDefinition_readonly(
 	value: T.PublicFieldDefinition.LooseConfig['readonly']
 ): T.PublicFieldDefinition['_readonly'] {
@@ -6385,12 +6391,6 @@ export function resolvePublicFieldDefinition_abstract(
 export function resolvePublicFieldDefinition_accessor(
 	value: T.PublicFieldDefinition.LooseConfig['accessor']
 ): T.PublicFieldDefinition['_accessor'] {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolvePublicFieldDefinition_overrideModifier(
-	value: T.PublicFieldDefinition.LooseConfig['overrideModifier']
-): T.PublicFieldDefinition['_override_modifier'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -6518,10 +6518,10 @@ export function coerceToPublicFieldDefinition(
 		declare: resolvePublicFieldDefinition_declare(input.declare),
 		accessibilityModifier: resolvePublicFieldDefinition_accessibilityModifier(input.accessibilityModifier),
 		static: resolvePublicFieldDefinition_static(input.static),
+		override: resolvePublicFieldDefinition_override(input.override),
 		readonly: resolvePublicFieldDefinition_readonly(input.readonly),
 		abstract: resolvePublicFieldDefinition_abstract(input.abstract),
 		accessor: resolvePublicFieldDefinition_accessor(input.accessor),
-		overrideModifier: resolvePublicFieldDefinition_overrideModifier(input.overrideModifier),
 		name: _requireField('public_field_definition', 'name', resolvePublicFieldDefinition_name(input.name)),
 		optionality: resolvePublicFieldDefinition_optionality(input.optionality),
 		type: resolvePublicFieldDefinition_type(input.type),
@@ -6582,9 +6582,9 @@ export function resolveMethodSignature_static(
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveMethodSignature_overrideModifier(
-	value: T.MethodSignature.LooseConfig['overrideModifier']
-): T.MethodSignature['_override_modifier'] {
+export function resolveMethodSignature_override(
+	value: T.MethodSignature.LooseConfig['override']
+): T.MethodSignature['_override'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -6727,7 +6727,7 @@ export function coerceToMethodSignature(input: T.MethodSignature.Loose): ReturnT
 	return F.buildMethodSignature({
 		accessibilityModifier: resolveMethodSignature_accessibilityModifier(input.accessibilityModifier),
 		static: resolveMethodSignature_static(input.static),
-		overrideModifier: resolveMethodSignature_overrideModifier(input.overrideModifier),
+		override: resolveMethodSignature_override(input.override),
 		readonly: resolveMethodSignature_readonly(input.readonly),
 		async: resolveMethodSignature_async(input.async),
 		accessorKind: resolveMethodSignature_accessorKind(input.accessorKind),
@@ -6754,9 +6754,9 @@ export function resolveAbstractMethodSignature_accessibilityModifier(
 	);
 }
 
-export function resolveAbstractMethodSignature_overrideModifier(
-	value: T.AbstractMethodSignature.LooseConfig['overrideModifier']
-): T.AbstractMethodSignature['_override_modifier'] {
+export function resolveAbstractMethodSignature_override(
+	value: T.AbstractMethodSignature.LooseConfig['override']
+): T.AbstractMethodSignature['_override'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -6890,7 +6890,7 @@ export function coerceToAbstractMethodSignature(
 		return input as unknown as ReturnType<typeof F.buildAbstractMethodSignature>;
 	return F.buildAbstractMethodSignature({
 		accessibilityModifier: resolveAbstractMethodSignature_accessibilityModifier(input.accessibilityModifier),
-		overrideModifier: resolveAbstractMethodSignature_overrideModifier(input.overrideModifier),
+		override: resolveAbstractMethodSignature_override(input.override),
 		accessorKind: resolveAbstractMethodSignature_accessorKind(input.accessorKind),
 		name: _requireField('abstract_method_signature', 'name', resolveAbstractMethodSignature_name(input.name)),
 		optional: resolveAbstractMethodSignature_optional(input.optional),
@@ -7635,9 +7635,9 @@ export function resolveRequiredParameter_accessibilityModifier(
 	);
 }
 
-export function resolveRequiredParameter_overrideModifier(
-	value: T.RequiredParameter.LooseConfig['overrideModifier']
-): T.RequiredParameter['_override_modifier'] {
+export function resolveRequiredParameter_override(
+	value: T.RequiredParameter.LooseConfig['override']
+): T.RequiredParameter['_override'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -7681,7 +7681,7 @@ export function coerceToRequiredParameter(
 	return F.buildRequiredParameter({
 		decorator: resolveRequiredParameter_decorators(input.decorator),
 		accessibilityModifier: resolveRequiredParameter_accessibilityModifier(input.accessibilityModifier),
-		overrideModifier: resolveRequiredParameter_overrideModifier(input.overrideModifier),
+		override: resolveRequiredParameter_override(input.override),
 		readonly: resolveRequiredParameter_readonly(input.readonly),
 		pattern: _requireField('required_parameter', 'pattern', resolveRequiredParameter_pattern(input.pattern)),
 		type: resolveRequiredParameter_type(input.type),
@@ -7710,9 +7710,9 @@ export function resolveOptionalParameter_accessibilityModifier(
 	);
 }
 
-export function resolveOptionalParameter_overrideModifier(
-	value: T.OptionalParameter.LooseConfig['overrideModifier']
-): T.OptionalParameter['_override_modifier'] {
+export function resolveOptionalParameter_override(
+	value: T.OptionalParameter.LooseConfig['override']
+): T.OptionalParameter['_override'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -7756,7 +7756,7 @@ export function coerceToOptionalParameter(
 	return F.buildOptionalParameter({
 		decorator: resolveOptionalParameter_decorators(input.decorator),
 		accessibilityModifier: resolveOptionalParameter_accessibilityModifier(input.accessibilityModifier),
-		overrideModifier: resolveOptionalParameter_overrideModifier(input.overrideModifier),
+		override: resolveOptionalParameter_override(input.override),
 		readonly: resolveOptionalParameter_readonly(input.readonly),
 		pattern: _requireField('optional_parameter', 'pattern', resolveOptionalParameter_pattern(input.pattern)),
 		type: resolveOptionalParameter_type(input.type),
@@ -8473,9 +8473,9 @@ export function resolveTypeQuerySubscriptExpression_object(
 	);
 }
 
-export function resolveTypeQuerySubscriptExpression_optionalChainMarker(
-	value: T.TypeQuerySubscriptExpression.LooseConfig['optionalChainMarker']
-): T.TypeQuerySubscriptExpression['_optional_chain_marker'] {
+export function resolveTypeQuerySubscriptExpression_optionalChain(
+	value: T.TypeQuerySubscriptExpression.LooseConfig['optionalChain']
+): T.TypeQuerySubscriptExpression['_optional_chain'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -8540,7 +8540,7 @@ export function coerceToTypeQuerySubscriptExpression(
 			'object',
 			resolveTypeQuerySubscriptExpression_object(input.object)
 		),
-		optionalChainMarker: resolveTypeQuerySubscriptExpression_optionalChainMarker(input.optionalChainMarker),
+		optionalChain: resolveTypeQuerySubscriptExpression_optionalChain(input.optionalChain),
 		index: _requireField(
 			'type_query_subscript_expression',
 			'index',
@@ -8996,9 +8996,9 @@ export function resolvePropertySignature_static(
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolvePropertySignature_overrideModifier(
-	value: T.PropertySignature.LooseConfig['overrideModifier']
-): T.PropertySignature['_override_modifier'] {
+export function resolvePropertySignature_override(
+	value: T.PropertySignature.LooseConfig['override']
+): T.PropertySignature['_override'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -9118,7 +9118,7 @@ export function coerceToPropertySignature(
 	return F.buildPropertySignature({
 		accessibilityModifier: resolvePropertySignature_accessibilityModifier(input.accessibilityModifier),
 		static: resolvePropertySignature_static(input.static),
-		overrideModifier: resolvePropertySignature_overrideModifier(input.overrideModifier),
+		override: resolvePropertySignature_override(input.override),
 		readonly: resolvePropertySignature_readonly(input.readonly),
 		name: _requireField('property_signature', 'name', resolvePropertySignature_name(input.name)),
 		optional: resolvePropertySignature_optional(input.optional),

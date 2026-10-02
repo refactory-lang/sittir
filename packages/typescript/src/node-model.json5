@@ -1667,7 +1667,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "override_modifier": {
+      "override": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1808,6 +1808,13 @@
         "multiple": false,
         "nonEmpty": false
       },
+      "override": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "readonly": {
         "unnamed": false,
         "slotCount": 1,
@@ -1823,13 +1830,6 @@
         "nonEmpty": false
       },
       "accessor": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "override_modifier": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1889,7 +1889,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "override_modifier": {
+      "override": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1961,7 +1961,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "override_modifier": {
+      "override": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2430,7 +2430,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "override_modifier": {
+      "override": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2481,7 +2481,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "override_modifier": {
+      "override": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2819,7 +2819,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "optional_chain_marker": {
+      "optional_chain": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3020,7 +3020,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "override_modifier": {
+      "override": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -5148,9 +5148,9 @@
           ]
         },
         {
-          "name": "override_modifier",
-          "propertyName": "overrideModifier",
-          "paramName": "overrideModifier",
+          "name": "override",
+          "propertyName": "override",
+          "paramName": "override",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -5473,7 +5473,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "accessibility_modifier",
-        "override_modifier",
+        "override",
         "accessor_kind",
         "name",
         "optional",
@@ -17435,9 +17435,9 @@
           ]
         },
         {
-          "name": "override_modifier",
-          "propertyName": "overrideModifier",
-          "paramName": "overrideModifier",
+          "name": "override",
+          "propertyName": "override",
+          "paramName": "override",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -17817,7 +17817,7 @@
       "factoryFields": [
         "accessibility_modifier",
         "static",
-        "override_modifier",
+        "override",
         "readonly",
         "async",
         "accessor_kind",
@@ -17876,9 +17876,9 @@
           ]
         },
         {
-          "name": "override_modifier",
-          "propertyName": "overrideModifier",
-          "paramName": "overrideModifier",
+          "name": "override",
+          "propertyName": "override",
+          "paramName": "override",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -18238,7 +18238,7 @@
       "factoryFields": [
         "accessibility_modifier",
         "static",
-        "override_modifier",
+        "override",
         "readonly",
         "async",
         "accessor_kind",
@@ -20973,9 +20973,9 @@
           ]
         },
         {
-          "name": "override_modifier",
-          "propertyName": "overrideModifier",
-          "paramName": "overrideModifier",
+          "name": "override",
+          "propertyName": "override",
+          "paramName": "override",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -21082,7 +21082,7 @@
       "factoryFields": [
         "decorator",
         "accessibility_modifier",
-        "override_modifier",
+        "override",
         "readonly",
         "pattern",
         "type",
@@ -22486,9 +22486,9 @@
           ]
         },
         {
-          "name": "override_modifier",
-          "propertyName": "overrideModifier",
-          "paramName": "overrideModifier",
+          "name": "override",
+          "propertyName": "override",
+          "paramName": "override",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -22746,7 +22746,7 @@
       "factoryFields": [
         "accessibility_modifier",
         "static",
-        "override_modifier",
+        "override",
         "readonly",
         "name",
         "optional",
@@ -22849,6 +22849,26 @@
           ]
         },
         {
+          "name": "override",
+          "propertyName": "override",
+          "paramName": "override",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [
+            "override_modifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "override_modifier",
+              "parseKind": "override_modifier"
+            }
+          ]
+        },
+        {
           "name": "readonly",
           "propertyName": "readonly",
           "paramName": "readonly",
@@ -22899,26 +22919,6 @@
               "multiplicity": "optional",
               "value": "accessor",
               "parseKind": "accessor_keyword"
-            }
-          ]
-        },
-        {
-          "name": "override_modifier",
-          "propertyName": "overrideModifier",
-          "paramName": "overrideModifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "boolean",
-          "kinds": [
-            "override_modifier"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "override_modifier",
-              "parseKind": "override_modifier"
             }
           ]
         },
@@ -23173,10 +23173,10 @@
         "declare",
         "accessibility_modifier",
         "static",
+        "override",
         "readonly",
         "abstract",
         "accessor",
-        "override_modifier",
         "name",
         "optionality",
         "type",
@@ -23512,9 +23512,9 @@
           ]
         },
         {
-          "name": "override_modifier",
-          "propertyName": "overrideModifier",
-          "paramName": "overrideModifier",
+          "name": "override",
+          "propertyName": "override",
+          "paramName": "override",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -23621,7 +23621,7 @@
       "factoryFields": [
         "decorator",
         "accessibility_modifier",
-        "override_modifier",
+        "override",
         "readonly",
         "pattern",
         "type",
@@ -27688,9 +27688,9 @@
           ]
         },
         {
-          "name": "optional_chain_marker",
-          "propertyName": "optionalChainMarker",
-          "paramName": "optionalChainMarker",
+          "name": "optional_chain",
+          "propertyName": "optionalChain",
+          "paramName": "optionalChain",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -27745,7 +27745,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "object",
-        "optional_chain_marker",
+        "optional_chain",
         "index"
       ]
     },

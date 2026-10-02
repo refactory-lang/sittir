@@ -2759,7 +2759,7 @@ export function coerceToTryStatement(input: T.TryStatement.Loose): ReturnType<ty
 	});
 }
 
-export function resolveExceptClause_star(value: T.ExceptClause.LooseConfig['star']): T.ExceptClause['_star'] {
+export function resolveExceptClause_group(value: T.ExceptClause.LooseConfig['group']): T.ExceptClause['_group'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -2777,7 +2777,7 @@ export function coerceToExceptClause(input: T.ExceptClause.Loose): ReturnType<ty
 	if (!_isLooseConfig<T.ExceptClause.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildExceptClause>;
 	return F.buildExceptClause({
-		star: resolveExceptClause_star(input.star),
+		group: resolveExceptClause_group(input.group),
 		exception: resolveExceptClause_exception(input.exception),
 		suite: _requireField('except_clause', 'suite', resolveExceptClause_suite(input.suite))
 	});
@@ -5301,7 +5301,7 @@ export function resolveInterpolation_expression(
 	);
 }
 
-export function resolveInterpolation_eq(value: T.Interpolation.LooseConfig['eq']): T.Interpolation['_eq'] {
+export function resolveInterpolation_debug(value: T.Interpolation.LooseConfig['debug']): T.Interpolation['_debug'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -5322,7 +5322,7 @@ export function coerceToInterpolation(input: T.Interpolation.Loose): ReturnType<
 		return input as unknown as ReturnType<typeof F.buildInterpolation>;
 	return F.buildInterpolation({
 		expression: _requireField('interpolation', 'expression', resolveInterpolation_expression(input.expression)),
-		eq: resolveInterpolation_eq(input.eq),
+		debug: resolveInterpolation_debug(input.debug),
 		typeConversion: resolveInterpolation_typeConversion(input.typeConversion),
 		formatSpecifier: resolveInterpolation_formatSpecifier(input.formatSpecifier)
 	});

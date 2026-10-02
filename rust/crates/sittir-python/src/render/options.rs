@@ -271,8 +271,8 @@ pub const SITE_ELSE_CLAUSE_COLON_AFTER: usize = 262;
 pub const SITE_ELSE_CLAUSE_ELSE_KEYWORD_AFTER: usize = 263;
 pub const SITE_ELSE_CLAUSE_ELSE_CLAUSE_BEFORE: usize = 264;
 pub const SITE_ELSE_CLAUSE_ELSE_CLAUSE_AFTER: usize = 265;
-pub const SITE_EXCEPT_CLAUSE_STAR_BEFORE: usize = 266;
-pub const SITE_EXCEPT_CLAUSE_STAR_AFTER: usize = 267;
+pub const SITE_EXCEPT_CLAUSE_GROUP_BEFORE: usize = 266;
+pub const SITE_EXCEPT_CLAUSE_GROUP_AFTER: usize = 267;
 pub const SITE_EXCEPT_CLAUSE_COLON_BEFORE: usize = 268;
 pub const SITE_EXCEPT_CLAUSE_COLON_AFTER: usize = 269;
 pub const SITE_EXCEPT_CLAUSE_EXCEPT_KEYWORD_AFTER: usize = 270;
@@ -498,8 +498,8 @@ pub const SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_AFTER: usize = 489;
 pub const SITE_IMPORT_STATEMENT_IMPORT_KEYWORD_AFTER: usize = 490;
 pub const SITE_IMPORT_STATEMENT_IMPORT_STATEMENT_BEFORE: usize = 491;
 pub const SITE_IMPORT_STATEMENT_IMPORT_STATEMENT_AFTER: usize = 492;
-pub const SITE_INTERPOLATION_EQ_BEFORE: usize = 493;
-pub const SITE_INTERPOLATION_EQ_AFTER: usize = 494;
+pub const SITE_INTERPOLATION_DEBUG_BEFORE: usize = 493;
+pub const SITE_INTERPOLATION_DEBUG_AFTER: usize = 494;
 pub const SITE_INTERPOLATION_LBRACE_AFTER: usize = 495;
 pub const SITE_INTERPOLATION_RBRACE_BEFORE: usize = 496;
 pub const SITE_INTERPOLATION_INTERPOLATION_BEFORE: usize = 497;
@@ -1236,8 +1236,8 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("else_clause", "else_keyword_after", "else_keyword_after", &[122, 123, 124, 115, 125, 126]),
     ("else_clause", "else_clause_before", "else_clause_before", &[122, 123, 124, 115, 125, 126]),
     ("else_clause", "else_clause_after", "else_clause_after", &[122, 123, 124, 115, 125, 126]),
-    ("except_clause", "star_before", "star_before", &[122, 123, 124, 115, 125, 126]),
-    ("except_clause", "star_after", "star_after", &[122, 123, 124, 115, 125, 126]),
+    ("except_clause", "group_before", "group_before", &[122, 123, 124, 115, 125, 126]),
+    ("except_clause", "group_after", "group_after", &[122, 123, 124, 115, 125, 126]),
     ("except_clause", "colon_before", "colon_before", &[122, 123, 124, 115, 125, 126]),
     ("except_clause", "colon_after", "colon_after", &[122, 123, 124, 115, 125, 126]),
     ("except_clause", "except_keyword_after", "except_keyword_after", &[122, 123, 124, 115, 125, 126]),
@@ -1463,8 +1463,8 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("import_statement", "import_keyword_after", "import_keyword_after", &[122, 123, 124, 115, 125, 126]),
     ("import_statement", "import_statement_before", "import_statement_before", &[122, 123, 124, 115, 125, 126]),
     ("import_statement", "import_statement_after", "import_statement_after", &[122, 123, 124, 115, 125, 126]),
-    ("interpolation", "eq_before", "eq_before", &[122, 123, 124, 115, 125, 126]),
-    ("interpolation", "eq_after", "eq_after", &[122, 123, 124, 115, 125, 126]),
+    ("interpolation", "debug_before", "debug_before", &[122, 123, 124, 115, 125, 126]),
+    ("interpolation", "debug_after", "debug_after", &[122, 123, 124, 115, 125, 126]),
     ("interpolation", "lbrace_after", "lbrace_after", &[122, 123, 124, 115, 125, 126]),
     ("interpolation", "rbrace_before", "rbrace_before", &[122, 123, 124, 115, 125, 126]),
     ("interpolation", "interpolation_before", "interpolation_before", &[122, 123, 124, 115, 125, 126]),
@@ -2609,8 +2609,8 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 123, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 2 },
-    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 2 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 122, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 122, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 122, strength: 2 },
@@ -4406,9 +4406,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ::sittir_core::options::AddressNode::Branch { key: "exceptKeyword", path: "(except_clause)/\"except\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXCEPT_CLAUSE_EXCEPT_KEYWORD_AFTER, path: "(except_clause)/\"except\"/after" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "star", path: "(except_clause)/\"*\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXCEPT_CLAUSE_STAR_AFTER, path: "(except_clause)/\"*\"/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_EXCEPT_CLAUSE_STAR_BEFORE, path: "(except_clause)/\"*\"/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "group", path: "(except_clause)/group:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXCEPT_CLAUSE_GROUP_AFTER, path: "(except_clause)/group:/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_EXCEPT_CLAUSE_GROUP_BEFORE, path: "(except_clause)/group:/before" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "exceptClauseExceptionAs", path: "(except_clause_exception_as)", children: &[
@@ -5042,9 +5042,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "interpolation", path: "(interpolation)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_INTERPOLATION_INTERPOLATION_AFTER, path: "(interpolation)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_INTERPOLATION_INTERPOLATION_BEFORE, path: "(interpolation)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "eq", path: "(interpolation)/\"=\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_INTERPOLATION_EQ_AFTER, path: "(interpolation)/\"=\"/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_INTERPOLATION_EQ_BEFORE, path: "(interpolation)/\"=\"/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "debug", path: "(interpolation)/debug:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_INTERPOLATION_DEBUG_AFTER, path: "(interpolation)/debug:/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_INTERPOLATION_DEBUG_BEFORE, path: "(interpolation)/debug:/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "lbrace", path: "(interpolation)/\"{\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_INTERPOLATION_LBRACE_AFTER, path: "(interpolation)/\"{\"/after" }] },

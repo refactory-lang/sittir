@@ -2529,19 +2529,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "mutable_specifier",
+					"test": "mutable",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "mutable_specifier_before"
+							"field": "mutable_before"
 						},
 						{
 							"kind": "slot",
-							"name": "mutable_specifier"
+							"name": "mutable"
 						},
 						{
 							"kind": "seam",
-							"field": "mutable_specifier_after"
+							"field": "mutable_after"
 						}
 					]
 				}
@@ -2599,19 +2599,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "mutable_specifier",
+					"test": "mutable",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "mutable_specifier_before"
+							"field": "mutable_before"
 						},
 						{
 							"kind": "slot",
-							"name": "mutable_specifier"
+							"name": "mutable"
 						},
 						{
 							"kind": "seam",
-							"field": "mutable_specifier_after"
+							"field": "mutable_after"
 						}
 					]
 				}
@@ -3974,19 +3974,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "mutable_specifier",
+					"test": "mutable",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "mutable_specifier_before"
+							"field": "mutable_before"
 						},
 						{
 							"kind": "slot",
-							"name": "mutable_specifier"
+							"name": "mutable"
 						},
 						{
 							"kind": "seam",
-							"field": "mutable_specifier_after"
+							"field": "mutable_after"
 						}
 					]
 				}
@@ -5027,15 +5027,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "mutable_specifier",
+					"test": "mutable",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "mutable_specifier"
+							"name": "mutable"
 						},
 						{
 							"kind": "seam",
-							"field": "mutable_specifier_after"
+							"field": "mutable_after"
 						}
 					]
 				}
@@ -5581,19 +5581,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "mutable_specifier",
+					"test": "mutable",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "mutable_specifier_before"
+							"field": "mutable_before"
 						},
 						{
 							"kind": "slot",
-							"name": "mutable_specifier"
+							"name": "mutable"
 						},
 						{
 							"kind": "seam",
-							"field": "mutable_specifier_after"
+							"field": "mutable_after"
 						}
 					]
 				}
@@ -5639,19 +5639,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "mutable_specifier",
+					"test": "mutable",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "mutable_specifier_before"
+							"field": "mutable_before"
 						},
 						{
 							"kind": "slot",
-							"name": "mutable_specifier"
+							"name": "mutable"
 						},
 						{
 							"kind": "seam",
-							"field": "mutable_specifier_after"
+							"field": "mutable_after"
 						}
 					]
 				}
@@ -5921,19 +5921,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "mutable_specifier",
+					"test": "mutable",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "mutable_specifier_before"
+							"field": "mutable_before"
 						},
 						{
 							"kind": "slot",
-							"name": "mutable_specifier"
+							"name": "mutable"
 						},
 						{
 							"kind": "seam",
-							"field": "mutable_specifier_after"
+							"field": "mutable_after"
 						}
 					]
 				}
@@ -6121,19 +6121,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "mutable_specifier",
+					"test": "mutable",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "mutable_specifier_before"
+							"field": "mutable_before"
 						},
 						{
 							"kind": "slot",
-							"name": "mutable_specifier"
+							"name": "mutable"
 						},
 						{
 							"kind": "seam",
-							"field": "mutable_specifier_after"
+							"field": "mutable_after"
 						}
 					]
 				}
@@ -7998,15 +7998,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "mutable_specifier",
+					"test": "mutable",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "mutable_specifier"
+							"name": "mutable"
 						},
 						{
 							"kind": "seam",
-							"field": "mutable_specifier_after"
+							"field": "mutable_after"
 						}
 					]
 				}

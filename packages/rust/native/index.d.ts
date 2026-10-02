@@ -616,7 +616,7 @@ export interface FieldPatternNamedTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _ref?: boolean
-  _mutable_specifier?: SlotValue<MutableSpecifierTransport>
+  _mutable?: SlotValue<MutableSpecifierTransport>
   _name: SlotValue<FieldIdentifierTransport>
   _pattern: SlotValue<PatternTransport>
 }
@@ -625,7 +625,7 @@ export interface FieldPatternShorthandTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _ref?: boolean
-  _mutable_specifier?: SlotValue<MutableSpecifierTransport>
+  _mutable?: SlotValue<MutableSpecifierTransport>
   _name: SlotValue<ShorthandFieldIdentifierTransport>
 }
 
@@ -871,7 +871,7 @@ export interface LetConditionTransport {
 export interface LetDeclarationTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _mutable_specifier?: SlotValue<MutableSpecifierTransport>
+  _mutable?: SlotValue<MutableSpecifierTransport>
   _pattern: SlotValue<PatternTransport>
   _type?: SlotValue<TypeTransport>
   _value?: SlotValue<ExpressionTransport>
@@ -1107,7 +1107,7 @@ export interface ParametersTransport {
 export interface ParameterTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _mutable_specifier?: SlotValue<MutableSpecifierTransport>
+  _mutable?: SlotValue<MutableSpecifierTransport>
   _name: SlotValue<ParameterNameTransportSlot>
   _type: SlotValue<TypeTransport>
 }
@@ -1228,7 +1228,7 @@ export interface ReferenceExpressionRawMutTransport {
 export interface ReferencePatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _mutable_specifier?: SlotValue<MutableSpecifierTransport>
+  _mutable?: SlotValue<MutableSpecifierTransport>
   _pattern: SlotValue<Box<PatternTransport>>
 }
 
@@ -1236,7 +1236,7 @@ export interface ReferenceTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _lifetime?: SlotValue<LifetimeTransport>
-  _mutable_specifier?: SlotValue<MutableSpecifierTransport>
+  _mutable?: SlotValue<MutableSpecifierTransport>
   _type: SlotValue<Box<TypeTransport>>
 }
 
@@ -1291,7 +1291,7 @@ export interface SelfParameterTransport {
   '$_edges'?: Edges
   _reference?: boolean
   _lifetime?: SlotValue<LifetimeTransport>
-  _mutable_specifier?: SlotValue<MutableSpecifierTransport>
+  _mutable?: SlotValue<MutableSpecifierTransport>
 }
 
 export interface ShebangTransport {
@@ -1333,7 +1333,7 @@ export interface StaticItemTransport {
   '$_edges'?: Edges
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _ref?: boolean
-  _mutable_specifier?: SlotValue<MutableSpecifierTransport>
+  _mutable?: SlotValue<MutableSpecifierTransport>
   _name: SlotValue<IdentifierTransport>
   _type: SlotValue<TypeTransport>
   _value?: SlotValue<ExpressionTransport>
@@ -1709,7 +1709,7 @@ export interface UseWildcardTransport {
 export interface VariadicParameterTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _mutable_specifier?: SlotValue<MutableSpecifierTransport>
+  _mutable?: SlotValue<MutableSpecifierTransport>
   _pattern?: SlotValue<PatternTransport>
 }
 

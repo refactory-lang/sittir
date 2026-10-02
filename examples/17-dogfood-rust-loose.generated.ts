@@ -64,7 +64,7 @@ export function rebuildSpliceLoose() {
 				}), rs.build.parameter({
 					name: "f",
 					type: rs.build.referenceType({
-						mutableSpecifier: true,
+						mutable: true,
 						type: rs.build.genericType({
 							type: rs.build.scopedTypeIdentifier({
 								path: rs.build.scopedIdentifier({
@@ -173,7 +173,7 @@ export function rebuildSpliceLoose() {
 					type: rs.kinds.StrKeyword,
 				}),
 			}), rs.build.parameter({
-				mutableSpecifier: true,
+				mutable: true,
 				name: "edits",
 				type: rs.build.genericType({
 					type: "Vec",
@@ -373,7 +373,7 @@ export function rebuildSpliceLoose() {
 						}),
 					}),
 				})).$trivia.leading(rs.build.lineComment(" Sort descending by start_pos. Ties broken by end_pos descending —"), rs.build.lineComment(" with identical start positions, the longer replacement applies"), rs.build.lineComment(" first so the shorter doesn't overwrite its tail. (Tie-breaking is"), rs.build.lineComment(" documented consumer-visible behavior; overlap detection is still"), rs.build.lineComment(" theirs.)")), rs.build.letDeclaration({
-					mutableSpecifier: true,
+					mutable: true,
 					pattern: "buf",
 					value: rs.build.callExpression({
 						function: rs.build.scopedIdentifier({

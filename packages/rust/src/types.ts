@@ -4533,13 +4533,13 @@ export interface StaticItem {
 	readonly $type: TSKindId.StaticItem;
 	readonly _visibility_modifier?: VisibilityModifier;
 	readonly _ref?: boolean;
-	readonly _mutable_specifier?: boolean;
+	readonly _mutable?: boolean;
 	readonly _name: Identifier;
 	readonly _type: Type;
 	readonly _value?: Expression;
 	readonly __inputHints__?: {
 		readonly ref?: BaseBooleanKeyword<'ref'>;
-		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
+		readonly mutable?: BaseBooleanKeyword<'mut'>;
 		readonly type:
 			| KindEnum<
 					| '!'
@@ -4586,19 +4586,19 @@ export interface StaticItem {
 	};
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
-		readonly mutable_specifier?: 'mut' | 'mut';
+		readonly mutable?: 'mut' | 'mut';
 	};
 	readonly __slotHints__?: {
 		readonly visibilityModifier: SlotHint<T.VisibilityModifier, true>;
 		readonly ref: SlotHint<NonNullable<T.StaticItem.Config>['ref'], true>;
-		readonly mutableSpecifier: SlotHint<NonNullable<T.StaticItem.Config>['mutableSpecifier'], true>;
+		readonly mutable: SlotHint<NonNullable<T.StaticItem.Config>['mutable'], true>;
 		readonly name: SlotHint<T.Identifier>;
 		readonly type: SlotHint<NonNullable<T.StaticItem.Config>['type']>;
 		readonly value: SlotHint<NonNullable<T.StaticItem.Config>['value'], true>;
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	ref(): boolean | undefined;
-	mutableSpecifier(): boolean | undefined;
+	mutable(): boolean | undefined;
 	name(): Identifier;
 	type(): Type;
 	value(): Expression | undefined;
@@ -5457,13 +5457,13 @@ export interface LifetimeParameter {
 
 export interface LetDeclaration {
 	readonly $type: TSKindId.LetDeclaration;
-	readonly _mutable_specifier?: boolean;
+	readonly _mutable?: boolean;
 	readonly _pattern: Pattern;
 	readonly _type?: Type;
 	readonly _value?: Expression;
 	readonly _alternative?: Block;
 	readonly __inputHints__?: {
-		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
+		readonly mutable?: BaseBooleanKeyword<'mut'>;
 		readonly pattern:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
@@ -5515,16 +5515,16 @@ export interface LetDeclaration {
 			| Expression;
 	};
 	readonly __looseHints__?: {
-		readonly mutable_specifier?: 'mut' | 'mut';
+		readonly mutable?: 'mut' | 'mut';
 	};
 	readonly __slotHints__?: {
-		readonly mutableSpecifier: SlotHint<NonNullable<T.LetDeclaration.Config>['mutableSpecifier'], true>;
+		readonly mutable: SlotHint<NonNullable<T.LetDeclaration.Config>['mutable'], true>;
 		readonly pattern: SlotHint<NonNullable<T.LetDeclaration.Config>['pattern']>;
 		readonly type: SlotHint<NonNullable<T.LetDeclaration.Config>['type'], true>;
 		readonly value: SlotHint<NonNullable<T.LetDeclaration.Config>['value'], true>;
 		readonly alternative: SlotHint<T.Block, true>;
 	};
-	mutableSpecifier(): boolean | undefined;
+	mutable(): boolean | undefined;
 	pattern(): Pattern;
 	type(): Type | undefined;
 	value(): Expression | undefined;
@@ -6164,30 +6164,30 @@ export interface SelfParameter {
 	readonly $type: TSKindId.SelfParameter;
 	readonly _reference?: boolean;
 	readonly _lifetime?: Lifetime;
-	readonly _mutable_specifier?: boolean;
+	readonly _mutable?: boolean;
 	readonly __inputHints__?: {
 		readonly reference?: BaseBooleanKeyword<'&'>;
-		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
+		readonly mutable?: BaseBooleanKeyword<'mut'>;
 	};
 	readonly __looseHints__?: {
-		readonly mutable_specifier?: 'mut' | 'mut';
+		readonly mutable?: 'mut' | 'mut';
 	};
 	readonly __slotHints__?: {
 		readonly reference: SlotHint<NonNullable<T.SelfParameter.Config>['reference'], true>;
 		readonly lifetime: SlotHint<T.Lifetime, true>;
-		readonly mutableSpecifier: SlotHint<NonNullable<T.SelfParameter.Config>['mutableSpecifier'], true>;
+		readonly mutable: SlotHint<NonNullable<T.SelfParameter.Config>['mutable'], true>;
 	};
 	reference(): boolean | undefined;
 	lifetime(): Lifetime | undefined;
-	mutableSpecifier(): boolean | undefined;
+	mutable(): boolean | undefined;
 }
 
 export interface VariadicParameter {
 	readonly $type: TSKindId.VariadicParameter;
-	readonly _mutable_specifier?: boolean;
+	readonly _mutable?: boolean;
 	readonly _pattern?: Pattern;
 	readonly __inputHints__?: {
-		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
+		readonly mutable?: BaseBooleanKeyword<'mut'>;
 		readonly pattern?:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
@@ -6196,23 +6196,23 @@ export interface VariadicParameter {
 			| Pattern;
 	};
 	readonly __looseHints__?: {
-		readonly mutable_specifier?: 'mut' | 'mut';
+		readonly mutable?: 'mut' | 'mut';
 	};
 	readonly __slotHints__?: {
-		readonly mutableSpecifier: SlotHint<NonNullable<T.VariadicParameter.Config>['mutableSpecifier'], true>;
+		readonly mutable: SlotHint<NonNullable<T.VariadicParameter.Config>['mutable'], true>;
 		readonly pattern: SlotHint<NonNullable<T.VariadicParameter.Config>['pattern'], true>;
 	};
-	mutableSpecifier(): boolean | undefined;
+	mutable(): boolean | undefined;
 	pattern(): Pattern | undefined;
 }
 
 export interface Parameter {
 	readonly $type: TSKindId.Parameter;
-	readonly _mutable_specifier?: boolean;
+	readonly _mutable?: boolean;
 	readonly _name: Pattern | TSKindId.Self;
 	readonly _type: Type;
 	readonly __inputHints__?: {
-		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
+		readonly mutable?: BaseBooleanKeyword<'mut'>;
 		readonly name:
 			| KindEnum<
 					'true' | 'false' | '..' | '_' | 'self',
@@ -6261,14 +6261,14 @@ export interface Parameter {
 			| Type;
 	};
 	readonly __looseHints__?: {
-		readonly mutable_specifier?: 'mut' | 'mut';
+		readonly mutable?: 'mut' | 'mut';
 	};
 	readonly __slotHints__?: {
-		readonly mutableSpecifier: SlotHint<NonNullable<T.Parameter.Config>['mutableSpecifier'], true>;
+		readonly mutable: SlotHint<NonNullable<T.Parameter.Config>['mutable'], true>;
 		readonly name: SlotHint<NonNullable<T.Parameter.Config>['name']>;
 		readonly type: SlotHint<NonNullable<T.Parameter.Config>['type']>;
 	};
-	mutableSpecifier(): boolean | undefined;
+	mutable(): boolean | undefined;
 	name(): Pattern | TSKindId.Self;
 	type(): Type;
 }
@@ -6913,10 +6913,10 @@ export interface TypeBinding {
 export interface ReferenceType {
 	readonly $type: TSKindId.ReferenceType;
 	readonly _lifetime?: Lifetime;
-	readonly _mutable_specifier?: boolean;
+	readonly _mutable?: boolean;
 	readonly _type: Type;
 	readonly __inputHints__?: {
-		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
+		readonly mutable?: BaseBooleanKeyword<'mut'>;
 		readonly type:
 			| KindEnum<
 					| '!'
@@ -6959,15 +6959,15 @@ export interface ReferenceType {
 			| Type;
 	};
 	readonly __looseHints__?: {
-		readonly mutable_specifier?: 'mut' | 'mut';
+		readonly mutable?: 'mut' | 'mut';
 	};
 	readonly __slotHints__?: {
 		readonly lifetime: SlotHint<T.Lifetime, true>;
-		readonly mutableSpecifier: SlotHint<NonNullable<T.ReferenceType.Config>['mutableSpecifier'], true>;
+		readonly mutable: SlotHint<NonNullable<T.ReferenceType.Config>['mutable'], true>;
 		readonly type: SlotHint<NonNullable<T.ReferenceType.Config>['type']>;
 	};
 	lifetime(): Lifetime | undefined;
-	mutableSpecifier(): boolean | undefined;
+	mutable(): boolean | undefined;
 	type(): Type;
 }
 
@@ -8616,10 +8616,10 @@ export interface CapturedPattern {
 
 export interface ReferencePattern {
 	readonly $type: TSKindId.ReferencePattern;
-	readonly _mutable_specifier?: boolean;
+	readonly _mutable?: boolean;
 	readonly _pattern: Pattern;
 	readonly __inputHints__?: {
-		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
+		readonly mutable?: BaseBooleanKeyword<'mut'>;
 		readonly pattern:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
@@ -8628,13 +8628,13 @@ export interface ReferencePattern {
 			| Pattern;
 	};
 	readonly __looseHints__?: {
-		readonly mutable_specifier?: 'mut' | 'mut';
+		readonly mutable?: 'mut' | 'mut';
 	};
 	readonly __slotHints__?: {
-		readonly mutableSpecifier: SlotHint<NonNullable<T.ReferencePattern.Config>['mutableSpecifier'], true>;
+		readonly mutable: SlotHint<NonNullable<T.ReferencePattern.Config>['mutable'], true>;
 		readonly pattern: SlotHint<NonNullable<T.ReferencePattern.Config>['pattern']>;
 	};
-	mutableSpecifier(): boolean | undefined;
+	mutable(): boolean | undefined;
 	pattern(): Pattern;
 }
 
@@ -10750,35 +10750,35 @@ export interface DelimTokenTreeBrace {
 export interface FieldPatternShorthand {
 	readonly $type: TSKindId.FieldPatternShorthand;
 	readonly _ref?: boolean;
-	readonly _mutable_specifier?: boolean;
+	readonly _mutable?: boolean;
 	readonly _name: ShorthandFieldIdentifier;
 	readonly __inputHints__?: {
 		readonly ref?: BaseBooleanKeyword<'ref'>;
-		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
+		readonly mutable?: BaseBooleanKeyword<'mut'>;
 	};
 	readonly __looseHints__?: {
-		readonly mutable_specifier?: 'mut' | 'mut';
+		readonly mutable?: 'mut' | 'mut';
 		readonly name: readonly Identifier[];
 	};
 	readonly __slotHints__?: {
 		readonly ref: SlotHint<NonNullable<T.FieldPatternShorthand.Config>['ref'], true>;
-		readonly mutableSpecifier: SlotHint<NonNullable<T.FieldPatternShorthand.Config>['mutableSpecifier'], true>;
+		readonly mutable: SlotHint<NonNullable<T.FieldPatternShorthand.Config>['mutable'], true>;
 		readonly name: SlotHint<T.ShorthandFieldIdentifier | T.ShorthandFieldIdentifier.Types>;
 	};
 	ref(): boolean | undefined;
-	mutableSpecifier(): boolean | undefined;
+	mutable(): boolean | undefined;
 	name(): ShorthandFieldIdentifier;
 }
 
 export interface FieldPatternNamed {
 	readonly $type: TSKindId.FieldPatternNamed;
 	readonly _ref?: boolean;
-	readonly _mutable_specifier?: boolean;
+	readonly _mutable?: boolean;
 	readonly _name: FieldIdentifier;
 	readonly _pattern: Pattern;
 	readonly __inputHints__?: {
 		readonly ref?: BaseBooleanKeyword<'ref'>;
-		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
+		readonly mutable?: BaseBooleanKeyword<'mut'>;
 		readonly pattern:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
@@ -10787,17 +10787,17 @@ export interface FieldPatternNamed {
 			| Pattern;
 	};
 	readonly __looseHints__?: {
-		readonly mutable_specifier?: 'mut' | 'mut';
+		readonly mutable?: 'mut' | 'mut';
 		readonly name: readonly Identifier[];
 	};
 	readonly __slotHints__?: {
 		readonly ref: SlotHint<NonNullable<T.FieldPatternNamed.Config>['ref'], true>;
-		readonly mutableSpecifier: SlotHint<NonNullable<T.FieldPatternNamed.Config>['mutableSpecifier'], true>;
+		readonly mutable: SlotHint<NonNullable<T.FieldPatternNamed.Config>['mutable'], true>;
 		readonly name: SlotHint<T.FieldIdentifier | T.FieldIdentifier.Types>;
 		readonly pattern: SlotHint<NonNullable<T.FieldPatternNamed.Config>['pattern']>;
 	};
 	ref(): boolean | undefined;
-	mutableSpecifier(): boolean | undefined;
+	mutable(): boolean | undefined;
 	name(): FieldIdentifier;
 	pattern(): Pattern;
 }
@@ -12779,7 +12779,7 @@ export namespace StaticItem {
 			readonly before?: WhitespaceArm;
 			readonly colon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly eq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly mutableSpecifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly mutable?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly refKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly semi?: { readonly before?: WhitespaceArm };
 			readonly staticKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
@@ -12973,7 +12973,7 @@ export namespace LetDeclaration {
 			readonly elseKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly eq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly letKeyword?: { readonly after?: WhitespaceArm };
-			readonly mutableSpecifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly mutable?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly semi?: { readonly before?: WhitespaceArm };
 		};
 	}
@@ -13047,7 +13047,7 @@ export namespace SelfParameter {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly mutableSpecifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly mutable?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly reference?: { readonly after?: WhitespaceArm };
 			readonly self?: { readonly before?: WhitespaceArm };
 		};
@@ -13061,7 +13061,7 @@ export namespace VariadicParameter {
 			readonly before?: WhitespaceArm;
 			readonly colon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly dotDotDot?: { readonly before?: WhitespaceArm };
-			readonly mutableSpecifier?: { readonly after?: WhitespaceArm };
+			readonly mutable?: { readonly after?: WhitespaceArm };
 		};
 	}
 }
@@ -13072,7 +13072,7 @@ export namespace Parameter {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
 			readonly colon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly mutableSpecifier?: { readonly after?: WhitespaceArm };
+			readonly mutable?: { readonly after?: WhitespaceArm };
 		};
 	}
 }
@@ -13238,7 +13238,7 @@ export namespace ReferenceType {
 			readonly after?: WhitespaceArm;
 			readonly amp?: { readonly after?: WhitespaceArm };
 			readonly before?: WhitespaceArm;
-			readonly mutableSpecifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly mutable?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -13952,7 +13952,7 @@ export namespace ReferencePattern {
 			readonly after?: WhitespaceArm;
 			readonly amp?: { readonly after?: WhitespaceArm };
 			readonly before?: WhitespaceArm;
-			readonly mutableSpecifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly mutable?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -14943,7 +14943,7 @@ export namespace FieldPatternShorthand {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly mutableSpecifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly mutable?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly refKeyword?: { readonly after?: WhitespaceArm };
 		};
 	}
@@ -14955,7 +14955,7 @@ export namespace FieldPatternNamed {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
 			readonly colon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly mutableSpecifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly mutable?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly refKeyword?: { readonly after?: WhitespaceArm };
 		};
 	}

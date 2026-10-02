@@ -23327,7 +23327,7 @@
                     "$type": 232,
                     "$source": 0,
                     "$named": true,
-                    "_mutable_specifier": true,
+                    "_mutable": true,
                     "_pattern": {
                       "$type": 1,
                       "$source": 0,
@@ -23359,7 +23359,7 @@
                       }
                     ],
                     "$slotOrder": [
-                      "mutable_specifier",
+                      "mutable",
                       "pattern"
                     ]
                   }
@@ -23681,7 +23681,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "extern \"C\" fn foo() {}\n\nextern \"C\" fn printf(* const c_char, ...,) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}\n",
-    "expectedReparseTree": "(source_file statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (pointer_type_const type: (type_identifier))) element: (attributed_parameter (variadic_parameter)))) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (pointer_type_const type: (primitive_type)))) element: (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block (line_comment (line_comment_regular)) trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_regular)))))",
+    "expectedReparseTree": "(source_file statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (pointer_type_const type: (type_identifier))) element: (attributed_parameter (variadic_parameter)))) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (pointer_type_const type: (primitive_type)))) element: (attributed_parameter (variadic_parameter mutable: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block (line_comment (line_comment_regular)) trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_regular)))))",
     "wrappedText": "extern \"C\" fn foo() {}\n\nextern \"C\" fn printf(* const c_char, ...,) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}\n",
     "wrappedOffset": 0
   },
@@ -24235,7 +24235,7 @@
                 "$type": 232,
                 "$source": 0,
                 "$named": true,
-                "_mutable_specifier": true,
+                "_mutable": true,
                 "_pattern": {
                   "$type": 1,
                   "$source": 0,
@@ -24267,7 +24267,7 @@
                   }
                 ],
                 "$slotOrder": [
-                  "mutable_specifier",
+                  "mutable",
                   "pattern"
                 ]
               }
@@ -24587,7 +24587,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
-    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (pointer_type_const type: (primitive_type)))) element: (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block (line_comment (line_comment_regular)) trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_regular))))",
+    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (pointer_type_const type: (primitive_type)))) element: (attributed_parameter (variadic_parameter mutable: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block (line_comment (line_comment_regular)) trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_regular))))",
     "wrappedText": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "wrappedOffset": 0
   },
@@ -25007,7 +25007,7 @@
               "$type": 232,
               "$source": 0,
               "$named": true,
-              "_mutable_specifier": true,
+              "_mutable": true,
               "_pattern": {
                 "$type": 1,
                 "$source": 0,
@@ -25039,7 +25039,7 @@
                 }
               ],
               "$slotOrder": [
-                "mutable_specifier",
+                "mutable",
                 "pattern"
               ]
             }
@@ -25088,7 +25088,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(fmt: * const i8, mut ap: ...)",
-    "expectedReparseTree": "(parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (pointer_type_const type: (primitive_type)))) element: (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier)))))",
+    "expectedReparseTree": "(parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (pointer_type_const type: (primitive_type)))) element: (attributed_parameter (variadic_parameter mutable: (mutable_specifier) pattern: (identifier)))))",
     "wrappedText": "fn _f(fmt: * const i8, mut ap: ...) {}",
     "wrappedOffset": 5
   },
@@ -28727,7 +28727,7 @@
           "$type": 223,
           "$source": 0,
           "$named": true,
-          "_mutable_specifier": true,
+          "_mutable": true,
           "_pattern": {
             "$type": 1,
             "$source": 0,
@@ -28779,7 +28779,7 @@
             }
           ],
           "$slotOrder": [
-            "mutable_specifier",
+            "mutable",
             "pattern",
             "value"
           ]
@@ -29001,7 +29001,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "let x;\n\nlet x = 42;\n\nlet x: i32;\n\nlet x: i8 = 42;\n\nlet mut x = 5;\n\nlet y: bool = false;\n\nlet bool: bool = false;\n\nlet u32: str = \"\";\n",
-    "expectedReparseTree": "(source_file statements: (let_declaration pattern: (identifier)) statements: (let_declaration pattern: (identifier) value: (integer_literal_decimal)) statements: (let_declaration pattern: (identifier) type: (primitive_type)) statements: (let_declaration pattern: (identifier) type: (primitive_type) value: (integer_literal_decimal)) statements: (let_declaration mutable_specifier: (mutable_specifier) pattern: (identifier) value: (integer_literal_decimal)) statements: (let_declaration pattern: (identifier) type: (primitive_type) value: (boolean_literal)) statements: (let_declaration pattern: (identifier) type: (primitive_type) value: (boolean_literal)) statements: (let_declaration pattern: (identifier) type: (primitive_type) value: (string_literal string_open: (string_open))))",
+    "expectedReparseTree": "(source_file statements: (let_declaration pattern: (identifier)) statements: (let_declaration pattern: (identifier) value: (integer_literal_decimal)) statements: (let_declaration pattern: (identifier) type: (primitive_type)) statements: (let_declaration pattern: (identifier) type: (primitive_type) value: (integer_literal_decimal)) statements: (let_declaration mutable: (mutable_specifier) pattern: (identifier) value: (integer_literal_decimal)) statements: (let_declaration pattern: (identifier) type: (primitive_type) value: (boolean_literal)) statements: (let_declaration pattern: (identifier) type: (primitive_type) value: (boolean_literal)) statements: (let_declaration pattern: (identifier) type: (primitive_type) value: (string_literal string_open: (string_open))))",
     "wrappedText": "let x;\n\nlet x = 42;\n\nlet x: i32;\n\nlet x: i8 = 42;\n\nlet mut x = 5;\n\nlet y: bool = false;\n\nlet bool: bool = false;\n\nlet u32: str = \"\";\n",
     "wrappedOffset": 0
   },
@@ -29294,7 +29294,7 @@
       "$type": 223,
       "$source": 0,
       "$named": true,
-      "_mutable_specifier": true,
+      "_mutable": true,
       "_pattern": {
         "$type": 1,
         "$source": 0,
@@ -29346,7 +29346,7 @@
         }
       ],
       "$slotOrder": [
-        "mutable_specifier",
+        "mutable",
         "pattern",
         "value"
       ]
@@ -29360,7 +29360,7 @@
     "pattern": "let_declaration",
     "edits": [],
     "expectedSourceOut": "let mut x = 5;",
-    "expectedReparseTree": "(let_declaration mutable_specifier: (mutable_specifier) pattern: (identifier) value: (integer_literal_decimal))",
+    "expectedReparseTree": "(let_declaration mutable: (mutable_specifier) pattern: (identifier) value: (integer_literal_decimal))",
     "wrappedText": "let mut x = 5;",
     "wrappedOffset": 0
   },
@@ -43690,10 +43690,10 @@
                     "$source": 0,
                     "$named": true,
                     "_reference": true,
-                    "_mutable_specifier": true,
+                    "_mutable": true,
                     "$slotOrder": [
                       "reference",
-                      "mutable_specifier",
+                      "mutable",
                       "self"
                     ]
                   }
@@ -44148,7 +44148,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "pub fn splice<T: Into<Text>>(&mut self, old_range: Range<usize>, new_text: T) {}\n\npub fn uninit_array<const LEN: usize>() -> [Self; LEN] {}\n",
-    "expectedReparseTree": "(source_file statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)))))))))) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter mutable_specifier: (mutable_specifier) self: (self))) element: (attributed_parameter (parameter name: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (primitive_type))))))) element: (attributed_parameter (parameter name: (identifier) type: (type_identifier))))) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (const_parameter name: (identifier) type: (primitive_type))))) parameters: (parameters) return_type: (array_type element: (type_identifier) length: (identifier)) body: (block)))",
+    "expectedReparseTree": "(source_file statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)))))))))) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter mutable: (mutable_specifier) self: (self))) element: (attributed_parameter (parameter name: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (primitive_type))))))) element: (attributed_parameter (parameter name: (identifier) type: (type_identifier))))) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (const_parameter name: (identifier) type: (primitive_type))))) parameters: (parameters) return_type: (array_type element: (type_identifier) length: (identifier)) body: (block)))",
     "wrappedText": "pub fn splice<T: Into<Text>>(&mut self, old_range: Range<usize>, new_text: T) {}\n\npub fn uninit_array<const LEN: usize>() -> [Self; LEN] {}\n",
     "wrappedOffset": 0
   },
@@ -44362,10 +44362,10 @@
                 "$source": 0,
                 "$named": true,
                 "_reference": true,
-                "_mutable_specifier": true,
+                "_mutable": true,
                 "$slotOrder": [
                   "reference",
-                  "mutable_specifier",
+                  "mutable",
                   "self"
                 ]
               }
@@ -44597,7 +44597,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "pub fn splice<T: Into<Text>>(&mut self, old_range: Range<usize>, new_text: T) {}",
-    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)))))))))) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter mutable_specifier: (mutable_specifier) self: (self))) element: (attributed_parameter (parameter name: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (primitive_type))))))) element: (attributed_parameter (parameter name: (identifier) type: (type_identifier))))) body: (block))",
+    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)))))))))) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter mutable: (mutable_specifier) self: (self))) element: (attributed_parameter (parameter name: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (primitive_type))))))) element: (attributed_parameter (parameter name: (identifier) type: (type_identifier))))) body: (block))",
     "wrappedText": "pub fn splice<T: Into<Text>>(&mut self, old_range: Range<usize>, new_text: T) {}",
     "wrappedOffset": 0
   },
@@ -45702,10 +45702,10 @@
               "$source": 0,
               "$named": true,
               "_reference": true,
-              "_mutable_specifier": true,
+              "_mutable": true,
               "$slotOrder": [
                 "reference",
-                "mutable_specifier",
+                "mutable",
                 "self"
               ]
             }
@@ -45912,7 +45912,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(&mut self, old_range: Range<usize>, new_text: T)",
-    "expectedReparseTree": "(parameters (parameters_elements element: (attributed_parameter (self_parameter mutable_specifier: (mutable_specifier) self: (self))) element: (attributed_parameter (parameter name: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (primitive_type))))))) element: (attributed_parameter (parameter name: (identifier) type: (type_identifier)))))",
+    "expectedReparseTree": "(parameters (parameters_elements element: (attributed_parameter (self_parameter mutable: (mutable_specifier) self: (self))) element: (attributed_parameter (parameter name: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (primitive_type))))))) element: (attributed_parameter (parameter name: (identifier) type: (type_identifier)))))",
     "wrappedText": "fn _f(&mut self, old_range: Range<usize>, new_text: T) {}",
     "wrappedOffset": 5
   },
@@ -46287,7 +46287,7 @@
                     "$type": 233,
                     "$source": 0,
                     "$named": true,
-                    "_mutable_specifier": true,
+                    "_mutable": true,
                     "_name": {
                       "$type": 1,
                       "$source": 0,
@@ -46311,7 +46311,7 @@
                       }
                     ],
                     "$slotOrder": [
-                      "mutable_specifier",
+                      "mutable",
                       "name",
                       "type"
                     ]
@@ -46375,7 +46375,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "fn foo(mut x: u32) {}\n",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter mutable_specifier: (mutable_specifier) name: (identifier) type: (primitive_type))))) body: (block)))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter mutable: (mutable_specifier) name: (identifier) type: (primitive_type))))) body: (block)))",
     "wrappedText": "fn foo(mut x: u32) {}\n",
     "wrappedOffset": 0
   },
@@ -46414,7 +46414,7 @@
                 "$type": 233,
                 "$source": 0,
                 "$named": true,
-                "_mutable_specifier": true,
+                "_mutable": true,
                 "_name": {
                   "$type": 1,
                   "$source": 0,
@@ -46438,7 +46438,7 @@
                   }
                 ],
                 "$slotOrder": [
-                  "mutable_specifier",
+                  "mutable",
                   "name",
                   "type"
                 ]
@@ -46500,7 +46500,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo(mut x: u32) {}",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter mutable_specifier: (mutable_specifier) name: (identifier) type: (primitive_type))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter mutable: (mutable_specifier) name: (identifier) type: (primitive_type))))) body: (block))",
     "wrappedText": "fn foo(mut x: u32) {}",
     "wrappedOffset": 0
   },
@@ -46525,7 +46525,7 @@
               "$type": 233,
               "$source": 0,
               "$named": true,
-              "_mutable_specifier": true,
+              "_mutable": true,
               "_name": {
                 "$type": 1,
                 "$source": 0,
@@ -46549,7 +46549,7 @@
                 }
               ],
               "$slotOrder": [
-                "mutable_specifier",
+                "mutable",
                 "name",
                 "type"
               ]
@@ -46588,7 +46588,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(mut x: u32)",
-    "expectedReparseTree": "(parameters (parameters_elements element: (attributed_parameter (parameter mutable_specifier: (mutable_specifier) name: (identifier) type: (primitive_type)))))",
+    "expectedReparseTree": "(parameters (parameters_elements element: (attributed_parameter (parameter mutable: (mutable_specifier) name: (identifier) type: (primitive_type)))))",
     "wrappedText": "fn _f(mut x: u32) {}",
     "wrappedOffset": 5
   },
@@ -46600,7 +46600,7 @@
       "$type": 233,
       "$source": 0,
       "$named": true,
-      "_mutable_specifier": true,
+      "_mutable": true,
       "_name": {
         "$type": 1,
         "$source": 0,
@@ -46624,7 +46624,7 @@
         }
       ],
       "$slotOrder": [
-        "mutable_specifier",
+        "mutable",
         "name",
         "type"
       ]
@@ -46638,7 +46638,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "mut x: u32",
-    "expectedReparseTree": "(parameter mutable_specifier: (mutable_specifier) name: (identifier) type: (primitive_type))",
+    "expectedReparseTree": "(parameter mutable: (mutable_specifier) name: (identifier) type: (primitive_type))",
     "wrappedText": "fn _f(mut x: u32) {}",
     "wrappedOffset": 6
   },
@@ -51331,7 +51331,7 @@
           "$type": 206,
           "$source": 0,
           "$named": true,
-          "_mutable_specifier": true,
+          "_mutable": true,
           "_name": {
             "$type": 1,
             "$source": 0,
@@ -51423,7 +51423,7 @@
             }
           ],
           "$slotOrder": [
-            "mutable_specifier",
+            "mutable",
             "name",
             "type"
           ]
@@ -51439,7 +51439,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "static N: i32 = 5;\n\nstatic mut __progname: * mut::c_char;\n",
-    "expectedReparseTree": "(source_file statements: (static_item name: (identifier) type: (primitive_type) value: (integer_literal_decimal)) statements: (static_item mutable_specifier: (mutable_specifier) name: (identifier) type: (pointer_type_mut (mutable_specifier) type: (scoped_type_identifier name: (type_identifier)))))",
+    "expectedReparseTree": "(source_file statements: (static_item name: (identifier) type: (primitive_type) value: (integer_literal_decimal)) statements: (static_item mutable: (mutable_specifier) name: (identifier) type: (pointer_type_mut (mutable_specifier) type: (scoped_type_identifier name: (type_identifier)))))",
     "wrappedText": "static N: i32 = 5;\n\nstatic mut __progname: * mut::c_char;\n",
     "wrappedOffset": 0
   },
@@ -51538,7 +51538,7 @@
       "$type": 206,
       "$source": 0,
       "$named": true,
-      "_mutable_specifier": true,
+      "_mutable": true,
       "_name": {
         "$type": 1,
         "$source": 0,
@@ -51630,7 +51630,7 @@
         }
       ],
       "$slotOrder": [
-        "mutable_specifier",
+        "mutable",
         "name",
         "type"
       ]
@@ -51644,7 +51644,7 @@
     "pattern": "static_item",
     "edits": [],
     "expectedSourceOut": "static mut __progname: * mut::c_char;",
-    "expectedReparseTree": "(static_item mutable_specifier: (mutable_specifier) name: (identifier) type: (pointer_type_mut (mutable_specifier) type: (scoped_type_identifier name: (type_identifier))))",
+    "expectedReparseTree": "(static_item mutable: (mutable_specifier) name: (identifier) type: (pointer_type_mut (mutable_specifier) type: (scoped_type_identifier name: (type_identifier))))",
     "wrappedText": "static mut __progname: * mut::c_char;",
     "wrappedOffset": 0
   },
@@ -73722,9 +73722,9 @@
                           "$type": 231,
                           "$source": 0,
                           "$named": true,
-                          "_mutable_specifier": true,
+                          "_mutable": true,
                           "$slotOrder": [
-                            "mutable_specifier",
+                            "mutable",
                             "self"
                           ]
                         }
@@ -73929,11 +73929,11 @@
                               }
                             ]
                           },
-                          "_mutable_specifier": true,
+                          "_mutable": true,
                           "$slotOrder": [
                             "reference",
                             "lifetime",
-                            "mutable_specifier",
+                            "mutable",
                             "self"
                           ]
                         }
@@ -74199,7 +74199,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "impl Person {\n    const leg_count: u32 = 2;\n    fn walk(self) {}\n    fn walk_mut(mut self) {}\n    fn talk(&self) {}\n    fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{\n    State::Init\n}> {}\n",
-    "expectedReparseTree": "(source_file statements: (impl_item_body type: (type_identifier) (declaration_list declarations: (const_item name: (identifier) type: (primitive_type) value: (integer_literal_decimal)) declarations: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter self: (self))))) body: (block)) declarations: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter mutable_specifier: (mutable_specifier) self: (self))))) body: (block)) declarations: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter self: (self))))) body: (block)) declarations: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter lifetime: (lifetime name: (identifier)) mutable_specifier: (mutable_specifier) self: (self))))) body: (block)))) statements: (impl_item_body type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier))))))) (declaration_list)))",
+    "expectedReparseTree": "(source_file statements: (impl_item_body type: (type_identifier) (declaration_list declarations: (const_item name: (identifier) type: (primitive_type) value: (integer_literal_decimal)) declarations: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter self: (self))))) body: (block)) declarations: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter mutable: (mutable_specifier) self: (self))))) body: (block)) declarations: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter self: (self))))) body: (block)) declarations: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter lifetime: (lifetime name: (identifier)) mutable: (mutable_specifier) self: (self))))) body: (block)))) statements: (impl_item_body type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier))))))) (declaration_list)))",
     "wrappedText": "impl Person {\n    const leg_count: u32 = 2;\n    fn walk(self) {}\n    fn walk_mut(mut self) {}\n    fn talk(&self) {}\n    fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{\n    State::Init\n}> {}\n",
     "wrappedOffset": 0
   },
@@ -74421,9 +74421,9 @@
                       "$type": 231,
                       "$source": 0,
                       "$named": true,
-                      "_mutable_specifier": true,
+                      "_mutable": true,
                       "$slotOrder": [
-                        "mutable_specifier",
+                        "mutable",
                         "self"
                       ]
                     }
@@ -74628,11 +74628,11 @@
                           }
                         ]
                       },
-                      "_mutable_specifier": true,
+                      "_mutable": true,
                       "$slotOrder": [
                         "reference",
                         "lifetime",
-                        "mutable_specifier",
+                        "mutable",
                         "self"
                       ]
                     }
@@ -74736,7 +74736,7 @@
     "pattern": "impl_item_body",
     "edits": [],
     "expectedSourceOut": "impl Person {\n    const leg_count: u32 = 2;\n    fn walk(self) {}\n    fn walk_mut(mut self) {}\n    fn talk(&self) {}\n    fn talk_mut(&'a mut self) {}\n}",
-    "expectedReparseTree": "(impl_item_body type: (type_identifier) (declaration_list declarations: (const_item name: (identifier) type: (primitive_type) value: (integer_literal_decimal)) declarations: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter self: (self))))) body: (block)) declarations: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter mutable_specifier: (mutable_specifier) self: (self))))) body: (block)) declarations: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter self: (self))))) body: (block)) declarations: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter lifetime: (lifetime name: (identifier)) mutable_specifier: (mutable_specifier) self: (self))))) body: (block))))",
+    "expectedReparseTree": "(impl_item_body type: (type_identifier) (declaration_list declarations: (const_item name: (identifier) type: (primitive_type) value: (integer_literal_decimal)) declarations: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter self: (self))))) body: (block)) declarations: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter mutable: (mutable_specifier) self: (self))))) body: (block)) declarations: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter self: (self))))) body: (block)) declarations: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter lifetime: (lifetime name: (identifier)) mutable: (mutable_specifier) self: (self))))) body: (block))))",
     "wrappedText": "impl Person {\n    const leg_count: u32 = 2;\n    fn walk(self) {}\n    fn walk_mut(mut self) {}\n    fn talk(&self) {}\n    fn talk_mut(&'a mut self) {}\n}",
     "wrappedOffset": 0
   },
@@ -75237,9 +75237,9 @@
                 "$type": 231,
                 "$source": 0,
                 "$named": true,
-                "_mutable_specifier": true,
+                "_mutable": true,
                 "$slotOrder": [
-                  "mutable_specifier",
+                  "mutable",
                   "self"
                 ]
               }
@@ -75305,7 +75305,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn walk_mut(mut self) {}",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter mutable_specifier: (mutable_specifier) self: (self))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter mutable: (mutable_specifier) self: (self))))) body: (block))",
     "wrappedText": "fn walk_mut(mut self) {}",
     "wrappedOffset": 0
   },
@@ -75478,11 +75478,11 @@
                     }
                   ]
                 },
-                "_mutable_specifier": true,
+                "_mutable": true,
                 "$slotOrder": [
                   "reference",
                   "lifetime",
-                  "mutable_specifier",
+                  "mutable",
                   "self"
                 ]
               }
@@ -75548,7 +75548,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn talk_mut(&'a mut self) {}",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter lifetime: (lifetime name: (identifier)) mutable_specifier: (mutable_specifier) self: (self))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter lifetime: (lifetime name: (identifier)) mutable: (mutable_specifier) self: (self))))) body: (block))",
     "wrappedText": "fn talk_mut(&'a mut self) {}",
     "wrappedOffset": 0
   },
@@ -75637,9 +75637,9 @@
               "$type": 231,
               "$source": 0,
               "$named": true,
-              "_mutable_specifier": true,
+              "_mutable": true,
               "$slotOrder": [
-                "mutable_specifier",
+                "mutable",
                 "self"
               ]
             }
@@ -75677,7 +75677,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(mut self)",
-    "expectedReparseTree": "(parameters (parameters_elements element: (attributed_parameter (self_parameter mutable_specifier: (mutable_specifier) self: (self)))))",
+    "expectedReparseTree": "(parameters (parameters_elements element: (attributed_parameter (self_parameter mutable: (mutable_specifier) self: (self)))))",
     "wrappedText": "fn _f(mut self) {}",
     "wrappedOffset": 5
   },
@@ -75794,11 +75794,11 @@
                   }
                 ]
               },
-              "_mutable_specifier": true,
+              "_mutable": true,
               "$slotOrder": [
                 "reference",
                 "lifetime",
-                "mutable_specifier",
+                "mutable",
                 "self"
               ]
             }
@@ -75836,7 +75836,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(&'a mut self)",
-    "expectedReparseTree": "(parameters (parameters_elements element: (attributed_parameter (self_parameter lifetime: (lifetime name: (identifier)) mutable_specifier: (mutable_specifier) self: (self)))))",
+    "expectedReparseTree": "(parameters (parameters_elements element: (attributed_parameter (self_parameter lifetime: (lifetime name: (identifier)) mutable: (mutable_specifier) self: (self)))))",
     "wrappedText": "fn _f(&'a mut self) {}",
     "wrappedOffset": 5
   },
@@ -106012,7 +106012,7 @@
                       "$type": 252,
                       "$source": 0,
                       "$named": true,
-                      "_mutable_specifier": true,
+                      "_mutable": true,
                       "_type": {
                         "$type": 468,
                         "$source": 0,
@@ -106040,7 +106040,7 @@
                         }
                       ],
                       "$slotOrder": [
-                        "mutable_specifier",
+                        "mutable",
                         "type"
                       ]
                     },
@@ -109427,7 +109427,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "fn walk<F>(&self, it: &mut F) -> bool where F: FnMut(&Pat) -> bool {\n    return false\n}\n\nimpl <'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {}\n\nimpl <T> A for B<T> where C<T>: D, T: 'c, 'c: 'b, {}\n\nimpl <'a, E> Read where &'a E: Read, {}\n\nimpl <T> A for B<T> where (T, T, T): C, {}\n\nimpl <T> A for B<T> where for <'a> D<T>: E<'a>, {}\n\npub trait A<B> where B: C, {}\n\nfn foo<A>() where A: B + As<f64>, f64: As<A> {}\n\nimpl <A> Default for B<A> where * mut A: C + D {}\n",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter self: (self))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type mutable_specifier: (mutable_specifier) type: (type_identifier)))))) return_type: (primitive_type) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_elements element: (attributed_parameter (reference_type type: (type_identifier))))) return_type: (primitive_type)))))) body: (block trailing_expression: (return_expression expression: (boolean_literal)))) statements: (impl_item_body type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (lifetime name: (identifier)) bounds: (type_identifier)))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime name: (identifier)))))) (declaration_list)) statements: (impl_item_body type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier))))) bounds: (trait_bounds bounds: (type_identifier))) where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime name: (identifier)))) where_predicate: (where_predicate left: (lifetime name: (identifier)) bounds: (trait_bounds bounds: (lifetime name: (identifier)))))) (declaration_list)) statements: (impl_item_body type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier))))) type: (type_identifier) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (reference_type lifetime: (lifetime name: (identifier)) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier))))) (declaration_list)) statements: (impl_item_body type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (tuple_type (tuple_type_elements type: (type_identifier) type: (type_identifier) type: (type_identifier))) bounds: (trait_bounds bounds: (type_identifier))))) (declaration_list)) statements: (impl_item_body type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (higher_ranked_trait_bound type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)))))) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier)))))))))) (declaration_list)) statements: (trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier))))) body: (declaration_list)) statements: (function_item name: (identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) parameters: (parameters) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier) bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (primitive_type))))))) where_predicate: (where_predicate left: (primitive_type) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier))))))))) body: (block)) statements: (impl_item_body type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (pointer_type_mut (mutable_specifier) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier))))) (declaration_list)))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter self: (self))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type mutable: (mutable_specifier) type: (type_identifier)))))) return_type: (primitive_type) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_elements element: (attributed_parameter (reference_type type: (type_identifier))))) return_type: (primitive_type)))))) body: (block trailing_expression: (return_expression expression: (boolean_literal)))) statements: (impl_item_body type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (lifetime name: (identifier)) bounds: (type_identifier)))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime name: (identifier)))))) (declaration_list)) statements: (impl_item_body type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier))))) bounds: (trait_bounds bounds: (type_identifier))) where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime name: (identifier)))) where_predicate: (where_predicate left: (lifetime name: (identifier)) bounds: (trait_bounds bounds: (lifetime name: (identifier)))))) (declaration_list)) statements: (impl_item_body type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))) element: (attributed_type_parameter (type_parameter name: (type_identifier))))) type: (type_identifier) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (reference_type lifetime: (lifetime name: (identifier)) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier))))) (declaration_list)) statements: (impl_item_body type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (tuple_type (tuple_type_elements type: (type_identifier) type: (type_identifier) type: (type_identifier))) bounds: (trait_bounds bounds: (type_identifier))))) (declaration_list)) statements: (impl_item_body type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (higher_ranked_trait_bound type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)))))) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier)))))))))) (declaration_list)) statements: (trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier))))) body: (declaration_list)) statements: (function_item name: (identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) parameters: (parameters) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier) bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (primitive_type))))))) where_predicate: (where_predicate left: (primitive_type) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier))))))))) body: (block)) statements: (impl_item_body type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (pointer_type_mut (mutable_specifier) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier))))) (declaration_list)))",
     "wrappedText": "fn walk<F>(&self, it: &mut F) -> bool where F: FnMut(&Pat) -> bool {\n    return false\n}\n\nimpl <'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {}\n\nimpl <T> A for B<T> where C<T>: D, T: 'c, 'c: 'b, {}\n\nimpl <'a, E> Read where &'a E: Read, {}\n\nimpl <T> A for B<T> where (T, T, T): C, {}\n\nimpl <T> A for B<T> where for <'a> D<T>: E<'a>, {}\n\npub trait A<B> where B: C, {}\n\nfn foo<A>() where A: B + As<f64>, f64: As<A> {}\n\nimpl <A> Default for B<A> where * mut A: C + D {}\n",
     "wrappedOffset": 0
   },
@@ -109554,7 +109554,7 @@
                   "$type": 252,
                   "$source": 0,
                   "$named": true,
-                  "_mutable_specifier": true,
+                  "_mutable": true,
                   "_type": {
                     "$type": 468,
                     "$source": 0,
@@ -109582,7 +109582,7 @@
                     }
                   ],
                   "$slotOrder": [
-                    "mutable_specifier",
+                    "mutable",
                     "type"
                   ]
                 },
@@ -109897,7 +109897,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn walk<F>(&self, it: &mut F) -> bool where F: FnMut(&Pat) -> bool {\n    return false\n}",
-    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter self: (self))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type mutable_specifier: (mutable_specifier) type: (type_identifier)))))) return_type: (primitive_type) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_elements element: (attributed_parameter (reference_type type: (type_identifier))))) return_type: (primitive_type)))))) body: (block trailing_expression: (return_expression expression: (boolean_literal))))",
+    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters (type_parameters_elements element: (attributed_type_parameter (type_parameter name: (type_identifier))))) parameters: (parameters (parameters_elements element: (attributed_parameter (self_parameter self: (self))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type mutable: (mutable_specifier) type: (type_identifier)))))) return_type: (primitive_type) where_clause: (where_clause (where_predicates where_predicate: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_elements element: (attributed_parameter (reference_type type: (type_identifier))))) return_type: (primitive_type)))))) body: (block trailing_expression: (return_expression expression: (boolean_literal))))",
     "wrappedText": "fn walk<F>(&self, it: &mut F) -> bool where F: FnMut(&Pat) -> bool {\n    return false\n}",
     "wrappedOffset": 0
   },
@@ -113456,7 +113456,7 @@
                 "$type": 252,
                 "$source": 0,
                 "$named": true,
-                "_mutable_specifier": true,
+                "_mutable": true,
                 "_type": {
                   "$type": 468,
                   "$source": 0,
@@ -113484,7 +113484,7 @@
                   }
                 ],
                 "$slotOrder": [
-                  "mutable_specifier",
+                  "mutable",
                   "type"
                 ]
               },
@@ -113549,7 +113549,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(&self, it: &mut F)",
-    "expectedReparseTree": "(parameters (parameters_elements element: (attributed_parameter (self_parameter self: (self))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type mutable_specifier: (mutable_specifier) type: (type_identifier))))))",
+    "expectedReparseTree": "(parameters (parameters_elements element: (attributed_parameter (self_parameter self: (self))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type mutable: (mutable_specifier) type: (type_identifier))))))",
     "wrappedText": "fn _f(&self, it: &mut F) {}",
     "wrappedOffset": 5
   },
@@ -113688,7 +113688,7 @@
         "$type": 252,
         "$source": 0,
         "$named": true,
-        "_mutable_specifier": true,
+        "_mutable": true,
         "_type": {
           "$type": 468,
           "$source": 0,
@@ -113716,7 +113716,7 @@
           }
         ],
         "$slotOrder": [
-          "mutable_specifier",
+          "mutable",
           "type"
         ]
       },
@@ -113745,7 +113745,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "it: &mut F",
-    "expectedReparseTree": "(parameter name: (identifier) type: (reference_type mutable_specifier: (mutable_specifier) type: (type_identifier)))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (reference_type mutable: (mutable_specifier) type: (type_identifier)))",
     "wrappedText": "fn _f(it: &mut F) {}",
     "wrappedOffset": 6
   },
@@ -113757,7 +113757,7 @@
       "$type": 252,
       "$source": 0,
       "$named": true,
-      "_mutable_specifier": true,
+      "_mutable": true,
       "_type": {
         "$type": 468,
         "$source": 0,
@@ -113785,7 +113785,7 @@
         }
       ],
       "$slotOrder": [
-        "mutable_specifier",
+        "mutable",
         "type"
       ]
     },
@@ -113798,7 +113798,7 @@
     "pattern": "reference_type",
     "edits": [],
     "expectedSourceOut": "&mut F",
-    "expectedReparseTree": "(reference_type mutable_specifier: (mutable_specifier) type: (type_identifier))",
+    "expectedReparseTree": "(reference_type mutable: (mutable_specifier) type: (type_identifier))",
     "wrappedText": "type _X = &mut F;",
     "wrappedOffset": 10
   },
@@ -194279,7 +194279,7 @@
                       "$type": 326,
                       "$source": 0,
                       "$named": true,
-                      "_mutable_specifier": true,
+                      "_mutable": true,
                       "_pattern": {
                         "$type": 1,
                         "$source": 0,
@@ -194302,7 +194302,7 @@
                         }
                       ],
                       "$slotOrder": [
-                        "mutable_specifier",
+                        "mutable",
                         "pattern"
                       ]
                     }
@@ -194391,7 +194391,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "match x {\n    A(ref x) => x.0,\n    ref mut y => y,\n    &mut z => z,\n}\n",
-    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (ref_pattern pattern: (identifier))))) value: (field_expression value: (identifier) field: (integer_literal_decimal))) (match_arm_with_comma pattern: (match_pattern pattern: (ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (identifier)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (reference_pattern mutable_specifier: (mutable_specifier) pattern: (identifier))) value: (identifier)))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (ref_pattern pattern: (identifier))))) value: (field_expression value: (identifier) field: (integer_literal_decimal))) (match_arm_with_comma pattern: (match_pattern pattern: (ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (identifier)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (reference_pattern mutable: (mutable_specifier) pattern: (identifier))) value: (identifier)))))))",
     "wrappedText": "match x {\n    A(ref x) => x.0,\n    ref mut y => y,\n    &mut z => z,\n}\n",
     "wrappedOffset": 0
   },
@@ -194664,7 +194664,7 @@
                 "$type": 326,
                 "$source": 0,
                 "$named": true,
-                "_mutable_specifier": true,
+                "_mutable": true,
                 "_pattern": {
                   "$type": 1,
                   "$source": 0,
@@ -194687,7 +194687,7 @@
                   }
                 ],
                 "$slotOrder": [
-                  "mutable_specifier",
+                  "mutable",
                   "pattern"
                 ]
               }
@@ -194773,7 +194773,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match x {\n    A(ref x) => x.0,\n    ref mut y => y,\n    &mut z => z,\n}",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (ref_pattern pattern: (identifier))))) value: (field_expression value: (identifier) field: (integer_literal_decimal))) (match_arm_with_comma pattern: (match_pattern pattern: (ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (identifier)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (reference_pattern mutable_specifier: (mutable_specifier) pattern: (identifier))) value: (identifier)))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (ref_pattern pattern: (identifier))))) value: (field_expression value: (identifier) field: (integer_literal_decimal))) (match_arm_with_comma pattern: (match_pattern pattern: (ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (identifier)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (reference_pattern mutable: (mutable_specifier) pattern: (identifier))) value: (identifier)))))",
     "wrappedText": "fn _f() { let _ = match x {\n    A(ref x) => x.0,\n    ref mut y => y,\n    &mut z => z,\n}; }",
     "wrappedOffset": 18
   },
@@ -195092,7 +195092,7 @@
       "$type": 326,
       "$source": 0,
       "$named": true,
-      "_mutable_specifier": true,
+      "_mutable": true,
       "_pattern": {
         "$type": 1,
         "$source": 0,
@@ -195115,7 +195115,7 @@
         }
       ],
       "$slotOrder": [
-        "mutable_specifier",
+        "mutable",
         "pattern"
       ]
     },
@@ -195128,7 +195128,7 @@
     "pattern": "reference_pattern",
     "edits": [],
     "expectedSourceOut": "&mut z",
-    "expectedReparseTree": "(reference_pattern mutable_specifier: (mutable_specifier) pattern: (identifier))",
+    "expectedReparseTree": "(reference_pattern mutable: (mutable_specifier) pattern: (identifier))",
     "wrappedText": "fn _f() { let &mut z = (); }",
     "wrappedOffset": 14
   },
@@ -225174,7 +225174,7 @@
                 }
               ]
             },
-            "_mutable_specifier": true,
+            "_mutable": true,
             "_type": 73,
             "$other": [
               {
@@ -225189,7 +225189,7 @@
             ],
             "$slotOrder": [
               "lifetime",
-              "mutable_specifier",
+              "mutable",
               "type"
             ]
           },
@@ -225238,7 +225238,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "type A = &B;\n\ntype C = &'a str;\n\ntype D = &'a mut str;\n",
-    "expectedReparseTree": "(source_file statements: (type_item name: (type_identifier) type: (reference_type type: (type_identifier))) statements: (type_item name: (type_identifier) type: (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type))) statements: (type_item name: (type_identifier) type: (reference_type lifetime: (lifetime name: (identifier)) mutable_specifier: (mutable_specifier) type: (primitive_type))))",
+    "expectedReparseTree": "(source_file statements: (type_item name: (type_identifier) type: (reference_type type: (type_identifier))) statements: (type_item name: (type_identifier) type: (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type))) statements: (type_item name: (type_identifier) type: (reference_type lifetime: (lifetime name: (identifier)) mutable: (mutable_specifier) type: (primitive_type))))",
     "wrappedText": "type A = &B;\n\ntype C = &'a str;\n\ntype D = &'a mut str;\n",
     "wrappedOffset": 0
   },
@@ -225513,7 +225513,7 @@
             }
           ]
         },
-        "_mutable_specifier": true,
+        "_mutable": true,
         "_type": 73,
         "$other": [
           {
@@ -225528,7 +225528,7 @@
         ],
         "$slotOrder": [
           "lifetime",
-          "mutable_specifier",
+          "mutable",
           "type"
         ]
       },
@@ -225575,7 +225575,7 @@
     "pattern": "type_item",
     "edits": [],
     "expectedSourceOut": "type D = &'a mut str;",
-    "expectedReparseTree": "(type_item name: (type_identifier) type: (reference_type lifetime: (lifetime name: (identifier)) mutable_specifier: (mutable_specifier) type: (primitive_type)))",
+    "expectedReparseTree": "(type_item name: (type_identifier) type: (reference_type lifetime: (lifetime name: (identifier)) mutable: (mutable_specifier) type: (primitive_type)))",
     "wrappedText": "type D = &'a mut str;",
     "wrappedOffset": 0
   },
@@ -225853,7 +225853,7 @@
           }
         ]
       },
-      "_mutable_specifier": true,
+      "_mutable": true,
       "_type": 73,
       "$other": [
         {
@@ -225868,7 +225868,7 @@
       ],
       "$slotOrder": [
         "lifetime",
-        "mutable_specifier",
+        "mutable",
         "type"
       ]
     },
@@ -225881,7 +225881,7 @@
     "pattern": "reference_type",
     "edits": [],
     "expectedSourceOut": "&'a mut str",
-    "expectedReparseTree": "(reference_type lifetime: (lifetime name: (identifier)) mutable_specifier: (mutable_specifier) type: (primitive_type))",
+    "expectedReparseTree": "(reference_type lifetime: (lifetime name: (identifier)) mutable: (mutable_specifier) type: (primitive_type))",
     "wrappedText": "type _X = &'a mut str;",
     "wrappedOffset": 10
   },
@@ -232932,7 +232932,7 @@
                             }
                           ]
                         },
-                        "_mutable_specifier": true,
+                        "_mutable": true,
                         "_type": {
                           "$type": 246,
                           "$source": 0,
@@ -233077,7 +233077,7 @@
                         ],
                         "$slotOrder": [
                           "lifetime",
-                          "mutable_specifier",
+                          "mutable",
                           "type"
                         ]
                       },
@@ -233220,7 +233220,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "fn high_order1(value: i32, f: fn(i32)) -> i32 {}\n\nfn high_order2(value: i32, f: fn(i32) -> i32) -> i32 {\n    f(value)\n}\n\nfn high_order3(value: i32, f: &FnOnce(i32) -> i32) -> i32 {\n    f(value)\n}\n\ntype F = for<'a, 'b> fn(x: &'a A, y: &'a mut B<'i, 't>,) -> C;\n",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))) element: (attributed_parameter (parameter name: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_elements element: (attributed_parameter (primitive_type))))))))) return_type: (primitive_type) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))) element: (attributed_parameter (parameter name: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_elements element: (attributed_parameter (primitive_type)))) return_type: (primitive_type)))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier))))))) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type type: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_elements element: (attributed_parameter (primitive_type)))) return_type: (primitive_type))))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier))))))) statements: (type_item name: (type_identifier) type: (function_type for_lifetimes: (for_lifetimes (lifetimes lifetime: (lifetime name: (identifier)) lifetime: (lifetime name: (identifier)))) (function_type_fn_form) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) type: (type_identifier)))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (lifetime name: (identifier))))))))))) return_type: (type_identifier))))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))) element: (attributed_parameter (parameter name: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_elements element: (attributed_parameter (primitive_type))))))))) return_type: (primitive_type) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))) element: (attributed_parameter (parameter name: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_elements element: (attributed_parameter (primitive_type)))) return_type: (primitive_type)))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier))))))) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (primitive_type))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type type: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_elements element: (attributed_parameter (primitive_type)))) return_type: (primitive_type))))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier))))))) statements: (type_item name: (type_identifier) type: (function_type for_lifetimes: (for_lifetimes (lifetimes lifetime: (lifetime name: (identifier)) lifetime: (lifetime name: (identifier)))) (function_type_fn_form) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) type: (type_identifier)))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) mutable: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (lifetime name: (identifier))))))))))) return_type: (type_identifier))))",
     "wrappedText": "fn high_order1(value: i32, f: fn(i32)) -> i32 {}\n\nfn high_order2(value: i32, f: fn(i32) -> i32) -> i32 {\n    f(value)\n}\n\nfn high_order3(value: i32, f: &FnOnce(i32) -> i32) -> i32 {\n    f(value)\n}\n\ntype F = for<'a, 'b> fn(x: &'a A, y: &'a mut B<'i, 't>,) -> C;\n",
     "wrappedOffset": 0
   },
@@ -235118,7 +235118,7 @@
                     }
                   ]
                 },
-                "_mutable_specifier": true,
+                "_mutable": true,
                 "_type": {
                   "$type": 246,
                   "$source": 0,
@@ -235263,7 +235263,7 @@
                 ],
                 "$slotOrder": [
                   "lifetime",
-                  "mutable_specifier",
+                  "mutable",
                   "type"
                 ]
               },
@@ -235337,7 +235337,7 @@
     "pattern": "parameters",
     "edits": [],
     "expectedSourceOut": "(x: &'a A, y: &'a mut B<'i, 't>,)",
-    "expectedReparseTree": "(parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) type: (type_identifier)))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (lifetime name: (identifier)))))))))))",
+    "expectedReparseTree": "(parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) type: (type_identifier)))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) mutable: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (lifetime name: (identifier)))))))))))",
     "wrappedText": "fn _f(x: &'a A, y: &'a mut B<'i, 't>,) {}",
     "wrappedOffset": 5
   },
@@ -236008,7 +236008,7 @@
             }
           ]
         },
-        "_mutable_specifier": true,
+        "_mutable": true,
         "_type": {
           "$type": 246,
           "$source": 0,
@@ -236153,7 +236153,7 @@
         ],
         "$slotOrder": [
           "lifetime",
-          "mutable_specifier",
+          "mutable",
           "type"
         ]
       },
@@ -236182,7 +236182,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "y: &'a mut B<'i, 't>",
-    "expectedReparseTree": "(parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (lifetime name: (identifier))))))))",
+    "expectedReparseTree": "(parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) mutable: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (lifetime name: (identifier))))))))",
     "wrappedText": "fn _f(y: &'a mut B<'i, 't>) {}",
     "wrappedOffset": 6
   },
@@ -236723,7 +236723,7 @@
                       }
                     ]
                   },
-                  "_mutable_specifier": true,
+                  "_mutable": true,
                   "_type": {
                     "$type": 246,
                     "$source": 0,
@@ -236868,7 +236868,7 @@
                   ],
                   "$slotOrder": [
                     "lifetime",
-                    "mutable_specifier",
+                    "mutable",
                     "type"
                   ]
                 },
@@ -236975,7 +236975,7 @@
     "pattern": "function_type",
     "edits": [],
     "expectedSourceOut": "for<'a, 'b> fn(x: &'a A, y: &'a mut B<'i, 't>,) -> C",
-    "expectedReparseTree": "(function_type for_lifetimes: (for_lifetimes (lifetimes lifetime: (lifetime name: (identifier)) lifetime: (lifetime name: (identifier)))) (function_type_fn_form) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) type: (type_identifier)))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (lifetime name: (identifier))))))))))) return_type: (type_identifier))",
+    "expectedReparseTree": "(function_type for_lifetimes: (for_lifetimes (lifetimes lifetime: (lifetime name: (identifier)) lifetime: (lifetime name: (identifier)))) (function_type_fn_form) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) type: (type_identifier)))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) mutable: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (lifetime name: (identifier))))))))))) return_type: (type_identifier))",
     "wrappedText": "type _X = for<'a, 'b> fn(x: &'a A, y: &'a mut B<'i, 't>,) -> C;",
     "wrappedOffset": 10
   },
@@ -237757,7 +237757,7 @@
           }
         ]
       },
-      "_mutable_specifier": true,
+      "_mutable": true,
       "_type": {
         "$type": 246,
         "$source": 0,
@@ -237902,7 +237902,7 @@
       ],
       "$slotOrder": [
         "lifetime",
-        "mutable_specifier",
+        "mutable",
         "type"
       ]
     },
@@ -237915,7 +237915,7 @@
     "pattern": "reference_type",
     "edits": [],
     "expectedSourceOut": "&'a mut B<'i, 't>",
-    "expectedReparseTree": "(reference_type lifetime: (lifetime name: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (lifetime name: (identifier)))))))",
+    "expectedReparseTree": "(reference_type lifetime: (lifetime name: (identifier)) mutable: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (lifetime name: (identifier)))))))",
     "wrappedText": "type _X = &'a mut B<'i, 't>;",
     "wrappedOffset": 10
   },
@@ -238374,7 +238374,7 @@
                         }
                       ]
                     },
-                    "_mutable_specifier": true,
+                    "_mutable": true,
                     "_type": {
                       "$type": 246,
                       "$source": 0,
@@ -238519,7 +238519,7 @@
                     ],
                     "$slotOrder": [
                       "lifetime",
-                      "mutable_specifier",
+                      "mutable",
                       "type"
                     ]
                   },
@@ -238660,7 +238660,7 @@
     "pattern": "type_item",
     "edits": [],
     "expectedSourceOut": "type F = for<'a, 'b> fn(x: &'a A, y: &'a mut B<'i, 't>,) -> C;",
-    "expectedReparseTree": "(type_item name: (type_identifier) type: (function_type for_lifetimes: (for_lifetimes (lifetimes lifetime: (lifetime name: (identifier)) lifetime: (lifetime name: (identifier)))) (function_type_fn_form) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) type: (type_identifier)))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (lifetime name: (identifier))))))))))) return_type: (type_identifier)))",
+    "expectedReparseTree": "(type_item name: (type_identifier) type: (function_type for_lifetimes: (for_lifetimes (lifetimes lifetime: (lifetime name: (identifier)) lifetime: (lifetime name: (identifier)))) (function_type_fn_form) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) type: (type_identifier)))) element: (attributed_parameter (parameter name: (identifier) type: (reference_type lifetime: (lifetime name: (identifier)) mutable: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (lifetime name: (identifier))) element: (type_argument (lifetime name: (identifier))))))))))) return_type: (type_identifier)))",
     "wrappedText": "type F = for<'a, 'b> fn(x: &'a A, y: &'a mut B<'i, 't>,) -> C;",
     "wrappedOffset": 0
   },

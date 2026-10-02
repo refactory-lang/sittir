@@ -753,7 +753,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "mutable_specifier": {
+      "mutable": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1156,7 +1156,7 @@
       }
     },
     "let_declaration": {
-      "mutable_specifier": {
+      "mutable": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1282,7 +1282,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "mutable_specifier": {
+      "mutable": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1291,7 +1291,7 @@
       }
     },
     "variadic_parameter": {
-      "mutable_specifier": {
+      "mutable": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1307,7 +1307,7 @@
       }
     },
     "parameter": {
-      "mutable_specifier": {
+      "mutable": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1558,7 +1558,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "mutable_specifier": {
+      "mutable": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2377,7 +2377,7 @@
       }
     },
     "reference_pattern": {
-      "mutable_specifier": {
+      "mutable": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3494,7 +3494,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "mutable_specifier": {
+      "mutable": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3517,7 +3517,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "mutable_specifier": {
+      "mutable": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -11232,9 +11232,9 @@
           ]
         },
         {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
+          "name": "mutable",
+          "propertyName": "mutable",
+          "paramName": "mutable",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -11296,7 +11296,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "ref",
-        "mutable_specifier",
+        "mutable",
         "name",
         "pattern"
       ]
@@ -11331,9 +11331,9 @@
           ]
         },
         {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
+          "name": "mutable",
+          "propertyName": "mutable",
+          "paramName": "mutable",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -11375,7 +11375,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "ref",
-        "mutable_specifier",
+        "mutable",
         "name"
       ]
     },
@@ -14437,9 +14437,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
+          "name": "mutable",
+          "propertyName": "mutable",
+          "paramName": "mutable",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -14539,7 +14539,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "mutable_specifier",
+        "mutable",
         "pattern",
         "type",
         "value",
@@ -16957,9 +16957,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
+          "name": "mutable",
+          "propertyName": "mutable",
+          "paramName": "mutable",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -17026,7 +17026,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "mutable_specifier",
+        "mutable",
         "name",
         "type"
       ]
@@ -19663,9 +19663,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
+          "name": "mutable",
+          "propertyName": "mutable",
+          "paramName": "mutable",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -19705,7 +19705,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "mutable_specifier",
+        "mutable",
         "pattern"
       ]
     },
@@ -19738,9 +19738,9 @@
           ]
         },
         {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
+          "name": "mutable",
+          "propertyName": "mutable",
+          "paramName": "mutable",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -19781,7 +19781,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "lifetime",
-        "mutable_specifier",
+        "mutable",
         "type"
       ]
     },
@@ -20963,9 +20963,9 @@
           ]
         },
         {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
+          "name": "mutable",
+          "propertyName": "mutable",
+          "paramName": "mutable",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -20987,7 +20987,7 @@
       "factoryFields": [
         "reference",
         "lifetime",
-        "mutable_specifier"
+        "mutable"
       ]
     },
     {
@@ -21436,9 +21436,9 @@
           ]
         },
         {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
+          "name": "mutable",
+          "propertyName": "mutable",
+          "paramName": "mutable",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -21520,7 +21520,7 @@
       "factoryFields": [
         "visibility_modifier",
         "ref",
-        "mutable_specifier",
+        "mutable",
         "name",
         "type",
         "value"
@@ -25854,9 +25854,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
+          "name": "mutable",
+          "propertyName": "mutable",
+          "paramName": "mutable",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -25896,7 +25896,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "mutable_specifier",
+        "mutable",
         "pattern"
       ]
     },

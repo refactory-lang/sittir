@@ -8279,13 +8279,13 @@
             "members": [
               {
                 "type": "FIELD",
-                "name": "override_modifier",
+                "name": "override",
                 "content": {
                   "type": "SYMBOL",
                   "name": "override_modifier"
                 },
                 "metadata": {
-                  "fieldSource": "enriched"
+                  "fieldSource": "override"
                 }
               },
               {
@@ -8911,8 +8911,15 @@
                   "type": "CHOICE",
                   "members": [
                     {
-                      "type": "SYMBOL",
-                      "name": "override_modifier"
+                      "type": "FIELD",
+                      "name": "override",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "override_modifier"
+                      },
+                      "metadata": {
+                        "fieldSource": "override"
+                      }
                     },
                     {
                       "type": "BLANK"
@@ -9242,13 +9249,13 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "override_modifier",
+              "name": "override",
               "content": {
                 "type": "SYMBOL",
                 "name": "override_modifier"
               },
               "metadata": {
-                "fieldSource": "enriched"
+                "fieldSource": "override"
               }
             },
             {
@@ -9390,13 +9397,13 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "override_modifier",
+              "name": "override",
               "content": {
                 "type": "SYMBOL",
                 "name": "override_modifier"
               },
               "metadata": {
-                "fieldSource": "enriched"
+                "fieldSource": "override"
               }
             },
             {
@@ -10582,8 +10589,15 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "override_modifier"
+              "type": "FIELD",
+              "name": "override",
+              "content": {
+                "type": "SYMBOL",
+                "name": "override_modifier"
+              },
+              "metadata": {
+                "fieldSource": "override"
+              }
             },
             {
               "type": "BLANK"
@@ -11715,13 +11729,20 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "ALIAS",
+              "type": "FIELD",
+              "name": "optional_chain",
               "content": {
-                "type": "SYMBOL",
-                "name": "_optional_chain_marker"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_optional_chain_marker"
+                },
+                "named": true,
+                "value": "optional_chain_marker"
               },
-              "named": true,
-              "value": "optional_chain_marker"
+              "metadata": {
+                "fieldSource": "override"
+              }
             },
             {
               "type": "BLANK"
@@ -12396,13 +12417,13 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "override_modifier",
+              "name": "override",
               "content": {
                 "type": "SYMBOL",
                 "name": "override_modifier"
               },
               "metadata": {
-                "fieldSource": "enriched"
+                "fieldSource": "override"
               }
             },
             {
