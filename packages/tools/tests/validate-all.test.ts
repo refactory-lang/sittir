@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
+import { FULL_PIPELINE_TIMEOUT } from '../../codegen/src/__tests__/helpers/timeouts.ts';
 import { generate } from '../../codegen/src/compiler/generate.ts';
 import { validateReadRenderParse } from '../src/validate/read-render-parse.ts';
 import { validateFactoryRenderParse } from '../src/validate/factory-render-parse.ts';
@@ -56,7 +57,7 @@ for (const grammar of GRAMMARS) {
 		let result: Awaited<ReturnType<typeof generate>>;
 		beforeAll(async () => {
 			result = await generate({ grammar, outputDir: 'src' });
-		});
+		}, FULL_PIPELINE_TIMEOUT);
 
 		it('generates without errors', () => {
 			expect(result.templates.bodies.size).toBeGreaterThan(0);

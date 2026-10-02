@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest';
 import type { RawGrammar } from '../types.ts';
 import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
 import { grammarPackage } from '../../grammars.ts';
@@ -14,6 +14,10 @@ vi.mock('../link.ts', async (importOriginal) => {
 function record(code: string, ownerKind: string, canProceed: boolean): GrammarDiagnostic {
 	return { scope: 'grammar', grammar: 'fixture', code, severity: canProceed ? 'warning' : 'error', ownerKind, message: code, canProceed };
 }
+
+beforeAll(async () => {
+	await import('../generate.ts');
+});
 
 describe('assertGatePasses', () => {
 	it('throws on an unfloored blocking record, naming its code', async () => {

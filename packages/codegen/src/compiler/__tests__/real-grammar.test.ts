@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { beforeAll, describe, it, expect } from 'vitest';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
@@ -7,27 +7,35 @@ import { ruleListParts } from '../../dsl/rule-patterns.ts';
 import { evaluatePackage } from '../evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 
-const pythonGrammar = grammarPackage('python');
-const rustGrammar = grammarPackage('rust');
-const tsGrammar = grammarPackage('typescript');
+type Evaluated = Awaited<ReturnType<typeof evaluatePackage>>;
+
+const upstream: Record<string, Evaluated> = {};
+const authored: Record<string, Evaluated> = {};
+
+for (const grammar of ['python', 'rust', 'typescript']) {
+	beforeAll(async () => {
+		upstream[grammar] = await evaluatePackage(grammarPackage(grammar), { base: true });
+		authored[grammar] = await evaluatePackage(grammarPackage(grammar));
+	});
+}
 
 describe('Evaluate — real tree-sitter grammars', () => {
-	it('evaluates Python grammar.js', async () => {
-		const raw = await evaluatePackage(pythonGrammar, { base: true });
+	it('evaluates Python grammar.js', () => {
+		const raw = upstream.python!;
 		expect(raw.name).toBe('python');
 		expect(Object.keys(raw.rules).length).toBeGreaterThan(50);
 		expect(raw.references.length).toBeGreaterThan(0);
 	});
 
-	it('captures Python supertypes', async () => {
-		const raw = await evaluatePackage(pythonGrammar, { base: true });
+	it('captures Python supertypes', () => {
+		const raw = upstream.python!;
 		expect(raw.supertypes).toContain('_simple_statement');
 		expect(raw.supertypes).toContain('_compound_statement');
 		expect(raw.supertypes.length).toBeGreaterThan(0);
 	});
 
-	it('captures Python externals', async () => {
-		const raw = await evaluatePackage(pythonGrammar, { base: true });
+	it('captures Python externals', () => {
+		const raw = upstream.python!;
 		expect(raw.externals.length).toBeGreaterThan(0);
 	});
 
@@ -35,7 +43,7 @@ describe('Evaluate — real tree-sitter grammars', () => {
 		['python', [']', ')', '}']],
 		['typescript', ['||']]
 	])('%s keeps literal-text externals but mints no rule for them', async (_name, literals) => {
-		const raw = await evaluatePackage(grammarPackage(_name));
+		const raw = authored[_name]!;
 		expect(literals.every((t) => ruleListParts(raw.externals).literals.includes(t))).toBe(true);
 		const linked = link(raw, { generatedIdTables: await loadGeneratedIdTables(_name) });
 		expect(literals.filter((t) => linked.rules[t] !== undefined)).toEqual([]);
@@ -46,13 +54,13 @@ describe('Evaluate — real tree-sitter grammars', () => {
 		['rust'],
 		['typescript']
 	])('%s mints no rule keyed by literal token text', async (_name) => {
-		const raw = await evaluatePackage(grammarPackage(_name));
+		const raw = authored[_name]!;
 		const linked = link(raw, { generatedIdTables: await loadGeneratedIdTables(_name) });
 		expect(Object.keys(linked.rules).filter((k) => !/^[A-Za-z_][A-Za-z0-9_]*$/.test(k))).toEqual([]);
 	});
 
-	it('has rules for key Python constructs', async () => {
-		const raw = await evaluatePackage(pythonGrammar, { base: true });
+	it('has rules for key Python constructs', () => {
+		const raw = upstream.python!;
 		const ruleNames = Object.keys(raw.rules);
 		expect(ruleNames).toContain('module');
 		expect(ruleNames).toContain('function_definition');
@@ -62,8 +70,8 @@ describe('Evaluate — real tree-sitter grammars', () => {
 });
 
 describe('Evaluate — Rust grammar.js', () => {
-	it('evaluates Rust grammar', async () => {
-		const raw = await evaluatePackage(rustGrammar, { base: true });
+	it('evaluates Rust grammar', () => {
+		const raw = upstream.rust!;
 		expect(raw.name).toBe('rust');
 		expect(Object.keys(raw.rules).length).toBeGreaterThan(100);
 		expect(raw.references.length).toBeGreaterThan(0);
@@ -71,16 +79,16 @@ describe('Evaluate — Rust grammar.js', () => {
 });
 
 describe('Evaluate — TypeScript grammar.js', () => {
-	it('evaluates TypeScript grammar', async () => {
-		const raw = await evaluatePackage(tsGrammar, { base: true });
+	it('evaluates TypeScript grammar', () => {
+		const raw = upstream.typescript!;
 		expect(raw.name).toBe('typescript');
 		expect(Object.keys(raw.rules).length).toBeGreaterThan(100);
 	});
 });
 
 describe('Full pipeline — evaluate → link → normalize → assemble', () => {
-	it('processes Python through all 4 phases', async () => {
-		const raw = await evaluatePackage(pythonGrammar, { base: true });
+	it('processes Python through all 4 phases', () => {
+		const raw = upstream.python!;
 		const linked = link(raw);
 		const normalized = normalizeGrammar(linked);
 		const nodeMap = assemble(AssembleCtx.from(normalized));
@@ -97,8 +105,8 @@ describe('Full pipeline — evaluate → link → normalize → assemble', () =>
 		expect(types.get('pattern')).toBeGreaterThan(0);
 	});
 
-	it('processes Rust through all 4 phases', async () => {
-		const raw = await evaluatePackage(rustGrammar, { base: true });
+	it('processes Rust through all 4 phases', () => {
+		const raw = upstream.rust!;
 		const linked = link(raw);
 		const normalized = normalizeGrammar(linked);
 		const nodeMap = assemble(AssembleCtx.from(normalized));
