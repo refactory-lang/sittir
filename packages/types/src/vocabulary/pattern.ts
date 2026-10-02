@@ -70,7 +70,7 @@ export namespace Pattern {
 		export interface Dictionary<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Case<G>>> {
 			// claimed by p
 			readonly kind: 'pattern.case.dictionary';
-			readonly dictPatternElements?: V.Unmapped<'python:dict_pattern_elements'>;
+			readonly elements?: V.Unmapped<'python:dict_pattern_elements'>;
 			// unmapped: <python:dict_pattern_elements>
 		}
 		export interface Keyword<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Case<G>>> {

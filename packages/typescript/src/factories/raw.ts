@@ -199,11 +199,11 @@ export function buildExportClause(...args: unknown[]) {
 }
 function _buildExportClause(value?: AdmitBound<T.ExportSpecifiers, T.AdmittedNodes>): T.ExportClause.Bound {
 	const _export_specifiers = rejectBareText(value, 'ExportClause.exportSpecifiers', 'a built ExportSpecifiers');
-	const listView = ownerView(_export_specifiers, '_export_specifier');
+	const listView = ownerView(_export_specifiers, '_item');
 	const listedItems =
 		listView.stored === undefined
 			? undefined
-			: listItems(ownerElements(listView.list, 'exportSpecifiers'), {
+			: listItems(ownerElements(listView.list, 'items'), {
 					kind: TSKindId.ExportSpecifier,
 					content: 'name',
 					decorations: ['_export_kind', '_alias']
@@ -420,9 +420,9 @@ export function buildNamedImports(...args: unknown[]) {
 }
 function _buildNamedImports(value?: AdmitBound<T.ImportSpecifiers, T.AdmittedNodes>): T.NamedImports.Bound {
 	const _import_specifiers = rejectBareText(value, 'NamedImports.importSpecifiers', 'a built ImportSpecifiers');
-	const listView = ownerView(_import_specifiers, '_import_specifier');
+	const listView = ownerView(_import_specifiers, '_item');
 	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'importSpecifiers'), undefined);
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.NamedImports as const,
@@ -3558,9 +3558,9 @@ function _buildFormalParameters(
 	value?: AdmitBound<T.FormalParametersElements, T.AdmittedNodes>
 ): T.FormalParameters.Bound {
 	const _elements = rejectBareText(value, 'FormalParameters.elements', 'a built FormalParametersElements');
-	const listView = ownerView(_elements, '_formal_parameter');
+	const listView = ownerView(_elements, '_item');
 	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'formalParameters'), undefined);
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FormalParameters as const,
@@ -5115,9 +5115,9 @@ export function buildEnumBody(...args: unknown[]) {
 }
 function _buildEnumBody(value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>): T.EnumBody.Bound {
 	const _elements = rejectBareText(value, 'EnumBody.elements', 'a built EnumBodyElements');
-	const listView = ownerView(_elements, '_element');
+	const listView = ownerView(_elements, '_item');
 	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'elements'), undefined);
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.EnumBody as const,
@@ -6648,9 +6648,9 @@ export function buildTypeArguments(...args: unknown[]) {
 }
 function _buildTypeArguments(value: AdmitBound<T.Types, T.AdmittedNodes>): T.TypeArguments.Bound {
 	const _types = rejectBareText(value, 'TypeArguments.types', 'a built Types');
-	const listView = ownerView(_types, '_type');
+	const listView = ownerView(_types, '_item');
 	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'types'), undefined);
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TypeArguments as const,
@@ -6949,11 +6949,11 @@ export function buildTypeParameters(...args: unknown[]) {
 }
 function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.AdmittedNodes>): T.TypeParameters.Bound {
 	const _elements = rejectBareText(value, 'TypeParameters.elements', 'a built TypeParametersElements');
-	const listView = ownerView(_elements, '_type_parameter');
+	const listView = ownerView(_elements, '_item');
 	const listedItems =
 		listView.stored === undefined
 			? undefined
-			: listItems(ownerElements(listView.list, 'typeParameters'), {
+			: listItems(ownerElements(listView.list, 'items'), {
 					kind: TSKindId.TypeParameter,
 					content: 'name',
 					decorations: ['_const_marker', '_constraint', '_value']
@@ -7226,9 +7226,9 @@ export function buildTupleType(...args: unknown[]) {
 }
 function _buildTupleType(value?: AdmitBound<T.TupleTypeMembers, T.AdmittedNodes>): T.TupleType.Bound {
 	const _tuple_type_members = rejectBareText(value, 'TupleType.tupleTypeMembers', 'a built TupleTypeMembers');
-	const listView = ownerView(_tuple_type_members, '_tuple_type_member');
+	const listView = ownerView(_tuple_type_members, '_item');
 	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'tupleTypeMembers'), undefined);
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TupleType as const,
@@ -7470,24 +7470,23 @@ function _buildExportSpecifiers(
 				: buildExportSpecifier({ name: e } as Parameters<typeof buildExportSpecifier>[0])) as T.ExportSpecifier
 	);
 	_assertNonEmpty(_mapped, 'export_specifiers.elements');
-	const _export_specifier = _mapped;
+	const _item = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_export_specifier);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExportSpecifiers as const,
 		$source: 2 as const,
 		$named: true as const,
-		_export_specifier,
+		_item,
 		_delimiter,
 		$with: {
-			exportSpecifiers: (
-				...vs: NonEmptyArray<AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>>
-			) => rebuilt(node, handle, () => buildExportSpecifiers(options, ...vs)),
+			items: (...vs: NonEmptyArray<AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildExportSpecifiers(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildExportSpecifiers({ ...options, delimiter: v }, ...elements))
 		},
-		exportSpecifiers: () => _export_specifier,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
@@ -7539,23 +7538,23 @@ function _buildImportSpecifiers(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ImportSpecifiers.Bound {
 	_assertNonEmpty(elements, 'import_specifiers.elements');
-	const _import_specifier = elements;
+	const _item = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_import_specifier);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ImportSpecifiers as const,
 		$source: 2 as const,
 		$named: true as const,
-		_import_specifier,
+		_item,
 		_delimiter,
 		$with: {
-			importSpecifiers: (...vs: NonEmptyArray<AdmitBound<T.ImportSpecifier, T.AdmittedNodes>>) =>
+			items: (...vs: NonEmptyArray<AdmitBound<T.ImportSpecifier, T.AdmittedNodes>>) =>
 				rebuilt(node, handle, () => buildImportSpecifiers(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildImportSpecifiers({ ...options, delimiter: v }, ...elements))
 		},
-		importSpecifiers: () => _import_specifier,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -7605,24 +7604,23 @@ function _buildFormalParametersElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.FormalParametersElements.Bound {
 	_assertNonEmpty(elements, 'formal_parameters_elements.elements');
-	const _formal_parameter = elements;
+	const _item = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_formal_parameter);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FormalParametersElements as const,
 		$source: 2 as const,
 		$named: true as const,
-		_formal_parameter,
+		_item,
 		_delimiter,
 		$with: {
-			formalParameters: (
-				...vs: NonEmptyArray<AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>>
-			) => rebuilt(node, handle, () => buildFormalParametersElements(options, ...vs)),
+			items: (...vs: NonEmptyArray<AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildFormalParametersElements(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildFormalParametersElements({ ...options, delimiter: v }, ...elements))
 		},
-		formalParameters: () => _formal_parameter,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -7765,23 +7763,23 @@ function _buildEnumBodyElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.EnumBodyElements.Bound {
 	_assertNonEmpty(elements, 'enum_body_elements.elements');
-	const _element = elements;
+	const _item = elements;
 	const _delimiter = options.delimiter ?? Delimiter.Trailing;
-	const listedStored = storedElements(_element);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.EnumBodyElements as const,
 		$source: 2 as const,
 		$named: true as const,
-		_element,
+		_item,
 		_delimiter,
 		$with: {
-			elements: (...vs: NonEmptyArray<AdmitBound<T.EnumBodyElement, T.AdmittedNodes>>) =>
+			items: (...vs: NonEmptyArray<AdmitBound<T.EnumBodyElement, T.AdmittedNodes>>) =>
 				rebuilt(node, handle, () => buildEnumBodyElements(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildEnumBodyElements({ ...options, delimiter: v }, ...elements))
 		},
-		elements: () => _element,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -7831,25 +7829,25 @@ function _buildTypes(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.Types.Bound {
 	_assertNonEmpty(elements, 'types.elements');
-	const _type = admitAliasContent<NonEmptyArray<T.Type>>(elements, [
+	const _item = admitAliasContent<NonEmptyArray<T.Type>>(elements, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_type);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Types as const,
 		$source: 2 as const,
 		$named: true as const,
-		_type,
+		_item,
 		_delimiter,
 		$with: {
-			types: (...vs: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>) =>
+			items: (...vs: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>) =>
 				rebuilt(node, handle, () => buildTypes(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildTypes({ ...options, delimiter: v }, ...elements))
 		},
-		types: () => _type,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -7906,24 +7904,24 @@ function _buildTypeParametersElements(
 				: buildTypeParameter({ name: e } as Parameters<typeof buildTypeParameter>[0])) as T.TypeParameter
 	);
 	_assertNonEmpty(_mapped, 'type_parameters_elements.elements');
-	const _type_parameter = _mapped;
+	const _item = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_type_parameter);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TypeParametersElements as const,
 		$source: 2 as const,
 		$named: true as const,
-		_type_parameter,
+		_item,
 		_delimiter,
 		$with: {
-			typeParameters: (
+			items: (
 				...vs: NonEmptyArray<AdmitBound<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>>
 			) => rebuilt(node, handle, () => buildTypeParametersElements(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildTypeParametersElements({ ...options, delimiter: v }, ...elements))
 		},
-		typeParameters: () => _type_parameter,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
@@ -7999,20 +7997,20 @@ function _buildTupleTypeMembers(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.TupleTypeMembers.Bound {
 	_assertNonEmpty(elements, 'tuple_type_members.elements');
-	const _tuple_type_member = admitAliasContent<
+	const _item = admitAliasContent<
 		NonEmptyArray<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type>
 	>(elements, [[[1], (v: unknown) => buildTypeIdentifier(v as never)]]);
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_tuple_type_member);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TupleTypeMembers as const,
 		$source: 2 as const,
 		$named: true as const,
-		_tuple_type_member,
+		_item,
 		_delimiter,
 		$with: {
-			tupleTypeMembers: (
+			items: (
 				...vs: NonEmptyArray<
 					AdmitBound<
 						T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
@@ -8023,7 +8021,7 @@ function _buildTupleTypeMembers(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildTupleTypeMembers({ ...options, delimiter: v }, ...elements))
 		},
-		tupleTypeMembers: () => _tuple_type_member,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -8284,20 +8282,20 @@ function _buildObjectTypeContent(
 	}
 ): T.ObjectTypeContent.Bound {
 	_assertNonEmpty(elements, 'object_type_content.elements');
-	const _members = elements;
+	const _item = elements;
 	const _separator = options.separator ?? TSKindId.Semi;
 	const _delimiter = options.delimiter ?? Delimiter.Trailing;
-	const listedStored = storedElements(_members);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ObjectTypeContent as const,
 		$source: 2 as const,
 		$named: true as const,
-		_members,
+		_item,
 		_separator,
 		_delimiter,
 		$with: {
-			members: (
+			items: (
 				...vs: NonEmptyArray<
 					AdmitBound<
 						| T.ExportStatement
@@ -8315,7 +8313,7 @@ function _buildObjectTypeContent(
 			delimiter: (v?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both) =>
 				rebuilt(node, handle, () => buildObjectTypeContent({ ...options, delimiter: v }, ...elements))
 		},
-		members: () => _members,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),

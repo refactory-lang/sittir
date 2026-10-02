@@ -12985,7 +12985,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "export_specifier",
+          "name": "item",
           "content": {
             "type": "SYMBOL",
             "name": "export_specifier"
@@ -13005,7 +13005,7 @@
               },
               {
                 "type": "FIELD",
-                "name": "export_specifier",
+                "name": "item",
                 "content": {
                   "type": "SYMBOL",
                   "name": "export_specifier"
@@ -13059,7 +13059,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "import_specifier",
+          "name": "item",
           "content": {
             "type": "SYMBOL",
             "name": "import_specifier"
@@ -13079,7 +13079,7 @@
               },
               {
                 "type": "FIELD",
-                "name": "import_specifier",
+                "name": "item",
                 "content": {
                   "type": "SYMBOL",
                   "name": "import_specifier"
@@ -13172,7 +13172,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "formal_parameter",
+          "name": "item",
           "content": {
             "type": "SYMBOL",
             "name": "_formal_parameter"
@@ -13192,7 +13192,7 @@
               },
               {
                 "type": "FIELD",
-                "name": "formal_parameter",
+                "name": "item",
                 "content": {
                   "type": "SYMBOL",
                   "name": "_formal_parameter"
@@ -13264,7 +13264,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "element",
+          "name": "item",
           "content": {
             "type": "SYMBOL",
             "name": "_enum_body_element",
@@ -13287,7 +13287,7 @@
               },
               {
                 "type": "FIELD",
-                "name": "element",
+                "name": "item",
                 "content": {
                   "type": "SYMBOL",
                   "name": "_enum_body_element",
@@ -13367,7 +13367,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "type",
+          "name": "item",
           "content": {
             "type": "SYMBOL",
             "name": "type"
@@ -13387,7 +13387,7 @@
               },
               {
                 "type": "FIELD",
-                "name": "type",
+                "name": "item",
                 "content": {
                   "type": "SYMBOL",
                   "name": "type"
@@ -13421,7 +13421,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "type_parameter",
+          "name": "item",
           "content": {
             "type": "SYMBOL",
             "name": "type_parameter"
@@ -13441,7 +13441,7 @@
               },
               {
                 "type": "FIELD",
-                "name": "type_parameter",
+                "name": "item",
                 "content": {
                   "type": "SYMBOL",
                   "name": "type_parameter"
@@ -13516,7 +13516,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "tuple_type_member",
+          "name": "item",
           "content": {
             "type": "SYMBOL",
             "name": "_tuple_type_member"
@@ -13536,7 +13536,7 @@
               },
               {
                 "type": "FIELD",
-                "name": "tuple_type_member",
+                "name": "item",
                 "content": {
                   "type": "SYMBOL",
                   "name": "_tuple_type_member"
@@ -13878,7 +13878,7 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "members",
+              "name": "item",
               "content": {
                 "type": "CHOICE",
                 "members": [
@@ -13932,7 +13932,7 @@
                   },
                   {
                     "type": "FIELD",
-                    "name": "members",
+                    "name": "item",
                     "content": {
                       "type": "CHOICE",
                       "members": [

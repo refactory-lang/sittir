@@ -59,12 +59,12 @@ export default sittirGrammar(base, {
 		body: { before: preference('indent'), after: preference('dedent') },
 		gap: { separator: preference('newline') },
 		field_declaration_list_elements: {
-			'element:/separator/","/after': preference('newline'),
-			'element:/delimiter': preference('Delimiter.Trailing')
+			'item:/separator/","/after': preference('newline'),
+			'item:/delimiter': preference('Delimiter.Trailing')
 		},
 		enum_variant_list_elements: {
-			'element:/separator/","/after': preference('newline'),
-			'element:/delimiter': preference('Delimiter.Trailing')
+			'item:/separator/","/after': preference('newline'),
+			'item:/delimiter': preference('Delimiter.Trailing')
 		},
 
 		_: {
@@ -115,7 +115,7 @@ export default sittirGrammar(base, {
 		},
 
 		struct_pattern: { '"{"/before': preference('space') },
-		struct_pattern_elements: { 'element:/start': preference('space'), 'element:/end': preference('space') },
+		struct_pattern_elements: { 'item:/start': preference('space'), 'item:/end': preference('space') },
 		macro_invocation: { '"!"/after': preference('tight') },
 		visibility_modifier_pub: { '"pub"/after': preference('tight') },
 		self_parameter: { 'reference:/after': preference('tight') },

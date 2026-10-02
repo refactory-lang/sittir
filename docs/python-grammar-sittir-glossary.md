@@ -389,7 +389,8 @@ that as a list that needs its trailing separator at one element, and a built
 
 A `rules:` body does not pass through enrich, so the names are written by hand
 as enrich would derive them for a list whose element is a choice: the kind is
-`<owner>_elements`, its item field `element`, and the owner's slot `elements`.
+`<owner>_elements`, its item field `item` (every list kind's), and the owner's
+slot `elements`.
 
 One upstream reading changes: `(*a)`, which is not valid Python, was a tuple of
 one splat and is now a parenthesized expression.

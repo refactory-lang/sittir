@@ -158,3 +158,43 @@ describe('a hoisted list kind named after its owner because its element has no s
 		expect(rules.owner).toMatchObject(seq(str('('), { type: 'FIELD', name: 'elements', content: sym('owner_elements') }, str(')')));
 	});
 });
+
+describe('the element field of a rule that is a list', () => {
+	const entry = sym('entry');
+	const run = (element: unknown) => [element, { type: 'REPEAT', content: seq(str(','), element) }];
+	const authoredKey = { type: 'FIELD', name: 'key', content: entry };
+	let rules: Record<string, unknown>;
+	beforeAll(() => {
+		rules = enrichedRules({
+			owner: seq(sym('hoisted'), sym('whole'), sym('plain'), sym('mixed'), sym('named')),
+			hoisted: seq(str('('), ...run(entry), optional(str(',')), str(')')),
+			whole: seq(...run(entry), optional(str(','))),
+			plain: seq(...run(entry)),
+			mixed: seq(sym('plain'), str(':'), ...run(entry)),
+			named: seq(...run(authoredKey), optional(str(','))),
+			entry: str('e')
+		});
+	});
+	const fieldNames = (rule: unknown): string[] => [...JSON.stringify(stripped(rule)).matchAll(/"type":"FIELD","name":"([a-z_]+)"/g)].map((match) => match[1]!);
+
+	it('is item in a hoisted list kind', () => {
+		expect(new Set(fieldNames(rules.entries))).toEqual(new Set(['item']));
+	});
+
+	it('is item in a rule whose whole body is the list', () => {
+		expect(new Set(fieldNames(rules.whole))).toEqual(new Set(['item']));
+	});
+
+	it('keeps the element name in a separated run with a fixed separator and no optional flank, which is not a list kind', () => {
+		expect(new Set(fieldNames(rules.plain))).toEqual(new Set(['entry']));
+	});
+
+	it('keeps the element name in an owner that holds more than the list', () => {
+		expect(fieldNames(rules.mixed)).toContain('entry');
+		expect(fieldNames(rules.mixed)).not.toContain('item');
+	});
+
+	it('keeps a field the grammar authored', () => {
+		expect(new Set(fieldNames(rules.named))).toEqual(new Set(['key']));
+	});
+});

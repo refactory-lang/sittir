@@ -8714,23 +8714,23 @@ export interface Metavariable {
 
 export interface MacroRules {
 	readonly $type: TSKindId.MacroRules;
-	readonly _macro_rule: NonEmptyArray<MacroRule>;
+	readonly _item: NonEmptyArray<MacroRule>;
 	readonly __slotHints__?: {
-		readonly macroRules: SlotHint<NonEmptyArray<T.MacroRule>, false, true>;
+		readonly items: SlotHint<NonEmptyArray<T.MacroRule>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<T.MacroRule, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
-	macroRules(): NonEmptyArray<MacroRule>;
+	items(): NonEmptyArray<MacroRule>;
 }
 
 export interface EnumVariantListElements {
 	readonly $type: TSKindId.EnumVariantListElements;
-	readonly _element: NonEmptyArray<AttributedEnumVariant>;
+	readonly _item: NonEmptyArray<AttributedEnumVariant>;
 	readonly __inputHints__?: {
-		readonly element: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>;
+		readonly item: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<
+		readonly items: SlotHint<
 			NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>,
 			false,
 			true,
@@ -8742,17 +8742,17 @@ export interface EnumVariantListElements {
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 	};
-	elements(): NonEmptyArray<AttributedEnumVariant>;
+	items(): NonEmptyArray<AttributedEnumVariant>;
 }
 
 export interface FieldDeclarationListElements {
 	readonly $type: TSKindId.FieldDeclarationListElements;
-	readonly _element: NonEmptyArray<AttributedFieldDeclaration>;
+	readonly _item: NonEmptyArray<AttributedFieldDeclaration>;
 	readonly __inputHints__?: {
-		readonly element: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>;
+		readonly item: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<
+		readonly items: SlotHint<
 			NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>,
 			false,
 			true,
@@ -8764,17 +8764,17 @@ export interface FieldDeclarationListElements {
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 	};
-	elements(): NonEmptyArray<AttributedFieldDeclaration>;
+	items(): NonEmptyArray<AttributedFieldDeclaration>;
 }
 
 export interface OrderedFieldDeclarationListElements {
 	readonly $type: TSKindId.OrderedFieldDeclarationListElements;
-	readonly _element: NonEmptyArray<AttributedOrderedField>;
+	readonly _item: NonEmptyArray<AttributedOrderedField>;
 	readonly __inputHints__?: {
-		readonly element: NonEmptyArray<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>;
+		readonly item: NonEmptyArray<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<
+		readonly items: SlotHint<
 			NonEmptyArray<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>,
 			false,
 			true,
@@ -8786,30 +8786,30 @@ export interface OrderedFieldDeclarationListElements {
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 	};
-	elements(): NonEmptyArray<AttributedOrderedField>;
+	items(): NonEmptyArray<AttributedOrderedField>;
 }
 
 export interface WherePredicates {
 	readonly $type: TSKindId.WherePredicates;
-	readonly _where_predicate: NonEmptyArray<WherePredicate>;
+	readonly _item: NonEmptyArray<WherePredicate>;
 	readonly __slotHints__?: {
-		readonly wherePredicates: SlotHint<NonEmptyArray<T.WherePredicate>, false, true>;
+		readonly items: SlotHint<NonEmptyArray<T.WherePredicate>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
-	wherePredicates(): NonEmptyArray<WherePredicate>;
+	items(): NonEmptyArray<WherePredicate>;
 }
 
 export interface TypeParametersElements {
 	readonly $type: TSKindId.TypeParametersElements;
-	readonly _element: NonEmptyArray<AttributedTypeParameter>;
+	readonly _item: NonEmptyArray<AttributedTypeParameter>;
 	readonly __inputHints__?: {
-		readonly element: NonEmptyArray<
+		readonly item: NonEmptyArray<
 			T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
 		>;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<
+		readonly items: SlotHint<
 			NonEmptyArray<
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
 			>,
@@ -8823,12 +8823,12 @@ export interface TypeParametersElements {
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 	};
-	elements(): NonEmptyArray<AttributedTypeParameter>;
+	items(): NonEmptyArray<AttributedTypeParameter>;
 }
 
 export interface UseClauses {
 	readonly $type: TSKindId.UseClauses;
-	readonly _use_clause: NonEmptyArray<
+	readonly _item: NonEmptyArray<
 		| TSKindId.Self
 		| TSKindId.U8Keyword
 		| TSKindId.I8Keyword
@@ -8861,7 +8861,7 @@ export interface UseClauses {
 		| UseWildcard
 	>;
 	readonly __slotHints__?: {
-		readonly useClauses: SlotHint<
+		readonly items: SlotHint<
 			NonEmptyArray<
 				| TSKindId.Self
 				| TSKindId.U8Keyword
@@ -8932,7 +8932,7 @@ export interface UseClauses {
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 	};
-	useClauses(): NonEmptyArray<
+	items(): NonEmptyArray<
 		| TSKindId.Self
 		| TSKindId.U8Keyword
 		| TSKindId.I8Keyword
@@ -8968,9 +8968,9 @@ export interface UseClauses {
 
 export interface ParametersElements {
 	readonly $type: TSKindId.ParametersElements;
-	readonly _element: NonEmptyArray<AttributedParameter>;
+	readonly _item: NonEmptyArray<AttributedParameter>;
 	readonly __inputHints__?: {
-		readonly element: NonEmptyArray<
+		readonly item: NonEmptyArray<
 			| T.AttributedParameter
 			| T.Parameter
 			| T.SelfParameter
@@ -8981,7 +8981,7 @@ export interface ParametersElements {
 		>;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<
+		readonly items: SlotHint<
 			NonEmptyArray<
 				| T.AttributedParameter
 				| T.Parameter
@@ -9007,58 +9007,58 @@ export interface ParametersElements {
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 	};
-	elements(): NonEmptyArray<AttributedParameter>;
+	items(): NonEmptyArray<AttributedParameter>;
 }
 
 export interface Lifetimes {
 	readonly $type: TSKindId.Lifetimes;
-	readonly _lifetime: NonEmptyArray<Lifetime>;
+	readonly _item: NonEmptyArray<Lifetime>;
 	readonly __slotHints__?: {
-		readonly lifetimes: SlotHint<NonEmptyArray<T.Lifetime>, false, true>;
+		readonly items: SlotHint<NonEmptyArray<T.Lifetime>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<T.Lifetime, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
-	lifetimes(): NonEmptyArray<Lifetime>;
+	items(): NonEmptyArray<Lifetime>;
 }
 
 export interface Types {
 	readonly $type: TSKindId.Types;
-	readonly _type: NonEmptyArray<Type>;
+	readonly _item: NonEmptyArray<Type>;
 	readonly __slotHints__?: {
-		readonly types: SlotHint<NonEmptyArray<T.Type | T.TypeIdentifier.Types>, false, true>;
+		readonly items: SlotHint<NonEmptyArray<T.Type | T.TypeIdentifier.Types>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<
 			T.Type | T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 	};
-	types(): NonEmptyArray<Type>;
+	items(): NonEmptyArray<Type>;
 }
 
 export interface UseBoundsElements {
 	readonly $type: TSKindId.UseBoundsElements;
-	readonly _element: NonEmptyArray<Lifetime | TypeIdentifier>;
+	readonly _item: NonEmptyArray<Lifetime | TypeIdentifier>;
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<NonEmptyArray<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>, false, true>;
+		readonly items: SlotHint<NonEmptyArray<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<
 			T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 	};
-	elements(): NonEmptyArray<Lifetime | TypeIdentifier>;
+	items(): NonEmptyArray<Lifetime | TypeIdentifier>;
 }
 
 export interface TypeArgumentsElements {
 	readonly $type: TSKindId.TypeArgumentsElements;
-	readonly _element: NonEmptyArray<TypeArgument>;
+	readonly _item: NonEmptyArray<TypeArgument>;
 	readonly __inputHints__?: {
-		readonly element: NonEmptyArray<
+		readonly item: NonEmptyArray<
 			T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types
 		>;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<
+		readonly items: SlotHint<
 			NonEmptyArray<
 				T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types
 			>,
@@ -9072,17 +9072,17 @@ export interface TypeArgumentsElements {
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 	};
-	elements(): NonEmptyArray<TypeArgument>;
+	items(): NonEmptyArray<TypeArgument>;
 }
 
 export interface ArgumentsElements {
 	readonly $type: TSKindId.ArgumentsElements;
-	readonly _element: NonEmptyArray<AttributedArgument>;
+	readonly _item: NonEmptyArray<AttributedArgument>;
 	readonly __inputHints__?: {
-		readonly element: NonEmptyArray<T.AttributedArgument | T.Expression>;
+		readonly item: NonEmptyArray<T.AttributedArgument | T.Expression>;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<
+		readonly items: SlotHint<
 			NonEmptyArray<T.AttributedArgument | T.Expression>,
 			false,
 			true,
@@ -9094,25 +9094,25 @@ export interface ArgumentsElements {
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 	};
-	elements(): NonEmptyArray<AttributedArgument>;
+	items(): NonEmptyArray<AttributedArgument>;
 }
 
 export interface Expressions {
 	readonly $type: TSKindId.Expressions;
-	readonly _expression: NonEmptyArray<Expression>;
+	readonly _item: NonEmptyArray<Expression>;
 	readonly __slotHints__?: {
-		readonly expressions: SlotHint<NonEmptyArray<T.Expression>, false, true>;
+		readonly items: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
-	expressions(): NonEmptyArray<Expression>;
+	items(): NonEmptyArray<Expression>;
 }
 
 export interface FieldInitializerListElements {
 	readonly $type: TSKindId.FieldInitializerListElements;
-	readonly _element: NonEmptyArray<ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer>;
+	readonly _item: NonEmptyArray<ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer>;
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<
+		readonly items: SlotHint<
 			NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>,
 			false,
 			true
@@ -9123,46 +9123,46 @@ export interface FieldInitializerListElements {
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 	};
-	elements(): NonEmptyArray<ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer>;
+	items(): NonEmptyArray<ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer>;
 }
 
 export interface TuplePatternElements {
 	readonly $type: TSKindId.TuplePatternElements;
-	readonly _element: NonEmptyArray<Pattern | ClosureExpression>;
+	readonly _item: NonEmptyArray<Pattern | ClosureExpression>;
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<NonEmptyArray<T.Pattern | T.ClosureExpression>, false, true>;
+		readonly items: SlotHint<NonEmptyArray<T.Pattern | T.ClosureExpression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<
 			T.Pattern | T.ClosureExpression,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 	};
-	elements(): NonEmptyArray<Pattern | ClosureExpression>;
+	items(): NonEmptyArray<Pattern | ClosureExpression>;
 }
 
 export interface Patterns {
 	readonly $type: TSKindId.Patterns;
-	readonly _pattern: NonEmptyArray<Pattern>;
+	readonly _item: NonEmptyArray<Pattern>;
 	readonly __slotHints__?: {
-		readonly patterns: SlotHint<NonEmptyArray<T.Pattern>, false, true>;
+		readonly items: SlotHint<NonEmptyArray<T.Pattern>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
-	patterns(): NonEmptyArray<Pattern>;
+	items(): NonEmptyArray<Pattern>;
 }
 
 export interface StructPatternElements {
 	readonly $type: TSKindId.StructPatternElements;
-	readonly _element: NonEmptyArray<FieldPattern | TSKindId.RemainingFieldPattern>;
+	readonly _item: NonEmptyArray<FieldPattern | TSKindId.RemainingFieldPattern>;
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<NonEmptyArray<T.FieldPattern | TSKindId.RemainingFieldPattern>, false, true>;
+		readonly items: SlotHint<NonEmptyArray<T.FieldPattern | TSKindId.RemainingFieldPattern>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<
 			T.FieldPattern | TSKindId.RemainingFieldPattern,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 	};
-	elements(): NonEmptyArray<FieldPattern | TSKindId.RemainingFieldPattern>;
+	items(): NonEmptyArray<FieldPattern | TSKindId.RemainingFieldPattern>;
 }
 
 export interface UseWildcardGroup {
@@ -13999,7 +13999,7 @@ export namespace MacroRules {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly macroRule?: {
+			readonly item?: {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: WhitespaceArm;
 				readonly macroRule?: { readonly after?: WhitespaceArm };
@@ -14015,7 +14015,7 @@ export namespace EnumVariantListElements {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly element?: {
+			readonly item?: {
 				readonly attributedEnumVariant?: { readonly after?: WhitespaceArm };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: WhitespaceArm;
@@ -14031,7 +14031,7 @@ export namespace FieldDeclarationListElements {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly element?: {
+			readonly item?: {
 				readonly attributedFieldDeclaration?: { readonly after?: WhitespaceArm };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: WhitespaceArm;
@@ -14047,7 +14047,7 @@ export namespace OrderedFieldDeclarationListElements {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly element?: {
+			readonly item?: {
 				readonly attributedOrderedField?: { readonly after?: WhitespaceArm };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: WhitespaceArm;
@@ -14063,7 +14063,7 @@ export namespace WherePredicates {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly wherePredicate?: {
+			readonly item?: {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: WhitespaceArm;
 				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
@@ -14079,7 +14079,7 @@ export namespace TypeParametersElements {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly element?: {
+			readonly item?: {
 				readonly attributedTypeParameter?: { readonly after?: WhitespaceArm };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: WhitespaceArm;
@@ -14095,7 +14095,7 @@ export namespace UseClauses {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly useClause?: {
+			readonly item?: {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: WhitespaceArm;
 				readonly scopedIdentifier?: { readonly after?: WhitespaceArm };
@@ -14115,7 +14115,7 @@ export namespace ParametersElements {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly element?: {
+			readonly item?: {
 				readonly attributedParameter?: { readonly after?: WhitespaceArm };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: WhitespaceArm;
@@ -14131,7 +14131,7 @@ export namespace Lifetimes {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly lifetime?: {
+			readonly item?: {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: WhitespaceArm;
 				readonly lifetime?: { readonly after?: WhitespaceArm };
@@ -14147,7 +14147,7 @@ export namespace Types {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly type?: {
+			readonly item?: {
 				readonly abstractType?: { readonly after?: WhitespaceArm };
 				readonly arrayType?: { readonly after?: WhitespaceArm };
 				readonly boundedType?: { readonly after?: WhitespaceArm };
@@ -14175,7 +14175,7 @@ export namespace UseBoundsElements {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly element?: {
+			readonly item?: {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: WhitespaceArm;
 				readonly lifetime?: { readonly after?: WhitespaceArm };
@@ -14191,7 +14191,7 @@ export namespace TypeArgumentsElements {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly element?: {
+			readonly item?: {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: WhitespaceArm;
 				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
@@ -14207,7 +14207,7 @@ export namespace ArgumentsElements {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly element?: {
+			readonly item?: {
 				readonly attributedArgument?: { readonly after?: WhitespaceArm };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: WhitespaceArm;
@@ -14223,7 +14223,7 @@ export namespace Expressions {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly expression?: {
+			readonly item?: {
 				readonly arrayExpressionList?: { readonly after?: WhitespaceArm };
 				readonly arrayExpressionSemi?: { readonly after?: WhitespaceArm };
 				readonly assignmentExpression?: { readonly after?: WhitespaceArm };
@@ -14282,7 +14282,7 @@ export namespace FieldInitializerListElements {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly element?: {
+			readonly item?: {
 				readonly baseFieldInitializer?: { readonly after?: WhitespaceArm };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: WhitespaceArm;
@@ -14300,7 +14300,7 @@ export namespace TuplePatternElements {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly element?: {
+			readonly item?: {
 				readonly capturedPattern?: { readonly after?: WhitespaceArm };
 				readonly closureExpressionBlock?: { readonly after?: WhitespaceArm };
 				readonly closureExpressionExpr?: { readonly after?: WhitespaceArm };
@@ -14336,7 +14336,7 @@ export namespace Patterns {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly pattern?: {
+			readonly item?: {
 				readonly capturedPattern?: { readonly after?: WhitespaceArm };
 				readonly constBlock?: { readonly after?: WhitespaceArm };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
@@ -14370,7 +14370,7 @@ export namespace StructPatternElements {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly element?: {
+			readonly item?: {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: WhitespaceArm;
 				readonly fieldPatternNamed?: { readonly after?: WhitespaceArm };
@@ -16929,7 +16929,7 @@ export interface MacroRulesNs extends NodeNs<
 	MacroRules.Bound,
 	MacroRules.BuildArgs,
 	MacroRules.LooseArgs,
-	'macro_rule',
+	'item',
 	TSKindId.MacroRules,
 	MacroRules.Parsed,
 	never
@@ -16942,7 +16942,7 @@ export interface EnumVariantListElementsNs extends NodeNs<
 	EnumVariantListElements.Bound,
 	EnumVariantListElements.BuildArgs,
 	EnumVariantListElements.LooseArgs,
-	'element',
+	'item',
 	TSKindId.EnumVariantListElements,
 	EnumVariantListElements.Parsed,
 	never
@@ -16955,7 +16955,7 @@ export interface FieldDeclarationListElementsNs extends NodeNs<
 	FieldDeclarationListElements.Bound,
 	FieldDeclarationListElements.BuildArgs,
 	FieldDeclarationListElements.LooseArgs,
-	'element',
+	'item',
 	TSKindId.FieldDeclarationListElements,
 	FieldDeclarationListElements.Parsed,
 	never
@@ -16968,7 +16968,7 @@ export interface OrderedFieldDeclarationListElementsNs extends NodeNs<
 	OrderedFieldDeclarationListElements.Bound,
 	OrderedFieldDeclarationListElements.BuildArgs,
 	OrderedFieldDeclarationListElements.LooseArgs,
-	'element',
+	'item',
 	TSKindId.OrderedFieldDeclarationListElements,
 	OrderedFieldDeclarationListElements.Parsed,
 	never
@@ -16981,7 +16981,7 @@ export interface WherePredicatesNs extends NodeNs<
 	WherePredicates.Bound,
 	WherePredicates.BuildArgs,
 	WherePredicates.LooseArgs,
-	'where_predicate',
+	'item',
 	TSKindId.WherePredicates,
 	WherePredicates.Parsed,
 	never
@@ -16994,7 +16994,7 @@ export interface TypeParametersElementsNs extends NodeNs<
 	TypeParametersElements.Bound,
 	TypeParametersElements.BuildArgs,
 	TypeParametersElements.LooseArgs,
-	'element',
+	'item',
 	TSKindId.TypeParametersElements,
 	TypeParametersElements.Parsed,
 	never
@@ -17007,7 +17007,7 @@ export interface UseClausesNs extends NodeNs<
 	UseClauses.Bound,
 	UseClauses.BuildArgs,
 	UseClauses.LooseArgs,
-	'use_clause',
+	'item',
 	TSKindId.UseClauses,
 	UseClauses.Parsed,
 	never
@@ -17020,7 +17020,7 @@ export interface ParametersElementsNs extends NodeNs<
 	ParametersElements.Bound,
 	ParametersElements.BuildArgs,
 	ParametersElements.LooseArgs,
-	'element',
+	'item',
 	TSKindId.ParametersElements,
 	ParametersElements.Parsed,
 	never
@@ -17033,7 +17033,7 @@ export interface LifetimesNs extends NodeNs<
 	Lifetimes.Bound,
 	Lifetimes.BuildArgs,
 	Lifetimes.LooseArgs,
-	'lifetime',
+	'item',
 	TSKindId.Lifetimes,
 	Lifetimes.Parsed,
 	never
@@ -17046,7 +17046,7 @@ export interface TypesNs extends NodeNs<
 	Types.Bound,
 	Types.BuildArgs,
 	Types.LooseArgs,
-	'type',
+	'item',
 	TSKindId.Types,
 	Types.Parsed,
 	never
@@ -17059,7 +17059,7 @@ export interface UseBoundsElementsNs extends NodeNs<
 	UseBoundsElements.Bound,
 	UseBoundsElements.BuildArgs,
 	UseBoundsElements.LooseArgs,
-	'element',
+	'item',
 	TSKindId.UseBoundsElements,
 	UseBoundsElements.Parsed,
 	never
@@ -17072,7 +17072,7 @@ export interface TypeArgumentsElementsNs extends NodeNs<
 	TypeArgumentsElements.Bound,
 	TypeArgumentsElements.BuildArgs,
 	TypeArgumentsElements.LooseArgs,
-	'element',
+	'item',
 	TSKindId.TypeArgumentsElements,
 	TypeArgumentsElements.Parsed,
 	never
@@ -17085,7 +17085,7 @@ export interface ArgumentsElementsNs extends NodeNs<
 	ArgumentsElements.Bound,
 	ArgumentsElements.BuildArgs,
 	ArgumentsElements.LooseArgs,
-	'element',
+	'item',
 	TSKindId.ArgumentsElements,
 	ArgumentsElements.Parsed,
 	never
@@ -17098,7 +17098,7 @@ export interface ExpressionsNs extends NodeNs<
 	Expressions.Bound,
 	Expressions.BuildArgs,
 	Expressions.LooseArgs,
-	'expression',
+	'item',
 	TSKindId.Expressions,
 	Expressions.Parsed,
 	never
@@ -17111,7 +17111,7 @@ export interface FieldInitializerListElementsNs extends NodeNs<
 	FieldInitializerListElements.Bound,
 	FieldInitializerListElements.BuildArgs,
 	FieldInitializerListElements.LooseArgs,
-	'element',
+	'item',
 	TSKindId.FieldInitializerListElements,
 	FieldInitializerListElements.Parsed,
 	never
@@ -17124,7 +17124,7 @@ export interface TuplePatternElementsNs extends NodeNs<
 	TuplePatternElements.Bound,
 	TuplePatternElements.BuildArgs,
 	TuplePatternElements.LooseArgs,
-	'element',
+	'item',
 	TSKindId.TuplePatternElements,
 	TuplePatternElements.Parsed,
 	never
@@ -17137,7 +17137,7 @@ export interface PatternsNs extends NodeNs<
 	Patterns.Bound,
 	Patterns.BuildArgs,
 	Patterns.LooseArgs,
-	'pattern',
+	'item',
 	TSKindId.Patterns,
 	Patterns.Parsed,
 	never
@@ -17150,7 +17150,7 @@ export interface StructPatternElementsNs extends NodeNs<
 	StructPatternElements.Bound,
 	StructPatternElements.BuildArgs,
 	StructPatternElements.LooseArgs,
-	'element',
+	'item',
 	TSKindId.StructPatternElements,
 	StructPatternElements.Parsed,
 	never

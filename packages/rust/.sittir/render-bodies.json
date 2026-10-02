@@ -126,7 +126,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -2065,7 +2065,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -2159,7 +2159,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "expression"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -2385,7 +2385,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -2509,7 +2509,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -4188,7 +4188,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "lifetime"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -4554,7 +4554,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "macro_rule"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -5025,7 +5025,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -5127,7 +5127,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -5171,7 +5171,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "pattern"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -6531,7 +6531,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -7146,7 +7146,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -7296,7 +7296,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -7590,7 +7590,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -7604,7 +7604,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -7816,7 +7816,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -7830,7 +7830,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "use_clause"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -8211,7 +8211,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "where_predicate"
+			"name": "item"
 		},
 		{
 			"kind": "seam",

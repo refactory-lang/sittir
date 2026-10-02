@@ -7672,7 +7672,7 @@ export function coerceToMetavariable(input: T.Metavariable.Loose): ReturnType<ty
 export function coerceToMacroRules(...input: T.MacroRules.LooseArgs): ReturnType<typeof F.buildMacroRules> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.MacroRules)) {
 		const data = input[0];
-		const stored = (data as unknown as { _macro_rule?: unknown })._macro_rule;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildMacroRules(
 			{
@@ -7696,7 +7696,7 @@ export function coerceToEnumVariantListElements(
 ): ReturnType<typeof F.buildEnumVariantListElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.EnumVariantListElements)) {
 		const data = input[0];
-		const stored = (data as unknown as { _element?: unknown })._element;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildEnumVariantListElements(
 			{
@@ -7725,7 +7725,7 @@ export function coerceToFieldDeclarationListElements(
 ): ReturnType<typeof F.buildFieldDeclarationListElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FieldDeclarationListElements)) {
 		const data = input[0];
-		const stored = (data as unknown as { _element?: unknown })._element;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildFieldDeclarationListElements(
 			{
@@ -7754,7 +7754,7 @@ export function coerceToOrderedFieldDeclarationListElements(
 ): ReturnType<typeof F.buildOrderedFieldDeclarationListElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.OrderedFieldDeclarationListElements)) {
 		const data = input[0];
-		const stored = (data as unknown as { _element?: unknown })._element;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildOrderedFieldDeclarationListElements(
 			{
@@ -7826,7 +7826,7 @@ export function coerceToWherePredicates(
 ): ReturnType<typeof F.buildWherePredicates> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.WherePredicates)) {
 		const data = input[0];
-		const stored = (data as unknown as { _where_predicate?: unknown })._where_predicate;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildWherePredicates(
 			{
@@ -7854,7 +7854,7 @@ export function coerceToTypeParametersElements(
 ): ReturnType<typeof F.buildTypeParametersElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeParametersElements)) {
 		const data = input[0];
-		const stored = (data as unknown as { _element?: unknown })._element;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildTypeParametersElements(
 			{
@@ -7888,7 +7888,7 @@ export function coerceToTypeParametersElements(
 export function coerceToUseClauses(...input: T.UseClauses.LooseArgs): ReturnType<typeof F.buildUseClauses> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.UseClauses)) {
 		const data = input[0];
-		const stored = (data as unknown as { _use_clause?: unknown })._use_clause;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildUseClauses(
 			{
@@ -7983,7 +7983,7 @@ export function coerceToParametersElements(
 ): ReturnType<typeof F.buildParametersElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ParametersElements)) {
 		const data = input[0];
-		const stored = (data as unknown as { _element?: unknown })._element;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildParametersElements(
 			{
@@ -8069,7 +8069,7 @@ export function coerceToParametersElements(
 export function coerceToLifetimes(...input: T.Lifetimes.LooseArgs): ReturnType<typeof F.buildLifetimes> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Lifetimes)) {
 		const data = input[0];
-		const stored = (data as unknown as { _lifetime?: unknown })._lifetime;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildLifetimes(
 			{
@@ -8091,7 +8091,7 @@ export function coerceToLifetimes(...input: T.Lifetimes.LooseArgs): ReturnType<t
 export function coerceToTypes(...input: T.Types.LooseArgs): ReturnType<typeof F.buildTypes> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Types)) {
 		const data = input[0];
-		const stored = (data as unknown as { _type?: unknown })._type;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildTypes(
 			{
@@ -8142,7 +8142,7 @@ export function coerceToUseBoundsElements(
 ): ReturnType<typeof F.buildUseBoundsElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.UseBoundsElements)) {
 		const data = input[0];
-		const stored = (data as unknown as { _element?: unknown })._element;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildUseBoundsElements(
 			{
@@ -8170,7 +8170,7 @@ export function coerceToTypeArgumentsElements(
 ): ReturnType<typeof F.buildTypeArgumentsElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeArgumentsElements)) {
 		const data = input[0];
-		const stored = (data as unknown as { _element?: unknown })._element;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildTypeArgumentsElements(
 			{
@@ -8279,7 +8279,7 @@ export function coerceToArgumentsElements(
 ): ReturnType<typeof F.buildArgumentsElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ArgumentsElements)) {
 		const data = input[0];
-		const stored = (data as unknown as { _element?: unknown })._element;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildArgumentsElements(
 			{
@@ -8470,7 +8470,7 @@ export function coerceToArgumentsElements(
 export function coerceToExpressions(...input: T.Expressions.LooseArgs): ReturnType<typeof F.buildExpressions> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Expressions)) {
 		const data = input[0];
-		const stored = (data as unknown as { _expression?: unknown })._expression;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildExpressions(
 			{
@@ -8584,7 +8584,7 @@ export function coerceToFieldInitializerListElements(
 ): ReturnType<typeof F.buildFieldInitializerListElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FieldInitializerListElements)) {
 		const data = input[0];
-		const stored = (data as unknown as { _element?: unknown })._element;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildFieldInitializerListElements(
 			{
@@ -8614,7 +8614,7 @@ export function coerceToTuplePatternElements(
 ): ReturnType<typeof F.buildTuplePatternElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TuplePatternElements)) {
 		const data = input[0];
-		const stored = (data as unknown as { _element?: unknown })._element;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildTuplePatternElements(
 			{
@@ -8701,7 +8701,7 @@ export function coerceToTuplePatternElements(
 export function coerceToPatterns(...input: T.Patterns.LooseArgs): ReturnType<typeof F.buildPatterns> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Patterns)) {
 		const data = input[0];
-		const stored = (data as unknown as { _pattern?: unknown })._pattern;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildPatterns(
 			{
@@ -8788,7 +8788,7 @@ export function coerceToStructPatternElements(
 ): ReturnType<typeof F.buildStructPatternElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StructPatternElements)) {
 		const data = input[0];
-		const stored = (data as unknown as { _element?: unknown })._element;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildStructPatternElements(
 			{

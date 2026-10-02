@@ -320,11 +320,11 @@ pub const SITE_ENUM_BODY_LBRACE_AFTER: usize = 311;
 pub const SITE_ENUM_BODY_RBRACE_BEFORE: usize = 312;
 pub const SITE_ENUM_BODY_ENUM_BODY_BEFORE: usize = 313;
 pub const SITE_ENUM_BODY_ENUM_BODY_AFTER: usize = 314;
-pub const SITE_ENUM_BODY_ELEMENTS_ELEMENT_ENUM_ASSIGNMENT_AFTER: usize = 315;
-pub const SITE_ENUM_BODY_ELEMENTS_ELEMENT_END: usize = 316;
-pub const SITE_ENUM_BODY_ELEMENTS_ELEMENT_START: usize = 317;
-pub const SITE_ENUM_BODY_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE: usize = 318;
-pub const SITE_ENUM_BODY_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER: usize = 319;
+pub const SITE_ENUM_BODY_ELEMENTS_ITEM_ENUM_ASSIGNMENT_AFTER: usize = 315;
+pub const SITE_ENUM_BODY_ELEMENTS_ITEM_END: usize = 316;
+pub const SITE_ENUM_BODY_ELEMENTS_ITEM_START: usize = 317;
+pub const SITE_ENUM_BODY_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE: usize = 318;
+pub const SITE_ENUM_BODY_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER: usize = 319;
 pub const SITE_ENUM_BODY_ELEMENTS_ENUM_BODY_ELEMENTS_BEFORE: usize = 320;
 pub const SITE_ENUM_BODY_ELEMENTS_ENUM_BODY_ELEMENTS_AFTER: usize = 321;
 pub const SITE_ENUM_DECLARATION_CONST_MARKER_AFTER: usize = 322;
@@ -342,11 +342,11 @@ pub const SITE_EXPORT_SPECIFIER_TYPE_KEYWORD_AFTER: usize = 333;
 pub const SITE_EXPORT_SPECIFIER_TYPEOF_KEYWORD_AFTER: usize = 334;
 pub const SITE_EXPORT_SPECIFIER_EXPORT_SPECIFIER_BEFORE: usize = 335;
 pub const SITE_EXPORT_SPECIFIER_EXPORT_SPECIFIER_AFTER: usize = 336;
-pub const SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_EXPORT_SPECIFIER_AFTER: usize = 337;
-pub const SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_END: usize = 338;
-pub const SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_START: usize = 339;
-pub const SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_SEPARATOR_SPACE_BEFORE: usize = 340;
-pub const SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_SEPARATOR_SPACE_AFTER: usize = 341;
+pub const SITE_EXPORT_SPECIFIERS_ITEM_EXPORT_SPECIFIER_AFTER: usize = 337;
+pub const SITE_EXPORT_SPECIFIERS_ITEM_END: usize = 338;
+pub const SITE_EXPORT_SPECIFIERS_ITEM_START: usize = 339;
+pub const SITE_EXPORT_SPECIFIERS_ITEM_SEPARATOR_SPACE_BEFORE: usize = 340;
+pub const SITE_EXPORT_SPECIFIERS_ITEM_SEPARATOR_SPACE_AFTER: usize = 341;
 pub const SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIERS_BEFORE: usize = 342;
 pub const SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIERS_AFTER: usize = 343;
 pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_DECORATOR_AFTER: usize = 344;
@@ -478,12 +478,12 @@ pub const SITE_FORMAL_PARAMETERS_LPAREN_AFTER: usize = 469;
 pub const SITE_FORMAL_PARAMETERS_RPAREN_BEFORE: usize = 470;
 pub const SITE_FORMAL_PARAMETERS_FORMAL_PARAMETERS_BEFORE: usize = 471;
 pub const SITE_FORMAL_PARAMETERS_FORMAL_PARAMETERS_AFTER: usize = 472;
-pub const SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_OPTIONAL_PARAMETER_AFTER: usize = 473;
-pub const SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_REQUIRED_PARAMETER_AFTER: usize = 474;
-pub const SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_END: usize = 475;
-pub const SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_START: usize = 476;
-pub const SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_BEFORE: usize = 477;
-pub const SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_AFTER: usize = 478;
+pub const SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_OPTIONAL_PARAMETER_AFTER: usize = 473;
+pub const SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_REQUIRED_PARAMETER_AFTER: usize = 474;
+pub const SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_END: usize = 475;
+pub const SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_START: usize = 476;
+pub const SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE: usize = 477;
+pub const SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER: usize = 478;
 pub const SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETERS_ELEMENTS_BEFORE: usize = 479;
 pub const SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETERS_ELEMENTS_AFTER: usize = 480;
 pub const SITE_FUNCTION_DECLARATION_ASYNC_MARKER_AFTER: usize = 481;
@@ -589,12 +589,12 @@ pub const SITE_IMPORT_SPECIFIER_NAME_TYPE_KEYWORD_AFTER: usize = 580;
 pub const SITE_IMPORT_SPECIFIER_NAME_TYPEOF_KEYWORD_AFTER: usize = 581;
 pub const SITE_IMPORT_SPECIFIER_NAME_IMPORT_SPECIFIER_NAME_BEFORE: usize = 582;
 pub const SITE_IMPORT_SPECIFIER_NAME_IMPORT_SPECIFIER_NAME_AFTER: usize = 583;
-pub const SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_IMPORT_SPECIFIER_AS_AFTER: usize = 584;
-pub const SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_IMPORT_SPECIFIER_NAME_AFTER: usize = 585;
-pub const SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_END: usize = 586;
-pub const SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_START: usize = 587;
-pub const SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_SEPARATOR_SPACE_BEFORE: usize = 588;
-pub const SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_SEPARATOR_SPACE_AFTER: usize = 589;
+pub const SITE_IMPORT_SPECIFIERS_ITEM_IMPORT_SPECIFIER_AS_AFTER: usize = 584;
+pub const SITE_IMPORT_SPECIFIERS_ITEM_IMPORT_SPECIFIER_NAME_AFTER: usize = 585;
+pub const SITE_IMPORT_SPECIFIERS_ITEM_END: usize = 586;
+pub const SITE_IMPORT_SPECIFIERS_ITEM_START: usize = 587;
+pub const SITE_IMPORT_SPECIFIERS_ITEM_SEPARATOR_SPACE_BEFORE: usize = 588;
+pub const SITE_IMPORT_SPECIFIERS_ITEM_SEPARATOR_SPACE_AFTER: usize = 589;
 pub const SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIERS_BEFORE: usize = 590;
 pub const SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIERS_AFTER: usize = 591;
 pub const SITE_IMPORT_STATEMENT_TERMINATOR: usize = 592;
@@ -784,22 +784,22 @@ pub const SITE_OBJECT_TYPE_CLOSING_BEFORE: usize = 775;
 pub const SITE_OBJECT_TYPE_OPENING_AFTER: usize = 776;
 pub const SITE_OBJECT_TYPE_OBJECT_TYPE_BEFORE: usize = 777;
 pub const SITE_OBJECT_TYPE_OBJECT_TYPE_AFTER: usize = 778;
-pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_CALL_SIGNATURE_AFTER: usize = 779;
-pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_CONSTRUCT_SIGNATURE_AFTER: usize = 780;
-pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_EXPORT_STATEMENT_DEFAULT_DECLARATION_AFTER: usize = 781;
-pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_EXPORT_STATEMENT_DEFAULT_FROM_AFTER: usize = 782;
-pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_EXPORT_STATEMENT_EQUALS_EXPORT_AFTER: usize = 783;
-pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_EXPORT_STATEMENT_NAMESPACE_EXPORT_AFTER: usize = 784;
-pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_EXPORT_STATEMENT_TYPE_EXPORT_AFTER: usize = 785;
-pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_INDEX_SIGNATURE_COLON_AFTER: usize = 786;
-pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_AFTER: usize = 787;
-pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_METHOD_SIGNATURE_AFTER: usize = 788;
-pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_PROPERTY_SIGNATURE_AFTER: usize = 789;
-pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_END: usize = 790;
-pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_START: usize = 791;
-pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_SEPARATOR: usize = 792;
-pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_SEPARATOR_SPACE_BEFORE: usize = 793;
-pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_SEPARATOR_SPACE_AFTER: usize = 794;
+pub const SITE_OBJECT_TYPE_CONTENT_ITEM_CALL_SIGNATURE_AFTER: usize = 779;
+pub const SITE_OBJECT_TYPE_CONTENT_ITEM_CONSTRUCT_SIGNATURE_AFTER: usize = 780;
+pub const SITE_OBJECT_TYPE_CONTENT_ITEM_EXPORT_STATEMENT_DEFAULT_DECLARATION_AFTER: usize = 781;
+pub const SITE_OBJECT_TYPE_CONTENT_ITEM_EXPORT_STATEMENT_DEFAULT_FROM_AFTER: usize = 782;
+pub const SITE_OBJECT_TYPE_CONTENT_ITEM_EXPORT_STATEMENT_EQUALS_EXPORT_AFTER: usize = 783;
+pub const SITE_OBJECT_TYPE_CONTENT_ITEM_EXPORT_STATEMENT_NAMESPACE_EXPORT_AFTER: usize = 784;
+pub const SITE_OBJECT_TYPE_CONTENT_ITEM_EXPORT_STATEMENT_TYPE_EXPORT_AFTER: usize = 785;
+pub const SITE_OBJECT_TYPE_CONTENT_ITEM_INDEX_SIGNATURE_COLON_AFTER: usize = 786;
+pub const SITE_OBJECT_TYPE_CONTENT_ITEM_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_AFTER: usize = 787;
+pub const SITE_OBJECT_TYPE_CONTENT_ITEM_METHOD_SIGNATURE_AFTER: usize = 788;
+pub const SITE_OBJECT_TYPE_CONTENT_ITEM_PROPERTY_SIGNATURE_AFTER: usize = 789;
+pub const SITE_OBJECT_TYPE_CONTENT_ITEM_END: usize = 790;
+pub const SITE_OBJECT_TYPE_CONTENT_ITEM_START: usize = 791;
+pub const SITE_OBJECT_TYPE_CONTENT_ITEM_SEPARATOR: usize = 792;
+pub const SITE_OBJECT_TYPE_CONTENT_ITEM_SEPARATOR_SPACE_BEFORE: usize = 793;
+pub const SITE_OBJECT_TYPE_CONTENT_ITEM_SEPARATOR_SPACE_AFTER: usize = 794;
 pub const SITE_OBJECT_TYPE_CONTENT_OBJECT_TYPE_CONTENT_BEFORE: usize = 795;
 pub const SITE_OBJECT_TYPE_CONTENT_OBJECT_TYPE_CONTENT_AFTER: usize = 796;
 pub const SITE_OMITTING_TYPE_ANNOTATION_DASH_QMARK_COLON_AFTER: usize = 797;
@@ -1192,37 +1192,37 @@ pub const SITE_TUPLE_TYPE_LBRACK_AFTER: usize = 1183;
 pub const SITE_TUPLE_TYPE_RBRACK_BEFORE: usize = 1184;
 pub const SITE_TUPLE_TYPE_TUPLE_TYPE_BEFORE: usize = 1185;
 pub const SITE_TUPLE_TYPE_TUPLE_TYPE_AFTER: usize = 1186;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_ARRAY_TYPE_AFTER: usize = 1187;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_CONDITIONAL_TYPE_AFTER: usize = 1188;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_CONSTRUCTOR_TYPE_AFTER: usize = 1189;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_FLOW_MAYBE_TYPE_AFTER: usize = 1190;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_FUNCTION_TYPE_AFTER: usize = 1191;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_GENERIC_TYPE_AFTER: usize = 1192;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_INDEX_TYPE_QUERY_AFTER: usize = 1193;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_INFER_TYPE_AFTER: usize = 1194;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_INTERSECTION_TYPE_AFTER: usize = 1195;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_LITERAL_TYPE_NEGATIVE_NUMBER_AFTER: usize = 1196;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_LOOKUP_TYPE_AFTER: usize = 1197;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_NESTED_TYPE_IDENTIFIER_AFTER: usize = 1198;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_OBJECT_TYPE_AFTER: usize = 1199;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_OPTIONAL_TUPLE_PARAMETER_AFTER: usize = 1200;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_OPTIONAL_TYPE_AFTER: usize = 1201;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_PARENTHESIZED_TYPE_AFTER: usize = 1202;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_READONLY_TYPE_AFTER: usize = 1203;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_REST_TYPE_AFTER: usize = 1204;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_STRING_DOUBLE_AFTER: usize = 1205;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_STRING_SINGLE_AFTER: usize = 1206;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_TEMPLATE_LITERAL_TYPE_AFTER: usize = 1207;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_TUPLE_PARAMETER_AFTER: usize = 1208;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_TUPLE_TYPE_AFTER: usize = 1209;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_TYPE_QUERY_AFTER: usize = 1210;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION_AFTER: usize = 1211;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION_AFTER: usize = 1212;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_UNION_TYPE_AFTER: usize = 1213;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_END: usize = 1214;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_START: usize = 1215;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_SEPARATOR_SPACE_BEFORE: usize = 1216;
-pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_SEPARATOR_SPACE_AFTER: usize = 1217;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_ARRAY_TYPE_AFTER: usize = 1187;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_CONDITIONAL_TYPE_AFTER: usize = 1188;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_CONSTRUCTOR_TYPE_AFTER: usize = 1189;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_FLOW_MAYBE_TYPE_AFTER: usize = 1190;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_FUNCTION_TYPE_AFTER: usize = 1191;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_GENERIC_TYPE_AFTER: usize = 1192;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_INDEX_TYPE_QUERY_AFTER: usize = 1193;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_INFER_TYPE_AFTER: usize = 1194;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_INTERSECTION_TYPE_AFTER: usize = 1195;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_LITERAL_TYPE_NEGATIVE_NUMBER_AFTER: usize = 1196;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_LOOKUP_TYPE_AFTER: usize = 1197;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_NESTED_TYPE_IDENTIFIER_AFTER: usize = 1198;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_OBJECT_TYPE_AFTER: usize = 1199;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_OPTIONAL_TUPLE_PARAMETER_AFTER: usize = 1200;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_OPTIONAL_TYPE_AFTER: usize = 1201;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_PARENTHESIZED_TYPE_AFTER: usize = 1202;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_READONLY_TYPE_AFTER: usize = 1203;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_REST_TYPE_AFTER: usize = 1204;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_STRING_DOUBLE_AFTER: usize = 1205;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_STRING_SINGLE_AFTER: usize = 1206;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_TEMPLATE_LITERAL_TYPE_AFTER: usize = 1207;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_TUPLE_PARAMETER_AFTER: usize = 1208;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_TUPLE_TYPE_AFTER: usize = 1209;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_TYPE_QUERY_AFTER: usize = 1210;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION_AFTER: usize = 1211;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION_AFTER: usize = 1212;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_UNION_TYPE_AFTER: usize = 1213;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_END: usize = 1214;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_START: usize = 1215;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_SEPARATOR_SPACE_BEFORE: usize = 1216;
+pub const SITE_TUPLE_TYPE_MEMBERS_ITEM_SEPARATOR_SPACE_AFTER: usize = 1217;
 pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBERS_BEFORE: usize = 1218;
 pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBERS_AFTER: usize = 1219;
 pub const SITE_TYPE_ALIAS_DECLARATION_TERMINATOR: usize = 1220;
@@ -1248,11 +1248,11 @@ pub const SITE_TYPE_PARAMETERS_LT_AFTER: usize = 1239;
 pub const SITE_TYPE_PARAMETERS_GT_BEFORE: usize = 1240;
 pub const SITE_TYPE_PARAMETERS_TYPE_PARAMETERS_BEFORE: usize = 1241;
 pub const SITE_TYPE_PARAMETERS_TYPE_PARAMETERS_AFTER: usize = 1242;
-pub const SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_TYPE_PARAMETER_AFTER: usize = 1243;
-pub const SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_END: usize = 1244;
-pub const SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_START: usize = 1245;
-pub const SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_SEPARATOR_SPACE_BEFORE: usize = 1246;
-pub const SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_SEPARATOR_SPACE_AFTER: usize = 1247;
+pub const SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_TYPE_PARAMETER_AFTER: usize = 1243;
+pub const SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_END: usize = 1244;
+pub const SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_START: usize = 1245;
+pub const SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE: usize = 1246;
+pub const SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER: usize = 1247;
 pub const SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETERS_ELEMENTS_BEFORE: usize = 1248;
 pub const SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETERS_ELEMENTS_AFTER: usize = 1249;
 pub const SITE_TYPE_PREDICATE_IS_KEYWORD_BEFORE: usize = 1250;
@@ -1288,33 +1288,33 @@ pub const SITE_TYPE_QUERY_SUBSCRIPT_EXPRESSION_LBRACK_AFTER: usize = 1279;
 pub const SITE_TYPE_QUERY_SUBSCRIPT_EXPRESSION_RBRACK_BEFORE: usize = 1280;
 pub const SITE_TYPE_QUERY_SUBSCRIPT_EXPRESSION_TYPE_QUERY_SUBSCRIPT_EXPRESSION_BEFORE: usize = 1281;
 pub const SITE_TYPE_QUERY_SUBSCRIPT_EXPRESSION_TYPE_QUERY_SUBSCRIPT_EXPRESSION_AFTER: usize = 1282;
-pub const SITE_TYPES_TYPE_ARRAY_TYPE_AFTER: usize = 1283;
-pub const SITE_TYPES_TYPE_CONDITIONAL_TYPE_AFTER: usize = 1284;
-pub const SITE_TYPES_TYPE_CONSTRUCTOR_TYPE_AFTER: usize = 1285;
-pub const SITE_TYPES_TYPE_FLOW_MAYBE_TYPE_AFTER: usize = 1286;
-pub const SITE_TYPES_TYPE_FUNCTION_TYPE_AFTER: usize = 1287;
-pub const SITE_TYPES_TYPE_GENERIC_TYPE_AFTER: usize = 1288;
-pub const SITE_TYPES_TYPE_INDEX_TYPE_QUERY_AFTER: usize = 1289;
-pub const SITE_TYPES_TYPE_INFER_TYPE_AFTER: usize = 1290;
-pub const SITE_TYPES_TYPE_INTERSECTION_TYPE_AFTER: usize = 1291;
-pub const SITE_TYPES_TYPE_LITERAL_TYPE_NEGATIVE_NUMBER_AFTER: usize = 1292;
-pub const SITE_TYPES_TYPE_LOOKUP_TYPE_AFTER: usize = 1293;
-pub const SITE_TYPES_TYPE_NESTED_TYPE_IDENTIFIER_AFTER: usize = 1294;
-pub const SITE_TYPES_TYPE_OBJECT_TYPE_AFTER: usize = 1295;
-pub const SITE_TYPES_TYPE_PARENTHESIZED_TYPE_AFTER: usize = 1296;
-pub const SITE_TYPES_TYPE_READONLY_TYPE_AFTER: usize = 1297;
-pub const SITE_TYPES_TYPE_STRING_DOUBLE_AFTER: usize = 1298;
-pub const SITE_TYPES_TYPE_STRING_SINGLE_AFTER: usize = 1299;
-pub const SITE_TYPES_TYPE_TEMPLATE_LITERAL_TYPE_AFTER: usize = 1300;
-pub const SITE_TYPES_TYPE_TUPLE_TYPE_AFTER: usize = 1301;
-pub const SITE_TYPES_TYPE_TYPE_QUERY_AFTER: usize = 1302;
-pub const SITE_TYPES_TYPE_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION_AFTER: usize = 1303;
-pub const SITE_TYPES_TYPE_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION_AFTER: usize = 1304;
-pub const SITE_TYPES_TYPE_UNION_TYPE_AFTER: usize = 1305;
-pub const SITE_TYPES_TYPE_END: usize = 1306;
-pub const SITE_TYPES_TYPE_START: usize = 1307;
-pub const SITE_TYPES_TYPE_SEPARATOR_SPACE_BEFORE: usize = 1308;
-pub const SITE_TYPES_TYPE_SEPARATOR_SPACE_AFTER: usize = 1309;
+pub const SITE_TYPES_ITEM_ARRAY_TYPE_AFTER: usize = 1283;
+pub const SITE_TYPES_ITEM_CONDITIONAL_TYPE_AFTER: usize = 1284;
+pub const SITE_TYPES_ITEM_CONSTRUCTOR_TYPE_AFTER: usize = 1285;
+pub const SITE_TYPES_ITEM_FLOW_MAYBE_TYPE_AFTER: usize = 1286;
+pub const SITE_TYPES_ITEM_FUNCTION_TYPE_AFTER: usize = 1287;
+pub const SITE_TYPES_ITEM_GENERIC_TYPE_AFTER: usize = 1288;
+pub const SITE_TYPES_ITEM_INDEX_TYPE_QUERY_AFTER: usize = 1289;
+pub const SITE_TYPES_ITEM_INFER_TYPE_AFTER: usize = 1290;
+pub const SITE_TYPES_ITEM_INTERSECTION_TYPE_AFTER: usize = 1291;
+pub const SITE_TYPES_ITEM_LITERAL_TYPE_NEGATIVE_NUMBER_AFTER: usize = 1292;
+pub const SITE_TYPES_ITEM_LOOKUP_TYPE_AFTER: usize = 1293;
+pub const SITE_TYPES_ITEM_NESTED_TYPE_IDENTIFIER_AFTER: usize = 1294;
+pub const SITE_TYPES_ITEM_OBJECT_TYPE_AFTER: usize = 1295;
+pub const SITE_TYPES_ITEM_PARENTHESIZED_TYPE_AFTER: usize = 1296;
+pub const SITE_TYPES_ITEM_READONLY_TYPE_AFTER: usize = 1297;
+pub const SITE_TYPES_ITEM_STRING_DOUBLE_AFTER: usize = 1298;
+pub const SITE_TYPES_ITEM_STRING_SINGLE_AFTER: usize = 1299;
+pub const SITE_TYPES_ITEM_TEMPLATE_LITERAL_TYPE_AFTER: usize = 1300;
+pub const SITE_TYPES_ITEM_TUPLE_TYPE_AFTER: usize = 1301;
+pub const SITE_TYPES_ITEM_TYPE_QUERY_AFTER: usize = 1302;
+pub const SITE_TYPES_ITEM_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION_AFTER: usize = 1303;
+pub const SITE_TYPES_ITEM_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION_AFTER: usize = 1304;
+pub const SITE_TYPES_ITEM_UNION_TYPE_AFTER: usize = 1305;
+pub const SITE_TYPES_ITEM_END: usize = 1306;
+pub const SITE_TYPES_ITEM_START: usize = 1307;
+pub const SITE_TYPES_ITEM_SEPARATOR_SPACE_BEFORE: usize = 1308;
+pub const SITE_TYPES_ITEM_SEPARATOR_SPACE_AFTER: usize = 1309;
 pub const SITE_TYPES_TYPES_BEFORE: usize = 1310;
 pub const SITE_TYPES_TYPES_AFTER: usize = 1311;
 pub const SITE_UNARY_EXPRESSION_OPERATOR_AFTER: usize = 1312;
@@ -1361,14 +1361,14 @@ pub const SITE_YIELD_EXPRESSION_YIELD_EXPRESSION_AFTER: usize = 1352;
 pub const SITE_YIELD_EXPRESSION_DELEGATE_STAR_AFTER: usize = 1353;
 pub const SITE_YIELD_EXPRESSION_DELEGATE_YIELD_EXPRESSION_DELEGATE_BEFORE: usize = 1354;
 pub const SITE_YIELD_EXPRESSION_DELEGATE_YIELD_EXPRESSION_DELEGATE_AFTER: usize = 1355;
-pub const DELIM_ENUM_BODY_ELEMENTS_ELEMENT: usize = 0;
-pub const DELIM_EXPORT_SPECIFIERS_EXPORT_SPECIFIER: usize = 1;
-pub const DELIM_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER: usize = 2;
-pub const DELIM_IMPORT_SPECIFIERS_IMPORT_SPECIFIER: usize = 3;
-pub const DELIM_OBJECT_TYPE_CONTENT_MEMBERS: usize = 4;
-pub const DELIM_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER: usize = 5;
-pub const DELIM_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER: usize = 6;
-pub const DELIM_TYPES_TYPE: usize = 7;
+pub const DELIM_ENUM_BODY_ELEMENTS_ITEM: usize = 0;
+pub const DELIM_EXPORT_SPECIFIERS_ITEM: usize = 1;
+pub const DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM: usize = 2;
+pub const DELIM_IMPORT_SPECIFIERS_ITEM: usize = 3;
+pub const DELIM_OBJECT_TYPE_CONTENT_ITEM: usize = 4;
+pub const DELIM_TUPLE_TYPE_MEMBERS_ITEM: usize = 5;
+pub const DELIM_TYPE_PARAMETERS_ELEMENTS_ITEM: usize = 6;
+pub const DELIM_TYPES_ITEM: usize = 7;
 
 /// (kind, address, label, allowed kind ids), in canonical path order.
 pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
@@ -1687,11 +1687,11 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("enum_body", "rbrace_before", "rbrace_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("enum_body", "enum_body_before", "enum_body_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("enum_body", "enum_body_after", "enum_body_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("enum_body_elements", "element_enum_assignment_after", "enum_assignment_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("enum_body_elements", "item_enum_assignment_after", "enum_assignment_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("enum_body_elements", "enum_body_elements_end", "enum_body_elements_end", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("enum_body_elements", "enum_body_elements_start", "enum_body_elements_start", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("enum_body_elements", "element_separator_space_before", "comma_separator_space_before", &[180, 181, 182, 183, 184, 185]),
-    ("enum_body_elements", "element_separator_space_after", "comma_separator_space_after", &[180, 181, 182, 183, 184, 185]),
+    ("enum_body_elements", "item_separator_space_before", "comma_separator_space_before", &[180, 181, 182, 183, 184, 185]),
+    ("enum_body_elements", "item_separator_space_after", "comma_separator_space_after", &[180, 181, 182, 183, 184, 185]),
     ("enum_body_elements", "enum_body_elements_before", "enum_body_elements_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("enum_body_elements", "enum_body_elements_after", "enum_body_elements_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("enum_declaration", "const_marker_after", "const_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -1709,11 +1709,11 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("export_specifier", "typeof_keyword_after", "typeof_keyword_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("export_specifier", "export_specifier_before", "export_specifier_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("export_specifier", "export_specifier_after", "export_specifier_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("export_specifiers", "export_specifier_export_specifier_after", "export_specifier_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("export_specifiers", "item_export_specifier_after", "export_specifier_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("export_specifiers", "export_specifiers_end", "export_specifiers_end", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("export_specifiers", "export_specifiers_start", "export_specifiers_start", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("export_specifiers", "export_specifier_separator_space_before", "comma_separator_space_before", &[180, 181, 182, 183, 184, 185]),
-    ("export_specifiers", "export_specifier_separator_space_after", "comma_separator_space_after", &[180, 181, 182, 183, 184, 185]),
+    ("export_specifiers", "item_separator_space_before", "comma_separator_space_before", &[180, 181, 182, 183, 184, 185]),
+    ("export_specifiers", "item_separator_space_after", "comma_separator_space_after", &[180, 181, 182, 183, 184, 185]),
     ("export_specifiers", "export_specifiers_before", "export_specifiers_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("export_specifiers", "export_specifiers_after", "export_specifiers_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("export_statement_default_declaration", "decorator_decorator_after", "decorator_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -1845,12 +1845,12 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("formal_parameters", "rparen_before", "rparen_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("formal_parameters", "formal_parameters_before", "formal_parameters_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("formal_parameters", "formal_parameters_after", "formal_parameters_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("formal_parameters_elements", "formal_parameter_optional_parameter_after", "optional_parameter_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("formal_parameters_elements", "formal_parameter_required_parameter_after", "required_parameter_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("formal_parameters_elements", "item_optional_parameter_after", "optional_parameter_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("formal_parameters_elements", "item_required_parameter_after", "required_parameter_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("formal_parameters_elements", "formal_parameters_elements_end", "formal_parameters_elements_end", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("formal_parameters_elements", "formal_parameters_elements_start", "formal_parameters_elements_start", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("formal_parameters_elements", "formal_parameter_separator_space_before", "comma_separator_space_before", &[180, 181, 182, 183, 184, 185]),
-    ("formal_parameters_elements", "formal_parameter_separator_space_after", "comma_separator_space_after", &[180, 181, 182, 183, 184, 185]),
+    ("formal_parameters_elements", "item_separator_space_before", "comma_separator_space_before", &[180, 181, 182, 183, 184, 185]),
+    ("formal_parameters_elements", "item_separator_space_after", "comma_separator_space_after", &[180, 181, 182, 183, 184, 185]),
     ("formal_parameters_elements", "formal_parameters_elements_before", "formal_parameters_elements_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("formal_parameters_elements", "formal_parameters_elements_after", "formal_parameters_elements_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("function_declaration", "async_marker_after", "async_marker_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -1956,12 +1956,12 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("import_specifier_name", "typeof_keyword_after", "typeof_keyword_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("import_specifier_name", "import_specifier_name_before", "import_specifier_name_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("import_specifier_name", "import_specifier_name_after", "import_specifier_name_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("import_specifiers", "import_specifier_import_specifier_as_after", "import_specifier_as_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("import_specifiers", "import_specifier_import_specifier_name_after", "import_specifier_name_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("import_specifiers", "item_import_specifier_as_after", "import_specifier_as_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("import_specifiers", "item_import_specifier_name_after", "import_specifier_name_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("import_specifiers", "import_specifiers_end", "import_specifiers_end", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("import_specifiers", "import_specifiers_start", "import_specifiers_start", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("import_specifiers", "import_specifier_separator_space_before", "comma_separator_space_before", &[180, 181, 182, 183, 184, 185]),
-    ("import_specifiers", "import_specifier_separator_space_after", "comma_separator_space_after", &[180, 181, 182, 183, 184, 185]),
+    ("import_specifiers", "item_separator_space_before", "comma_separator_space_before", &[180, 181, 182, 183, 184, 185]),
+    ("import_specifiers", "item_separator_space_after", "comma_separator_space_after", &[180, 181, 182, 183, 184, 185]),
     ("import_specifiers", "import_specifiers_before", "import_specifiers_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("import_specifiers", "import_specifiers_after", "import_specifiers_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("import_statement", "terminator", "terminator", &[173, 20]),
@@ -2151,22 +2151,22 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("object_type", "opening_after", "opening_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("object_type", "object_type_before", "object_type_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("object_type", "object_type_after", "object_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("object_type_content", "members_call_signature_after", "call_signature_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("object_type_content", "members_construct_signature_after", "construct_signature_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("object_type_content", "members_export_statement_default_declaration_after", "export_statement_default_declaration_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("object_type_content", "members_export_statement_default_from_after", "export_statement_default_from_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("object_type_content", "members_export_statement_equals_export_after", "export_statement_equals_export_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("object_type_content", "members_export_statement_namespace_export_after", "export_statement_namespace_export_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("object_type_content", "members_export_statement_type_export_after", "export_statement_type_export_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("object_type_content", "members_index_signature_colon_after", "index_signature_colon_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("object_type_content", "members_index_signature_mapped_type_clause_after", "index_signature_mapped_type_clause_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("object_type_content", "members_method_signature_after", "method_signature_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("object_type_content", "members_property_signature_after", "property_signature_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("object_type_content", "item_call_signature_after", "call_signature_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("object_type_content", "item_construct_signature_after", "construct_signature_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("object_type_content", "item_export_statement_default_declaration_after", "export_statement_default_declaration_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("object_type_content", "item_export_statement_default_from_after", "export_statement_default_from_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("object_type_content", "item_export_statement_equals_export_after", "export_statement_equals_export_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("object_type_content", "item_export_statement_namespace_export_after", "export_statement_namespace_export_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("object_type_content", "item_export_statement_type_export_after", "export_statement_type_export_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("object_type_content", "item_index_signature_colon_after", "index_signature_colon_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("object_type_content", "item_index_signature_mapped_type_clause_after", "index_signature_mapped_type_clause_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("object_type_content", "item_method_signature_after", "method_signature_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("object_type_content", "item_property_signature_after", "property_signature_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("object_type_content", "object_type_content_end", "object_type_content_end", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("object_type_content", "object_type_content_start", "object_type_content_start", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("object_type_content", "members_separator", "separator", &[14, 20]),
-    ("object_type_content", "members_separator_space_before", "object_type_content_separator_space_before", &[180, 181, 182, 183, 184, 185]),
-    ("object_type_content", "members_separator_space_after", "object_type_content_separator_space_after", &[180, 181, 182, 183, 184, 185]),
+    ("object_type_content", "item_separator", "separator", &[14, 20]),
+    ("object_type_content", "item_separator_space_before", "object_type_content_separator_space_before", &[180, 181, 182, 183, 184, 185]),
+    ("object_type_content", "item_separator_space_after", "object_type_content_separator_space_after", &[180, 181, 182, 183, 184, 185]),
     ("object_type_content", "object_type_content_before", "object_type_content_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("object_type_content", "object_type_content_after", "object_type_content_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("omitting_type_annotation", "dash_qmark_colon_after", "dash_qmark_colon_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -2559,37 +2559,37 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("tuple_type", "rbrack_before", "rbrack_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("tuple_type", "tuple_type_before", "tuple_type_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("tuple_type", "tuple_type_after", "tuple_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_array_type_after", "array_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_conditional_type_after", "conditional_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_constructor_type_after", "constructor_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_flow_maybe_type_after", "flow_maybe_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_function_type_after", "function_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_generic_type_after", "generic_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_index_type_query_after", "index_type_query_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_infer_type_after", "infer_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_intersection_type_after", "intersection_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_literal_type_negative_number_after", "literal_type_negative_number_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_lookup_type_after", "lookup_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_nested_type_identifier_after", "nested_type_identifier_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_object_type_after", "object_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_optional_tuple_parameter_after", "optional_tuple_parameter_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_optional_type_after", "optional_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_parenthesized_type_after", "parenthesized_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_readonly_type_after", "readonly_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_rest_type_after", "rest_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_string_double_after", "string_double_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_string_single_after", "string_single_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_template_literal_type_after", "template_literal_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_tuple_parameter_after", "tuple_parameter_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_tuple_type_after", "tuple_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_type_query_after", "type_query_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_type_query_call_expression_in_type_annotation_after", "type_query_call_expression_in_type_annotation_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_type_query_member_expression_in_type_annotation_after", "type_query_member_expression_in_type_annotation_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_union_type_after", "union_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_array_type_after", "array_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_conditional_type_after", "conditional_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_constructor_type_after", "constructor_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_flow_maybe_type_after", "flow_maybe_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_function_type_after", "function_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_generic_type_after", "generic_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_index_type_query_after", "index_type_query_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_infer_type_after", "infer_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_intersection_type_after", "intersection_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_literal_type_negative_number_after", "literal_type_negative_number_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_lookup_type_after", "lookup_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_nested_type_identifier_after", "nested_type_identifier_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_object_type_after", "object_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_optional_tuple_parameter_after", "optional_tuple_parameter_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_optional_type_after", "optional_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_parenthesized_type_after", "parenthesized_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_readonly_type_after", "readonly_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_rest_type_after", "rest_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_string_double_after", "string_double_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_string_single_after", "string_single_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_template_literal_type_after", "template_literal_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_tuple_parameter_after", "tuple_parameter_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_tuple_type_after", "tuple_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_type_query_after", "type_query_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_type_query_call_expression_in_type_annotation_after", "type_query_call_expression_in_type_annotation_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_type_query_member_expression_in_type_annotation_after", "type_query_member_expression_in_type_annotation_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("tuple_type_members", "item_union_type_after", "union_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("tuple_type_members", "tuple_type_members_end", "tuple_type_members_end", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("tuple_type_members", "tuple_type_members_start", "tuple_type_members_start", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("tuple_type_members", "tuple_type_member_separator_space_before", "comma_separator_space_before", &[180, 181, 182, 183, 184, 185]),
-    ("tuple_type_members", "tuple_type_member_separator_space_after", "comma_separator_space_after", &[180, 181, 182, 183, 184, 185]),
+    ("tuple_type_members", "item_separator_space_before", "comma_separator_space_before", &[180, 181, 182, 183, 184, 185]),
+    ("tuple_type_members", "item_separator_space_after", "comma_separator_space_after", &[180, 181, 182, 183, 184, 185]),
     ("tuple_type_members", "tuple_type_members_before", "tuple_type_members_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("tuple_type_members", "tuple_type_members_after", "tuple_type_members_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("type_alias_declaration", "terminator", "terminator", &[173, 20]),
@@ -2615,11 +2615,11 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("type_parameters", "gt_before", "gt_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("type_parameters", "type_parameters_before", "type_parameters_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("type_parameters", "type_parameters_after", "type_parameters_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("type_parameters_elements", "type_parameter_type_parameter_after", "type_parameter_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("type_parameters_elements", "item_type_parameter_after", "type_parameter_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("type_parameters_elements", "type_parameters_elements_end", "type_parameters_elements_end", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("type_parameters_elements", "type_parameters_elements_start", "type_parameters_elements_start", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("type_parameters_elements", "type_parameter_separator_space_before", "comma_separator_space_before", &[180, 181, 182, 183, 184, 185]),
-    ("type_parameters_elements", "type_parameter_separator_space_after", "comma_separator_space_after", &[180, 181, 182, 183, 184, 185]),
+    ("type_parameters_elements", "item_separator_space_before", "comma_separator_space_before", &[180, 181, 182, 183, 184, 185]),
+    ("type_parameters_elements", "item_separator_space_after", "comma_separator_space_after", &[180, 181, 182, 183, 184, 185]),
     ("type_parameters_elements", "type_parameters_elements_before", "type_parameters_elements_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("type_parameters_elements", "type_parameters_elements_after", "type_parameters_elements_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("type_predicate", "is_keyword_before", "is_keyword_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -2655,33 +2655,33 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("type_query_subscript_expression", "rbrack_before", "rbrack_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("type_query_subscript_expression", "type_query_subscript_expression_before", "type_query_subscript_expression_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("type_query_subscript_expression", "type_query_subscript_expression_after", "type_query_subscript_expression_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_array_type_after", "array_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_conditional_type_after", "conditional_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_constructor_type_after", "constructor_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_flow_maybe_type_after", "flow_maybe_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_function_type_after", "function_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_generic_type_after", "generic_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_index_type_query_after", "index_type_query_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_infer_type_after", "infer_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_intersection_type_after", "intersection_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_literal_type_negative_number_after", "literal_type_negative_number_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_lookup_type_after", "lookup_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_nested_type_identifier_after", "nested_type_identifier_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_object_type_after", "object_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_parenthesized_type_after", "parenthesized_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_readonly_type_after", "readonly_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_string_double_after", "string_double_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_string_single_after", "string_single_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_template_literal_type_after", "template_literal_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_tuple_type_after", "tuple_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_type_query_after", "type_query_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_type_query_call_expression_in_type_annotation_after", "type_query_call_expression_in_type_annotation_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_type_query_member_expression_in_type_annotation_after", "type_query_member_expression_in_type_annotation_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_union_type_after", "union_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_array_type_after", "array_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_conditional_type_after", "conditional_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_constructor_type_after", "constructor_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_flow_maybe_type_after", "flow_maybe_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_function_type_after", "function_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_generic_type_after", "generic_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_index_type_query_after", "index_type_query_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_infer_type_after", "infer_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_intersection_type_after", "intersection_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_literal_type_negative_number_after", "literal_type_negative_number_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_lookup_type_after", "lookup_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_nested_type_identifier_after", "nested_type_identifier_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_object_type_after", "object_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_parenthesized_type_after", "parenthesized_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_readonly_type_after", "readonly_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_string_double_after", "string_double_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_string_single_after", "string_single_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_template_literal_type_after", "template_literal_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_tuple_type_after", "tuple_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_type_query_after", "type_query_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_type_query_call_expression_in_type_annotation_after", "type_query_call_expression_in_type_annotation_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_type_query_member_expression_in_type_annotation_after", "type_query_member_expression_in_type_annotation_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("types", "item_union_type_after", "union_type_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("types", "types_end", "types_end", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("types", "types_start", "types_start", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("types", "type_separator_space_before", "comma_separator_space_before", &[180, 181, 182, 183, 184, 185]),
-    ("types", "type_separator_space_after", "comma_separator_space_after", &[180, 181, 182, 183, 184, 185]),
+    ("types", "item_separator_space_before", "comma_separator_space_before", &[180, 181, 182, 183, 184, 185]),
+    ("types", "item_separator_space_after", "comma_separator_space_after", &[180, 181, 182, 183, 184, 185]),
     ("types", "types_before", "types_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("types", "types_after", "types_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("unary_expression", "operator_after", "operator_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -2976,19 +2976,19 @@ pub static KIND_FLAGS: &[u8] = &[
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 ];
 
 /// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.
 pub static DELIMITER_SITES: &[(&str, &str, u8, u8)] = &[
-    ("enum_body_elements", "element_delimiter", 2, 2),
-    ("export_specifiers", "export_specifier_delimiter", 2, 0),
-    ("formal_parameters_elements", "formal_parameter_delimiter", 2, 0),
-    ("import_specifiers", "import_specifier_delimiter", 2, 0),
-    ("object_type_content", "members_delimiter", 3, 2),
-    ("tuple_type_members", "tuple_type_member_delimiter", 2, 0),
-    ("type_parameters_elements", "type_parameter_delimiter", 2, 0),
-    ("types", "type_delimiter", 2, 0),
+    ("enum_body_elements", "item_delimiter", 2, 2),
+    ("export_specifiers", "item_delimiter", 2, 0),
+    ("formal_parameters_elements", "item_delimiter", 2, 0),
+    ("import_specifiers", "item_delimiter", 2, 0),
+    ("object_type_content", "item_delimiter", 3, 2),
+    ("tuple_type_members", "item_delimiter", 2, 0),
+    ("type_parameters_elements", "item_delimiter", 2, 0),
+    ("types", "item_delimiter", 2, 0),
 ];
 
 pub const INDENT_KIND: u16 = 186;
@@ -4780,7 +4780,7 @@ pub static SEATS_CLASS_DECLARATION_DECORATOR: &[u16] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_ENUM_BODY_ELEMENTS_ELEMENT: &[u16] = &[
+pub static SEATS_ENUM_BODY_ELEMENTS_ITEM: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
@@ -4804,7 +4804,7 @@ pub static SEATS_ENUM_BODY_ELEMENTS_ELEMENT: &[u16] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_EXPORT_SPECIFIERS_EXPORT_SPECIFIER: &[u16] = &[
+pub static SEATS_EXPORT_SPECIFIERS_ITEM: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
@@ -4892,7 +4892,7 @@ pub static SEATS_EXTENDS_TYPE_CLAUSE_TYPE: &[u16] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER: &[u16] = &[
+pub static SEATS_FORMAL_PARAMETERS_ELEMENTS_ITEM: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
@@ -4947,7 +4947,7 @@ pub static SEATS_IMPLEMENTS_CLAUSE_TYPE: &[u16] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_IMPORT_SPECIFIERS_IMPORT_SPECIFIER: &[u16] = &[
+pub static SEATS_IMPORT_SPECIFIERS_ITEM: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
@@ -5052,7 +5052,7 @@ pub static SEATS_OBJECT_PATTERN_PROPERTIES: &[u16] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_OBJECT_TYPE_CONTENT_MEMBERS: &[u16] = &[
+pub static SEATS_OBJECT_TYPE_CONTENT_ITEM: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
@@ -5323,7 +5323,7 @@ pub static SEATS_SWITCH_DEFAULT_BODY: &[u16] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER: &[u16] = &[
+pub static SEATS_TUPLE_TYPE_MEMBERS_ITEM: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
@@ -5353,7 +5353,7 @@ pub static SEATS_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER: &[u16] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER: &[u16] = &[
+pub static SEATS_TYPE_PARAMETERS_ELEMENTS_ITEM: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
@@ -5380,7 +5380,7 @@ pub static SEATS_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER: &[u16] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_TYPES_TYPE: &[u16] = &[
+pub static SEATS_TYPES_ITEM: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
@@ -6220,19 +6220,19 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "enumBodyElements", path: "(enum_body_elements)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_BODY_ELEMENTS_ENUM_BODY_ELEMENTS_AFTER, path: "(enum_body_elements)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_BODY_ELEMENTS_ENUM_BODY_ELEMENTS_BEFORE, path: "(enum_body_elements)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "element", path: "(enum_body_elements)/element:", children: &[
-            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_ENUM_BODY_ELEMENTS_ELEMENT, path: "(enum_body_elements)/element:/delimiter" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_BODY_ELEMENTS_ELEMENT_END, path: "(enum_body_elements)/element:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "enumAssignment", path: "(enum_body_elements)/element:/(enum_assignment)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_BODY_ELEMENTS_ELEMENT_ENUM_ASSIGNMENT_AFTER, path: "(enum_body_elements)/element:/(enum_assignment)/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "item", path: "(enum_body_elements)/item:", children: &[
+            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_ENUM_BODY_ELEMENTS_ITEM, path: "(enum_body_elements)/item:/delimiter" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_BODY_ELEMENTS_ITEM_END, path: "(enum_body_elements)/item:/end" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "enumAssignment", path: "(enum_body_elements)/item:/(enum_assignment)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_BODY_ELEMENTS_ITEM_ENUM_ASSIGNMENT_AFTER, path: "(enum_body_elements)/item:/(enum_assignment)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(enum_body_elements)/element:/separator", children: &[
-                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(enum_body_elements)/element:/separator/\",\"", children: &[
-                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_BODY_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER, path: "(enum_body_elements)/element:/separator/\",\"/after" }] },
-                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_BODY_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE, path: "(enum_body_elements)/element:/separator/\",\"/before" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(enum_body_elements)/item:/separator", children: &[
+                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(enum_body_elements)/item:/separator/\",\"", children: &[
+                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_BODY_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER, path: "(enum_body_elements)/item:/separator/\",\"/after" }] },
+                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_BODY_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE, path: "(enum_body_elements)/item:/separator/\",\"/before" }] },
                 ] },
             ] },
-            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_BODY_ELEMENTS_ELEMENT_START, path: "(enum_body_elements)/element:/start" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_BODY_ELEMENTS_ITEM_START, path: "(enum_body_elements)/item:/start" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "enumDeclaration", path: "(enum_declaration)", children: &[
@@ -6273,19 +6273,19 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "exportSpecifiers", path: "(export_specifiers)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIERS_AFTER, path: "(export_specifiers)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIERS_BEFORE, path: "(export_specifiers)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "exportSpecifier", path: "(export_specifiers)/export_specifier:", children: &[
-            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_EXPORT_SPECIFIERS_EXPORT_SPECIFIER, path: "(export_specifiers)/export_specifier:/delimiter" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_END, path: "(export_specifiers)/export_specifier:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "exportSpecifier", path: "(export_specifiers)/export_specifier:/(export_specifier)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_EXPORT_SPECIFIER_AFTER, path: "(export_specifiers)/export_specifier:/(export_specifier)/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "item", path: "(export_specifiers)/item:", children: &[
+            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_EXPORT_SPECIFIERS_ITEM, path: "(export_specifiers)/item:/delimiter" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPORT_SPECIFIERS_ITEM_END, path: "(export_specifiers)/item:/end" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "exportSpecifier", path: "(export_specifiers)/item:/(export_specifier)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPORT_SPECIFIERS_ITEM_EXPORT_SPECIFIER_AFTER, path: "(export_specifiers)/item:/(export_specifier)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(export_specifiers)/export_specifier:/separator", children: &[
-                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(export_specifiers)/export_specifier:/separator/\",\"", children: &[
-                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_SEPARATOR_SPACE_AFTER, path: "(export_specifiers)/export_specifier:/separator/\",\"/after" }] },
-                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_SEPARATOR_SPACE_BEFORE, path: "(export_specifiers)/export_specifier:/separator/\",\"/before" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(export_specifiers)/item:/separator", children: &[
+                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(export_specifiers)/item:/separator/\",\"", children: &[
+                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPORT_SPECIFIERS_ITEM_SEPARATOR_SPACE_AFTER, path: "(export_specifiers)/item:/separator/\",\"/after" }] },
+                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPORT_SPECIFIERS_ITEM_SEPARATOR_SPACE_BEFORE, path: "(export_specifiers)/item:/separator/\",\"/before" }] },
                 ] },
             ] },
-            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_START, path: "(export_specifiers)/export_specifier:/start" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPORT_SPECIFIERS_ITEM_START, path: "(export_specifiers)/item:/start" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "exportStatementDefaultDeclaration", path: "(export_statement_default_declaration)", children: &[
@@ -6576,22 +6576,22 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "formalParametersElements", path: "(formal_parameters_elements)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETERS_ELEMENTS_AFTER, path: "(formal_parameters_elements)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETERS_ELEMENTS_BEFORE, path: "(formal_parameters_elements)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "formalParameter", path: "(formal_parameters_elements)/formal_parameter:", children: &[
-            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER, path: "(formal_parameters_elements)/formal_parameter:/delimiter" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_END, path: "(formal_parameters_elements)/formal_parameter:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "optionalParameter", path: "(formal_parameters_elements)/formal_parameter:/(optional_parameter)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_OPTIONAL_PARAMETER_AFTER, path: "(formal_parameters_elements)/formal_parameter:/(optional_parameter)/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "item", path: "(formal_parameters_elements)/item:", children: &[
+            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM, path: "(formal_parameters_elements)/item:/delimiter" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_END, path: "(formal_parameters_elements)/item:/end" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "optionalParameter", path: "(formal_parameters_elements)/item:/(optional_parameter)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_OPTIONAL_PARAMETER_AFTER, path: "(formal_parameters_elements)/item:/(optional_parameter)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "requiredParameter", path: "(formal_parameters_elements)/formal_parameter:/(required_parameter)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_REQUIRED_PARAMETER_AFTER, path: "(formal_parameters_elements)/formal_parameter:/(required_parameter)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "requiredParameter", path: "(formal_parameters_elements)/item:/(required_parameter)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_REQUIRED_PARAMETER_AFTER, path: "(formal_parameters_elements)/item:/(required_parameter)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(formal_parameters_elements)/formal_parameter:/separator", children: &[
-                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(formal_parameters_elements)/formal_parameter:/separator/\",\"", children: &[
-                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_AFTER, path: "(formal_parameters_elements)/formal_parameter:/separator/\",\"/after" }] },
-                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_BEFORE, path: "(formal_parameters_elements)/formal_parameter:/separator/\",\"/before" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(formal_parameters_elements)/item:/separator", children: &[
+                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(formal_parameters_elements)/item:/separator/\",\"", children: &[
+                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER, path: "(formal_parameters_elements)/item:/separator/\",\"/after" }] },
+                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE, path: "(formal_parameters_elements)/item:/separator/\",\"/before" }] },
                 ] },
             ] },
-            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_START, path: "(formal_parameters_elements)/formal_parameter:/start" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_START, path: "(formal_parameters_elements)/item:/start" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "functionDeclaration", path: "(function_declaration)", children: &[
@@ -6845,22 +6845,22 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "importSpecifiers", path: "(import_specifiers)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIERS_AFTER, path: "(import_specifiers)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIERS_BEFORE, path: "(import_specifiers)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "importSpecifier", path: "(import_specifiers)/import_specifier:", children: &[
-            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_IMPORT_SPECIFIERS_IMPORT_SPECIFIER, path: "(import_specifiers)/import_specifier:/delimiter" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_END, path: "(import_specifiers)/import_specifier:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "importSpecifierAs", path: "(import_specifiers)/import_specifier:/(import_specifier_as)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_IMPORT_SPECIFIER_AS_AFTER, path: "(import_specifiers)/import_specifier:/(import_specifier_as)/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "item", path: "(import_specifiers)/item:", children: &[
+            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_IMPORT_SPECIFIERS_ITEM, path: "(import_specifiers)/item:/delimiter" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIERS_ITEM_END, path: "(import_specifiers)/item:/end" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "importSpecifierAs", path: "(import_specifiers)/item:/(import_specifier_as)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIERS_ITEM_IMPORT_SPECIFIER_AS_AFTER, path: "(import_specifiers)/item:/(import_specifier_as)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "importSpecifierName", path: "(import_specifiers)/import_specifier:/(import_specifier_name)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_IMPORT_SPECIFIER_NAME_AFTER, path: "(import_specifiers)/import_specifier:/(import_specifier_name)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "importSpecifierName", path: "(import_specifiers)/item:/(import_specifier_name)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIERS_ITEM_IMPORT_SPECIFIER_NAME_AFTER, path: "(import_specifiers)/item:/(import_specifier_name)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(import_specifiers)/import_specifier:/separator", children: &[
-                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(import_specifiers)/import_specifier:/separator/\",\"", children: &[
-                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_SEPARATOR_SPACE_AFTER, path: "(import_specifiers)/import_specifier:/separator/\",\"/after" }] },
-                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_SEPARATOR_SPACE_BEFORE, path: "(import_specifiers)/import_specifier:/separator/\",\"/before" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(import_specifiers)/item:/separator", children: &[
+                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(import_specifiers)/item:/separator/\",\"", children: &[
+                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIERS_ITEM_SEPARATOR_SPACE_AFTER, path: "(import_specifiers)/item:/separator/\",\"/after" }] },
+                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIERS_ITEM_SEPARATOR_SPACE_BEFORE, path: "(import_specifiers)/item:/separator/\",\"/before" }] },
                 ] },
             ] },
-            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_START, path: "(import_specifiers)/import_specifier:/start" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPORT_SPECIFIERS_ITEM_START, path: "(import_specifiers)/item:/start" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "importStatement", path: "(import_statement)", children: &[
@@ -7287,48 +7287,48 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "objectTypeContent", path: "(object_type_content)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_OBJECT_TYPE_CONTENT_AFTER, path: "(object_type_content)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_OBJECT_TYPE_CONTENT_BEFORE, path: "(object_type_content)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "members", path: "(object_type_content)/members:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "callSignature", path: "(object_type_content)/members:/(call_signature)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_CALL_SIGNATURE_AFTER, path: "(object_type_content)/members:/(call_signature)/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "item", path: "(object_type_content)/item:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "callSignature", path: "(object_type_content)/item:/(call_signature)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_ITEM_CALL_SIGNATURE_AFTER, path: "(object_type_content)/item:/(call_signature)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "constructSignature", path: "(object_type_content)/members:/(construct_signature)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_CONSTRUCT_SIGNATURE_AFTER, path: "(object_type_content)/members:/(construct_signature)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "constructSignature", path: "(object_type_content)/item:/(construct_signature)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_ITEM_CONSTRUCT_SIGNATURE_AFTER, path: "(object_type_content)/item:/(construct_signature)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_OBJECT_TYPE_CONTENT_MEMBERS, path: "(object_type_content)/members:/delimiter" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_END, path: "(object_type_content)/members:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "exportStatementDefaultDeclaration", path: "(object_type_content)/members:/(export_statement_default_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_EXPORT_STATEMENT_DEFAULT_DECLARATION_AFTER, path: "(object_type_content)/members:/(export_statement_default_declaration)/after" }] },
+            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_OBJECT_TYPE_CONTENT_ITEM, path: "(object_type_content)/item:/delimiter" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_ITEM_END, path: "(object_type_content)/item:/end" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "exportStatementDefaultDeclaration", path: "(object_type_content)/item:/(export_statement_default_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_ITEM_EXPORT_STATEMENT_DEFAULT_DECLARATION_AFTER, path: "(object_type_content)/item:/(export_statement_default_declaration)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "exportStatementDefaultFrom", path: "(object_type_content)/members:/(export_statement_default_from)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_EXPORT_STATEMENT_DEFAULT_FROM_AFTER, path: "(object_type_content)/members:/(export_statement_default_from)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "exportStatementDefaultFrom", path: "(object_type_content)/item:/(export_statement_default_from)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_ITEM_EXPORT_STATEMENT_DEFAULT_FROM_AFTER, path: "(object_type_content)/item:/(export_statement_default_from)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "exportStatementEqualsExport", path: "(object_type_content)/members:/(export_statement_equals_export)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_EXPORT_STATEMENT_EQUALS_EXPORT_AFTER, path: "(object_type_content)/members:/(export_statement_equals_export)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "exportStatementEqualsExport", path: "(object_type_content)/item:/(export_statement_equals_export)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_ITEM_EXPORT_STATEMENT_EQUALS_EXPORT_AFTER, path: "(object_type_content)/item:/(export_statement_equals_export)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "exportStatementNamespaceExport", path: "(object_type_content)/members:/(export_statement_namespace_export)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_EXPORT_STATEMENT_NAMESPACE_EXPORT_AFTER, path: "(object_type_content)/members:/(export_statement_namespace_export)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "exportStatementNamespaceExport", path: "(object_type_content)/item:/(export_statement_namespace_export)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_ITEM_EXPORT_STATEMENT_NAMESPACE_EXPORT_AFTER, path: "(object_type_content)/item:/(export_statement_namespace_export)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "exportStatementTypeExport", path: "(object_type_content)/members:/(export_statement_type_export)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_EXPORT_STATEMENT_TYPE_EXPORT_AFTER, path: "(object_type_content)/members:/(export_statement_type_export)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "exportStatementTypeExport", path: "(object_type_content)/item:/(export_statement_type_export)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_ITEM_EXPORT_STATEMENT_TYPE_EXPORT_AFTER, path: "(object_type_content)/item:/(export_statement_type_export)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "indexSignatureColon", path: "(object_type_content)/members:/(index_signature_colon)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_INDEX_SIGNATURE_COLON_AFTER, path: "(object_type_content)/members:/(index_signature_colon)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "indexSignatureColon", path: "(object_type_content)/item:/(index_signature_colon)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_ITEM_INDEX_SIGNATURE_COLON_AFTER, path: "(object_type_content)/item:/(index_signature_colon)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "indexSignatureMappedTypeClause", path: "(object_type_content)/members:/(index_signature_mapped_type_clause)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_AFTER, path: "(object_type_content)/members:/(index_signature_mapped_type_clause)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "indexSignatureMappedTypeClause", path: "(object_type_content)/item:/(index_signature_mapped_type_clause)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_ITEM_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_AFTER, path: "(object_type_content)/item:/(index_signature_mapped_type_clause)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "methodSignature", path: "(object_type_content)/members:/(method_signature)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_METHOD_SIGNATURE_AFTER, path: "(object_type_content)/members:/(method_signature)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "methodSignature", path: "(object_type_content)/item:/(method_signature)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_ITEM_METHOD_SIGNATURE_AFTER, path: "(object_type_content)/item:/(method_signature)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "propertySignature", path: "(object_type_content)/members:/(property_signature)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_PROPERTY_SIGNATURE_AFTER, path: "(object_type_content)/members:/(property_signature)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "propertySignature", path: "(object_type_content)/item:/(property_signature)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_ITEM_PROPERTY_SIGNATURE_AFTER, path: "(object_type_content)/item:/(property_signature)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(object_type_content)/members:/separator", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_SEPARATOR_SPACE_AFTER, path: "(object_type_content)/members:/separator/after" }] },
-                ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_SEPARATOR_SPACE_BEFORE, path: "(object_type_content)/members:/separator/before" }] },
-                ::sittir_core::options::AddressNode::Spacing { key: "kind", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_SEPARATOR, path: "(object_type_content)/members:/separator/kind" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(object_type_content)/item:/separator", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_ITEM_SEPARATOR_SPACE_AFTER, path: "(object_type_content)/item:/separator/after" }] },
+                ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_ITEM_SEPARATOR_SPACE_BEFORE, path: "(object_type_content)/item:/separator/before" }] },
+                ::sittir_core::options::AddressNode::Spacing { key: "kind", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_ITEM_SEPARATOR, path: "(object_type_content)/item:/separator/kind" }] },
             ] },
-            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_START, path: "(object_type_content)/members:/start" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_ITEM_START, path: "(object_type_content)/item:/start" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "omittingTypeAnnotation", path: "(omitting_type_annotation)", children: &[
@@ -8334,96 +8334,96 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "tupleTypeMembers", path: "(tuple_type_members)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBERS_AFTER, path: "(tuple_type_members)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBERS_BEFORE, path: "(tuple_type_members)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "tupleTypeMember", path: "(tuple_type_members)/tuple_type_member:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "arrayType", path: "(tuple_type_members)/tuple_type_member:/(array_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_ARRAY_TYPE_AFTER, path: "(tuple_type_members)/tuple_type_member:/(array_type)/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "item", path: "(tuple_type_members)/item:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "arrayType", path: "(tuple_type_members)/item:/(array_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_ARRAY_TYPE_AFTER, path: "(tuple_type_members)/item:/(array_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "conditionalType", path: "(tuple_type_members)/tuple_type_member:/(conditional_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_CONDITIONAL_TYPE_AFTER, path: "(tuple_type_members)/tuple_type_member:/(conditional_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "conditionalType", path: "(tuple_type_members)/item:/(conditional_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_CONDITIONAL_TYPE_AFTER, path: "(tuple_type_members)/item:/(conditional_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "constructorType", path: "(tuple_type_members)/tuple_type_member:/(constructor_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_CONSTRUCTOR_TYPE_AFTER, path: "(tuple_type_members)/tuple_type_member:/(constructor_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "constructorType", path: "(tuple_type_members)/item:/(constructor_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_CONSTRUCTOR_TYPE_AFTER, path: "(tuple_type_members)/item:/(constructor_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER, path: "(tuple_type_members)/tuple_type_member:/delimiter" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_END, path: "(tuple_type_members)/tuple_type_member:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "flowMaybeType", path: "(tuple_type_members)/tuple_type_member:/(flow_maybe_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_FLOW_MAYBE_TYPE_AFTER, path: "(tuple_type_members)/tuple_type_member:/(flow_maybe_type)/after" }] },
+            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_TUPLE_TYPE_MEMBERS_ITEM, path: "(tuple_type_members)/item:/delimiter" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_END, path: "(tuple_type_members)/item:/end" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "flowMaybeType", path: "(tuple_type_members)/item:/(flow_maybe_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_FLOW_MAYBE_TYPE_AFTER, path: "(tuple_type_members)/item:/(flow_maybe_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "functionType", path: "(tuple_type_members)/tuple_type_member:/(function_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_FUNCTION_TYPE_AFTER, path: "(tuple_type_members)/tuple_type_member:/(function_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "functionType", path: "(tuple_type_members)/item:/(function_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_FUNCTION_TYPE_AFTER, path: "(tuple_type_members)/item:/(function_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "genericType", path: "(tuple_type_members)/tuple_type_member:/(generic_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_GENERIC_TYPE_AFTER, path: "(tuple_type_members)/tuple_type_member:/(generic_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "genericType", path: "(tuple_type_members)/item:/(generic_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_GENERIC_TYPE_AFTER, path: "(tuple_type_members)/item:/(generic_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "indexTypeQuery", path: "(tuple_type_members)/tuple_type_member:/(index_type_query)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_INDEX_TYPE_QUERY_AFTER, path: "(tuple_type_members)/tuple_type_member:/(index_type_query)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "indexTypeQuery", path: "(tuple_type_members)/item:/(index_type_query)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_INDEX_TYPE_QUERY_AFTER, path: "(tuple_type_members)/item:/(index_type_query)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "inferType", path: "(tuple_type_members)/tuple_type_member:/(infer_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_INFER_TYPE_AFTER, path: "(tuple_type_members)/tuple_type_member:/(infer_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "inferType", path: "(tuple_type_members)/item:/(infer_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_INFER_TYPE_AFTER, path: "(tuple_type_members)/item:/(infer_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "intersectionType", path: "(tuple_type_members)/tuple_type_member:/(intersection_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_INTERSECTION_TYPE_AFTER, path: "(tuple_type_members)/tuple_type_member:/(intersection_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "intersectionType", path: "(tuple_type_members)/item:/(intersection_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_INTERSECTION_TYPE_AFTER, path: "(tuple_type_members)/item:/(intersection_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "literalTypeNegativeNumber", path: "(tuple_type_members)/tuple_type_member:/(literal_type_negative_number)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_LITERAL_TYPE_NEGATIVE_NUMBER_AFTER, path: "(tuple_type_members)/tuple_type_member:/(literal_type_negative_number)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "literalTypeNegativeNumber", path: "(tuple_type_members)/item:/(literal_type_negative_number)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_LITERAL_TYPE_NEGATIVE_NUMBER_AFTER, path: "(tuple_type_members)/item:/(literal_type_negative_number)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "lookupType", path: "(tuple_type_members)/tuple_type_member:/(lookup_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_LOOKUP_TYPE_AFTER, path: "(tuple_type_members)/tuple_type_member:/(lookup_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "lookupType", path: "(tuple_type_members)/item:/(lookup_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_LOOKUP_TYPE_AFTER, path: "(tuple_type_members)/item:/(lookup_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "nestedTypeIdentifier", path: "(tuple_type_members)/tuple_type_member:/(nested_type_identifier)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_NESTED_TYPE_IDENTIFIER_AFTER, path: "(tuple_type_members)/tuple_type_member:/(nested_type_identifier)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "nestedTypeIdentifier", path: "(tuple_type_members)/item:/(nested_type_identifier)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_NESTED_TYPE_IDENTIFIER_AFTER, path: "(tuple_type_members)/item:/(nested_type_identifier)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "objectType", path: "(tuple_type_members)/tuple_type_member:/(object_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_OBJECT_TYPE_AFTER, path: "(tuple_type_members)/tuple_type_member:/(object_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "objectType", path: "(tuple_type_members)/item:/(object_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_OBJECT_TYPE_AFTER, path: "(tuple_type_members)/item:/(object_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "optionalTupleParameter", path: "(tuple_type_members)/tuple_type_member:/(optional_tuple_parameter)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_OPTIONAL_TUPLE_PARAMETER_AFTER, path: "(tuple_type_members)/tuple_type_member:/(optional_tuple_parameter)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "optionalTupleParameter", path: "(tuple_type_members)/item:/(optional_tuple_parameter)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_OPTIONAL_TUPLE_PARAMETER_AFTER, path: "(tuple_type_members)/item:/(optional_tuple_parameter)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "optionalType", path: "(tuple_type_members)/tuple_type_member:/(optional_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_OPTIONAL_TYPE_AFTER, path: "(tuple_type_members)/tuple_type_member:/(optional_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "optionalType", path: "(tuple_type_members)/item:/(optional_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_OPTIONAL_TYPE_AFTER, path: "(tuple_type_members)/item:/(optional_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "parenthesizedType", path: "(tuple_type_members)/tuple_type_member:/(parenthesized_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_PARENTHESIZED_TYPE_AFTER, path: "(tuple_type_members)/tuple_type_member:/(parenthesized_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "parenthesizedType", path: "(tuple_type_members)/item:/(parenthesized_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_PARENTHESIZED_TYPE_AFTER, path: "(tuple_type_members)/item:/(parenthesized_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "readonlyType", path: "(tuple_type_members)/tuple_type_member:/(readonly_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_READONLY_TYPE_AFTER, path: "(tuple_type_members)/tuple_type_member:/(readonly_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "readonlyType", path: "(tuple_type_members)/item:/(readonly_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_READONLY_TYPE_AFTER, path: "(tuple_type_members)/item:/(readonly_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "restType", path: "(tuple_type_members)/tuple_type_member:/(rest_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_REST_TYPE_AFTER, path: "(tuple_type_members)/tuple_type_member:/(rest_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "restType", path: "(tuple_type_members)/item:/(rest_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_REST_TYPE_AFTER, path: "(tuple_type_members)/item:/(rest_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(tuple_type_members)/tuple_type_member:/separator", children: &[
-                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(tuple_type_members)/tuple_type_member:/separator/\",\"", children: &[
-                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_SEPARATOR_SPACE_AFTER, path: "(tuple_type_members)/tuple_type_member:/separator/\",\"/after" }] },
-                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_SEPARATOR_SPACE_BEFORE, path: "(tuple_type_members)/tuple_type_member:/separator/\",\"/before" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(tuple_type_members)/item:/separator", children: &[
+                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(tuple_type_members)/item:/separator/\",\"", children: &[
+                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_SEPARATOR_SPACE_AFTER, path: "(tuple_type_members)/item:/separator/\",\"/after" }] },
+                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_SEPARATOR_SPACE_BEFORE, path: "(tuple_type_members)/item:/separator/\",\"/before" }] },
                 ] },
             ] },
-            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_START, path: "(tuple_type_members)/tuple_type_member:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "stringDouble", path: "(tuple_type_members)/tuple_type_member:/(string_double)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_STRING_DOUBLE_AFTER, path: "(tuple_type_members)/tuple_type_member:/(string_double)/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_START, path: "(tuple_type_members)/item:/start" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "stringDouble", path: "(tuple_type_members)/item:/(string_double)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_STRING_DOUBLE_AFTER, path: "(tuple_type_members)/item:/(string_double)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "stringSingle", path: "(tuple_type_members)/tuple_type_member:/(string_single)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_STRING_SINGLE_AFTER, path: "(tuple_type_members)/tuple_type_member:/(string_single)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "stringSingle", path: "(tuple_type_members)/item:/(string_single)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_STRING_SINGLE_AFTER, path: "(tuple_type_members)/item:/(string_single)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "templateLiteralType", path: "(tuple_type_members)/tuple_type_member:/(template_literal_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_TEMPLATE_LITERAL_TYPE_AFTER, path: "(tuple_type_members)/tuple_type_member:/(template_literal_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "templateLiteralType", path: "(tuple_type_members)/item:/(template_literal_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_TEMPLATE_LITERAL_TYPE_AFTER, path: "(tuple_type_members)/item:/(template_literal_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "tupleParameter", path: "(tuple_type_members)/tuple_type_member:/(tuple_parameter)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_TUPLE_PARAMETER_AFTER, path: "(tuple_type_members)/tuple_type_member:/(tuple_parameter)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "tupleParameter", path: "(tuple_type_members)/item:/(tuple_parameter)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_TUPLE_PARAMETER_AFTER, path: "(tuple_type_members)/item:/(tuple_parameter)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "tupleType", path: "(tuple_type_members)/tuple_type_member:/(tuple_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_TUPLE_TYPE_AFTER, path: "(tuple_type_members)/tuple_type_member:/(tuple_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "tupleType", path: "(tuple_type_members)/item:/(tuple_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_TUPLE_TYPE_AFTER, path: "(tuple_type_members)/item:/(tuple_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "typeQuery", path: "(tuple_type_members)/tuple_type_member:/(type_query)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_TYPE_QUERY_AFTER, path: "(tuple_type_members)/tuple_type_member:/(type_query)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "typeQuery", path: "(tuple_type_members)/item:/(type_query)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_TYPE_QUERY_AFTER, path: "(tuple_type_members)/item:/(type_query)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "typeQueryCallExpressionInTypeAnnotation", path: "(tuple_type_members)/tuple_type_member:/(type_query_call_expression_in_type_annotation)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION_AFTER, path: "(tuple_type_members)/tuple_type_member:/(type_query_call_expression_in_type_annotation)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "typeQueryCallExpressionInTypeAnnotation", path: "(tuple_type_members)/item:/(type_query_call_expression_in_type_annotation)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION_AFTER, path: "(tuple_type_members)/item:/(type_query_call_expression_in_type_annotation)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "typeQueryMemberExpressionInTypeAnnotation", path: "(tuple_type_members)/tuple_type_member:/(type_query_member_expression_in_type_annotation)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION_AFTER, path: "(tuple_type_members)/tuple_type_member:/(type_query_member_expression_in_type_annotation)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "typeQueryMemberExpressionInTypeAnnotation", path: "(tuple_type_members)/item:/(type_query_member_expression_in_type_annotation)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION_AFTER, path: "(tuple_type_members)/item:/(type_query_member_expression_in_type_annotation)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "unionType", path: "(tuple_type_members)/tuple_type_member:/(union_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_UNION_TYPE_AFTER, path: "(tuple_type_members)/tuple_type_member:/(union_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "unionType", path: "(tuple_type_members)/item:/(union_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_MEMBERS_ITEM_UNION_TYPE_AFTER, path: "(tuple_type_members)/item:/(union_type)/after" }] },
             ] },
         ] },
     ] },
@@ -8483,18 +8483,18 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "typeParametersElements", path: "(type_parameters_elements)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETERS_ELEMENTS_AFTER, path: "(type_parameters_elements)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETERS_ELEMENTS_BEFORE, path: "(type_parameters_elements)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "typeParameter", path: "(type_parameters_elements)/type_parameter:", children: &[
-            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER, path: "(type_parameters_elements)/type_parameter:/delimiter" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_END, path: "(type_parameters_elements)/type_parameter:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(type_parameters_elements)/type_parameter:/separator", children: &[
-                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(type_parameters_elements)/type_parameter:/separator/\",\"", children: &[
-                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_SEPARATOR_SPACE_AFTER, path: "(type_parameters_elements)/type_parameter:/separator/\",\"/after" }] },
-                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_SEPARATOR_SPACE_BEFORE, path: "(type_parameters_elements)/type_parameter:/separator/\",\"/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "item", path: "(type_parameters_elements)/item:", children: &[
+            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_TYPE_PARAMETERS_ELEMENTS_ITEM, path: "(type_parameters_elements)/item:/delimiter" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_END, path: "(type_parameters_elements)/item:/end" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(type_parameters_elements)/item:/separator", children: &[
+                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(type_parameters_elements)/item:/separator/\",\"", children: &[
+                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER, path: "(type_parameters_elements)/item:/separator/\",\"/after" }] },
+                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE, path: "(type_parameters_elements)/item:/separator/\",\"/before" }] },
                 ] },
             ] },
-            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_START, path: "(type_parameters_elements)/type_parameter:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "typeParameter", path: "(type_parameters_elements)/type_parameter:/(type_parameter)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_TYPE_PARAMETER_AFTER, path: "(type_parameters_elements)/type_parameter:/(type_parameter)/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_START, path: "(type_parameters_elements)/item:/start" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "typeParameter", path: "(type_parameters_elements)/item:/(type_parameter)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_TYPE_PARAMETER_AFTER, path: "(type_parameters_elements)/item:/(type_parameter)/after" }] },
             ] },
         ] },
     ] },
@@ -8570,84 +8570,84 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "types", path: "(types)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPES_AFTER, path: "(types)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPES_BEFORE, path: "(types)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "type", path: "(types)/type:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "arrayType", path: "(types)/type:/(array_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_ARRAY_TYPE_AFTER, path: "(types)/type:/(array_type)/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "item", path: "(types)/item:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "arrayType", path: "(types)/item:/(array_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_ARRAY_TYPE_AFTER, path: "(types)/item:/(array_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "conditionalType", path: "(types)/type:/(conditional_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_CONDITIONAL_TYPE_AFTER, path: "(types)/type:/(conditional_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "conditionalType", path: "(types)/item:/(conditional_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_CONDITIONAL_TYPE_AFTER, path: "(types)/item:/(conditional_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "constructorType", path: "(types)/type:/(constructor_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_CONSTRUCTOR_TYPE_AFTER, path: "(types)/type:/(constructor_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "constructorType", path: "(types)/item:/(constructor_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_CONSTRUCTOR_TYPE_AFTER, path: "(types)/item:/(constructor_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_TYPES_TYPE, path: "(types)/type:/delimiter" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_END, path: "(types)/type:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "flowMaybeType", path: "(types)/type:/(flow_maybe_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_FLOW_MAYBE_TYPE_AFTER, path: "(types)/type:/(flow_maybe_type)/after" }] },
+            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_TYPES_ITEM, path: "(types)/item:/delimiter" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_END, path: "(types)/item:/end" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "flowMaybeType", path: "(types)/item:/(flow_maybe_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_FLOW_MAYBE_TYPE_AFTER, path: "(types)/item:/(flow_maybe_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "functionType", path: "(types)/type:/(function_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_FUNCTION_TYPE_AFTER, path: "(types)/type:/(function_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "functionType", path: "(types)/item:/(function_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_FUNCTION_TYPE_AFTER, path: "(types)/item:/(function_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "genericType", path: "(types)/type:/(generic_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_GENERIC_TYPE_AFTER, path: "(types)/type:/(generic_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "genericType", path: "(types)/item:/(generic_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_GENERIC_TYPE_AFTER, path: "(types)/item:/(generic_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "indexTypeQuery", path: "(types)/type:/(index_type_query)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_INDEX_TYPE_QUERY_AFTER, path: "(types)/type:/(index_type_query)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "indexTypeQuery", path: "(types)/item:/(index_type_query)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_INDEX_TYPE_QUERY_AFTER, path: "(types)/item:/(index_type_query)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "inferType", path: "(types)/type:/(infer_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_INFER_TYPE_AFTER, path: "(types)/type:/(infer_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "inferType", path: "(types)/item:/(infer_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_INFER_TYPE_AFTER, path: "(types)/item:/(infer_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "intersectionType", path: "(types)/type:/(intersection_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_INTERSECTION_TYPE_AFTER, path: "(types)/type:/(intersection_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "intersectionType", path: "(types)/item:/(intersection_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_INTERSECTION_TYPE_AFTER, path: "(types)/item:/(intersection_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "literalTypeNegativeNumber", path: "(types)/type:/(literal_type_negative_number)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_LITERAL_TYPE_NEGATIVE_NUMBER_AFTER, path: "(types)/type:/(literal_type_negative_number)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "literalTypeNegativeNumber", path: "(types)/item:/(literal_type_negative_number)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_LITERAL_TYPE_NEGATIVE_NUMBER_AFTER, path: "(types)/item:/(literal_type_negative_number)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "lookupType", path: "(types)/type:/(lookup_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_LOOKUP_TYPE_AFTER, path: "(types)/type:/(lookup_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "lookupType", path: "(types)/item:/(lookup_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_LOOKUP_TYPE_AFTER, path: "(types)/item:/(lookup_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "nestedTypeIdentifier", path: "(types)/type:/(nested_type_identifier)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_NESTED_TYPE_IDENTIFIER_AFTER, path: "(types)/type:/(nested_type_identifier)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "nestedTypeIdentifier", path: "(types)/item:/(nested_type_identifier)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_NESTED_TYPE_IDENTIFIER_AFTER, path: "(types)/item:/(nested_type_identifier)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "objectType", path: "(types)/type:/(object_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_OBJECT_TYPE_AFTER, path: "(types)/type:/(object_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "objectType", path: "(types)/item:/(object_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_OBJECT_TYPE_AFTER, path: "(types)/item:/(object_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "parenthesizedType", path: "(types)/type:/(parenthesized_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_PARENTHESIZED_TYPE_AFTER, path: "(types)/type:/(parenthesized_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "parenthesizedType", path: "(types)/item:/(parenthesized_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_PARENTHESIZED_TYPE_AFTER, path: "(types)/item:/(parenthesized_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "readonlyType", path: "(types)/type:/(readonly_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_READONLY_TYPE_AFTER, path: "(types)/type:/(readonly_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "readonlyType", path: "(types)/item:/(readonly_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_READONLY_TYPE_AFTER, path: "(types)/item:/(readonly_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(types)/type:/separator", children: &[
-                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(types)/type:/separator/\",\"", children: &[
-                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_SEPARATOR_SPACE_AFTER, path: "(types)/type:/separator/\",\"/after" }] },
-                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_SEPARATOR_SPACE_BEFORE, path: "(types)/type:/separator/\",\"/before" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(types)/item:/separator", children: &[
+                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(types)/item:/separator/\",\"", children: &[
+                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_SEPARATOR_SPACE_AFTER, path: "(types)/item:/separator/\",\"/after" }] },
+                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_SEPARATOR_SPACE_BEFORE, path: "(types)/item:/separator/\",\"/before" }] },
                 ] },
             ] },
-            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_START, path: "(types)/type:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "stringDouble", path: "(types)/type:/(string_double)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_STRING_DOUBLE_AFTER, path: "(types)/type:/(string_double)/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_START, path: "(types)/item:/start" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "stringDouble", path: "(types)/item:/(string_double)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_STRING_DOUBLE_AFTER, path: "(types)/item:/(string_double)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "stringSingle", path: "(types)/type:/(string_single)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_STRING_SINGLE_AFTER, path: "(types)/type:/(string_single)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "stringSingle", path: "(types)/item:/(string_single)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_STRING_SINGLE_AFTER, path: "(types)/item:/(string_single)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "templateLiteralType", path: "(types)/type:/(template_literal_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_TEMPLATE_LITERAL_TYPE_AFTER, path: "(types)/type:/(template_literal_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "templateLiteralType", path: "(types)/item:/(template_literal_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_TEMPLATE_LITERAL_TYPE_AFTER, path: "(types)/item:/(template_literal_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "tupleType", path: "(types)/type:/(tuple_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_TUPLE_TYPE_AFTER, path: "(types)/type:/(tuple_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "tupleType", path: "(types)/item:/(tuple_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_TUPLE_TYPE_AFTER, path: "(types)/item:/(tuple_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "typeQuery", path: "(types)/type:/(type_query)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_TYPE_QUERY_AFTER, path: "(types)/type:/(type_query)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "typeQuery", path: "(types)/item:/(type_query)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_TYPE_QUERY_AFTER, path: "(types)/item:/(type_query)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "typeQueryCallExpressionInTypeAnnotation", path: "(types)/type:/(type_query_call_expression_in_type_annotation)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION_AFTER, path: "(types)/type:/(type_query_call_expression_in_type_annotation)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "typeQueryCallExpressionInTypeAnnotation", path: "(types)/item:/(type_query_call_expression_in_type_annotation)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION_AFTER, path: "(types)/item:/(type_query_call_expression_in_type_annotation)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "typeQueryMemberExpressionInTypeAnnotation", path: "(types)/type:/(type_query_member_expression_in_type_annotation)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION_AFTER, path: "(types)/type:/(type_query_member_expression_in_type_annotation)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "typeQueryMemberExpressionInTypeAnnotation", path: "(types)/item:/(type_query_member_expression_in_type_annotation)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION_AFTER, path: "(types)/item:/(type_query_member_expression_in_type_annotation)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "unionType", path: "(types)/type:/(union_type)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_TYPE_UNION_TYPE_AFTER, path: "(types)/type:/(union_type)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "unionType", path: "(types)/item:/(union_type)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_UNION_TYPE_AFTER, path: "(types)/item:/(union_type)/after" }] },
             ] },
         ] },
     ] },

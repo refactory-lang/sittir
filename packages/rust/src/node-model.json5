@@ -341,7 +341,7 @@
     "raw_string_literal.string_content": {
       "string_content": "raw_string_literal_content"
     },
-    "types.type": {
+    "types.item": {
       "type_identifier": "identifier"
     },
     "closure_expression_block.return_type": {
@@ -2477,7 +2477,7 @@
       }
     },
     "macro_rules": {
-      "macro_rule": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2486,7 +2486,7 @@
       }
     },
     "enum_variant_list_elements": {
-      "element": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2495,7 +2495,7 @@
       }
     },
     "field_declaration_list_elements": {
-      "element": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2504,7 +2504,7 @@
       }
     },
     "ordered_field_declaration_list_elements": {
-      "element": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2513,7 +2513,7 @@
       }
     },
     "where_predicates": {
-      "where_predicate": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2522,7 +2522,7 @@
       }
     },
     "type_parameters_elements": {
-      "element": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2531,7 +2531,7 @@
       }
     },
     "use_clauses": {
-      "use_clause": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2540,7 +2540,7 @@
       }
     },
     "parameters_elements": {
-      "element": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2549,7 +2549,7 @@
       }
     },
     "lifetimes": {
-      "lifetime": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2558,7 +2558,7 @@
       }
     },
     "types": {
-      "type": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2567,7 +2567,7 @@
       }
     },
     "use_bounds_elements": {
-      "element": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2576,7 +2576,7 @@
       }
     },
     "type_arguments_elements": {
-      "element": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2585,7 +2585,7 @@
       }
     },
     "arguments_elements": {
-      "element": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2594,7 +2594,7 @@
       }
     },
     "expressions": {
-      "expression": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2603,7 +2603,7 @@
       }
     },
     "field_initializer_list_elements": {
-      "element": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2612,7 +2612,7 @@
       }
     },
     "tuple_pattern_elements": {
-      "element": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2621,7 +2621,7 @@
       }
     },
     "patterns": {
-      "pattern": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2630,7 +2630,7 @@
       }
     },
     "struct_pattern_elements": {
-      "element": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -4953,7 +4953,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "element"
+        "item"
       ],
       "bareAccepts": [
         "_range_expression_bare",
@@ -9793,7 +9793,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "element"
+        "item"
       ],
       "bareAccepts": [
         "attributed_enum_variant",
@@ -10480,7 +10480,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "expression"
+        "item"
       ],
       "bareAccepts": [
         "_range_expression_bare",
@@ -10870,7 +10870,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "element"
+        "item"
       ],
       "bareAccepts": [
         "attributed_field_declaration",
@@ -11207,7 +11207,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "element"
+        "item"
       ],
       "bareAccepts": [
         "_range_expression_bare",
@@ -14803,7 +14803,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "lifetime"
+        "item"
       ],
       "bareAccepts": [
         "identifier",
@@ -15574,7 +15574,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "macro_rule"
+        "item"
       ],
       "bareAccepts": [
         "macro_rule"
@@ -16988,7 +16988,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "element"
+        "item"
       ],
       "bareAccepts": [
         "abstract_type",
@@ -17247,7 +17247,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "element"
+        "item"
       ],
       "bareAccepts": [
         "abstract_type",
@@ -17468,7 +17468,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "pattern"
+        "item"
       ],
       "bareAccepts": [
         "block",
@@ -22259,7 +22259,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "element"
+        "item"
       ],
       "bareAccepts": [
         "field_pattern_named",
@@ -23611,7 +23611,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "element"
+        "item"
       ],
       "bareAccepts": [
         "block",
@@ -24045,7 +24045,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "element"
+        "item"
       ],
       "bareAccepts": [
         "abstract_type",
@@ -24571,7 +24571,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "element"
+        "item"
       ],
       "bareAccepts": [
         "attributed_type_parameter",
@@ -24601,7 +24601,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "type"
+        "item"
       ],
       "bareAccepts": [
         "abstract_type",
@@ -25251,7 +25251,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "element"
+        "item"
       ],
       "bareAccepts": [
         "identifier",
@@ -25288,7 +25288,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "use_clause"
+        "item"
       ],
       "bareAccepts": [
         "crate",
@@ -26497,7 +26497,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "where_predicate"
+        "item"
       ],
       "bareAccepts": [
         "where_predicate"

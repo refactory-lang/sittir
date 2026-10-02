@@ -20,7 +20,7 @@ describe('a list owner', () => {
 	});
 	it('the list slot setter takes the list factory arguments and keeps the elements it is given', () => {
 		const ps = fnOf('function f(a: number, b: string) {}\n').parameters();
-		expect(ps.$with.formalParametersElements(ps.at(0)).$render()).toBe('(a: number)');
-		expect(ps.$with.formalParametersElements({ delimiter: Delimiter.Trailing }, ps.at(0)).$render()).toBe('(a: number,)');
+		expect(ps.$with.elements(ps.at(0)).$render()).toBe('(a: number)');
+		expect(ps.$with.elements({ delimiter: Delimiter.Trailing }, ps.at(0)).$render()).toBe('(a: number,)');
 	});
 });

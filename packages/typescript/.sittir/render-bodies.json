@@ -2117,7 +2117,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -2296,7 +2296,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "export_specifier"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -3228,7 +3228,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "formal_parameter"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -4108,7 +4108,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "import_specifier"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -6001,7 +6001,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "members"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -7689,7 +7689,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "tuple_type_member"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -7925,7 +7925,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type_parameter"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -8179,7 +8179,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "item"
 		},
 		{
 			"kind": "seam",

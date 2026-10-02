@@ -358,7 +358,7 @@ export default sittirGrammar(base, {
 	rules: {
 		// See docs/python-grammar-sittir-glossary.md::tuple
 		_tuple_elements: vocabulary(($) => {
-			const element = () => field('element', choice($.expression, $.yield, $.list_splat, $.parenthesized_list_splat));
+			const element = () => field('item', choice($.expression, $.yield, $.list_splat, $.parenthesized_list_splat));
 			return seq(seq(element(), ','), repeat(seq(element(), ',')), optional(element()));
 		}),
 		tuple: reauthored(

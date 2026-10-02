@@ -40,8 +40,8 @@ describe('a list owner', () => {
 	it('the list slot setter on a parsed owner takes the list factory arguments', () => {
 		const ps = fnOf('fn f(a: u8) {}\n').parameters();
 		const q = rs.build.parameter({ name: 'q', type: 'u8' });
-		expect(ps.$with.parametersElements({ delimiter: Delimiter.Trailing }, q).$render()).toBe('(q: u8,)');
-		expect(ps.$with.parametersElements(q).$render()).toBe('(q: u8)');
+		expect(ps.$with.elements({ delimiter: Delimiter.Trailing }, q).$render()).toBe('(q: u8,)');
+		expect(ps.$with.elements(q).$render()).toBe('(q: u8)');
 	});
 	it('the list slot setter on a built owner takes the list factory arguments', () => {
 		const q = rs.build.parameter({ name: 'q', type: 'u8' });
@@ -51,7 +51,7 @@ describe('a list owner', () => {
 	it('$with on an owner is not callable: the list is set through its slot', () => {
 		const ps = fnOf('fn f(a: u8) {}\n').parameters();
 		expect(typeof ps.$with).toBe('object');
-		expect(typeof ps.$with.parametersElements).toBe('function');
+		expect(typeof ps.$with.elements).toBe('function');
 	});
 	it('writes its members as enumerable own properties; the index getters of a parsed owner stay off the keys', () => {
 		const ps = fnOf('fn f(a: u8) {}\n').parameters();

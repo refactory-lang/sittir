@@ -99,7 +99,7 @@
 	"argument_list_elements": [
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		}
 	],
 	"as_pattern": [
@@ -577,7 +577,7 @@
 	"case_patterns": [
 		{
 			"kind": "slot",
-			"name": "case_pattern"
+			"name": "item"
 		}
 	],
 	"case_tuple_pattern": [
@@ -759,7 +759,7 @@
 	"collection_elements": [
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		}
 	],
 	"comment": [
@@ -1120,7 +1120,7 @@
 	"dict_pattern_elements": [
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		}
 	],
 	"dictionary": [
@@ -1200,7 +1200,7 @@
 	"dictionary_elements": [
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		}
 	],
 	"dictionary_splat": [
@@ -1599,7 +1599,7 @@
 	"expression_list": [
 		{
 			"kind": "slot",
-			"name": "expression"
+			"name": "item"
 		}
 	],
 	"expression_statement": [
@@ -1611,7 +1611,7 @@
 	"expression_statement_tuple": [
 		{
 			"kind": "slot",
-			"name": "expression"
+			"name": "item"
 		}
 	],
 	"finally_clause": [
@@ -2855,7 +2855,7 @@
 	"list_pattern_case_patterns": [
 		{
 			"kind": "slot",
-			"name": "case_pattern"
+			"name": "item"
 		}
 	],
 	"list_splat": [
@@ -3178,7 +3178,7 @@
 	"parameters_elements": [
 		{
 			"kind": "slot",
-			"name": "parameter"
+			"name": "item"
 		}
 	],
 	"parenthesized_expression": [
@@ -3277,13 +3277,13 @@
 	"pattern_list": [
 		{
 			"kind": "slot",
-			"name": "pattern"
+			"name": "item"
 		}
 	],
 	"patterns": [
 		{
 			"kind": "slot",
-			"name": "pattern"
+			"name": "item"
 		}
 	],
 	"print_arguments": [
@@ -3592,7 +3592,7 @@
 	"simple_statements_elements": [
 		{
 			"kind": "slot",
-			"name": "simple_statement"
+			"name": "item"
 		}
 	],
 	"slice": [
@@ -3969,7 +3969,7 @@
 	"tuple_elements": [
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		}
 	],
 	"tuple_pattern": [
@@ -4165,7 +4165,7 @@
 	"types": [
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "item"
 		}
 	],
 	"unary_operator": [
@@ -4281,7 +4281,7 @@
 	"with_clause_bare": [
 		{
 			"kind": "slot",
-			"name": "with_item"
+			"name": "item"
 		}
 	],
 	"with_clause_paren": [
@@ -4317,7 +4317,7 @@
 	"with_clause_with_items": [
 		{
 			"kind": "slot",
-			"name": "with_item"
+			"name": "item"
 		}
 	],
 	"with_item": [

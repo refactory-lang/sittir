@@ -110,7 +110,7 @@ describe('trivia model facts', () => {
 	it('derives inner gaps from optional and repeat slots between the tokens, in render order', async () => {
 		const rust = await nodeMapOf('rust');
 		expect(innerGapsOf(rust, 'block')).toEqual([{ key: 'statements', precedingTokens: 1 }]);
-		expect(innerGapsOf(rust, 'arguments')).toEqual([{ key: 'arguments_elements', precedingTokens: 1 }]);
+		expect(innerGapsOf(rust, 'arguments')).toEqual([{ key: 'elements', precedingTokens: 1 }]);
 		expect(innerGapsOf(rust, 'function_item')).toEqual([]);
 		expect(innerGapsOf(rust, 'source_file')).toEqual([{ key: 'statements', precedingTokens: 0 }]);
 		expect(innerGapsOf(await nodeMapOf('typescript'), 'program')).toEqual([{ key: 'statements', precedingTokens: 0 }]);

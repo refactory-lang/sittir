@@ -3227,7 +3227,7 @@
       }
     },
     "export_specifiers": {
-      "export_specifier": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3236,7 +3236,7 @@
       }
     },
     "import_specifiers": {
-      "import_specifier": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3245,7 +3245,7 @@
       }
     },
     "formal_parameters_elements": {
-      "formal_parameter": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3263,7 +3263,7 @@
       }
     },
     "enum_body_elements": {
-      "element": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3272,7 +3272,7 @@
       }
     },
     "types": {
-      "type": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3281,7 +3281,7 @@
       }
     },
     "type_parameters_elements": {
-      "type_parameter": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3290,7 +3290,7 @@
       }
     },
     "tuple_type_members": {
-      "tuple_type_member": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3357,7 +3357,7 @@
       }
     },
     "object_type_content": {
-      "members": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -10954,7 +10954,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "element"
+        "item"
       ],
       "bareAccepts": [
         "any_keyword",
@@ -11407,7 +11407,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "export_specifier"
+        "item"
       ],
       "bareAccepts": [
         "export_specifier",
@@ -13507,7 +13507,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "formal_parameter"
+        "item"
       ],
       "bareAccepts": [
         "optional_parameter",
@@ -15411,7 +15411,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "import_specifier"
+        "item"
       ],
       "bareAccepts": [
         "import_specifier_as",
@@ -20579,7 +20579,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "members"
+        "item"
       ],
       "bareAccepts": [
         "any_keyword",
@@ -26377,7 +26377,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "tuple_type_member"
+        "item"
       ],
       "bareAccepts": [
         "any_keyword",
@@ -27023,7 +27023,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "type_parameter"
+        "item"
       ],
       "bareAccepts": [
         "identifier",
@@ -27769,7 +27769,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "type"
+        "item"
       ],
       "bareAccepts": [
         "any_keyword",

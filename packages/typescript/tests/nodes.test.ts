@@ -212,7 +212,7 @@ describe('import_clause sub-factories', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_import_specifier: [
+			_item: [
 				{
 					$type: TSKindId.ImportSpecifierName,
 					$text: 'test',
@@ -267,7 +267,7 @@ describe('import_clause sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_import_specifier: [
+					_item: [
 						{
 							$type: TSKindId.ImportSpecifierName,
 							$text: 'test',
@@ -996,7 +996,7 @@ describe('yield_expression sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_type: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -1024,7 +1024,7 @@ describe('yield_expression sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_type: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
 				} as any
 			} as any,
 			expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
@@ -2361,7 +2361,7 @@ describe('type_assertion', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_type: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
 				} as any
 			} as any,
 			expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
@@ -2381,7 +2381,7 @@ describe('type_assertion', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_type: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
 				} as any
 			} as any,
 			expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
@@ -2443,7 +2443,7 @@ describe('instantiation_expression', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_type: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -2463,7 +2463,7 @@ describe('instantiation_expression', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_type: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -2510,7 +2510,7 @@ describe('extends_clause', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_type: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		} as any);
@@ -2534,7 +2534,7 @@ describe('extends_clause', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_type: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		} as any);
@@ -3496,7 +3496,7 @@ describe('generic_type', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_type: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -3522,7 +3522,7 @@ describe('generic_type', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_type: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -3699,7 +3699,7 @@ describe('type_query_instantiation_expression', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_type: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -3719,7 +3719,7 @@ describe('type_query_instantiation_expression', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_type: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -3965,7 +3965,7 @@ describe('type_arguments', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_type: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+			_item: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
 		} as any);
 		expect(node.$type).toBe(TSKindId.TypeArguments);
 		expect(node.$source).toBe(2);
@@ -3976,7 +3976,7 @@ describe('type_arguments', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_type: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+			_item: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
 		} as any);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -4038,7 +4038,7 @@ describe('type_parameters', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_type_parameter: [
+			_item: [
 				{
 					$type: TSKindId.TypeParameter,
 					$text: 'test',
@@ -4063,7 +4063,7 @@ describe('type_parameters', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_type_parameter: [
+			_item: [
 				{
 					$type: TSKindId.TypeParameter,
 					$text: 'test',
@@ -4689,7 +4689,7 @@ describe('parenthesized_expression_typed sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_type: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -4717,7 +4717,7 @@ describe('parenthesized_expression_typed sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_type: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
 				} as any
 			} as any,
 			expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
@@ -4864,7 +4864,7 @@ describe('parenthesized_expression_typed sub-factories', () => {
 							$text: 'test',
 							$source: 2,
 							$named: true,
-							_type: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+							_item: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
 						} as any
 					} as any
 				}
@@ -4896,7 +4896,7 @@ describe('parenthesized_expression_typed sub-factories', () => {
 							$text: 'test',
 							$source: 2,
 							$named: true,
-							_type: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+							_item: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
 						} as any
 					} as any,
 					expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
@@ -5069,7 +5069,7 @@ describe('export_statement_default_from sub-factories', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_export_specifier: [
+				_item: [
 					{
 						$type: TSKindId.ExportSpecifier,
 						$text: 'test',

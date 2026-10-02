@@ -14,7 +14,7 @@ it('the emitted Options type is pinned', () => {
 it('types every site by kind id at its address and rejects a wrong member at compile time', () => {
 	const ok: Options = {
 		argumentListElements: {
-			element: { separator: { comma: { after: py.kinds.Space } }, delimiter: Delimiter.Trailing }
+			item: { separator: { comma: { after: py.kinds.Space } }, delimiter: Delimiter.Trailing }
 		},
 		block: { statements: { separator: py.kinds.Newline } },
 		module: { statements: { separator: py.kinds.Newline } },
@@ -23,7 +23,7 @@ it('types every site by kind id at its address and rejects a wrong member at com
 	};
 	const bad: Options = {
 		argumentListElements: {
-			element: {
+			item: {
 				// @ts-expect-error a comma is not a whitespace kind
 				separator: { comma: { after: py.kinds.Comma } },
 				// @ts-expect-error the leading flank is fixed here

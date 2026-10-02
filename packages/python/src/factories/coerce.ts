@@ -476,9 +476,9 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 130, 133, 134, 135, 136, 138, 140,
 		141, 142, 144, 145, 146, 147, 148, 149, 167, 168, 169, 170, 171, 172, 175, 180, 181, 200, 202, 206, 207, 208, 209,
 		212, 213, 216, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246, 247, 256, 259,
-		268, 270, 274, 276, 277, 279, 285, 286, 287, 288, 297, 334
+		268, 270, 274, 276, 277, 279, 285, 286, 287, 288, 297, 335
 	]),
-	import_statement: new Set([135, 136, 181, 334]),
+	import_statement: new Set([135, 136, 181, 335]),
 	future_import_statement: new Set([135, 136, 181, 279]),
 	import_list: new Set([136, 181]),
 	print_statement: new Set([
@@ -510,14 +510,14 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 115, 130, 133, 134, 135, 136, 138,
 		140, 141, 142, 144, 145, 146, 147, 148, 149, 167, 168, 169, 170, 171, 172, 175, 179, 180, 181, 200, 202, 206, 207,
 		208, 209, 212, 213, 216, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246, 247,
-		256, 259, 268, 270, 274, 276, 277, 279, 285, 286, 287, 288, 293, 294, 295, 297, 334
+		256, 259, 268, 270, 274, 276, 277, 279, 285, 286, 287, 288, 293, 294, 295, 297, 335
 	]),
 	match_block: new Set([115, 291, 292]),
 	finally_clause: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 115, 130, 133, 134, 135, 136, 138,
 		140, 141, 142, 144, 145, 146, 147, 148, 149, 167, 168, 169, 170, 171, 172, 175, 179, 180, 181, 200, 202, 206, 207,
 		208, 209, 212, 213, 216, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246, 247,
-		256, 259, 268, 270, 274, 276, 277, 279, 285, 286, 287, 288, 293, 294, 295, 297, 334
+		256, 259, 268, 270, 274, 276, 277, 279, 285, 286, 287, 288, 293, 294, 295, 297, 335
 	]),
 	with_item: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
@@ -636,7 +636,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 130, 133, 134, 135, 136, 138, 140,
 		141, 142, 144, 145, 146, 147, 148, 149, 167, 168, 169, 170, 171, 172, 175, 180, 181, 200, 202, 206, 207, 208, 209,
 		212, 213, 216, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246, 247, 256, 268,
-		270, 274, 276, 277, 279, 285, 286, 287, 288, 297, 334
+		270, 274, 276, 277, 279, 285, 286, 287, 288, 297, 335
 	]),
 	subjects: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
@@ -728,7 +728,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 130, 133, 134, 135, 136, 138, 140,
 		141, 142, 144, 145, 146, 147, 148, 149, 167, 168, 169, 170, 171, 172, 175, 180, 181, 200, 202, 206, 207, 208, 209,
 		212, 213, 216, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246, 247, 256, 259,
-		268, 270, 274, 276, 277, 279, 285, 286, 287, 288, 297, 334
+		268, 270, 274, 276, 277, 279, 285, 286, 287, 288, 297, 335
 	]),
 	suite_block: new Set([179]),
 	suite_empty: new Set([115]),
@@ -3321,7 +3321,7 @@ export function coerceToBlock(...input: T.Block.LooseArgs): ReturnType<typeof F.
 export function coerceToExpressionList(...input: T.ExpressionList.LooseArgs): ReturnType<typeof F.buildExpressionList> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExpressionList)) {
 		const data = input[0];
-		const stored = (data as unknown as { _expression?: unknown })._expression;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildExpressionList(
 			{
@@ -3816,7 +3816,7 @@ export function coerceToParametersElements(
 ): ReturnType<typeof F.buildParametersElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ParametersElements)) {
 		const data = input[0];
-		const stored = (data as unknown as { _parameter?: unknown })._parameter;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildParametersElements(
 			{
@@ -3856,7 +3856,7 @@ export function coerceToParametersElements(
 export function coerceToPatterns(...input: T.Patterns.LooseArgs): ReturnType<typeof F.buildPatterns> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Patterns)) {
 		const data = input[0];
-		const stored = (data as unknown as { _pattern?: unknown })._pattern;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildPatterns(
 			{
@@ -4440,7 +4440,7 @@ export function coerceToAugmentedAssignment(
 export function coerceToPatternList(...input: T.PatternList.LooseArgs): ReturnType<typeof F.buildPatternList> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.PatternList)) {
 		const data = input[0];
-		const stored = (data as unknown as { _pattern?: unknown })._pattern;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildPatternList(
 			{
@@ -5032,7 +5032,7 @@ export function coerceToCollectionElements(
 ): ReturnType<typeof F.buildCollectionElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.CollectionElements)) {
 		const data = input[0];
-		const stored = (data as unknown as { _element?: unknown })._element;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildCollectionElements(
 			{
@@ -5458,7 +5458,7 @@ export function coerceToSimpleStatementsElements(
 ): ReturnType<typeof F.buildSimpleStatementsElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.SimpleStatementsElements)) {
 		const data = input[0];
-		const stored = (data as unknown as { _simple_statement?: unknown })._simple_statement;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildSimpleStatementsElements(
 			{
@@ -5581,7 +5581,7 @@ export function coerceToSubjects(...input: T.Subjects.LooseArgs): ReturnType<typ
 export function coerceToCasePatterns(...input: T.CasePatterns.LooseArgs): ReturnType<typeof F.buildCasePatterns> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.CasePatterns)) {
 		const data = input[0];
-		const stored = (data as unknown as { _case_pattern?: unknown })._case_pattern;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildCasePatterns(
 			{
@@ -5609,7 +5609,7 @@ export function coerceToWithClauseWithItems(
 ): ReturnType<typeof F.buildWithClauseWithItems> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.WithClauseWithItems)) {
 		const data = input[0];
-		const stored = (data as unknown as { _with_item?: unknown })._with_item;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildWithClauseWithItems(
 			{
@@ -5631,7 +5631,7 @@ export function coerceToWithClauseWithItems(
 export function coerceToTypes(...input: T.Types.LooseArgs): ReturnType<typeof F.buildTypes> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Types)) {
 		const data = input[0];
-		const stored = (data as unknown as { _type?: unknown })._type;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildTypes(
 			{
@@ -5655,7 +5655,7 @@ export function coerceToArgumentListElements(
 ): ReturnType<typeof F.buildArgumentListElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ArgumentListElements)) {
 		const data = input[0];
-		const stored = (data as unknown as { _element?: unknown })._element;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildArgumentListElements(
 			{
@@ -5747,7 +5747,7 @@ export function coerceToListPatternCasePatterns(
 ): ReturnType<typeof F.buildListPatternCasePatterns> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ListPatternCasePatterns)) {
 		const data = input[0];
-		const stored = (data as unknown as { _case_pattern?: unknown })._case_pattern;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildListPatternCasePatterns(
 			{
@@ -5775,7 +5775,7 @@ export function coerceToDictPatternElements(
 ): ReturnType<typeof F.buildDictPatternElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.DictPatternElements)) {
 		const data = input[0];
-		const stored = (data as unknown as { _element?: unknown })._element;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildDictPatternElements(
 			{
@@ -5880,7 +5880,7 @@ export function coerceToDictionaryElements(
 ): ReturnType<typeof F.buildDictionaryElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.DictionaryElements)) {
 		const data = input[0];
-		const stored = (data as unknown as { _element?: unknown })._element;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildDictionaryElements(
 			{
@@ -5941,7 +5941,7 @@ export function coerceToFormatSpecifierText(
 export function coerceToTupleElements(...input: T.TupleElements.LooseArgs): ReturnType<typeof F.buildTupleElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TupleElements)) {
 		const data = input[0];
-		const stored = (data as unknown as { _element?: unknown })._element;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildTupleElements(
 			{
@@ -7008,7 +7008,7 @@ export function coerceToExpressionStatementTuple(
 ): ReturnType<typeof F.buildExpressionStatementTuple> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExpressionStatementTuple)) {
 		const data = input[0];
-		const stored = (data as unknown as { _expression?: unknown })._expression;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildExpressionStatementTuple(
 			{
@@ -7084,7 +7084,7 @@ export function coerceToExpressionStatementTuple(
 export function coerceToWithClauseBare(...input: T.WithClauseBare.LooseArgs): ReturnType<typeof F.buildWithClauseBare> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.WithClauseBare)) {
 		const data = input[0];
-		const stored = (data as unknown as { _with_item?: unknown })._with_item;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildWithClauseBare(
 			{

@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "f59d24f",
+    "commit": "94ed3fc",
     "grammars": {
         "python": {
             "hoistedKindCount": 45,
@@ -16,21 +16,21 @@
                 "coverage": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 145,
-                    "total": 145
+                    "pass": 146,
+                    "total": 146
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 1402,
+                    "astMatchPass": 1404,
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1402,
-                    "total": 1402
+                    "pass": 1404,
+                    "total": 1404
                 },
                 "from": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 179,
-                    "total": 179
+                    "pass": 180,
+                    "total": 180
                 },
                 "roundtrip": {
                     "astMatchPass": 115,
@@ -81,7 +81,7 @@
             }
         },
         "rust": {
-            "hoistedKindCount": 96,
+            "hoistedKindCount": 98,
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
@@ -205,7 +205,7 @@
     },
     "totals": {
         "fail": 3,
-        "pass": 11973,
-        "total": 11976
+        "pass": 11977,
+        "total": 11980
     }
 }

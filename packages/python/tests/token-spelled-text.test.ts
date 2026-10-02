@@ -8,9 +8,9 @@ type Spelled = { readonly $text?: string; readonly $other?: unknown };
 
 function importPrefixOf(source: string): Spelled {
 	const root = py.parse(source) as unknown as {
-		statements(): readonly { simpleStatementsElements(): { simpleStatements(): readonly unknown[] } }[];
+		statements(): readonly { elements(): { items(): readonly unknown[] } }[];
 	};
-	const statement = root.statements()[0]!.simpleStatementsElements().simpleStatements()[0] as {
+	const statement = root.statements()[0]!.elements().items()[0] as {
 		moduleName(): { prefix(): Spelled };
 	};
 	return statement.moduleName().prefix();

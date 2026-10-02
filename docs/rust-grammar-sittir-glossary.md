@@ -680,7 +680,7 @@ single element keeps its separator; nothing about the list is authored.
 
 The names are the ones enrich derives: the list kind is `expressions`, the
 plural of the element's name, which no other rust list proposes; its item field
-is `expression`, and the owner's slot is `expressions`.
+is `item`, as in every list kind, and the owner's slot is `expressions`.
 
 One `patches:` entry is authored: `tuple_expression: { 1: field('attributes') }`
 fields the attribute repeat, which the
@@ -690,7 +690,7 @@ fields the attribute repeat, which the
 
 Nothing is authored. Upstream writes `seq('(', sepBy1(',', _type),
 optional(','), ')')`; enrich hoists the separated run as the list kind
-`types` (item field `type`), and the owner's slot is `types`. The trailing
+`types` (item field `item`), and the owner's slot is `types`. The trailing
 comma is the list's optional one, so a one-element `(T)` renders without it.
 
 ### `type_item` (`packages/rust/grammar.sittir.ts:760`)

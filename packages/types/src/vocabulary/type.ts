@@ -323,12 +323,12 @@ export namespace Type {
 	export interface Tuple<G extends GrammarContext> extends Simplify<SubKindOf<V.Type<G>>> {
 		// claimed by rt
 		readonly kind: 'type.tuple';
-		readonly tupleTypeElements?: V.Unmapped<'rust:tuple_type_elements'>;
-		// r only
-		// unmapped: <rust:tuple_type_elements>
 		readonly tupleTypeMembers?: V.Unmapped<'typescript:tuple_type_members'>;
 		// t only
 		// unmapped: <typescript:tuple_type_members>
+		readonly types?: V.Unmapped<'rust:types'>;
+		// r only
+		// unmapped: <rust:types>
 	}
 	export interface Union<G extends GrammarContext> extends Simplify<SubKindOf<V.Type<G>>> {
 		// claimed by pt

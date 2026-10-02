@@ -762,6 +762,7 @@ function separatedListTail(members: readonly Rule[], i: number, symbols: SymbolS
 function fieldTerminatedListElements(
 	seqRule: Rule,
 	info: SeparatedListBodyInfo,
+	site: 'list' | 'separated',
 	reserve: (base: string) => string,
 	symbols: SymbolSource,
 	ruleOrigins: ReadonlyMap<string, EnrichRuleOrigin>
@@ -771,12 +772,13 @@ function fieldTerminatedListElements(
 	const unfielded = sites.filter((site) => !isFieldType((site as { type: string }).type));
 	if (unfielded.length === 0) return null;
 	const fielded = sites.find((site) => isFieldType((site as { type: string }).type)) as { name?: string } | undefined;
-	const fieldName = fielded?.name ?? reserve(elementSlotName(info.element, true, ruleOrigins));
+	const fieldName = fielded?.name ?? reserve(elementSlotName(info.element, site, ruleOrigins));
 	return mapTerminatedListElements(seqRule, symbols, (site) => (unfielded.includes(site) ? makeField(fieldName, site) : site));
 }
 
 function fieldSeparatedListElements(
 	seqRule: Rule,
+	site: 'list' | 'separated',
 	reserve: (base: string) => string,
 	symbols: SymbolSource,
 	ruleOrigins: ReadonlyMap<string, EnrichRuleOrigin>
@@ -784,14 +786,14 @@ function fieldSeparatedListElements(
 	const members = (seqRule as unknown as { members?: Rule[] }).members;
 	if (!Array.isArray(members)) return null;
 	const info = separatedListBodyInfo(seqRule, symbols);
-	if (info?.form === 'terminated') return fieldTerminatedListElements(seqRule, info, reserve, symbols, ruleOrigins);
+	if (info?.form === 'terminated') return fieldTerminatedListElements(seqRule, info, site, reserve, symbols, ruleOrigins);
 	for (let i = 0; i < members.length - 1; i++) {
 		const leading = members[i]!;
 		if (isFieldType((leading as { type: string }).type)) continue;
 		const tail = separatedListTail(members, i, symbols);
 		if (!tail) continue;
 		const { repeatCursor, inner, innerElement, outerPrecStack, innerPrecStack } = tail;
-		const fieldName = reserve(elementSlotName(leading, true, ruleOrigins));
+		const fieldName = reserve(elementSlotName(leading, site, ruleOrigins));
 
 		const innerMembers = (inner as unknown as { members: Rule[] }).members;
 		const newInnerMembers = innerMembers.slice();
@@ -812,6 +814,12 @@ function fieldSeparatedListElements(
 		return { ...(seqRule as object), members: newMembers } as Rule;
 	}
 	return null;
+}
+
+function listKindBodySeqs(seqRule: Rule, symbols: SymbolSource): readonly Rule[] {
+	if (separatedListBodyInfo(seqRule, symbols)?.flankCarrying !== true) return [];
+	const members = (seqRule as unknown as { members: readonly Rule[] }).members;
+	return [seqRule, ...members.filter((member) => isSeqType((member as { type: string }).type))];
 }
 
 function applyNodeChoiceFieldWrap(ruleName: string, rule: Rule, mergedRules: Record<string, Rule>, ctx: EnrichCtx): Rule {
@@ -854,6 +862,8 @@ function applyNodeChoiceFieldWrap(ruleName: string, rule: Rule, mergedRules: Rec
 		}
 	};
 	countEligibleRefs(rule);
+
+	const listBodySeqs = new Set<Rule>();
 
 	const visit = (r: Rule, suppressed: boolean, scope: Set<string>): Rule => {
 		if (isFieldType((r as { type: string }).type) || isLexedBoundary(r)) return r;
@@ -900,14 +910,15 @@ function applyNodeChoiceFieldWrap(ruleName: string, rule: Rule, mergedRules: Rec
 			}
 			if (isChoiceType((visitedInner as { type: string }).type) && isAllArmsNodeShaped(visitedInner)) {
 				changed = true;
-				return makeField(reserve(elementSlotName(visitedInner, false, ctx.ruleOrigins), scope), rebuildRepeat(visitedInner));
+				return makeField(reserve(elementSlotName(visitedInner, 'repeat', ctx.ruleOrigins), scope), rebuildRepeat(visitedInner));
 			}
 			if (visitedInner === inner) return r;
 			return rebuildRepeat(visitedInner);
 		}
 
 		if (isSeqType((r as { type: string }).type)) {
-			const sepListRewrite = fieldSeparatedListElements(r, (base) => reserve(base, scope), ctx.sourceSymbols, ctx.ruleOrigins);
+			for (const body of listKindBodySeqs(r, ctx.sourceSymbols)) listBodySeqs.add(body);
+			const sepListRewrite = fieldSeparatedListElements(r, listBodySeqs.has(r) ? 'list' : 'separated', (base) => reserve(base, scope), ctx.sourceSymbols, ctx.ruleOrigins);
 			if (sepListRewrite) {
 				changed = true;
 				r = sepListRewrite;
@@ -2255,8 +2266,9 @@ function listKindElementPlural(info: SeparatedListBodyInfo, ruleOrigins: Readonl
 	return pluralizeFieldName(info.elementName);
 }
 
-function elementSlotName(element: Rule, separated: boolean, ruleOrigins: ReadonlyMap<string, EnrichRuleOrigin>): string {
-	return elementSupertypeOrigin(element, ruleOrigins)?.slot ?? (separated ? deriveElementFieldName(element) : 'elements');
+function elementSlotName(element: Rule, site: 'list' | 'separated' | 'repeat', ruleOrigins: ReadonlyMap<string, EnrichRuleOrigin>): string {
+	if (site === 'list') return 'item';
+	return elementSupertypeOrigin(element, ruleOrigins)?.slot ?? (site === 'separated' ? deriveElementFieldName(element) : 'elements');
 }
 
 function elementChoiceSlots(
@@ -2276,7 +2288,7 @@ function elementChoiceSlots(
 			case CHOICE:
 				if (repeat !== undefined && isTopologyMixed(partitionChoiceArms(node, dslArmStage))) {
 					const authored = authoredAt(repeat.path) ?? authoredAt([...repeat.path, 0]);
-					const found: ElementSlot = { slot: authored ?? elementSlotName(node as Rule, repeat.separated, ruleOrigins), authoredSlot: authored !== undefined };
+					const found: ElementSlot = { slot: authored ?? elementSlotName(node as Rule, repeat.separated ? 'separated' : 'repeat', ruleOrigins), authoredSlot: authored !== undefined };
 					const key = ruleKey(node as RuntimeRule);
 					const known = slots.get(key);
 					if (known !== undefined && known.slot !== found.slot) {

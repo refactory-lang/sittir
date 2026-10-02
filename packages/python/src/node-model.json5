@@ -878,7 +878,7 @@
       }
     },
     "expression_list": {
-      "expression": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1042,7 +1042,7 @@
       }
     },
     "parameters_elements": {
-      "parameter": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1051,7 +1051,7 @@
       }
     },
     "patterns": {
-      "pattern": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1293,7 +1293,7 @@
       }
     },
     "pattern_list": {
-      "pattern": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1628,7 +1628,7 @@
       }
     },
     "collection_elements": {
-      "element": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1797,7 +1797,7 @@
       }
     },
     "simple_statements_elements": {
-      "simple_statement": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1815,7 +1815,7 @@
       }
     },
     "case_patterns": {
-      "case_pattern": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1824,7 +1824,7 @@
       }
     },
     "with_clause_with_items": {
-      "with_item": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1833,7 +1833,7 @@
       }
     },
     "types": {
-      "type": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1842,7 +1842,7 @@
       }
     },
     "argument_list_elements": {
-      "element": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1851,7 +1851,7 @@
       }
     },
     "list_pattern_case_patterns": {
-      "case_pattern": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1860,7 +1860,7 @@
       }
     },
     "dict_pattern_elements": {
-      "element": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1878,7 +1878,7 @@
       }
     },
     "dictionary_elements": {
-      "element": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1896,7 +1896,7 @@
       }
     },
     "tuple_elements": {
-      "element": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2307,7 +2307,7 @@
       }
     },
     "expression_statement_tuple": {
-      "expression": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2316,7 +2316,7 @@
       }
     },
     "with_clause_bare": {
-      "with_item": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3234,7 +3234,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "element"
+        "item"
       ],
       "bareAccepts": [
         "as_pattern",
@@ -4858,7 +4858,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "case_pattern"
+        "item"
       ],
       "bareAccepts": [
         "_simple_pattern",
@@ -5222,7 +5222,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "element"
+        "item"
       ],
       "bareAccepts": [
         "as_pattern",
@@ -6318,7 +6318,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "element"
+        "item"
       ],
       "bareAccepts": [
         "key_value_pattern",
@@ -6493,7 +6493,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "element"
+        "item"
       ],
       "bareAccepts": [
         "as_pattern",
@@ -7850,7 +7850,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "expression"
+        "item"
       ],
       "bareAccepts": [
         "as_pattern",
@@ -8059,7 +8059,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "expression"
+        "item"
       ],
       "bareAccepts": [
         "as_pattern",
@@ -11228,7 +11228,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "case_pattern"
+        "item"
       ],
       "bareAccepts": [
         "_simple_pattern",
@@ -12255,7 +12255,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "parameter"
+        "item"
       ],
       "bareAccepts": [
         "async_keyword",
@@ -12578,7 +12578,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "pattern"
+        "item"
       ],
       "bareAccepts": [
         "async_keyword",
@@ -12613,7 +12613,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "pattern"
+        "item"
       ],
       "bareAccepts": [
         "async_keyword",
@@ -13663,7 +13663,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "simple_statement"
+        "item"
       ],
       "bareAccepts": [
         "aliased_import",
@@ -14980,7 +14980,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "element"
+        "item"
       ],
       "bareAccepts": [
         "as_pattern",
@@ -15563,7 +15563,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "type"
+        "item"
       ],
       "bareAccepts": [
         "as_pattern",
@@ -16041,7 +16041,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "with_item"
+        "item"
       ],
       "bareAccepts": [
         "as_pattern",
@@ -16220,7 +16220,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "with_item"
+        "item"
       ],
       "bareAccepts": [
         "as_pattern",

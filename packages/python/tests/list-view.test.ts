@@ -6,7 +6,7 @@ const py = await createEngine(python);
 
 const dictionaryOf = (source: string) => {
 	const statement = py.parse(source).statements()[0] as any;
-	const dictionary = statement.simpleStatementsElements()[0].content();
+	const dictionary = statement.elements()[0].content();
 	expect(dictionary.$type).toBe(py.kinds.Dictionary);
 	return dictionary;
 };

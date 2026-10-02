@@ -760,7 +760,7 @@ describe('if_statement', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -780,7 +780,7 @@ describe('if_statement', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -803,7 +803,7 @@ describe('elif_clause', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -823,7 +823,7 @@ describe('elif_clause', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -844,7 +844,7 @@ describe('else_clause', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+				_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 			} as any
 		} as any);
 		expect(node.$type).toBe(TSKindId.ElseClause);
@@ -861,7 +861,7 @@ describe('else_clause', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+				_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 			} as any
 		} as any);
 		const rendered = node.$render!();
@@ -937,7 +937,7 @@ describe('match_block sub-factories', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_case_pattern: [
+				_item: [
 					{
 						$type: TSKindId.CasePattern,
 						$text: 'test',
@@ -964,7 +964,7 @@ describe('match_block sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		} as any);
@@ -986,7 +986,7 @@ describe('case_clause', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_case_pattern: [
+				_item: [
 					{
 						$type: TSKindId.CasePattern,
 						$text: 'test',
@@ -1013,7 +1013,7 @@ describe('case_clause', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -1027,7 +1027,7 @@ describe('case_clause', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_case_pattern: [
+				_item: [
 					{
 						$type: TSKindId.CasePattern,
 						$text: 'test',
@@ -1054,7 +1054,7 @@ describe('case_clause', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -1078,7 +1078,7 @@ describe('for_statement', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -1099,7 +1099,7 @@ describe('for_statement', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -1122,7 +1122,7 @@ describe('while_statement', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -1142,7 +1142,7 @@ describe('while_statement', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -1164,7 +1164,7 @@ describe('try_statement', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -1183,7 +1183,7 @@ describe('try_statement', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -1205,7 +1205,7 @@ describe('except_clause', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -1224,7 +1224,7 @@ describe('except_clause', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -1246,7 +1246,7 @@ describe('except_clause sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any,
 			exception: {
@@ -1268,7 +1268,7 @@ describe('except_clause sub-factories', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+				_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 			} as any
 		});
 		expect(node.$type).toBe(TSKindId.ExceptClause);
@@ -1301,7 +1301,7 @@ describe('except_clause sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any,
 			exception: [{ value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any }]
@@ -1322,7 +1322,7 @@ describe('except_clause sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any,
 			exception: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
@@ -1345,7 +1345,7 @@ describe('finally_clause', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+				_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 			} as any
 		} as any);
 		expect(node.$type).toBe(TSKindId.FinallyClause);
@@ -1362,7 +1362,7 @@ describe('finally_clause', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+				_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 			} as any
 		} as any);
 		const rendered = node.$render!();
@@ -1379,7 +1379,7 @@ describe('with_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_with_item: [
+				_item: [
 					{
 						$type: TSKindId.WithItem,
 						$text: 'test',
@@ -1399,7 +1399,7 @@ describe('with_statement', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -1413,7 +1413,7 @@ describe('with_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_with_item: [
+				_item: [
 					{
 						$type: TSKindId.WithItem,
 						$text: 'test',
@@ -1433,7 +1433,7 @@ describe('with_statement', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -1471,7 +1471,7 @@ describe('function_definition', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -1492,7 +1492,7 @@ describe('function_definition', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -1520,7 +1520,7 @@ describe('lambda_parameters', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_parameter: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+			_item: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 		} as any);
 		expect(node.$type).toBe(TSKindId.LambdaParameters);
 		expect(node.$source).toBe(2);
@@ -1531,7 +1531,7 @@ describe('lambda_parameters', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_parameter: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+			_item: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 		} as any);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -1669,7 +1669,7 @@ describe('class_definition', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -1689,7 +1689,7 @@ describe('class_definition', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any
 		});
@@ -1705,7 +1705,7 @@ describe('type_parameter', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_type: [
+			_item: [
 				{
 					$type: TSKindId.Type,
 					$text: 'test',
@@ -1724,7 +1724,7 @@ describe('type_parameter', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_type: [
+			_item: [
 				{
 					$type: TSKindId.Type,
 					$text: 'test',
@@ -1806,7 +1806,7 @@ describe('decorated_definition', () => {
 						$text: 'test',
 						$source: 2,
 						$named: true,
-						_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+						_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 					} as any
 				} as any
 			} as any
@@ -1841,7 +1841,7 @@ describe('decorated_definition', () => {
 						$text: 'test',
 						$source: 2,
 						$named: true,
-						_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+						_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 					} as any
 				} as any
 			} as any
@@ -2915,7 +2915,7 @@ describe('type sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_type: [
+					_item: [
 						{
 							$type: TSKindId.Type,
 							$text: 'test',
@@ -3023,7 +3023,7 @@ describe('generic_type', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_type: [
+					_item: [
 						{
 							$type: TSKindId.Type,
 							$text: 'test',
@@ -3051,7 +3051,7 @@ describe('generic_type', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_type: [
+					_item: [
 						{
 							$type: TSKindId.Type,
 							$text: 'test',
@@ -3223,7 +3223,7 @@ describe('set', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_element: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+			_item: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 		} as any);
 		expect(node.$type).toBe(TSKindId.Set);
 		expect(node.$source).toBe(2);
@@ -3234,7 +3234,7 @@ describe('set', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_element: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+			_item: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 		} as any);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);

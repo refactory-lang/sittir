@@ -100,10 +100,10 @@ export interface AliasedImportTransport {
 export interface ArgumentListElementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _element: Array<SlotValue<ArgumentListElementsElementTransportSlot>>
+  _item: Array<SlotValue<ArgumentListElementsItemTransportSlot>>
   _delimiter?: number
-  _element_separator_space_before?: number
-  _element_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface ArgumentListTransport {
@@ -230,10 +230,10 @@ export interface CaseListPatternTransport {
 export interface CasePatternsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _case_pattern: Array<SlotValue<CasePatternTransport>>
+  _item: Array<SlotValue<CasePatternTransport>>
   _delimiter?: number
-  _case_pattern_separator_space_before?: number
-  _case_pattern_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface CasePatternTransport {
@@ -273,10 +273,10 @@ export interface ClassPatternTransport {
 export interface CollectionElementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _element: Array<SlotValue<CollectionElementsElementTransportSlot>>
+  _item: Array<SlotValue<CollectionElementsItemTransportSlot>>
   _delimiter?: number
-  _element_separator_space_before?: number
-  _element_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface CommentTransport {
@@ -375,10 +375,10 @@ export interface DictionaryComprehensionTransport {
 export interface DictionaryElementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _element: Array<SlotValue<DictionaryElementsElementTransportSlot>>
+  _item: Array<SlotValue<DictionaryElementsItemTransportSlot>>
   _delimiter?: number
-  _element_separator_space_before?: number
-  _element_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface DictionarySplatPatternTransport {
@@ -402,10 +402,10 @@ export interface DictionaryTransport {
 export interface DictPatternElementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _element: Array<SlotValue<DictPatternElementsElementTransportSlot>>
+  _item: Array<SlotValue<DictPatternElementsItemTransportSlot>>
   _delimiter?: number
-  _element_separator_space_before?: number
-  _element_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface DictPatternTransport {
@@ -537,10 +537,10 @@ export interface ExecStatementTransport {
 export interface ExpressionListTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _expression: Array<SlotValue<ExpressionTransport>>
+  _item: Array<SlotValue<ExpressionTransport>>
   _delimiter?: number
-  _expression_separator_space_before?: number
-  _expression_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface ExpressionStatementTransport {
@@ -552,10 +552,10 @@ export interface ExpressionStatementTransport {
 export interface ExpressionStatementTupleTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _expression: Array<SlotValue<ExpressionTransport>>
+  _item: Array<SlotValue<ExpressionTransport>>
   _delimiter?: number
-  _expression_separator_space_before?: number
-  _expression_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface FinallyClauseTransport {
@@ -783,10 +783,10 @@ export interface ListComprehensionTransport {
 export interface ListPatternCasePatternsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _case_pattern: Array<SlotValue<CasePatternTransport>>
+  _item: Array<SlotValue<CasePatternTransport>>
   _delimiter?: number
-  _case_pattern_separator_space_before?: number
-  _case_pattern_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface ListPatternTransport {
@@ -897,10 +897,10 @@ export interface PairTransport {
 export interface ParametersElementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _parameter: Array<SlotValue<ParameterTransport>>
+  _item: Array<SlotValue<ParameterTransport>>
   _delimiter?: number
-  _parameter_separator_space_before?: number
-  _parameter_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface ParametersTransport {
@@ -930,19 +930,19 @@ export interface ParenthesizedListSplatTransport {
 export interface PatternListTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _pattern: Array<SlotValue<PatternTransport>>
+  _item: Array<SlotValue<PatternTransport>>
   _delimiter?: number
-  _pattern_separator_space_before?: number
-  _pattern_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface PatternsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _pattern: Array<SlotValue<PatternTransport>>
+  _item: Array<SlotValue<PatternTransport>>
   _delimiter?: number
-  _pattern_separator_space_before?: number
-  _pattern_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface PrintArgumentsTransport {
@@ -1031,10 +1031,10 @@ export interface SimplePatternTransport {
 export interface SimpleStatementsElementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _simple_statement: Array<SlotValue<SimpleStatementTransport>>
+  _item: Array<SlotValue<SimpleStatementTransport>>
   _delimiter?: number
-  _simple_statement_separator_space_before?: number
-  _simple_statement_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface SimpleStatementsTransport {
@@ -1141,10 +1141,10 @@ export interface TryStatementTransport {
 export interface TupleElementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _element: Array<SlotValue<TupleElementsElementTransportSlot>>
+  _item: Array<SlotValue<TupleElementsItemTransportSlot>>
   _delimiter?: number
-  _element_separator_space_before?: number
-  _element_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface TuplePatternTransport {
@@ -1190,10 +1190,10 @@ export interface TypeParameterTransport {
 export interface TypesTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _type: Array<SlotValue<TypeTransport>>
+  _item: Array<SlotValue<TypeTransport>>
   _delimiter?: number
-  _type_separator_space_before?: number
-  _type_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface TypeTransport {
@@ -1235,10 +1235,10 @@ export interface WhileStatementTransport {
 export interface WithClauseBareTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _with_item: Array<SlotValue<WithItemTransport>>
+  _item: Array<SlotValue<WithItemTransport>>
   _delimiter?: number
-  _with_item_separator_space_before?: number
-  _with_item_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface WithClauseParenTransport {
@@ -1250,10 +1250,10 @@ export interface WithClauseParenTransport {
 export interface WithClauseWithItemsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _with_item: Array<SlotValue<WithItemTransport>>
+  _item: Array<SlotValue<WithItemTransport>>
   _delimiter?: number
-  _with_item_separator_space_before?: number
-  _with_item_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface WithItemTransport {

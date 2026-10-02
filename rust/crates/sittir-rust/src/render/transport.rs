@@ -29732,7 +29732,7 @@ impl ::sittir_core::render::Render for BlockCommentContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum UseClausesUseClauseTransportSlot {
+pub enum UseClausesItemTransportSlot {
     Metavariable(MetavariableTransport),
     Identifier(IdentifierTransport),
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -29766,45 +29766,45 @@ pub enum UseClausesUseClauseTransportSlot {
     Verbatim(VerbatimTransport),
 }
 
-impl ::sittir_core::prepare::Prepare for UseClausesUseClauseTransportSlot {
+impl ::sittir_core::prepare::Prepare for UseClausesItemTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            UseClausesUseClauseTransportSlot::Metavariable(t) => t.prepare(ctx),
-            UseClausesUseClauseTransportSlot::Identifier(t) => t.prepare(ctx),
-            UseClausesUseClauseTransportSlot::ScopedIdentifier(t) => t.prepare(ctx),
-            UseClausesUseClauseTransportSlot::UseAsClause(t) => t.prepare(ctx),
-            UseClausesUseClauseTransportSlot::UseList(t) => t.prepare(ctx),
-            UseClausesUseClauseTransportSlot::ScopedUseList(t) => t.prepare(ctx),
-            UseClausesUseClauseTransportSlot::UseWildcard(t) => t.prepare(ctx),
-            UseClausesUseClauseTransportSlot::Literal19_73_65_6c_66 => Ok(()),
-            UseClausesUseClauseTransportSlot::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            UseClausesUseClauseTransportSlot::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            UseClausesUseClauseTransportSlot::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            UseClausesUseClauseTransportSlot::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            UseClausesUseClauseTransportSlot::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            UseClausesUseClauseTransportSlot::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            UseClausesUseClauseTransportSlot::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            UseClausesUseClauseTransportSlot::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            UseClausesUseClauseTransportSlot::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            UseClausesUseClauseTransportSlot::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            UseClausesUseClauseTransportSlot::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            UseClausesUseClauseTransportSlot::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            UseClausesUseClauseTransportSlot::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            UseClausesUseClauseTransportSlot::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            UseClausesUseClauseTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            UseClausesUseClauseTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            UseClausesUseClauseTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            UseClausesUseClauseTransportSlot::Literal20_73_75_70_65_72 => Ok(()),
-            UseClausesUseClauseTransportSlot::Literal21_63_72_61_74_65 => Ok(()),
-            UseClausesUseClauseTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            UseClausesUseClauseTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            UseClausesUseClauseTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            UseClausesUseClauseTransportSlot::Verbatim(t) => t.prepare(ctx),
+            UseClausesItemTransportSlot::Metavariable(t) => t.prepare(ctx),
+            UseClausesItemTransportSlot::Identifier(t) => t.prepare(ctx),
+            UseClausesItemTransportSlot::ScopedIdentifier(t) => t.prepare(ctx),
+            UseClausesItemTransportSlot::UseAsClause(t) => t.prepare(ctx),
+            UseClausesItemTransportSlot::UseList(t) => t.prepare(ctx),
+            UseClausesItemTransportSlot::ScopedUseList(t) => t.prepare(ctx),
+            UseClausesItemTransportSlot::UseWildcard(t) => t.prepare(ctx),
+            UseClausesItemTransportSlot::Literal19_73_65_6c_66 => Ok(()),
+            UseClausesItemTransportSlot::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            UseClausesItemTransportSlot::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            UseClausesItemTransportSlot::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            UseClausesItemTransportSlot::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            UseClausesItemTransportSlot::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            UseClausesItemTransportSlot::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            UseClausesItemTransportSlot::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            UseClausesItemTransportSlot::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            UseClausesItemTransportSlot::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            UseClausesItemTransportSlot::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            UseClausesItemTransportSlot::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            UseClausesItemTransportSlot::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            UseClausesItemTransportSlot::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            UseClausesItemTransportSlot::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            UseClausesItemTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            UseClausesItemTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            UseClausesItemTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            UseClausesItemTransportSlot::Literal20_73_75_70_65_72 => Ok(()),
+            UseClausesItemTransportSlot::Literal21_63_72_61_74_65 => Ok(()),
+            UseClausesItemTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            UseClausesItemTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            UseClausesItemTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            UseClausesItemTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for UseClausesUseClauseTransportSlot {
+impl ::sittir_core::view::KindOf for UseClausesItemTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Metavariable(inner) => inner.kind_in(kinds),
@@ -29843,7 +29843,7 @@ impl ::sittir_core::view::KindOf for UseClausesUseClauseTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for UseClausesUseClauseTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for UseClausesItemTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -29896,18 +29896,18 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseClausesUseClauseTransportSlot
                         UseWildcardTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in UseClausesUseClauseTransportSlot",
+                        "unknown kind id {other} in UseClausesItemTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in UseClausesUseClauseTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in UseClausesItemTransportSlot")
                 )?;
                 match kind_id {
                     id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
-                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in UseClausesUseClauseTransportSlot"))?,
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in UseClausesItemTransportSlot"))?,
                     })),
                     125 => Ok(Self::Literal19_73_65_6c_66),
                     58 => Ok(Self::Literal22_75_38_5f_6b_65_79_77_6f_72_64),
@@ -29954,136 +29954,136 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseClausesUseClauseTransportSlot
                         UseWildcardTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in UseClausesUseClauseTransportSlot",
+                        "unknown kind id {other} in UseClausesItemTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("UseClausesUseClauseTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("UseClausesItemTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for UseClausesUseClauseTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for UseClausesItemTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("UseClausesUseClauseTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("UseClausesItemTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<UseClausesUseClauseTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<UseClausesItemTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        UseClausesUseClauseTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        UseClausesItemTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<UseClausesUseClauseTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<UseClausesItemTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        UseClausesUseClauseTransportSlot::to_napi_value(env, *val)
+        UseClausesItemTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn use_clauses_use_clause_transport_slot_to_any(t: UseClausesUseClauseTransportSlot) -> AnyTransport {
+fn use_clauses_item_transport_slot_to_any(t: UseClausesItemTransportSlot) -> AnyTransport {
     match t {
-        UseClausesUseClauseTransportSlot::Metavariable(inner) => AnyTransport::Metavariable(inner),
-        UseClausesUseClauseTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        UseClausesUseClauseTransportSlot::ScopedIdentifier(inner) => AnyTransport::ScopedIdentifier(inner),
-        UseClausesUseClauseTransportSlot::UseAsClause(inner) => AnyTransport::UseAsClause(inner),
-        UseClausesUseClauseTransportSlot::UseList(inner) => AnyTransport::UseList(inner),
-        UseClausesUseClauseTransportSlot::ScopedUseList(inner) => AnyTransport::ScopedUseList(inner),
-        UseClausesUseClauseTransportSlot::UseWildcard(inner) => AnyTransport::UseWildcard(inner),
-        UseClausesUseClauseTransportSlot::Literal19_73_65_6c_66 => AnyTransport::Literal19_73_65_6c_66,
-        UseClausesUseClauseTransportSlot::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal22_75_38_5f_6b_65_79_77_6f_72_64,
-        UseClausesUseClauseTransportSlot::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal23_69_38_5f_6b_65_79_77_6f_72_64,
-        UseClausesUseClauseTransportSlot::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64,
-        UseClausesUseClauseTransportSlot::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64,
-        UseClausesUseClauseTransportSlot::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64,
-        UseClausesUseClauseTransportSlot::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64,
-        UseClausesUseClauseTransportSlot::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64,
-        UseClausesUseClauseTransportSlot::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64,
-        UseClausesUseClauseTransportSlot::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64,
-        UseClausesUseClauseTransportSlot::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64,
-        UseClausesUseClauseTransportSlot::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64,
-        UseClausesUseClauseTransportSlot::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64,
-        UseClausesUseClauseTransportSlot::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64,
-        UseClausesUseClauseTransportSlot::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64,
-        UseClausesUseClauseTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64,
-        UseClausesUseClauseTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64,
-        UseClausesUseClauseTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64,
-        UseClausesUseClauseTransportSlot::Literal20_73_75_70_65_72 => AnyTransport::Literal20_73_75_70_65_72,
-        UseClausesUseClauseTransportSlot::Literal21_63_72_61_74_65 => AnyTransport::Literal21_63_72_61_74_65,
-        UseClausesUseClauseTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64,
-        UseClausesUseClauseTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64,
-        UseClausesUseClauseTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64,
-        UseClausesUseClauseTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        UseClausesItemTransportSlot::Metavariable(inner) => AnyTransport::Metavariable(inner),
+        UseClausesItemTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        UseClausesItemTransportSlot::ScopedIdentifier(inner) => AnyTransport::ScopedIdentifier(inner),
+        UseClausesItemTransportSlot::UseAsClause(inner) => AnyTransport::UseAsClause(inner),
+        UseClausesItemTransportSlot::UseList(inner) => AnyTransport::UseList(inner),
+        UseClausesItemTransportSlot::ScopedUseList(inner) => AnyTransport::ScopedUseList(inner),
+        UseClausesItemTransportSlot::UseWildcard(inner) => AnyTransport::UseWildcard(inner),
+        UseClausesItemTransportSlot::Literal19_73_65_6c_66 => AnyTransport::Literal19_73_65_6c_66,
+        UseClausesItemTransportSlot::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal22_75_38_5f_6b_65_79_77_6f_72_64,
+        UseClausesItemTransportSlot::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal23_69_38_5f_6b_65_79_77_6f_72_64,
+        UseClausesItemTransportSlot::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64,
+        UseClausesItemTransportSlot::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64,
+        UseClausesItemTransportSlot::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64,
+        UseClausesItemTransportSlot::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64,
+        UseClausesItemTransportSlot::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64,
+        UseClausesItemTransportSlot::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64,
+        UseClausesItemTransportSlot::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64,
+        UseClausesItemTransportSlot::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64,
+        UseClausesItemTransportSlot::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64,
+        UseClausesItemTransportSlot::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64,
+        UseClausesItemTransportSlot::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64,
+        UseClausesItemTransportSlot::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64,
+        UseClausesItemTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64,
+        UseClausesItemTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64,
+        UseClausesItemTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64,
+        UseClausesItemTransportSlot::Literal20_73_75_70_65_72 => AnyTransport::Literal20_73_75_70_65_72,
+        UseClausesItemTransportSlot::Literal21_63_72_61_74_65 => AnyTransport::Literal21_63_72_61_74_65,
+        UseClausesItemTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64,
+        UseClausesItemTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64,
+        UseClausesItemTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64,
+        UseClausesItemTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl ::sittir_core::render::Render for UseClausesUseClauseTransportSlot {
+impl ::sittir_core::render::Render for UseClausesItemTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            UseClausesUseClauseTransportSlot::Metavariable(inner) => inner.render(w),
-            UseClausesUseClauseTransportSlot::Identifier(inner) => inner.render(w),
-            UseClausesUseClauseTransportSlot::ScopedIdentifier(inner) => inner.render(w),
-            UseClausesUseClauseTransportSlot::UseAsClause(inner) => inner.render(w),
-            UseClausesUseClauseTransportSlot::UseList(inner) => inner.render(w),
-            UseClausesUseClauseTransportSlot::ScopedUseList(inner) => inner.render(w),
-            UseClausesUseClauseTransportSlot::UseWildcard(inner) => inner.render(w),
-            UseClausesUseClauseTransportSlot::Literal19_73_65_6c_66 => w.text("self"),
-            UseClausesUseClauseTransportSlot::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => w.text("u8"),
-            UseClausesUseClauseTransportSlot::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => w.text("i8"),
-            UseClausesUseClauseTransportSlot::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => w.text("u16"),
-            UseClausesUseClauseTransportSlot::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => w.text("i16"),
-            UseClausesUseClauseTransportSlot::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => w.text("u32"),
-            UseClausesUseClauseTransportSlot::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => w.text("i32"),
-            UseClausesUseClauseTransportSlot::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => w.text("u64"),
-            UseClausesUseClauseTransportSlot::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => w.text("i64"),
-            UseClausesUseClauseTransportSlot::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => w.text("u128"),
-            UseClausesUseClauseTransportSlot::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => w.text("i128"),
-            UseClausesUseClauseTransportSlot::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => w.text("isize"),
-            UseClausesUseClauseTransportSlot::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => w.text("usize"),
-            UseClausesUseClauseTransportSlot::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => w.text("f32"),
-            UseClausesUseClauseTransportSlot::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => w.text("f64"),
-            UseClausesUseClauseTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => w.text("bool"),
-            UseClausesUseClauseTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => w.text("str"),
-            UseClausesUseClauseTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => w.text("char"),
-            UseClausesUseClauseTransportSlot::Literal20_73_75_70_65_72 => w.text("super"),
-            UseClausesUseClauseTransportSlot::Literal21_63_72_61_74_65 => w.text("crate"),
-            UseClausesUseClauseTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => w.text("default"),
-            UseClausesUseClauseTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => w.text("union"),
-            UseClausesUseClauseTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => w.text("gen"),
-            UseClausesUseClauseTransportSlot::Verbatim(inner) => inner.render(w),
+            UseClausesItemTransportSlot::Metavariable(inner) => inner.render(w),
+            UseClausesItemTransportSlot::Identifier(inner) => inner.render(w),
+            UseClausesItemTransportSlot::ScopedIdentifier(inner) => inner.render(w),
+            UseClausesItemTransportSlot::UseAsClause(inner) => inner.render(w),
+            UseClausesItemTransportSlot::UseList(inner) => inner.render(w),
+            UseClausesItemTransportSlot::ScopedUseList(inner) => inner.render(w),
+            UseClausesItemTransportSlot::UseWildcard(inner) => inner.render(w),
+            UseClausesItemTransportSlot::Literal19_73_65_6c_66 => w.text("self"),
+            UseClausesItemTransportSlot::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => w.text("u8"),
+            UseClausesItemTransportSlot::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => w.text("i8"),
+            UseClausesItemTransportSlot::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => w.text("u16"),
+            UseClausesItemTransportSlot::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => w.text("i16"),
+            UseClausesItemTransportSlot::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => w.text("u32"),
+            UseClausesItemTransportSlot::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => w.text("i32"),
+            UseClausesItemTransportSlot::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => w.text("u64"),
+            UseClausesItemTransportSlot::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => w.text("i64"),
+            UseClausesItemTransportSlot::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => w.text("u128"),
+            UseClausesItemTransportSlot::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => w.text("i128"),
+            UseClausesItemTransportSlot::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => w.text("isize"),
+            UseClausesItemTransportSlot::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => w.text("usize"),
+            UseClausesItemTransportSlot::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => w.text("f32"),
+            UseClausesItemTransportSlot::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => w.text("f64"),
+            UseClausesItemTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => w.text("bool"),
+            UseClausesItemTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => w.text("str"),
+            UseClausesItemTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => w.text("char"),
+            UseClausesItemTransportSlot::Literal20_73_75_70_65_72 => w.text("super"),
+            UseClausesItemTransportSlot::Literal21_63_72_61_74_65 => w.text("crate"),
+            UseClausesItemTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => w.text("default"),
+            UseClausesItemTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => w.text("union"),
+            UseClausesItemTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => w.text("gen"),
+            UseClausesItemTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub enum UseBoundsElementsElementTransportSlot {
+pub enum UseBoundsElementsItemTransportSlot {
     Lifetime(LifetimeTransport),
     TypeIdentifier(TypeIdentifierTransport),
 }
 
-impl ::sittir_core::prepare::Prepare for UseBoundsElementsElementTransportSlot {
+impl ::sittir_core::prepare::Prepare for UseBoundsElementsItemTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            UseBoundsElementsElementTransportSlot::Lifetime(t) => t.prepare(ctx),
-            UseBoundsElementsElementTransportSlot::TypeIdentifier(t) => t.prepare(ctx),
+            UseBoundsElementsItemTransportSlot::Lifetime(t) => t.prepare(ctx),
+            UseBoundsElementsItemTransportSlot::TypeIdentifier(t) => t.prepare(ctx),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for UseBoundsElementsElementTransportSlot {
+impl ::sittir_core::view::KindOf for UseBoundsElementsItemTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Lifetime(inner) => inner.kind_in(kinds),
@@ -30093,7 +30093,7 @@ impl ::sittir_core::view::KindOf for UseBoundsElementsElementTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for UseBoundsElementsElementTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for UseBoundsElementsItemTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -30108,14 +30108,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseBoundsElementsElementTranspor
                         TypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in UseBoundsElementsElementTransportSlot",
+                        "unknown kind id {other} in UseBoundsElementsItemTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in UseBoundsElementsElementTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in UseBoundsElementsItemTransportSlot")
                 )?;
                 match kind_id {
                     239 => Ok(Self::Lifetime(
@@ -30125,79 +30125,79 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseBoundsElementsElementTranspor
                         TypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in UseBoundsElementsElementTransportSlot",
+                        "unknown kind id {other} in UseBoundsElementsItemTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("UseBoundsElementsElementTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("UseBoundsElementsItemTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for UseBoundsElementsElementTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for UseBoundsElementsItemTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("UseBoundsElementsElementTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("UseBoundsElementsItemTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<UseBoundsElementsElementTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<UseBoundsElementsItemTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        UseBoundsElementsElementTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        UseBoundsElementsItemTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<UseBoundsElementsElementTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<UseBoundsElementsItemTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        UseBoundsElementsElementTransportSlot::to_napi_value(env, *val)
+        UseBoundsElementsItemTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn use_bounds_elements_element_transport_slot_to_any(t: UseBoundsElementsElementTransportSlot) -> AnyTransport {
+fn use_bounds_elements_item_transport_slot_to_any(t: UseBoundsElementsItemTransportSlot) -> AnyTransport {
     match t {
-        UseBoundsElementsElementTransportSlot::Lifetime(inner) => AnyTransport::Lifetime(inner),
-        UseBoundsElementsElementTransportSlot::TypeIdentifier(inner) => AnyTransport::TypeIdentifier(inner),
+        UseBoundsElementsItemTransportSlot::Lifetime(inner) => AnyTransport::Lifetime(inner),
+        UseBoundsElementsItemTransportSlot::TypeIdentifier(inner) => AnyTransport::TypeIdentifier(inner),
     }
 }
 
-impl ::sittir_core::render::Render for UseBoundsElementsElementTransportSlot {
+impl ::sittir_core::render::Render for UseBoundsElementsItemTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            UseBoundsElementsElementTransportSlot::Lifetime(inner) => inner.render(w),
-            UseBoundsElementsElementTransportSlot::TypeIdentifier(inner) => inner.render(w),
+            UseBoundsElementsItemTransportSlot::Lifetime(inner) => inner.render(w),
+            UseBoundsElementsItemTransportSlot::TypeIdentifier(inner) => inner.render(w),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub enum FieldInitializerListElementsElementTransportSlot {
+pub enum FieldInitializerListElementsItemTransportSlot {
     ShorthandFieldInitializer(ShorthandFieldInitializerTransport),
     FieldInitializer(FieldInitializerTransport),
     BaseFieldInitializer(BaseFieldInitializerTransport),
 }
 
-impl ::sittir_core::prepare::Prepare for FieldInitializerListElementsElementTransportSlot {
+impl ::sittir_core::prepare::Prepare for FieldInitializerListElementsItemTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            FieldInitializerListElementsElementTransportSlot::ShorthandFieldInitializer(t) => t.prepare(ctx),
-            FieldInitializerListElementsElementTransportSlot::FieldInitializer(t) => t.prepare(ctx),
-            FieldInitializerListElementsElementTransportSlot::BaseFieldInitializer(t) => t.prepare(ctx),
+            FieldInitializerListElementsItemTransportSlot::ShorthandFieldInitializer(t) => t.prepare(ctx),
+            FieldInitializerListElementsItemTransportSlot::FieldInitializer(t) => t.prepare(ctx),
+            FieldInitializerListElementsItemTransportSlot::BaseFieldInitializer(t) => t.prepare(ctx),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for FieldInitializerListElementsElementTransportSlot {
+impl ::sittir_core::view::KindOf for FieldInitializerListElementsItemTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::ShorthandFieldInitializer(inner) => inner.kind_in(kinds),
@@ -30208,7 +30208,7 @@ impl ::sittir_core::view::KindOf for FieldInitializerListElementsElementTranspor
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FieldInitializerListElementsElementTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for FieldInitializerListElementsItemTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -30226,14 +30226,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for FieldInitializerListElementsElem
                         BaseFieldInitializerTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in FieldInitializerListElementsElementTransportSlot",
+                        "unknown kind id {other} in FieldInitializerListElementsItemTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in FieldInitializerListElementsElementTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in FieldInitializerListElementsItemTransportSlot")
                 )?;
                 match kind_id {
                     284 => Ok(Self::ShorthandFieldInitializer(
@@ -30246,65 +30246,65 @@ impl ::napi::bindgen_prelude::FromNapiValue for FieldInitializerListElementsElem
                         BaseFieldInitializerTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in FieldInitializerListElementsElementTransportSlot",
+                        "unknown kind id {other} in FieldInitializerListElementsItemTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("FieldInitializerListElementsElementTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("FieldInitializerListElementsItemTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FieldInitializerListElementsElementTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for FieldInitializerListElementsItemTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("FieldInitializerListElementsElementTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("FieldInitializerListElementsItemTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FieldInitializerListElementsElementTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FieldInitializerListElementsItemTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        FieldInitializerListElementsElementTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        FieldInitializerListElementsItemTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FieldInitializerListElementsElementTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FieldInitializerListElementsItemTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        FieldInitializerListElementsElementTransportSlot::to_napi_value(env, *val)
+        FieldInitializerListElementsItemTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn field_initializer_list_elements_element_transport_slot_to_any(t: FieldInitializerListElementsElementTransportSlot) -> AnyTransport {
+fn field_initializer_list_elements_item_transport_slot_to_any(t: FieldInitializerListElementsItemTransportSlot) -> AnyTransport {
     match t {
-        FieldInitializerListElementsElementTransportSlot::ShorthandFieldInitializer(inner) => AnyTransport::ShorthandFieldInitializer(inner),
-        FieldInitializerListElementsElementTransportSlot::FieldInitializer(inner) => AnyTransport::FieldInitializer(inner),
-        FieldInitializerListElementsElementTransportSlot::BaseFieldInitializer(inner) => AnyTransport::BaseFieldInitializer(inner),
+        FieldInitializerListElementsItemTransportSlot::ShorthandFieldInitializer(inner) => AnyTransport::ShorthandFieldInitializer(inner),
+        FieldInitializerListElementsItemTransportSlot::FieldInitializer(inner) => AnyTransport::FieldInitializer(inner),
+        FieldInitializerListElementsItemTransportSlot::BaseFieldInitializer(inner) => AnyTransport::BaseFieldInitializer(inner),
     }
 }
 
-impl ::sittir_core::render::Render for FieldInitializerListElementsElementTransportSlot {
+impl ::sittir_core::render::Render for FieldInitializerListElementsItemTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            FieldInitializerListElementsElementTransportSlot::ShorthandFieldInitializer(inner) => inner.render(w),
-            FieldInitializerListElementsElementTransportSlot::FieldInitializer(inner) => inner.render(w),
-            FieldInitializerListElementsElementTransportSlot::BaseFieldInitializer(inner) => inner.render(w),
+            FieldInitializerListElementsItemTransportSlot::ShorthandFieldInitializer(inner) => inner.render(w),
+            FieldInitializerListElementsItemTransportSlot::FieldInitializer(inner) => inner.render(w),
+            FieldInitializerListElementsItemTransportSlot::BaseFieldInitializer(inner) => inner.render(w),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub enum TuplePatternElementsElementTransportSlot {
+pub enum TuplePatternElementsItemTransportSlot {
     StringLiteral(StringLiteralTransport),
     RawStringLiteral(RawStringLiteralTransport),
     CharLiteralEscapedSimple(CharLiteralEscapedSimpleTransport),
@@ -30364,71 +30364,71 @@ pub enum TuplePatternElementsElementTransportSlot {
     Verbatim(VerbatimTransport),
 }
 
-impl ::sittir_core::prepare::Prepare for TuplePatternElementsElementTransportSlot {
+impl ::sittir_core::prepare::Prepare for TuplePatternElementsItemTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            TuplePatternElementsElementTransportSlot::StringLiteral(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::RawStringLiteral(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::CharLiteralEscapedSimple(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::CharLiteralEscapedHex(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::CharLiteralPlain(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::CharLiteralEmpty(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::BooleanLiteral(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::IntegerLiteralDecimal(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::IntegerLiteralHex(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::IntegerLiteralBinary(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::IntegerLiteralOctal(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::FloatLiteral(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::NegativeLiteral(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::U8Keyword(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::I8Keyword(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::U16Keyword(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::I16Keyword(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::U32Keyword(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::I32Keyword(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::U64Keyword(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::I64Keyword(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::U128Keyword(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::I128Keyword(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::IsizeKeyword(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::UsizeKeyword(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::F32Keyword(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::F64Keyword(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::BoolKeyword(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::StrKeyword(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::CharKeyword(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::Identifier(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::ScopedIdentifier(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::GenericPattern(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::TuplePattern(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::TupleStructPattern(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::StructPattern(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::DefaultKeyword(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::UnionKeyword(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::GenKeyword(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::RefPattern(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::SlicePattern(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::CapturedPattern(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::ReferencePattern(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::RemainingFieldPattern(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::MutPattern(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::RangePatternWithLeft(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::RangePatternPrefix(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::OrPatternBinary(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::OrPatternPrefix(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::ConstBlock(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::MacroInvocation(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::WildcardPattern(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::ClosureExpressionBlock(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::ClosureExpressionExpr(t) => t.prepare(ctx),
-            TuplePatternElementsElementTransportSlot::Verbatim(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::StringLiteral(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::RawStringLiteral(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::CharLiteralEscapedSimple(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::CharLiteralEscapedHex(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::CharLiteralPlain(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::CharLiteralEmpty(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::BooleanLiteral(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::IntegerLiteralDecimal(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::IntegerLiteralHex(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::IntegerLiteralBinary(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::IntegerLiteralOctal(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::FloatLiteral(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::NegativeLiteral(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::U8Keyword(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::I8Keyword(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::U16Keyword(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::I16Keyword(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::U32Keyword(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::I32Keyword(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::U64Keyword(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::I64Keyword(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::U128Keyword(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::I128Keyword(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::IsizeKeyword(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::UsizeKeyword(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::F32Keyword(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::F64Keyword(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::BoolKeyword(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::StrKeyword(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::CharKeyword(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::Identifier(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::ScopedIdentifier(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::GenericPattern(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::TuplePattern(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::TupleStructPattern(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::StructPattern(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::DefaultKeyword(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::UnionKeyword(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::GenKeyword(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::RefPattern(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::SlicePattern(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::CapturedPattern(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::ReferencePattern(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::RemainingFieldPattern(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::MutPattern(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::RangePatternWithLeft(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::RangePatternPrefix(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::OrPatternBinary(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::OrPatternPrefix(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::ConstBlock(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::MacroInvocation(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::WildcardPattern(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::ClosureExpressionBlock(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::ClosureExpressionExpr(t) => t.prepare(ctx),
+            TuplePatternElementsItemTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for TuplePatternElementsElementTransportSlot {
+impl ::sittir_core::view::KindOf for TuplePatternElementsItemTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::StringLiteral(inner) => inner.kind_in(kinds),
@@ -30493,7 +30493,7 @@ impl ::sittir_core::view::KindOf for TuplePatternElementsElementTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TuplePatternElementsElementTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for TuplePatternElementsItemTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -30676,18 +30676,18 @@ impl ::napi::bindgen_prelude::FromNapiValue for TuplePatternElementsElementTrans
                         ClosureExpressionExprTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TuplePatternElementsElementTransportSlot",
+                        "unknown kind id {other} in TuplePatternElementsItemTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in TuplePatternElementsElementTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in TuplePatternElementsItemTransportSlot")
                 )?;
                 match kind_id {
                     id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
-                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in TuplePatternElementsElementTransportSlot"))?,
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in TuplePatternElementsItemTransportSlot"))?,
                     })),
                     336 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
@@ -30864,190 +30864,190 @@ impl ::napi::bindgen_prelude::FromNapiValue for TuplePatternElementsElementTrans
                         ClosureExpressionExprTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TuplePatternElementsElementTransportSlot",
+                        "unknown kind id {other} in TuplePatternElementsItemTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("TuplePatternElementsElementTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("TuplePatternElementsItemTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TuplePatternElementsElementTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for TuplePatternElementsItemTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TuplePatternElementsElementTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("TuplePatternElementsItemTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TuplePatternElementsElementTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TuplePatternElementsItemTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        TuplePatternElementsElementTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        TuplePatternElementsItemTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TuplePatternElementsElementTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TuplePatternElementsItemTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        TuplePatternElementsElementTransportSlot::to_napi_value(env, *val)
+        TuplePatternElementsItemTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn tuple_pattern_elements_element_transport_slot_to_any(t: TuplePatternElementsElementTransportSlot) -> AnyTransport {
+fn tuple_pattern_elements_item_transport_slot_to_any(t: TuplePatternElementsItemTransportSlot) -> AnyTransport {
     match t {
-        TuplePatternElementsElementTransportSlot::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
-        TuplePatternElementsElementTransportSlot::RawStringLiteral(inner) => AnyTransport::RawStringLiteral(inner),
-        TuplePatternElementsElementTransportSlot::CharLiteralEscapedSimple(inner) => AnyTransport::CharLiteralEscapedSimple(inner),
-        TuplePatternElementsElementTransportSlot::CharLiteralEscapedUnicodeFixed(inner) => AnyTransport::CharLiteralEscapedUnicodeFixed(inner),
-        TuplePatternElementsElementTransportSlot::CharLiteralEscapedUnicodeBraced(inner) => AnyTransport::CharLiteralEscapedUnicodeBraced(inner),
-        TuplePatternElementsElementTransportSlot::CharLiteralEscapedHex(inner) => AnyTransport::CharLiteralEscapedHex(inner),
-        TuplePatternElementsElementTransportSlot::CharLiteralPlain(inner) => AnyTransport::CharLiteralPlain(inner),
-        TuplePatternElementsElementTransportSlot::CharLiteralEmpty(inner) => AnyTransport::CharLiteralEmpty(inner),
-        TuplePatternElementsElementTransportSlot::BooleanLiteral(inner) => AnyTransport::BooleanLiteral(inner),
-        TuplePatternElementsElementTransportSlot::IntegerLiteralDecimal(inner) => AnyTransport::IntegerLiteralDecimal(inner),
-        TuplePatternElementsElementTransportSlot::IntegerLiteralHex(inner) => AnyTransport::IntegerLiteralHex(inner),
-        TuplePatternElementsElementTransportSlot::IntegerLiteralBinary(inner) => AnyTransport::IntegerLiteralBinary(inner),
-        TuplePatternElementsElementTransportSlot::IntegerLiteralOctal(inner) => AnyTransport::IntegerLiteralOctal(inner),
-        TuplePatternElementsElementTransportSlot::FloatLiteral(inner) => AnyTransport::FloatLiteral(inner),
-        TuplePatternElementsElementTransportSlot::NegativeLiteral(inner) => AnyTransport::NegativeLiteral(inner),
-        TuplePatternElementsElementTransportSlot::U8Keyword(inner) => AnyTransport::U8Keyword(inner),
-        TuplePatternElementsElementTransportSlot::I8Keyword(inner) => AnyTransport::I8Keyword(inner),
-        TuplePatternElementsElementTransportSlot::U16Keyword(inner) => AnyTransport::U16Keyword(inner),
-        TuplePatternElementsElementTransportSlot::I16Keyword(inner) => AnyTransport::I16Keyword(inner),
-        TuplePatternElementsElementTransportSlot::U32Keyword(inner) => AnyTransport::U32Keyword(inner),
-        TuplePatternElementsElementTransportSlot::I32Keyword(inner) => AnyTransport::I32Keyword(inner),
-        TuplePatternElementsElementTransportSlot::U64Keyword(inner) => AnyTransport::U64Keyword(inner),
-        TuplePatternElementsElementTransportSlot::I64Keyword(inner) => AnyTransport::I64Keyword(inner),
-        TuplePatternElementsElementTransportSlot::U128Keyword(inner) => AnyTransport::U128Keyword(inner),
-        TuplePatternElementsElementTransportSlot::I128Keyword(inner) => AnyTransport::I128Keyword(inner),
-        TuplePatternElementsElementTransportSlot::IsizeKeyword(inner) => AnyTransport::IsizeKeyword(inner),
-        TuplePatternElementsElementTransportSlot::UsizeKeyword(inner) => AnyTransport::UsizeKeyword(inner),
-        TuplePatternElementsElementTransportSlot::F32Keyword(inner) => AnyTransport::F32Keyword(inner),
-        TuplePatternElementsElementTransportSlot::F64Keyword(inner) => AnyTransport::F64Keyword(inner),
-        TuplePatternElementsElementTransportSlot::BoolKeyword(inner) => AnyTransport::BoolKeyword(inner),
-        TuplePatternElementsElementTransportSlot::StrKeyword(inner) => AnyTransport::StrKeyword(inner),
-        TuplePatternElementsElementTransportSlot::CharKeyword(inner) => AnyTransport::CharKeyword(inner),
-        TuplePatternElementsElementTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        TuplePatternElementsElementTransportSlot::ScopedIdentifier(inner) => AnyTransport::ScopedIdentifier(inner),
-        TuplePatternElementsElementTransportSlot::GenericPattern(inner) => AnyTransport::GenericPattern(inner),
-        TuplePatternElementsElementTransportSlot::TuplePattern(inner) => AnyTransport::TuplePattern(inner),
-        TuplePatternElementsElementTransportSlot::TupleStructPattern(inner) => AnyTransport::TupleStructPattern(inner),
-        TuplePatternElementsElementTransportSlot::StructPattern(inner) => AnyTransport::StructPattern(inner),
-        TuplePatternElementsElementTransportSlot::DefaultKeyword(inner) => AnyTransport::DefaultKeyword(inner),
-        TuplePatternElementsElementTransportSlot::UnionKeyword(inner) => AnyTransport::UnionKeyword(inner),
-        TuplePatternElementsElementTransportSlot::GenKeyword(inner) => AnyTransport::GenKeyword(inner),
-        TuplePatternElementsElementTransportSlot::RefPattern(inner) => AnyTransport::RefPattern(inner),
-        TuplePatternElementsElementTransportSlot::SlicePattern(inner) => AnyTransport::SlicePattern(inner),
-        TuplePatternElementsElementTransportSlot::CapturedPattern(inner) => AnyTransport::CapturedPattern(inner),
-        TuplePatternElementsElementTransportSlot::ReferencePattern(inner) => AnyTransport::ReferencePattern(inner),
-        TuplePatternElementsElementTransportSlot::RemainingFieldPattern(inner) => AnyTransport::RemainingFieldPattern(inner),
-        TuplePatternElementsElementTransportSlot::MutPattern(inner) => AnyTransport::MutPattern(inner),
-        TuplePatternElementsElementTransportSlot::RangePatternWithLeft(inner) => AnyTransport::RangePatternWithLeft(inner),
-        TuplePatternElementsElementTransportSlot::RangePatternPrefix(inner) => AnyTransport::RangePatternPrefix(inner),
-        TuplePatternElementsElementTransportSlot::OrPatternBinary(inner) => AnyTransport::OrPatternBinary(inner),
-        TuplePatternElementsElementTransportSlot::OrPatternPrefix(inner) => AnyTransport::OrPatternPrefix(inner),
-        TuplePatternElementsElementTransportSlot::ConstBlock(inner) => AnyTransport::ConstBlock(inner),
-        TuplePatternElementsElementTransportSlot::MacroInvocation(inner) => AnyTransport::MacroInvocation(inner),
-        TuplePatternElementsElementTransportSlot::WildcardPattern(inner) => AnyTransport::WildcardPattern(inner),
-        TuplePatternElementsElementTransportSlot::ClosureExpressionBlock(inner) => AnyTransport::ClosureExpressionBlock(inner),
-        TuplePatternElementsElementTransportSlot::ClosureExpressionExpr(inner) => AnyTransport::ClosureExpressionExpr(inner),
-        TuplePatternElementsElementTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        TuplePatternElementsItemTransportSlot::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
+        TuplePatternElementsItemTransportSlot::RawStringLiteral(inner) => AnyTransport::RawStringLiteral(inner),
+        TuplePatternElementsItemTransportSlot::CharLiteralEscapedSimple(inner) => AnyTransport::CharLiteralEscapedSimple(inner),
+        TuplePatternElementsItemTransportSlot::CharLiteralEscapedUnicodeFixed(inner) => AnyTransport::CharLiteralEscapedUnicodeFixed(inner),
+        TuplePatternElementsItemTransportSlot::CharLiteralEscapedUnicodeBraced(inner) => AnyTransport::CharLiteralEscapedUnicodeBraced(inner),
+        TuplePatternElementsItemTransportSlot::CharLiteralEscapedHex(inner) => AnyTransport::CharLiteralEscapedHex(inner),
+        TuplePatternElementsItemTransportSlot::CharLiteralPlain(inner) => AnyTransport::CharLiteralPlain(inner),
+        TuplePatternElementsItemTransportSlot::CharLiteralEmpty(inner) => AnyTransport::CharLiteralEmpty(inner),
+        TuplePatternElementsItemTransportSlot::BooleanLiteral(inner) => AnyTransport::BooleanLiteral(inner),
+        TuplePatternElementsItemTransportSlot::IntegerLiteralDecimal(inner) => AnyTransport::IntegerLiteralDecimal(inner),
+        TuplePatternElementsItemTransportSlot::IntegerLiteralHex(inner) => AnyTransport::IntegerLiteralHex(inner),
+        TuplePatternElementsItemTransportSlot::IntegerLiteralBinary(inner) => AnyTransport::IntegerLiteralBinary(inner),
+        TuplePatternElementsItemTransportSlot::IntegerLiteralOctal(inner) => AnyTransport::IntegerLiteralOctal(inner),
+        TuplePatternElementsItemTransportSlot::FloatLiteral(inner) => AnyTransport::FloatLiteral(inner),
+        TuplePatternElementsItemTransportSlot::NegativeLiteral(inner) => AnyTransport::NegativeLiteral(inner),
+        TuplePatternElementsItemTransportSlot::U8Keyword(inner) => AnyTransport::U8Keyword(inner),
+        TuplePatternElementsItemTransportSlot::I8Keyword(inner) => AnyTransport::I8Keyword(inner),
+        TuplePatternElementsItemTransportSlot::U16Keyword(inner) => AnyTransport::U16Keyword(inner),
+        TuplePatternElementsItemTransportSlot::I16Keyword(inner) => AnyTransport::I16Keyword(inner),
+        TuplePatternElementsItemTransportSlot::U32Keyword(inner) => AnyTransport::U32Keyword(inner),
+        TuplePatternElementsItemTransportSlot::I32Keyword(inner) => AnyTransport::I32Keyword(inner),
+        TuplePatternElementsItemTransportSlot::U64Keyword(inner) => AnyTransport::U64Keyword(inner),
+        TuplePatternElementsItemTransportSlot::I64Keyword(inner) => AnyTransport::I64Keyword(inner),
+        TuplePatternElementsItemTransportSlot::U128Keyword(inner) => AnyTransport::U128Keyword(inner),
+        TuplePatternElementsItemTransportSlot::I128Keyword(inner) => AnyTransport::I128Keyword(inner),
+        TuplePatternElementsItemTransportSlot::IsizeKeyword(inner) => AnyTransport::IsizeKeyword(inner),
+        TuplePatternElementsItemTransportSlot::UsizeKeyword(inner) => AnyTransport::UsizeKeyword(inner),
+        TuplePatternElementsItemTransportSlot::F32Keyword(inner) => AnyTransport::F32Keyword(inner),
+        TuplePatternElementsItemTransportSlot::F64Keyword(inner) => AnyTransport::F64Keyword(inner),
+        TuplePatternElementsItemTransportSlot::BoolKeyword(inner) => AnyTransport::BoolKeyword(inner),
+        TuplePatternElementsItemTransportSlot::StrKeyword(inner) => AnyTransport::StrKeyword(inner),
+        TuplePatternElementsItemTransportSlot::CharKeyword(inner) => AnyTransport::CharKeyword(inner),
+        TuplePatternElementsItemTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        TuplePatternElementsItemTransportSlot::ScopedIdentifier(inner) => AnyTransport::ScopedIdentifier(inner),
+        TuplePatternElementsItemTransportSlot::GenericPattern(inner) => AnyTransport::GenericPattern(inner),
+        TuplePatternElementsItemTransportSlot::TuplePattern(inner) => AnyTransport::TuplePattern(inner),
+        TuplePatternElementsItemTransportSlot::TupleStructPattern(inner) => AnyTransport::TupleStructPattern(inner),
+        TuplePatternElementsItemTransportSlot::StructPattern(inner) => AnyTransport::StructPattern(inner),
+        TuplePatternElementsItemTransportSlot::DefaultKeyword(inner) => AnyTransport::DefaultKeyword(inner),
+        TuplePatternElementsItemTransportSlot::UnionKeyword(inner) => AnyTransport::UnionKeyword(inner),
+        TuplePatternElementsItemTransportSlot::GenKeyword(inner) => AnyTransport::GenKeyword(inner),
+        TuplePatternElementsItemTransportSlot::RefPattern(inner) => AnyTransport::RefPattern(inner),
+        TuplePatternElementsItemTransportSlot::SlicePattern(inner) => AnyTransport::SlicePattern(inner),
+        TuplePatternElementsItemTransportSlot::CapturedPattern(inner) => AnyTransport::CapturedPattern(inner),
+        TuplePatternElementsItemTransportSlot::ReferencePattern(inner) => AnyTransport::ReferencePattern(inner),
+        TuplePatternElementsItemTransportSlot::RemainingFieldPattern(inner) => AnyTransport::RemainingFieldPattern(inner),
+        TuplePatternElementsItemTransportSlot::MutPattern(inner) => AnyTransport::MutPattern(inner),
+        TuplePatternElementsItemTransportSlot::RangePatternWithLeft(inner) => AnyTransport::RangePatternWithLeft(inner),
+        TuplePatternElementsItemTransportSlot::RangePatternPrefix(inner) => AnyTransport::RangePatternPrefix(inner),
+        TuplePatternElementsItemTransportSlot::OrPatternBinary(inner) => AnyTransport::OrPatternBinary(inner),
+        TuplePatternElementsItemTransportSlot::OrPatternPrefix(inner) => AnyTransport::OrPatternPrefix(inner),
+        TuplePatternElementsItemTransportSlot::ConstBlock(inner) => AnyTransport::ConstBlock(inner),
+        TuplePatternElementsItemTransportSlot::MacroInvocation(inner) => AnyTransport::MacroInvocation(inner),
+        TuplePatternElementsItemTransportSlot::WildcardPattern(inner) => AnyTransport::WildcardPattern(inner),
+        TuplePatternElementsItemTransportSlot::ClosureExpressionBlock(inner) => AnyTransport::ClosureExpressionBlock(inner),
+        TuplePatternElementsItemTransportSlot::ClosureExpressionExpr(inner) => AnyTransport::ClosureExpressionExpr(inner),
+        TuplePatternElementsItemTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl ::sittir_core::render::Render for TuplePatternElementsElementTransportSlot {
+impl ::sittir_core::render::Render for TuplePatternElementsItemTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            TuplePatternElementsElementTransportSlot::StringLiteral(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::RawStringLiteral(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::CharLiteralEscapedSimple(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::CharLiteralEscapedHex(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::CharLiteralPlain(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::CharLiteralEmpty(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::BooleanLiteral(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::IntegerLiteralDecimal(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::IntegerLiteralHex(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::IntegerLiteralBinary(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::IntegerLiteralOctal(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::FloatLiteral(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::NegativeLiteral(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::U8Keyword(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::I8Keyword(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::U16Keyword(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::I16Keyword(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::U32Keyword(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::I32Keyword(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::U64Keyword(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::I64Keyword(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::U128Keyword(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::I128Keyword(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::IsizeKeyword(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::UsizeKeyword(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::F32Keyword(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::F64Keyword(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::BoolKeyword(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::StrKeyword(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::CharKeyword(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::Identifier(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::ScopedIdentifier(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::GenericPattern(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::TuplePattern(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::TupleStructPattern(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::StructPattern(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::DefaultKeyword(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::UnionKeyword(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::GenKeyword(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::RefPattern(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::SlicePattern(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::CapturedPattern(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::ReferencePattern(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::RemainingFieldPattern(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::MutPattern(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::RangePatternWithLeft(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::RangePatternPrefix(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::OrPatternBinary(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::OrPatternPrefix(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::ConstBlock(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::MacroInvocation(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::WildcardPattern(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::ClosureExpressionBlock(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::ClosureExpressionExpr(inner) => inner.render(w),
-            TuplePatternElementsElementTransportSlot::Verbatim(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::StringLiteral(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::RawStringLiteral(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::CharLiteralEscapedSimple(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::CharLiteralEscapedHex(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::CharLiteralPlain(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::CharLiteralEmpty(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::BooleanLiteral(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::IntegerLiteralDecimal(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::IntegerLiteralHex(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::IntegerLiteralBinary(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::IntegerLiteralOctal(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::FloatLiteral(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::NegativeLiteral(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::U8Keyword(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::I8Keyword(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::U16Keyword(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::I16Keyword(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::U32Keyword(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::I32Keyword(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::U64Keyword(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::I64Keyword(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::U128Keyword(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::I128Keyword(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::IsizeKeyword(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::UsizeKeyword(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::F32Keyword(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::F64Keyword(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::BoolKeyword(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::StrKeyword(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::CharKeyword(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::Identifier(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::ScopedIdentifier(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::GenericPattern(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::TuplePattern(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::TupleStructPattern(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::StructPattern(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::DefaultKeyword(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::UnionKeyword(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::GenKeyword(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::RefPattern(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::SlicePattern(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::CapturedPattern(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::ReferencePattern(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::RemainingFieldPattern(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::MutPattern(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::RangePatternWithLeft(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::RangePatternPrefix(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::OrPatternBinary(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::OrPatternPrefix(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::ConstBlock(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::MacroInvocation(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::WildcardPattern(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::ClosureExpressionBlock(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::ClosureExpressionExpr(inner) => inner.render(w),
+            TuplePatternElementsItemTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub enum StructPatternElementsElementTransportSlot {
+pub enum StructPatternElementsItemTransportSlot {
     FieldPatternShorthand(FieldPatternShorthandTransport),
     FieldPatternNamed(FieldPatternNamedTransport),
     Literal112_72_65_6d_61_69_6e_69_6e_67_5f_66_69_65_6c_64_5f_70_61_74_74_65_72_6e,
 }
 
-impl ::sittir_core::prepare::Prepare for StructPatternElementsElementTransportSlot {
+impl ::sittir_core::prepare::Prepare for StructPatternElementsItemTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            StructPatternElementsElementTransportSlot::FieldPatternShorthand(t) => t.prepare(ctx),
-            StructPatternElementsElementTransportSlot::FieldPatternNamed(t) => t.prepare(ctx),
-            StructPatternElementsElementTransportSlot::Literal112_72_65_6d_61_69_6e_69_6e_67_5f_66_69_65_6c_64_5f_70_61_74_74_65_72_6e => Ok(()),
+            StructPatternElementsItemTransportSlot::FieldPatternShorthand(t) => t.prepare(ctx),
+            StructPatternElementsItemTransportSlot::FieldPatternNamed(t) => t.prepare(ctx),
+            StructPatternElementsItemTransportSlot::Literal112_72_65_6d_61_69_6e_69_6e_67_5f_66_69_65_6c_64_5f_70_61_74_74_65_72_6e => Ok(()),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for StructPatternElementsElementTransportSlot {
+impl ::sittir_core::view::KindOf for StructPatternElementsItemTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::FieldPatternShorthand(inner) => inner.kind_in(kinds),
@@ -31058,7 +31058,7 @@ impl ::sittir_core::view::KindOf for StructPatternElementsElementTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for StructPatternElementsElementTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for StructPatternElementsItemTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -31074,14 +31074,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructPatternElementsElementTran
                         FieldPatternNamedTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in StructPatternElementsElementTransportSlot",
+                        "unknown kind id {other} in StructPatternElementsItemTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in StructPatternElementsElementTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in StructPatternElementsItemTransportSlot")
                 )?;
                 match kind_id {
                     321 => Ok(Self::Literal112_72_65_6d_61_69_6e_69_6e_67_5f_66_69_65_6c_64_5f_70_61_74_74_65_72_6e),
@@ -31092,59 +31092,59 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructPatternElementsElementTran
                         FieldPatternNamedTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in StructPatternElementsElementTransportSlot",
+                        "unknown kind id {other} in StructPatternElementsItemTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("StructPatternElementsElementTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("StructPatternElementsItemTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for StructPatternElementsElementTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for StructPatternElementsItemTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("StructPatternElementsElementTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("StructPatternElementsItemTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<StructPatternElementsElementTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<StructPatternElementsItemTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        StructPatternElementsElementTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        StructPatternElementsItemTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<StructPatternElementsElementTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<StructPatternElementsItemTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        StructPatternElementsElementTransportSlot::to_napi_value(env, *val)
+        StructPatternElementsItemTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn struct_pattern_elements_element_transport_slot_to_any(t: StructPatternElementsElementTransportSlot) -> AnyTransport {
+fn struct_pattern_elements_item_transport_slot_to_any(t: StructPatternElementsItemTransportSlot) -> AnyTransport {
     match t {
-        StructPatternElementsElementTransportSlot::FieldPatternShorthand(inner) => AnyTransport::FieldPatternShorthand(inner),
-        StructPatternElementsElementTransportSlot::FieldPatternNamed(inner) => AnyTransport::FieldPatternNamed(inner),
-        StructPatternElementsElementTransportSlot::Literal112_72_65_6d_61_69_6e_69_6e_67_5f_66_69_65_6c_64_5f_70_61_74_74_65_72_6e => AnyTransport::Literal112_72_65_6d_61_69_6e_69_6e_67_5f_66_69_65_6c_64_5f_70_61_74_74_65_72_6e,
+        StructPatternElementsItemTransportSlot::FieldPatternShorthand(inner) => AnyTransport::FieldPatternShorthand(inner),
+        StructPatternElementsItemTransportSlot::FieldPatternNamed(inner) => AnyTransport::FieldPatternNamed(inner),
+        StructPatternElementsItemTransportSlot::Literal112_72_65_6d_61_69_6e_69_6e_67_5f_66_69_65_6c_64_5f_70_61_74_74_65_72_6e => AnyTransport::Literal112_72_65_6d_61_69_6e_69_6e_67_5f_66_69_65_6c_64_5f_70_61_74_74_65_72_6e,
     }
 }
 
-impl ::sittir_core::render::Render for StructPatternElementsElementTransportSlot {
+impl ::sittir_core::render::Render for StructPatternElementsItemTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            StructPatternElementsElementTransportSlot::FieldPatternShorthand(inner) => inner.render(w),
-            StructPatternElementsElementTransportSlot::FieldPatternNamed(inner) => inner.render(w),
-            StructPatternElementsElementTransportSlot::Literal112_72_65_6d_61_69_6e_69_6e_67_5f_66_69_65_6c_64_5f_70_61_74_74_65_72_6e => w.text(".."),
+            StructPatternElementsItemTransportSlot::FieldPatternShorthand(inner) => inner.render(w),
+            StructPatternElementsItemTransportSlot::FieldPatternNamed(inner) => inner.render(w),
+            StructPatternElementsItemTransportSlot::Literal112_72_65_6d_61_69_6e_69_6e_67_5f_66_69_65_6c_64_5f_70_61_74_74_65_72_6e => w.text(".."),
         }
     }
 }
@@ -51048,14 +51048,14 @@ pub struct MacroRulesTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rule"))]
-    pub macro_rule: Vec<::sittir_core::SlotValue<MacroRuleTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    pub item: Vec<::sittir_core::SlotValue<MacroRuleTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rule_separator_space_before"))]
-    pub macro_rule_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_macro_rule_separator_space_after"))]
-    pub macro_rule_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
+    pub item_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_after"))]
+    pub item_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for MacroRulesTransport {
@@ -51080,18 +51080,18 @@ impl ::sittir_core::prepare::Prepare for MacroRulesTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_macro_rule = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.macro_rule.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ";", options::allowed(options::SITE_MACRO_RULES_MACRO_RULE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_MACRO_RULES_MACRO_RULE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.macro_rule_separator_space_before.is_none() { self.macro_rule_separator_space_before = gaps.before; }
-            if self.macro_rule_separator_space_after.is_none() { self.macro_rule_separator_space_after = gaps.after; }
+        let separated_item = {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ";", options::allowed(options::SITE_MACRO_RULES_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_MACRO_RULES_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
+            if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
         };
-        self.macro_rule_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_MACRO_RULES_MACRO_RULE_SEPARATOR_SPACE_BEFORE].arm);
-        self.macro_rule_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_MACRO_RULES_MACRO_RULE_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.macro_rule.iter_mut().map(Some), options::SEATS_MACRO_RULES_MACRO_RULE, &separated_macro_rule, ctx);
-        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_MACRO_RULES_MACRO_RULE]);
-        self.macro_rule.prepare(ctx)?;
+        self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_MACRO_RULES_ITEM_SEPARATOR_SPACE_BEFORE].arm);
+        self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_MACRO_RULES_ITEM_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_MACRO_RULES_ITEM, &separated_item, ctx);
+        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_MACRO_RULES_ITEM]);
+        self.item.prepare(ctx)?;
         Ok(())
     }
 }
@@ -51123,14 +51123,14 @@ pub struct EnumVariantListElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
-    pub element: Vec<::sittir_core::SlotValue<AttributedEnumVariantTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    pub item: Vec<::sittir_core::SlotValue<AttributedEnumVariantTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
-    pub element_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_after"))]
-    pub element_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
+    pub item_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_after"))]
+    pub item_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for EnumVariantListElementsTransport {
@@ -51155,18 +51155,18 @@ impl ::sittir_core::prepare::Prepare for EnumVariantListElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_element = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.element_separator_space_before.is_none() { self.element_separator_space_before = gaps.before; }
-            if self.element_separator_space_after.is_none() { self.element_separator_space_after = gaps.after; }
+        let separated_item = {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
+            if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
         };
-        self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE].arm);
-        self.element_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.element.iter_mut().map(Some), options::SEATS_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT, &separated_element, ctx);
-        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT]);
-        self.element.prepare(ctx)?;
+        self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
+        self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_ENUM_VARIANT_LIST_ELEMENTS_ITEM, &separated_item, ctx);
+        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_ENUM_VARIANT_LIST_ELEMENTS_ITEM]);
+        self.item.prepare(ctx)?;
         Ok(())
     }
 }
@@ -51198,14 +51198,14 @@ pub struct FieldDeclarationListElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
-    pub element: Vec<::sittir_core::SlotValue<AttributedFieldDeclarationTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    pub item: Vec<::sittir_core::SlotValue<AttributedFieldDeclarationTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
-    pub element_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_after"))]
-    pub element_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
+    pub item_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_after"))]
+    pub item_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for FieldDeclarationListElementsTransport {
@@ -51230,18 +51230,18 @@ impl ::sittir_core::prepare::Prepare for FieldDeclarationListElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_element = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.element_separator_space_before.is_none() { self.element_separator_space_before = gaps.before; }
-            if self.element_separator_space_after.is_none() { self.element_separator_space_after = gaps.after; }
+        let separated_item = {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
+            if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
         };
-        self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE].arm);
-        self.element_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.element.iter_mut().map(Some), options::SEATS_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT, &separated_element, ctx);
-        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT]);
-        self.element.prepare(ctx)?;
+        self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
+        self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_FIELD_DECLARATION_LIST_ELEMENTS_ITEM, &separated_item, ctx);
+        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_FIELD_DECLARATION_LIST_ELEMENTS_ITEM]);
+        self.item.prepare(ctx)?;
         Ok(())
     }
 }
@@ -51273,14 +51273,14 @@ pub struct OrderedFieldDeclarationListElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
-    pub element: Vec<::sittir_core::SlotValue<AttributedOrderedFieldTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    pub item: Vec<::sittir_core::SlotValue<AttributedOrderedFieldTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
-    pub element_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_after"))]
-    pub element_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
+    pub item_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_after"))]
+    pub item_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for OrderedFieldDeclarationListElementsTransport {
@@ -51305,18 +51305,18 @@ impl ::sittir_core::prepare::Prepare for OrderedFieldDeclarationListElementsTran
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_element = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.element_separator_space_before.is_none() { self.element_separator_space_before = gaps.before; }
-            if self.element_separator_space_after.is_none() { self.element_separator_space_after = gaps.after; }
+        let separated_item = {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
+            if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
         };
-        self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE].arm);
-        self.element_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.element.iter_mut().map(Some), options::SEATS_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT, &separated_element, ctx);
-        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT]);
-        self.element.prepare(ctx)?;
+        self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
+        self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ITEM, &separated_item, ctx);
+        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ITEM]);
+        self.item.prepare(ctx)?;
         Ok(())
     }
 }
@@ -51348,14 +51348,14 @@ pub struct WherePredicatesTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_predicate"))]
-    pub where_predicate: Vec<::sittir_core::SlotValue<WherePredicateTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    pub item: Vec<::sittir_core::SlotValue<WherePredicateTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_predicate_separator_space_before"))]
-    pub where_predicate_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_predicate_separator_space_after"))]
-    pub where_predicate_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
+    pub item_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_after"))]
+    pub item_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for WherePredicatesTransport {
@@ -51380,18 +51380,18 @@ impl ::sittir_core::prepare::Prepare for WherePredicatesTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_where_predicate = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.where_predicate.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_WHERE_PREDICATES_WHERE_PREDICATE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_WHERE_PREDICATES_WHERE_PREDICATE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.where_predicate_separator_space_before.is_none() { self.where_predicate_separator_space_before = gaps.before; }
-            if self.where_predicate_separator_space_after.is_none() { self.where_predicate_separator_space_after = gaps.after; }
+        let separated_item = {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_WHERE_PREDICATES_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_WHERE_PREDICATES_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
+            if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
         };
-        self.where_predicate_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_WHERE_PREDICATES_WHERE_PREDICATE_SEPARATOR_SPACE_BEFORE].arm);
-        self.where_predicate_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_WHERE_PREDICATES_WHERE_PREDICATE_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.where_predicate.iter_mut().map(Some), options::SEATS_WHERE_PREDICATES_WHERE_PREDICATE, &separated_where_predicate, ctx);
-        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_WHERE_PREDICATES_WHERE_PREDICATE]);
-        self.where_predicate.prepare(ctx)?;
+        self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_WHERE_PREDICATES_ITEM_SEPARATOR_SPACE_BEFORE].arm);
+        self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_WHERE_PREDICATES_ITEM_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_WHERE_PREDICATES_ITEM, &separated_item, ctx);
+        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_WHERE_PREDICATES_ITEM]);
+        self.item.prepare(ctx)?;
         Ok(())
     }
 }
@@ -51423,14 +51423,14 @@ pub struct TypeParametersElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
-    pub element: Vec<::sittir_core::SlotValue<AttributedTypeParameterTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    pub item: Vec<::sittir_core::SlotValue<AttributedTypeParameterTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
-    pub element_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_after"))]
-    pub element_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
+    pub item_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_after"))]
+    pub item_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for TypeParametersElementsTransport {
@@ -51455,18 +51455,18 @@ impl ::sittir_core::prepare::Prepare for TypeParametersElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_element = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TYPE_PARAMETERS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TYPE_PARAMETERS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.element_separator_space_before.is_none() { self.element_separator_space_before = gaps.before; }
-            if self.element_separator_space_after.is_none() { self.element_separator_space_after = gaps.after; }
+        let separated_item = {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
+            if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
         };
-        self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE].arm);
-        self.element_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.element.iter_mut().map(Some), options::SEATS_TYPE_PARAMETERS_ELEMENTS_ELEMENT, &separated_element, ctx);
-        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_TYPE_PARAMETERS_ELEMENTS_ELEMENT]);
-        self.element.prepare(ctx)?;
+        self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
+        self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_TYPE_PARAMETERS_ELEMENTS_ITEM, &separated_item, ctx);
+        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_TYPE_PARAMETERS_ELEMENTS_ITEM]);
+        self.item.prepare(ctx)?;
         Ok(())
     }
 }
@@ -51498,14 +51498,14 @@ pub struct UseClausesTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_clause"))]
-    pub use_clause: Vec<::sittir_core::SlotValue<UseClausesUseClauseTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    pub item: Vec<::sittir_core::SlotValue<UseClausesItemTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_clause_separator_space_before"))]
-    pub use_clause_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_clause_separator_space_after"))]
-    pub use_clause_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
+    pub item_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_after"))]
+    pub item_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for UseClausesTransport {
@@ -51530,18 +51530,18 @@ impl ::sittir_core::prepare::Prepare for UseClausesTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_use_clause = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.use_clause.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_USE_CLAUSES_USE_CLAUSE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_USE_CLAUSES_USE_CLAUSE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.use_clause_separator_space_before.is_none() { self.use_clause_separator_space_before = gaps.before; }
-            if self.use_clause_separator_space_after.is_none() { self.use_clause_separator_space_after = gaps.after; }
+        let separated_item = {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_USE_CLAUSES_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_USE_CLAUSES_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
+            if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
         };
-        self.use_clause_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_USE_CLAUSES_USE_CLAUSE_SEPARATOR_SPACE_BEFORE].arm);
-        self.use_clause_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_USE_CLAUSES_USE_CLAUSE_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.use_clause.iter_mut().map(Some), options::SEATS_USE_CLAUSES_USE_CLAUSE, &separated_use_clause, ctx);
-        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_USE_CLAUSES_USE_CLAUSE]);
-        self.use_clause.prepare(ctx)?;
+        self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_USE_CLAUSES_ITEM_SEPARATOR_SPACE_BEFORE].arm);
+        self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_USE_CLAUSES_ITEM_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_USE_CLAUSES_ITEM, &separated_item, ctx);
+        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_USE_CLAUSES_ITEM]);
+        self.item.prepare(ctx)?;
         Ok(())
     }
 }
@@ -51573,14 +51573,14 @@ pub struct ParametersElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
-    pub element: Vec<::sittir_core::SlotValue<AttributedParameterTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    pub item: Vec<::sittir_core::SlotValue<AttributedParameterTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
-    pub element_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_after"))]
-    pub element_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
+    pub item_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_after"))]
+    pub item_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ParametersElementsTransport {
@@ -51605,18 +51605,18 @@ impl ::sittir_core::prepare::Prepare for ParametersElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_element = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PARAMETERS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PARAMETERS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.element_separator_space_before.is_none() { self.element_separator_space_before = gaps.before; }
-            if self.element_separator_space_after.is_none() { self.element_separator_space_after = gaps.after; }
+        let separated_item = {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
+            if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
         };
-        self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE].arm);
-        self.element_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.element.iter_mut().map(Some), options::SEATS_PARAMETERS_ELEMENTS_ELEMENT, &separated_element, ctx);
-        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_PARAMETERS_ELEMENTS_ELEMENT]);
-        self.element.prepare(ctx)?;
+        self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
+        self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_PARAMETERS_ELEMENTS_ITEM, &separated_item, ctx);
+        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_PARAMETERS_ELEMENTS_ITEM]);
+        self.item.prepare(ctx)?;
         Ok(())
     }
 }
@@ -51648,14 +51648,14 @@ pub struct LifetimesTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lifetime"))]
-    pub lifetime: Vec<::sittir_core::SlotValue<LifetimeTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    pub item: Vec<::sittir_core::SlotValue<LifetimeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lifetime_separator_space_before"))]
-    pub lifetime_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lifetime_separator_space_after"))]
-    pub lifetime_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
+    pub item_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_after"))]
+    pub item_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for LifetimesTransport {
@@ -51680,18 +51680,18 @@ impl ::sittir_core::prepare::Prepare for LifetimesTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_lifetime = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.lifetime.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_LIFETIMES_LIFETIME_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_LIFETIMES_LIFETIME_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.lifetime_separator_space_before.is_none() { self.lifetime_separator_space_before = gaps.before; }
-            if self.lifetime_separator_space_after.is_none() { self.lifetime_separator_space_after = gaps.after; }
+        let separated_item = {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_LIFETIMES_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_LIFETIMES_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
+            if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
         };
-        self.lifetime_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_LIFETIMES_LIFETIME_SEPARATOR_SPACE_BEFORE].arm);
-        self.lifetime_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_LIFETIMES_LIFETIME_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.lifetime.iter_mut().map(Some), options::SEATS_LIFETIMES_LIFETIME, &separated_lifetime, ctx);
-        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_LIFETIMES_LIFETIME]);
-        self.lifetime.prepare(ctx)?;
+        self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_LIFETIMES_ITEM_SEPARATOR_SPACE_BEFORE].arm);
+        self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_LIFETIMES_ITEM_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_LIFETIMES_ITEM, &separated_item, ctx);
+        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_LIFETIMES_ITEM]);
+        self.item.prepare(ctx)?;
         Ok(())
     }
 }
@@ -51723,14 +51723,14 @@ pub struct TypesTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: Vec<::sittir_core::SlotValue<TypeTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    pub item: Vec<::sittir_core::SlotValue<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_before"))]
-    pub type_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_after"))]
-    pub type_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
+    pub item_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_after"))]
+    pub item_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for TypesTransport {
@@ -51755,18 +51755,18 @@ impl ::sittir_core::prepare::Prepare for TypesTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_type_ = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.type_.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TYPES_TYPE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TYPES_TYPE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.type_separator_space_before.is_none() { self.type_separator_space_before = gaps.before; }
-            if self.type_separator_space_after.is_none() { self.type_separator_space_after = gaps.after; }
+        let separated_item = {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TYPES_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TYPES_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
+            if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
         };
-        self.type_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TYPES_TYPE_SEPARATOR_SPACE_BEFORE].arm);
-        self.type_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_TYPES_TYPE_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.type_.iter_mut().map(Some), options::SEATS_TYPES_TYPE, &separated_type_, ctx);
-        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_TYPES_TYPE]);
-        self.type_.prepare(ctx)?;
+        self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TYPES_ITEM_SEPARATOR_SPACE_BEFORE].arm);
+        self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_TYPES_ITEM_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_TYPES_ITEM, &separated_item, ctx);
+        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_TYPES_ITEM]);
+        self.item.prepare(ctx)?;
         Ok(())
     }
 }
@@ -51798,14 +51798,14 @@ pub struct UseBoundsElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
-    pub element: Vec<::sittir_core::SlotValue<UseBoundsElementsElementTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    pub item: Vec<::sittir_core::SlotValue<UseBoundsElementsItemTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
-    pub element_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_after"))]
-    pub element_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
+    pub item_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_after"))]
+    pub item_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for UseBoundsElementsTransport {
@@ -51830,18 +51830,18 @@ impl ::sittir_core::prepare::Prepare for UseBoundsElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_element = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_USE_BOUNDS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_USE_BOUNDS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.element_separator_space_before.is_none() { self.element_separator_space_before = gaps.before; }
-            if self.element_separator_space_after.is_none() { self.element_separator_space_after = gaps.after; }
+        let separated_item = {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_USE_BOUNDS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_USE_BOUNDS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
+            if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
         };
-        self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_USE_BOUNDS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE].arm);
-        self.element_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_USE_BOUNDS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.element.iter_mut().map(Some), options::SEATS_USE_BOUNDS_ELEMENTS_ELEMENT, &separated_element, ctx);
-        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_USE_BOUNDS_ELEMENTS_ELEMENT]);
-        self.element.prepare(ctx)?;
+        self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_USE_BOUNDS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
+        self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_USE_BOUNDS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_USE_BOUNDS_ELEMENTS_ITEM, &separated_item, ctx);
+        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_USE_BOUNDS_ELEMENTS_ITEM]);
+        self.item.prepare(ctx)?;
         Ok(())
     }
 }
@@ -51873,14 +51873,14 @@ pub struct TypeArgumentsElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
-    pub element: Vec<::sittir_core::SlotValue<TypeArgumentTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    pub item: Vec<::sittir_core::SlotValue<TypeArgumentTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
-    pub element_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_after"))]
-    pub element_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
+    pub item_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_after"))]
+    pub item_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for TypeArgumentsElementsTransport {
@@ -51905,18 +51905,18 @@ impl ::sittir_core::prepare::Prepare for TypeArgumentsElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_element = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TYPE_ARGUMENTS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TYPE_ARGUMENTS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.element_separator_space_before.is_none() { self.element_separator_space_before = gaps.before; }
-            if self.element_separator_space_after.is_none() { self.element_separator_space_after = gaps.after; }
+        let separated_item = {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TYPE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TYPE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
+            if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
         };
-        self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TYPE_ARGUMENTS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE].arm);
-        self.element_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_TYPE_ARGUMENTS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.element.iter_mut().map(Some), options::SEATS_TYPE_ARGUMENTS_ELEMENTS_ELEMENT, &separated_element, ctx);
-        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_TYPE_ARGUMENTS_ELEMENTS_ELEMENT]);
-        self.element.prepare(ctx)?;
+        self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TYPE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
+        self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_TYPE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_TYPE_ARGUMENTS_ELEMENTS_ITEM, &separated_item, ctx);
+        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_TYPE_ARGUMENTS_ELEMENTS_ITEM]);
+        self.item.prepare(ctx)?;
         Ok(())
     }
 }
@@ -51948,14 +51948,14 @@ pub struct ArgumentsElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
-    pub element: Vec<::sittir_core::SlotValue<AttributedArgumentTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    pub item: Vec<::sittir_core::SlotValue<AttributedArgumentTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
-    pub element_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_after"))]
-    pub element_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
+    pub item_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_after"))]
+    pub item_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ArgumentsElementsTransport {
@@ -51980,18 +51980,18 @@ impl ::sittir_core::prepare::Prepare for ArgumentsElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_element = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_ARGUMENTS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ARGUMENTS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.element_separator_space_before.is_none() { self.element_separator_space_before = gaps.before; }
-            if self.element_separator_space_after.is_none() { self.element_separator_space_after = gaps.after; }
+        let separated_item = {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
+            if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
         };
-        self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE].arm);
-        self.element_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.element.iter_mut().map(Some), options::SEATS_ARGUMENTS_ELEMENTS_ELEMENT, &separated_element, ctx);
-        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_ARGUMENTS_ELEMENTS_ELEMENT]);
-        self.element.prepare(ctx)?;
+        self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
+        self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_ARGUMENTS_ELEMENTS_ITEM, &separated_item, ctx);
+        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_ARGUMENTS_ELEMENTS_ITEM]);
+        self.item.prepare(ctx)?;
         Ok(())
     }
 }
@@ -52023,14 +52023,14 @@ pub struct ExpressionsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
-    pub expression: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    pub item: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_separator_space_before"))]
-    pub expression_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_separator_space_after"))]
-    pub expression_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
+    pub item_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_after"))]
+    pub item_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ExpressionsTransport {
@@ -52055,18 +52055,18 @@ impl ::sittir_core::prepare::Prepare for ExpressionsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_expression = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.expression.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_EXPRESSIONS_EXPRESSION_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXPRESSIONS_EXPRESSION_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.expression_separator_space_before.is_none() { self.expression_separator_space_before = gaps.before; }
-            if self.expression_separator_space_after.is_none() { self.expression_separator_space_after = gaps.after; }
+        let separated_item = {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_EXPRESSIONS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXPRESSIONS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
+            if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
         };
-        self.expression_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_EXPRESSIONS_EXPRESSION_SEPARATOR_SPACE_BEFORE].arm);
-        self.expression_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_EXPRESSIONS_EXPRESSION_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.expression.iter_mut().map(Some), options::SEATS_EXPRESSIONS_EXPRESSION, &separated_expression, ctx);
-        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_EXPRESSIONS_EXPRESSION]);
-        self.expression.prepare(ctx)?;
+        self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_EXPRESSIONS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
+        self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_EXPRESSIONS_ITEM_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_EXPRESSIONS_ITEM, &separated_item, ctx);
+        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_EXPRESSIONS_ITEM]);
+        self.item.prepare(ctx)?;
         Ok(())
     }
 }
@@ -52098,14 +52098,14 @@ pub struct FieldInitializerListElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
-    pub element: Vec<::sittir_core::SlotValue<FieldInitializerListElementsElementTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    pub item: Vec<::sittir_core::SlotValue<FieldInitializerListElementsItemTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
-    pub element_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_after"))]
-    pub element_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
+    pub item_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_after"))]
+    pub item_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for FieldInitializerListElementsTransport {
@@ -52130,18 +52130,18 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerListElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_element = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.element_separator_space_before.is_none() { self.element_separator_space_before = gaps.before; }
-            if self.element_separator_space_after.is_none() { self.element_separator_space_after = gaps.after; }
+        let separated_item = {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
+            if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
         };
-        self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE].arm);
-        self.element_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.element.iter_mut().map(Some), options::SEATS_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT, &separated_element, ctx);
-        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT]);
-        self.element.prepare(ctx)?;
+        self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
+        self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_FIELD_INITIALIZER_LIST_ELEMENTS_ITEM, &separated_item, ctx);
+        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_FIELD_INITIALIZER_LIST_ELEMENTS_ITEM]);
+        self.item.prepare(ctx)?;
         Ok(())
     }
 }
@@ -52173,14 +52173,14 @@ pub struct TuplePatternElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
-    pub element: Vec<::sittir_core::SlotValue<TuplePatternElementsElementTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    pub item: Vec<::sittir_core::SlotValue<TuplePatternElementsItemTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
-    pub element_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_after"))]
-    pub element_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
+    pub item_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_after"))]
+    pub item_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for TuplePatternElementsTransport {
@@ -52205,18 +52205,18 @@ impl ::sittir_core::prepare::Prepare for TuplePatternElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_element = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.element_separator_space_before.is_none() { self.element_separator_space_before = gaps.before; }
-            if self.element_separator_space_after.is_none() { self.element_separator_space_after = gaps.after; }
+        let separated_item = {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
+            if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
         };
-        self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE].arm);
-        self.element_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.element.iter_mut().map(Some), options::SEATS_TUPLE_PATTERN_ELEMENTS_ELEMENT, &separated_element, ctx);
-        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_TUPLE_PATTERN_ELEMENTS_ELEMENT]);
-        self.element.prepare(ctx)?;
+        self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
+        self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_TUPLE_PATTERN_ELEMENTS_ITEM, &separated_item, ctx);
+        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_TUPLE_PATTERN_ELEMENTS_ITEM]);
+        self.item.prepare(ctx)?;
         Ok(())
     }
 }
@@ -52248,14 +52248,14 @@ pub struct PatternsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
-    pub pattern: Vec<::sittir_core::SlotValue<PatternTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    pub item: Vec<::sittir_core::SlotValue<PatternTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern_separator_space_before"))]
-    pub pattern_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern_separator_space_after"))]
-    pub pattern_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
+    pub item_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_after"))]
+    pub item_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for PatternsTransport {
@@ -52280,18 +52280,18 @@ impl ::sittir_core::prepare::Prepare for PatternsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_pattern = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.pattern.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PATTERNS_PATTERN_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PATTERNS_PATTERN_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.pattern_separator_space_before.is_none() { self.pattern_separator_space_before = gaps.before; }
-            if self.pattern_separator_space_after.is_none() { self.pattern_separator_space_after = gaps.after; }
+        let separated_item = {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
+            if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
         };
-        self.pattern_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PATTERNS_PATTERN_SEPARATOR_SPACE_BEFORE].arm);
-        self.pattern_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PATTERNS_PATTERN_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.pattern.iter_mut().map(Some), options::SEATS_PATTERNS_PATTERN, &separated_pattern, ctx);
-        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_PATTERNS_PATTERN]);
-        self.pattern.prepare(ctx)?;
+        self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
+        self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_PATTERNS_ITEM, &separated_item, ctx);
+        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_PATTERNS_ITEM]);
+        self.item.prepare(ctx)?;
         Ok(())
     }
 }
@@ -52323,14 +52323,14 @@ pub struct StructPatternElementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element"))]
-    pub element: Vec<::sittir_core::SlotValue<StructPatternElementsElementTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
+    pub item: Vec<::sittir_core::SlotValue<StructPatternElementsItemTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_before"))]
-    pub element_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_after"))]
-    pub element_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_before"))]
+    pub item_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item_separator_space_after"))]
+    pub item_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for StructPatternElementsTransport {
@@ -52355,18 +52355,18 @@ impl ::sittir_core::prepare::Prepare for StructPatternElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_element = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.element_separator_space_before.is_none() { self.element_separator_space_before = gaps.before; }
-            if self.element_separator_space_after.is_none() { self.element_separator_space_after = gaps.after; }
+        let separated_item = {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_STRUCT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_STRUCT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
+            if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
         };
-        self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE].arm);
-        self.element_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.element.iter_mut().map(Some), options::SEATS_STRUCT_PATTERN_ELEMENTS_ELEMENT, &separated_element, ctx);
-        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_STRUCT_PATTERN_ELEMENTS_ELEMENT]);
-        self.element.prepare(ctx)?;
+        self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_STRUCT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
+        self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_STRUCT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_STRUCT_PATTERN_ELEMENTS_ITEM, &separated_item, ctx);
+        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_STRUCT_PATTERN_ELEMENTS_ITEM]);
+        self.item.prepare(ctx)?;
         Ok(())
     }
 }
@@ -77000,7 +77000,7 @@ impl ::sittir_core::prepare::SeatTarget for StructPatternTypeTransportSlot {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for UseClausesUseClauseTransportSlot {
+impl ::sittir_core::prepare::SeatTarget for UseClausesItemTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::ScopedIdentifier(t) => t.seat_target(table),
@@ -77014,7 +77014,7 @@ impl ::sittir_core::prepare::SeatTarget for UseClausesUseClauseTransportSlot {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for UseBoundsElementsElementTransportSlot {
+impl ::sittir_core::prepare::SeatTarget for UseBoundsElementsItemTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::Lifetime(t) => t.seat_target(table),
@@ -77024,7 +77024,7 @@ impl ::sittir_core::prepare::SeatTarget for UseBoundsElementsElementTransportSlo
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for FieldInitializerListElementsElementTransportSlot {
+impl ::sittir_core::prepare::SeatTarget for FieldInitializerListElementsItemTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::ShorthandFieldInitializer(t) => t.seat_target(table),
@@ -77036,7 +77036,7 @@ impl ::sittir_core::prepare::SeatTarget for FieldInitializerListElementsElementT
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for TuplePatternElementsElementTransportSlot {
+impl ::sittir_core::prepare::SeatTarget for TuplePatternElementsItemTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::StringLiteral(t) => t.seat_target(table),
@@ -77066,7 +77066,7 @@ impl ::sittir_core::prepare::SeatTarget for TuplePatternElementsElementTransport
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for StructPatternElementsElementTransportSlot {
+impl ::sittir_core::prepare::SeatTarget for StructPatternElementsItemTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::FieldPatternShorthand(t) => t.seat_target(table),
@@ -79619,325 +79619,325 @@ fn render_primitive_type(t: &PrimitiveTypeEnum, w: &mut dyn ::sittir_core::rende
 }
 
 fn render_macro_rules(node: &MacroRulesTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let macro_rule = ListView {
-        items: &node.macro_rule,
+    let item = ListView {
+        items: &node.item,
         template: "{}",
         token: ";",
-        before: node.macro_rule_separator_space_before.unwrap_or(0),
-        after: node.macro_rule_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(0),
+        after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: Some(options::SITE_MACRO_RULES_MACRO_RULE_START),
-        tail: Some(options::SITE_MACRO_RULES_MACRO_RULE_END),
+        head: Some(options::SITE_MACRO_RULES_ITEM_START),
+        tail: Some(options::SITE_MACRO_RULES_ITEM_END),
     };
     w.edge(::sittir_core::types::KindId(342), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    macro_rule.render(w)?;
+    item.render(w)?;
     w.edge(::sittir_core::types::KindId(342), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_enum_variant_list_elements(node: &EnumVariantListElementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let element = ListView {
-        items: &node.element,
+    let item = ListView {
+        items: &node.item,
         template: "{}",
         token: ",",
-        before: node.element_separator_space_before.unwrap_or(0),
-        after: node.element_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(0),
+        after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: Some(options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_START),
-        tail: Some(options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_END),
+        head: Some(options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ITEM_START),
+        tail: Some(options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ITEM_END),
     };
     w.edge(::sittir_core::types::KindId(343), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    element.render(w)?;
+    item.render(w)?;
     w.edge(::sittir_core::types::KindId(343), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_field_declaration_list_elements(node: &FieldDeclarationListElementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let element = ListView {
-        items: &node.element,
+    let item = ListView {
+        items: &node.item,
         template: "{}",
         token: ",",
-        before: node.element_separator_space_before.unwrap_or(0),
-        after: node.element_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(0),
+        after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: Some(options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_START),
-        tail: Some(options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_END),
+        head: Some(options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_START),
+        tail: Some(options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_END),
     };
     w.edge(::sittir_core::types::KindId(344), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    element.render(w)?;
+    item.render(w)?;
     w.edge(::sittir_core::types::KindId(344), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_ordered_field_declaration_list_elements(node: &OrderedFieldDeclarationListElementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let element = ListView {
-        items: &node.element,
+    let item = ListView {
+        items: &node.item,
         template: "{}",
         token: ",",
-        before: node.element_separator_space_before.unwrap_or(0),
-        after: node.element_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(0),
+        after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: Some(options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_START),
-        tail: Some(options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_END),
+        head: Some(options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_START),
+        tail: Some(options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_END),
     };
     w.edge(::sittir_core::types::KindId(345), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    element.render(w)?;
+    item.render(w)?;
     w.edge(::sittir_core::types::KindId(345), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_where_predicates(node: &WherePredicatesTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let where_predicate = ListView {
-        items: &node.where_predicate,
+    let item = ListView {
+        items: &node.item,
         template: "{}",
         token: ",",
-        before: node.where_predicate_separator_space_before.unwrap_or(0),
-        after: node.where_predicate_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(0),
+        after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: Some(options::SITE_WHERE_PREDICATES_WHERE_PREDICATE_START),
-        tail: Some(options::SITE_WHERE_PREDICATES_WHERE_PREDICATE_END),
+        head: Some(options::SITE_WHERE_PREDICATES_ITEM_START),
+        tail: Some(options::SITE_WHERE_PREDICATES_ITEM_END),
     };
     w.edge(::sittir_core::types::KindId(346), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    where_predicate.render(w)?;
+    item.render(w)?;
     w.edge(::sittir_core::types::KindId(346), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_type_parameters_elements(node: &TypeParametersElementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let element = ListView {
-        items: &node.element,
+    let item = ListView {
+        items: &node.item,
         template: "{}",
         token: ",",
-        before: node.element_separator_space_before.unwrap_or(0),
-        after: node.element_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(0),
+        after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: Some(options::SITE_TYPE_PARAMETERS_ELEMENTS_ELEMENT_START),
-        tail: Some(options::SITE_TYPE_PARAMETERS_ELEMENTS_ELEMENT_END),
+        head: Some(options::SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_START),
+        tail: Some(options::SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_END),
     };
     w.edge(::sittir_core::types::KindId(347), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    element.render(w)?;
+    item.render(w)?;
     w.edge(::sittir_core::types::KindId(347), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_use_clauses(node: &UseClausesTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let use_clause = ListView {
-        items: &node.use_clause,
+    let item = ListView {
+        items: &node.item,
         template: "{}",
         token: ",",
-        before: node.use_clause_separator_space_before.unwrap_or(0),
-        after: node.use_clause_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(0),
+        after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: Some(options::SITE_USE_CLAUSES_USE_CLAUSE_START),
-        tail: Some(options::SITE_USE_CLAUSES_USE_CLAUSE_END),
+        head: Some(options::SITE_USE_CLAUSES_ITEM_START),
+        tail: Some(options::SITE_USE_CLAUSES_ITEM_END),
     };
     w.edge(::sittir_core::types::KindId(348), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    use_clause.render(w)?;
+    item.render(w)?;
     w.edge(::sittir_core::types::KindId(348), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_parameters_elements(node: &ParametersElementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let element = ListView {
-        items: &node.element,
+    let item = ListView {
+        items: &node.item,
         template: "{}",
         token: ",",
-        before: node.element_separator_space_before.unwrap_or(0),
-        after: node.element_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(0),
+        after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: Some(options::SITE_PARAMETERS_ELEMENTS_ELEMENT_START),
-        tail: Some(options::SITE_PARAMETERS_ELEMENTS_ELEMENT_END),
+        head: Some(options::SITE_PARAMETERS_ELEMENTS_ITEM_START),
+        tail: Some(options::SITE_PARAMETERS_ELEMENTS_ITEM_END),
     };
     w.edge(::sittir_core::types::KindId(349), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    element.render(w)?;
+    item.render(w)?;
     w.edge(::sittir_core::types::KindId(349), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_lifetimes(node: &LifetimesTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let lifetime = ListView {
-        items: &node.lifetime,
+    let item = ListView {
+        items: &node.item,
         template: "{}",
         token: ",",
-        before: node.lifetime_separator_space_before.unwrap_or(0),
-        after: node.lifetime_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(0),
+        after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: Some(options::SITE_LIFETIMES_LIFETIME_START),
-        tail: Some(options::SITE_LIFETIMES_LIFETIME_END),
+        head: Some(options::SITE_LIFETIMES_ITEM_START),
+        tail: Some(options::SITE_LIFETIMES_ITEM_END),
     };
     w.edge(::sittir_core::types::KindId(350), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    lifetime.render(w)?;
+    item.render(w)?;
     w.edge(::sittir_core::types::KindId(350), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_types(node: &TypesTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let type_ = ListView {
-        items: &node.type_,
+    let item = ListView {
+        items: &node.item,
         template: "{}",
         token: ",",
-        before: node.type_separator_space_before.unwrap_or(0),
-        after: node.type_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(0),
+        after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: Some(options::SITE_TYPES_TYPE_START),
-        tail: Some(options::SITE_TYPES_TYPE_END),
+        head: Some(options::SITE_TYPES_ITEM_START),
+        tail: Some(options::SITE_TYPES_ITEM_END),
     };
     w.edge(::sittir_core::types::KindId(351), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    type_.render(w)?;
+    item.render(w)?;
     w.edge(::sittir_core::types::KindId(351), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_use_bounds_elements(node: &UseBoundsElementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let element = ListView {
-        items: &node.element,
+    let item = ListView {
+        items: &node.item,
         template: "{}",
         token: ",",
-        before: node.element_separator_space_before.unwrap_or(0),
-        after: node.element_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(0),
+        after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: Some(options::SITE_USE_BOUNDS_ELEMENTS_ELEMENT_START),
-        tail: Some(options::SITE_USE_BOUNDS_ELEMENTS_ELEMENT_END),
+        head: Some(options::SITE_USE_BOUNDS_ELEMENTS_ITEM_START),
+        tail: Some(options::SITE_USE_BOUNDS_ELEMENTS_ITEM_END),
     };
     w.edge(::sittir_core::types::KindId(352), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    element.render(w)?;
+    item.render(w)?;
     w.edge(::sittir_core::types::KindId(352), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_type_arguments_elements(node: &TypeArgumentsElementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let element = ListView {
-        items: &node.element,
+    let item = ListView {
+        items: &node.item,
         template: "{}",
         token: ",",
-        before: node.element_separator_space_before.unwrap_or(0),
-        after: node.element_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(0),
+        after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: Some(options::SITE_TYPE_ARGUMENTS_ELEMENTS_ELEMENT_START),
-        tail: Some(options::SITE_TYPE_ARGUMENTS_ELEMENTS_ELEMENT_END),
+        head: Some(options::SITE_TYPE_ARGUMENTS_ELEMENTS_ITEM_START),
+        tail: Some(options::SITE_TYPE_ARGUMENTS_ELEMENTS_ITEM_END),
     };
     w.edge(::sittir_core::types::KindId(353), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    element.render(w)?;
+    item.render(w)?;
     w.edge(::sittir_core::types::KindId(353), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_arguments_elements(node: &ArgumentsElementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let element = ListView {
-        items: &node.element,
+    let item = ListView {
+        items: &node.item,
         template: "{}",
         token: ",",
-        before: node.element_separator_space_before.unwrap_or(0),
-        after: node.element_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(0),
+        after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: Some(options::SITE_ARGUMENTS_ELEMENTS_ELEMENT_START),
-        tail: Some(options::SITE_ARGUMENTS_ELEMENTS_ELEMENT_END),
+        head: Some(options::SITE_ARGUMENTS_ELEMENTS_ITEM_START),
+        tail: Some(options::SITE_ARGUMENTS_ELEMENTS_ITEM_END),
     };
     w.edge(::sittir_core::types::KindId(354), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    element.render(w)?;
+    item.render(w)?;
     w.edge(::sittir_core::types::KindId(354), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_expressions(node: &ExpressionsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let expression = ListView {
-        items: &node.expression,
+    let item = ListView {
+        items: &node.item,
         template: "{}",
         token: ",",
-        before: node.expression_separator_space_before.unwrap_or(0),
-        after: node.expression_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(0),
+        after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
-        trailing: (&node.expression).len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: Some(options::SITE_EXPRESSIONS_EXPRESSION_START),
-        tail: Some(options::SITE_EXPRESSIONS_EXPRESSION_END),
+        trailing: (&node.item).len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        head: Some(options::SITE_EXPRESSIONS_ITEM_START),
+        tail: Some(options::SITE_EXPRESSIONS_ITEM_END),
     };
     w.edge(::sittir_core::types::KindId(355), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    expression.render(w)?;
+    item.render(w)?;
     w.edge(::sittir_core::types::KindId(355), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_field_initializer_list_elements(node: &FieldInitializerListElementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let element = ListView {
-        items: &node.element,
+    let item = ListView {
+        items: &node.item,
         template: "{}",
         token: ",",
-        before: node.element_separator_space_before.unwrap_or(0),
-        after: node.element_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(0),
+        after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: Some(options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_START),
-        tail: Some(options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_END),
+        head: Some(options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ITEM_START),
+        tail: Some(options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ITEM_END),
     };
     w.edge(::sittir_core::types::KindId(356), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    element.render(w)?;
+    item.render(w)?;
     w.edge(::sittir_core::types::KindId(356), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_tuple_pattern_elements(node: &TuplePatternElementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let element = ListView {
-        items: &node.element,
+    let item = ListView {
+        items: &node.item,
         template: "{}",
         token: ",",
-        before: node.element_separator_space_before.unwrap_or(0),
-        after: node.element_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(0),
+        after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: Some(options::SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_START),
-        tail: Some(options::SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_END),
+        head: Some(options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_START),
+        tail: Some(options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_END),
     };
     w.edge(::sittir_core::types::KindId(357), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    element.render(w)?;
+    item.render(w)?;
     w.edge(::sittir_core::types::KindId(357), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_patterns(node: &PatternsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let pattern = ListView {
-        items: &node.pattern,
+    let item = ListView {
+        items: &node.item,
         template: "{}",
         token: ",",
-        before: node.pattern_separator_space_before.unwrap_or(0),
-        after: node.pattern_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(0),
+        after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: Some(options::SITE_PATTERNS_PATTERN_START),
-        tail: Some(options::SITE_PATTERNS_PATTERN_END),
+        head: Some(options::SITE_PATTERNS_ITEM_START),
+        tail: Some(options::SITE_PATTERNS_ITEM_END),
     };
     w.edge(::sittir_core::types::KindId(358), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    pattern.render(w)?;
+    item.render(w)?;
     w.edge(::sittir_core::types::KindId(358), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_struct_pattern_elements(node: &StructPatternElementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let element = ListView {
-        items: &node.element,
+    let item = ListView {
+        items: &node.item,
         template: "{}",
         token: ",",
-        before: node.element_separator_space_before.unwrap_or(0),
-        after: node.element_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(0),
+        after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: Some(options::SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_START),
-        tail: Some(options::SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_END),
+        head: Some(options::SITE_STRUCT_PATTERN_ELEMENTS_ITEM_START),
+        tail: Some(options::SITE_STRUCT_PATTERN_ELEMENTS_ITEM_END),
     };
     w.edge(::sittir_core::types::KindId(359), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    element.render(w)?;
+    item.render(w)?;
     w.edge(::sittir_core::types::KindId(359), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }

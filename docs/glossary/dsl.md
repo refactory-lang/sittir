@@ -7113,7 +7113,11 @@ The `element-supertype` origin of a list element that is a reference to an eleme
 
 ### `packages/codegen/src/dsl/enrich.ts::elementSlotName`
 
-The one slot-name function for a list element: the stamped slot of an element supertype, else `deriveElementFieldName` for a separated-list element and `elements` for a repeat's content. `applyNodeChoiceFieldWrap` and `fieldSeparatedListElements` field through it, so the name on the supertype and the name of the field are the same fact.
+The one slot-name function for a list element, by where the element sits. In a list kind's body (`'list'`, per `listKindBodySeqs`) the field is always `item`, so every list kind has the same slot, `items`, whatever it holds; what the list holds is said by the owner's slot. Elsewhere the element is a slot of its owner: the stamped slot of an element supertype, else `deriveElementFieldName` for a separated run that shares the owner with other members (`'separated'`) and `elements` for a repeat's content (`'repeat'`). A field the grammar authored on an element is never renamed. `applyNodeChoiceFieldWrap` and `fieldSeparatedListElements` field through it, so the name on the supertype and the name of the field are the same fact.
+
+### `packages/codegen/src/dsl/enrich.ts::listKindBodySeqs`
+
+The seqs that hold a list kind's elements, given a seq: the seq itself and a seq directly inside it (the head run written as its own seq, beside the trailing separator) when the whole seq is a separated list whose separator varies per instance (`separatedListBodyInfo(...).flankCarrying`), and none otherwise. That is the condition under which the model classifies a kind as a list, and a seq of that shape always ends as its own kind: it is a rule's body, or enrich splits it out of its owner as a hoisted list or a choice arm. A separated run with a fixed separator and no optional flank is a slot of an owner that is not a list.
 
 ### `packages/codegen/src/dsl/enrich.ts::listKindElementPlural`
 

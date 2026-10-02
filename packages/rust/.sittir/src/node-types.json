@@ -913,7 +913,7 @@
     "type": "arguments_elements",
     "named": true,
     "fields": {
-      "element": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -2517,7 +2517,7 @@
     "type": "enum_variant_list_elements",
     "named": true,
     "fields": {
-      "element": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -2608,7 +2608,7 @@
     "type": "expressions",
     "named": true,
     "fields": {
-      "expression": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -2738,7 +2738,7 @@
     "type": "field_declaration_list_elements",
     "named": true,
     "fields": {
-      "element": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -2840,7 +2840,7 @@
     "type": "field_initializer_list_elements",
     "named": true,
     "fields": {
-      "element": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -4038,7 +4038,7 @@
     "type": "lifetimes",
     "named": true,
     "fields": {
-      "lifetime": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -4313,7 +4313,7 @@
     "type": "macro_rules",
     "named": true,
     "fields": {
-      "macro_rule": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -4764,7 +4764,7 @@
     "type": "ordered_field_declaration_list_elements",
     "named": true,
     "fields": {
-      "element": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -4841,7 +4841,7 @@
     "type": "parameters_elements",
     "named": true,
     "fields": {
-      "element": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -4873,7 +4873,7 @@
     "type": "patterns",
     "named": true,
     "fields": {
-      "pattern": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -6071,7 +6071,7 @@
     "type": "struct_pattern_elements",
     "named": true,
     "fields": {
-      "element": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -6592,7 +6592,7 @@
     "type": "tuple_pattern_elements",
     "named": true,
     "fields": {
-      "element": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -6712,7 +6712,7 @@
     "type": "type_arguments_elements",
     "named": true,
     "fields": {
-      "element": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -6908,7 +6908,7 @@
     "type": "type_parameters_elements",
     "named": true,
     "fields": {
-      "element": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -6924,7 +6924,7 @@
     "type": "types",
     "named": true,
     "fields": {
-      "type": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -7118,7 +7118,7 @@
     "type": "use_bounds_elements",
     "named": true,
     "fields": {
-      "element": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -7138,7 +7138,7 @@
     "type": "use_clauses",
     "named": true,
     "fields": {
-      "use_clause": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -7528,7 +7528,7 @@
     "type": "where_predicates",
     "named": true,
     "fields": {
-      "where_predicate": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [

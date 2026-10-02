@@ -49,8 +49,8 @@ export default sittirGrammar(base, {
 		statements: { terminator: preference(';') },
 		quotes: { style: preference('double') },
 		enum_body_elements: {
-			'element:/separator/","/after': preference('newline'),
-			'element:/delimiter': preference('Delimiter.Trailing')
+			'item:/separator/","/after': preference('newline'),
+			'item:/delimiter': preference('Delimiter.Trailing')
 		},
 		program: { 'statements:/separator': preference('tight'), 'statements:/(_)/after': preference('blankline') },
 
@@ -107,19 +107,19 @@ export default sittirGrammar(base, {
 		update_expression_prefix: { 'operator:/after': preference('tight') },
 
 		object_type_content: {
-			'members:/separator/before': preference('tight'),
-			'members:/separator/after': preference('newline'),
-			'members:/separator/kind': preference('semi'),
-			'members:/delimiter': preference('Delimiter.Trailing')
+			'item:/separator/before': preference('tight'),
+			'item:/separator/after': preference('newline'),
+			'item:/separator/kind': preference('semi'),
+			'item:/delimiter': preference('Delimiter.Trailing')
 		},
 
 		statement_block: { before: preference('space') },
 		class_body: { before: preference('space') },
 		switch_body: { before: preference('space') },
 		named_imports: { before: preference('space'), after: preference('space') },
-		import_specifiers: { 'import_specifier:/start': preference('space'), 'import_specifier:/end': preference('space') },
+		import_specifiers: { 'item:/start': preference('space'), 'item:/end': preference('space') },
 		export_clause: { before: preference('space'), after: preference('space') },
-		export_specifiers: { 'export_specifier:/start': preference('space'), 'export_specifier:/end': preference('space') },
+		export_specifiers: { 'item:/start': preference('space'), 'item:/end': preference('space') },
 		object: { 'properties:/start': preference('space'), 'properties:/end': preference('space') },
 		object_pattern: { 'properties:/start': preference('space'), 'properties:/end': preference('space') },
 		ternary_expression: { '":"/before': preference('space') },
@@ -599,7 +599,7 @@ export default sittirGrammar(base, {
 			);
 			return seq(
 				optional(SEP()),
-				seq(field('members', member), repeat(seq(SEP(), field('members', member)))),
+				seq(field('item', member), repeat(seq(SEP(), field('item', member)))),
 				optional(SEP())
 			);
 		})

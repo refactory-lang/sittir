@@ -1306,7 +1306,7 @@ export function wrapExportClause(data: T.ExportClause, tree: TreeHandle): T.Expo
 		}),
 		tree
 	);
-	const listView = ownerView(_export_specifiers, '_export_specifier', tree);
+	const listView = ownerView(_export_specifiers, '_item', tree);
 	const node = {
 		...data,
 		$type: TSKindId.ExportClause as const,
@@ -1329,7 +1329,7 @@ export function wrapExportClause(data: T.ExportClause, tree: TreeHandle): T.Expo
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
-			listItems(ownerElements(node.exportSpecifiers(), 'exportSpecifiers'), {
+			listItems(ownerElements(node.exportSpecifiers(), 'items'), {
 				kind: TSKindId.ExportSpecifier,
 				content: 'name',
 				decorations: ['_export_kind', '_alias']
@@ -1695,7 +1695,7 @@ export function wrapNamedImports(data: T.NamedImports, tree: TreeHandle): T.Name
 		}),
 		tree
 	);
-	const listView = ownerView(_import_specifiers, '_import_specifier', tree);
+	const listView = ownerView(_import_specifiers, '_item', tree);
 	const node = {
 		...data,
 		$type: TSKindId.NamedImports as const,
@@ -1717,7 +1717,7 @@ export function wrapNamedImports(data: T.NamedImports, tree: TreeHandle): T.Name
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.importSpecifiers(), 'importSpecifiers'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.importSpecifiers(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7278,7 +7278,7 @@ export function wrapFormalParameters(data: T.FormalParameters, tree: TreeHandle)
 		}),
 		tree
 	);
-	const listView = ownerView(_elements, '_formal_parameter', tree);
+	const listView = ownerView(_elements, '_item', tree);
 	const node = {
 		...data,
 		$type: TSKindId.FormalParameters as const,
@@ -7304,7 +7304,7 @@ export function wrapFormalParameters(data: T.FormalParameters, tree: TreeHandle)
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'formalParameters'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -10240,7 +10240,7 @@ export function wrapEnumBody(data: T.EnumBody, tree: TreeHandle): T.EnumBody.Par
 		}),
 		tree
 	);
-	const listView = ownerView(_elements, '_element', tree);
+	const listView = ownerView(_elements, '_item', tree);
 	const node = {
 		...data,
 		$type: TSKindId.EnumBody as const,
@@ -10261,7 +10261,7 @@ export function wrapEnumBody(data: T.EnumBody, tree: TreeHandle): T.EnumBody.Par
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'elements'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -13183,7 +13183,7 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.Ty
 		}),
 		tree
 	);
-	const listView = ownerView(_types, '_type', tree);
+	const listView = ownerView(_types, '_item', tree);
 	const node = {
 		...data,
 		$type: TSKindId.TypeArguments as const,
@@ -13204,7 +13204,7 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.Ty
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.types(), 'types'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.types(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -13579,7 +13579,7 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 		}),
 		tree
 	);
-	const listView = ownerView(_elements, '_type_parameter', tree);
+	const listView = ownerView(_elements, '_item', tree);
 	const node = {
 		...data,
 		$type: TSKindId.TypeParameters as const,
@@ -13602,7 +13602,7 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
-			listItems(ownerElements(node.elements(), 'typeParameters'), {
+			listItems(ownerElements(node.elements(), 'items'), {
 				kind: TSKindId.TypeParameter,
 				content: 'name',
 				decorations: ['_const_marker', '_constraint', '_value']
@@ -14031,7 +14031,7 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle): T.TupleType.
 		}),
 		tree
 	);
-	const listView = ownerView(_tuple_type_members, '_tuple_type_member', tree);
+	const listView = ownerView(_tuple_type_members, '_item', tree);
 	const node = {
 		...data,
 		$type: TSKindId.TupleType as const,
@@ -14053,7 +14053,7 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle): T.TupleType.
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.tupleTypeMembers(), 'tupleTypeMembers'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.tupleTypeMembers(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -14382,13 +14382,13 @@ export function wrapExportSpecifiers(
 	},
 	tree: TreeHandle
 ): T.ExportSpecifiers.Parsed {
-	data = _keepModelledSlots(data, ['_export_specifier']);
+	data = _keepModelledSlots(data, ['_item']);
 	const handle = currentHandle();
 	const _content = storeExpanded(
-		normalizeRepeatedWrapSlot(data._export_specifier, true, 'export_specifier', {
+		normalizeRepeatedWrapSlot(data._item, true, 'item', {
 			tree,
 			nodeType: data.$type,
-			slotName: 'export_specifier',
+			slotName: 'item',
 			span: (data as _UntypedNode).$span
 		}),
 		tree
@@ -14400,20 +14400,17 @@ export function wrapExportSpecifiers(
 	const node = {
 		...data,
 		$type: TSKindId.ExportSpecifiers as const,
-		_export_specifier: _content,
+		_item: _content,
 		_delimiter,
 
-		exportSpecifiers() {
-			return hydrateChildren<T.ExportSpecifier>(
-				this._export_specifier as readonly T.ExportSpecifier[] | undefined,
-				tree
-			);
+		items() {
+			return hydrateChildren<T.ExportSpecifier>(this._item as readonly T.ExportSpecifier[] | undefined, tree);
 		},
 		$with: {},
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
-			listItems(ownerElements(node, 'exportSpecifiers'), {
+			listItems(ownerElements(node, 'items'), {
 				kind: TSKindId.ExportSpecifier,
 				content: 'name',
 				decorations: ['_export_kind', '_alias']
@@ -14441,13 +14438,13 @@ export function wrapImportSpecifiers(
 	},
 	tree: TreeHandle
 ): T.ImportSpecifiers.Parsed {
-	data = _keepModelledSlots(data, ['_import_specifier']);
+	data = _keepModelledSlots(data, ['_item']);
 	const handle = currentHandle();
 	const _content = storeExpanded(
-		normalizeRepeatedWrapSlot(data._import_specifier, true, 'import_specifier', {
+		normalizeRepeatedWrapSlot(data._item, true, 'item', {
 			tree,
 			nodeType: data.$type,
-			slotName: 'import_specifier',
+			slotName: 'item',
 			span: (data as _UntypedNode).$span
 		}),
 		tree
@@ -14459,19 +14456,16 @@ export function wrapImportSpecifiers(
 	const node = {
 		...data,
 		$type: TSKindId.ImportSpecifiers as const,
-		_import_specifier: _content,
+		_item: _content,
 		_delimiter,
 
-		importSpecifiers() {
-			return hydrateChildren<T.ImportSpecifier>(
-				this._import_specifier as readonly T.ImportSpecifier[] | undefined,
-				tree
-			);
+		items() {
+			return hydrateChildren<T.ImportSpecifier>(this._item as readonly T.ImportSpecifier[] | undefined, tree);
 		},
 		$with: {},
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'importSpecifiers'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -14540,13 +14534,13 @@ export function wrapFormalParametersElements(
 	},
 	tree: TreeHandle
 ): T.FormalParametersElements.Parsed {
-	data = _keepModelledSlots(data, ['_formal_parameter']);
+	data = _keepModelledSlots(data, ['_item']);
 	const handle = currentHandle();
 	const _content = storeExpanded(
-		normalizeRepeatedWrapSlot(data._formal_parameter, true, 'formal_parameter', {
+		normalizeRepeatedWrapSlot(data._item, true, 'item', {
 			tree,
 			nodeType: data.$type,
-			slotName: 'formal_parameter',
+			slotName: 'item',
 			span: (data as _UntypedNode).$span
 		}),
 		tree
@@ -14558,19 +14552,19 @@ export function wrapFormalParametersElements(
 	const node = {
 		...data,
 		$type: TSKindId.FormalParametersElements as const,
-		_formal_parameter: _content,
+		_item: _content,
 		_delimiter,
 
-		formalParameters() {
+		items() {
 			return hydrateChildren<T.RequiredParameter | T.OptionalParameter>(
-				this._formal_parameter as readonly (T.RequiredParameter | T.OptionalParameter)[] | undefined,
+				this._item as readonly (T.RequiredParameter | T.OptionalParameter)[] | undefined,
 				tree
 			);
 		},
 		$with: {},
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'formalParameters'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -14722,13 +14716,13 @@ export function wrapEnumBodyElements(
 	},
 	tree: TreeHandle
 ): T.EnumBodyElements.Parsed {
-	data = _keepModelledSlots(data, ['_element']);
+	data = _keepModelledSlots(data, ['_item']);
 	const handle = currentHandle();
 	const _content = storeExpanded(
-		normalizeRepeatedWrapSlot(data._element, true, 'element', {
+		normalizeRepeatedWrapSlot(data._item, true, 'item', {
 			tree,
 			nodeType: data.$type,
-			slotName: 'element',
+			slotName: 'item',
 			span: (data as _UntypedNode).$span
 		}),
 		tree
@@ -14740,16 +14734,16 @@ export function wrapEnumBodyElements(
 	const node = {
 		...data,
 		$type: TSKindId.EnumBodyElements as const,
-		_element: _content,
+		_item: _content,
 		_delimiter,
 
-		elements() {
-			return hydrateChildren<T.EnumBodyElement>(this._element as readonly T.EnumBodyElement[] | undefined, tree);
+		items() {
+			return hydrateChildren<T.EnumBodyElement>(this._item as readonly T.EnumBodyElement[] | undefined, tree);
 		},
 		$with: {},
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'elements'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -14770,13 +14764,13 @@ export function wrapTypes(
 	data: T.Types & { readonly $other?: _UntypedNode['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
 ): T.Types.Parsed {
-	data = _keepModelledSlots(data, ['_type']);
+	data = _keepModelledSlots(data, ['_item']);
 	const handle = currentHandle();
 	const _content = storeExpanded(
-		normalizeRepeatedWrapSlot(data._type, true, 'type', {
+		normalizeRepeatedWrapSlot(data._item, true, 'item', {
 			tree,
 			nodeType: data.$type,
-			slotName: 'type',
+			slotName: 'item',
 			span: (data as _UntypedNode).$span
 		}),
 		tree
@@ -14788,16 +14782,16 @@ export function wrapTypes(
 	const node = {
 		...data,
 		$type: TSKindId.Types as const,
-		_type: _content,
+		_item: _content,
 		_delimiter,
 
-		types() {
-			return hydrateChildren<T.Type>(this._type as readonly T.Type[] | undefined, tree);
+		items() {
+			return hydrateChildren<T.Type>(this._item as readonly T.Type[] | undefined, tree);
 		},
 		$with: {},
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'types'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -14821,13 +14815,13 @@ export function wrapTypeParametersElements(
 	},
 	tree: TreeHandle
 ): T.TypeParametersElements.Parsed {
-	data = _keepModelledSlots(data, ['_type_parameter']);
+	data = _keepModelledSlots(data, ['_item']);
 	const handle = currentHandle();
 	const _content = storeExpanded(
-		normalizeRepeatedWrapSlot(data._type_parameter, true, 'type_parameter', {
+		normalizeRepeatedWrapSlot(data._item, true, 'item', {
 			tree,
 			nodeType: data.$type,
-			slotName: 'type_parameter',
+			slotName: 'item',
 			span: (data as _UntypedNode).$span
 		}),
 		tree
@@ -14839,17 +14833,17 @@ export function wrapTypeParametersElements(
 	const node = {
 		...data,
 		$type: TSKindId.TypeParametersElements as const,
-		_type_parameter: _content,
+		_item: _content,
 		_delimiter,
 
-		typeParameters() {
-			return hydrateChildren<T.TypeParameter>(this._type_parameter as readonly T.TypeParameter[] | undefined, tree);
+		items() {
+			return hydrateChildren<T.TypeParameter>(this._item as readonly T.TypeParameter[] | undefined, tree);
 		},
 		$with: {},
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
-			listItems(ownerElements(node, 'typeParameters'), {
+			listItems(ownerElements(node, 'items'), {
 				kind: TSKindId.TypeParameter,
 				content: 'name',
 				decorations: ['_const_marker', '_constraint', '_value']
@@ -14877,13 +14871,13 @@ export function wrapTupleTypeMembers(
 	},
 	tree: TreeHandle
 ): T.TupleTypeMembers.Parsed {
-	data = _keepModelledSlots(data, ['_tuple_type_member']);
+	data = _keepModelledSlots(data, ['_item']);
 	const handle = currentHandle();
 	const _content = storeExpanded(
-		normalizeRepeatedWrapSlot(data._tuple_type_member, true, 'tuple_type_member', {
+		normalizeRepeatedWrapSlot(data._item, true, 'item', {
 			tree,
 			nodeType: data.$type,
-			slotName: 'tuple_type_member',
+			slotName: 'item',
 			span: (data as _UntypedNode).$span
 		}),
 		tree
@@ -14895,12 +14889,12 @@ export function wrapTupleTypeMembers(
 	const node = {
 		...data,
 		$type: TSKindId.TupleTypeMembers as const,
-		_tuple_type_member: _content,
+		_item: _content,
 		_delimiter,
 
-		tupleTypeMembers() {
+		items() {
 			return hydrateChildren<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type>(
-				this._tuple_type_member as
+				this._item as
 					| readonly (T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type)[]
 					| undefined,
 				tree
@@ -14909,7 +14903,7 @@ export function wrapTupleTypeMembers(
 		$with: {},
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'tupleTypeMembers'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -15143,13 +15137,13 @@ export function wrapObjectTypeContent(
 	},
 	tree: TreeHandle
 ): T.ObjectTypeContent.Parsed {
-	data = _keepModelledSlots(data, ['_members']);
+	data = _keepModelledSlots(data, ['_item']);
 	const handle = currentHandle();
 	const _content = storeExpanded(
-		normalizeRepeatedWrapSlot(data._members, true, 'members', {
+		normalizeRepeatedWrapSlot(data._item, true, 'item', {
 			tree,
 			nodeType: data.$type,
-			slotName: 'members',
+			slotName: 'item',
 			span: (data as _UntypedNode).$span
 		}),
 		tree
@@ -15162,11 +15156,11 @@ export function wrapObjectTypeContent(
 	const node = {
 		...data,
 		$type: TSKindId.ObjectTypeContent as const,
-		_members: _content,
+		_item: _content,
 		_separator,
 		_delimiter,
 
-		members() {
+		items() {
 			return hydrateChildren<
 				| T.ExportStatement
 				| T.PropertySignature
@@ -15175,7 +15169,7 @@ export function wrapObjectTypeContent(
 				| T.IndexSignature
 				| T.MethodSignature
 			>(
-				this._members as
+				this._item as
 					| readonly (
 							| T.ExportStatement
 							| T.PropertySignature
@@ -15191,7 +15185,7 @@ export function wrapObjectTypeContent(
 		$with: {},
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'members'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -19383,11 +19377,11 @@ function _wrapTrivia(trivia: _UntypedNode['$_trivia'], tree: TreeHandle): _Untyp
 	);
 }
 
-const _ALIAS_ENVELOPES: ReadonlySet<_UntypedNode['$type']> = new Set([459, 461, 462, 463, 464, 466]);
+const _ALIAS_ENVELOPES: ReadonlySet<_UntypedNode['$type']> = new Set([460, 462, 463, 464, 465, 467]);
 const _HIDDEN_KINDS: ReadonlySet<_UntypedNode['$type']> = new Set([
 	179, 180, 181, 182, 183, 184, 185, 186, 187, 189, 193, 194, 198, 201, 203, 207, 214, 231, 232, 233, 250, 251, 253,
 	258, 260, 262, 263, 268, 270, 274, 275, 283, 288, 291, 309, 322, 331, 336, 338, 355, 369, 378, 381, 391, 396, 435,
-	436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458
+	436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459
 ]);
 function _displayOf(entry: _UntypedNode): _UntypedNode['$type'] {
 	return (entry as { readonly $displayType?: _UntypedNode['$type'] }).$displayType ?? entry.$type;
