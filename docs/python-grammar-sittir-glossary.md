@@ -226,7 +226,7 @@ one repeat, and the render keeps the comma after a single member.
 ### `for_in_clause` (`packages/python/grammar.sittir.ts:128`)
 
 `for_in_clause` is `prec.left(seq(optional('async'), 'for', …))`. Enrich
-fields the `async` position as `field('async_marker', SYMBOL(_kw_async_marker))`,
+fields the `async` position as `field('async', SYMBOL(_kw_async))`,
 as it does for `for_statement`, `function_definition`, and `with_statement`;
 the one authored entry fields the trailing comma at `5/0`.
 

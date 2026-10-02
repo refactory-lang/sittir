@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "94ed3fc",
+    "commit": "ff9d37f",
     "grammars": {
         "python": {
             "hoistedKindCount": 45,

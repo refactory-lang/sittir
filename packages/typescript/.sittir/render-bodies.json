@@ -118,19 +118,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "override_modifier",
+					"test": "override",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "override_modifier_before"
+							"field": "override_before"
 						},
 						{
 							"kind": "slot",
-							"name": "override_modifier"
+							"name": "override"
 						},
 						{
 							"kind": "seam",
-							"field": "override_modifier_after"
+							"field": "override_after"
 						}
 					]
 				}
@@ -204,19 +204,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "optional_marker",
+					"test": "optional",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "optional_marker_before"
+							"field": "optional_before"
 						},
 						{
 							"kind": "slot",
-							"name": "optional_marker"
+							"name": "optional"
 						},
 						{
 							"kind": "seam",
-							"field": "optional_marker_after"
+							"field": "optional_after"
 						}
 					]
 				}
@@ -525,15 +525,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "async_marker",
+					"test": "async",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "async_marker"
+							"name": "async"
 						},
 						{
 							"kind": "seam",
-							"field": "async_marker_after"
+							"field": "async_after"
 						}
 					]
 				}
@@ -656,15 +656,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "using_marker",
+					"test": "using",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "using_marker"
+							"name": "using"
 						},
 						{
 							"kind": "seam",
-							"field": "using_marker_after"
+							"field": "using_after"
 						}
 					]
 				}
@@ -1629,15 +1629,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "abstract_marker",
+					"test": "abstract",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "abstract_marker"
+							"name": "abstract"
 						},
 						{
 							"kind": "seam",
-							"field": "abstract_marker_after"
+							"field": "abstract_after"
 						}
 					]
 				}
@@ -1701,15 +1701,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "abstract_marker",
+					"test": "abstract",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "abstract_marker"
+							"name": "abstract"
 						},
 						{
 							"kind": "seam",
-							"field": "abstract_marker_after"
+							"field": "abstract_after"
 						}
 					]
 				}
@@ -2133,15 +2133,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "const_marker",
+					"test": "const",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "const_marker"
+							"name": "const"
 						},
 						{
 							"kind": "seam",
-							"field": "const_marker_after"
+							"field": "const_after"
 						}
 					]
 				}
@@ -3030,19 +3030,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "await_marker",
+					"test": "await",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "await_marker_before"
+							"field": "await_before"
 						},
 						{
 							"kind": "slot",
-							"name": "await_marker"
+							"name": "await"
 						},
 						{
 							"kind": "seam",
-							"field": "await_marker_after"
+							"field": "await_after"
 						}
 					]
 				}
@@ -3244,15 +3244,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "async_marker",
+					"test": "async",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "async_marker"
+							"name": "async"
 						},
 						{
 							"kind": "seam",
-							"field": "async_marker_after"
+							"field": "async_after"
 						}
 					]
 				}
@@ -3338,15 +3338,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "async_marker",
+					"test": "async",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "async_marker"
+							"name": "async"
 						},
 						{
 							"kind": "seam",
-							"field": "async_marker_after"
+							"field": "async_after"
 						}
 					]
 				}
@@ -3428,15 +3428,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "async_marker",
+					"test": "async",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "async_marker"
+							"name": "async"
 						},
 						{
 							"kind": "seam",
-							"field": "async_marker_after"
+							"field": "async_after"
 						}
 					]
 				}
@@ -3552,15 +3552,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "async_marker",
+					"test": "async",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "async_marker"
+							"name": "async"
 						},
 						{
 							"kind": "seam",
-							"field": "async_marker_after"
+							"field": "async_after"
 						}
 					]
 				}
@@ -3654,15 +3654,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "async_marker",
+					"test": "async",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "async_marker"
+							"name": "async"
 						},
 						{
 							"kind": "seam",
-							"field": "async_marker_after"
+							"field": "async_after"
 						}
 					]
 				}
@@ -4226,19 +4226,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "readonly_marker",
+					"test": "readonly",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "readonly_marker_before"
+							"field": "readonly_before"
 						},
 						{
 							"kind": "slot",
-							"name": "readonly_marker"
+							"name": "readonly"
 						},
 						{
 							"kind": "seam",
-							"field": "readonly_marker_after"
+							"field": "readonly_after"
 						}
 					]
 				}
@@ -4324,19 +4324,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "readonly_marker",
+					"test": "readonly",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "readonly_marker_before"
+							"field": "readonly_before"
 						},
 						{
 							"kind": "slot",
-							"name": "readonly_marker"
+							"name": "readonly"
 						},
 						{
 							"kind": "seam",
-							"field": "readonly_marker_after"
+							"field": "readonly_after"
 						}
 					]
 				}
@@ -4850,19 +4850,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "static_marker",
+					"test": "static",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "static_marker_before"
+							"field": "static_before"
 						},
 						{
 							"kind": "slot",
-							"name": "static_marker"
+							"name": "static"
 						},
 						{
 							"kind": "seam",
-							"field": "static_marker_after"
+							"field": "static_after"
 						}
 					]
 				}
@@ -4872,19 +4872,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "override_modifier",
+					"test": "override",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "override_modifier_before"
+							"field": "override_before"
 						},
 						{
 							"kind": "slot",
-							"name": "override_modifier"
+							"name": "override"
 						},
 						{
 							"kind": "seam",
-							"field": "override_modifier_after"
+							"field": "override_after"
 						}
 					]
 				}
@@ -4894,19 +4894,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "readonly_marker",
+					"test": "readonly",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "readonly_marker_before"
+							"field": "readonly_before"
 						},
 						{
 							"kind": "slot",
-							"name": "readonly_marker"
+							"name": "readonly"
 						},
 						{
 							"kind": "seam",
-							"field": "readonly_marker_after"
+							"field": "readonly_after"
 						}
 					]
 				}
@@ -4916,19 +4916,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "async_marker",
+					"test": "async",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "async_marker_before"
+							"field": "async_before"
 						},
 						{
 							"kind": "slot",
-							"name": "async_marker"
+							"name": "async"
 						},
 						{
 							"kind": "seam",
-							"field": "async_marker_after"
+							"field": "async_after"
 						}
 					]
 				}
@@ -5002,19 +5002,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "optional_marker",
+					"test": "optional",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "optional_marker_before"
+							"field": "optional_before"
 						},
 						{
 							"kind": "slot",
-							"name": "optional_marker"
+							"name": "optional"
 						},
 						{
 							"kind": "seam",
-							"field": "optional_marker_after"
+							"field": "optional_after"
 						}
 					]
 				}
@@ -5088,19 +5088,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "static_marker",
+					"test": "static",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "static_marker_before"
+							"field": "static_before"
 						},
 						{
 							"kind": "slot",
-							"name": "static_marker"
+							"name": "static"
 						},
 						{
 							"kind": "seam",
-							"field": "static_marker_after"
+							"field": "static_after"
 						}
 					]
 				}
@@ -5110,19 +5110,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "override_modifier",
+					"test": "override",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "override_modifier_before"
+							"field": "override_before"
 						},
 						{
 							"kind": "slot",
-							"name": "override_modifier"
+							"name": "override"
 						},
 						{
 							"kind": "seam",
-							"field": "override_modifier_after"
+							"field": "override_after"
 						}
 					]
 				}
@@ -5132,19 +5132,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "readonly_marker",
+					"test": "readonly",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "readonly_marker_before"
+							"field": "readonly_before"
 						},
 						{
 							"kind": "slot",
-							"name": "readonly_marker"
+							"name": "readonly"
 						},
 						{
 							"kind": "seam",
-							"field": "readonly_marker_after"
+							"field": "readonly_after"
 						}
 					]
 				}
@@ -5154,19 +5154,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "async_marker",
+					"test": "async",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "async_marker_before"
+							"field": "async_before"
 						},
 						{
 							"kind": "slot",
-							"name": "async_marker"
+							"name": "async"
 						},
 						{
 							"kind": "seam",
-							"field": "async_marker_after"
+							"field": "async_after"
 						}
 					]
 				}
@@ -5240,19 +5240,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "optional_marker",
+					"test": "optional",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "optional_marker_before"
+							"field": "optional_before"
 						},
 						{
 							"kind": "slot",
-							"name": "optional_marker"
+							"name": "optional"
 						},
 						{
 							"kind": "seam",
-							"field": "optional_marker_after"
+							"field": "optional_after"
 						}
 					]
 				}
@@ -6079,11 +6079,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "override_modifier",
+					"test": "override",
 					"body": [
 						{
+							"kind": "seam",
+							"field": "override_before"
+						},
+						{
 							"kind": "slot",
-							"name": "override_modifier"
+							"name": "override"
+						},
+						{
+							"kind": "seam",
+							"field": "override_after"
 						}
 					]
 				}
@@ -6093,19 +6101,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "readonly_marker",
+					"test": "readonly",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "readonly_marker_before"
+							"field": "readonly_before"
 						},
 						{
 							"kind": "slot",
-							"name": "readonly_marker"
+							"name": "readonly"
 						},
 						{
 							"kind": "seam",
-							"field": "readonly_marker_after"
+							"field": "readonly_after"
 						}
 					]
 				}
@@ -6472,19 +6480,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "static_marker",
+					"test": "static",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "static_marker_before"
+							"field": "static_before"
 						},
 						{
 							"kind": "slot",
-							"name": "static_marker"
+							"name": "static"
 						},
 						{
 							"kind": "seam",
-							"field": "static_marker_after"
+							"field": "static_after"
 						}
 					]
 				}
@@ -6494,19 +6502,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "override_modifier",
+					"test": "override",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "override_modifier_before"
+							"field": "override_before"
 						},
 						{
 							"kind": "slot",
-							"name": "override_modifier"
+							"name": "override"
 						},
 						{
 							"kind": "seam",
-							"field": "override_modifier_after"
+							"field": "override_after"
 						}
 					]
 				}
@@ -6516,19 +6524,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "readonly_marker",
+					"test": "readonly",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "readonly_marker_before"
+							"field": "readonly_before"
 						},
 						{
 							"kind": "slot",
-							"name": "readonly_marker"
+							"name": "readonly"
 						},
 						{
 							"kind": "seam",
-							"field": "readonly_marker_after"
+							"field": "readonly_after"
 						}
 					]
 				}
@@ -6542,19 +6550,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "optional_marker",
+					"test": "optional",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "optional_marker_before"
+							"field": "optional_before"
 						},
 						{
 							"kind": "slot",
-							"name": "optional_marker"
+							"name": "optional"
 						},
 						{
 							"kind": "seam",
-							"field": "optional_marker_after"
+							"field": "optional_after"
 						}
 					]
 				}
@@ -6592,19 +6600,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "declare_marker",
+					"test": "declare",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "declare_marker_before"
+							"field": "declare_before"
 						},
 						{
 							"kind": "slot",
-							"name": "declare_marker"
+							"name": "declare"
 						},
 						{
 							"kind": "seam",
-							"field": "declare_marker_after"
+							"field": "declare_after"
 						}
 					]
 				}
@@ -6636,11 +6644,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "static_marker",
+					"test": "static",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "static_marker"
+							"name": "static"
 						}
 					]
 				}
@@ -6650,11 +6658,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "override_modifier",
+					"test": "override",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "override_modifier"
+							"name": "override"
 						}
 					]
 				}
@@ -6664,11 +6672,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "readonly_marker",
+					"test": "readonly",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "readonly_marker"
+							"name": "readonly"
 						}
 					]
 				}
@@ -6678,11 +6686,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "abstract_marker",
+					"test": "abstract",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "abstract_marker"
+							"name": "abstract"
 						}
 					]
 				}
@@ -6692,11 +6700,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "accessor_marker",
+					"test": "accessor",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "accessor_marker"
+							"name": "accessor"
 						}
 					]
 				}
@@ -6710,19 +6718,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "optionality_marker",
+					"test": "optionality",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "optionality_marker_before"
+							"field": "optionality_before"
 						},
 						{
 							"kind": "slot",
-							"name": "optionality_marker"
+							"name": "optionality"
 						},
 						{
 							"kind": "seam",
-							"field": "optionality_marker_after"
+							"field": "optionality_after"
 						}
 					]
 				}
@@ -6868,11 +6876,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "override_modifier",
+					"test": "override",
 					"body": [
 						{
+							"kind": "seam",
+							"field": "override_before"
+						},
+						{
 							"kind": "slot",
-							"name": "override_modifier"
+							"name": "override"
+						},
+						{
+							"kind": "seam",
+							"field": "override_after"
 						}
 					]
 				}
@@ -6882,19 +6898,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "readonly_marker",
+					"test": "readonly",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "readonly_marker_before"
+							"field": "readonly_before"
 						},
 						{
 							"kind": "slot",
-							"name": "readonly_marker"
+							"name": "readonly"
 						},
 						{
 							"kind": "seam",
-							"field": "readonly_marker_after"
+							"field": "readonly_after"
 						}
 					]
 				}
@@ -7837,15 +7853,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "const_marker",
+					"test": "const",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "const_marker"
+							"name": "const"
 						},
 						{
 							"kind": "seam",
-							"field": "const_marker_after"
+							"field": "const_after"
 						}
 					]
 				}
@@ -8125,7 +8141,7 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "optional_chain_marker",
+					"test": "optional_chain",
 					"body": [
 						{
 							"kind": "seam",
@@ -8133,7 +8149,7 @@
 						},
 						{
 							"kind": "slot",
-							"name": "optional_chain_marker"
+							"name": "optional_chain"
 						},
 						{
 							"kind": "seam",

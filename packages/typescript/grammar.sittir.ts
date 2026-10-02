@@ -237,8 +237,9 @@ export default sittirGrammar(base, {
 		],
 
 		abstract_method_signature: {
+			'2/0': field('override'),
 			'3/0': field('accessor_kind'),
-			'5/0': field('optional_marker')
+			'5/0': field('optional')
 		},
 
 		ambient_declaration: {
@@ -275,7 +276,7 @@ export default sittirGrammar(base, {
 				// itself optional, so without this field a sign-less
 				// `readonly [k: string]: T` has nothing recording the
 				// group's occurrence and render drops the keyword.
-				'0/0/1': field('readonly_marker')
+				'0/0/1': field('readonly')
 			},
 			{ '2/0': variant('colon'), '2/1': variant('mapped_type_clause') }
 		],
@@ -319,17 +320,20 @@ export default sittirGrammar(base, {
 		},
 
 		method_definition: {
+			'2/0': field('override'),
 			'5/0': field('accessor_kind'),
-			'7/0': field('optional_marker')
+			'7/0': field('optional')
 		},
 
 		method_signature: {
+			'2/0': field('override'),
 			'5/0': field('accessor_kind'),
-			'7/0': field('optional_marker')
+			'7/0': field('optional')
 		},
 
 		property_signature: {
-			'5/0': field('optional_marker')
+			'2/0': field('override'),
+			'5/0': field('optional')
 		},
 
 		satisfies_expression: {
@@ -351,7 +355,7 @@ export default sittirGrammar(base, {
 		},
 
 		yield_expression: [{ '1/0': variant('delegate') }, { 1: field('expression') }],
-		_type_query_subscript_expression: { '1/0': alias('optional_chain_marker') },
+		_type_query_subscript_expression: [{ '1/0': alias('optional_chain_marker') }, { '1/0': field('optional_chain') }],
 
 		expression_statement: {
 			0: field('expression'),
@@ -405,12 +409,14 @@ export default sittirGrammar(base, {
 			// Both spellings of the accessibility position (declare-first
 			// and access-first modifier orders) carry ONE shared field so
 			// the exclusive occurrences merge into a single slot, same as
-			// the enrich-promoted `*_marker` fields merge across the
+			// the enrich-promoted keyword fields merge across the
 			// permutation arms.
 			'1/0/0/1/0': field('accessibility_modifier'),
 			'1/0/1/0': field('accessibility_modifier'),
-			'4/0': field('optionality_marker')
+			'2/0/1/0': field('override'),
+			'4/0': field('optionality')
 		},
+		_parameter_name: { '2/0': field('override') },
 
 		parenthesized_expression: {
 			'1/0': variant('typed'),

@@ -1339,7 +1339,7 @@ pub fn stores_scalar(parent: KindId, field: Option<&str>, child: KindId) -> bool
         (289, Some("expression")) => matches!(child.0, 119 | 120 | 121 | 122 | 123 | 124),
         (290, Some("accessibility_modifier")) => matches!(child.0, 32 | 33 | 34),
         (290, Some("name")) => matches!(child.0, 7 | 30 | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | 50),
-        (290, Some("optionality_marker")) => matches!(child.0, 105 | 126),
+        (290, Some("optionality")) => matches!(child.0, 105 | 126),
         (290, Some("value")) => matches!(child.0, 119 | 120 | 121 | 122 | 123 | 124),
         (292, Some("expression")) => matches!(child.0, 119 | 120 | 121 | 122 | 123 | 124),
         (293, Some("accessibility_modifier")) => matches!(child.0, 32 | 33 | 34),

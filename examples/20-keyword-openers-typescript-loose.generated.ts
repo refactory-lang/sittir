@@ -189,7 +189,7 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 					declarators: [ts.build.variableDeclarator.plain({
 						name: "g",
 						value: ts.build.arrowFunction({
-							asyncMarker: true,
+							async: true,
 							content: ts.build.callSignature({
 								parameters: ts.build.requiredParameter({
 									pattern: "z",

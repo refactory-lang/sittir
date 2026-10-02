@@ -2188,7 +2188,7 @@ export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle): T.CaseClau
 }
 
 export function wrapForStatement(data: T.ForStatement, tree: TreeHandle): T.ForStatement.Parsed {
-	data = _keepModelledSlots(data, ['_async_marker', '_left', '_right', '_body', '_alternative']);
+	data = _keepModelledSlots(data, ['_async', '_left', '_right', '_body', '_alternative']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -2206,11 +2206,11 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle): T.ForS
 	const node = {
 		...data,
 		$type: TSKindId.ForStatement as const,
-		_async_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._async_marker, 'async_marker', false, data.$type, {
+		_async: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._async, 'async', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'async_marker',
+				slotName: 'async',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -2254,8 +2254,8 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle): T.ForS
 			tree
 		),
 
-		asyncMarker() {
-			return this._async_marker;
+		async() {
+			return this._async;
 		},
 		left() {
 			return hydrateChild<T.Pattern | T.PatternList>(this._left, tree);
@@ -2270,8 +2270,8 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle): T.ForS
 			return hydrateChild<T.ElseClause | undefined>(this._alternative, tree);
 		},
 		$with: {
-			asyncMarker: (v: NonNullable<T.ForStatement['_async_marker']>) =>
-				rebuilt(node, handle, () => wrapForStatement({ ...$edited(data), _async_marker: v }, tree)),
+			async: (v: NonNullable<T.ForStatement['_async']>) =>
+				rebuilt(node, handle, () => wrapForStatement({ ...$edited(data), _async: v }, tree)),
 			left: (v: NonNullable<T.ForStatement['_left']>) =>
 				rebuilt(node, handle, () => wrapForStatement({ ...$edited(data), _left: v }, tree)),
 			right: (v: NonNullable<T.ForStatement['_right']>) =>
@@ -2433,7 +2433,7 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle): T.TryS
 }
 
 export function wrapExceptClause(data: T.ExceptClause, tree: TreeHandle): T.ExceptClause.Parsed {
-	data = _keepModelledSlots(data, ['_star_marker', '_exception', '_suite']);
+	data = _keepModelledSlots(data, ['_group', '_exception', '_suite']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -2451,11 +2451,11 @@ export function wrapExceptClause(data: T.ExceptClause, tree: TreeHandle): T.Exce
 	const node = {
 		...data,
 		$type: TSKindId.ExceptClause as const,
-		_star_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._star_marker, 'star_marker', false, data.$type, {
+		_group: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._group, 'group', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'star_marker',
+				slotName: 'group',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -2478,8 +2478,8 @@ export function wrapExceptClause(data: T.ExceptClause, tree: TreeHandle): T.Exce
 			tree
 		),
 
-		starMarker() {
-			return this._star_marker;
+		group() {
+			return this._group;
 		},
 		exception() {
 			return hydrateChild<T.ExceptClauseException | undefined>(this._exception, tree);
@@ -2488,8 +2488,8 @@ export function wrapExceptClause(data: T.ExceptClause, tree: TreeHandle): T.Exce
 			return hydrateChild<T.Suite>(this._suite, tree);
 		},
 		$with: {
-			starMarker: (v: NonNullable<T.ExceptClause['_star_marker']>) =>
-				rebuilt(node, handle, () => wrapExceptClause({ ...$edited(data), _star_marker: v }, tree)),
+			group: (v: NonNullable<T.ExceptClause['_group']>) =>
+				rebuilt(node, handle, () => wrapExceptClause({ ...$edited(data), _group: v }, tree)),
 			exception: (v: NonNullable<T.ExceptClause['_exception']>) =>
 				rebuilt(node, handle, () => wrapExceptClause({ ...$edited(data), _exception: v }, tree)),
 			suite: (v: NonNullable<T.ExceptClause['_suite']>) =>
@@ -2539,7 +2539,7 @@ export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle): T.Fi
 }
 
 export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle): T.WithStatement.Parsed {
-	data = _keepModelledSlots(data, ['_async_marker', '_with_clause', '_body']);
+	data = _keepModelledSlots(data, ['_async', '_with_clause', '_body']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -2557,11 +2557,11 @@ export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle): T.Wi
 	const node = {
 		...data,
 		$type: TSKindId.WithStatement as const,
-		_async_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._async_marker, 'async_marker', false, data.$type, {
+		_async: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._async, 'async', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'async_marker',
+				slotName: 'async',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -2584,8 +2584,8 @@ export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle): T.Wi
 			tree
 		),
 
-		asyncMarker() {
-			return this._async_marker;
+		async() {
+			return this._async;
 		},
 		withClause() {
 			return hydrateChild<T.WithClause>(this._with_clause, tree);
@@ -2594,8 +2594,8 @@ export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle): T.Wi
 			return hydrateChild<T.Suite>(this._body, tree);
 		},
 		$with: {
-			asyncMarker: (v: NonNullable<T.WithStatement['_async_marker']>) =>
-				rebuilt(node, handle, () => wrapWithStatement({ ...$edited(data), _async_marker: v }, tree)),
+			async: (v: NonNullable<T.WithStatement['_async']>) =>
+				rebuilt(node, handle, () => wrapWithStatement({ ...$edited(data), _async: v }, tree)),
 			withClause: (v: NonNullable<T.WithStatement['_with_clause']>) =>
 				rebuilt(node, handle, () => wrapWithStatement({ ...$edited(data), _with_clause: v }, tree)),
 			body: (v: NonNullable<T.WithStatement['_body']>) =>
@@ -2676,14 +2676,7 @@ export function wrapWithItem(data: T.WithItem, tree: TreeHandle): T.WithItem.Par
 }
 
 export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHandle): T.FunctionDefinition.Parsed {
-	data = _keepModelledSlots(data, [
-		'_async_marker',
-		'_name',
-		'_type_parameters',
-		'_parameters',
-		'_return_type',
-		'_body'
-	]);
+	data = _keepModelledSlots(data, ['_async', '_name', '_type_parameters', '_parameters', '_return_type', '_body']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -2701,11 +2694,11 @@ export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHan
 	const node = {
 		...data,
 		$type: TSKindId.FunctionDefinition as const,
-		_async_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._async_marker, 'async_marker', false, data.$type, {
+		_async: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._async, 'async', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'async_marker',
+				slotName: 'async',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -2755,8 +2748,8 @@ export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHan
 			tree
 		),
 
-		asyncMarker() {
-			return this._async_marker;
+		async() {
+			return this._async;
 		},
 		name() {
 			return hydrateChild<T.Identifier>(this._name, tree);
@@ -2774,8 +2767,8 @@ export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHan
 			return hydrateChild<T.Suite>(this._body, tree);
 		},
 		$with: {
-			asyncMarker: (v: NonNullable<T.FunctionDefinition['_async_marker']>) =>
-				rebuilt(node, handle, () => wrapFunctionDefinition({ ...$edited(data), _async_marker: v }, tree)),
+			async: (v: NonNullable<T.FunctionDefinition['_async']>) =>
+				rebuilt(node, handle, () => wrapFunctionDefinition({ ...$edited(data), _async: v }, tree)),
 			name: (v: NonNullable<T.FunctionDefinition['_name']>) =>
 				rebuilt(node, handle, () => wrapFunctionDefinition({ ...$edited(data), _name: v }, tree)),
 			typeParameters: (...args: unknown[]) =>
@@ -7451,7 +7444,7 @@ export function wrapCollectionElements(
 }
 
 export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInClause.Parsed {
-	data = _keepModelledSlots(data, ['_async_marker', '_left', '_right', '_comma']);
+	data = _keepModelledSlots(data, ['_async', '_left', '_right', '_comma']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -7470,11 +7463,11 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInC
 	const node = {
 		...data,
 		$type: TSKindId.ForInClause as const,
-		_async_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._async_marker, 'async_marker', false, data.$type, {
+		_async: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._async, 'async', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'async_marker',
+				slotName: 'async',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -7509,8 +7502,8 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInC
 		),
 		...(_order && { $slotOrder: _order }),
 
-		asyncMarker() {
-			return this._async_marker;
+		async() {
+			return this._async;
 		},
 		left() {
 			return hydrateChild<T.Pattern | T.PatternList>(this._left, tree);
@@ -7525,8 +7518,8 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInC
 			return this._comma;
 		},
 		$with: {
-			asyncMarker: (v: NonNullable<T.ForInClause['_async_marker']>) =>
-				rebuilt(node, handle, () => wrapForInClause({ ...$edited(data), _async_marker: v }, tree)),
+			async: (v: NonNullable<T.ForInClause['_async']>) =>
+				rebuilt(node, handle, () => wrapForInClause({ ...$edited(data), _async: v }, tree)),
 			left: (v: NonNullable<T.ForInClause['_left']>) =>
 				rebuilt(node, handle, () => wrapForInClause({ ...$edited(data), _left: v }, tree)),
 			rights: (...v: NonEmptyArray<NonNullable<T.ForInClause['_right']>[number]>) =>
@@ -7811,7 +7804,7 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.St
 }
 
 export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle): T.Interpolation.Parsed {
-	data = _keepModelledSlots(data, ['_expression', '_eq_marker', '_type_conversion', '_format_specifier']);
+	data = _keepModelledSlots(data, ['_expression', '_debug', '_type_conversion', '_format_specifier']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -7841,11 +7834,11 @@ export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle): T.In
 			),
 			tree
 		),
-		_eq_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._eq_marker, 'eq_marker', false, data.$type, {
+		_debug: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._debug, 'debug', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'eq_marker',
+				slotName: 'debug',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -7871,8 +7864,8 @@ export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle): T.In
 		expression() {
 			return hydrateChild<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(this._expression, tree);
 		},
-		eqMarker() {
-			return this._eq_marker;
+		debug() {
+			return this._debug;
 		},
 		typeConversion() {
 			return hydrateChild<T.TypeConversion | undefined>(this._type_conversion, tree);
@@ -7883,8 +7876,8 @@ export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle): T.In
 		$with: {
 			expression: (v: NonNullable<T.Interpolation['_expression']>) =>
 				rebuilt(node, handle, () => wrapInterpolation({ ...$edited(data), _expression: v }, tree)),
-			eqMarker: (v: NonNullable<T.Interpolation['_eq_marker']>) =>
-				rebuilt(node, handle, () => wrapInterpolation({ ...$edited(data), _eq_marker: v }, tree)),
+			debug: (v: NonNullable<T.Interpolation['_debug']>) =>
+				rebuilt(node, handle, () => wrapInterpolation({ ...$edited(data), _debug: v }, tree)),
 			typeConversion: (v: NonNullable<T.Interpolation['_type_conversion']>) =>
 				rebuilt(node, handle, () => wrapInterpolation({ ...$edited(data), _type_conversion: v }, tree)),
 			formatSpecifier: (v: NonNullable<T.Interpolation['_format_specifier']>) =>

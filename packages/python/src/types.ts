@@ -2586,13 +2586,13 @@ export interface CaseClause {
 
 export interface ForStatement {
 	readonly $type: TSKindId.ForStatement;
-	readonly _async_marker?: boolean;
+	readonly _async?: boolean;
 	readonly _left: Pattern | PatternList;
 	readonly _right: Expression | ExpressionList;
 	readonly _body: Suite;
 	readonly _alternative?: ElseClause;
 	readonly __inputHints__?: {
-		readonly async_marker?: BaseBooleanKeyword<'async'>;
+		readonly async?: BaseBooleanKeyword<'async'>;
 		readonly right:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression
@@ -2602,13 +2602,13 @@ export interface ForStatement {
 		readonly alternative?: readonly Suite[];
 	};
 	readonly __slotHints__?: {
-		readonly asyncMarker: SlotHint<NonNullable<T.ForStatement.Config>['asyncMarker'], true>;
+		readonly async: SlotHint<NonNullable<T.ForStatement.Config>['async'], true>;
 		readonly left: SlotHint<T.Pattern | T.PatternList>;
 		readonly right: SlotHint<NonNullable<T.ForStatement.Config>['right']>;
 		readonly body: SlotHint<T.Suite>;
 		readonly alternative: SlotHint<T.ElseClause, true>;
 	};
-	asyncMarker(): boolean | undefined;
+	async(): boolean | undefined;
 	left(): Pattern | PatternList;
 	right(): Expression | ExpressionList;
 	body(): Suite;
@@ -2662,21 +2662,21 @@ export interface TryStatement {
 
 export interface ExceptClause {
 	readonly $type: TSKindId.ExceptClause;
-	readonly _star_marker?: boolean;
+	readonly _group?: boolean;
 	readonly _exception?: ExceptClauseException;
 	readonly _suite: Suite;
 	readonly __inputHints__?: {
-		readonly star_marker?: BaseBooleanKeyword<'*'>;
+		readonly group?: BaseBooleanKeyword<'*'>;
 	};
 	readonly __looseHints__?: {
 		readonly exception?: readonly (ExceptClauseExceptionAs | ExceptClauseExceptionList)[];
 	};
 	readonly __slotHints__?: {
-		readonly starMarker: SlotHint<NonNullable<T.ExceptClause.Config>['starMarker'], true>;
+		readonly group: SlotHint<NonNullable<T.ExceptClause.Config>['group'], true>;
 		readonly exception: SlotHint<T.ExceptClauseException, true>;
 		readonly suite: SlotHint<T.Suite>;
 	};
-	starMarker(): boolean | undefined;
+	group(): boolean | undefined;
 	exception(): ExceptClauseException | undefined;
 	suite(): Suite;
 }
@@ -2692,18 +2692,18 @@ export interface FinallyClause {
 
 export interface WithStatement {
 	readonly $type: TSKindId.WithStatement;
-	readonly _async_marker?: boolean;
+	readonly _async?: boolean;
 	readonly _with_clause: WithClause;
 	readonly _body: Suite;
 	readonly __inputHints__?: {
-		readonly async_marker?: BaseBooleanKeyword<'async'>;
+		readonly async?: BaseBooleanKeyword<'async'>;
 	};
 	readonly __slotHints__?: {
-		readonly asyncMarker: SlotHint<NonNullable<T.WithStatement.Config>['asyncMarker'], true>;
+		readonly async: SlotHint<NonNullable<T.WithStatement.Config>['async'], true>;
 		readonly withClause: SlotHint<T.WithClause>;
 		readonly body: SlotHint<T.Suite>;
 	};
-	asyncMarker(): boolean | undefined;
+	async(): boolean | undefined;
 	withClause(): WithClause;
 	body(): Suite;
 }
@@ -2724,14 +2724,14 @@ export interface WithItem {
 
 export interface FunctionDefinition {
 	readonly $type: TSKindId.FunctionDefinition;
-	readonly _async_marker?: boolean;
+	readonly _async?: boolean;
 	readonly _name: Identifier;
 	readonly _type_parameters?: TypeParameter;
 	readonly _parameters: Parameters;
 	readonly _return_type?: Type;
 	readonly _body: Suite;
 	readonly __inputHints__?: {
-		readonly async_marker?: BaseBooleanKeyword<'async'>;
+		readonly async?: BaseBooleanKeyword<'async'>;
 	};
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly Type[];
@@ -2739,7 +2739,7 @@ export interface FunctionDefinition {
 		readonly return_type?: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
 	readonly __slotHints__?: {
-		readonly asyncMarker: SlotHint<NonNullable<T.FunctionDefinition.Config>['asyncMarker'], true>;
+		readonly async: SlotHint<NonNullable<T.FunctionDefinition.Config>['async'], true>;
 		readonly name: SlotHint<T.Identifier>;
 		readonly typeParameters: SlotHint<T.TypeParameter, true>;
 		readonly parameters: SlotHint<T.Parameters>;
@@ -2750,7 +2750,7 @@ export interface FunctionDefinition {
 			readonly parameters: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	asyncMarker(): boolean | undefined;
+	async(): boolean | undefined;
 	name(): Identifier;
 	typeParameters(): TypeParameter | undefined;
 	parameters(): Parameters;
@@ -4306,12 +4306,12 @@ export interface CollectionElements {
 
 export interface ForInClause {
 	readonly $type: TSKindId.ForInClause;
-	readonly _async_marker?: boolean;
+	readonly _async?: boolean;
 	readonly _left: Pattern | PatternList;
 	readonly _right: NonEmptyArray<Expression | LambdaWithinForInClause>;
 	readonly _comma?: boolean;
 	readonly __inputHints__?: {
-		readonly async_marker?: BaseBooleanKeyword<'async'>;
+		readonly async?: BaseBooleanKeyword<'async'>;
 		readonly right: NonEmptyArray<
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression
@@ -4320,7 +4320,7 @@ export interface ForInClause {
 		readonly comma?: BaseBooleanKeyword<','>;
 	};
 	readonly __slotHints__?: {
-		readonly asyncMarker: SlotHint<NonNullable<T.ForInClause.Config>['asyncMarker'], true>;
+		readonly async: SlotHint<NonNullable<T.ForInClause.Config>['async'], true>;
 		readonly left: SlotHint<T.Pattern | T.PatternList>;
 		readonly rights: SlotHint<
 			NonEmptyArray<NonNullable<NonNullable<T.ForInClause.Config>['right']>[number]>,
@@ -4329,7 +4329,7 @@ export interface ForInClause {
 		>;
 		readonly comma: SlotHint<NonNullable<T.ForInClause.Config>['comma'], true>;
 	};
-	asyncMarker(): boolean | undefined;
+	async(): boolean | undefined;
 	left(): Pattern | PatternList;
 	rights(): NonEmptyArray<Expression | LambdaWithinForInClause>;
 	comma(): boolean | undefined;
@@ -4423,7 +4423,7 @@ export interface StringContent {
 export interface Interpolation {
 	readonly $type: TSKindId.Interpolation;
 	readonly _expression: Expression | ExpressionList | PatternList | Yield;
-	readonly _eq_marker?: boolean;
+	readonly _debug?: boolean;
 	readonly _type_conversion?: TypeConversion;
 	readonly _format_specifier?: FormatSpecifier;
 	readonly __inputHints__?: {
@@ -4433,19 +4433,19 @@ export interface Interpolation {
 			| ExpressionList
 			| PatternList
 			| Yield;
-		readonly eq_marker?: BaseBooleanKeyword<'='>;
+		readonly debug?: BaseBooleanKeyword<'='>;
 	};
 	readonly __looseHints__?: {
 		readonly format_specifier?: readonly (FormatSpecifierText | FormatExpression)[];
 	};
 	readonly __slotHints__?: {
 		readonly expression: SlotHint<NonNullable<T.Interpolation.Config>['expression']>;
-		readonly eqMarker: SlotHint<NonNullable<T.Interpolation.Config>['eqMarker'], true>;
+		readonly debug: SlotHint<NonNullable<T.Interpolation.Config>['debug'], true>;
 		readonly typeConversion: SlotHint<T.TypeConversion, true>;
 		readonly formatSpecifier: SlotHint<T.FormatSpecifier, true>;
 	};
 	expression(): Expression | ExpressionList | PatternList | Yield;
-	eqMarker(): boolean | undefined;
+	debug(): boolean | undefined;
 	typeConversion(): TypeConversion | undefined;
 	formatSpecifier(): FormatSpecifier | undefined;
 }
@@ -5897,7 +5897,7 @@ export namespace ForStatement {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: SpacingArm;
-			readonly asyncMarker?: { readonly after?: SpacingArm };
+			readonly asyncKeyword?: { readonly after?: SpacingArm };
 			readonly before?: SpacingArm;
 			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 			readonly forKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
@@ -5939,7 +5939,7 @@ export namespace ExceptClause {
 			readonly before?: SpacingArm;
 			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 			readonly exceptKeyword?: { readonly after?: SpacingArm };
-			readonly starMarker?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly group?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 		};
 	}
 }
@@ -5959,7 +5959,7 @@ export namespace WithStatement {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: SpacingArm;
-			readonly asyncMarker?: { readonly after?: SpacingArm };
+			readonly asyncKeyword?: { readonly after?: SpacingArm };
 			readonly before?: SpacingArm;
 			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 			readonly withKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
@@ -5971,7 +5971,7 @@ export namespace FunctionDefinition {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: SpacingArm;
-			readonly asyncMarker?: { readonly after?: SpacingArm };
+			readonly asyncKeyword?: { readonly after?: SpacingArm };
 			readonly before?: SpacingArm;
 			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 			readonly dashGt?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
@@ -6784,7 +6784,7 @@ export namespace ForInClause {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: SpacingArm;
-			readonly asyncMarker?: { readonly after?: SpacingArm };
+			readonly asyncKeyword?: { readonly after?: SpacingArm };
 			readonly before?: SpacingArm;
 			readonly comma?: { readonly before?: SpacingArm };
 			readonly forKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
@@ -6864,7 +6864,7 @@ export namespace Interpolation {
 		readonly __optionsHint__?: {
 			readonly after?: SpacingArm;
 			readonly before?: SpacingArm;
-			readonly eqMarker?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly debug?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 			readonly lbrace?: { readonly after?: SpacingArm };
 			readonly rbrace?: { readonly before?: SpacingArm };
 		};

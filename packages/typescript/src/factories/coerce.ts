@@ -3105,9 +3105,7 @@ export function coerceToForStatement(input: T.ForStatement.Loose): ReturnType<ty
 	});
 }
 
-export function resolveForInStatement_awaitMarker(
-	value: T.ForInStatement.LooseConfig['awaitMarker']
-): T.ForInStatement['_await_marker'] {
+export function resolveForInStatement_await(value: T.ForInStatement.LooseConfig['await']): T.ForInStatement['_await'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -3128,7 +3126,7 @@ export function coerceToForInStatement(input: T.ForInStatement.Loose): ReturnTyp
 	if (!_isLooseConfig<T.ForInStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildForInStatement>;
 	return F.buildForInStatement({
-		awaitMarker: resolveForInStatement_awaitMarker(input.awaitMarker),
+		await: resolveForInStatement_await(input.await),
 		forHeader: _requireField('for_in_statement', 'forHeader', resolveForInStatement_forHeader(input.forHeader)),
 		body: _requireField('for_in_statement', 'body', resolveForInStatement_body(input.body))
 	});
@@ -4327,9 +4325,9 @@ export function coerceToClassHeritage(input: T.ClassHeritage.Loose): ReturnType<
 	);
 }
 
-export function resolveFunctionExpression_asyncMarker(
-	value: T.FunctionExpression.LooseConfig['asyncMarker']
-): T.FunctionExpression['_async_marker'] {
+export function resolveFunctionExpression_async(
+	value: T.FunctionExpression.LooseConfig['async']
+): T.FunctionExpression['_async'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -4369,7 +4367,7 @@ export function coerceToFunctionExpression(
 	if (!_isLooseConfig<T.FunctionExpression.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildFunctionExpression>;
 	return F.buildFunctionExpression({
-		asyncMarker: resolveFunctionExpression_asyncMarker(input?.asyncMarker),
+		async: resolveFunctionExpression_async(input?.async),
 		name: resolveFunctionExpression_name(input?.name),
 		typeParameters: resolveFunctionExpression_typeParameters(input?.typeParameters),
 		parameters: resolveFunctionExpression_parameters(input?.parameters) ?? F.buildFormalParameters(),
@@ -4378,9 +4376,9 @@ export function coerceToFunctionExpression(
 	});
 }
 
-export function resolveFunctionDeclaration_asyncMarker(
-	value: T.FunctionDeclaration.LooseConfig['asyncMarker']
-): T.FunctionDeclaration['_async_marker'] {
+export function resolveFunctionDeclaration_async(
+	value: T.FunctionDeclaration.LooseConfig['async']
+): T.FunctionDeclaration['_async'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -4426,7 +4424,7 @@ export function coerceToFunctionDeclaration(
 	if (!_isLooseConfig<T.FunctionDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFunctionDeclaration>;
 	return F.buildFunctionDeclaration({
-		asyncMarker: resolveFunctionDeclaration_asyncMarker(input.asyncMarker),
+		async: resolveFunctionDeclaration_async(input.async),
 		name: _requireField('function_declaration', 'name', resolveFunctionDeclaration_name(input.name)),
 		typeParameters: resolveFunctionDeclaration_typeParameters(input.typeParameters),
 		parameters: resolveFunctionDeclaration_parameters(input.parameters) ?? F.buildFormalParameters(),
@@ -4436,9 +4434,9 @@ export function coerceToFunctionDeclaration(
 	});
 }
 
-export function resolveGeneratorFunction_asyncMarker(
-	value: T.GeneratorFunction.LooseConfig['asyncMarker']
-): T.GeneratorFunction['_async_marker'] {
+export function resolveGeneratorFunction_async(
+	value: T.GeneratorFunction.LooseConfig['async']
+): T.GeneratorFunction['_async'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -4478,7 +4476,7 @@ export function coerceToGeneratorFunction(
 	if (!_isLooseConfig<T.GeneratorFunction.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildGeneratorFunction>;
 	return F.buildGeneratorFunction({
-		asyncMarker: resolveGeneratorFunction_asyncMarker(input?.asyncMarker),
+		async: resolveGeneratorFunction_async(input?.async),
 		name: resolveGeneratorFunction_name(input?.name),
 		typeParameters: resolveGeneratorFunction_typeParameters(input?.typeParameters),
 		parameters: resolveGeneratorFunction_parameters(input?.parameters) ?? F.buildFormalParameters(),
@@ -4487,9 +4485,9 @@ export function coerceToGeneratorFunction(
 	});
 }
 
-export function resolveGeneratorFunctionDeclaration_asyncMarker(
-	value: T.GeneratorFunctionDeclaration.LooseConfig['asyncMarker']
-): T.GeneratorFunctionDeclaration['_async_marker'] {
+export function resolveGeneratorFunctionDeclaration_async(
+	value: T.GeneratorFunctionDeclaration.LooseConfig['async']
+): T.GeneratorFunctionDeclaration['_async'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -4535,7 +4533,7 @@ export function coerceToGeneratorFunctionDeclaration(
 	if (!_isLooseConfig<T.GeneratorFunctionDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildGeneratorFunctionDeclaration>;
 	return F.buildGeneratorFunctionDeclaration({
-		asyncMarker: resolveGeneratorFunctionDeclaration_asyncMarker(input.asyncMarker),
+		async: resolveGeneratorFunctionDeclaration_async(input.async),
 		name: _requireField('generator_function_declaration', 'name', resolveGeneratorFunctionDeclaration_name(input.name)),
 		typeParameters: resolveGeneratorFunctionDeclaration_typeParameters(input.typeParameters),
 		parameters: resolveGeneratorFunctionDeclaration_parameters(input.parameters) ?? F.buildFormalParameters(),
@@ -4545,9 +4543,7 @@ export function coerceToGeneratorFunctionDeclaration(
 	});
 }
 
-export function resolveArrowFunction_asyncMarker(
-	value: T.ArrowFunction.LooseConfig['asyncMarker']
-): T.ArrowFunction['_async_marker'] {
+export function resolveArrowFunction_async(value: T.ArrowFunction.LooseConfig['async']): T.ArrowFunction['_async'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -4568,7 +4564,7 @@ export function coerceToArrowFunction(input: T.ArrowFunction.Loose): ReturnType<
 	if (!_isLooseConfig<T.ArrowFunction.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildArrowFunction>;
 	return F.buildArrowFunction({
-		asyncMarker: resolveArrowFunction_asyncMarker(input.asyncMarker),
+		async: resolveArrowFunction_async(input.async),
 		content: _requireField('arrow_function', 'content', resolveArrowFunction_content(input.content)),
 		body: _requireField('arrow_function', 'body', resolveArrowFunction_body(input.body))
 	});
@@ -4914,9 +4910,9 @@ export function coerceToLhsExpression(input: T.LhsExpression.Loose): ReturnType<
 	);
 }
 
-export function resolveAssignmentExpression_usingMarker(
-	value: T.AssignmentExpression.LooseConfig['usingMarker']
-): T.AssignmentExpression['_using_marker'] {
+export function resolveAssignmentExpression_using(
+	value: T.AssignmentExpression.LooseConfig['using']
+): T.AssignmentExpression['_using'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -4941,7 +4937,7 @@ export function coerceToAssignmentExpression(
 	if (!_isLooseConfig<T.AssignmentExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAssignmentExpression>;
 	return F.buildAssignmentExpression({
-		usingMarker: resolveAssignmentExpression_usingMarker(input.usingMarker),
+		using: resolveAssignmentExpression_using(input.using),
 		left: _requireField('assignment_expression', 'left', resolveAssignmentExpression_left(input.left)),
 		right: _requireField('assignment_expression', 'right', resolveAssignmentExpression_right(input.right))
 	});
@@ -5931,27 +5927,27 @@ export function resolveMethodDefinition_accessibilityModifier(
 	);
 }
 
-export function resolveMethodDefinition_staticMarker(
-	value: T.MethodDefinition.LooseConfig['staticMarker']
-): T.MethodDefinition['_static_marker'] {
+export function resolveMethodDefinition_static(
+	value: T.MethodDefinition.LooseConfig['static']
+): T.MethodDefinition['_static'] {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveMethodDefinition_overrideModifier(
-	value: T.MethodDefinition.LooseConfig['overrideModifier']
-): T.MethodDefinition['_override_modifier'] {
+export function resolveMethodDefinition_override(
+	value: T.MethodDefinition.LooseConfig['override']
+): T.MethodDefinition['_override'] {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveMethodDefinition_readonlyMarker(
-	value: T.MethodDefinition.LooseConfig['readonlyMarker']
-): T.MethodDefinition['_readonly_marker'] {
+export function resolveMethodDefinition_readonly(
+	value: T.MethodDefinition.LooseConfig['readonly']
+): T.MethodDefinition['_readonly'] {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveMethodDefinition_asyncMarker(
-	value: T.MethodDefinition.LooseConfig['asyncMarker']
-): T.MethodDefinition['_async_marker'] {
+export function resolveMethodDefinition_async(
+	value: T.MethodDefinition.LooseConfig['async']
+): T.MethodDefinition['_async'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -6054,9 +6050,9 @@ export function resolveMethodDefinition_name(
 	);
 }
 
-export function resolveMethodDefinition_optionalMarker(
-	value: T.MethodDefinition.LooseConfig['optionalMarker']
-): T.MethodDefinition['_optional_marker'] {
+export function resolveMethodDefinition_optional(
+	value: T.MethodDefinition.LooseConfig['optional']
+): T.MethodDefinition['_optional'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -6089,13 +6085,13 @@ export function coerceToMethodDefinition(input: T.MethodDefinition.Loose): Retur
 		return input as unknown as ReturnType<typeof F.buildMethodDefinition>;
 	return F.buildMethodDefinition({
 		accessibilityModifier: resolveMethodDefinition_accessibilityModifier(input.accessibilityModifier),
-		staticMarker: resolveMethodDefinition_staticMarker(input.staticMarker),
-		overrideModifier: resolveMethodDefinition_overrideModifier(input.overrideModifier),
-		readonlyMarker: resolveMethodDefinition_readonlyMarker(input.readonlyMarker),
-		asyncMarker: resolveMethodDefinition_asyncMarker(input.asyncMarker),
+		static: resolveMethodDefinition_static(input.static),
+		override: resolveMethodDefinition_override(input.override),
+		readonly: resolveMethodDefinition_readonly(input.readonly),
+		async: resolveMethodDefinition_async(input.async),
 		accessorKind: resolveMethodDefinition_accessorKind(input.accessorKind),
 		name: _requireField('method_definition', 'name', resolveMethodDefinition_name(input.name)),
-		optionalMarker: resolveMethodDefinition_optionalMarker(input.optionalMarker),
+		optional: resolveMethodDefinition_optional(input.optional),
 		typeParameters: resolveMethodDefinition_typeParameters(input.typeParameters),
 		parameters: resolveMethodDefinition_parameters(input.parameters) ?? F.buildFormalParameters(),
 		returnType: resolveMethodDefinition_returnType(input.returnType),
@@ -6347,9 +6343,9 @@ export function resolvePublicFieldDefinition_decorators(
 	return _resolveManyBranch<T.Decorator>(value, 'decorator');
 }
 
-export function resolvePublicFieldDefinition_declareMarker(
-	value: T.PublicFieldDefinition.LooseConfig['declareMarker']
-): T.PublicFieldDefinition['_declare_marker'] {
+export function resolvePublicFieldDefinition_declare(
+	value: T.PublicFieldDefinition.LooseConfig['declare']
+): T.PublicFieldDefinition['_declare'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -6368,33 +6364,33 @@ export function resolvePublicFieldDefinition_accessibilityModifier(
 	);
 }
 
-export function resolvePublicFieldDefinition_staticMarker(
-	value: T.PublicFieldDefinition.LooseConfig['staticMarker']
-): T.PublicFieldDefinition['_static_marker'] {
+export function resolvePublicFieldDefinition_static(
+	value: T.PublicFieldDefinition.LooseConfig['static']
+): T.PublicFieldDefinition['_static'] {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolvePublicFieldDefinition_readonlyMarker(
-	value: T.PublicFieldDefinition.LooseConfig['readonlyMarker']
-): T.PublicFieldDefinition['_readonly_marker'] {
+export function resolvePublicFieldDefinition_override(
+	value: T.PublicFieldDefinition.LooseConfig['override']
+): T.PublicFieldDefinition['_override'] {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolvePublicFieldDefinition_abstractMarker(
-	value: T.PublicFieldDefinition.LooseConfig['abstractMarker']
-): T.PublicFieldDefinition['_abstract_marker'] {
+export function resolvePublicFieldDefinition_readonly(
+	value: T.PublicFieldDefinition.LooseConfig['readonly']
+): T.PublicFieldDefinition['_readonly'] {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolvePublicFieldDefinition_accessorMarker(
-	value: T.PublicFieldDefinition.LooseConfig['accessorMarker']
-): T.PublicFieldDefinition['_accessor_marker'] {
+export function resolvePublicFieldDefinition_abstract(
+	value: T.PublicFieldDefinition.LooseConfig['abstract']
+): T.PublicFieldDefinition['_abstract'] {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolvePublicFieldDefinition_overrideModifier(
-	value: T.PublicFieldDefinition.LooseConfig['overrideModifier']
-): T.PublicFieldDefinition['_override_modifier'] {
+export function resolvePublicFieldDefinition_accessor(
+	value: T.PublicFieldDefinition.LooseConfig['accessor']
+): T.PublicFieldDefinition['_accessor'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -6488,9 +6484,9 @@ export function resolvePublicFieldDefinition_name(
 	);
 }
 
-export function resolvePublicFieldDefinition_optionalityMarker(
-	value: T.PublicFieldDefinition.LooseConfig['optionalityMarker']
-): T.PublicFieldDefinition['_optionality_marker'] {
+export function resolvePublicFieldDefinition_optionality(
+	value: T.PublicFieldDefinition.LooseConfig['optionality']
+): T.PublicFieldDefinition['_optionality'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'?' | '!'>(value, _K2, _K2)),
 		[['?', TSKindId.Qmark] as const, ['!', TSKindId.Bang] as const]
@@ -6519,15 +6515,15 @@ export function coerceToPublicFieldDefinition(
 		return input as unknown as ReturnType<typeof F.buildPublicFieldDefinition>;
 	return F.buildPublicFieldDefinition({
 		decorator: resolvePublicFieldDefinition_decorators(input.decorator),
-		declareMarker: resolvePublicFieldDefinition_declareMarker(input.declareMarker),
+		declare: resolvePublicFieldDefinition_declare(input.declare),
 		accessibilityModifier: resolvePublicFieldDefinition_accessibilityModifier(input.accessibilityModifier),
-		staticMarker: resolvePublicFieldDefinition_staticMarker(input.staticMarker),
-		readonlyMarker: resolvePublicFieldDefinition_readonlyMarker(input.readonlyMarker),
-		abstractMarker: resolvePublicFieldDefinition_abstractMarker(input.abstractMarker),
-		accessorMarker: resolvePublicFieldDefinition_accessorMarker(input.accessorMarker),
-		overrideModifier: resolvePublicFieldDefinition_overrideModifier(input.overrideModifier),
+		static: resolvePublicFieldDefinition_static(input.static),
+		override: resolvePublicFieldDefinition_override(input.override),
+		readonly: resolvePublicFieldDefinition_readonly(input.readonly),
+		abstract: resolvePublicFieldDefinition_abstract(input.abstract),
+		accessor: resolvePublicFieldDefinition_accessor(input.accessor),
 		name: _requireField('public_field_definition', 'name', resolvePublicFieldDefinition_name(input.name)),
-		optionalityMarker: resolvePublicFieldDefinition_optionalityMarker(input.optionalityMarker),
+		optionality: resolvePublicFieldDefinition_optionality(input.optionality),
 		type: resolvePublicFieldDefinition_type(input.type),
 		value: resolvePublicFieldDefinition_value(input.value)
 	});
@@ -6580,27 +6576,27 @@ export function resolveMethodSignature_accessibilityModifier(
 	);
 }
 
-export function resolveMethodSignature_staticMarker(
-	value: T.MethodSignature.LooseConfig['staticMarker']
-): T.MethodSignature['_static_marker'] {
+export function resolveMethodSignature_static(
+	value: T.MethodSignature.LooseConfig['static']
+): T.MethodSignature['_static'] {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveMethodSignature_overrideModifier(
-	value: T.MethodSignature.LooseConfig['overrideModifier']
-): T.MethodSignature['_override_modifier'] {
+export function resolveMethodSignature_override(
+	value: T.MethodSignature.LooseConfig['override']
+): T.MethodSignature['_override'] {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveMethodSignature_readonlyMarker(
-	value: T.MethodSignature.LooseConfig['readonlyMarker']
-): T.MethodSignature['_readonly_marker'] {
+export function resolveMethodSignature_readonly(
+	value: T.MethodSignature.LooseConfig['readonly']
+): T.MethodSignature['_readonly'] {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveMethodSignature_asyncMarker(
-	value: T.MethodSignature.LooseConfig['asyncMarker']
-): T.MethodSignature['_async_marker'] {
+export function resolveMethodSignature_async(
+	value: T.MethodSignature.LooseConfig['async']
+): T.MethodSignature['_async'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -6701,9 +6697,9 @@ export function resolveMethodSignature_name(value: T.MethodSignature.LooseConfig
 	);
 }
 
-export function resolveMethodSignature_optionalMarker(
-	value: T.MethodSignature.LooseConfig['optionalMarker']
-): T.MethodSignature['_optional_marker'] {
+export function resolveMethodSignature_optional(
+	value: T.MethodSignature.LooseConfig['optional']
+): T.MethodSignature['_optional'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -6730,13 +6726,13 @@ export function coerceToMethodSignature(input: T.MethodSignature.Loose): ReturnT
 		return input as unknown as ReturnType<typeof F.buildMethodSignature>;
 	return F.buildMethodSignature({
 		accessibilityModifier: resolveMethodSignature_accessibilityModifier(input.accessibilityModifier),
-		staticMarker: resolveMethodSignature_staticMarker(input.staticMarker),
-		overrideModifier: resolveMethodSignature_overrideModifier(input.overrideModifier),
-		readonlyMarker: resolveMethodSignature_readonlyMarker(input.readonlyMarker),
-		asyncMarker: resolveMethodSignature_asyncMarker(input.asyncMarker),
+		static: resolveMethodSignature_static(input.static),
+		override: resolveMethodSignature_override(input.override),
+		readonly: resolveMethodSignature_readonly(input.readonly),
+		async: resolveMethodSignature_async(input.async),
 		accessorKind: resolveMethodSignature_accessorKind(input.accessorKind),
 		name: _requireField('method_signature', 'name', resolveMethodSignature_name(input.name)),
-		optionalMarker: resolveMethodSignature_optionalMarker(input.optionalMarker),
+		optional: resolveMethodSignature_optional(input.optional),
 		typeParameters: resolveMethodSignature_typeParameters(input.typeParameters),
 		parameters: resolveMethodSignature_parameters(input.parameters) ?? F.buildFormalParameters(),
 		returnType: resolveMethodSignature_returnType(input.returnType)
@@ -6758,9 +6754,9 @@ export function resolveAbstractMethodSignature_accessibilityModifier(
 	);
 }
 
-export function resolveAbstractMethodSignature_overrideModifier(
-	value: T.AbstractMethodSignature.LooseConfig['overrideModifier']
-): T.AbstractMethodSignature['_override_modifier'] {
+export function resolveAbstractMethodSignature_override(
+	value: T.AbstractMethodSignature.LooseConfig['override']
+): T.AbstractMethodSignature['_override'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -6863,9 +6859,9 @@ export function resolveAbstractMethodSignature_name(
 	);
 }
 
-export function resolveAbstractMethodSignature_optionalMarker(
-	value: T.AbstractMethodSignature.LooseConfig['optionalMarker']
-): T.AbstractMethodSignature['_optional_marker'] {
+export function resolveAbstractMethodSignature_optional(
+	value: T.AbstractMethodSignature.LooseConfig['optional']
+): T.AbstractMethodSignature['_optional'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -6894,19 +6890,19 @@ export function coerceToAbstractMethodSignature(
 		return input as unknown as ReturnType<typeof F.buildAbstractMethodSignature>;
 	return F.buildAbstractMethodSignature({
 		accessibilityModifier: resolveAbstractMethodSignature_accessibilityModifier(input.accessibilityModifier),
-		overrideModifier: resolveAbstractMethodSignature_overrideModifier(input.overrideModifier),
+		override: resolveAbstractMethodSignature_override(input.override),
 		accessorKind: resolveAbstractMethodSignature_accessorKind(input.accessorKind),
 		name: _requireField('abstract_method_signature', 'name', resolveAbstractMethodSignature_name(input.name)),
-		optionalMarker: resolveAbstractMethodSignature_optionalMarker(input.optionalMarker),
+		optional: resolveAbstractMethodSignature_optional(input.optional),
 		typeParameters: resolveAbstractMethodSignature_typeParameters(input.typeParameters),
 		parameters: resolveAbstractMethodSignature_parameters(input.parameters) ?? F.buildFormalParameters(),
 		returnType: resolveAbstractMethodSignature_returnType(input.returnType)
 	});
 }
 
-export function resolveFunctionSignature_asyncMarker(
-	value: T.FunctionSignature.LooseConfig['asyncMarker']
-): T.FunctionSignature['_async_marker'] {
+export function resolveFunctionSignature_async(
+	value: T.FunctionSignature.LooseConfig['async']
+): T.FunctionSignature['_async'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -6942,7 +6938,7 @@ export function coerceToFunctionSignature(
 		return input as unknown as ReturnType<typeof F.buildFunctionSignature>;
 	return F.buildFunctionSignature(
 		{
-			asyncMarker: resolveFunctionSignature_asyncMarker(input.asyncMarker),
+			async: resolveFunctionSignature_async(input.async),
 			name: _requireField('function_signature', 'name', resolveFunctionSignature_name(input.name)),
 			typeParameters: resolveFunctionSignature_typeParameters(input.typeParameters),
 			parameters: resolveFunctionSignature_parameters(input.parameters) ?? F.buildFormalParameters(),
@@ -7424,9 +7420,9 @@ export function coerceToExtendsTypeClause(
 	);
 }
 
-export function resolveEnumDeclaration_constMarker(
-	value: T.EnumDeclaration.LooseConfig['constMarker']
-): T.EnumDeclaration['_const_marker'] {
+export function resolveEnumDeclaration_const(
+	value: T.EnumDeclaration.LooseConfig['const']
+): T.EnumDeclaration['_const'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -7442,7 +7438,7 @@ export function coerceToEnumDeclaration(input: T.EnumDeclaration.Loose): ReturnT
 	if (!_isLooseConfig<T.EnumDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildEnumDeclaration>;
 	return F.buildEnumDeclaration({
-		constMarker: resolveEnumDeclaration_constMarker(input.constMarker),
+		const: resolveEnumDeclaration_const(input.const),
 		name: _requireField('enum_declaration', 'name', resolveEnumDeclaration_name(input.name)),
 		body: resolveEnumDeclaration_body(input.body) ?? F.buildEnumBody()
 	});
@@ -7637,15 +7633,15 @@ export function resolveRequiredParameter_accessibilityModifier(
 	);
 }
 
-export function resolveRequiredParameter_overrideModifier(
-	value: T.RequiredParameter.LooseConfig['overrideModifier']
-): T.RequiredParameter['_override_modifier'] {
+export function resolveRequiredParameter_override(
+	value: T.RequiredParameter.LooseConfig['override']
+): T.RequiredParameter['_override'] {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveRequiredParameter_readonlyMarker(
-	value: T.RequiredParameter.LooseConfig['readonlyMarker']
-): T.RequiredParameter['_readonly_marker'] {
+export function resolveRequiredParameter_readonly(
+	value: T.RequiredParameter.LooseConfig['readonly']
+): T.RequiredParameter['_readonly'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -7683,8 +7679,8 @@ export function coerceToRequiredParameter(
 	return F.buildRequiredParameter({
 		decorator: resolveRequiredParameter_decorators(input.decorator),
 		accessibilityModifier: resolveRequiredParameter_accessibilityModifier(input.accessibilityModifier),
-		overrideModifier: resolveRequiredParameter_overrideModifier(input.overrideModifier),
-		readonlyMarker: resolveRequiredParameter_readonlyMarker(input.readonlyMarker),
+		override: resolveRequiredParameter_override(input.override),
+		readonly: resolveRequiredParameter_readonly(input.readonly),
 		pattern: _requireField('required_parameter', 'pattern', resolveRequiredParameter_pattern(input.pattern)),
 		type: resolveRequiredParameter_type(input.type),
 		value: resolveRequiredParameter_value(input.value)
@@ -7712,15 +7708,15 @@ export function resolveOptionalParameter_accessibilityModifier(
 	);
 }
 
-export function resolveOptionalParameter_overrideModifier(
-	value: T.OptionalParameter.LooseConfig['overrideModifier']
-): T.OptionalParameter['_override_modifier'] {
+export function resolveOptionalParameter_override(
+	value: T.OptionalParameter.LooseConfig['override']
+): T.OptionalParameter['_override'] {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveOptionalParameter_readonlyMarker(
-	value: T.OptionalParameter.LooseConfig['readonlyMarker']
-): T.OptionalParameter['_readonly_marker'] {
+export function resolveOptionalParameter_readonly(
+	value: T.OptionalParameter.LooseConfig['readonly']
+): T.OptionalParameter['_readonly'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -7758,8 +7754,8 @@ export function coerceToOptionalParameter(
 	return F.buildOptionalParameter({
 		decorator: resolveOptionalParameter_decorators(input.decorator),
 		accessibilityModifier: resolveOptionalParameter_accessibilityModifier(input.accessibilityModifier),
-		overrideModifier: resolveOptionalParameter_overrideModifier(input.overrideModifier),
-		readonlyMarker: resolveOptionalParameter_readonlyMarker(input.readonlyMarker),
+		override: resolveOptionalParameter_override(input.override),
+		readonly: resolveOptionalParameter_readonly(input.readonly),
 		pattern: _requireField('optional_parameter', 'pattern', resolveOptionalParameter_pattern(input.pattern)),
 		type: resolveOptionalParameter_type(input.type),
 		value: resolveOptionalParameter_value(input.value)
@@ -8130,9 +8126,9 @@ export function coerceToRestType(input: T.RestType.Loose): ReturnType<typeof F.b
 	);
 }
 
-export function resolveConstructorType_abstractMarker(
-	value: T.ConstructorType.LooseConfig['abstractMarker']
-): T.ConstructorType['_abstract_marker'] {
+export function resolveConstructorType_abstract(
+	value: T.ConstructorType.LooseConfig['abstract']
+): T.ConstructorType['_abstract'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -8159,7 +8155,7 @@ export function coerceToConstructorType(input: T.ConstructorType.Loose): ReturnT
 	if (!_isLooseConfig<T.ConstructorType.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildConstructorType>;
 	return F.buildConstructorType({
-		abstractMarker: resolveConstructorType_abstractMarker(input.abstractMarker),
+		abstract: resolveConstructorType_abstract(input.abstract),
 		typeParameters: resolveConstructorType_typeParameters(input.typeParameters),
 		parameters: resolveConstructorType_parameters(input.parameters) ?? F.buildFormalParameters(),
 		type: _requireField('constructor_type', 'type', resolveConstructorType_type(input.type))
@@ -8475,9 +8471,9 @@ export function resolveTypeQuerySubscriptExpression_object(
 	);
 }
 
-export function resolveTypeQuerySubscriptExpression_optionalChainMarker(
-	value: T.TypeQuerySubscriptExpression.LooseConfig['optionalChainMarker']
-): T.TypeQuerySubscriptExpression['_optional_chain_marker'] {
+export function resolveTypeQuerySubscriptExpression_optionalChain(
+	value: T.TypeQuerySubscriptExpression.LooseConfig['optionalChain']
+): T.TypeQuerySubscriptExpression['_optional_chain'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -8542,7 +8538,7 @@ export function coerceToTypeQuerySubscriptExpression(
 			'object',
 			resolveTypeQuerySubscriptExpression_object(input.object)
 		),
-		optionalChainMarker: resolveTypeQuerySubscriptExpression_optionalChainMarker(input.optionalChainMarker),
+		optionalChain: resolveTypeQuerySubscriptExpression_optionalChain(input.optionalChain),
 		index: _requireField(
 			'type_query_subscript_expression',
 			'index',
@@ -8992,21 +8988,21 @@ export function resolvePropertySignature_accessibilityModifier(
 	);
 }
 
-export function resolvePropertySignature_staticMarker(
-	value: T.PropertySignature.LooseConfig['staticMarker']
-): T.PropertySignature['_static_marker'] {
+export function resolvePropertySignature_static(
+	value: T.PropertySignature.LooseConfig['static']
+): T.PropertySignature['_static'] {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolvePropertySignature_overrideModifier(
-	value: T.PropertySignature.LooseConfig['overrideModifier']
-): T.PropertySignature['_override_modifier'] {
+export function resolvePropertySignature_override(
+	value: T.PropertySignature.LooseConfig['override']
+): T.PropertySignature['_override'] {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolvePropertySignature_readonlyMarker(
-	value: T.PropertySignature.LooseConfig['readonlyMarker']
-): T.PropertySignature['_readonly_marker'] {
+export function resolvePropertySignature_readonly(
+	value: T.PropertySignature.LooseConfig['readonly']
+): T.PropertySignature['_readonly'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -9100,9 +9096,9 @@ export function resolvePropertySignature_name(
 	);
 }
 
-export function resolvePropertySignature_optionalMarker(
-	value: T.PropertySignature.LooseConfig['optionalMarker']
-): T.PropertySignature['_optional_marker'] {
+export function resolvePropertySignature_optional(
+	value: T.PropertySignature.LooseConfig['optional']
+): T.PropertySignature['_optional'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -9119,11 +9115,11 @@ export function coerceToPropertySignature(
 		return input as unknown as ReturnType<typeof F.buildPropertySignature>;
 	return F.buildPropertySignature({
 		accessibilityModifier: resolvePropertySignature_accessibilityModifier(input.accessibilityModifier),
-		staticMarker: resolvePropertySignature_staticMarker(input.staticMarker),
-		overrideModifier: resolvePropertySignature_overrideModifier(input.overrideModifier),
-		readonlyMarker: resolvePropertySignature_readonlyMarker(input.readonlyMarker),
+		static: resolvePropertySignature_static(input.static),
+		override: resolvePropertySignature_override(input.override),
+		readonly: resolvePropertySignature_readonly(input.readonly),
 		name: _requireField('property_signature', 'name', resolvePropertySignature_name(input.name)),
-		optionalMarker: resolvePropertySignature_optionalMarker(input.optionalMarker),
+		optional: resolvePropertySignature_optional(input.optional),
 		type: resolvePropertySignature_type(input.type)
 	});
 }
@@ -9157,9 +9153,7 @@ export function coerceToTypeParameters(...args: unknown[]): ReturnType<typeof F.
 	);
 }
 
-export function resolveTypeParameter_constMarker(
-	value: T.TypeParameter.LooseConfig['constMarker']
-): T.TypeParameter['_const_marker'] {
+export function resolveTypeParameter_const(value: T.TypeParameter.LooseConfig['const']): T.TypeParameter['_const'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -9181,7 +9175,7 @@ export function coerceToTypeParameter(input: T.TypeParameter.Loose): ReturnType<
 	if (!_isLooseConfig<T.TypeParameter.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildTypeParameter>;
 	return F.buildTypeParameter({
-		constMarker: resolveTypeParameter_constMarker(input.constMarker),
+		const: resolveTypeParameter_const(input.const),
 		name: _requireField('type_parameter', 'name', resolveTypeParameter_name(input.name)),
 		constraint: resolveTypeParameter_constraint(input.constraint),
 		value: resolveTypeParameter_value(input.value)
@@ -9239,9 +9233,9 @@ export function coerceToConstraint(input: T.Constraint.Loose): ReturnType<typeof
 	});
 }
 
-export function resolveConstructSignature_abstractMarker(
-	value: T.ConstructSignature.LooseConfig['abstractMarker']
-): T.ConstructSignature['_abstract_marker'] {
+export function resolveConstructSignature_abstract(
+	value: T.ConstructSignature.LooseConfig['abstract']
+): T.ConstructSignature['_abstract'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -9269,7 +9263,7 @@ export function coerceToConstructSignature(
 	if (!_isLooseConfig<T.ConstructSignature.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildConstructSignature>;
 	return F.buildConstructSignature({
-		abstractMarker: resolveConstructSignature_abstractMarker(input?.abstractMarker),
+		abstract: resolveConstructSignature_abstract(input?.abstract),
 		typeParameters: resolveConstructSignature_typeParameters(input?.typeParameters),
 		parameters: resolveConstructSignature_parameters(input?.parameters) ?? F.buildFormalParameters(),
 		type: resolveConstructSignature_type(input?.type)
@@ -10725,9 +10719,9 @@ export function resolveIndexSignatureColon_sign(
 	);
 }
 
-export function resolveIndexSignatureColon_readonlyMarker(
-	value: T.IndexSignatureColon.LooseConfig['readonlyMarker']
-): T.IndexSignatureColon['_readonly_marker'] {
+export function resolveIndexSignatureColon_readonly(
+	value: T.IndexSignatureColon.LooseConfig['readonly']
+): T.IndexSignatureColon['_readonly'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -10843,7 +10837,7 @@ export function coerceToIndexSignatureColon(
 		return input as unknown as ReturnType<typeof F.buildIndexSignatureColon>;
 	return F.buildIndexSignatureColon({
 		sign: resolveIndexSignatureColon_sign(input.sign),
-		readonlyMarker: resolveIndexSignatureColon_readonlyMarker(input.readonlyMarker),
+		readonly: resolveIndexSignatureColon_readonly(input.readonly),
 		name: _requireField('index_signature_colon', 'name', resolveIndexSignatureColon_name(input.name)),
 		indexType: _requireField(
 			'index_signature_colon',
@@ -10863,9 +10857,9 @@ export function resolveIndexSignatureMappedTypeClause_sign(
 	);
 }
 
-export function resolveIndexSignatureMappedTypeClause_readonlyMarker(
-	value: T.IndexSignatureMappedTypeClause.LooseConfig['readonlyMarker']
-): T.IndexSignatureMappedTypeClause['_readonly_marker'] {
+export function resolveIndexSignatureMappedTypeClause_readonly(
+	value: T.IndexSignatureMappedTypeClause.LooseConfig['readonly']
+): T.IndexSignatureMappedTypeClause['_readonly'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -10892,7 +10886,7 @@ export function coerceToIndexSignatureMappedTypeClause(
 		return input as unknown as ReturnType<typeof F.buildIndexSignatureMappedTypeClause>;
 	return F.buildIndexSignatureMappedTypeClause({
 		sign: resolveIndexSignatureMappedTypeClause_sign(input.sign),
-		readonlyMarker: resolveIndexSignatureMappedTypeClause_readonlyMarker(input.readonlyMarker),
+		readonly: resolveIndexSignatureMappedTypeClause_readonly(input.readonly),
 		mappedTypeClause: _requireField(
 			'index_signature_mapped_type_clause',
 			'mappedTypeClause',

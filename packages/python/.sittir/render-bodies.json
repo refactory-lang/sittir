@@ -1433,19 +1433,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "star_marker",
+					"test": "group",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "star_marker_before"
+							"field": "group_before"
 						},
 						{
 							"kind": "slot",
-							"name": "star_marker"
+							"name": "group"
 						},
 						{
 							"kind": "seam",
-							"field": "star_marker_after"
+							"field": "group_after"
 						}
 					]
 				}
@@ -1876,15 +1876,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "async_marker",
+					"test": "async",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "async_marker"
+							"name": "async"
 						},
 						{
 							"kind": "seam",
-							"field": "async_marker_after"
+							"field": "async_after"
 						}
 					]
 				}
@@ -1954,15 +1954,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "async_marker",
+					"test": "async",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "async_marker"
+							"name": "async"
 						},
 						{
 							"kind": "seam",
-							"field": "async_marker_after"
+							"field": "async_after"
 						}
 					]
 				}
@@ -2072,15 +2072,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "async_marker",
+					"test": "async",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "async_marker"
+							"name": "async"
 						},
 						{
 							"kind": "seam",
-							"field": "async_marker_after"
+							"field": "async_after"
 						}
 					]
 				}
@@ -2487,19 +2487,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "eq_marker",
+					"test": "debug",
 					"body": [
 						{
 							"kind": "seam",
-							"field": "eq_marker_before"
+							"field": "debug_before"
 						},
 						{
 							"kind": "slot",
-							"name": "eq_marker"
+							"name": "debug"
 						},
 						{
 							"kind": "seam",
-							"field": "eq_marker_after"
+							"field": "debug_after"
 						}
 					]
 				}
@@ -4335,15 +4335,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "async_marker",
+					"test": "async",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "async_marker"
+							"name": "async"
 						},
 						{
 							"kind": "seam",
-							"field": "async_marker_after"
+							"field": "async_after"
 						}
 					]
 				}

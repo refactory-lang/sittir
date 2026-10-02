@@ -24,7 +24,25 @@ import {
 	typeEq
 } from '../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../types/runtime-shapes.ts';
-import { CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
+import {
+	ALIAS,
+	CHOICE,
+	DEDENT,
+	FIELD,
+	IMMEDIATE_TOKEN,
+	INDENT,
+	NEWLINE,
+	OPTIONAL,
+	PATTERN,
+	REPEAT,
+	REPEAT1,
+	SEQ,
+	STRING,
+	SUPERTYPE,
+	SYMBOL,
+	TOKEN
+} from '../types/rule-types.ts'; // @rule-type-consts
+import { assertNever } from '../polymorph-variant.ts';
 import { dslArmStage, isTopologyMixed, partitionChoiceArms } from './choice-arm-partition.ts';
 
 function withContent(node: object, content: Rule): Rule {
@@ -1643,7 +1661,7 @@ function tryPromoteInnerKeyword(
 	if (!isStringType(innerNorm.type)) return null;
 	const kw = innerNorm.value;
 	if (typeof kw !== 'string' || !matchesWordShape(kw, ctx.wordMatcher)) return null;
-	const fieldName = `${kw}_marker`;
+	const fieldName = kw;
 	if (claimed.has(fieldName)) {
 		reportSkip('optional-keyword-prefix', ruleName, `field '${fieldName}' already exists`);
 		return null;
@@ -2175,7 +2193,7 @@ function promotePermutationArmKeywords(choiceRule: Rule, ctx: EnrichCtx): Rule {
 			const norm = normalizeMember(m);
 			if (!isStringType(norm.type) || typeof norm.value !== 'string') return m;
 			if (!matchesWordShape(norm.value, ctx.wordMatcher)) return m;
-			const fieldName = `${norm.value}_marker`;
+			const fieldName = norm.value;
 			const symbolRef = registerKwRule(m, fieldName, ctx.kwRules, ctx.rulesBag, ctx.ruleOrigins);
 			if (symbolRef === null) return m;
 			armChanged = true;
@@ -2358,6 +2376,8 @@ function coveredByAuthoredGroup(body: Rule, ctx: EnrichCtx): boolean {
 	return ctx.authoredGroupBodies.some((pattern) => rulesEqual(unwrapPrec(body) as RuntimeRule, pattern));
 }
 
+type BlankRule = { readonly type: 'BLANK' };
+
 function fieldOwnerPrefixedLists(
 	owner: string,
 	rule: Rule,
@@ -2369,13 +2389,15 @@ function fieldOwnerPrefixedLists(
 	collectAllFieldNamesDeep(rule, taken);
 	const authoredAbove = (path: readonly number[]): boolean =>
 		authoredSites.some((site) => site.path.length <= path.length && site.path.every((step, i) => step === path[i]));
-	const walk = (node: AnyRule, path: readonly number[]): AnyRule => {
-		if (isPrecWrapper(node)) {
-			const content = (node as { content: AnyRule }).content;
-			const walked = walk(content, path);
-			return walked === content ? node : (withContent(node as object, walked as Rule) as AnyRule);
-		}
+	const walk = (node: AnyRule | BlankRule, path: readonly number[]): AnyRule | BlankRule => {
 		switch (node.type) {
+			case 'PREC':
+			case 'PREC_LEFT':
+			case 'PREC_RIGHT':
+			case 'PREC_DYNAMIC': {
+				const walked = walk(node.content, path);
+				return walked === node.content ? node : (withContent(node as object, walked as Rule) as AnyRule);
+			}
 			case SYMBOL: {
 				const slot = slots.get(node.name);
 				if (slot === undefined || authoredAbove(path)) return node;
@@ -2396,8 +2418,20 @@ function fieldOwnerPrefixedLists(
 				const walked = walk(node.content, [...path, 0]);
 				return walked === node.content ? node : (withContent(node as object, walked as Rule) as AnyRule);
 			}
-			default:
+			case FIELD:
+			case ALIAS:
+			case TOKEN:
+			case IMMEDIATE_TOKEN:
+			case STRING:
+			case PATTERN:
+			case SUPERTYPE:
+			case INDENT:
+			case DEDENT:
+			case NEWLINE:
+			case 'BLANK':
 				return node;
+			default:
+				return assertNever(node);
 		}
 	};
 	return walk(rule as AnyRule, []) as Rule;

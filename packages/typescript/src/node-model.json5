@@ -625,7 +625,7 @@
       }
     },
     "for_in_statement": {
-      "await_marker": {
+      "await": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1062,7 +1062,7 @@
       }
     },
     "function_expression": {
-      "async_marker": {
+      "async": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1106,7 +1106,7 @@
       }
     },
     "function_declaration": {
-      "async_marker": {
+      "async": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1157,7 +1157,7 @@
       }
     },
     "generator_function": {
-      "async_marker": {
+      "async": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1201,7 +1201,7 @@
       }
     },
     "generator_function_declaration": {
-      "async_marker": {
+      "async": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1252,7 +1252,7 @@
       }
     },
     "arrow_function": {
-      "async_marker": {
+      "async": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1362,7 +1362,7 @@
       }
     },
     "assignment_expression": {
-      "using_marker": {
+      "using": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1654,28 +1654,28 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "static_marker": {
+      "static": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "override_modifier": {
+      "override": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "readonly_marker": {
+      "readonly": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "async_marker": {
+      "async": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1696,7 +1696,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "optional_marker": {
+      "optional": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1781,7 +1781,7 @@
         "multiple": true,
         "nonEmpty": false
       },
-      "declare_marker": {
+      "declare": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1795,35 +1795,35 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "static_marker": {
+      "static": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "readonly_marker": {
+      "override": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "abstract_marker": {
+      "readonly": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "accessor_marker": {
+      "abstract": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "override_modifier": {
+      "accessor": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1837,7 +1837,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "optionality_marker": {
+      "optionality": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1876,28 +1876,28 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "static_marker": {
+      "static": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "override_modifier": {
+      "override": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "readonly_marker": {
+      "readonly": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "async_marker": {
+      "async": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1918,7 +1918,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "optional_marker": {
+      "optional": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1955,7 +1955,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "override_modifier": {
+      "override": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1976,7 +1976,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "optional_marker": {
+      "optional": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2006,7 +2006,7 @@
       }
     },
     "function_signature": {
-      "async_marker": {
+      "async": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2331,7 +2331,7 @@
       }
     },
     "enum_declaration": {
-      "const_marker": {
+      "const": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2424,14 +2424,14 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "override_modifier": {
+      "override": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "readonly_marker": {
+      "readonly": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2475,14 +2475,14 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "override_modifier": {
+      "override": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "readonly_marker": {
+      "readonly": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2648,7 +2648,7 @@
       }
     },
     "constructor_type": {
-      "abstract_marker": {
+      "abstract": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2813,7 +2813,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "optional_chain_marker": {
+      "optional_chain": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3007,21 +3007,21 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "static_marker": {
+      "static": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "override_modifier": {
+      "override": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "readonly_marker": {
+      "readonly": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3035,7 +3035,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "optional_marker": {
+      "optional": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3060,7 +3060,7 @@
       }
     },
     "type_parameter": {
-      "const_marker": {
+      "const": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3115,7 +3115,7 @@
       }
     },
     "construct_signature": {
-      "abstract_marker": {
+      "abstract": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3725,7 +3725,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "readonly_marker": {
+      "readonly": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3762,7 +3762,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "readonly_marker": {
+      "readonly": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -5142,9 +5142,9 @@
           ]
         },
         {
-          "name": "override_modifier",
-          "propertyName": "overrideModifier",
-          "paramName": "overrideModifier",
+          "name": "override",
+          "propertyName": "override",
+          "paramName": "override",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -5372,9 +5372,9 @@
           ]
         },
         {
-          "name": "optional_marker",
-          "propertyName": "optionalMarker",
-          "paramName": "optionalMarker",
+          "name": "optional",
+          "propertyName": "optional",
+          "paramName": "optional",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -5467,10 +5467,10 @@
       "factoryShape": "config",
       "factoryFields": [
         "accessibility_modifier",
-        "override_modifier",
+        "override",
         "accessor_kind",
         "name",
-        "optional_marker",
+        "optional",
         "type_parameters",
         "parameters",
         "return_type"
@@ -6068,9 +6068,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "async_marker",
-          "propertyName": "asyncMarker",
-          "paramName": "asyncMarker",
+          "name": "async",
+          "propertyName": "async",
+          "paramName": "async",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -6148,7 +6148,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "async_marker",
+        "async",
         "content",
         "body"
       ]
@@ -6523,9 +6523,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "using_marker",
-          "propertyName": "usingMarker",
-          "paramName": "usingMarker",
+          "name": "using",
+          "propertyName": "using",
+          "paramName": "using",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -6590,7 +6590,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "using_marker",
+        "using",
         "left",
         "right"
       ]
@@ -9225,9 +9225,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "abstract_marker",
-          "propertyName": "abstractMarker",
-          "paramName": "abstractMarker",
+          "name": "abstract",
+          "propertyName": "abstract",
+          "paramName": "abstract",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -9305,7 +9305,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "abstract_marker",
+        "abstract",
         "type_parameters",
         "parameters",
         "type"
@@ -9320,9 +9320,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "abstract_marker",
-          "propertyName": "abstractMarker",
-          "paramName": "abstractMarker",
+          "name": "abstract",
+          "propertyName": "abstract",
+          "paramName": "abstract",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -9400,7 +9400,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "abstract_marker",
+        "abstract",
         "type_parameters",
         "parameters",
         "type"
@@ -11050,9 +11050,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "const_marker",
-          "propertyName": "constMarker",
-          "paramName": "constMarker",
+          "name": "const",
+          "propertyName": "const",
+          "paramName": "const_",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -11110,7 +11110,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "const_marker",
+        "const",
         "name",
         "body"
       ]
@@ -13224,9 +13224,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "await_marker",
-          "propertyName": "awaitMarker",
-          "paramName": "awaitMarker",
+          "name": "await",
+          "propertyName": "await",
+          "paramName": "await_",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -13284,7 +13284,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "await_marker",
+        "await",
         "for_header",
         "body"
       ]
@@ -13534,9 +13534,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "async_marker",
-          "propertyName": "asyncMarker",
-          "paramName": "asyncMarker",
+          "name": "async",
+          "propertyName": "async",
+          "paramName": "async",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -13688,7 +13688,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "async_marker",
+        "async",
         "name",
         "type_parameters",
         "parameters",
@@ -13706,9 +13706,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "async_marker",
-          "propertyName": "asyncMarker",
-          "paramName": "asyncMarker",
+          "name": "async",
+          "propertyName": "async",
+          "paramName": "async",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -13840,7 +13840,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "async_marker",
+        "async",
         "name",
         "type_parameters",
         "parameters",
@@ -13868,9 +13868,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "async_marker",
-          "propertyName": "asyncMarker",
-          "paramName": "asyncMarker",
+          "name": "async",
+          "propertyName": "async",
+          "paramName": "async",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -14015,7 +14015,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "async_marker",
+        "async",
         "name",
         "type_parameters",
         "parameters",
@@ -14121,9 +14121,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "async_marker",
-          "propertyName": "asyncMarker",
-          "paramName": "asyncMarker",
+          "name": "async",
+          "propertyName": "async",
+          "paramName": "async",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -14255,7 +14255,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "async_marker",
+        "async",
         "name",
         "type_parameters",
         "parameters",
@@ -14272,9 +14272,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "async_marker",
-          "propertyName": "asyncMarker",
-          "paramName": "asyncMarker",
+          "name": "async",
+          "propertyName": "async",
+          "paramName": "async",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -14426,7 +14426,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "async_marker",
+        "async",
         "name",
         "type_parameters",
         "parameters",
@@ -15662,9 +15662,9 @@
           ]
         },
         {
-          "name": "readonly_marker",
-          "propertyName": "readonlyMarker",
-          "paramName": "readonlyMarker",
+          "name": "readonly",
+          "propertyName": "readonly",
+          "paramName": "readonly",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -15897,7 +15897,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "sign",
-        "readonly_marker",
+        "readonly",
         "name",
         "index_type",
         "type"
@@ -15939,9 +15939,9 @@
           ]
         },
         {
-          "name": "readonly_marker",
-          "propertyName": "readonlyMarker",
-          "paramName": "readonlyMarker",
+          "name": "readonly",
+          "propertyName": "readonly",
+          "paramName": "readonly",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -16022,7 +16022,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "sign",
-        "readonly_marker",
+        "readonly",
         "mapped_type_clause",
         "type"
       ]
@@ -17406,9 +17406,9 @@
           ]
         },
         {
-          "name": "static_marker",
-          "propertyName": "staticMarker",
-          "paramName": "staticMarker",
+          "name": "static",
+          "propertyName": "static",
+          "paramName": "static_",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -17424,9 +17424,9 @@
           ]
         },
         {
-          "name": "override_modifier",
-          "propertyName": "overrideModifier",
-          "paramName": "overrideModifier",
+          "name": "override",
+          "propertyName": "override",
+          "paramName": "override",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -17444,9 +17444,9 @@
           ]
         },
         {
-          "name": "readonly_marker",
-          "propertyName": "readonlyMarker",
-          "paramName": "readonlyMarker",
+          "name": "readonly",
+          "propertyName": "readonly",
+          "paramName": "readonly",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -17462,9 +17462,9 @@
           ]
         },
         {
-          "name": "async_marker",
-          "propertyName": "asyncMarker",
-          "paramName": "asyncMarker",
+          "name": "async",
+          "propertyName": "async",
+          "paramName": "async",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -17690,9 +17690,9 @@
           ]
         },
         {
-          "name": "optional_marker",
-          "propertyName": "optionalMarker",
-          "paramName": "optionalMarker",
+          "name": "optional",
+          "propertyName": "optional",
+          "paramName": "optional",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -17805,13 +17805,13 @@
       "factoryShape": "config",
       "factoryFields": [
         "accessibility_modifier",
-        "static_marker",
-        "override_modifier",
-        "readonly_marker",
-        "async_marker",
+        "static",
+        "override",
+        "readonly",
+        "async",
         "accessor_kind",
         "name",
-        "optional_marker",
+        "optional",
         "type_parameters",
         "parameters",
         "return_type",
@@ -17847,9 +17847,9 @@
           ]
         },
         {
-          "name": "static_marker",
-          "propertyName": "staticMarker",
-          "paramName": "staticMarker",
+          "name": "static",
+          "propertyName": "static",
+          "paramName": "static_",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -17865,9 +17865,9 @@
           ]
         },
         {
-          "name": "override_modifier",
-          "propertyName": "overrideModifier",
-          "paramName": "overrideModifier",
+          "name": "override",
+          "propertyName": "override",
+          "paramName": "override",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -17885,9 +17885,9 @@
           ]
         },
         {
-          "name": "readonly_marker",
-          "propertyName": "readonlyMarker",
-          "paramName": "readonlyMarker",
+          "name": "readonly",
+          "propertyName": "readonly",
+          "paramName": "readonly",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -17903,9 +17903,9 @@
           ]
         },
         {
-          "name": "async_marker",
-          "propertyName": "asyncMarker",
-          "paramName": "asyncMarker",
+          "name": "async",
+          "propertyName": "async",
+          "paramName": "async",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -18131,9 +18131,9 @@
           ]
         },
         {
-          "name": "optional_marker",
-          "propertyName": "optionalMarker",
-          "paramName": "optionalMarker",
+          "name": "optional",
+          "propertyName": "optional",
+          "paramName": "optional",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -18226,13 +18226,13 @@
       "factoryShape": "config",
       "factoryFields": [
         "accessibility_modifier",
-        "static_marker",
-        "override_modifier",
-        "readonly_marker",
-        "async_marker",
+        "static",
+        "override",
+        "readonly",
+        "async",
         "accessor_kind",
         "name",
-        "optional_marker",
+        "optional",
         "type_parameters",
         "parameters",
         "return_type"
@@ -20962,9 +20962,9 @@
           ]
         },
         {
-          "name": "override_modifier",
-          "propertyName": "overrideModifier",
-          "paramName": "overrideModifier",
+          "name": "override",
+          "propertyName": "override",
+          "paramName": "override",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -20982,9 +20982,9 @@
           ]
         },
         {
-          "name": "readonly_marker",
-          "propertyName": "readonlyMarker",
-          "paramName": "readonlyMarker",
+          "name": "readonly",
+          "propertyName": "readonly",
+          "paramName": "readonly",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -21071,8 +21071,8 @@
       "factoryFields": [
         "decorator",
         "accessibility_modifier",
-        "override_modifier",
-        "readonly_marker",
+        "override",
+        "readonly",
         "pattern",
         "type",
         "value"
@@ -22457,9 +22457,9 @@
           ]
         },
         {
-          "name": "static_marker",
-          "propertyName": "staticMarker",
-          "paramName": "staticMarker",
+          "name": "static",
+          "propertyName": "static",
+          "paramName": "static_",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -22475,9 +22475,9 @@
           ]
         },
         {
-          "name": "override_modifier",
-          "propertyName": "overrideModifier",
-          "paramName": "overrideModifier",
+          "name": "override",
+          "propertyName": "override",
+          "paramName": "override",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -22495,9 +22495,9 @@
           ]
         },
         {
-          "name": "readonly_marker",
-          "propertyName": "readonlyMarker",
-          "paramName": "readonlyMarker",
+          "name": "readonly",
+          "propertyName": "readonly",
+          "paramName": "readonly",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -22693,9 +22693,9 @@
           ]
         },
         {
-          "name": "optional_marker",
-          "propertyName": "optionalMarker",
-          "paramName": "optionalMarker",
+          "name": "optional",
+          "propertyName": "optional",
+          "paramName": "optional",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -22734,11 +22734,11 @@
       "factoryShape": "config",
       "factoryFields": [
         "accessibility_modifier",
-        "static_marker",
-        "override_modifier",
-        "readonly_marker",
+        "static",
+        "override",
+        "readonly",
         "name",
-        "optional_marker",
+        "optional",
         "type"
       ]
     },
@@ -22782,9 +22782,9 @@
           ]
         },
         {
-          "name": "declare_marker",
-          "propertyName": "declareMarker",
-          "paramName": "declareMarker",
+          "name": "declare",
+          "propertyName": "declare",
+          "paramName": "declare",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -22820,9 +22820,9 @@
           ]
         },
         {
-          "name": "static_marker",
-          "propertyName": "staticMarker",
-          "paramName": "staticMarker",
+          "name": "static",
+          "propertyName": "static",
+          "paramName": "static_",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -22838,9 +22838,29 @@
           ]
         },
         {
-          "name": "readonly_marker",
-          "propertyName": "readonlyMarker",
-          "paramName": "readonlyMarker",
+          "name": "override",
+          "propertyName": "override",
+          "paramName": "override",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [
+            "override_modifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "override_modifier",
+              "parseKind": "override_modifier"
+            }
+          ]
+        },
+        {
+          "name": "readonly",
+          "propertyName": "readonly",
+          "paramName": "readonly",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -22856,9 +22876,9 @@
           ]
         },
         {
-          "name": "abstract_marker",
-          "propertyName": "abstractMarker",
-          "paramName": "abstractMarker",
+          "name": "abstract",
+          "propertyName": "abstract",
+          "paramName": "abstract",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -22874,9 +22894,9 @@
           ]
         },
         {
-          "name": "accessor_marker",
-          "propertyName": "accessorMarker",
-          "paramName": "accessorMarker",
+          "name": "accessor",
+          "propertyName": "accessor",
+          "paramName": "accessor",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -22888,26 +22908,6 @@
               "multiplicity": "optional",
               "value": "accessor",
               "parseKind": "accessor_keyword"
-            }
-          ]
-        },
-        {
-          "name": "override_modifier",
-          "propertyName": "overrideModifier",
-          "paramName": "overrideModifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "boolean",
-          "kinds": [
-            "override_modifier"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "override_modifier",
-              "parseKind": "override_modifier"
             }
           ]
         },
@@ -23092,9 +23092,9 @@
           ]
         },
         {
-          "name": "optionality_marker",
-          "propertyName": "optionalityMarker",
-          "paramName": "optionalityMarker",
+          "name": "optionality",
+          "propertyName": "optionality",
+          "paramName": "optionality",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -23159,15 +23159,15 @@
       "factoryShape": "config",
       "factoryFields": [
         "decorator",
-        "declare_marker",
+        "declare",
         "accessibility_modifier",
-        "static_marker",
-        "readonly_marker",
-        "abstract_marker",
-        "accessor_marker",
-        "override_modifier",
+        "static",
+        "override",
+        "readonly",
+        "abstract",
+        "accessor",
         "name",
-        "optionality_marker",
+        "optionality",
         "type",
         "value"
       ]
@@ -23501,9 +23501,9 @@
           ]
         },
         {
-          "name": "override_modifier",
-          "propertyName": "overrideModifier",
-          "paramName": "overrideModifier",
+          "name": "override",
+          "propertyName": "override",
+          "paramName": "override",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -23521,9 +23521,9 @@
           ]
         },
         {
-          "name": "readonly_marker",
-          "propertyName": "readonlyMarker",
-          "paramName": "readonlyMarker",
+          "name": "readonly",
+          "propertyName": "readonly",
+          "paramName": "readonly",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -23610,8 +23610,8 @@
       "factoryFields": [
         "decorator",
         "accessibility_modifier",
-        "override_modifier",
-        "readonly_marker",
+        "override",
+        "readonly",
         "pattern",
         "type",
         "value"
@@ -26876,9 +26876,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "const_marker",
-          "propertyName": "constMarker",
-          "paramName": "constMarker",
+          "name": "const",
+          "propertyName": "const",
+          "paramName": "const_",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -26956,7 +26956,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "const_marker",
+        "const",
         "name",
         "constraint",
         "value"
@@ -27677,9 +27677,9 @@
           ]
         },
         {
-          "name": "optional_chain_marker",
-          "propertyName": "optionalChainMarker",
-          "paramName": "optionalChainMarker",
+          "name": "optional_chain",
+          "propertyName": "optionalChain",
+          "paramName": "optionalChain",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -27734,7 +27734,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "object",
-        "optional_chain_marker",
+        "optional_chain",
         "index"
       ]
     },

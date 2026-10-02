@@ -586,7 +586,7 @@ function permutationAtomKey(
 	const r = core as Record<string, unknown>;
 	const t = typeof r.type === 'string' ? r.type : '';
 	const keyed = (lit: string | null, fallback: string): string => {
-		if (lit !== null && (fieldName === undefined || fieldName === `${lit}_marker`)) return `lit:${lit}`;
+		if (lit !== null && (fieldName === undefined || fieldName === lit)) return `lit:${lit}`;
 		const bare = lit !== null ? `lit:${lit}` : fallback;
 		return fieldName === undefined ? bare : `field:${fieldName}=${bare}`;
 	};

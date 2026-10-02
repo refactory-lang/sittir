@@ -1,7 +1,8 @@
 import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
 import type { OtherKindWitness, RuleCause, RuleCauseDeclaration, WitnessFormItem } from '../../dsl/primitives/rule-cause.ts';
 import type { Rule } from '../../types/rule.ts';
-import { CHOICE, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts';
+import { ALIAS, CHOICE, DEDENT, FIELD, IMMEDIATE_TOKEN, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN } from '../../types/rule-types.ts';
+import { assertNever } from '../../polymorph-variant.ts';
 import type { RawGrammar } from '../types.ts';
 import type { StageDiagnosis } from '../stage.ts';
 import type { WhitespaceCollision } from '../../dsl/whitespace.ts';
@@ -97,21 +98,14 @@ function judgeVocabulary(grammar: string, name: string, enriched: StageDiagnosis
 function derivesForm(rules: UpstreamRules, rule: Rule<'evaluate'>, form: readonly WitnessFormItem[]): boolean {
 	const expanding = new Set<string>();
 	const ends = (node: Rule<'evaluate'>, at: number): number[] => {
-		const shape = node as {
-			type: string;
-			value?: string;
-			name?: string;
-			content?: Rule<'evaluate'>;
-			members?: readonly Rule<'evaluate'>[];
-		};
 		const item = form[at];
-		switch (shape.type) {
+		switch (node.type) {
 			case STRING:
-				return item === shape.value ? [at + 1] : [];
+				return item === node.value ? [at + 1] : [];
 			case SYMBOL: {
-				if (typeof item === 'object' && item.symbol === shape.name) return [at + 1];
-				const body = shape.name?.startsWith('_') ? rules[shape.name] : undefined;
-				const key = `${shape.name}@${at}`;
+				if (typeof item === 'object' && item.symbol === node.name) return [at + 1];
+				const body = node.name.startsWith('_') ? rules[node.name] : undefined;
+				const key = `${node.name}@${at}`;
 				if (body === undefined || expanding.has(key)) return [];
 				expanding.add(key);
 				const reached = ends(body, at);
@@ -119,23 +113,38 @@ function derivesForm(rules: UpstreamRules, rule: Rule<'evaluate'>, form: readonl
 				return reached;
 			}
 			case SEQ:
-				return (shape.members ?? []).reduce<number[]>((starts, member) => [...new Set(starts.flatMap((start) => ends(member, start)))], [at]);
+				return node.members.reduce<number[]>((starts, member) => [...new Set(starts.flatMap((start) => ends(member, start)))], [at]);
 			case CHOICE:
-				return [...new Set((shape.members ?? []).flatMap((member) => ends(member, at)))];
+				return [...new Set(node.members.flatMap((member) => ends(member, at)))];
 			case OPTIONAL:
-				return [...new Set([at, ...ends(shape.content!, at)])];
+				return [...new Set([at, ...ends(node.content, at)])];
 			case REPEAT:
 			case REPEAT1: {
-				const reached = new Set<number>(shape.type === REPEAT ? [at] : []);
+				const reached = new Set<number>(node.type === REPEAT ? [at] : []);
 				let frontier = [at];
 				while (frontier.length > 0) {
-					frontier = [...new Set(frontier.flatMap((start) => ends(shape.content!, start)))].filter((end) => !reached.has(end));
+					frontier = [...new Set(frontier.flatMap((start) => ends(node.content, start)))].filter((end) => !reached.has(end));
 					for (const end of frontier) reached.add(end);
 				}
 				return [...reached];
 			}
+			case FIELD:
+			case ALIAS:
+			case TOKEN:
+			case IMMEDIATE_TOKEN:
+			case 'PREC':
+			case 'PREC_LEFT':
+			case 'PREC_RIGHT':
+			case 'PREC_DYNAMIC':
+				return ends(node.content, at);
+			case PATTERN:
+			case SUPERTYPE:
+			case INDENT:
+			case DEDENT:
+			case NEWLINE:
+				return [];
 			default:
-				return shape.content === undefined ? [] : ends(shape.content, at);
+				return assertNever(node);
 		}
 	};
 	return ends(rule, 0).includes(form.length);

@@ -1885,7 +1885,7 @@
           }
         ]
       },
-      "star_marker": {
+      "group": {
         "multiple": false,
         "required": false,
         "types": [
@@ -2081,7 +2081,7 @@
     "type": "for_in_clause",
     "named": true,
     "fields": {
-      "async_marker": {
+      "async": {
         "multiple": false,
         "required": false,
         "types": [
@@ -2149,7 +2149,7 @@
           }
         ]
       },
-      "async_marker": {
+      "async": {
         "multiple": false,
         "required": false,
         "types": [
@@ -2203,7 +2203,7 @@
     "type": "format_expression",
     "named": true,
     "fields": {
-      "eq_marker": {
+      "debug": {
         "multiple": false,
         "required": false,
         "types": [
@@ -2281,7 +2281,7 @@
     "type": "function_definition",
     "named": true,
     "fields": {
-      "async_marker": {
+      "async": {
         "multiple": false,
         "required": false,
         "types": [
@@ -2574,7 +2574,7 @@
     "type": "interpolation",
     "named": true,
     "fields": {
-      "eq_marker": {
+      "debug": {
         "multiple": false,
         "required": false,
         "types": [
@@ -4511,7 +4511,7 @@
     "type": "with_statement",
     "named": true,
     "fields": {
-      "async_marker": {
+      "async": {
         "multiple": false,
         "required": false,
         "types": [

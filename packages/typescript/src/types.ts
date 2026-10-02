@@ -3501,19 +3501,19 @@ export interface ForStatement {
 
 export interface ForInStatement {
 	readonly $type: TSKindId.ForInStatement;
-	readonly _await_marker?: boolean;
+	readonly _await?: boolean;
 	readonly _for_header: ForHeader;
 	readonly _body: Statement;
 	readonly __inputHints__?: {
-		readonly await_marker?: BaseBooleanKeyword<'await'>;
+		readonly await?: BaseBooleanKeyword<'await'>;
 		readonly body: KindEnum<';', TSKindId.Semi> | Statement;
 	};
 	readonly __slotHints__?: {
-		readonly awaitMarker: SlotHint<NonNullable<T.ForInStatement.Config>['awaitMarker'], true>;
+		readonly await: SlotHint<NonNullable<T.ForInStatement.Config>['await'], true>;
 		readonly forHeader: SlotHint<T.ForHeader>;
 		readonly body: SlotHint<NonNullable<T.ForInStatement.Config>['body']>;
 	};
-	awaitMarker(): boolean | undefined;
+	await(): boolean | undefined;
 	forHeader(): ForHeader;
 	body(): Statement;
 }
@@ -4546,21 +4546,21 @@ export interface ClassHeritage {
 
 export interface FunctionExpression {
 	readonly $type: TSKindId.FunctionExpression;
-	readonly _async_marker?: boolean;
+	readonly _async?: boolean;
 	readonly _name?: Identifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
 	readonly _body: StatementBlock;
 	readonly __inputHints__?: {
-		readonly async_marker?: BaseBooleanKeyword<'async'>;
+		readonly async?: BaseBooleanKeyword<'async'>;
 	};
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
 	readonly __slotHints__?: {
-		readonly asyncMarker: SlotHint<NonNullable<T.FunctionExpression.Config>['asyncMarker'], true>;
+		readonly async: SlotHint<NonNullable<T.FunctionExpression.Config>['async'], true>;
 		readonly name: SlotHint<T.Identifier, true>;
 		readonly typeParameters: SlotHint<T.TypeParameters, true>;
 		readonly parameters: SlotHint<T.FormalParameters>;
@@ -4577,7 +4577,7 @@ export interface FunctionExpression {
 			>;
 		};
 	};
-	asyncMarker(): boolean | undefined;
+	async(): boolean | undefined;
 	name(): Identifier | undefined;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
@@ -4587,7 +4587,7 @@ export interface FunctionExpression {
 
 export interface FunctionDeclaration {
 	readonly $type: TSKindId.FunctionDeclaration;
-	readonly _async_marker?: boolean;
+	readonly _async?: boolean;
 	readonly _name: Identifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
@@ -4595,7 +4595,7 @@ export interface FunctionDeclaration {
 	readonly _body: StatementBlock;
 	readonly _automatic_semicolon?: boolean;
 	readonly __inputHints__?: {
-		readonly async_marker?: BaseBooleanKeyword<'async'>;
+		readonly async?: BaseBooleanKeyword<'async'>;
 		readonly automatic_semicolon?: BaseBooleanKeyword<'\n'>;
 	};
 	readonly __looseHints__?: {
@@ -4603,7 +4603,7 @@ export interface FunctionDeclaration {
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
 	readonly __slotHints__?: {
-		readonly asyncMarker: SlotHint<NonNullable<T.FunctionDeclaration.Config>['asyncMarker'], true>;
+		readonly async: SlotHint<NonNullable<T.FunctionDeclaration.Config>['async'], true>;
 		readonly name: SlotHint<T.Identifier>;
 		readonly typeParameters: SlotHint<T.TypeParameters, true>;
 		readonly parameters: SlotHint<T.FormalParameters>;
@@ -4621,7 +4621,7 @@ export interface FunctionDeclaration {
 			>;
 		};
 	};
-	asyncMarker(): boolean | undefined;
+	async(): boolean | undefined;
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
@@ -4632,21 +4632,21 @@ export interface FunctionDeclaration {
 
 export interface GeneratorFunction {
 	readonly $type: TSKindId.GeneratorFunction;
-	readonly _async_marker?: boolean;
+	readonly _async?: boolean;
 	readonly _name?: Identifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
 	readonly _body: StatementBlock;
 	readonly __inputHints__?: {
-		readonly async_marker?: BaseBooleanKeyword<'async'>;
+		readonly async?: BaseBooleanKeyword<'async'>;
 	};
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
 	readonly __slotHints__?: {
-		readonly asyncMarker: SlotHint<NonNullable<T.GeneratorFunction.Config>['asyncMarker'], true>;
+		readonly async: SlotHint<NonNullable<T.GeneratorFunction.Config>['async'], true>;
 		readonly name: SlotHint<T.Identifier, true>;
 		readonly typeParameters: SlotHint<T.TypeParameters, true>;
 		readonly parameters: SlotHint<T.FormalParameters>;
@@ -4663,7 +4663,7 @@ export interface GeneratorFunction {
 			>;
 		};
 	};
-	asyncMarker(): boolean | undefined;
+	async(): boolean | undefined;
 	name(): Identifier | undefined;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
@@ -4673,7 +4673,7 @@ export interface GeneratorFunction {
 
 export interface GeneratorFunctionDeclaration {
 	readonly $type: TSKindId.GeneratorFunctionDeclaration;
-	readonly _async_marker?: boolean;
+	readonly _async?: boolean;
 	readonly _name: Identifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
@@ -4681,7 +4681,7 @@ export interface GeneratorFunctionDeclaration {
 	readonly _body: StatementBlock;
 	readonly _automatic_semicolon?: boolean;
 	readonly __inputHints__?: {
-		readonly async_marker?: BaseBooleanKeyword<'async'>;
+		readonly async?: BaseBooleanKeyword<'async'>;
 		readonly automatic_semicolon?: BaseBooleanKeyword<'\n'>;
 	};
 	readonly __looseHints__?: {
@@ -4689,7 +4689,7 @@ export interface GeneratorFunctionDeclaration {
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
 	readonly __slotHints__?: {
-		readonly asyncMarker: SlotHint<NonNullable<T.GeneratorFunctionDeclaration.Config>['asyncMarker'], true>;
+		readonly async: SlotHint<NonNullable<T.GeneratorFunctionDeclaration.Config>['async'], true>;
 		readonly name: SlotHint<T.Identifier>;
 		readonly typeParameters: SlotHint<T.TypeParameters, true>;
 		readonly parameters: SlotHint<T.FormalParameters>;
@@ -4710,7 +4710,7 @@ export interface GeneratorFunctionDeclaration {
 			>;
 		};
 	};
-	asyncMarker(): boolean | undefined;
+	async(): boolean | undefined;
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
@@ -4721,11 +4721,11 @@ export interface GeneratorFunctionDeclaration {
 
 export interface ArrowFunction {
 	readonly $type: TSKindId.ArrowFunction;
-	readonly _async_marker?: boolean;
+	readonly _async?: boolean;
 	readonly _content: ArrowFunctionParameter | CallSignature;
 	readonly _body: Expression | StatementBlock;
 	readonly __inputHints__?: {
-		readonly async_marker?: BaseBooleanKeyword<'async'>;
+		readonly async?: BaseBooleanKeyword<'async'>;
 		readonly body:
 			| KindEnum<
 					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
@@ -4735,11 +4735,11 @@ export interface ArrowFunction {
 			| StatementBlock;
 	};
 	readonly __slotHints__?: {
-		readonly asyncMarker: SlotHint<NonNullable<T.ArrowFunction.Config>['asyncMarker'], true>;
+		readonly async: SlotHint<NonNullable<T.ArrowFunction.Config>['async'], true>;
 		readonly content: SlotHint<T.ArrowFunctionParameter | T.CallSignature>;
 		readonly body: SlotHint<NonNullable<T.ArrowFunction.Config>['body']>;
 	};
-	asyncMarker(): boolean | undefined;
+	async(): boolean | undefined;
 	content(): ArrowFunctionParameter | CallSignature;
 	body(): Expression | StatementBlock;
 }
@@ -5016,11 +5016,11 @@ export interface LhsExpression {
 
 export interface AssignmentExpression {
 	readonly $type: TSKindId.AssignmentExpression;
-	readonly _using_marker?: boolean;
+	readonly _using?: boolean;
 	readonly _left: ParenthesizedExpression | LhsExpression;
 	readonly _right: Expression;
 	readonly __inputHints__?: {
-		readonly using_marker?: BaseBooleanKeyword<'using'>;
+		readonly using?: BaseBooleanKeyword<'using'>;
 		readonly right:
 			| KindEnum<
 					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
@@ -5029,11 +5029,11 @@ export interface AssignmentExpression {
 			| Expression;
 	};
 	readonly __slotHints__?: {
-		readonly usingMarker: SlotHint<NonNullable<T.AssignmentExpression.Config>['usingMarker'], true>;
+		readonly using: SlotHint<NonNullable<T.AssignmentExpression.Config>['using'], true>;
 		readonly left: SlotHint<T.ParenthesizedExpression | T.LhsExpression>;
 		readonly right: SlotHint<NonNullable<T.AssignmentExpression.Config>['right']>;
 	};
-	usingMarker(): boolean | undefined;
+	using(): boolean | undefined;
 	left(): ParenthesizedExpression | LhsExpression;
 	right(): Expression;
 }
@@ -5730,10 +5730,10 @@ export interface RestPattern {
 export interface MethodDefinition {
 	readonly $type: TSKindId.MethodDefinition;
 	readonly _accessibility_modifier?: number;
-	readonly _static_marker?: boolean;
-	readonly _override_modifier?: boolean;
-	readonly _readonly_marker?: boolean;
-	readonly _async_marker?: boolean;
+	readonly _static?: boolean;
+	readonly _override?: boolean;
+	readonly _readonly?: boolean;
+	readonly _async?: boolean;
 	readonly _accessor_kind?: number;
 	readonly _name:
 		| PropertyIdentifier
@@ -5763,7 +5763,7 @@ export interface MethodDefinition {
 		| String
 		| Number
 		| ComputedPropertyName;
-	readonly _optional_marker?: boolean;
+	readonly _optional?: boolean;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
@@ -5773,10 +5773,10 @@ export interface MethodDefinition {
 			'public' | 'private' | 'protected',
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
 		>;
-		readonly static_marker?: BaseBooleanKeyword<'static'>;
-		readonly override_modifier?: BaseBooleanKeyword<'override'>;
-		readonly readonly_marker?: BaseBooleanKeyword<'readonly'>;
-		readonly async_marker?: BaseBooleanKeyword<'async'>;
+		readonly static?: BaseBooleanKeyword<'static'>;
+		readonly override?: BaseBooleanKeyword<'override'>;
+		readonly readonly?: BaseBooleanKeyword<'readonly'>;
+		readonly async?: BaseBooleanKeyword<'async'>;
 		readonly accessor_kind?: KindEnum<'get' | 'set' | '*', TSKindId.GetKeyword | TSKindId.SetKeyword | TSKindId.Star>;
 		readonly name:
 			| KindEnum<
@@ -5830,22 +5830,22 @@ export interface MethodDefinition {
 			| String
 			| Number
 			| ComputedPropertyName;
-		readonly optional_marker?: BaseBooleanKeyword<'?'>;
+		readonly optional?: BaseBooleanKeyword<'?'>;
 	};
 	readonly __looseHints__?: {
-		readonly override_modifier?: 'override' | 'override';
+		readonly override?: 'override' | 'override';
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
 	readonly __slotHints__?: {
 		readonly accessibilityModifier: SlotHint<NonNullable<T.MethodDefinition.Config>['accessibilityModifier'], true>;
-		readonly staticMarker: SlotHint<NonNullable<T.MethodDefinition.Config>['staticMarker'], true>;
-		readonly overrideModifier: SlotHint<NonNullable<T.MethodDefinition.Config>['overrideModifier'], true>;
-		readonly readonlyMarker: SlotHint<NonNullable<T.MethodDefinition.Config>['readonlyMarker'], true>;
-		readonly asyncMarker: SlotHint<NonNullable<T.MethodDefinition.Config>['asyncMarker'], true>;
+		readonly static: SlotHint<NonNullable<T.MethodDefinition.Config>['static'], true>;
+		readonly override: SlotHint<NonNullable<T.MethodDefinition.Config>['override'], true>;
+		readonly readonly: SlotHint<NonNullable<T.MethodDefinition.Config>['readonly'], true>;
+		readonly async: SlotHint<NonNullable<T.MethodDefinition.Config>['async'], true>;
 		readonly accessorKind: SlotHint<NonNullable<T.MethodDefinition.Config>['accessorKind'], true>;
 		readonly name: SlotHint<NonNullable<T.MethodDefinition.Config>['name']>;
-		readonly optionalMarker: SlotHint<NonNullable<T.MethodDefinition.Config>['optionalMarker'], true>;
+		readonly optional: SlotHint<NonNullable<T.MethodDefinition.Config>['optional'], true>;
 		readonly typeParameters: SlotHint<T.TypeParameters, true>;
 		readonly parameters: SlotHint<T.FormalParameters>;
 		readonly returnType: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
@@ -5862,10 +5862,10 @@ export interface MethodDefinition {
 		};
 	};
 	accessibilityModifier(): number | undefined;
-	staticMarker(): boolean | undefined;
-	overrideModifier(): boolean | undefined;
-	readonlyMarker(): boolean | undefined;
-	asyncMarker(): boolean | undefined;
+	static(): boolean | undefined;
+	override(): boolean | undefined;
+	readonly(): boolean | undefined;
+	async(): boolean | undefined;
 	accessorKind(): number | undefined;
 	name():
 		| PropertyIdentifier
@@ -5895,7 +5895,7 @@ export interface MethodDefinition {
 		| String
 		| Number
 		| ComputedPropertyName;
-	optionalMarker(): boolean | undefined;
+	optional(): boolean | undefined;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
 	returnType(): TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
@@ -6168,13 +6168,13 @@ export interface ComputedPropertyName {
 export interface PublicFieldDefinition {
 	readonly $type: TSKindId.PublicFieldDefinition;
 	readonly _decorator?: readonly Decorator[];
-	readonly _declare_marker?: boolean;
+	readonly _declare?: boolean;
 	readonly _accessibility_modifier?: number;
-	readonly _static_marker?: boolean;
-	readonly _readonly_marker?: boolean;
-	readonly _abstract_marker?: boolean;
-	readonly _accessor_marker?: boolean;
-	readonly _override_modifier?: boolean;
+	readonly _static?: boolean;
+	readonly _override?: boolean;
+	readonly _readonly?: boolean;
+	readonly _abstract?: boolean;
+	readonly _accessor?: boolean;
 	readonly _name:
 		| PropertyIdentifier
 		| TSKindId.DeclareKeyword
@@ -6203,20 +6203,20 @@ export interface PublicFieldDefinition {
 		| String
 		| Number
 		| ComputedPropertyName;
-	readonly _optionality_marker?: number;
+	readonly _optionality?: number;
 	readonly _type?: TypeAnnotation;
 	readonly _value?: Expression;
 	readonly __inputHints__?: {
-		readonly declare_marker?: BaseBooleanKeyword<'declare'>;
+		readonly declare?: BaseBooleanKeyword<'declare'>;
 		readonly accessibility_modifier?: KindEnum<
 			'public' | 'private' | 'protected',
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
 		>;
-		readonly static_marker?: BaseBooleanKeyword<'static'>;
-		readonly readonly_marker?: BaseBooleanKeyword<'readonly'>;
-		readonly abstract_marker?: BaseBooleanKeyword<'abstract'>;
-		readonly accessor_marker?: BaseBooleanKeyword<'accessor'>;
-		readonly override_modifier?: BaseBooleanKeyword<'override'>;
+		readonly static?: BaseBooleanKeyword<'static'>;
+		readonly override?: BaseBooleanKeyword<'override'>;
+		readonly readonly?: BaseBooleanKeyword<'readonly'>;
+		readonly abstract?: BaseBooleanKeyword<'abstract'>;
+		readonly accessor?: BaseBooleanKeyword<'accessor'>;
 		readonly name:
 			| KindEnum<
 					| 'declare'
@@ -6269,7 +6269,7 @@ export interface PublicFieldDefinition {
 			| String
 			| Number
 			| ComputedPropertyName;
-		readonly optionality_marker?: KindEnum<'?' | '!', TSKindId.Qmark | TSKindId.Bang>;
+		readonly optionality?: KindEnum<'?' | '!', TSKindId.Qmark | TSKindId.Bang>;
 		readonly value?:
 			| KindEnum<
 					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
@@ -6278,34 +6278,34 @@ export interface PublicFieldDefinition {
 			| Expression;
 	};
 	readonly __looseHints__?: {
-		readonly override_modifier?: 'override' | 'override';
+		readonly override?: 'override' | 'override';
 		readonly type?: readonly Type[];
 	};
 	readonly __slotHints__?: {
 		readonly decorators: SlotHint<T.Decorator[], true, true>;
-		readonly declareMarker: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['declareMarker'], true>;
+		readonly declare: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['declare'], true>;
 		readonly accessibilityModifier: SlotHint<
 			NonNullable<T.PublicFieldDefinition.Config>['accessibilityModifier'],
 			true
 		>;
-		readonly staticMarker: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['staticMarker'], true>;
-		readonly readonlyMarker: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['readonlyMarker'], true>;
-		readonly abstractMarker: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['abstractMarker'], true>;
-		readonly accessorMarker: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['accessorMarker'], true>;
-		readonly overrideModifier: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['overrideModifier'], true>;
+		readonly static: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['static'], true>;
+		readonly override: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['override'], true>;
+		readonly readonly: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['readonly'], true>;
+		readonly abstract: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['abstract'], true>;
+		readonly accessor: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['accessor'], true>;
 		readonly name: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['name']>;
-		readonly optionalityMarker: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['optionalityMarker'], true>;
+		readonly optionality: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['optionality'], true>;
 		readonly type: SlotHint<T.TypeAnnotation, true>;
 		readonly value: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['value'], true>;
 	};
 	decorators(): readonly Decorator[];
-	declareMarker(): boolean | undefined;
+	declare(): boolean | undefined;
 	accessibilityModifier(): number | undefined;
-	staticMarker(): boolean | undefined;
-	readonlyMarker(): boolean | undefined;
-	abstractMarker(): boolean | undefined;
-	accessorMarker(): boolean | undefined;
-	overrideModifier(): boolean | undefined;
+	static(): boolean | undefined;
+	override(): boolean | undefined;
+	readonly(): boolean | undefined;
+	abstract(): boolean | undefined;
+	accessor(): boolean | undefined;
 	name():
 		| PropertyIdentifier
 		| TSKindId.DeclareKeyword
@@ -6334,7 +6334,7 @@ export interface PublicFieldDefinition {
 		| String
 		| Number
 		| ComputedPropertyName;
-	optionalityMarker(): number | undefined;
+	optionality(): number | undefined;
 	type(): TypeAnnotation | undefined;
 	value(): Expression | undefined;
 }
@@ -6359,10 +6359,10 @@ export interface NonNullExpression {
 export interface MethodSignature {
 	readonly $type: TSKindId.MethodSignature;
 	readonly _accessibility_modifier?: number;
-	readonly _static_marker?: boolean;
-	readonly _override_modifier?: boolean;
-	readonly _readonly_marker?: boolean;
-	readonly _async_marker?: boolean;
+	readonly _static?: boolean;
+	readonly _override?: boolean;
+	readonly _readonly?: boolean;
+	readonly _async?: boolean;
 	readonly _accessor_kind?: number;
 	readonly _name:
 		| PropertyIdentifier
@@ -6392,7 +6392,7 @@ export interface MethodSignature {
 		| String
 		| Number
 		| ComputedPropertyName;
-	readonly _optional_marker?: boolean;
+	readonly _optional?: boolean;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
@@ -6401,10 +6401,10 @@ export interface MethodSignature {
 			'public' | 'private' | 'protected',
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
 		>;
-		readonly static_marker?: BaseBooleanKeyword<'static'>;
-		readonly override_modifier?: BaseBooleanKeyword<'override'>;
-		readonly readonly_marker?: BaseBooleanKeyword<'readonly'>;
-		readonly async_marker?: BaseBooleanKeyword<'async'>;
+		readonly static?: BaseBooleanKeyword<'static'>;
+		readonly override?: BaseBooleanKeyword<'override'>;
+		readonly readonly?: BaseBooleanKeyword<'readonly'>;
+		readonly async?: BaseBooleanKeyword<'async'>;
 		readonly accessor_kind?: KindEnum<'get' | 'set' | '*', TSKindId.GetKeyword | TSKindId.SetKeyword | TSKindId.Star>;
 		readonly name:
 			| KindEnum<
@@ -6458,22 +6458,22 @@ export interface MethodSignature {
 			| String
 			| Number
 			| ComputedPropertyName;
-		readonly optional_marker?: BaseBooleanKeyword<'?'>;
+		readonly optional?: BaseBooleanKeyword<'?'>;
 	};
 	readonly __looseHints__?: {
-		readonly override_modifier?: 'override' | 'override';
+		readonly override?: 'override' | 'override';
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
 	readonly __slotHints__?: {
 		readonly accessibilityModifier: SlotHint<NonNullable<T.MethodSignature.Config>['accessibilityModifier'], true>;
-		readonly staticMarker: SlotHint<NonNullable<T.MethodSignature.Config>['staticMarker'], true>;
-		readonly overrideModifier: SlotHint<NonNullable<T.MethodSignature.Config>['overrideModifier'], true>;
-		readonly readonlyMarker: SlotHint<NonNullable<T.MethodSignature.Config>['readonlyMarker'], true>;
-		readonly asyncMarker: SlotHint<NonNullable<T.MethodSignature.Config>['asyncMarker'], true>;
+		readonly static: SlotHint<NonNullable<T.MethodSignature.Config>['static'], true>;
+		readonly override: SlotHint<NonNullable<T.MethodSignature.Config>['override'], true>;
+		readonly readonly: SlotHint<NonNullable<T.MethodSignature.Config>['readonly'], true>;
+		readonly async: SlotHint<NonNullable<T.MethodSignature.Config>['async'], true>;
 		readonly accessorKind: SlotHint<NonNullable<T.MethodSignature.Config>['accessorKind'], true>;
 		readonly name: SlotHint<NonNullable<T.MethodSignature.Config>['name']>;
-		readonly optionalMarker: SlotHint<NonNullable<T.MethodSignature.Config>['optionalMarker'], true>;
+		readonly optional: SlotHint<NonNullable<T.MethodSignature.Config>['optional'], true>;
 		readonly typeParameters: SlotHint<T.TypeParameters, true>;
 		readonly parameters: SlotHint<T.FormalParameters>;
 		readonly returnType: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
@@ -6489,10 +6489,10 @@ export interface MethodSignature {
 		};
 	};
 	accessibilityModifier(): number | undefined;
-	staticMarker(): boolean | undefined;
-	overrideModifier(): boolean | undefined;
-	readonlyMarker(): boolean | undefined;
-	asyncMarker(): boolean | undefined;
+	static(): boolean | undefined;
+	override(): boolean | undefined;
+	readonly(): boolean | undefined;
+	async(): boolean | undefined;
 	accessorKind(): number | undefined;
 	name():
 		| PropertyIdentifier
@@ -6522,7 +6522,7 @@ export interface MethodSignature {
 		| String
 		| Number
 		| ComputedPropertyName;
-	optionalMarker(): boolean | undefined;
+	optional(): boolean | undefined;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
 	returnType(): TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
@@ -6531,7 +6531,7 @@ export interface MethodSignature {
 export interface AbstractMethodSignature {
 	readonly $type: TSKindId.AbstractMethodSignature;
 	readonly _accessibility_modifier?: number;
-	readonly _override_modifier?: boolean;
+	readonly _override?: boolean;
 	readonly _accessor_kind?: number;
 	readonly _name:
 		| PropertyIdentifier
@@ -6561,7 +6561,7 @@ export interface AbstractMethodSignature {
 		| String
 		| Number
 		| ComputedPropertyName;
-	readonly _optional_marker?: boolean;
+	readonly _optional?: boolean;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
@@ -6570,7 +6570,7 @@ export interface AbstractMethodSignature {
 			'public' | 'private' | 'protected',
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
 		>;
-		readonly override_modifier?: BaseBooleanKeyword<'override'>;
+		readonly override?: BaseBooleanKeyword<'override'>;
 		readonly accessor_kind?: KindEnum<'get' | 'set' | '*', TSKindId.GetKeyword | TSKindId.SetKeyword | TSKindId.Star>;
 		readonly name:
 			| KindEnum<
@@ -6624,10 +6624,10 @@ export interface AbstractMethodSignature {
 			| String
 			| Number
 			| ComputedPropertyName;
-		readonly optional_marker?: BaseBooleanKeyword<'?'>;
+		readonly optional?: BaseBooleanKeyword<'?'>;
 	};
 	readonly __looseHints__?: {
-		readonly override_modifier?: 'override' | 'override';
+		readonly override?: 'override' | 'override';
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
@@ -6636,10 +6636,10 @@ export interface AbstractMethodSignature {
 			NonNullable<T.AbstractMethodSignature.Config>['accessibilityModifier'],
 			true
 		>;
-		readonly overrideModifier: SlotHint<NonNullable<T.AbstractMethodSignature.Config>['overrideModifier'], true>;
+		readonly override: SlotHint<NonNullable<T.AbstractMethodSignature.Config>['override'], true>;
 		readonly accessorKind: SlotHint<NonNullable<T.AbstractMethodSignature.Config>['accessorKind'], true>;
 		readonly name: SlotHint<NonNullable<T.AbstractMethodSignature.Config>['name']>;
-		readonly optionalMarker: SlotHint<NonNullable<T.AbstractMethodSignature.Config>['optionalMarker'], true>;
+		readonly optional: SlotHint<NonNullable<T.AbstractMethodSignature.Config>['optional'], true>;
 		readonly typeParameters: SlotHint<T.TypeParameters, true>;
 		readonly parameters: SlotHint<T.FormalParameters>;
 		readonly returnType: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
@@ -6655,7 +6655,7 @@ export interface AbstractMethodSignature {
 		};
 	};
 	accessibilityModifier(): number | undefined;
-	overrideModifier(): boolean | undefined;
+	override(): boolean | undefined;
 	accessorKind(): number | undefined;
 	name():
 		| PropertyIdentifier
@@ -6685,7 +6685,7 @@ export interface AbstractMethodSignature {
 		| String
 		| Number
 		| ComputedPropertyName;
-	optionalMarker(): boolean | undefined;
+	optional(): boolean | undefined;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
 	returnType(): TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
@@ -6693,14 +6693,14 @@ export interface AbstractMethodSignature {
 
 export interface FunctionSignature {
 	readonly $type: TSKindId.FunctionSignature;
-	readonly _async_marker?: boolean;
+	readonly _async?: boolean;
 	readonly _name: Identifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
 	readonly _terminator: number;
 	readonly __inputHints__?: {
-		readonly async_marker?: BaseBooleanKeyword<'async'>;
+		readonly async?: BaseBooleanKeyword<'async'>;
 		readonly terminator: KindEnum<
 			'\n' | ';',
 			TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.FunctionSignatureAutomaticSemicolon
@@ -6711,7 +6711,7 @@ export interface FunctionSignature {
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
 	readonly __slotHints__?: {
-		readonly asyncMarker: SlotHint<NonNullable<T.FunctionSignature.Config>['asyncMarker'], true>;
+		readonly async: SlotHint<NonNullable<T.FunctionSignature.Config>['async'], true>;
 		readonly name: SlotHint<T.Identifier>;
 		readonly typeParameters: SlotHint<T.TypeParameters, true>;
 		readonly parameters: SlotHint<T.FormalParameters>;
@@ -6728,7 +6728,7 @@ export interface FunctionSignature {
 			>;
 		};
 	};
-	asyncMarker(): boolean | undefined;
+	async(): boolean | undefined;
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
@@ -7129,24 +7129,24 @@ export interface ExtendsTypeClause {
 
 export interface EnumDeclaration {
 	readonly $type: TSKindId.EnumDeclaration;
-	readonly _const_marker?: boolean;
+	readonly _const?: boolean;
 	readonly _name: Identifier;
 	readonly _body: EnumBody;
 	readonly __inputHints__?: {
-		readonly const_marker?: BaseBooleanKeyword<'const'>;
+		readonly const?: BaseBooleanKeyword<'const'>;
 	};
 	readonly __looseHints__?: {
 		readonly body: readonly EnumBodyElement[];
 	};
 	readonly __slotHints__?: {
-		readonly constMarker: SlotHint<NonNullable<T.EnumDeclaration.Config>['constMarker'], true>;
+		readonly const: SlotHint<NonNullable<T.EnumDeclaration.Config>['const'], true>;
 		readonly name: SlotHint<T.Identifier>;
 		readonly body: SlotHint<T.EnumBody>;
 		readonly $listSlots: {
 			readonly body: ListSlotHint<T.EnumBodyElement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	constMarker(): boolean | undefined;
+	const(): boolean | undefined;
 	name(): Identifier;
 	body(): EnumBody;
 }
@@ -7354,8 +7354,8 @@ export interface RequiredParameter {
 	readonly $type: TSKindId.RequiredParameter;
 	readonly _decorator?: readonly Decorator[];
 	readonly _accessibility_modifier?: number;
-	readonly _override_modifier?: boolean;
-	readonly _readonly_marker?: boolean;
+	readonly _override?: boolean;
+	readonly _readonly?: boolean;
 	readonly _pattern: Pattern | TSKindId.This;
 	readonly _type?: TypeAnnotation;
 	readonly _value?: Expression;
@@ -7364,8 +7364,8 @@ export interface RequiredParameter {
 			'public' | 'private' | 'protected',
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
 		>;
-		readonly override_modifier?: BaseBooleanKeyword<'override'>;
-		readonly readonly_marker?: BaseBooleanKeyword<'readonly'>;
+		readonly override?: BaseBooleanKeyword<'override'>;
+		readonly readonly?: BaseBooleanKeyword<'readonly'>;
 		readonly pattern: KindEnum<'this', TSKindId.This> | Pattern;
 		readonly value?:
 			| KindEnum<
@@ -7375,22 +7375,22 @@ export interface RequiredParameter {
 			| Expression;
 	};
 	readonly __looseHints__?: {
-		readonly override_modifier?: 'override' | 'override';
+		readonly override?: 'override' | 'override';
 		readonly type?: readonly Type[];
 	};
 	readonly __slotHints__?: {
 		readonly decorators: SlotHint<T.Decorator[], true, true>;
 		readonly accessibilityModifier: SlotHint<NonNullable<T.RequiredParameter.Config>['accessibilityModifier'], true>;
-		readonly overrideModifier: SlotHint<NonNullable<T.RequiredParameter.Config>['overrideModifier'], true>;
-		readonly readonlyMarker: SlotHint<NonNullable<T.RequiredParameter.Config>['readonlyMarker'], true>;
+		readonly override: SlotHint<NonNullable<T.RequiredParameter.Config>['override'], true>;
+		readonly readonly: SlotHint<NonNullable<T.RequiredParameter.Config>['readonly'], true>;
 		readonly pattern: SlotHint<NonNullable<T.RequiredParameter.Config>['pattern']>;
 		readonly type: SlotHint<T.TypeAnnotation, true>;
 		readonly value: SlotHint<NonNullable<T.RequiredParameter.Config>['value'], true>;
 	};
 	decorators(): readonly Decorator[];
 	accessibilityModifier(): number | undefined;
-	overrideModifier(): boolean | undefined;
-	readonlyMarker(): boolean | undefined;
+	override(): boolean | undefined;
+	readonly(): boolean | undefined;
 	pattern(): Pattern | TSKindId.This;
 	type(): TypeAnnotation | undefined;
 	value(): Expression | undefined;
@@ -7400,8 +7400,8 @@ export interface OptionalParameter {
 	readonly $type: TSKindId.OptionalParameter;
 	readonly _decorator?: readonly Decorator[];
 	readonly _accessibility_modifier?: number;
-	readonly _override_modifier?: boolean;
-	readonly _readonly_marker?: boolean;
+	readonly _override?: boolean;
+	readonly _readonly?: boolean;
 	readonly _pattern: Pattern | TSKindId.This;
 	readonly _type?: TypeAnnotation;
 	readonly _value?: Expression;
@@ -7410,8 +7410,8 @@ export interface OptionalParameter {
 			'public' | 'private' | 'protected',
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
 		>;
-		readonly override_modifier?: BaseBooleanKeyword<'override'>;
-		readonly readonly_marker?: BaseBooleanKeyword<'readonly'>;
+		readonly override?: BaseBooleanKeyword<'override'>;
+		readonly readonly?: BaseBooleanKeyword<'readonly'>;
 		readonly pattern: KindEnum<'this', TSKindId.This> | Pattern;
 		readonly value?:
 			| KindEnum<
@@ -7421,22 +7421,22 @@ export interface OptionalParameter {
 			| Expression;
 	};
 	readonly __looseHints__?: {
-		readonly override_modifier?: 'override' | 'override';
+		readonly override?: 'override' | 'override';
 		readonly type?: readonly Type[];
 	};
 	readonly __slotHints__?: {
 		readonly decorators: SlotHint<T.Decorator[], true, true>;
 		readonly accessibilityModifier: SlotHint<NonNullable<T.OptionalParameter.Config>['accessibilityModifier'], true>;
-		readonly overrideModifier: SlotHint<NonNullable<T.OptionalParameter.Config>['overrideModifier'], true>;
-		readonly readonlyMarker: SlotHint<NonNullable<T.OptionalParameter.Config>['readonlyMarker'], true>;
+		readonly override: SlotHint<NonNullable<T.OptionalParameter.Config>['override'], true>;
+		readonly readonly: SlotHint<NonNullable<T.OptionalParameter.Config>['readonly'], true>;
 		readonly pattern: SlotHint<NonNullable<T.OptionalParameter.Config>['pattern']>;
 		readonly type: SlotHint<T.TypeAnnotation, true>;
 		readonly value: SlotHint<NonNullable<T.OptionalParameter.Config>['value'], true>;
 	};
 	decorators(): readonly Decorator[];
 	accessibilityModifier(): number | undefined;
-	overrideModifier(): boolean | undefined;
-	readonlyMarker(): boolean | undefined;
+	override(): boolean | undefined;
+	readonly(): boolean | undefined;
 	pattern(): Pattern | TSKindId.This;
 	type(): TypeAnnotation | undefined;
 	value(): Expression | undefined;
@@ -7761,12 +7761,12 @@ export interface RestType {
 
 export interface ConstructorType {
 	readonly $type: TSKindId.ConstructorType;
-	readonly _abstract_marker?: boolean;
+	readonly _abstract?: boolean;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _type: Type;
 	readonly __inputHints__?: {
-		readonly abstract_marker?: BaseBooleanKeyword<'abstract'>;
+		readonly abstract?: BaseBooleanKeyword<'abstract'>;
 		readonly type:
 			| KindEnum<
 					| 'any'
@@ -7799,7 +7799,7 @@ export interface ConstructorType {
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
 	readonly __slotHints__?: {
-		readonly abstractMarker: SlotHint<NonNullable<T.ConstructorType.Config>['abstractMarker'], true>;
+		readonly abstract: SlotHint<NonNullable<T.ConstructorType.Config>['abstract'], true>;
 		readonly typeParameters: SlotHint<T.TypeParameters, true>;
 		readonly parameters: SlotHint<T.FormalParameters>;
 		readonly type: SlotHint<NonNullable<T.ConstructorType.Config>['type']>;
@@ -7814,7 +7814,7 @@ export interface ConstructorType {
 			>;
 		};
 	};
-	abstractMarker(): boolean | undefined;
+	abstract(): boolean | undefined;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
 	type(): Type;
@@ -8196,7 +8196,7 @@ export interface TypeQuerySubscriptExpression {
 		| TypeQuerySubscriptExpression
 		| TypeQueryMemberExpression
 		| TypeQueryCallExpression;
-	readonly _optional_chain_marker?: boolean;
+	readonly _optional_chain?: boolean;
 	readonly _index:
 		| TSKindId.AnyKeyword
 		| TSKindId.NumberKeyword
@@ -8217,7 +8217,7 @@ export interface TypeQuerySubscriptExpression {
 			| TypeQuerySubscriptExpression
 			| TypeQueryMemberExpression
 			| TypeQueryCallExpression;
-		readonly optional_chain_marker?: BaseBooleanKeyword<'?.'>;
+		readonly optional_chain?: BaseBooleanKeyword<'?.'>;
 		readonly index:
 			| KindEnum<
 					| 'any'
@@ -8246,10 +8246,7 @@ export interface TypeQuerySubscriptExpression {
 	};
 	readonly __slotHints__?: {
 		readonly object: SlotHint<NonNullable<T.TypeQuerySubscriptExpression.Config>['object']>;
-		readonly optionalChainMarker: SlotHint<
-			NonNullable<T.TypeQuerySubscriptExpression.Config>['optionalChainMarker'],
-			true
-		>;
+		readonly optionalChain: SlotHint<NonNullable<T.TypeQuerySubscriptExpression.Config>['optionalChain'], true>;
 		readonly index: SlotHint<NonNullable<T.TypeQuerySubscriptExpression.Config>['index']>;
 	};
 	object():
@@ -8258,7 +8255,7 @@ export interface TypeQuerySubscriptExpression {
 		| TypeQuerySubscriptExpression
 		| TypeQueryMemberExpression
 		| TypeQueryCallExpression;
-	optionalChainMarker(): boolean | undefined;
+	optionalChain(): boolean | undefined;
 	index():
 		| TSKindId.AnyKeyword
 		| TSKindId.NumberKeyword
@@ -8752,9 +8749,9 @@ export interface CallSignature {
 export interface PropertySignature {
 	readonly $type: TSKindId.PropertySignature;
 	readonly _accessibility_modifier?: number;
-	readonly _static_marker?: boolean;
-	readonly _override_modifier?: boolean;
-	readonly _readonly_marker?: boolean;
+	readonly _static?: boolean;
+	readonly _override?: boolean;
+	readonly _readonly?: boolean;
 	readonly _name:
 		| PropertyIdentifier
 		| TSKindId.DeclareKeyword
@@ -8783,16 +8780,16 @@ export interface PropertySignature {
 		| String
 		| Number
 		| ComputedPropertyName;
-	readonly _optional_marker?: boolean;
+	readonly _optional?: boolean;
 	readonly _type?: TypeAnnotation;
 	readonly __inputHints__?: {
 		readonly accessibility_modifier?: KindEnum<
 			'public' | 'private' | 'protected',
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
 		>;
-		readonly static_marker?: BaseBooleanKeyword<'static'>;
-		readonly override_modifier?: BaseBooleanKeyword<'override'>;
-		readonly readonly_marker?: BaseBooleanKeyword<'readonly'>;
+		readonly static?: BaseBooleanKeyword<'static'>;
+		readonly override?: BaseBooleanKeyword<'override'>;
+		readonly readonly?: BaseBooleanKeyword<'readonly'>;
 		readonly name:
 			| KindEnum<
 					| 'declare'
@@ -8845,25 +8842,25 @@ export interface PropertySignature {
 			| String
 			| Number
 			| ComputedPropertyName;
-		readonly optional_marker?: BaseBooleanKeyword<'?'>;
+		readonly optional?: BaseBooleanKeyword<'?'>;
 	};
 	readonly __looseHints__?: {
-		readonly override_modifier?: 'override' | 'override';
+		readonly override?: 'override' | 'override';
 		readonly type?: readonly Type[];
 	};
 	readonly __slotHints__?: {
 		readonly accessibilityModifier: SlotHint<NonNullable<T.PropertySignature.Config>['accessibilityModifier'], true>;
-		readonly staticMarker: SlotHint<NonNullable<T.PropertySignature.Config>['staticMarker'], true>;
-		readonly overrideModifier: SlotHint<NonNullable<T.PropertySignature.Config>['overrideModifier'], true>;
-		readonly readonlyMarker: SlotHint<NonNullable<T.PropertySignature.Config>['readonlyMarker'], true>;
+		readonly static: SlotHint<NonNullable<T.PropertySignature.Config>['static'], true>;
+		readonly override: SlotHint<NonNullable<T.PropertySignature.Config>['override'], true>;
+		readonly readonly: SlotHint<NonNullable<T.PropertySignature.Config>['readonly'], true>;
 		readonly name: SlotHint<NonNullable<T.PropertySignature.Config>['name']>;
-		readonly optionalMarker: SlotHint<NonNullable<T.PropertySignature.Config>['optionalMarker'], true>;
+		readonly optional: SlotHint<NonNullable<T.PropertySignature.Config>['optional'], true>;
 		readonly type: SlotHint<T.TypeAnnotation, true>;
 	};
 	accessibilityModifier(): number | undefined;
-	staticMarker(): boolean | undefined;
-	overrideModifier(): boolean | undefined;
-	readonlyMarker(): boolean | undefined;
+	static(): boolean | undefined;
+	override(): boolean | undefined;
+	readonly(): boolean | undefined;
 	name():
 		| PropertyIdentifier
 		| TSKindId.DeclareKeyword
@@ -8892,7 +8889,7 @@ export interface PropertySignature {
 		| String
 		| Number
 		| ComputedPropertyName;
-	optionalMarker(): boolean | undefined;
+	optional(): boolean | undefined;
 	type(): TypeAnnotation | undefined;
 }
 
@@ -8920,24 +8917,24 @@ export interface TypeParameters {
 
 export interface TypeParameter {
 	readonly $type: TSKindId.TypeParameter;
-	readonly _const_marker?: boolean;
+	readonly _const?: boolean;
 	readonly _name: TypeIdentifier;
 	readonly _constraint?: Constraint;
 	readonly _value?: DefaultType;
 	readonly __inputHints__?: {
-		readonly const_marker?: BaseBooleanKeyword<'const'>;
+		readonly const?: BaseBooleanKeyword<'const'>;
 	};
 	readonly __looseHints__?: {
 		readonly name: readonly Identifier[];
 		readonly value?: readonly Type[];
 	};
 	readonly __slotHints__?: {
-		readonly constMarker: SlotHint<NonNullable<T.TypeParameter.Config>['constMarker'], true>;
+		readonly const: SlotHint<NonNullable<T.TypeParameter.Config>['const'], true>;
 		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
 		readonly constraint: SlotHint<T.Constraint, true>;
 		readonly value: SlotHint<T.DefaultType, true>;
 	};
-	constMarker(): boolean | undefined;
+	const(): boolean | undefined;
 	name(): TypeIdentifier;
 	constraint(): Constraint | undefined;
 	value(): DefaultType | undefined;
@@ -9023,12 +9020,12 @@ export interface Constraint {
 
 export interface ConstructSignature {
 	readonly $type: TSKindId.ConstructSignature;
-	readonly _abstract_marker?: boolean;
+	readonly _abstract?: boolean;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _type?: TypeAnnotation;
 	readonly __inputHints__?: {
-		readonly abstract_marker?: BaseBooleanKeyword<'abstract'>;
+		readonly abstract?: BaseBooleanKeyword<'abstract'>;
 	};
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly TypeParameter[];
@@ -9036,7 +9033,7 @@ export interface ConstructSignature {
 		readonly type?: readonly Type[];
 	};
 	readonly __slotHints__?: {
-		readonly abstractMarker: SlotHint<NonNullable<T.ConstructSignature.Config>['abstractMarker'], true>;
+		readonly abstract: SlotHint<NonNullable<T.ConstructSignature.Config>['abstract'], true>;
 		readonly typeParameters: SlotHint<T.TypeParameters, true>;
 		readonly parameters: SlotHint<T.FormalParameters>;
 		readonly type: SlotHint<T.TypeAnnotation, true>;
@@ -9051,7 +9048,7 @@ export interface ConstructSignature {
 			>;
 		};
 	};
-	abstractMarker(): boolean | undefined;
+	abstract(): boolean | undefined;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
 	type(): TypeAnnotation | undefined;
@@ -10045,7 +10042,7 @@ export interface ClassBodyMemberDeclaration {
 export interface IndexSignatureColon {
 	readonly $type: TSKindId.IndexSignatureColon;
 	readonly _sign?: number;
-	readonly _readonly_marker?: boolean;
+	readonly _readonly?: boolean;
 	readonly _name:
 		| Identifier
 		| TSKindId.DeclareKeyword
@@ -10074,7 +10071,7 @@ export interface IndexSignatureColon {
 	readonly _type: TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
 	readonly __inputHints__?: {
 		readonly sign?: KindEnum<'-' | '+', TSKindId.Dash | TSKindId.Plus>;
-		readonly readonly_marker?: BaseBooleanKeyword<'readonly'>;
+		readonly readonly?: BaseBooleanKeyword<'readonly'>;
 		readonly name:
 			| KindEnum<
 					| 'declare'
@@ -10152,7 +10149,7 @@ export interface IndexSignatureColon {
 	};
 	readonly __slotHints__?: {
 		readonly sign: SlotHint<NonNullable<T.IndexSignatureColon.Config>['sign'], true>;
-		readonly readonlyMarker: SlotHint<NonNullable<T.IndexSignatureColon.Config>['readonlyMarker'], true>;
+		readonly readonly: SlotHint<NonNullable<T.IndexSignatureColon.Config>['readonly'], true>;
 		readonly name: SlotHint<NonNullable<T.IndexSignatureColon.Config>['name']>;
 		readonly indexType: SlotHint<NonNullable<T.IndexSignatureColon.Config>['indexType']>;
 		readonly type: SlotHint<
@@ -10160,7 +10157,7 @@ export interface IndexSignatureColon {
 		>;
 	};
 	sign(): number | undefined;
-	readonlyMarker(): boolean | undefined;
+	readonly(): boolean | undefined;
 	name():
 		| Identifier
 		| TSKindId.DeclareKeyword
@@ -10192,23 +10189,23 @@ export interface IndexSignatureColon {
 export interface IndexSignatureMappedTypeClause {
 	readonly $type: TSKindId.IndexSignatureMappedTypeClause;
 	readonly _sign?: number;
-	readonly _readonly_marker?: boolean;
+	readonly _readonly?: boolean;
 	readonly _mapped_type_clause: MappedTypeClause;
 	readonly _type: TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
 	readonly __inputHints__?: {
 		readonly sign?: KindEnum<'-' | '+', TSKindId.Dash | TSKindId.Plus>;
-		readonly readonly_marker?: BaseBooleanKeyword<'readonly'>;
+		readonly readonly?: BaseBooleanKeyword<'readonly'>;
 	};
 	readonly __slotHints__?: {
 		readonly sign: SlotHint<NonNullable<T.IndexSignatureMappedTypeClause.Config>['sign'], true>;
-		readonly readonlyMarker: SlotHint<NonNullable<T.IndexSignatureMappedTypeClause.Config>['readonlyMarker'], true>;
+		readonly readonly: SlotHint<NonNullable<T.IndexSignatureMappedTypeClause.Config>['readonly'], true>;
 		readonly mappedTypeClause: SlotHint<T.MappedTypeClause>;
 		readonly type: SlotHint<
 			T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation
 		>;
 	};
 	sign(): number | undefined;
-	readonlyMarker(): boolean | undefined;
+	readonly(): boolean | undefined;
 	mappedTypeClause(): MappedTypeClause;
 	type(): TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
 }
@@ -12323,7 +12320,7 @@ export namespace ForInStatement {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
-			readonly awaitMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly awaitKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly before?: WhitespaceArm;
 			readonly forKeyword?: { readonly after?: WhitespaceArm };
 		};
@@ -12766,7 +12763,7 @@ export namespace FunctionExpression {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
-			readonly asyncMarker?: { readonly after?: WhitespaceArm };
+			readonly asyncKeyword?: { readonly after?: WhitespaceArm };
 			readonly before?: WhitespaceArm;
 			readonly functionKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
@@ -12777,7 +12774,7 @@ export namespace FunctionDeclaration {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
-			readonly asyncMarker?: { readonly after?: WhitespaceArm };
+			readonly asyncKeyword?: { readonly after?: WhitespaceArm };
 			readonly before?: WhitespaceArm;
 			readonly functionKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
@@ -12788,7 +12785,7 @@ export namespace GeneratorFunction {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
-			readonly asyncMarker?: { readonly after?: WhitespaceArm };
+			readonly asyncKeyword?: { readonly after?: WhitespaceArm };
 			readonly before?: WhitespaceArm;
 			readonly functionKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly star?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
@@ -12800,7 +12797,7 @@ export namespace GeneratorFunctionDeclaration {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
-			readonly asyncMarker?: { readonly after?: WhitespaceArm };
+			readonly asyncKeyword?: { readonly after?: WhitespaceArm };
 			readonly before?: WhitespaceArm;
 			readonly functionKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly star?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
@@ -12812,7 +12809,7 @@ export namespace ArrowFunction {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
-			readonly asyncMarker?: { readonly after?: WhitespaceArm };
+			readonly asyncKeyword?: { readonly after?: WhitespaceArm };
 			readonly before?: WhitespaceArm;
 			readonly eqGt?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
@@ -12868,7 +12865,7 @@ export namespace AssignmentExpression {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
 			readonly eq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly usingMarker?: { readonly after?: WhitespaceArm };
+			readonly usingKeyword?: { readonly after?: WhitespaceArm };
 		};
 	}
 }
@@ -13122,12 +13119,12 @@ export namespace MethodDefinition {
 			readonly accessibilityModifier?: { readonly after?: WhitespaceArm };
 			readonly accessorKind?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly after?: WhitespaceArm;
-			readonly asyncMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly asyncKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly before?: WhitespaceArm;
-			readonly optionalMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly overrideModifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly readonlyMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly staticMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly optional?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly overrideKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly readonlyKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly staticKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -13169,7 +13166,7 @@ export namespace PublicFieldDefinition {
 			readonly accessibilityModifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly declareMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly declareKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly decorator?: {
 				readonly decorator?: { readonly after?: WhitespaceArm };
 				readonly end?: WhitespaceArm;
@@ -13177,7 +13174,7 @@ export namespace PublicFieldDefinition {
 				readonly start?: WhitespaceArm;
 			};
 			readonly eq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly optionalityMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly optionality?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -13198,12 +13195,12 @@ export namespace MethodSignature {
 			readonly accessibilityModifier?: { readonly after?: WhitespaceArm };
 			readonly accessorKind?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly after?: WhitespaceArm;
-			readonly asyncMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly asyncKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly before?: WhitespaceArm;
-			readonly optionalMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly overrideModifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly readonlyMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly staticMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly optional?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly overrideKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly readonlyKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly staticKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -13216,8 +13213,8 @@ export namespace AbstractMethodSignature {
 			readonly accessorKind?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly optionalMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly overrideModifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly optional?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly overrideKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -13226,7 +13223,7 @@ export namespace FunctionSignature {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
-			readonly asyncMarker?: { readonly after?: WhitespaceArm };
+			readonly asyncKeyword?: { readonly after?: WhitespaceArm };
 			readonly before?: WhitespaceArm;
 			readonly functionKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.FunctionSignatureAutomaticSemicolon;
@@ -13453,7 +13450,7 @@ export namespace EnumDeclaration {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly constMarker?: { readonly after?: WhitespaceArm };
+			readonly constKeyword?: { readonly after?: WhitespaceArm };
 			readonly enumKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
@@ -13505,7 +13502,8 @@ export namespace RequiredParameter {
 				readonly start?: WhitespaceArm;
 			};
 			readonly eq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly readonlyMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly overrideKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly readonlyKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -13522,8 +13520,9 @@ export namespace OptionalParameter {
 				readonly start?: WhitespaceArm;
 			};
 			readonly eq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly overrideKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly qmark?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly readonlyMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly readonlyKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -13643,7 +13642,7 @@ export namespace RestType {
 export namespace ConstructorType {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly abstractMarker?: { readonly after?: WhitespaceArm };
+			readonly abstractKeyword?: { readonly after?: WhitespaceArm };
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
 			readonly eqGt?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
@@ -13849,10 +13848,10 @@ export namespace PropertySignature {
 			readonly accessibilityModifier?: { readonly after?: WhitespaceArm };
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly optionalMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly overrideModifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly readonlyMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly staticMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly optional?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly overrideKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly readonlyKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly staticKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -13873,7 +13872,7 @@ export namespace TypeParameter {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly constMarker?: { readonly after?: WhitespaceArm };
+			readonly constKeyword?: { readonly after?: WhitespaceArm };
 		};
 	}
 }
@@ -13902,7 +13901,7 @@ export namespace Constraint {
 export namespace ConstructSignature {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly abstractMarker?: { readonly after?: WhitespaceArm };
+			readonly abstractKeyword?: { readonly after?: WhitespaceArm };
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
 			readonly newKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
@@ -14316,7 +14315,7 @@ export namespace IndexSignatureColon {
 			readonly colon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly lbrack?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly rbrack?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly readonlyMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly readonlyKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly sign?: { readonly after?: WhitespaceArm };
 		};
 	}
@@ -14329,7 +14328,7 @@ export namespace IndexSignatureMappedTypeClause {
 			readonly before?: WhitespaceArm;
 			readonly lbrack?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly rbrack?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly readonlyMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly readonlyKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly sign?: { readonly after?: WhitespaceArm };
 		};
 	}

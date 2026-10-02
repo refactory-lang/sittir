@@ -105,10 +105,10 @@ export interface AbstractMethodSignatureTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
-  _override_modifier?: SlotValue<OverrideModifierTransport>
+  _override?: SlotValue<OverrideModifierTransport>
   _accessor_kind?: SlotValue<Box<AnyTransport>>
   _name: SlotValue<AbstractMethodSignatureNameTransportSlot>
-  _optional_marker?: boolean
+  _optional?: boolean
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
   _return_type?: SlotValue<AbstractMethodSignatureReturnTypeTransportSlot>
@@ -179,7 +179,7 @@ export interface ArrowFunctionParameterTransport {
 export interface ArrowFunctionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _async_marker?: boolean
+  _async?: boolean
   _body: SlotValue<Box<ArrowFunctionBodyTransportSlot>>
   _content: SlotValue<ArrowFunctionContentTransportSlot>
 }
@@ -206,7 +206,7 @@ export interface AssertsTransport {
 export interface AssignmentExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _using_marker?: boolean
+  _using?: boolean
   _left: SlotValue<Box<AssignmentExpressionLeftTransportSlot>>
   _right: SlotValue<Box<ExpressionTransport>>
 }
@@ -410,7 +410,7 @@ export interface ConstraintTransport {
 export interface ConstructorTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _abstract_marker?: boolean
+  _abstract?: boolean
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
   _type: SlotValue<Box<TypeTransport>>
@@ -419,7 +419,7 @@ export interface ConstructorTypeTransport {
 export interface ConstructSignatureTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _abstract_marker?: boolean
+  _abstract?: boolean
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
   _type?: SlotValue<TypeAnnotationTransport>
@@ -535,7 +535,7 @@ export interface EnumBodyTransport {
 export interface EnumDeclarationTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _const_marker?: boolean
+  _const?: boolean
   _name: SlotValue<IdentifierTransport>
   _body: SlotValue<EnumBodyTransport>
 }
@@ -711,7 +711,7 @@ export interface ForHeaderVarKindTransport {
 export interface ForInStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _await_marker?: boolean
+  _await?: boolean
   _body: SlotValue<Box<StatementTransport>>
   _for_header: SlotValue<ForHeaderTransport>
 }
@@ -743,7 +743,7 @@ export interface ForStatementTransport {
 export interface FunctionDeclarationTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _async_marker?: boolean
+  _async?: boolean
   _name: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
@@ -755,7 +755,7 @@ export interface FunctionDeclarationTransport {
 export interface FunctionExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _async_marker?: boolean
+  _async?: boolean
   _name?: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
@@ -766,7 +766,7 @@ export interface FunctionExpressionTransport {
 export interface FunctionSignatureTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _async_marker?: boolean
+  _async?: boolean
   _name: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
@@ -785,7 +785,7 @@ export interface FunctionTypeTransport {
 export interface GeneratorFunctionDeclarationTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _async_marker?: boolean
+  _async?: boolean
   _name: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
@@ -797,7 +797,7 @@ export interface GeneratorFunctionDeclarationTransport {
 export interface GeneratorFunctionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _async_marker?: boolean
+  _async?: boolean
   _name?: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
@@ -919,7 +919,7 @@ export interface IndexSignatureColonTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _sign?: SlotValue<Box<AnyTransport>>
-  _readonly_marker?: boolean
+  _readonly?: boolean
   _name: SlotValue<IndexSignatureColonNameTransportSlot>
   _index_type: SlotValue<TypeTransport>
   _type: SlotValue<IndexSignatureColonTypeTransportSlot>
@@ -929,7 +929,7 @@ export interface IndexSignatureMappedTypeClauseTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _sign?: SlotValue<Box<AnyTransport>>
-  _readonly_marker?: boolean
+  _readonly?: boolean
   _type: SlotValue<IndexSignatureMappedTypeClauseTypeTransportSlot>
   _mapped_type_clause: SlotValue<MappedTypeClauseTransport>
 }
@@ -1053,13 +1053,13 @@ export interface MethodDefinitionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
-  _static_marker?: boolean
-  _override_modifier?: SlotValue<OverrideModifierTransport>
-  _readonly_marker?: boolean
-  _async_marker?: boolean
+  _static?: boolean
+  _override?: SlotValue<OverrideModifierTransport>
+  _readonly?: boolean
+  _async?: boolean
   _accessor_kind?: SlotValue<Box<AnyTransport>>
   _name: SlotValue<MethodDefinitionNameTransportSlot>
-  _optional_marker?: boolean
+  _optional?: boolean
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
   _return_type?: SlotValue<MethodDefinitionReturnTypeTransportSlot>
@@ -1070,13 +1070,13 @@ export interface MethodSignatureTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
-  _static_marker?: boolean
-  _override_modifier?: SlotValue<OverrideModifierTransport>
-  _readonly_marker?: boolean
-  _async_marker?: boolean
+  _static?: boolean
+  _override?: SlotValue<OverrideModifierTransport>
+  _readonly?: boolean
+  _async?: boolean
   _accessor_kind?: SlotValue<Box<AnyTransport>>
   _name: SlotValue<MethodSignatureNameTransportSlot>
-  _optional_marker?: boolean
+  _optional?: boolean
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
   _return_type?: SlotValue<MethodSignatureReturnTypeTransportSlot>
@@ -1265,12 +1265,12 @@ export interface OptionalParameterTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _decorator?: Array<SlotValue<DecoratorTransport>>
-  _readonly_marker?: boolean
+  _override?: SlotValue<OverrideModifierTransport>
+  _readonly?: boolean
   _pattern: SlotValue<OptionalParameterPatternTransportSlot>
   _type?: SlotValue<TypeAnnotationTransport>
   _value?: SlotValue<ExpressionTransport>
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
-  _override_modifier?: SlotValue<OverrideModifierTransport>
   _decorator_separator_space?: number
 }
 
@@ -1344,11 +1344,11 @@ export interface PropertySignatureTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
-  _static_marker?: boolean
-  _override_modifier?: SlotValue<OverrideModifierTransport>
-  _readonly_marker?: boolean
+  _static?: boolean
+  _override?: SlotValue<OverrideModifierTransport>
+  _readonly?: boolean
   _name: SlotValue<PropertySignatureNameTransportSlot>
-  _optional_marker?: boolean
+  _optional?: boolean
   _type?: SlotValue<TypeAnnotationTransport>
 }
 
@@ -1356,17 +1356,17 @@ export interface PublicFieldDefinitionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _decorator?: Array<SlotValue<DecoratorTransport>>
-  _declare_marker?: boolean
+  _declare?: boolean
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
-  _static_marker?: boolean
-  _readonly_marker?: boolean
-  _abstract_marker?: boolean
-  _accessor_marker?: boolean
+  _static?: boolean
+  _override?: SlotValue<OverrideModifierTransport>
+  _readonly?: boolean
+  _abstract?: boolean
+  _accessor?: boolean
   _name: SlotValue<PublicFieldDefinitionNameTransportSlot>
-  _optionality_marker?: SlotValue<Box<AnyTransport>>
+  _optionality?: SlotValue<Box<AnyTransport>>
   _type?: SlotValue<TypeAnnotationTransport>
   _value?: SlotValue<ExpressionTransport>
-  _override_modifier?: SlotValue<OverrideModifierTransport>
   _decorator_separator_space?: number
 }
 
@@ -1387,12 +1387,12 @@ export interface RequiredParameterTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _decorator?: Array<SlotValue<DecoratorTransport>>
-  _readonly_marker?: boolean
+  _override?: SlotValue<OverrideModifierTransport>
+  _readonly?: boolean
   _pattern: SlotValue<RequiredParameterPatternTransportSlot>
   _type?: SlotValue<TypeAnnotationTransport>
   _value?: SlotValue<ExpressionTransport>
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
-  _override_modifier?: SlotValue<OverrideModifierTransport>
   _decorator_separator_space?: number
 }
 
@@ -1632,7 +1632,7 @@ export interface TypeParametersTransport {
 export interface TypeParameterTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _const_marker?: boolean
+  _const?: boolean
   _name: SlotValue<TypeIdentifierTransport>
   _constraint?: SlotValue<ConstraintTransport>
   _value?: SlotValue<DefaultTypeTransport>
@@ -1691,8 +1691,8 @@ export interface TypeQuerySubscriptExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _object: SlotValue<Box<TypeQuerySubscriptExpressionObjectTransportSlot>>
+  _optional_chain?: SlotValue<OptionalChainMarkerTransport>
   _index: SlotValue<TypeQuerySubscriptExpressionIndexTransportSlot>
-  _optional_chain_marker?: SlotValue<OptionalChainMarkerTransport>
 }
 
 export interface TypeQueryTransport {

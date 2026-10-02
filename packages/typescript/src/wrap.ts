@@ -2535,7 +2535,7 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle): T.ForS
 }
 
 export function wrapForInStatement(data: T.ForInStatement, tree: TreeHandle): T.ForInStatement.Parsed {
-	data = _keepModelledSlots(data, ['_await_marker', '_for_header', '_body']);
+	data = _keepModelledSlots(data, ['_await', '_for_header', '_body']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -2553,11 +2553,11 @@ export function wrapForInStatement(data: T.ForInStatement, tree: TreeHandle): T.
 	const node = {
 		...data,
 		$type: TSKindId.ForInStatement as const,
-		_await_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._await_marker, 'await_marker', false, data.$type, {
+		_await: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._await, 'await', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'await_marker',
+				slotName: 'await',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -2583,8 +2583,8 @@ export function wrapForInStatement(data: T.ForInStatement, tree: TreeHandle): T.
 			tree
 		),
 
-		awaitMarker() {
-			return this._await_marker;
+		await() {
+			return this._await;
 		},
 		forHeader() {
 			return hydrateChild<T.ForHeader>(this._for_header, tree);
@@ -2593,8 +2593,8 @@ export function wrapForInStatement(data: T.ForInStatement, tree: TreeHandle): T.
 			return hydrateChild<T.Statement>(this._body, tree);
 		},
 		$with: {
-			awaitMarker: (v: NonNullable<T.ForInStatement['_await_marker']>) =>
-				rebuilt(node, handle, () => wrapForInStatement({ ...$edited(data), _await_marker: v }, tree)),
+			await: (v: NonNullable<T.ForInStatement['_await']>) =>
+				rebuilt(node, handle, () => wrapForInStatement({ ...$edited(data), _await: v }, tree)),
 			forHeader: (v: NonNullable<T.ForInStatement['_for_header']>) =>
 				rebuilt(node, handle, () => wrapForInStatement({ ...$edited(data), _for_header: v }, tree)),
 			body: (v: NonNullable<T.ForInStatement['_body']>) =>
@@ -4850,14 +4850,7 @@ export function wrapClassHeritage(data: T.ClassHeritage, tree: TreeHandle): T.Cl
 }
 
 export function wrapFunctionExpression(data: T.FunctionExpression, tree: TreeHandle): T.FunctionExpression.Parsed {
-	data = _keepModelledSlots(data, [
-		'_async_marker',
-		'_name',
-		'_type_parameters',
-		'_parameters',
-		'_return_type',
-		'_body'
-	]);
+	data = _keepModelledSlots(data, ['_async', '_name', '_type_parameters', '_parameters', '_return_type', '_body']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -4875,11 +4868,11 @@ export function wrapFunctionExpression(data: T.FunctionExpression, tree: TreeHan
 	const node = {
 		...data,
 		$type: TSKindId.FunctionExpression as const,
-		_async_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._async_marker, 'async_marker', false, data.$type, {
+		_async: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._async, 'async', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'async_marker',
+				slotName: 'async',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -4929,8 +4922,8 @@ export function wrapFunctionExpression(data: T.FunctionExpression, tree: TreeHan
 			tree
 		),
 
-		asyncMarker() {
-			return this._async_marker;
+		async() {
+			return this._async;
 		},
 		name() {
 			return hydrateChild<T.Identifier | undefined>(this._name, tree);
@@ -4951,8 +4944,8 @@ export function wrapFunctionExpression(data: T.FunctionExpression, tree: TreeHan
 			return hydrateChild<T.StatementBlock>(this._body, tree);
 		},
 		$with: {
-			asyncMarker: (v: NonNullable<T.FunctionExpression['_async_marker']>) =>
-				rebuilt(node, handle, () => wrapFunctionExpression({ ...$edited(data), _async_marker: v }, tree)),
+			async: (v: NonNullable<T.FunctionExpression['_async']>) =>
+				rebuilt(node, handle, () => wrapFunctionExpression({ ...$edited(data), _async: v }, tree)),
 			name: (v: NonNullable<T.FunctionExpression['_name']>) =>
 				rebuilt(node, handle, () => wrapFunctionExpression({ ...$edited(data), _name: v }, tree)),
 			typeParameters: (...args: unknown[]) =>
@@ -4990,7 +4983,7 @@ export function wrapFunctionExpression(data: T.FunctionExpression, tree: TreeHan
 
 export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeHandle): T.FunctionDeclaration.Parsed {
 	data = _keepModelledSlots(data, [
-		'_async_marker',
+		'_async',
 		'_name',
 		'_type_parameters',
 		'_parameters',
@@ -5015,11 +5008,11 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
 	const node = {
 		...data,
 		$type: TSKindId.FunctionDeclaration as const,
-		_async_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._async_marker, 'async_marker', false, data.$type, {
+		_async: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._async, 'async', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'async_marker',
+				slotName: 'async',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -5077,8 +5070,8 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
 			})
 		),
 
-		asyncMarker() {
-			return this._async_marker;
+		async() {
+			return this._async;
 		},
 		name() {
 			return hydrateChild<T.Identifier>(this._name, tree);
@@ -5102,8 +5095,8 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
 			return this._automatic_semicolon;
 		},
 		$with: {
-			asyncMarker: (v: NonNullable<T.FunctionDeclaration['_async_marker']>) =>
-				rebuilt(node, handle, () => wrapFunctionDeclaration({ ...$edited(data), _async_marker: v }, tree)),
+			async: (v: NonNullable<T.FunctionDeclaration['_async']>) =>
+				rebuilt(node, handle, () => wrapFunctionDeclaration({ ...$edited(data), _async: v }, tree)),
 			name: (v: NonNullable<T.FunctionDeclaration['_name']>) =>
 				rebuilt(node, handle, () => wrapFunctionDeclaration({ ...$edited(data), _name: v }, tree)),
 			typeParameters: (...args: unknown[]) =>
@@ -5142,14 +5135,7 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
 }
 
 export function wrapGeneratorFunction(data: T.GeneratorFunction, tree: TreeHandle): T.GeneratorFunction.Parsed {
-	data = _keepModelledSlots(data, [
-		'_async_marker',
-		'_name',
-		'_type_parameters',
-		'_parameters',
-		'_return_type',
-		'_body'
-	]);
+	data = _keepModelledSlots(data, ['_async', '_name', '_type_parameters', '_parameters', '_return_type', '_body']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -5167,11 +5153,11 @@ export function wrapGeneratorFunction(data: T.GeneratorFunction, tree: TreeHandl
 	const node = {
 		...data,
 		$type: TSKindId.GeneratorFunction as const,
-		_async_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._async_marker, 'async_marker', false, data.$type, {
+		_async: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._async, 'async', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'async_marker',
+				slotName: 'async',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -5221,8 +5207,8 @@ export function wrapGeneratorFunction(data: T.GeneratorFunction, tree: TreeHandl
 			tree
 		),
 
-		asyncMarker() {
-			return this._async_marker;
+		async() {
+			return this._async;
 		},
 		name() {
 			return hydrateChild<T.Identifier | undefined>(this._name, tree);
@@ -5243,8 +5229,8 @@ export function wrapGeneratorFunction(data: T.GeneratorFunction, tree: TreeHandl
 			return hydrateChild<T.StatementBlock>(this._body, tree);
 		},
 		$with: {
-			asyncMarker: (v: NonNullable<T.GeneratorFunction['_async_marker']>) =>
-				rebuilt(node, handle, () => wrapGeneratorFunction({ ...$edited(data), _async_marker: v }, tree)),
+			async: (v: NonNullable<T.GeneratorFunction['_async']>) =>
+				rebuilt(node, handle, () => wrapGeneratorFunction({ ...$edited(data), _async: v }, tree)),
 			name: (v: NonNullable<T.GeneratorFunction['_name']>) =>
 				rebuilt(node, handle, () => wrapGeneratorFunction({ ...$edited(data), _name: v }, tree)),
 			typeParameters: (...args: unknown[]) =>
@@ -5285,7 +5271,7 @@ export function wrapGeneratorFunctionDeclaration(
 	tree: TreeHandle
 ): T.GeneratorFunctionDeclaration.Parsed {
 	data = _keepModelledSlots(data, [
-		'_async_marker',
+		'_async',
 		'_name',
 		'_type_parameters',
 		'_parameters',
@@ -5310,11 +5296,11 @@ export function wrapGeneratorFunctionDeclaration(
 	const node = {
 		...data,
 		$type: TSKindId.GeneratorFunctionDeclaration as const,
-		_async_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._async_marker, 'async_marker', false, data.$type, {
+		_async: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._async, 'async', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'async_marker',
+				slotName: 'async',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -5372,8 +5358,8 @@ export function wrapGeneratorFunctionDeclaration(
 			})
 		),
 
-		asyncMarker() {
-			return this._async_marker;
+		async() {
+			return this._async;
 		},
 		name() {
 			return hydrateChild<T.Identifier>(this._name, tree);
@@ -5397,8 +5383,8 @@ export function wrapGeneratorFunctionDeclaration(
 			return this._automatic_semicolon;
 		},
 		$with: {
-			asyncMarker: (v: NonNullable<T.GeneratorFunctionDeclaration['_async_marker']>) =>
-				rebuilt(node, handle, () => wrapGeneratorFunctionDeclaration({ ...$edited(data), _async_marker: v }, tree)),
+			async: (v: NonNullable<T.GeneratorFunctionDeclaration['_async']>) =>
+				rebuilt(node, handle, () => wrapGeneratorFunctionDeclaration({ ...$edited(data), _async: v }, tree)),
 			name: (v: NonNullable<T.GeneratorFunctionDeclaration['_name']>) =>
 				rebuilt(node, handle, () => wrapGeneratorFunctionDeclaration({ ...$edited(data), _name: v }, tree)),
 			typeParameters: (...args: unknown[]) =>
@@ -5439,7 +5425,7 @@ export function wrapGeneratorFunctionDeclaration(
 }
 
 export function wrapArrowFunction(data: T.ArrowFunction, tree: TreeHandle): T.ArrowFunction.Parsed {
-	data = _keepModelledSlots(data, ['_async_marker', '_content', '_body']);
+	data = _keepModelledSlots(data, ['_async', '_content', '_body']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -5457,11 +5443,11 @@ export function wrapArrowFunction(data: T.ArrowFunction, tree: TreeHandle): T.Ar
 	const node = {
 		...data,
 		$type: TSKindId.ArrowFunction as const,
-		_async_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._async_marker, 'async_marker', false, data.$type, {
+		_async: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._async, 'async', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'async_marker',
+				slotName: 'async',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -5487,8 +5473,8 @@ export function wrapArrowFunction(data: T.ArrowFunction, tree: TreeHandle): T.Ar
 			tree
 		),
 
-		asyncMarker() {
-			return this._async_marker;
+		async() {
+			return this._async;
 		},
 		content() {
 			return hydrateChild<T.ArrowFunctionParameter | T.CallSignature>(this._content, tree);
@@ -5497,8 +5483,8 @@ export function wrapArrowFunction(data: T.ArrowFunction, tree: TreeHandle): T.Ar
 			return hydrateChild<T.Expression | T.StatementBlock>(this._body, tree);
 		},
 		$with: {
-			asyncMarker: (v: NonNullable<T.ArrowFunction['_async_marker']>) =>
-				rebuilt(node, handle, () => wrapArrowFunction({ ...$edited(data), _async_marker: v }, tree)),
+			async: (v: NonNullable<T.ArrowFunction['_async']>) =>
+				rebuilt(node, handle, () => wrapArrowFunction({ ...$edited(data), _async: v }, tree)),
 			content: (v: NonNullable<T.ArrowFunction['_content']>) =>
 				rebuilt(node, handle, () => wrapArrowFunction({ ...$edited(data), _content: v }, tree)),
 			body: (v: NonNullable<T.ArrowFunction['_body']>) =>
@@ -6012,7 +5998,7 @@ export function wrapAssignmentExpression(
 	data: T.AssignmentExpression,
 	tree: TreeHandle
 ): T.AssignmentExpression.Parsed {
-	data = _keepModelledSlots(data, ['_using_marker', '_left', '_right']);
+	data = _keepModelledSlots(data, ['_using', '_left', '_right']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -6030,11 +6016,11 @@ export function wrapAssignmentExpression(
 	const node = {
 		...data,
 		$type: TSKindId.AssignmentExpression as const,
-		_using_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._using_marker, 'using_marker', false, data.$type, {
+		_using: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._using, 'using', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'using_marker',
+				slotName: 'using',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -6060,8 +6046,8 @@ export function wrapAssignmentExpression(
 			tree
 		),
 
-		usingMarker() {
-			return this._using_marker;
+		using() {
+			return this._using;
 		},
 		left() {
 			return hydrateChild<T.ParenthesizedExpression | T.LhsExpression>(this._left, tree);
@@ -6070,8 +6056,8 @@ export function wrapAssignmentExpression(
 			return hydrateChild<T.Expression>(this._right, tree);
 		},
 		$with: {
-			usingMarker: (v: NonNullable<T.AssignmentExpression['_using_marker']>) =>
-				rebuilt(node, handle, () => wrapAssignmentExpression({ ...$edited(data), _using_marker: v }, tree)),
+			using: (v: NonNullable<T.AssignmentExpression['_using']>) =>
+				rebuilt(node, handle, () => wrapAssignmentExpression({ ...$edited(data), _using: v }, tree)),
 			left: (v: NonNullable<T.AssignmentExpression['_left']>) =>
 				rebuilt(node, handle, () => wrapAssignmentExpression({ ...$edited(data), _left: v }, tree)),
 			right: (v: NonNullable<T.AssignmentExpression['_right']>) =>
@@ -7572,13 +7558,13 @@ export function wrapRestPattern(data: T.RestPattern, tree: TreeHandle): T.RestPa
 export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle): T.MethodDefinition.Parsed {
 	data = _keepModelledSlots(data, [
 		'_accessibility_modifier',
-		'_static_marker',
-		'_override_modifier',
-		'_readonly_marker',
-		'_async_marker',
+		'_static',
+		'_override',
+		'_readonly',
+		'_async',
 		'_accessor_kind',
 		'_name',
-		'_optional_marker',
+		'_optional',
 		'_type_parameters',
 		'_parameters',
 		'_return_type',
@@ -7610,35 +7596,35 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
 			}),
 			{ public: 32, private: 33, protected: 34 }
 		),
-		_static_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._static_marker, 'static_marker', false, data.$type, {
+		_static: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._static, 'static', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'static_marker',
+				slotName: 'static',
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_override_modifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
+		_override: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._override, 'override', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'override_modifier',
+				slotName: 'override',
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_readonly_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._readonly_marker, 'readonly_marker', false, data.$type, {
+		_readonly: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._readonly, 'readonly', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'readonly_marker',
+				slotName: 'readonly',
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_async_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._async_marker, 'async_marker', false, data.$type, {
+		_async: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._async, 'async', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'async_marker',
+				slotName: 'async',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -7686,11 +7672,11 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
 			),
 			tree
 		),
-		_optional_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._optional_marker, 'optional_marker', false, data.$type, {
+		_optional: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._optional, 'optional', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'optional_marker',
+				slotName: 'optional',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -7734,17 +7720,17 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
 		accessibilityModifier() {
 			return this._accessibility_modifier;
 		},
-		staticMarker() {
-			return this._static_marker;
+		static() {
+			return this._static;
 		},
-		overrideModifier() {
-			return this._override_modifier;
+		override() {
+			return this._override;
 		},
-		readonlyMarker() {
-			return this._readonly_marker;
+		readonly() {
+			return this._readonly;
 		},
-		asyncMarker() {
-			return this._async_marker;
+		async() {
+			return this._async;
 		},
 		accessorKind() {
 			return this._accessor_kind;
@@ -7780,8 +7766,8 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
 				| T.ComputedPropertyName
 			>(this._name, tree);
 		},
-		optionalMarker() {
-			return this._optional_marker;
+		optional() {
+			return this._optional;
 		},
 		typeParameters() {
 			return hydrateChild<T.TypeParameters | undefined>(this._type_parameters, tree);
@@ -7801,20 +7787,20 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
 		$with: {
 			accessibilityModifier: (v: NonNullable<T.MethodDefinition['_accessibility_modifier']>) =>
 				rebuilt(node, handle, () => wrapMethodDefinition({ ...$edited(data), _accessibility_modifier: v }, tree)),
-			staticMarker: (v: NonNullable<T.MethodDefinition['_static_marker']>) =>
-				rebuilt(node, handle, () => wrapMethodDefinition({ ...$edited(data), _static_marker: v }, tree)),
-			overrideModifier: (v: NonNullable<T.MethodDefinition['_override_modifier']>) =>
-				rebuilt(node, handle, () => wrapMethodDefinition({ ...$edited(data), _override_modifier: v }, tree)),
-			readonlyMarker: (v: NonNullable<T.MethodDefinition['_readonly_marker']>) =>
-				rebuilt(node, handle, () => wrapMethodDefinition({ ...$edited(data), _readonly_marker: v }, tree)),
-			asyncMarker: (v: NonNullable<T.MethodDefinition['_async_marker']>) =>
-				rebuilt(node, handle, () => wrapMethodDefinition({ ...$edited(data), _async_marker: v }, tree)),
+			static: (v: NonNullable<T.MethodDefinition['_static']>) =>
+				rebuilt(node, handle, () => wrapMethodDefinition({ ...$edited(data), _static: v }, tree)),
+			override: (v: NonNullable<T.MethodDefinition['_override']>) =>
+				rebuilt(node, handle, () => wrapMethodDefinition({ ...$edited(data), _override: v }, tree)),
+			readonly: (v: NonNullable<T.MethodDefinition['_readonly']>) =>
+				rebuilt(node, handle, () => wrapMethodDefinition({ ...$edited(data), _readonly: v }, tree)),
+			async: (v: NonNullable<T.MethodDefinition['_async']>) =>
+				rebuilt(node, handle, () => wrapMethodDefinition({ ...$edited(data), _async: v }, tree)),
 			accessorKind: (v: NonNullable<T.MethodDefinition['_accessor_kind']>) =>
 				rebuilt(node, handle, () => wrapMethodDefinition({ ...$edited(data), _accessor_kind: v }, tree)),
 			name: (v: NonNullable<T.MethodDefinition['_name']>) =>
 				rebuilt(node, handle, () => wrapMethodDefinition({ ...$edited(data), _name: v }, tree)),
-			optionalMarker: (v: NonNullable<T.MethodDefinition['_optional_marker']>) =>
-				rebuilt(node, handle, () => wrapMethodDefinition({ ...$edited(data), _optional_marker: v }, tree)),
+			optional: (v: NonNullable<T.MethodDefinition['_optional']>) =>
+				rebuilt(node, handle, () => wrapMethodDefinition({ ...$edited(data), _optional: v }, tree)),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -8214,15 +8200,15 @@ export function wrapPublicFieldDefinition(
 ): T.PublicFieldDefinition.Parsed {
 	data = _keepModelledSlots(data, [
 		'_decorator',
-		'_declare_marker',
+		'_declare',
 		'_accessibility_modifier',
-		'_static_marker',
-		'_readonly_marker',
-		'_abstract_marker',
-		'_accessor_marker',
-		'_override_modifier',
+		'_static',
+		'_override',
+		'_readonly',
+		'_abstract',
+		'_accessor',
 		'_name',
-		'_optionality_marker',
+		'_optionality',
 		'_type',
 		'_value'
 	]);
@@ -8252,11 +8238,11 @@ export function wrapPublicFieldDefinition(
 			}),
 			tree
 		),
-		_declare_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._declare_marker, 'declare_marker', false, data.$type, {
+		_declare: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._declare, 'declare', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'declare_marker',
+				slotName: 'declare',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -8269,43 +8255,43 @@ export function wrapPublicFieldDefinition(
 			}),
 			{ public: 32, private: 33, protected: 34 }
 		),
-		_static_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._static_marker, 'static_marker', false, data.$type, {
+		_static: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._static, 'static', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'static_marker',
+				slotName: 'static',
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_readonly_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._readonly_marker, 'readonly_marker', false, data.$type, {
+		_override: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._override, 'override', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'readonly_marker',
+				slotName: 'override',
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_abstract_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._abstract_marker, 'abstract_marker', false, data.$type, {
+		_readonly: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._readonly, 'readonly', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'abstract_marker',
+				slotName: 'readonly',
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_accessor_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._accessor_marker, 'accessor_marker', false, data.$type, {
+		_abstract: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._abstract, 'abstract', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'accessor_marker',
+				slotName: 'abstract',
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_override_modifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
+		_accessor: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._accessor, 'accessor', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'override_modifier',
+				slotName: 'accessor',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -8344,11 +8330,11 @@ export function wrapPublicFieldDefinition(
 			),
 			tree
 		),
-		_optionality_marker: projectKindEnumStorage(
-			normalizeSingularWrapSlot(data._optionality_marker, 'optionality_marker', false, data.$type, {
+		_optionality: projectKindEnumStorage(
+			normalizeSingularWrapSlot(data._optionality, 'optionality', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'optionality_marker',
+				slotName: 'optionality',
 				span: (data as _UntypedNode).$span
 			}),
 			{ '?': 126, '!': 105 }
@@ -8378,26 +8364,26 @@ export function wrapPublicFieldDefinition(
 		decorators() {
 			return hydrateChildren<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree);
 		},
-		declareMarker() {
-			return this._declare_marker;
+		declare() {
+			return this._declare;
 		},
 		accessibilityModifier() {
 			return this._accessibility_modifier;
 		},
-		staticMarker() {
-			return this._static_marker;
+		static() {
+			return this._static;
 		},
-		readonlyMarker() {
-			return this._readonly_marker;
+		override() {
+			return this._override;
 		},
-		abstractMarker() {
-			return this._abstract_marker;
+		readonly() {
+			return this._readonly;
 		},
-		accessorMarker() {
-			return this._accessor_marker;
+		abstract() {
+			return this._abstract;
 		},
-		overrideModifier() {
-			return this._override_modifier;
+		accessor() {
+			return this._accessor;
 		},
 		name() {
 			return hydrateChild<
@@ -8430,8 +8416,8 @@ export function wrapPublicFieldDefinition(
 				| T.ComputedPropertyName
 			>(this._name, tree);
 		},
-		optionalityMarker() {
-			return this._optionality_marker;
+		optionality() {
+			return this._optionality;
 		},
 		type() {
 			return hydrateChild<T.TypeAnnotation | undefined>(this._type, tree);
@@ -8444,24 +8430,24 @@ export function wrapPublicFieldDefinition(
 				rebuilt(node, handle, () =>
 					wrapPublicFieldDefinition({ ...$edited(data), _decorator: restItems('decorators', v) }, tree)
 				),
-			declareMarker: (v: NonNullable<T.PublicFieldDefinition['_declare_marker']>) =>
-				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _declare_marker: v }, tree)),
+			declare: (v: NonNullable<T.PublicFieldDefinition['_declare']>) =>
+				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _declare: v }, tree)),
 			accessibilityModifier: (v: NonNullable<T.PublicFieldDefinition['_accessibility_modifier']>) =>
 				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _accessibility_modifier: v }, tree)),
-			staticMarker: (v: NonNullable<T.PublicFieldDefinition['_static_marker']>) =>
-				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _static_marker: v }, tree)),
-			readonlyMarker: (v: NonNullable<T.PublicFieldDefinition['_readonly_marker']>) =>
-				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _readonly_marker: v }, tree)),
-			abstractMarker: (v: NonNullable<T.PublicFieldDefinition['_abstract_marker']>) =>
-				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _abstract_marker: v }, tree)),
-			accessorMarker: (v: NonNullable<T.PublicFieldDefinition['_accessor_marker']>) =>
-				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _accessor_marker: v }, tree)),
-			overrideModifier: (v: NonNullable<T.PublicFieldDefinition['_override_modifier']>) =>
-				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _override_modifier: v }, tree)),
+			static: (v: NonNullable<T.PublicFieldDefinition['_static']>) =>
+				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _static: v }, tree)),
+			override: (v: NonNullable<T.PublicFieldDefinition['_override']>) =>
+				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _override: v }, tree)),
+			readonly: (v: NonNullable<T.PublicFieldDefinition['_readonly']>) =>
+				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _readonly: v }, tree)),
+			abstract: (v: NonNullable<T.PublicFieldDefinition['_abstract']>) =>
+				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _abstract: v }, tree)),
+			accessor: (v: NonNullable<T.PublicFieldDefinition['_accessor']>) =>
+				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _accessor: v }, tree)),
 			name: (v: NonNullable<T.PublicFieldDefinition['_name']>) =>
 				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _name: v }, tree)),
-			optionalityMarker: (v: NonNullable<T.PublicFieldDefinition['_optionality_marker']>) =>
-				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _optionality_marker: v }, tree)),
+			optionality: (v: NonNullable<T.PublicFieldDefinition['_optionality']>) =>
+				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _optionality: v }, tree)),
 			type: (v: NonNullable<T.PublicFieldDefinition['_type']>) =>
 				rebuilt(node, handle, () => wrapPublicFieldDefinition({ ...$edited(data), _type: v }, tree)),
 			value: (v: NonNullable<T.PublicFieldDefinition['_value']>) =>
@@ -8547,13 +8533,13 @@ export function wrapNonNullExpression(data: T.NonNullExpression, tree: TreeHandl
 export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle): T.MethodSignature.Parsed {
 	data = _keepModelledSlots(data, [
 		'_accessibility_modifier',
-		'_static_marker',
-		'_override_modifier',
-		'_readonly_marker',
-		'_async_marker',
+		'_static',
+		'_override',
+		'_readonly',
+		'_async',
 		'_accessor_kind',
 		'_name',
-		'_optional_marker',
+		'_optional',
 		'_type_parameters',
 		'_parameters',
 		'_return_type'
@@ -8584,35 +8570,35 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle): 
 			}),
 			{ public: 32, private: 33, protected: 34 }
 		),
-		_static_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._static_marker, 'static_marker', false, data.$type, {
+		_static: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._static, 'static', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'static_marker',
+				slotName: 'static',
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_override_modifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
+		_override: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._override, 'override', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'override_modifier',
+				slotName: 'override',
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_readonly_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._readonly_marker, 'readonly_marker', false, data.$type, {
+		_readonly: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._readonly, 'readonly', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'readonly_marker',
+				slotName: 'readonly',
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_async_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._async_marker, 'async_marker', false, data.$type, {
+		_async: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._async, 'async', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'async_marker',
+				slotName: 'async',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -8660,11 +8646,11 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle): 
 			),
 			tree
 		),
-		_optional_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._optional_marker, 'optional_marker', false, data.$type, {
+		_optional: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._optional, 'optional', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'optional_marker',
+				slotName: 'optional',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -8699,17 +8685,17 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle): 
 		accessibilityModifier() {
 			return this._accessibility_modifier;
 		},
-		staticMarker() {
-			return this._static_marker;
+		static() {
+			return this._static;
 		},
-		overrideModifier() {
-			return this._override_modifier;
+		override() {
+			return this._override;
 		},
-		readonlyMarker() {
-			return this._readonly_marker;
+		readonly() {
+			return this._readonly;
 		},
-		asyncMarker() {
-			return this._async_marker;
+		async() {
+			return this._async;
 		},
 		accessorKind() {
 			return this._accessor_kind;
@@ -8745,8 +8731,8 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle): 
 				| T.ComputedPropertyName
 			>(this._name, tree);
 		},
-		optionalMarker() {
-			return this._optional_marker;
+		optional() {
+			return this._optional;
 		},
 		typeParameters() {
 			return hydrateChild<T.TypeParameters | undefined>(this._type_parameters, tree);
@@ -8763,20 +8749,20 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle): 
 		$with: {
 			accessibilityModifier: (v: NonNullable<T.MethodSignature['_accessibility_modifier']>) =>
 				rebuilt(node, handle, () => wrapMethodSignature({ ...$edited(data), _accessibility_modifier: v }, tree)),
-			staticMarker: (v: NonNullable<T.MethodSignature['_static_marker']>) =>
-				rebuilt(node, handle, () => wrapMethodSignature({ ...$edited(data), _static_marker: v }, tree)),
-			overrideModifier: (v: NonNullable<T.MethodSignature['_override_modifier']>) =>
-				rebuilt(node, handle, () => wrapMethodSignature({ ...$edited(data), _override_modifier: v }, tree)),
-			readonlyMarker: (v: NonNullable<T.MethodSignature['_readonly_marker']>) =>
-				rebuilt(node, handle, () => wrapMethodSignature({ ...$edited(data), _readonly_marker: v }, tree)),
-			asyncMarker: (v: NonNullable<T.MethodSignature['_async_marker']>) =>
-				rebuilt(node, handle, () => wrapMethodSignature({ ...$edited(data), _async_marker: v }, tree)),
+			static: (v: NonNullable<T.MethodSignature['_static']>) =>
+				rebuilt(node, handle, () => wrapMethodSignature({ ...$edited(data), _static: v }, tree)),
+			override: (v: NonNullable<T.MethodSignature['_override']>) =>
+				rebuilt(node, handle, () => wrapMethodSignature({ ...$edited(data), _override: v }, tree)),
+			readonly: (v: NonNullable<T.MethodSignature['_readonly']>) =>
+				rebuilt(node, handle, () => wrapMethodSignature({ ...$edited(data), _readonly: v }, tree)),
+			async: (v: NonNullable<T.MethodSignature['_async']>) =>
+				rebuilt(node, handle, () => wrapMethodSignature({ ...$edited(data), _async: v }, tree)),
 			accessorKind: (v: NonNullable<T.MethodSignature['_accessor_kind']>) =>
 				rebuilt(node, handle, () => wrapMethodSignature({ ...$edited(data), _accessor_kind: v }, tree)),
 			name: (v: NonNullable<T.MethodSignature['_name']>) =>
 				rebuilt(node, handle, () => wrapMethodSignature({ ...$edited(data), _name: v }, tree)),
-			optionalMarker: (v: NonNullable<T.MethodSignature['_optional_marker']>) =>
-				rebuilt(node, handle, () => wrapMethodSignature({ ...$edited(data), _optional_marker: v }, tree)),
+			optional: (v: NonNullable<T.MethodSignature['_optional']>) =>
+				rebuilt(node, handle, () => wrapMethodSignature({ ...$edited(data), _optional: v }, tree)),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -8814,10 +8800,10 @@ export function wrapAbstractMethodSignature(
 ): T.AbstractMethodSignature.Parsed {
 	data = _keepModelledSlots(data, [
 		'_accessibility_modifier',
-		'_override_modifier',
+		'_override',
 		'_accessor_kind',
 		'_name',
-		'_optional_marker',
+		'_optional',
 		'_type_parameters',
 		'_parameters',
 		'_return_type'
@@ -8848,11 +8834,11 @@ export function wrapAbstractMethodSignature(
 			}),
 			{ public: 32, private: 33, protected: 34 }
 		),
-		_override_modifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
+		_override: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._override, 'override', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'override_modifier',
+				slotName: 'override',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -8900,11 +8886,11 @@ export function wrapAbstractMethodSignature(
 			),
 			tree
 		),
-		_optional_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._optional_marker, 'optional_marker', false, data.$type, {
+		_optional: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._optional, 'optional', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'optional_marker',
+				slotName: 'optional',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -8939,8 +8925,8 @@ export function wrapAbstractMethodSignature(
 		accessibilityModifier() {
 			return this._accessibility_modifier;
 		},
-		overrideModifier() {
-			return this._override_modifier;
+		override() {
+			return this._override;
 		},
 		accessorKind() {
 			return this._accessor_kind;
@@ -8976,8 +8962,8 @@ export function wrapAbstractMethodSignature(
 				| T.ComputedPropertyName
 			>(this._name, tree);
 		},
-		optionalMarker() {
-			return this._optional_marker;
+		optional() {
+			return this._optional;
 		},
 		typeParameters() {
 			return hydrateChild<T.TypeParameters | undefined>(this._type_parameters, tree);
@@ -8996,14 +8982,14 @@ export function wrapAbstractMethodSignature(
 				rebuilt(node, handle, () =>
 					wrapAbstractMethodSignature({ ...$edited(data), _accessibility_modifier: v }, tree)
 				),
-			overrideModifier: (v: NonNullable<T.AbstractMethodSignature['_override_modifier']>) =>
-				rebuilt(node, handle, () => wrapAbstractMethodSignature({ ...$edited(data), _override_modifier: v }, tree)),
+			override: (v: NonNullable<T.AbstractMethodSignature['_override']>) =>
+				rebuilt(node, handle, () => wrapAbstractMethodSignature({ ...$edited(data), _override: v }, tree)),
 			accessorKind: (v: NonNullable<T.AbstractMethodSignature['_accessor_kind']>) =>
 				rebuilt(node, handle, () => wrapAbstractMethodSignature({ ...$edited(data), _accessor_kind: v }, tree)),
 			name: (v: NonNullable<T.AbstractMethodSignature['_name']>) =>
 				rebuilt(node, handle, () => wrapAbstractMethodSignature({ ...$edited(data), _name: v }, tree)),
-			optionalMarker: (v: NonNullable<T.AbstractMethodSignature['_optional_marker']>) =>
-				rebuilt(node, handle, () => wrapAbstractMethodSignature({ ...$edited(data), _optional_marker: v }, tree)),
+			optional: (v: NonNullable<T.AbstractMethodSignature['_optional']>) =>
+				rebuilt(node, handle, () => wrapAbstractMethodSignature({ ...$edited(data), _optional: v }, tree)),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -9037,7 +9023,7 @@ export function wrapAbstractMethodSignature(
 
 export function wrapFunctionSignature(data: T.FunctionSignature, tree: TreeHandle): T.FunctionSignature.Parsed {
 	data = _keepModelledSlots(data, [
-		'_async_marker',
+		'_async',
 		'_name',
 		'_type_parameters',
 		'_parameters',
@@ -9061,11 +9047,11 @@ export function wrapFunctionSignature(data: T.FunctionSignature, tree: TreeHandl
 	const node = {
 		...data,
 		$type: TSKindId.FunctionSignature as const,
-		_async_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._async_marker, 'async_marker', false, data.$type, {
+		_async: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._async, 'async', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'async_marker',
+				slotName: 'async',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -9115,8 +9101,8 @@ export function wrapFunctionSignature(data: T.FunctionSignature, tree: TreeHandl
 			{ '\n': 173, ';': 20 }
 		),
 
-		asyncMarker() {
-			return this._async_marker;
+		async() {
+			return this._async;
 		},
 		name() {
 			return hydrateChild<T.Identifier>(this._name, tree);
@@ -9137,8 +9123,8 @@ export function wrapFunctionSignature(data: T.FunctionSignature, tree: TreeHandl
 			return this._terminator;
 		},
 		$with: {
-			asyncMarker: (v: NonNullable<T.FunctionSignature['_async_marker']>) =>
-				rebuilt(node, handle, () => wrapFunctionSignature({ ...$edited(data), _async_marker: v }, tree)),
+			async: (v: NonNullable<T.FunctionSignature['_async']>) =>
+				rebuilt(node, handle, () => wrapFunctionSignature({ ...$edited(data), _async: v }, tree)),
 			name: (v: NonNullable<T.FunctionSignature['_name']>) =>
 				rebuilt(node, handle, () => wrapFunctionSignature({ ...$edited(data), _name: v }, tree)),
 			typeParameters: (...args: unknown[]) =>
@@ -10150,7 +10136,7 @@ export function wrapExtendsTypeClause(data: T.ExtendsTypeClause, tree: TreeHandl
 }
 
 export function wrapEnumDeclaration(data: T.EnumDeclaration, tree: TreeHandle): T.EnumDeclaration.Parsed {
-	data = _keepModelledSlots(data, ['_const_marker', '_name', '_body']);
+	data = _keepModelledSlots(data, ['_const', '_name', '_body']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -10168,11 +10154,11 @@ export function wrapEnumDeclaration(data: T.EnumDeclaration, tree: TreeHandle): 
 	const node = {
 		...data,
 		$type: TSKindId.EnumDeclaration as const,
-		_const_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._const_marker, 'const_marker', false, data.$type, {
+		_const: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._const, 'const', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'const_marker',
+				slotName: 'const',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -10195,8 +10181,8 @@ export function wrapEnumDeclaration(data: T.EnumDeclaration, tree: TreeHandle): 
 			tree
 		),
 
-		constMarker() {
-			return this._const_marker;
+		const() {
+			return this._const;
 		},
 		name() {
 			return hydrateChild<T.Identifier>(this._name, tree);
@@ -10205,8 +10191,8 @@ export function wrapEnumDeclaration(data: T.EnumDeclaration, tree: TreeHandle): 
 			return hydrateChild<T.EnumBody>(this._body, tree);
 		},
 		$with: {
-			constMarker: (v: NonNullable<T.EnumDeclaration['_const_marker']>) =>
-				rebuilt(node, handle, () => wrapEnumDeclaration({ ...$edited(data), _const_marker: v }, tree)),
+			const: (v: NonNullable<T.EnumDeclaration['_const']>) =>
+				rebuilt(node, handle, () => wrapEnumDeclaration({ ...$edited(data), _const: v }, tree)),
 			name: (v: NonNullable<T.EnumDeclaration['_name']>) =>
 				rebuilt(node, handle, () => wrapEnumDeclaration({ ...$edited(data), _name: v }, tree)),
 			body: (...args: unknown[]) =>
@@ -10515,8 +10501,8 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
 	data = _keepModelledSlots(data, [
 		'_decorator',
 		'_accessibility_modifier',
-		'_override_modifier',
-		'_readonly_marker',
+		'_override',
+		'_readonly',
 		'_pattern',
 		'_type',
 		'_value'
@@ -10562,19 +10548,19 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
 			),
 			{ public: 32, private: 33, protected: 34 }
 		),
-		_override_modifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
+		_override: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._override, 'override', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'override_modifier',
+				slotName: 'override',
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_readonly_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._readonly_marker, 'readonly_marker', false, data.$type, {
+		_readonly: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._readonly, 'readonly', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'readonly_marker',
+				slotName: 'readonly',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -10618,11 +10604,11 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
 		accessibilityModifier() {
 			return this._accessibility_modifier;
 		},
-		overrideModifier() {
-			return this._override_modifier;
+		override() {
+			return this._override;
 		},
-		readonlyMarker() {
-			return this._readonly_marker;
+		readonly() {
+			return this._readonly;
 		},
 		pattern() {
 			return hydrateChild<T.Pattern | TSKindId.This>(this._pattern, tree);
@@ -10640,10 +10626,10 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
 				),
 			accessibilityModifier: (v: NonNullable<T.RequiredParameter['_accessibility_modifier']>) =>
 				rebuilt(node, handle, () => wrapRequiredParameter({ ...$edited(data), _accessibility_modifier: v }, tree)),
-			overrideModifier: (v: NonNullable<T.RequiredParameter['_override_modifier']>) =>
-				rebuilt(node, handle, () => wrapRequiredParameter({ ...$edited(data), _override_modifier: v }, tree)),
-			readonlyMarker: (v: NonNullable<T.RequiredParameter['_readonly_marker']>) =>
-				rebuilt(node, handle, () => wrapRequiredParameter({ ...$edited(data), _readonly_marker: v }, tree)),
+			override: (v: NonNullable<T.RequiredParameter['_override']>) =>
+				rebuilt(node, handle, () => wrapRequiredParameter({ ...$edited(data), _override: v }, tree)),
+			readonly: (v: NonNullable<T.RequiredParameter['_readonly']>) =>
+				rebuilt(node, handle, () => wrapRequiredParameter({ ...$edited(data), _readonly: v }, tree)),
 			pattern: (v: NonNullable<T.RequiredParameter['_pattern']>) =>
 				rebuilt(node, handle, () => wrapRequiredParameter({ ...$edited(data), _pattern: v }, tree)),
 			type: (v: NonNullable<T.RequiredParameter['_type']>) =>
@@ -10665,8 +10651,8 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
 	data = _keepModelledSlots(data, [
 		'_decorator',
 		'_accessibility_modifier',
-		'_override_modifier',
-		'_readonly_marker',
+		'_override',
+		'_readonly',
 		'_pattern',
 		'_type',
 		'_value'
@@ -10712,19 +10698,19 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
 			),
 			{ public: 32, private: 33, protected: 34 }
 		),
-		_override_modifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
+		_override: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._override, 'override', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'override_modifier',
+				slotName: 'override',
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_readonly_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._readonly_marker, 'readonly_marker', false, data.$type, {
+		_readonly: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._readonly, 'readonly', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'readonly_marker',
+				slotName: 'readonly',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -10768,11 +10754,11 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
 		accessibilityModifier() {
 			return this._accessibility_modifier;
 		},
-		overrideModifier() {
-			return this._override_modifier;
+		override() {
+			return this._override;
 		},
-		readonlyMarker() {
-			return this._readonly_marker;
+		readonly() {
+			return this._readonly;
 		},
 		pattern() {
 			return hydrateChild<T.Pattern | TSKindId.This>(this._pattern, tree);
@@ -10790,10 +10776,10 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
 				),
 			accessibilityModifier: (v: NonNullable<T.OptionalParameter['_accessibility_modifier']>) =>
 				rebuilt(node, handle, () => wrapOptionalParameter({ ...$edited(data), _accessibility_modifier: v }, tree)),
-			overrideModifier: (v: NonNullable<T.OptionalParameter['_override_modifier']>) =>
-				rebuilt(node, handle, () => wrapOptionalParameter({ ...$edited(data), _override_modifier: v }, tree)),
-			readonlyMarker: (v: NonNullable<T.OptionalParameter['_readonly_marker']>) =>
-				rebuilt(node, handle, () => wrapOptionalParameter({ ...$edited(data), _readonly_marker: v }, tree)),
+			override: (v: NonNullable<T.OptionalParameter['_override']>) =>
+				rebuilt(node, handle, () => wrapOptionalParameter({ ...$edited(data), _override: v }, tree)),
+			readonly: (v: NonNullable<T.OptionalParameter['_readonly']>) =>
+				rebuilt(node, handle, () => wrapOptionalParameter({ ...$edited(data), _readonly: v }, tree)),
 			pattern: (v: NonNullable<T.OptionalParameter['_pattern']>) =>
 				rebuilt(node, handle, () => wrapOptionalParameter({ ...$edited(data), _pattern: v }, tree)),
 			type: (v: NonNullable<T.OptionalParameter['_type']>) =>
@@ -11675,7 +11661,7 @@ export function wrapTupleTypeMember(
 }
 
 export function wrapConstructorType(data: T.ConstructorType, tree: TreeHandle): T.ConstructorType.Parsed {
-	data = _keepModelledSlots(data, ['_abstract_marker', '_type_parameters', '_parameters', '_type']);
+	data = _keepModelledSlots(data, ['_abstract', '_type_parameters', '_parameters', '_type']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -11693,11 +11679,11 @@ export function wrapConstructorType(data: T.ConstructorType, tree: TreeHandle): 
 	const node = {
 		...data,
 		$type: TSKindId.ConstructorType as const,
-		_abstract_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._abstract_marker, 'abstract_marker', false, data.$type, {
+		_abstract: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._abstract, 'abstract', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'abstract_marker',
+				slotName: 'abstract',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -11746,8 +11732,8 @@ export function wrapConstructorType(data: T.ConstructorType, tree: TreeHandle): 
 			tree
 		),
 
-		abstractMarker() {
-			return this._abstract_marker;
+		abstract() {
+			return this._abstract;
 		},
 		typeParameters() {
 			return hydrateChild<T.TypeParameters | undefined>(this._type_parameters, tree);
@@ -11759,8 +11745,8 @@ export function wrapConstructorType(data: T.ConstructorType, tree: TreeHandle): 
 			return hydrateChild<T.Type>(this._type, tree);
 		},
 		$with: {
-			abstractMarker: (v: NonNullable<T.ConstructorType['_abstract_marker']>) =>
-				rebuilt(node, handle, () => wrapConstructorType({ ...$edited(data), _abstract_marker: v }, tree)),
+			abstract: (v: NonNullable<T.ConstructorType['_abstract']>) =>
+				rebuilt(node, handle, () => wrapConstructorType({ ...$edited(data), _abstract: v }, tree)),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -12465,7 +12451,7 @@ export function wrapTypeQuerySubscriptExpression(
 	data: T.TypeQuerySubscriptExpression,
 	tree: TreeHandle
 ): T.TypeQuerySubscriptExpression.Parsed {
-	data = _keepModelledSlots(data, ['_object', '_optional_chain_marker', '_index']);
+	data = _keepModelledSlots(data, ['_object', '_optional_chain', '_index']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -12495,11 +12481,11 @@ export function wrapTypeQuerySubscriptExpression(
 			),
 			tree
 		),
-		_optional_chain_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._optional_chain_marker, 'optional_chain_marker', false, data.$type, {
+		_optional_chain: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._optional_chain, 'optional_chain', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'optional_chain_marker',
+				slotName: 'optional_chain',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -12538,8 +12524,8 @@ export function wrapTypeQuerySubscriptExpression(
 				| T.TypeQueryCallExpression
 			>(this._object, tree);
 		},
-		optionalChainMarker() {
-			return this._optional_chain_marker;
+		optionalChain() {
+			return this._optional_chain;
 		},
 		index() {
 			return hydrateChild<
@@ -12560,10 +12546,8 @@ export function wrapTypeQuerySubscriptExpression(
 		$with: {
 			object: (v: NonNullable<T.TypeQuerySubscriptExpression['_object']>) =>
 				rebuilt(node, handle, () => wrapTypeQuerySubscriptExpression({ ...$edited(data), _object: v }, tree)),
-			optionalChainMarker: (v: NonNullable<T.TypeQuerySubscriptExpression['_optional_chain_marker']>) =>
-				rebuilt(node, handle, () =>
-					wrapTypeQuerySubscriptExpression({ ...$edited(data), _optional_chain_marker: v }, tree)
-				),
+			optionalChain: (v: NonNullable<T.TypeQuerySubscriptExpression['_optional_chain']>) =>
+				rebuilt(node, handle, () => wrapTypeQuerySubscriptExpression({ ...$edited(data), _optional_chain: v }, tree)),
 			index: (v: NonNullable<T.TypeQuerySubscriptExpression['_index']>) =>
 				rebuilt(node, handle, () => wrapTypeQuerySubscriptExpression({ ...$edited(data), _index: v }, tree))
 		},
@@ -13382,11 +13366,11 @@ export function wrapCallSignature(data: T.CallSignature, tree: TreeHandle): T.Ca
 export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandle): T.PropertySignature.Parsed {
 	data = _keepModelledSlots(data, [
 		'_accessibility_modifier',
-		'_static_marker',
-		'_override_modifier',
-		'_readonly_marker',
+		'_static',
+		'_override',
+		'_readonly',
 		'_name',
-		'_optional_marker',
+		'_optional',
 		'_type'
 	]);
 	const handle = currentHandle();
@@ -13415,27 +13399,27 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
 			}),
 			{ public: 32, private: 33, protected: 34 }
 		),
-		_static_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._static_marker, 'static_marker', false, data.$type, {
+		_static: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._static, 'static', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'static_marker',
+				slotName: 'static',
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_override_modifier: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._override_modifier, 'override_modifier', false, data.$type, {
+		_override: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._override, 'override', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'override_modifier',
+				slotName: 'override',
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_readonly_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._readonly_marker, 'readonly_marker', false, data.$type, {
+		_readonly: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._readonly, 'readonly', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'readonly_marker',
+				slotName: 'readonly',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -13474,11 +13458,11 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
 			),
 			tree
 		),
-		_optional_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._optional_marker, 'optional_marker', false, data.$type, {
+		_optional: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._optional, 'optional', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'optional_marker',
+				slotName: 'optional',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -13495,14 +13479,14 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
 		accessibilityModifier() {
 			return this._accessibility_modifier;
 		},
-		staticMarker() {
-			return this._static_marker;
+		static() {
+			return this._static;
 		},
-		overrideModifier() {
-			return this._override_modifier;
+		override() {
+			return this._override;
 		},
-		readonlyMarker() {
-			return this._readonly_marker;
+		readonly() {
+			return this._readonly;
 		},
 		name() {
 			return hydrateChild<
@@ -13535,8 +13519,8 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
 				| T.ComputedPropertyName
 			>(this._name, tree);
 		},
-		optionalMarker() {
-			return this._optional_marker;
+		optional() {
+			return this._optional;
 		},
 		type() {
 			return hydrateChild<T.TypeAnnotation | undefined>(this._type, tree);
@@ -13544,16 +13528,16 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
 		$with: {
 			accessibilityModifier: (v: NonNullable<T.PropertySignature['_accessibility_modifier']>) =>
 				rebuilt(node, handle, () => wrapPropertySignature({ ...$edited(data), _accessibility_modifier: v }, tree)),
-			staticMarker: (v: NonNullable<T.PropertySignature['_static_marker']>) =>
-				rebuilt(node, handle, () => wrapPropertySignature({ ...$edited(data), _static_marker: v }, tree)),
-			overrideModifier: (v: NonNullable<T.PropertySignature['_override_modifier']>) =>
-				rebuilt(node, handle, () => wrapPropertySignature({ ...$edited(data), _override_modifier: v }, tree)),
-			readonlyMarker: (v: NonNullable<T.PropertySignature['_readonly_marker']>) =>
-				rebuilt(node, handle, () => wrapPropertySignature({ ...$edited(data), _readonly_marker: v }, tree)),
+			static: (v: NonNullable<T.PropertySignature['_static']>) =>
+				rebuilt(node, handle, () => wrapPropertySignature({ ...$edited(data), _static: v }, tree)),
+			override: (v: NonNullable<T.PropertySignature['_override']>) =>
+				rebuilt(node, handle, () => wrapPropertySignature({ ...$edited(data), _override: v }, tree)),
+			readonly: (v: NonNullable<T.PropertySignature['_readonly']>) =>
+				rebuilt(node, handle, () => wrapPropertySignature({ ...$edited(data), _readonly: v }, tree)),
 			name: (v: NonNullable<T.PropertySignature['_name']>) =>
 				rebuilt(node, handle, () => wrapPropertySignature({ ...$edited(data), _name: v }, tree)),
-			optionalMarker: (v: NonNullable<T.PropertySignature['_optional_marker']>) =>
-				rebuilt(node, handle, () => wrapPropertySignature({ ...$edited(data), _optional_marker: v }, tree)),
+			optional: (v: NonNullable<T.PropertySignature['_optional']>) =>
+				rebuilt(node, handle, () => wrapPropertySignature({ ...$edited(data), _optional: v }, tree)),
 			type: (v: NonNullable<T.PropertySignature['_type']>) =>
 				rebuilt(node, handle, () => wrapPropertySignature({ ...$edited(data), _type: v }, tree))
 		},
@@ -13605,7 +13589,7 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 			listItems(ownerElements(node.elements(), 'items'), {
 				kind: TSKindId.TypeParameter,
 				content: 'name',
-				decorations: ['_const_marker', '_constraint', '_value']
+				decorations: ['_const', '_constraint', '_value']
 			}),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
@@ -13624,7 +13608,7 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 }
 
 export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.TypeParameter.Parsed {
-	data = _keepModelledSlots(data, ['_const_marker', '_name', '_constraint', '_value']);
+	data = _keepModelledSlots(data, ['_const', '_name', '_constraint', '_value']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -13642,11 +13626,11 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.Ty
 	const node = {
 		...data,
 		$type: TSKindId.TypeParameter as const,
-		_const_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._const_marker, 'const_marker', false, data.$type, {
+		_const: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._const, 'const', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'const_marker',
+				slotName: 'const',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -13678,8 +13662,8 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.Ty
 			tree
 		),
 
-		constMarker() {
-			return this._const_marker;
+		const() {
+			return this._const;
 		},
 		name() {
 			return hydrateChild<T.TypeIdentifier>(this._name, tree);
@@ -13691,8 +13675,8 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.Ty
 			return hydrateChild<T.DefaultType | undefined>(this._value, tree);
 		},
 		$with: {
-			constMarker: (v: NonNullable<T.TypeParameter['_const_marker']>) =>
-				rebuilt(node, handle, () => wrapTypeParameter({ ...$edited(data), _const_marker: v }, tree)),
+			const: (v: NonNullable<T.TypeParameter['_const']>) =>
+				rebuilt(node, handle, () => wrapTypeParameter({ ...$edited(data), _const: v }, tree)),
 			name: (v: NonNullable<T.TypeParameter['_name']>) =>
 				rebuilt(node, handle, () => wrapTypeParameter({ ...$edited(data), _name: v }, tree)),
 			constraint: (v: NonNullable<T.TypeParameter['_constraint']>) =>
@@ -13839,7 +13823,7 @@ export function wrapConstraint(data: T.Constraint, tree: TreeHandle): T.Constrai
 }
 
 export function wrapConstructSignature(data: T.ConstructSignature, tree: TreeHandle): T.ConstructSignature.Parsed {
-	data = _keepModelledSlots(data, ['_abstract_marker', '_type_parameters', '_parameters', '_type']);
+	data = _keepModelledSlots(data, ['_abstract', '_type_parameters', '_parameters', '_type']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -13857,11 +13841,11 @@ export function wrapConstructSignature(data: T.ConstructSignature, tree: TreeHan
 	const node = {
 		...data,
 		$type: TSKindId.ConstructSignature as const,
-		_abstract_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._abstract_marker, 'abstract_marker', false, data.$type, {
+		_abstract: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._abstract, 'abstract', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'abstract_marker',
+				slotName: 'abstract',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -13893,8 +13877,8 @@ export function wrapConstructSignature(data: T.ConstructSignature, tree: TreeHan
 			tree
 		),
 
-		abstractMarker() {
-			return this._abstract_marker;
+		abstract() {
+			return this._abstract;
 		},
 		typeParameters() {
 			return hydrateChild<T.TypeParameters | undefined>(this._type_parameters, tree);
@@ -13906,8 +13890,8 @@ export function wrapConstructSignature(data: T.ConstructSignature, tree: TreeHan
 			return hydrateChild<T.TypeAnnotation | undefined>(this._type, tree);
 		},
 		$with: {
-			abstractMarker: (v: NonNullable<T.ConstructSignature['_abstract_marker']>) =>
-				rebuilt(node, handle, () => wrapConstructSignature({ ...$edited(data), _abstract_marker: v }, tree)),
+			abstract: (v: NonNullable<T.ConstructSignature['_abstract']>) =>
+				rebuilt(node, handle, () => wrapConstructSignature({ ...$edited(data), _abstract: v }, tree)),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -14846,7 +14830,7 @@ export function wrapTypeParametersElements(
 			listItems(ownerElements(node, 'items'), {
 				kind: TSKindId.TypeParameter,
 				content: 'name',
-				decorations: ['_const_marker', '_constraint', '_value']
+				decorations: ['_const', '_constraint', '_value']
 			}),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
@@ -16490,7 +16474,7 @@ export function wrapClassBodyMemberDeclaration(
 }
 
 export function wrapIndexSignatureColon(data: T.IndexSignatureColon, tree: TreeHandle): T.IndexSignatureColon.Parsed {
-	data = _keepModelledSlots(data, ['_sign', '_readonly_marker', '_name', '_index_type', '_type']);
+	data = _keepModelledSlots(data, ['_sign', '_readonly', '_name', '_index_type', '_type']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -16517,11 +16501,11 @@ export function wrapIndexSignatureColon(data: T.IndexSignatureColon, tree: TreeH
 			}),
 			{ '-': 91, '+': 90 }
 		),
-		_readonly_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._readonly_marker, 'readonly_marker', false, data.$type, {
+		_readonly: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._readonly, 'readonly', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'readonly_marker',
+				slotName: 'readonly',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -16599,8 +16583,8 @@ export function wrapIndexSignatureColon(data: T.IndexSignatureColon, tree: TreeH
 		sign() {
 			return this._sign;
 		},
-		readonlyMarker() {
-			return this._readonly_marker;
+		readonly() {
+			return this._readonly;
 		},
 		name() {
 			return hydrateChild<
@@ -16640,8 +16624,8 @@ export function wrapIndexSignatureColon(data: T.IndexSignatureColon, tree: TreeH
 		$with: {
 			sign: (v: NonNullable<T.IndexSignatureColon['_sign']>) =>
 				rebuilt(node, handle, () => wrapIndexSignatureColon({ ...$edited(data), _sign: v }, tree)),
-			readonlyMarker: (v: NonNullable<T.IndexSignatureColon['_readonly_marker']>) =>
-				rebuilt(node, handle, () => wrapIndexSignatureColon({ ...$edited(data), _readonly_marker: v }, tree)),
+			readonly: (v: NonNullable<T.IndexSignatureColon['_readonly']>) =>
+				rebuilt(node, handle, () => wrapIndexSignatureColon({ ...$edited(data), _readonly: v }, tree)),
 			name: (v: NonNullable<T.IndexSignatureColon['_name']>) =>
 				rebuilt(node, handle, () => wrapIndexSignatureColon({ ...$edited(data), _name: v }, tree)),
 			indexType: (v: NonNullable<T.IndexSignatureColon['_index_type']>) =>
@@ -16663,7 +16647,7 @@ export function wrapIndexSignatureMappedTypeClause(
 	data: T.IndexSignatureMappedTypeClause,
 	tree: TreeHandle
 ): T.IndexSignatureMappedTypeClause.Parsed {
-	data = _keepModelledSlots(data, ['_sign', '_readonly_marker', '_mapped_type_clause', '_type']);
+	data = _keepModelledSlots(data, ['_sign', '_readonly', '_mapped_type_clause', '_type']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -16690,11 +16674,11 @@ export function wrapIndexSignatureMappedTypeClause(
 			}),
 			{ '-': 91, '+': 90 }
 		),
-		_readonly_marker: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._readonly_marker, 'readonly_marker', false, data.$type, {
+		_readonly: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._readonly, 'readonly', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'readonly_marker',
+				slotName: 'readonly',
 				span: (data as _UntypedNode).$span
 			})
 		),
@@ -16720,8 +16704,8 @@ export function wrapIndexSignatureMappedTypeClause(
 		sign() {
 			return this._sign;
 		},
-		readonlyMarker() {
-			return this._readonly_marker;
+		readonly() {
+			return this._readonly;
 		},
 		mappedTypeClause() {
 			return hydrateChild<T.MappedTypeClause>(this._mapped_type_clause, tree);
@@ -16734,10 +16718,8 @@ export function wrapIndexSignatureMappedTypeClause(
 		$with: {
 			sign: (v: NonNullable<T.IndexSignatureMappedTypeClause['_sign']>) =>
 				rebuilt(node, handle, () => wrapIndexSignatureMappedTypeClause({ ...$edited(data), _sign: v }, tree)),
-			readonlyMarker: (v: NonNullable<T.IndexSignatureMappedTypeClause['_readonly_marker']>) =>
-				rebuilt(node, handle, () =>
-					wrapIndexSignatureMappedTypeClause({ ...$edited(data), _readonly_marker: v }, tree)
-				),
+			readonly: (v: NonNullable<T.IndexSignatureMappedTypeClause['_readonly']>) =>
+				rebuilt(node, handle, () => wrapIndexSignatureMappedTypeClause({ ...$edited(data), _readonly: v }, tree)),
 			mappedTypeClause: (v: NonNullable<T.IndexSignatureMappedTypeClause['_mapped_type_clause']>) =>
 				rebuilt(node, handle, () =>
 					wrapIndexSignatureMappedTypeClause({ ...$edited(data), _mapped_type_clause: v }, tree)

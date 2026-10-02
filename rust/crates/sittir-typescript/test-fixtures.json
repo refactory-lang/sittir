@@ -719,7 +719,7 @@
                                 }
                               }
                             },
-                            "_optional_marker": true,
+                            "_optional": true,
                             "_type": {
                               "$type": 326,
                               "$source": 0,
@@ -739,7 +739,7 @@
                             },
                             "$slotOrder": [
                               "name",
-                              "optional_marker",
+                              "optional",
                               "type"
                             ]
                           }
@@ -875,7 +875,7 @@
                                 }
                               }
                             },
-                            "_optional_marker": true,
+                            "_optional": true,
                             "_type": {
                               "$type": 326,
                               "$source": 0,
@@ -895,7 +895,7 @@
                             },
                             "$slotOrder": [
                               "name",
-                              "optional_marker",
+                              "optional",
                               "type"
                             ]
                           },
@@ -918,7 +918,7 @@
                                 }
                               }
                             },
-                            "_optional_marker": true,
+                            "_optional": true,
                             "_type": {
                               "$type": 326,
                               "$source": 0,
@@ -938,7 +938,7 @@
                             },
                             "$slotOrder": [
                               "name",
-                              "optional_marker",
+                              "optional",
                               "type"
                             ]
                           }
@@ -3237,7 +3237,7 @@
                             }
                           }
                         },
-                        "_optional_marker": true,
+                        "_optional": true,
                         "_type": {
                           "$type": 326,
                           "$source": 0,
@@ -3257,7 +3257,7 @@
                         },
                         "$slotOrder": [
                           "name",
-                          "optional_marker",
+                          "optional",
                           "type"
                         ]
                       }
@@ -3393,7 +3393,7 @@
                             }
                           }
                         },
-                        "_optional_marker": true,
+                        "_optional": true,
                         "_type": {
                           "$type": 326,
                           "$source": 0,
@@ -3413,7 +3413,7 @@
                         },
                         "$slotOrder": [
                           "name",
-                          "optional_marker",
+                          "optional",
                           "type"
                         ]
                       },
@@ -3436,7 +3436,7 @@
                             }
                           }
                         },
-                        "_optional_marker": true,
+                        "_optional": true,
                         "_type": {
                           "$type": 326,
                           "$source": 0,
@@ -3456,7 +3456,7 @@
                         },
                         "$slotOrder": [
                           "name",
-                          "optional_marker",
+                          "optional",
                           "type"
                         ]
                       }
@@ -8272,7 +8272,7 @@
                           }
                         }
                       },
-                      "_optional_marker": true,
+                      "_optional": true,
                       "_type": {
                         "$type": 326,
                         "$source": 0,
@@ -8292,7 +8292,7 @@
                       },
                       "$slotOrder": [
                         "name",
-                        "optional_marker",
+                        "optional",
                         "type"
                       ]
                     }
@@ -8428,7 +8428,7 @@
                           }
                         }
                       },
-                      "_optional_marker": true,
+                      "_optional": true,
                       "_type": {
                         "$type": 326,
                         "$source": 0,
@@ -8448,7 +8448,7 @@
                       },
                       "$slotOrder": [
                         "name",
-                        "optional_marker",
+                        "optional",
                         "type"
                       ]
                     },
@@ -8471,7 +8471,7 @@
                           }
                         }
                       },
-                      "_optional_marker": true,
+                      "_optional": true,
                       "_type": {
                         "$type": 326,
                         "$source": 0,
@@ -8491,7 +8491,7 @@
                       },
                       "$slotOrder": [
                         "name",
-                        "optional_marker",
+                        "optional",
                         "type"
                       ]
                     }
@@ -8847,7 +8847,7 @@
                         }
                       }
                     },
-                    "_optional_marker": true,
+                    "_optional": true,
                     "_type": {
                       "$type": 326,
                       "$source": 0,
@@ -8867,7 +8867,7 @@
                     },
                     "$slotOrder": [
                       "name",
-                      "optional_marker",
+                      "optional",
                       "type"
                     ]
                   }
@@ -9003,7 +9003,7 @@
                         }
                       }
                     },
-                    "_optional_marker": true,
+                    "_optional": true,
                     "_type": {
                       "$type": 326,
                       "$source": 0,
@@ -9023,7 +9023,7 @@
                     },
                     "$slotOrder": [
                       "name",
-                      "optional_marker",
+                      "optional",
                       "type"
                     ]
                   },
@@ -9046,7 +9046,7 @@
                         }
                       }
                     },
-                    "_optional_marker": true,
+                    "_optional": true,
                     "_type": {
                       "$type": 326,
                       "$source": 0,
@@ -9066,7 +9066,7 @@
                     },
                     "$slotOrder": [
                       "name",
-                      "optional_marker",
+                      "optional",
                       "type"
                     ]
                   }
@@ -10520,7 +10520,7 @@
                     }
                   }
                 },
-                "_optional_marker": true,
+                "_optional": true,
                 "_type": {
                   "$type": 326,
                   "$source": 0,
@@ -10540,7 +10540,7 @@
                 },
                 "$slotOrder": [
                   "name",
-                  "optional_marker",
+                  "optional",
                   "type"
                 ]
               }
@@ -10693,7 +10693,7 @@
                     }
                   }
                 },
-                "_optional_marker": true,
+                "_optional": true,
                 "_type": {
                   "$type": 326,
                   "$source": 0,
@@ -10713,7 +10713,7 @@
                 },
                 "$slotOrder": [
                   "name",
-                  "optional_marker",
+                  "optional",
                   "type"
                 ]
               },
@@ -10736,7 +10736,7 @@
                     }
                   }
                 },
-                "_optional_marker": true,
+                "_optional": true,
                 "_type": {
                   "$type": 326,
                   "$source": 0,
@@ -10756,7 +10756,7 @@
                 },
                 "$slotOrder": [
                   "name",
-                  "optional_marker",
+                  "optional",
                   "type"
                 ]
               }
@@ -10867,7 +10867,7 @@
                   }
                 }
               },
-              "_optional_marker": true,
+              "_optional": true,
               "_type": {
                 "$type": 326,
                 "$source": 0,
@@ -10887,7 +10887,7 @@
               },
               "$slotOrder": [
                 "name",
-                "optional_marker",
+                "optional",
                 "type"
               ]
             }
@@ -11005,7 +11005,7 @@
                   }
                 }
               },
-              "_optional_marker": true,
+              "_optional": true,
               "_type": {
                 "$type": 326,
                 "$source": 0,
@@ -11025,7 +11025,7 @@
               },
               "$slotOrder": [
                 "name",
-                "optional_marker",
+                "optional",
                 "type"
               ]
             },
@@ -11048,7 +11048,7 @@
                   }
                 }
               },
-              "_optional_marker": true,
+              "_optional": true,
               "_type": {
                 "$type": 326,
                 "$source": 0,
@@ -11068,7 +11068,7 @@
               },
               "$slotOrder": [
                 "name",
-                "optional_marker",
+                "optional",
                 "type"
               ]
             }
@@ -11159,7 +11159,7 @@
                 }
               }
             },
-            "_optional_marker": true,
+            "_optional": true,
             "_type": {
               "$type": 326,
               "$source": 0,
@@ -11179,7 +11179,7 @@
             },
             "$slotOrder": [
               "name",
-              "optional_marker",
+              "optional",
               "type"
             ]
           }
@@ -11292,7 +11292,7 @@
                 }
               }
             },
-            "_optional_marker": true,
+            "_optional": true,
             "_type": {
               "$type": 326,
               "$source": 0,
@@ -11312,7 +11312,7 @@
             },
             "$slotOrder": [
               "name",
-              "optional_marker",
+              "optional",
               "type"
             ]
           },
@@ -11335,7 +11335,7 @@
                 }
               }
             },
-            "_optional_marker": true,
+            "_optional": true,
             "_type": {
               "$type": 326,
               "$source": 0,
@@ -11355,7 +11355,7 @@
             },
             "$slotOrder": [
               "name",
-              "optional_marker",
+              "optional",
               "type"
             ]
           }
@@ -11435,7 +11435,7 @@
           }
         }
       },
-      "_optional_marker": true,
+      "_optional": true,
       "_type": {
         "$type": 326,
         "$source": 0,
@@ -11455,7 +11455,7 @@
       },
       "$slotOrder": [
         "name",
-        "optional_marker",
+        "optional",
         "type"
       ]
     },
@@ -11553,7 +11553,7 @@
           }
         }
       },
-      "_optional_marker": true,
+      "_optional": true,
       "_type": {
         "$type": 326,
         "$source": 0,
@@ -11573,7 +11573,7 @@
       },
       "$slotOrder": [
         "name",
-        "optional_marker",
+        "optional",
         "type"
       ]
     },
@@ -11613,7 +11613,7 @@
           }
         }
       },
-      "_optional_marker": true,
+      "_optional": true,
       "_type": {
         "$type": 326,
         "$source": 0,
@@ -11633,7 +11633,7 @@
       },
       "$slotOrder": [
         "name",
-        "optional_marker",
+        "optional",
         "type"
       ]
     },
@@ -17861,7 +17861,7 @@
             "$type": 295,
             "$source": 0,
             "$named": true,
-            "_async_marker": true,
+            "_async": true,
             "_name": {
               "$type": 1,
               "$source": 0,
@@ -18048,7 +18048,7 @@
               }
             ],
             "$slotOrder": [
-              "async_marker",
+              "async",
               "name",
               "parameters",
               "return_type",
@@ -18530,7 +18530,7 @@
         "$type": 295,
         "$source": 0,
         "$named": true,
-        "_async_marker": true,
+        "_async": true,
         "_name": {
           "$type": 1,
           "$source": 0,
@@ -18717,7 +18717,7 @@
           }
         ],
         "$slotOrder": [
-          "async_marker",
+          "async",
           "name",
           "parameters",
           "return_type",
@@ -20249,7 +20249,7 @@
       "$type": 295,
       "$source": 0,
       "$named": true,
-      "_async_marker": true,
+      "_async": true,
       "_name": {
         "$type": 1,
         "$source": 0,
@@ -20436,7 +20436,7 @@
         }
       ],
       "$slotOrder": [
-        "async_marker",
+        "async",
         "name",
         "parameters",
         "return_type",
@@ -20590,7 +20590,7 @@
                     "$type": 290,
                     "$source": 0,
                     "$named": true,
-                    "_static_marker": true,
+                    "_static": true,
                     "_name": {
                       "$type": 462,
                       "$source": 0,
@@ -20649,7 +20649,7 @@
                       ]
                     },
                     "$slotOrder": [
-                      "static_marker",
+                      "static",
                       "name",
                       "type"
                     ],
@@ -20769,7 +20769,7 @@
                 "$type": 290,
                 "$source": 0,
                 "$named": true,
-                "_static_marker": true,
+                "_static": true,
                 "_name": {
                   "$type": 462,
                   "$source": 0,
@@ -20828,7 +20828,7 @@
                   ]
                 },
                 "$slotOrder": [
-                  "static_marker",
+                  "static",
                   "name",
                   "type"
                 ],
@@ -20942,7 +20942,7 @@
               "$type": 290,
               "$source": 0,
               "$named": true,
-              "_static_marker": true,
+              "_static": true,
               "_name": {
                 "$type": 462,
                 "$source": 0,
@@ -21001,7 +21001,7 @@
                 ]
               },
               "$slotOrder": [
-                "static_marker",
+                "static",
                 "name",
                 "type"
               ],
@@ -21116,7 +21116,7 @@
             "$type": 290,
             "$source": 0,
             "$named": true,
-            "_static_marker": true,
+            "_static": true,
             "_name": {
               "$type": 462,
               "$source": 0,
@@ -21175,7 +21175,7 @@
               ]
             },
             "$slotOrder": [
-              "static_marker",
+              "static",
               "name",
               "type"
             ],
@@ -23424,7 +23424,7 @@
                       "$source": 0,
                       "$named": true,
                       "_accessibility_modifier": 32,
-                      "_readonly_marker": true,
+                      "_readonly": true,
                       "_name": {
                         "$type": 462,
                         "$source": 0,
@@ -23530,7 +23530,7 @@
                       },
                       "$slotOrder": [
                         "accessibility_modifier",
-                        "readonly_marker",
+                        "readonly",
                         "name",
                         "type"
                       ]
@@ -23613,7 +23613,7 @@
                     "$source": 0,
                     "$named": true,
                     "_accessibility_modifier": 32,
-                    "_readonly_marker": true,
+                    "_readonly": true,
                     "_name": {
                       "$type": 462,
                       "$source": 0,
@@ -23662,7 +23662,7 @@
                     ],
                     "$slotOrder": [
                       "accessibility_modifier",
-                      "readonly_marker",
+                      "readonly",
                       "name",
                       "value"
                     ],
@@ -23789,7 +23789,7 @@
                   "$source": 0,
                   "$named": true,
                   "_accessibility_modifier": 32,
-                  "_readonly_marker": true,
+                  "_readonly": true,
                   "_name": {
                     "$type": 462,
                     "$source": 0,
@@ -23895,7 +23895,7 @@
                   },
                   "$slotOrder": [
                     "accessibility_modifier",
-                    "readonly_marker",
+                    "readonly",
                     "name",
                     "type"
                   ]
@@ -23995,7 +23995,7 @@
                 "$source": 0,
                 "$named": true,
                 "_accessibility_modifier": 32,
-                "_readonly_marker": true,
+                "_readonly": true,
                 "_name": {
                   "$type": 462,
                   "$source": 0,
@@ -24044,7 +24044,7 @@
                 ],
                 "$slotOrder": [
                   "accessibility_modifier",
-                  "readonly_marker",
+                  "readonly",
                   "name",
                   "value"
                 ],
@@ -24165,7 +24165,7 @@
                 "$source": 0,
                 "$named": true,
                 "_accessibility_modifier": 32,
-                "_readonly_marker": true,
+                "_readonly": true,
                 "_name": {
                   "$type": 462,
                   "$source": 0,
@@ -24271,7 +24271,7 @@
                 },
                 "$slotOrder": [
                   "accessibility_modifier",
-                  "readonly_marker",
+                  "readonly",
                   "name",
                   "type"
                 ]
@@ -24468,7 +24468,7 @@
               "$source": 0,
               "$named": true,
               "_accessibility_modifier": 32,
-              "_readonly_marker": true,
+              "_readonly": true,
               "_name": {
                 "$type": 462,
                 "$source": 0,
@@ -24574,7 +24574,7 @@
               },
               "$slotOrder": [
                 "accessibility_modifier",
-                "readonly_marker",
+                "readonly",
                 "name",
                 "type"
               ]
@@ -24623,7 +24623,7 @@
             "$source": 0,
             "$named": true,
             "_accessibility_modifier": 32,
-            "_readonly_marker": true,
+            "_readonly": true,
             "_name": {
               "$type": 462,
               "$source": 0,
@@ -24729,7 +24729,7 @@
             },
             "$slotOrder": [
               "accessibility_modifier",
-              "readonly_marker",
+              "readonly",
               "name",
               "type"
             ]
@@ -24767,7 +24767,7 @@
       "$source": 0,
       "$named": true,
       "_accessibility_modifier": 32,
-      "_readonly_marker": true,
+      "_readonly": true,
       "_name": {
         "$type": 462,
         "$source": 0,
@@ -24873,7 +24873,7 @@
       },
       "$slotOrder": [
         "accessibility_modifier",
-        "readonly_marker",
+        "readonly",
         "name",
         "type"
       ]
@@ -25122,7 +25122,7 @@
               "$source": 0,
               "$named": true,
               "_accessibility_modifier": 32,
-              "_readonly_marker": true,
+              "_readonly": true,
               "_name": {
                 "$type": 462,
                 "$source": 0,
@@ -25171,7 +25171,7 @@
               ],
               "$slotOrder": [
                 "accessibility_modifier",
-                "readonly_marker",
+                "readonly",
                 "name",
                 "value"
               ],
@@ -25255,7 +25255,7 @@
             "$source": 0,
             "$named": true,
             "_accessibility_modifier": 32,
-            "_readonly_marker": true,
+            "_readonly": true,
             "_name": {
               "$type": 462,
               "$source": 0,
@@ -25304,7 +25304,7 @@
             ],
             "$slotOrder": [
               "accessibility_modifier",
-              "readonly_marker",
+              "readonly",
               "name",
               "value"
             ],
@@ -37882,7 +37882,7 @@
                     "$type": 314,
                     "$source": 0,
                     "$named": true,
-                    "_const_marker": true,
+                    "_const": true,
                     "_name": {
                       "$type": 1,
                       "$source": 0,
@@ -38018,7 +38018,7 @@
                       }
                     ],
                     "$slotOrder": [
-                      "const_marker",
+                      "const",
                       "name",
                       "body"
                     ]
@@ -38450,7 +38450,7 @@
                 "$type": 314,
                 "$source": 0,
                 "$named": true,
-                "_const_marker": true,
+                "_const": true,
                 "_name": {
                   "$type": 1,
                   "$source": 0,
@@ -38586,7 +38586,7 @@
                   }
                 ],
                 "$slotOrder": [
-                  "const_marker",
+                  "const",
                   "name",
                   "body"
                 ]
@@ -39012,7 +39012,7 @@
               "$type": 314,
               "$source": 0,
               "$named": true,
-              "_const_marker": true,
+              "_const": true,
               "_name": {
                 "$type": 1,
                 "$source": 0,
@@ -39148,7 +39148,7 @@
                 }
               ],
               "$slotOrder": [
-                "const_marker",
+                "const",
                 "name",
                 "body"
               ]
@@ -39548,7 +39548,7 @@
             "$type": 314,
             "$source": 0,
             "$named": true,
-            "_const_marker": true,
+            "_const": true,
             "_name": {
               "$type": 1,
               "$source": 0,
@@ -39684,7 +39684,7 @@
               }
             ],
             "$slotOrder": [
-              "const_marker",
+              "const",
               "name",
               "body"
             ]
@@ -40329,7 +40329,7 @@
         "$type": 314,
         "$source": 0,
         "$named": true,
-        "_const_marker": true,
+        "_const": true,
         "_name": {
           "$type": 1,
           "$source": 0,
@@ -40465,7 +40465,7 @@
           }
         ],
         "$slotOrder": [
-          "const_marker",
+          "const",
           "name",
           "body"
         ]
@@ -40890,7 +40890,7 @@
       "$type": 314,
       "$source": 0,
       "$named": true,
-      "_const_marker": true,
+      "_const": true,
       "_name": {
         "$type": 1,
         "$source": 0,
@@ -41026,7 +41026,7 @@
         }
       ],
       "$slotOrder": [
-        "const_marker",
+        "const",
         "name",
         "body"
       ]
@@ -43984,7 +43984,7 @@
                   "$source": 0,
                   "$named": true,
                   "_accessibility_modifier": 32,
-                  "_async_marker": true,
+                  "_async": true,
                   "_name": {
                     "$type": 462,
                     "$source": 0,
@@ -44764,7 +44764,7 @@
                   },
                   "$slotOrder": [
                     "accessibility_modifier",
-                    "async_marker",
+                    "async",
                     "name",
                     "type_parameters",
                     "parameters",
@@ -44786,8 +44786,8 @@
                   "$source": 0,
                   "$named": true,
                   "_accessibility_modifier": 32,
-                  "_readonly_marker": true,
-                  "_async_marker": true,
+                  "_readonly": true,
+                  "_async": true,
                   "_name": {
                     "$type": 462,
                     "$source": 0,
@@ -44803,7 +44803,7 @@
                       }
                     }
                   },
-                  "_optional_marker": true,
+                  "_optional": true,
                   "_type_parameters": {
                     "$type": 364,
                     "$source": 0,
@@ -44869,10 +44869,10 @@
                   },
                   "$slotOrder": [
                     "accessibility_modifier",
-                    "readonly_marker",
-                    "async_marker",
+                    "readonly",
+                    "async",
                     "name",
-                    "optional_marker",
+                    "optional",
                     "type_parameters",
                     "parameters"
                   ]
@@ -44892,7 +44892,7 @@
                   "$source": 0,
                   "$named": true,
                   "_accessibility_modifier": 33,
-                  "_static_marker": true,
+                  "_static": true,
                   "_name": {
                     "$type": 462,
                     "$source": 0,
@@ -44920,7 +44920,7 @@
                   },
                   "$slotOrder": [
                     "accessibility_modifier",
-                    "static_marker",
+                    "static",
                     "name",
                     "parameters"
                   ]
@@ -44940,8 +44940,8 @@
                   "$source": 0,
                   "$named": true,
                   "_accessibility_modifier": 33,
-                  "_static_marker": true,
-                  "_async_marker": true,
+                  "_static": true,
+                  "_async": true,
                   "_name": {
                     "$type": 462,
                     "$source": 0,
@@ -45000,8 +45000,8 @@
                   },
                   "$slotOrder": [
                     "accessibility_modifier",
-                    "static_marker",
-                    "async_marker",
+                    "static",
+                    "async",
                     "name",
                     "parameters",
                     "return_type"
@@ -45106,7 +45106,7 @@
               "$source": 0,
               "$named": true,
               "_accessibility_modifier": 32,
-              "_async_marker": true,
+              "_async": true,
               "_name": {
                 "$type": 462,
                 "$source": 0,
@@ -45886,7 +45886,7 @@
               },
               "$slotOrder": [
                 "accessibility_modifier",
-                "async_marker",
+                "async",
                 "name",
                 "type_parameters",
                 "parameters",
@@ -45908,8 +45908,8 @@
               "$source": 0,
               "$named": true,
               "_accessibility_modifier": 32,
-              "_readonly_marker": true,
-              "_async_marker": true,
+              "_readonly": true,
+              "_async": true,
               "_name": {
                 "$type": 462,
                 "$source": 0,
@@ -45925,7 +45925,7 @@
                   }
                 }
               },
-              "_optional_marker": true,
+              "_optional": true,
               "_type_parameters": {
                 "$type": 364,
                 "$source": 0,
@@ -45991,10 +45991,10 @@
               },
               "$slotOrder": [
                 "accessibility_modifier",
-                "readonly_marker",
-                "async_marker",
+                "readonly",
+                "async",
                 "name",
-                "optional_marker",
+                "optional",
                 "type_parameters",
                 "parameters"
               ]
@@ -46014,7 +46014,7 @@
               "$source": 0,
               "$named": true,
               "_accessibility_modifier": 33,
-              "_static_marker": true,
+              "_static": true,
               "_name": {
                 "$type": 462,
                 "$source": 0,
@@ -46042,7 +46042,7 @@
               },
               "$slotOrder": [
                 "accessibility_modifier",
-                "static_marker",
+                "static",
                 "name",
                 "parameters"
               ]
@@ -46062,8 +46062,8 @@
               "$source": 0,
               "$named": true,
               "_accessibility_modifier": 33,
-              "_static_marker": true,
-              "_async_marker": true,
+              "_static": true,
+              "_async": true,
               "_name": {
                 "$type": 462,
                 "$source": 0,
@@ -46122,8 +46122,8 @@
               },
               "$slotOrder": [
                 "accessibility_modifier",
-                "static_marker",
-                "async_marker",
+                "static",
+                "async",
                 "name",
                 "parameters",
                 "return_type"
@@ -46559,7 +46559,7 @@
             "$source": 0,
             "$named": true,
             "_accessibility_modifier": 32,
-            "_async_marker": true,
+            "_async": true,
             "_name": {
               "$type": 462,
               "$source": 0,
@@ -47339,7 +47339,7 @@
             },
             "$slotOrder": [
               "accessibility_modifier",
-              "async_marker",
+              "async",
               "name",
               "type_parameters",
               "parameters",
@@ -47361,8 +47361,8 @@
             "$source": 0,
             "$named": true,
             "_accessibility_modifier": 32,
-            "_readonly_marker": true,
-            "_async_marker": true,
+            "_readonly": true,
+            "_async": true,
             "_name": {
               "$type": 462,
               "$source": 0,
@@ -47378,7 +47378,7 @@
                 }
               }
             },
-            "_optional_marker": true,
+            "_optional": true,
             "_type_parameters": {
               "$type": 364,
               "$source": 0,
@@ -47444,10 +47444,10 @@
             },
             "$slotOrder": [
               "accessibility_modifier",
-              "readonly_marker",
-              "async_marker",
+              "readonly",
+              "async",
               "name",
-              "optional_marker",
+              "optional",
               "type_parameters",
               "parameters"
             ]
@@ -47467,7 +47467,7 @@
             "$source": 0,
             "$named": true,
             "_accessibility_modifier": 33,
-            "_static_marker": true,
+            "_static": true,
             "_name": {
               "$type": 462,
               "$source": 0,
@@ -47495,7 +47495,7 @@
             },
             "$slotOrder": [
               "accessibility_modifier",
-              "static_marker",
+              "static",
               "name",
               "parameters"
             ]
@@ -47515,8 +47515,8 @@
             "$source": 0,
             "$named": true,
             "_accessibility_modifier": 33,
-            "_static_marker": true,
-            "_async_marker": true,
+            "_static": true,
+            "_async": true,
             "_name": {
               "$type": 462,
               "$source": 0,
@@ -47575,8 +47575,8 @@
             },
             "$slotOrder": [
               "accessibility_modifier",
-              "static_marker",
-              "async_marker",
+              "static",
+              "async",
               "name",
               "parameters",
               "return_type"
@@ -50823,7 +50823,7 @@
                   "$type": 290,
                   "$source": 0,
                   "$named": true,
-                  "_static_marker": true,
+                  "_static": true,
                   "_name": {
                     "$type": 158,
                     "$source": 0,
@@ -50852,7 +50852,7 @@
                     ]
                   },
                   "$slotOrder": [
-                    "static_marker",
+                    "static",
                     "name",
                     "type"
                   ],
@@ -50873,7 +50873,7 @@
                   "$source": 0,
                   "$named": true,
                   "_accessibility_modifier": 32,
-                  "_static_marker": true,
+                  "_static": true,
                   "_name": {
                     "$type": 158,
                     "$source": 0,
@@ -50952,7 +50952,7 @@
                   ],
                   "$slotOrder": [
                     "accessibility_modifier",
-                    "static_marker",
+                    "static",
                     "name",
                     "type",
                     "value"
@@ -50974,8 +50974,8 @@
                   "$source": 0,
                   "$named": true,
                   "_accessibility_modifier": 32,
-                  "_static_marker": true,
-                  "_readonly_marker": true,
+                  "_static": true,
+                  "_readonly": true,
                   "_name": {
                     "$type": 415,
                     "$source": 0,
@@ -51014,7 +51014,7 @@
                       }
                     ]
                   },
-                  "_optionality_marker": 126,
+                  "_optionality": 126,
                   "_type": {
                     "$type": 326,
                     "$source": 0,
@@ -51097,10 +51097,10 @@
                   ],
                   "$slotOrder": [
                     "accessibility_modifier",
-                    "static_marker",
-                    "readonly_marker",
+                    "static",
+                    "readonly",
                     "name",
-                    "optionality_marker",
+                    "optionality",
                     "type",
                     "value"
                   ],
@@ -51120,8 +51120,8 @@
                   "$type": 290,
                   "$source": 0,
                   "$named": true,
-                  "_static_marker": true,
-                  "_readonly_marker": true,
+                  "_static": true,
+                  "_readonly": true,
                   "_name": {
                     "$type": 415,
                     "$source": 0,
@@ -51160,7 +51160,7 @@
                       }
                     ]
                   },
-                  "_optionality_marker": 126,
+                  "_optionality": 126,
                   "_type": {
                     "$type": 326,
                     "$source": 0,
@@ -51242,10 +51242,10 @@
                     }
                   ],
                   "$slotOrder": [
-                    "static_marker",
-                    "readonly_marker",
+                    "static",
+                    "readonly",
                     "name",
-                    "optionality_marker",
+                    "optionality",
                     "type",
                     "value"
                   ],
@@ -51265,7 +51265,7 @@
                   "$type": 290,
                   "$source": 0,
                   "$named": true,
-                  "_readonly_marker": true,
+                  "_readonly": true,
                   "_name": {
                     "$type": 415,
                     "$source": 0,
@@ -51304,7 +51304,7 @@
                       }
                     ]
                   },
-                  "_optionality_marker": 126,
+                  "_optionality": 126,
                   "_type": {
                     "$type": 326,
                     "$source": 0,
@@ -51386,9 +51386,9 @@
                     }
                   ],
                   "$slotOrder": [
-                    "readonly_marker",
+                    "readonly",
                     "name",
-                    "optionality_marker",
+                    "optionality",
                     "type",
                     "value"
                   ],
@@ -51492,7 +51492,7 @@
               "$type": 290,
               "$source": 0,
               "$named": true,
-              "_static_marker": true,
+              "_static": true,
               "_name": {
                 "$type": 158,
                 "$source": 0,
@@ -51521,7 +51521,7 @@
                 ]
               },
               "$slotOrder": [
-                "static_marker",
+                "static",
                 "name",
                 "type"
               ],
@@ -51542,7 +51542,7 @@
               "$source": 0,
               "$named": true,
               "_accessibility_modifier": 32,
-              "_static_marker": true,
+              "_static": true,
               "_name": {
                 "$type": 158,
                 "$source": 0,
@@ -51621,7 +51621,7 @@
               ],
               "$slotOrder": [
                 "accessibility_modifier",
-                "static_marker",
+                "static",
                 "name",
                 "type",
                 "value"
@@ -51643,8 +51643,8 @@
               "$source": 0,
               "$named": true,
               "_accessibility_modifier": 32,
-              "_static_marker": true,
-              "_readonly_marker": true,
+              "_static": true,
+              "_readonly": true,
               "_name": {
                 "$type": 415,
                 "$source": 0,
@@ -51683,7 +51683,7 @@
                   }
                 ]
               },
-              "_optionality_marker": 126,
+              "_optionality": 126,
               "_type": {
                 "$type": 326,
                 "$source": 0,
@@ -51766,10 +51766,10 @@
               ],
               "$slotOrder": [
                 "accessibility_modifier",
-                "static_marker",
-                "readonly_marker",
+                "static",
+                "readonly",
                 "name",
-                "optionality_marker",
+                "optionality",
                 "type",
                 "value"
               ],
@@ -51789,8 +51789,8 @@
               "$type": 290,
               "$source": 0,
               "$named": true,
-              "_static_marker": true,
-              "_readonly_marker": true,
+              "_static": true,
+              "_readonly": true,
               "_name": {
                 "$type": 415,
                 "$source": 0,
@@ -51829,7 +51829,7 @@
                   }
                 ]
               },
-              "_optionality_marker": 126,
+              "_optionality": 126,
               "_type": {
                 "$type": 326,
                 "$source": 0,
@@ -51911,10 +51911,10 @@
                 }
               ],
               "$slotOrder": [
-                "static_marker",
-                "readonly_marker",
+                "static",
+                "readonly",
                 "name",
-                "optionality_marker",
+                "optionality",
                 "type",
                 "value"
               ],
@@ -51934,7 +51934,7 @@
               "$type": 290,
               "$source": 0,
               "$named": true,
-              "_readonly_marker": true,
+              "_readonly": true,
               "_name": {
                 "$type": 415,
                 "$source": 0,
@@ -51973,7 +51973,7 @@
                   }
                 ]
               },
-              "_optionality_marker": 126,
+              "_optionality": 126,
               "_type": {
                 "$type": 326,
                 "$source": 0,
@@ -52055,9 +52055,9 @@
                 }
               ],
               "$slotOrder": [
-                "readonly_marker",
+                "readonly",
                 "name",
-                "optionality_marker",
+                "optionality",
                 "type",
                 "value"
               ],
@@ -52268,7 +52268,7 @@
             "$type": 290,
             "$source": 0,
             "$named": true,
-            "_static_marker": true,
+            "_static": true,
             "_name": {
               "$type": 158,
               "$source": 0,
@@ -52297,7 +52297,7 @@
               ]
             },
             "$slotOrder": [
-              "static_marker",
+              "static",
               "name",
               "type"
             ],
@@ -52318,7 +52318,7 @@
             "$source": 0,
             "$named": true,
             "_accessibility_modifier": 32,
-            "_static_marker": true,
+            "_static": true,
             "_name": {
               "$type": 158,
               "$source": 0,
@@ -52397,7 +52397,7 @@
             ],
             "$slotOrder": [
               "accessibility_modifier",
-              "static_marker",
+              "static",
               "name",
               "type",
               "value"
@@ -52419,8 +52419,8 @@
             "$source": 0,
             "$named": true,
             "_accessibility_modifier": 32,
-            "_static_marker": true,
-            "_readonly_marker": true,
+            "_static": true,
+            "_readonly": true,
             "_name": {
               "$type": 415,
               "$source": 0,
@@ -52459,7 +52459,7 @@
                 }
               ]
             },
-            "_optionality_marker": 126,
+            "_optionality": 126,
             "_type": {
               "$type": 326,
               "$source": 0,
@@ -52542,10 +52542,10 @@
             ],
             "$slotOrder": [
               "accessibility_modifier",
-              "static_marker",
-              "readonly_marker",
+              "static",
+              "readonly",
               "name",
-              "optionality_marker",
+              "optionality",
               "type",
               "value"
             ],
@@ -52565,8 +52565,8 @@
             "$type": 290,
             "$source": 0,
             "$named": true,
-            "_static_marker": true,
-            "_readonly_marker": true,
+            "_static": true,
+            "_readonly": true,
             "_name": {
               "$type": 415,
               "$source": 0,
@@ -52605,7 +52605,7 @@
                 }
               ]
             },
-            "_optionality_marker": 126,
+            "_optionality": 126,
             "_type": {
               "$type": 326,
               "$source": 0,
@@ -52687,10 +52687,10 @@
               }
             ],
             "$slotOrder": [
-              "static_marker",
-              "readonly_marker",
+              "static",
+              "readonly",
               "name",
-              "optionality_marker",
+              "optionality",
               "type",
               "value"
             ],
@@ -52710,7 +52710,7 @@
             "$type": 290,
             "$source": 0,
             "$named": true,
-            "_readonly_marker": true,
+            "_readonly": true,
             "_name": {
               "$type": 415,
               "$source": 0,
@@ -52749,7 +52749,7 @@
                 }
               ]
             },
-            "_optionality_marker": 126,
+            "_optionality": 126,
             "_type": {
               "$type": 326,
               "$source": 0,
@@ -52831,9 +52831,9 @@
               }
             ],
             "$slotOrder": [
-              "readonly_marker",
+              "readonly",
               "name",
-              "optionality_marker",
+              "optionality",
               "type",
               "value"
             ],
@@ -54584,7 +54584,7 @@
                       ]
                     }
                   ],
-                  "_static_marker": true,
+                  "_static": true,
                   "_name": {
                     "$type": 158,
                     "$source": 0,
@@ -54614,7 +54614,7 @@
                   },
                   "$slotOrder": [
                     "decorator",
-                    "static_marker",
+                    "static",
                     "name",
                     "type"
                   ]
@@ -54743,7 +54743,7 @@
                     }
                   ],
                   "_accessibility_modifier": 32,
-                  "_static_marker": true,
+                  "_static": true,
                   "_name": {
                     "$type": 158,
                     "$source": 0,
@@ -54823,7 +54823,7 @@
                   "$slotOrder": [
                     "decorator",
                     "accessibility_modifier",
-                    "static_marker",
+                    "static",
                     "name",
                     "type",
                     "value"
@@ -54871,7 +54871,7 @@
                       ]
                     }
                   ],
-                  "_readonly_marker": true,
+                  "_readonly": true,
                   "_name": {
                     "$type": 415,
                     "$source": 0,
@@ -54910,7 +54910,7 @@
                       }
                     ]
                   },
-                  "_optionality_marker": 126,
+                  "_optionality": 126,
                   "_type": {
                     "$type": 326,
                     "$source": 0,
@@ -54993,9 +54993,9 @@
                   ],
                   "$slotOrder": [
                     "decorator",
-                    "readonly_marker",
+                    "readonly",
                     "name",
-                    "optionality_marker",
+                    "optionality",
                     "type",
                     "value"
                   ]
@@ -55467,7 +55467,7 @@
                   ]
                 }
               ],
-              "_static_marker": true,
+              "_static": true,
               "_name": {
                 "$type": 158,
                 "$source": 0,
@@ -55497,7 +55497,7 @@
               },
               "$slotOrder": [
                 "decorator",
-                "static_marker",
+                "static",
                 "name",
                 "type"
               ]
@@ -55626,7 +55626,7 @@
                 }
               ],
               "_accessibility_modifier": 32,
-              "_static_marker": true,
+              "_static": true,
               "_name": {
                 "$type": 158,
                 "$source": 0,
@@ -55706,7 +55706,7 @@
               "$slotOrder": [
                 "decorator",
                 "accessibility_modifier",
-                "static_marker",
+                "static",
                 "name",
                 "type",
                 "value"
@@ -55754,7 +55754,7 @@
                   ]
                 }
               ],
-              "_readonly_marker": true,
+              "_readonly": true,
               "_name": {
                 "$type": 415,
                 "$source": 0,
@@ -55793,7 +55793,7 @@
                   }
                 ]
               },
-              "_optionality_marker": 126,
+              "_optionality": 126,
               "_type": {
                 "$type": 326,
                 "$source": 0,
@@ -55876,9 +55876,9 @@
               ],
               "$slotOrder": [
                 "decorator",
-                "readonly_marker",
+                "readonly",
                 "name",
-                "optionality_marker",
+                "optionality",
                 "type",
                 "value"
               ]
@@ -56339,7 +56339,7 @@
                 ]
               }
             ],
-            "_static_marker": true,
+            "_static": true,
             "_name": {
               "$type": 158,
               "$source": 0,
@@ -56369,7 +56369,7 @@
             },
             "$slotOrder": [
               "decorator",
-              "static_marker",
+              "static",
               "name",
               "type"
             ]
@@ -56498,7 +56498,7 @@
               }
             ],
             "_accessibility_modifier": 32,
-            "_static_marker": true,
+            "_static": true,
             "_name": {
               "$type": 158,
               "$source": 0,
@@ -56578,7 +56578,7 @@
             "$slotOrder": [
               "decorator",
               "accessibility_modifier",
-              "static_marker",
+              "static",
               "name",
               "type",
               "value"
@@ -56626,7 +56626,7 @@
                 ]
               }
             ],
-            "_readonly_marker": true,
+            "_readonly": true,
             "_name": {
               "$type": 415,
               "$source": 0,
@@ -56665,7 +56665,7 @@
                 }
               ]
             },
-            "_optionality_marker": 126,
+            "_optionality": 126,
             "_type": {
               "$type": 326,
               "$source": 0,
@@ -56748,9 +56748,9 @@
             ],
             "$slotOrder": [
               "decorator",
-              "readonly_marker",
+              "readonly",
               "name",
-              "optionality_marker",
+              "optionality",
               "type",
               "value"
             ]
@@ -58255,7 +58255,7 @@
                   "$type": 285,
                   "$source": 0,
                   "$named": true,
-                  "_static_marker": true,
+                  "_static": true,
                   "_name": {
                     "$type": 462,
                     "$source": 0,
@@ -58384,7 +58384,7 @@
                     ]
                   },
                   "$slotOrder": [
-                    "static_marker",
+                    "static",
                     "name",
                     "parameters",
                     "body"
@@ -58939,7 +58939,7 @@
               "$type": 285,
               "$source": 0,
               "$named": true,
-              "_static_marker": true,
+              "_static": true,
               "_name": {
                 "$type": 462,
                 "$source": 0,
@@ -59068,7 +59068,7 @@
                 ]
               },
               "$slotOrder": [
-                "static_marker",
+                "static",
                 "name",
                 "parameters",
                 "body"
@@ -59640,7 +59640,7 @@
             "$type": 285,
             "$source": 0,
             "$named": true,
-            "_static_marker": true,
+            "_static": true,
             "_name": {
               "$type": 462,
               "$source": 0,
@@ -59769,7 +59769,7 @@
               ]
             },
             "$slotOrder": [
-              "static_marker",
+              "static",
               "name",
               "parameters",
               "body"
@@ -62731,8 +62731,8 @@
                   "$type": 290,
                   "$source": 0,
                   "$named": true,
-                  "_readonly_marker": true,
-                  "_abstract_marker": true,
+                  "_readonly": true,
+                  "_abstract": true,
                   "_name": {
                     "$type": 462,
                     "$source": 0,
@@ -62766,8 +62766,8 @@
                     ]
                   },
                   "$slotOrder": [
-                    "readonly_marker",
-                    "abstract_marker",
+                    "readonly",
+                    "abstract",
                     "name",
                     "type"
                   ],
@@ -62802,7 +62802,7 @@
                       }
                     }
                   },
-                  "_optionality_marker": 105,
+                  "_optionality": 105,
                   "_type": {
                     "$type": 326,
                     "$source": 0,
@@ -62822,7 +62822,7 @@
                   },
                   "$slotOrder": [
                     "name",
-                    "optionality_marker",
+                    "optionality",
                     "type"
                   ],
                   "_decorator": []
@@ -63005,7 +63005,7 @@
                       }
                     }
                   },
-                  "_optional_marker": true,
+                  "_optional": true,
                   "_parameters": {
                     "$type": 281,
                     "$source": 0,
@@ -63047,7 +63047,7 @@
                   "$slotOrder": [
                     "accessibility_modifier",
                     "name",
-                    "optional_marker",
+                    "optional",
                     "parameters",
                     "return_type"
                   ]
@@ -63520,8 +63520,8 @@
               "$type": 290,
               "$source": 0,
               "$named": true,
-              "_readonly_marker": true,
-              "_abstract_marker": true,
+              "_readonly": true,
+              "_abstract": true,
               "_name": {
                 "$type": 462,
                 "$source": 0,
@@ -63555,8 +63555,8 @@
                 ]
               },
               "$slotOrder": [
-                "readonly_marker",
-                "abstract_marker",
+                "readonly",
+                "abstract",
                 "name",
                 "type"
               ],
@@ -63591,7 +63591,7 @@
                   }
                 }
               },
-              "_optionality_marker": 105,
+              "_optionality": 105,
               "_type": {
                 "$type": 326,
                 "$source": 0,
@@ -63611,7 +63611,7 @@
               },
               "$slotOrder": [
                 "name",
-                "optionality_marker",
+                "optionality",
                 "type"
               ],
               "_decorator": []
@@ -63794,7 +63794,7 @@
                   }
                 }
               },
-              "_optional_marker": true,
+              "_optional": true,
               "_parameters": {
                 "$type": 281,
                 "$source": 0,
@@ -63836,7 +63836,7 @@
               "$slotOrder": [
                 "accessibility_modifier",
                 "name",
-                "optional_marker",
+                "optional",
                 "parameters",
                 "return_type"
               ]
@@ -64356,8 +64356,8 @@
             "$type": 290,
             "$source": 0,
             "$named": true,
-            "_readonly_marker": true,
-            "_abstract_marker": true,
+            "_readonly": true,
+            "_abstract": true,
             "_name": {
               "$type": 462,
               "$source": 0,
@@ -64391,8 +64391,8 @@
               ]
             },
             "$slotOrder": [
-              "readonly_marker",
-              "abstract_marker",
+              "readonly",
+              "abstract",
               "name",
               "type"
             ],
@@ -64427,7 +64427,7 @@
                 }
               }
             },
-            "_optionality_marker": 105,
+            "_optionality": 105,
             "_type": {
               "$type": 326,
               "$source": 0,
@@ -64447,7 +64447,7 @@
             },
             "$slotOrder": [
               "name",
-              "optionality_marker",
+              "optionality",
               "type"
             ],
             "_decorator": []
@@ -64630,7 +64630,7 @@
                 }
               }
             },
-            "_optional_marker": true,
+            "_optional": true,
             "_parameters": {
               "$type": 281,
               "$source": 0,
@@ -64672,7 +64672,7 @@
             "$slotOrder": [
               "accessibility_modifier",
               "name",
-              "optional_marker",
+              "optional",
               "parameters",
               "return_type"
             ]
@@ -76887,7 +76887,7 @@
                   "$type": 285,
                   "$source": 0,
                   "$named": true,
-                  "_override_modifier": true,
+                  "_override": true,
                   "_name": {
                     "$type": 462,
                     "$source": 0,
@@ -76941,7 +76941,7 @@
                     "_statements": []
                   },
                   "$slotOrder": [
-                    "override_modifier",
+                    "override",
                     "name",
                     "parameters",
                     "body"
@@ -77007,7 +77007,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "abstract class Foo {\n  abstract baz(): void ;\n}\n\nclass Bar extends Foo {\n  override baz() {}\n}\n",
-    "expectedReparseTree": "(program statements: (abstract_class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))))) statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body members: (class_body_member_method (method_definition override_modifier: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (abstract_class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))))) statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body members: (class_body_member_method (method_definition override: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "abstract class Foo {\n  abstract baz(): void ;\n}\n\nclass Bar extends Foo {\n  override baz() {}\n}\n",
     "wrappedOffset": 0
   },
@@ -77371,7 +77371,7 @@
             "$type": 285,
             "$source": 0,
             "$named": true,
-            "_override_modifier": true,
+            "_override": true,
             "_name": {
               "$type": 462,
               "$source": 0,
@@ -77425,7 +77425,7 @@
               "_statements": []
             },
             "$slotOrder": [
-              "override_modifier",
+              "override",
               "name",
               "parameters",
               "body"
@@ -77469,7 +77469,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{\n  override baz() {}\n}",
-    "expectedReparseTree": "(class_body members: (class_body_member_method (method_definition override_modifier: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(class_body members: (class_body_member_method (method_definition override: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon)))",
     "wrappedText": "class _C {\n  override baz() {}\n}",
     "wrappedOffset": 9
   },
@@ -77640,7 +77640,7 @@
               "$type": 285,
               "$source": 0,
               "$named": true,
-              "_override_modifier": true,
+              "_override": true,
               "_name": {
                 "$type": 462,
                 "$source": 0,
@@ -77694,7 +77694,7 @@
                 "_statements": []
               },
               "$slotOrder": [
-                "override_modifier",
+                "override",
                 "name",
                 "parameters",
                 "body"
@@ -77758,7 +77758,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class Bar extends Foo {\n  override baz() {}\n}\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body members: (class_body_member_method (method_definition override_modifier: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body members: (class_body_member_method (method_definition override: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class Bar extends Foo {\n  override baz() {}\n}\n",
     "wrappedOffset": 0
   },
@@ -96988,7 +96988,7 @@
                   "$type": 365,
                   "$source": 0,
                   "$named": true,
-                  "_const_marker": true,
+                  "_const": true,
                   "_name": {
                     "$type": 467,
                     "$source": 0,
@@ -97005,7 +97005,7 @@
                     }
                   },
                   "$slotOrder": [
-                    "const_marker",
+                    "const",
                     "name"
                   ]
                 },
@@ -97013,7 +97013,7 @@
                   "$type": 365,
                   "$source": 0,
                   "$named": true,
-                  "_const_marker": true,
+                  "_const": true,
                   "_name": {
                     "$type": 467,
                     "$source": 0,
@@ -97048,7 +97048,7 @@
                     "_content": 131
                   },
                   "$slotOrder": [
-                    "const_marker",
+                    "const",
                     "name",
                     "constraint"
                   ]
@@ -98691,7 +98691,7 @@
               "$type": 365,
               "$source": 0,
               "$named": true,
-              "_const_marker": true,
+              "_const": true,
               "_name": {
                 "$type": 467,
                 "$source": 0,
@@ -98708,7 +98708,7 @@
                 }
               },
               "$slotOrder": [
-                "const_marker",
+                "const",
                 "name"
               ]
             },
@@ -98716,7 +98716,7 @@
               "$type": 365,
               "$source": 0,
               "$named": true,
-              "_const_marker": true,
+              "_const": true,
               "_name": {
                 "$type": 467,
                 "$source": 0,
@@ -98751,7 +98751,7 @@
                 "_content": 131
               },
               "$slotOrder": [
-                "const_marker",
+                "const",
                 "name",
                 "constraint"
               ]
@@ -102478,7 +102478,7 @@
             "$type": 365,
             "$source": 0,
             "$named": true,
-            "_const_marker": true,
+            "_const": true,
             "_name": {
               "$type": 467,
               "$source": 0,
@@ -102495,7 +102495,7 @@
               }
             },
             "$slotOrder": [
-              "const_marker",
+              "const",
               "name"
             ]
           },
@@ -102503,7 +102503,7 @@
             "$type": 365,
             "$source": 0,
             "$named": true,
-            "_const_marker": true,
+            "_const": true,
             "_name": {
               "$type": 467,
               "$source": 0,
@@ -102538,7 +102538,7 @@
               "_content": 131
             },
             "$slotOrder": [
-              "const_marker",
+              "const",
               "name",
               "constraint"
             ]
@@ -120897,7 +120897,7 @@
                   "$source": 0,
                   "$named": true,
                   "_sign": 91,
-                  "_readonly_marker": true,
+                  "_readonly": true,
                   "_mapped_type_clause": {
                     "$type": 353,
                     "$source": 0,
@@ -121003,7 +121003,7 @@
                   ],
                   "$slotOrder": [
                     "sign",
-                    "readonly_marker",
+                    "readonly",
                     "mapped_type_clause",
                     "type"
                   ]
@@ -122624,7 +122624,7 @@
             "$source": 0,
             "$named": true,
             "_sign": 91,
-            "_readonly_marker": true,
+            "_readonly": true,
             "_mapped_type_clause": {
               "$type": 353,
               "$source": 0,
@@ -122730,7 +122730,7 @@
             ],
             "$slotOrder": [
               "sign",
-              "readonly_marker",
+              "readonly",
               "mapped_type_clause",
               "type"
             ]
@@ -123380,7 +123380,7 @@
               "$source": 0,
               "$named": true,
               "_sign": 91,
-              "_readonly_marker": true,
+              "_readonly": true,
               "_mapped_type_clause": {
                 "$type": 353,
                 "$source": 0,
@@ -123486,7 +123486,7 @@
               ],
               "$slotOrder": [
                 "sign",
-                "readonly_marker",
+                "readonly",
                 "mapped_type_clause",
                 "type"
               ]
@@ -124097,7 +124097,7 @@
       "$source": 0,
       "$named": true,
       "_sign": 91,
-      "_readonly_marker": true,
+      "_readonly": true,
       "_mapped_type_clause": {
         "$type": 353,
         "$source": 0,
@@ -124203,7 +124203,7 @@
       ],
       "$slotOrder": [
         "sign",
-        "readonly_marker",
+        "readonly",
         "mapped_type_clause",
         "type"
       ]
@@ -125652,7 +125652,7 @@
                   "$type": 402,
                   "$source": 0,
                   "$named": true,
-                  "_readonly_marker": true,
+                  "_readonly": true,
                   "_name": {
                     "$type": 1,
                     "$source": 0,
@@ -125711,7 +125711,7 @@
                     }
                   ],
                   "$slotOrder": [
-                    "readonly_marker",
+                    "readonly",
                     "name",
                     "index_type",
                     "type"
@@ -125894,7 +125894,7 @@
               "$type": 402,
               "$source": 0,
               "$named": true,
-              "_readonly_marker": true,
+              "_readonly": true,
               "_name": {
                 "$type": 1,
                 "$source": 0,
@@ -125953,7 +125953,7 @@
                 }
               ],
               "$slotOrder": [
-                "readonly_marker",
+                "readonly",
                 "name",
                 "index_type",
                 "type"
@@ -126147,7 +126147,7 @@
             "$type": 402,
             "$source": 0,
             "$named": true,
-            "_readonly_marker": true,
+            "_readonly": true,
             "_name": {
               "$type": 1,
               "$source": 0,
@@ -126206,7 +126206,7 @@
               }
             ],
             "$slotOrder": [
-              "readonly_marker",
+              "readonly",
               "name",
               "index_type",
               "type"
@@ -126348,7 +126348,7 @@
       "$type": 402,
       "$source": 0,
       "$named": true,
-      "_readonly_marker": true,
+      "_readonly": true,
       "_name": {
         "$type": 1,
         "$source": 0,
@@ -126407,7 +126407,7 @@
         }
       ],
       "$slotOrder": [
-        "readonly_marker",
+        "readonly",
         "name",
         "index_type",
         "type"
@@ -144458,7 +144458,7 @@
                       }
                     }
                   },
-                  "_optional_marker": true,
+                  "_optional": true,
                   "_type": {
                     "$type": 326,
                     "$source": 0,
@@ -144492,7 +144492,7 @@
                   },
                   "$slotOrder": [
                     "name",
-                    "optional_marker",
+                    "optional",
                     "type"
                   ]
                 },
@@ -144515,7 +144515,7 @@
                       }
                     }
                   },
-                  "_optional_marker": true,
+                  "_optional": true,
                   "_type": {
                     "$type": 326,
                     "$source": 0,
@@ -144549,7 +144549,7 @@
                   },
                   "$slotOrder": [
                     "name",
-                    "optional_marker",
+                    "optional",
                     "type"
                   ]
                 },
@@ -144572,7 +144572,7 @@
                       }
                     }
                   },
-                  "_optional_marker": true,
+                  "_optional": true,
                   "_type": {
                     "$type": 326,
                     "$source": 0,
@@ -144606,7 +144606,7 @@
                   },
                   "$slotOrder": [
                     "name",
-                    "optional_marker",
+                    "optional",
                     "type"
                   ]
                 }
@@ -145093,7 +145093,7 @@
                   }
                 }
               },
-              "_optional_marker": true,
+              "_optional": true,
               "_type": {
                 "$type": 326,
                 "$source": 0,
@@ -145127,7 +145127,7 @@
               },
               "$slotOrder": [
                 "name",
-                "optional_marker",
+                "optional",
                 "type"
               ]
             },
@@ -145150,7 +145150,7 @@
                   }
                 }
               },
-              "_optional_marker": true,
+              "_optional": true,
               "_type": {
                 "$type": 326,
                 "$source": 0,
@@ -145184,7 +145184,7 @@
               },
               "$slotOrder": [
                 "name",
-                "optional_marker",
+                "optional",
                 "type"
               ]
             },
@@ -145207,7 +145207,7 @@
                   }
                 }
               },
-              "_optional_marker": true,
+              "_optional": true,
               "_type": {
                 "$type": 326,
                 "$source": 0,
@@ -145241,7 +145241,7 @@
               },
               "$slotOrder": [
                 "name",
-                "optional_marker",
+                "optional",
                 "type"
               ]
             }
@@ -145949,7 +145949,7 @@
                 }
               }
             },
-            "_optional_marker": true,
+            "_optional": true,
             "_type": {
               "$type": 326,
               "$source": 0,
@@ -145983,7 +145983,7 @@
             },
             "$slotOrder": [
               "name",
-              "optional_marker",
+              "optional",
               "type"
             ]
           },
@@ -146006,7 +146006,7 @@
                 }
               }
             },
-            "_optional_marker": true,
+            "_optional": true,
             "_type": {
               "$type": 326,
               "$source": 0,
@@ -146040,7 +146040,7 @@
             },
             "$slotOrder": [
               "name",
-              "optional_marker",
+              "optional",
               "type"
             ]
           },
@@ -146063,7 +146063,7 @@
                 }
               }
             },
-            "_optional_marker": true,
+            "_optional": true,
             "_type": {
               "$type": 326,
               "$source": 0,
@@ -146097,7 +146097,7 @@
             },
             "$slotOrder": [
               "name",
-              "optional_marker",
+              "optional",
               "type"
             ]
           }
@@ -146481,7 +146481,7 @@
           }
         }
       },
-      "_optional_marker": true,
+      "_optional": true,
       "_type": {
         "$type": 326,
         "$source": 0,
@@ -146515,7 +146515,7 @@
       },
       "$slotOrder": [
         "name",
-        "optional_marker",
+        "optional",
         "type"
       ]
     },
@@ -146555,7 +146555,7 @@
           }
         }
       },
-      "_optional_marker": true,
+      "_optional": true,
       "_type": {
         "$type": 326,
         "$source": 0,
@@ -146589,7 +146589,7 @@
       },
       "$slotOrder": [
         "name",
-        "optional_marker",
+        "optional",
         "type"
       ]
     },
@@ -146629,7 +146629,7 @@
           }
         }
       },
-      "_optional_marker": true,
+      "_optional": true,
       "_type": {
         "$type": 326,
         "$source": 0,
@@ -146663,7 +146663,7 @@
       },
       "$slotOrder": [
         "name",
-        "optional_marker",
+        "optional",
         "type"
       ]
     },
@@ -220459,7 +220459,7 @@
                       "$type": 337,
                       "$source": 0,
                       "$named": true,
-                      "_abstract_marker": true,
+                      "_abstract": true,
                       "_parameters": {
                         "$type": 281,
                         "$source": 0,
@@ -220568,7 +220568,7 @@
                         }
                       ],
                       "$slotOrder": [
-                        "abstract_marker",
+                        "abstract",
                         "parameters",
                         "type"
                       ]
@@ -220984,7 +220984,7 @@
                   "$type": 337,
                   "$source": 0,
                   "$named": true,
-                  "_abstract_marker": true,
+                  "_abstract": true,
                   "_parameters": {
                     "$type": 281,
                     "$source": 0,
@@ -221093,7 +221093,7 @@
                     }
                   ],
                   "$slotOrder": [
-                    "abstract_marker",
+                    "abstract",
                     "parameters",
                     "type"
                   ]
@@ -221697,7 +221697,7 @@
                 "$type": 337,
                 "$source": 0,
                 "$named": true,
-                "_abstract_marker": true,
+                "_abstract": true,
                 "_parameters": {
                   "$type": 281,
                   "$source": 0,
@@ -221806,7 +221806,7 @@
                   }
                 ],
                 "$slotOrder": [
-                  "abstract_marker",
+                  "abstract",
                   "parameters",
                   "type"
                 ]
@@ -222081,7 +222081,7 @@
       "$type": 337,
       "$source": 0,
       "$named": true,
-      "_abstract_marker": true,
+      "_abstract": true,
       "_parameters": {
         "$type": 281,
         "$source": 0,
@@ -222190,7 +222190,7 @@
         }
       ],
       "$slotOrder": [
-        "abstract_marker",
+        "abstract",
         "parameters",
         "type"
       ]
@@ -222926,7 +222926,7 @@
             "$type": 337,
             "$source": 0,
             "$named": true,
-            "_abstract_marker": true,
+            "_abstract": true,
             "_parameters": {
               "$type": 281,
               "$source": 0,
@@ -222973,7 +222973,7 @@
               }
             ],
             "$slotOrder": [
-              "abstract_marker",
+              "abstract",
               "parameters",
               "type"
             ]
@@ -223101,7 +223101,7 @@
         "$type": 337,
         "$source": 0,
         "$named": true,
-        "_abstract_marker": true,
+        "_abstract": true,
         "_parameters": {
           "$type": 281,
           "$source": 0,
@@ -223148,7 +223148,7 @@
           }
         ],
         "$slotOrder": [
-          "abstract_marker",
+          "abstract",
           "parameters",
           "type"
         ]
@@ -223368,7 +223368,7 @@
       "$type": 337,
       "$source": 0,
       "$named": true,
-      "_abstract_marker": true,
+      "_abstract": true,
       "_parameters": {
         "$type": 281,
         "$source": 0,
@@ -223415,7 +223415,7 @@
         }
       ],
       "$slotOrder": [
-        "abstract_marker",
+        "abstract",
         "parameters",
         "type"
       ]
@@ -233688,7 +233688,7 @@
                                 }
                               }
                             },
-                            "_optional_marker": true,
+                            "_optional": true,
                             "_type": {
                               "$type": 326,
                               "$source": 0,
@@ -233708,7 +233708,7 @@
                             },
                             "$slotOrder": [
                               "name",
-                              "optional_marker",
+                              "optional",
                               "type"
                             ]
                           }
@@ -233844,7 +233844,7 @@
                                 }
                               }
                             },
-                            "_optional_marker": true,
+                            "_optional": true,
                             "_type": {
                               "$type": 326,
                               "$source": 0,
@@ -233864,7 +233864,7 @@
                             },
                             "$slotOrder": [
                               "name",
-                              "optional_marker",
+                              "optional",
                               "type"
                             ]
                           },
@@ -233887,7 +233887,7 @@
                                 }
                               }
                             },
-                            "_optional_marker": true,
+                            "_optional": true,
                             "_type": {
                               "$type": 326,
                               "$source": 0,
@@ -233907,7 +233907,7 @@
                             },
                             "$slotOrder": [
                               "name",
-                              "optional_marker",
+                              "optional",
                               "type"
                             ]
                           }
@@ -236379,7 +236379,7 @@
                             }
                           }
                         },
-                        "_optional_marker": true,
+                        "_optional": true,
                         "_type": {
                           "$type": 326,
                           "$source": 0,
@@ -236399,7 +236399,7 @@
                         },
                         "$slotOrder": [
                           "name",
-                          "optional_marker",
+                          "optional",
                           "type"
                         ]
                       }
@@ -236535,7 +236535,7 @@
                             }
                           }
                         },
-                        "_optional_marker": true,
+                        "_optional": true,
                         "_type": {
                           "$type": 326,
                           "$source": 0,
@@ -236555,7 +236555,7 @@
                         },
                         "$slotOrder": [
                           "name",
-                          "optional_marker",
+                          "optional",
                           "type"
                         ]
                       },
@@ -236578,7 +236578,7 @@
                             }
                           }
                         },
-                        "_optional_marker": true,
+                        "_optional": true,
                         "_type": {
                           "$type": 326,
                           "$source": 0,
@@ -236598,7 +236598,7 @@
                         },
                         "$slotOrder": [
                           "name",
-                          "optional_marker",
+                          "optional",
                           "type"
                         ]
                       }
@@ -241715,7 +241715,7 @@
                           }
                         }
                       },
-                      "_optional_marker": true,
+                      "_optional": true,
                       "_type": {
                         "$type": 326,
                         "$source": 0,
@@ -241735,7 +241735,7 @@
                       },
                       "$slotOrder": [
                         "name",
-                        "optional_marker",
+                        "optional",
                         "type"
                       ]
                     }
@@ -241871,7 +241871,7 @@
                           }
                         }
                       },
-                      "_optional_marker": true,
+                      "_optional": true,
                       "_type": {
                         "$type": 326,
                         "$source": 0,
@@ -241891,7 +241891,7 @@
                       },
                       "$slotOrder": [
                         "name",
-                        "optional_marker",
+                        "optional",
                         "type"
                       ]
                     },
@@ -241914,7 +241914,7 @@
                           }
                         }
                       },
-                      "_optional_marker": true,
+                      "_optional": true,
                       "_type": {
                         "$type": 326,
                         "$source": 0,
@@ -241934,7 +241934,7 @@
                       },
                       "$slotOrder": [
                         "name",
-                        "optional_marker",
+                        "optional",
                         "type"
                       ]
                     }
@@ -242290,7 +242290,7 @@
                         }
                       }
                     },
-                    "_optional_marker": true,
+                    "_optional": true,
                     "_type": {
                       "$type": 326,
                       "$source": 0,
@@ -242310,7 +242310,7 @@
                     },
                     "$slotOrder": [
                       "name",
-                      "optional_marker",
+                      "optional",
                       "type"
                     ]
                   }
@@ -242446,7 +242446,7 @@
                         }
                       }
                     },
-                    "_optional_marker": true,
+                    "_optional": true,
                     "_type": {
                       "$type": 326,
                       "$source": 0,
@@ -242466,7 +242466,7 @@
                     },
                     "$slotOrder": [
                       "name",
-                      "optional_marker",
+                      "optional",
                       "type"
                     ]
                   },
@@ -242489,7 +242489,7 @@
                         }
                       }
                     },
-                    "_optional_marker": true,
+                    "_optional": true,
                     "_type": {
                       "$type": 326,
                       "$source": 0,
@@ -242509,7 +242509,7 @@
                     },
                     "$slotOrder": [
                       "name",
-                      "optional_marker",
+                      "optional",
                       "type"
                     ]
                   }
@@ -244180,7 +244180,7 @@
                     }
                   }
                 },
-                "_optional_marker": true,
+                "_optional": true,
                 "_type": {
                   "$type": 326,
                   "$source": 0,
@@ -244200,7 +244200,7 @@
                 },
                 "$slotOrder": [
                   "name",
-                  "optional_marker",
+                  "optional",
                   "type"
                 ]
               }
@@ -244353,7 +244353,7 @@
                     }
                   }
                 },
-                "_optional_marker": true,
+                "_optional": true,
                 "_type": {
                   "$type": 326,
                   "$source": 0,
@@ -244373,7 +244373,7 @@
                 },
                 "$slotOrder": [
                   "name",
-                  "optional_marker",
+                  "optional",
                   "type"
                 ]
               },
@@ -244396,7 +244396,7 @@
                     }
                   }
                 },
-                "_optional_marker": true,
+                "_optional": true,
                 "_type": {
                   "$type": 326,
                   "$source": 0,
@@ -244416,7 +244416,7 @@
                 },
                 "$slotOrder": [
                   "name",
-                  "optional_marker",
+                  "optional",
                   "type"
                 ]
               }
@@ -244527,7 +244527,7 @@
                   }
                 }
               },
-              "_optional_marker": true,
+              "_optional": true,
               "_type": {
                 "$type": 326,
                 "$source": 0,
@@ -244547,7 +244547,7 @@
               },
               "$slotOrder": [
                 "name",
-                "optional_marker",
+                "optional",
                 "type"
               ]
             }
@@ -244665,7 +244665,7 @@
                   }
                 }
               },
-              "_optional_marker": true,
+              "_optional": true,
               "_type": {
                 "$type": 326,
                 "$source": 0,
@@ -244685,7 +244685,7 @@
               },
               "$slotOrder": [
                 "name",
-                "optional_marker",
+                "optional",
                 "type"
               ]
             },
@@ -244708,7 +244708,7 @@
                   }
                 }
               },
-              "_optional_marker": true,
+              "_optional": true,
               "_type": {
                 "$type": 326,
                 "$source": 0,
@@ -244728,7 +244728,7 @@
               },
               "$slotOrder": [
                 "name",
-                "optional_marker",
+                "optional",
                 "type"
               ]
             }
@@ -244819,7 +244819,7 @@
                 }
               }
             },
-            "_optional_marker": true,
+            "_optional": true,
             "_type": {
               "$type": 326,
               "$source": 0,
@@ -244839,7 +244839,7 @@
             },
             "$slotOrder": [
               "name",
-              "optional_marker",
+              "optional",
               "type"
             ]
           }
@@ -244952,7 +244952,7 @@
                 }
               }
             },
-            "_optional_marker": true,
+            "_optional": true,
             "_type": {
               "$type": 326,
               "$source": 0,
@@ -244972,7 +244972,7 @@
             },
             "$slotOrder": [
               "name",
-              "optional_marker",
+              "optional",
               "type"
             ]
           },
@@ -244995,7 +244995,7 @@
                 }
               }
             },
-            "_optional_marker": true,
+            "_optional": true,
             "_type": {
               "$type": 326,
               "$source": 0,
@@ -245015,7 +245015,7 @@
             },
             "$slotOrder": [
               "name",
-              "optional_marker",
+              "optional",
               "type"
             ]
           }
@@ -245095,7 +245095,7 @@
           }
         }
       },
-      "_optional_marker": true,
+      "_optional": true,
       "_type": {
         "$type": 326,
         "$source": 0,
@@ -245115,7 +245115,7 @@
       },
       "$slotOrder": [
         "name",
-        "optional_marker",
+        "optional",
         "type"
       ]
     },
@@ -245213,7 +245213,7 @@
           }
         }
       },
-      "_optional_marker": true,
+      "_optional": true,
       "_type": {
         "$type": 326,
         "$source": 0,
@@ -245233,7 +245233,7 @@
       },
       "$slotOrder": [
         "name",
-        "optional_marker",
+        "optional",
         "type"
       ]
     },
@@ -245273,7 +245273,7 @@
           }
         }
       },
-      "_optional_marker": true,
+      "_optional": true,
       "_type": {
         "$type": 326,
         "$source": 0,
@@ -245293,7 +245293,7 @@
       },
       "$slotOrder": [
         "name",
-        "optional_marker",
+        "optional",
         "type"
       ]
     },

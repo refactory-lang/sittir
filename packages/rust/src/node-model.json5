@@ -746,14 +746,14 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "ref_marker": {
+      "ref": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "mutable_specifier": {
+      "mutable": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -977,7 +977,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "unsafe_marker": {
+      "unsafe": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1156,7 +1156,7 @@
       }
     },
     "let_declaration": {
-      "mutable_specifier": {
+      "mutable": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1282,7 +1282,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "mutable_specifier": {
+      "mutable": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1291,7 +1291,7 @@
       }
     },
     "variadic_parameter": {
-      "mutable_specifier": {
+      "mutable": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1307,7 +1307,7 @@
       }
     },
     "parameter": {
-      "mutable_specifier": {
+      "mutable": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1558,7 +1558,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "mutable_specifier": {
+      "mutable": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2213,7 +2213,7 @@
       }
     },
     "async_block": {
-      "move_marker": {
+      "move": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2229,7 +2229,7 @@
       }
     },
     "gen_block": {
-      "move_marker": {
+      "move": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2377,7 +2377,7 @@
       }
     },
     "reference_pattern": {
-      "mutable_specifier": {
+      "mutable": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2883,21 +2883,21 @@
       }
     },
     "closure_expression_block": {
-      "static_marker": {
+      "static": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "async_marker": {
+      "async": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "move_marker": {
+      "move": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2927,21 +2927,21 @@
       }
     },
     "closure_expression_expr": {
-      "static_marker": {
+      "static": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "async_marker": {
+      "async": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "move_marker": {
+      "move": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3018,7 +3018,7 @@
       }
     },
     "impl_item_body": {
-      "unsafe_marker": {
+      "unsafe": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3062,7 +3062,7 @@
       }
     },
     "impl_item_semi": {
-      "unsafe_marker": {
+      "unsafe": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3487,14 +3487,14 @@
       }
     },
     "field_pattern_shorthand": {
-      "ref_marker": {
+      "ref": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "mutable_specifier": {
+      "mutable": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3510,14 +3510,14 @@
       }
     },
     "field_pattern_named": {
-      "ref_marker": {
+      "ref": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "mutable_specifier": {
+      "mutable": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -5426,9 +5426,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "move_marker",
-          "propertyName": "moveMarker",
-          "paramName": "moveMarker",
+          "name": "move",
+          "propertyName": "move",
+          "paramName": "move",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -5466,7 +5466,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "move_marker",
+        "move",
         "body"
       ]
     },
@@ -8227,9 +8227,9 @@
       },
       "slots": [
         {
-          "name": "static_marker",
-          "propertyName": "staticMarker",
-          "paramName": "staticMarker",
+          "name": "static",
+          "propertyName": "static",
+          "paramName": "static_",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8245,9 +8245,9 @@
           ]
         },
         {
-          "name": "async_marker",
-          "propertyName": "asyncMarker",
-          "paramName": "asyncMarker",
+          "name": "async",
+          "propertyName": "async",
+          "paramName": "async",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8263,9 +8263,9 @@
           ]
         },
         {
-          "name": "move_marker",
-          "propertyName": "moveMarker",
-          "paramName": "moveMarker",
+          "name": "move",
+          "propertyName": "move",
+          "paramName": "move",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8344,9 +8344,9 @@
       "name": "closure_expression_block",
       "factoryShape": "config",
       "factoryFields": [
-        "static_marker",
-        "async_marker",
-        "move_marker",
+        "static",
+        "async",
+        "move",
         "parameters",
         "return_type",
         "body"
@@ -8364,9 +8364,9 @@
       },
       "slots": [
         {
-          "name": "static_marker",
-          "propertyName": "staticMarker",
-          "paramName": "staticMarker",
+          "name": "static",
+          "propertyName": "static",
+          "paramName": "static_",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8382,9 +8382,9 @@
           ]
         },
         {
-          "name": "async_marker",
-          "propertyName": "asyncMarker",
-          "paramName": "asyncMarker",
+          "name": "async",
+          "propertyName": "async",
+          "paramName": "async",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8400,9 +8400,9 @@
           ]
         },
         {
-          "name": "move_marker",
-          "propertyName": "moveMarker",
-          "paramName": "moveMarker",
+          "name": "move",
+          "propertyName": "move",
+          "paramName": "move",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8467,9 +8467,9 @@
       "name": "closure_expression_expr",
       "factoryShape": "config",
       "factoryFields": [
-        "static_marker",
-        "async_marker",
-        "move_marker",
+        "static",
+        "async",
+        "move",
         "parameters",
         "body"
       ]
@@ -11324,9 +11324,9 @@
       },
       "slots": [
         {
-          "name": "ref_marker",
-          "propertyName": "refMarker",
-          "paramName": "refMarker",
+          "name": "ref",
+          "propertyName": "ref",
+          "paramName": "ref",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -11342,9 +11342,9 @@
           ]
         },
         {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
+          "name": "mutable",
+          "propertyName": "mutable",
+          "paramName": "mutable",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -11405,8 +11405,8 @@
       "name": "field_pattern_named",
       "factoryShape": "config",
       "factoryFields": [
-        "ref_marker",
-        "mutable_specifier",
+        "ref",
+        "mutable",
         "name",
         "pattern"
       ]
@@ -11423,9 +11423,9 @@
       },
       "slots": [
         {
-          "name": "ref_marker",
-          "propertyName": "refMarker",
-          "paramName": "refMarker",
+          "name": "ref",
+          "propertyName": "ref",
+          "paramName": "ref",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -11441,9 +11441,9 @@
           ]
         },
         {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
+          "name": "mutable",
+          "propertyName": "mutable",
+          "paramName": "mutable",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -11484,8 +11484,8 @@
       "name": "field_pattern_shorthand",
       "factoryShape": "config",
       "factoryFields": [
-        "ref_marker",
-        "mutable_specifier",
+        "ref",
+        "mutable",
         "name"
       ]
     },
@@ -12467,9 +12467,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "move_marker",
-          "propertyName": "moveMarker",
-          "paramName": "moveMarker",
+          "name": "move",
+          "propertyName": "move",
+          "paramName": "move",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -12507,7 +12507,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "move_marker",
+        "move",
         "body"
       ]
     },
@@ -13093,9 +13093,9 @@
       },
       "slots": [
         {
-          "name": "unsafe_marker",
-          "propertyName": "unsafeMarker",
-          "paramName": "unsafeMarker",
+          "name": "unsafe",
+          "propertyName": "unsafe",
+          "paramName": "unsafe",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -13236,7 +13236,7 @@
       "name": "impl_item_body",
       "factoryShape": "config",
       "factoryFields": [
-        "unsafe_marker",
+        "unsafe",
         "type_parameters",
         "trait_clause",
         "type",
@@ -13372,9 +13372,9 @@
       },
       "slots": [
         {
-          "name": "unsafe_marker",
-          "propertyName": "unsafeMarker",
-          "paramName": "unsafeMarker",
+          "name": "unsafe",
+          "propertyName": "unsafe",
+          "paramName": "unsafe",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -13495,7 +13495,7 @@
       "name": "impl_item_semi",
       "factoryShape": "config",
       "factoryFields": [
-        "unsafe_marker",
+        "unsafe",
         "type_parameters",
         "trait_clause",
         "type",
@@ -14547,9 +14547,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
+          "name": "mutable",
+          "propertyName": "mutable",
+          "paramName": "mutable",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -14649,7 +14649,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "mutable_specifier",
+        "mutable",
         "pattern",
         "type",
         "value",
@@ -17067,9 +17067,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
+          "name": "mutable",
+          "propertyName": "mutable",
+          "paramName": "mutable",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -17136,7 +17136,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "mutable_specifier",
+        "mutable",
         "name",
         "type"
       ]
@@ -19773,9 +19773,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
+          "name": "mutable",
+          "propertyName": "mutable",
+          "paramName": "mutable",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -19815,7 +19815,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "mutable_specifier",
+        "mutable",
         "pattern"
       ]
     },
@@ -19848,9 +19848,9 @@
           ]
         },
         {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
+          "name": "mutable",
+          "propertyName": "mutable",
+          "paramName": "mutable",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -19891,7 +19891,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "lifetime",
-        "mutable_specifier",
+        "mutable",
         "type"
       ]
     },
@@ -21073,9 +21073,9 @@
           ]
         },
         {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
+          "name": "mutable",
+          "propertyName": "mutable",
+          "paramName": "mutable",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -21097,7 +21097,7 @@
       "factoryFields": [
         "reference",
         "lifetime",
-        "mutable_specifier"
+        "mutable"
       ]
     },
     {
@@ -21528,9 +21528,9 @@
           ]
         },
         {
-          "name": "ref_marker",
-          "propertyName": "refMarker",
-          "paramName": "refMarker",
+          "name": "ref",
+          "propertyName": "ref",
+          "paramName": "ref",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -21546,9 +21546,9 @@
           ]
         },
         {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
+          "name": "mutable",
+          "propertyName": "mutable",
+          "paramName": "mutable",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -21629,8 +21629,8 @@
       "factoryShape": "config",
       "factoryFields": [
         "visibility_modifier",
-        "ref_marker",
-        "mutable_specifier",
+        "ref",
+        "mutable",
         "name",
         "type",
         "value"
@@ -23101,9 +23101,9 @@
           ]
         },
         {
-          "name": "unsafe_marker",
-          "propertyName": "unsafeMarker",
-          "paramName": "unsafeMarker",
+          "name": "unsafe",
+          "propertyName": "unsafe",
+          "paramName": "unsafe",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -23222,7 +23222,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "visibility_modifier",
-        "unsafe_marker",
+        "unsafe",
         "name",
         "type_parameters",
         "bounds",
@@ -25864,9 +25864,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
+          "name": "mutable",
+          "propertyName": "mutable",
+          "paramName": "mutable",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -25906,7 +25906,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "mutable_specifier",
+        "mutable",
         "pattern"
       ]
     },

@@ -958,7 +958,7 @@ export namespace Expression {
 	export interface Interpolation<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression<G>>> {
 		// claimed by pt
 		readonly kind: 'expression.interpolation';
-		readonly eq?: boolean;
+		readonly debug?: boolean;
 		// p only
 		readonly expression?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 		readonly formatSpecifier?: V.Expression.Interpolation.Format<G>;

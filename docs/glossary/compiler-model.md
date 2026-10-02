@@ -3810,7 +3810,7 @@ slot, else nothing.
 
 The slot name, the field name as the model spells it (case kept, like the key it may derive from), of a member that is a field referencing a keyword node
 (`AssembledKeyword` with the `word` flag), such as an arrow function's
-`async_marker`. It names a seam like an enum slot does, so a cascaded
+`async`. It names a seam like an enum slot does, so a cascaded
 opener after the marker meets the keyword's face instead of nothing. A
 member inside a choice arm (`RenderRulesConfig.choiceArmNodes`) is left
 alone: the modifier-ordering arms of `public_field_definition` repeat the

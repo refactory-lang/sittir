@@ -596,7 +596,15 @@ and so does every `reauthored` rule whose cause is asserted but not verified:
 `'ambiguity'`, which has no detector, and `'alias-shape'`, verified or on its
 grammar's floor. Each is a shape the pipeline should one day produce from the
 upstream grammar by itself, at which point the entry is deleted and the ceiling
-drops; a ceiling never rises.
+drops. A ceiling rises only by the maintainer's decision for one named rule,
+recorded here with its reason; a change that merely needs room does not raise
+it.
+
+One such rule stands: python `_tuple_elements`. `tuple` has to stop sharing
+`_collection_elements`, and the derivable alternative, `tuple` itself as the
+list, makes the list kind a member of its own element union, which the
+widening types cannot express without a cycle. The hidden list rule is the
+hand-written entry that avoids it, and it goes when that cycle is solved.
 
 A rule reauthored under a witness-verified cause (`isWitnessVerified`) is not
 counted. It corrects an upstream rule that is wrong, the gate and the upstream

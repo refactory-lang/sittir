@@ -157,7 +157,7 @@ A newly registered rule is recorded in `ruleOrigins` as a `keyword` mint.
 #### body
 
 ```text
-// The name is a convention (`_<kw>_marker`), not a reservation — a base
+// The name is a convention (`_kw_<kw>`), not a reservation — a base
 // grammar can define its own rule at this exact name. Reuse it when it
 // structurally IS this keyword (ruleKey covers type/named along with
 // value, so an existing rule that displays the same text but visibly —
@@ -1652,9 +1652,9 @@ enum slot, permutable modifiers ⇒ marker slots). Callers (`applyClauseHoist`'s
 CHOICE branch and `mintStructuredChoiceArm`) decline the arm mint and let the
 parent's own slots absorb the markers; `promotePermutationArmKeywords`
 (enrich) then normalizes required raw keyword steps to the shared
-`field('<kw>_marker', $._kw_*)` spelling so the arms' slots merge.
+`field('<kw>', $._kw_*)` spelling so the arms' slots merge.
 
-Atom identity: a generated `<literal>_marker` field collapses to its literal
+Atom identity: a generated `<literal>` field collapses to its literal
 (the keyword-promotion spelling of the same fact), while any OTHER authored
 field name is slot identity and stays in the key — reordered same-named
 fields are a permutation, differing field sets are alternatives. The
@@ -3930,7 +3930,7 @@ Terminal-ness is the `SymbolSource`'s `isTerminal`, a predicted kind catalog's `
 #### body
 
 ```text
-/* A generated `<literal>_marker` field is the keyword-promotion spelling
+/* A generated `<literal>` field is the keyword-promotion spelling
 	   of the same literal — collapse it so a raw keyword in one arm keys
 	   equal to its promoted sibling. Any other field name is authored slot
 	   identity and stays in the key. */
@@ -4445,10 +4445,10 @@ same rule structurally when neither has a name.
  *
  *   3. Optional keyword-prefix promotion — `optional(identifier-literal)`
  *      at any seq position → wrap inner as the same FIELD(SYMBOL) form.
- *      Field is named `<token>_marker` (semantic suffix indicating
- *      "presence-indicator slot for this literal"); avoids JS-reserved-
- *      keyword collisions (`async`, `static`, `const`) at the
- *      factory/config surface.
+ *      Field is named by the keyword itself (`async`): the slot says
+ *      whether that keyword is present. A reserved word is a legal
+ *      property and method name; where a generator needs a bare
+ *      identifier it applies its own reserved-word rule.
  *
  *   4. Optional-symbol promotion — at a TOP-LEVEL seq position:
  *
@@ -4703,7 +4703,7 @@ the separate-binding form left it unshaped. `P` and `O` infer from the
 #### body
 
 ```text
-// Inject `_<kw>_marker` hidden rules — `registerKwRule` already checked
+// Inject `_kw_<kw>` hidden rules — `registerKwRule` already checked
 // each one against `rulesBag` (reusing or declining on collision), so
 // nothing here can shadow a base-grammar rule of the same name.
 // Inject clause-group rules — user rules NEVER shadow them either
@@ -4799,7 +4799,7 @@ a stamp made there would be lost. The stamp is the declaration link collects
 ```text
 // Fixed-point loop. The current pass set has well-defined
 // non-overlapping outputs (symbol-to-field wraps SYMBOLs as FIELD;
-// optional-keyword wraps optional(STRING) as FIELD(SYMBOL(_<x>_marker))),
+// optional-keyword wraps optional(STRING) as FIELD(SYMBOL(_kw_<x>))),
 // so a single iteration converges in practice. Looping is defensive:
 // if a pass's output ever exposes new candidates for an earlier
 // pass (e.g. structural simplification creates a new top-level
@@ -5551,7 +5551,9 @@ field labels instead of taking the minted `element` field.
 #### body
 
 ```text
-// `_marker` suffix avoids JS-reserved-keyword collisions.
+// The field is named by the keyword itself. Where a generator needs the name
+// as a bare identifier, its own reserved-word rule applies (`safeParamName`,
+// `rustFieldIdent`).
 ```
 
 ### `packages/codegen/src/dsl/enrich.ts::ClauseHoistCounter`
@@ -5727,7 +5729,7 @@ field labels instead of taking the minted `element` field.
  * word-shaped keyword step carries the same marker-field shape the
  * optional-keyword pass gives optional spellings: a REQUIRED keyword in one
  * arm and `optional('<kw>')` in a sibling are the same modifier slot, and
- * slot merging needs both spelled `field('<kw>_marker', $._kw_<kw>_marker)`.
+ * slot merging needs both spelled `field('<kw>', $._kw_<kw>)`.
  * Scoped to permutation arms only — global bare-keyword promotion is
  * deliberately off (it shifts parser tables grammar-wide).
  */
@@ -6321,11 +6323,15 @@ The clause-hoist view: the same ctx — the registries are shared, not copied, s
 
 State that exists only while the clause hoist runs. `separatedListNameCounts` is the grammar-global count of each proposed separated-list name, computed after the field-wrap and token-form passes and read by every list mint so a name is taken bare only when globally unique. `hiddenListPromotionNames` caches, per hidden rule whose whole body is a flank-carrying separated list, the visible kind every bare reference to it aliases to, so all references agree. `ownerPrefixedListSlots` maps each list kind that was named after its owner (`<owner>_<plural>`, or `<owner>_elements` when the element has no single name) to the slot name its owner gives it: the plural, or `elements`. `visibleGroupSynthName` writes it where it picks the name; `fieldOwnerPrefixedLists` reads it.
 
+### `packages/codegen/src/dsl/enrich.ts::BlankRule`
+
+The empty arm tree-sitter's `optional` writes into a choice. It is a runtime shape the typed rule union does not carry, so a walk over enrich's rules that enumerates every rule type names it beside the union.
+
 ### `packages/codegen/src/dsl/enrich.ts::fieldOwnerPrefixedLists`
 
 A kind name must be unique in the grammar; a slot name only within its owner. When a hoisted list kind had to take its owner as a prefix to be unique, the owner's slot should not repeat the owner's name, so the reference is wrapped in a field carrying the short name recorded in `ownerPrefixedListSlots`; the kind keeps its unique name.
 
-It runs once over every owner after the clause hoist, over the grammar's rules and the rules enrich minted alike, since a list can be hoisted out of a minted rule. Positions follow the patch-path convention, so a reference at or under a position an authored `field(...)` patch names is left to the patch. When the short name is already a slot of the owner, the reference stays unfielded, the slot keeps the name its kind gives it, and a `list-slot-name` skip is reported.
+Its walk enumerates every rule type: it descends through precedence wrappers, seqs, choices, repeats and optionals, stops at a field, an alias, a token or a terminal, and refuses a type it does not know. It runs once over every owner after the clause hoist, over the grammar's rules and the rules enrich minted alike, since a list can be hoisted out of a minted rule. Positions follow the patch-path convention, so a reference at or under a position an authored `field(...)` patch names is left to the patch. When the short name is already a slot of the owner, the reference stays unfielded, the slot keeps the name its kind gives it, and a `list-slot-name` skip is reported.
 
 ### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtxInit`
 
