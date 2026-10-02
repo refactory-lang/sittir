@@ -181,9 +181,6 @@ function assembleEngine<API extends LanguageAPI>(
 		write(): Pending {
 			throw unimplementedVerb('write');
 		},
-		applyEdits(source, edits) {
-			return native.applyEdits(source, edits);
-		},
 		dispose() {
 			handle.current = identity;
 			native.dispose();

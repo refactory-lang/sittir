@@ -24,21 +24,6 @@ export interface Edges {
 }
 
 /**
- * A single replacement against a source string. Napi boundary type.
- *
- * `#[napi(object)]` (gated on napi-bindings feature) auto-generates
- * the N-API mapping with camelCase field renaming — TS side sees
- * `{ startPos, endPos, insertedText }` per contracts/napi-api.md.
- * `serde` mirrors that with camelCase so `apply_edits` can accept
- * JSON payloads in the TS-forced-backend round-trip path.
- */
-export interface Edit {
-  startPos: number
-  endPos: number
-  insertedText: string
-}
-
-/**
  * Byte-range for an `UntypedNode` within its source string. `start`/`end`
  * are UTF-8 byte offsets (ast-grep / tree-sitter convention).
  * `#[napi(object)]` (gated on napi-bindings feature) adds
@@ -98,7 +83,6 @@ export declare class SittirEngine {
    */
   render(transport: RenderRoot, treeId?: number | undefined | null, options?: Options | undefined | null): string
   renderToFile(transport: RenderRoot, path: string, treeId?: number | undefined | null, options?: Options | undefined | null): void
-  applyEdits(source: string, edits: Array<Edit>): string
   /**
    * Free this engine's own state. The trees it parsed stay in the
    * addon's table: they belong to whoever still names them.

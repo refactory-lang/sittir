@@ -43,8 +43,6 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 	lines.push(...(spec.extra ?? []));
 	lines.push(
 		'    $render: () => renderText(handle, node),',
-		'    $toEdit: (startOrRange: number | StringIndexRange, endPos?: number) => toEditAt(renderText(handle, node), startOrRange, endPos),',
-		'    $replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),',
 		'    $trivia: {',
 		"      leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),",
 		"      trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),",

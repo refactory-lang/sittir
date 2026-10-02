@@ -6,11 +6,8 @@
  * 20-file `fixtures/codemod-sample/` corpus and asserts the output is
  * byte-identical to the JS-baseline captured by `capture-baseline.ts`
  * (one-shot, run with `SITTIR_BACKEND=js`). The codemod goes
- * through the rust language engine's `applyEdits`, so on
- * a machine where the napi `.node` artifact has been built the active
- * backend is `native`; without it, the test still validates the JS
- * fallback against its own baseline (it'll just not exercise the
- * `name === 'native'` assertion).
+ * through plain text splicing at the parsed positions, so the output does
+ * not depend on the backend.
  *
  * The native-backend assertion is conditional on the `.node` artifact
  * being available so this test is fully self-contained on a fresh

@@ -15,4 +15,4 @@ export default python;
 export type * from './types.js';
 export type * from './options.js';
 export type { IsGuards } from './is.js';
-export type { Edit, CSTNode } from '@sittir/types';
+export type { CSTNode } from '@sittir/types';

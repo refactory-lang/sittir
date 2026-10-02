@@ -902,7 +902,7 @@ A kind with an empty form gets the zero-argument overload returning `T.Empty<Typ
  * exactly as they do when parsed, so the round-trip contract is
  * preserved.
  *
- * The fluent method suffix (render/toEdit/replace) mirrors the base
+ * The fluent method suffix (render) mirrors the base
  * factory so the output shape is interchangeable; callers switching
  * between `ir.interfaceBody.curly(...)` and `readUntypedNode(...)` get the
  * same surface.
@@ -16626,7 +16626,7 @@ One `$with` setter of a node literal: its name, its parameter list and the rebui
 
 ### `packages/codegen/src/emitters/node-members.ts::nodeMemberLines`
 
-The member lines of a node's literal after its storage keys: the `$with` block, a reader per slot, the `$render`/`$toEdit`/`$replace` closures, the `$trivia` positions and `$engine`. Every closure reads the `handle` the builder captured with `currentHandle()` and the `node` the literal is assigned to, so the node needs no helper after it is built and every node of a kind has one shape. `extra` carries the lines a group seat or a list owner adds. One function writes these lines for the factories and the wraps.
+The member lines of a node's literal after its storage keys: the `$with` block, a reader per slot, the `$render` closure, the `$trivia` positions and `$engine`. Every closure reads the `handle` the builder captured with `currentHandle()` and the `node` the literal is assigned to, so the node needs no helper after it is built and every node of a kind has one shape. `extra` carries the lines a group seat or a list owner adds. One function writes these lines for the factories and the wraps.
 
 ### `packages/codegen/src/emitters/node-members.ts::innerPositionsOf`
 

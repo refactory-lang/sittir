@@ -1,7 +1,6 @@
 import { writeFileSync } from 'node:fs';
 import type {
 	AnyUntypedNode,
-	Edit,
 	EngineDiagnostics,
 	FormatRecord,
 	IndentOption,
@@ -68,7 +67,6 @@ export interface NativeEngineLike<TTransport = unknown> {
 	readRoot(treeId: number, depth?: number): string;
 	render(node: TTransport, treeId?: number, options?: object): string;
 	renderToFile?(node: TTransport, path: string, treeId?: number, options?: object): void;
-	applyEdits(source: string, edits: { startPos: number; endPos: number; insertedText: string }[]): string;
 	/** The binary's compile profile (`debug` | `release`); absent on a binary that predates the getter. */
 	readonly buildProfile?: string;
 	dispose(): void;
@@ -146,7 +144,6 @@ export interface NativeEngineDiagnostics<TRoot extends AnyUntypedNode = AnyUntyp
  */
 export interface RenderEngine<O extends object = RenderOptionValues, IndentChar extends string = never> {
 	render<const I extends string = string>(node: AnyUntypedNode | number, options?: RenderOptions<O & IndentOption<I, IndentChar>>): Rendered;
-	applyEdits(source: string, edits: readonly Edit[]): string;
 	dispose(): void;
 }
 
@@ -288,13 +285,6 @@ export function createNativeEngine<
 					return renderNativeNode(node, opts);
 				},
 
-				applyEdits(source, edits) {
-					return engine.applyEdits(
-						source,
-						edits.map((edit) => ({ ...edit }))
-					);
-				},
-
 				dispose() {
 					engine.dispose();
 				},
@@ -371,9 +361,6 @@ export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends
 				...(ignoreFormat !== undefined ? { ignoreFormat } : {}),
 				...(Object.keys(perCall).length > 0 ? { options: perCall } : {})
 			});
-		},
-		applyEdits(source, edits) {
-			return engine.applyEdits(source, edits);
 		},
 		parseAndRead(source, options) {
 			return engine.diagnostics.parseAndRead(source, options);

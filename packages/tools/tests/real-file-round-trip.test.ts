@@ -37,7 +37,7 @@ const CASES: ReadonlyArray<{
 	{ file: 'rust/crates/sittir-core/src/lib.rs', grammar: 'rust' },
 	// `#[...]` attribute arguments: a delimited token tree whose content the
 	// reader collapses to bare text, in a slot with no kind to route it by.
-	{ file: 'rust/crates/sittir-core/src/splice.rs', grammar: 'rust' },
+	{ file: 'packages/tools/tests/emit/__fixtures__/dogfood-rust.rs', grammar: 'rust' },
 	// Function parameters whose pattern collapses to a bare identifier string.
 	{ file: 'packages/common/src/format.ts', grammar: 'typescript' },
 	// Indentation-sensitive: lose the newline between a class and the next

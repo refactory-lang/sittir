@@ -1,18 +1,20 @@
-import { createEngine, ir, replace, wrap } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+import { nodeText } from './helpers.ts';
 
-export function addVerboseParameterToProcess(source: string) {
-	const engine = createEngine();
-	const tree = engine.parseAndRead(source, { extractFormat: true });
-	const fns = engine.findAndRead(source, 'fn $NAME($...PARAMS) $BODY');
-	const processFn = fns.find((fn) => wrap(fn, tree).name() === 'process');
+const engine = await createEngine(rust);
 
-	if (!processFn) return source;
+/**
+ * Renames the function `process` to `handle` with `$with`, which replaces one
+ * slot. The edited node writes its own separators; every child the edit did
+ * not touch renders the bytes it was read from.
+ */
+export function renameProcess(source: string) {
+	const processFn = engine
+		.parse(source)
+		.statements()
+		.find((statement) => engine.is.functionItem(statement) && nodeText(statement.name()) === 'process');
+	if (processFn === undefined || !engine.is.functionItem(processFn)) return undefined;
 
-	const target = wrap(processFn, tree);
-	const updatedParams = ir.parameters([
-		...target.parameters().$children,
-		ir.parameter({ name: 'verbose', type: 'bool' })
-	]);
-
-	return engine.applyEdits(source, [replace(target.parameters(), updatedParams)]);
+	return processFn.$with.name(engine.build.identifier('handle'));
 }

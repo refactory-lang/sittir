@@ -4,7 +4,6 @@
 //!
 //! - [`types`]    — primitive `UntypedNode` + wire-boundary serde attributes.
 //! - [`read_untyped_node`] — `tree_sitter::Tree` → `UntypedNode` traversal.
-//! - [`splice`]   — byte-level `apply_edits` on a source string.
 //! - [`boundary`] — (reserved) cross-FFI shape helpers; serde attrs live
 //!   alongside the structs in `types`.
 //! - [`view`]     — the render-time views (`View`, `ListView`) the generated
@@ -23,7 +22,6 @@ pub mod read_untyped_node;
 pub mod render;
 pub mod slot;
 pub mod spacing;
-pub mod splice;
 pub mod trivia;
 pub mod types;
 pub mod view;

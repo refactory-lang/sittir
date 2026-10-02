@@ -33,7 +33,6 @@ function fakeLanguage(name = 'fake') {
 			const native = {
 				render: (n: { text?: string }, call?: FakeRenderOptions) =>
 					createRenderHandle(() => `${call?.indent ?? opts?.options?.indent ?? ''}${n.text ?? ''}`),
-				applyEdits: (s: string) => `${s}!`,
 				parseAndRead: (s: string) => ({ root: { $type: 1, text: s }, tree: { source: s } }),
 				dispose: () => {
 					disposed = true;
@@ -130,11 +129,6 @@ describe('createEngine', () => {
 	it('parses through the native engine and wraps the root with its tree', async () => {
 		const e = await engineOf();
 		expect(e.parse('src')).toEqual({ $type: 1, text: 'src', wrappedWith: { source: 'src' } });
-	});
-
-	it('applies edits through the native engine', async () => {
-		const e = await engineOf();
-		expect(e.applyEdits('x', [])).toBe('x!');
 	});
 
 	it('disposes its native engine', async () => {

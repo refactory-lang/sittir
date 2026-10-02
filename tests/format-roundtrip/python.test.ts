@@ -1,13 +1,12 @@
 /**
  * Format roundtrip for the Python fixtures: the native reader records each
- * fixture's inferred format, and a text edit changes only its own byte range.
+ * fixture's inferred format, and an edit with `$with` changes only the slot it replaces.
  */
 
 import { describe, it, expect } from 'vitest';
-import { applyEdits } from '@sittir/common';
-import type { Edit } from '@sittir/types';
+import { createEngine } from '@sittir/common';
+import python from '@sittir/python';
 import {
-	diffPositions,
 	loadFixtureSource,
 	loadFormatCorpusEntries,
 	parseNativeFixture,
@@ -38,19 +37,16 @@ describe('format-roundtrip python fixtures', () => {
 });
 
 describe('US2 — edit isolation (python)', () => {
-	it('python-4space.py: rename find_user → lookup_user is isolated to the edited byte range', () => {
+	it('python-4space.py: rename find_user → lookup_user changes only the name', async () => {
+		const engine = await createEngine(python);
 		const source = loadFixtureSource('python-4space.py');
-		const original = 'find_user';
-		const replacement = 'lookup_user';
-		const startPos = source.indexOf(original);
-		expect(startPos).toBeGreaterThan(-1);
-		const endPos = startPos + original.length;
-		const edit: Edit = { startPos, endPos, insertedText: replacement };
-		const result = applyEdits(source, [edit]);
-		const diff = diffPositions(source, result.source);
-		expect(diff).not.toBeNull();
-		expect(diff!.start).toBeGreaterThanOrEqual(edit.startPos);
-		expect(diff!.end).toBeLessThan(edit.startPos + edit.insertedText.length);
+		const named = engine
+			.parse(source)
+			.statements()
+			.find((statement) => engine.is.functionDefinition(statement) && engine.render(statement.name()).toString() === 'find_user');
+		expect(named).toBeDefined();
+		if (named === undefined || !engine.is.functionDefinition(named)) return;
+		const edited = named.$with.name(engine.build.identifier('lookup_user'));
+		expect(edited.$render()).toBe(named.$render().replace('find_user', 'lookup_user'));
 	});
 });
-

@@ -3,7 +3,7 @@
 //! the invariants in data-model.md §1.
 
 use indexmap::IndexMap;
-use sittir_core::types::{Edit, FieldValue, KindId, UntypedNode, NodeHandle, Source, Span};
+use sittir_core::types::{FieldValue, KindId, UntypedNode, NodeHandle, Source, Span};
 
 // KindId fixtures — values match the Rust grammar's parser.c symbol ids.
 const K_IDENTIFIER: KindId = KindId(1);
@@ -309,22 +309,6 @@ fn anonymous_leaf_children_scalarize_on_the_wire() {
         .expect("child");
     assert_eq!(child.type_, KindId(55));
     assert_eq!(child.named, false);
-}
-
-#[test]
-fn edit_uses_camelcase_on_the_wire() {
-    let e = Edit {
-        start_pos: 10,
-        end_pos: 20,
-        inserted_text: "x".to_string(),
-    };
-    let json = serde_json::to_string(&e).unwrap();
-    let v = wire(&json);
-    let obj = v.as_object().expect("object");
-    assert!(obj.contains_key("startPos"));
-    assert!(obj.contains_key("endPos"));
-    assert!(obj.contains_key("insertedText"));
-    assert!(!obj.contains_key("start_pos"));
 }
 
 #[test]

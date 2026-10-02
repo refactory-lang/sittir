@@ -4,7 +4,7 @@ import { Delimiter } from '@sittir/common/utils';
 
 const engine = await createEngine(rust);
 
-// Rebuilds rust/crates/sittir-core/src/splice.rs through the FACTORY surface
+// Rebuilds packages/tools/tests/emit/__fixtures__/dogfood-rust.rs through the FACTORY surface
 // alone — every node is spelled with `.strict` or a namespaced form, never a
 // loose config — so a coercion failure is never mistaken for a factory one.
 // `17-dogfood-rust-loose.generated.ts` is the same target through the loose surface.

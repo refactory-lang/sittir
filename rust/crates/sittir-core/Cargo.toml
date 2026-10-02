@@ -5,7 +5,7 @@ edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
-description = "Render / readNode / splice primitives for sittir — hot-path engine shared across per-grammar render crates."
+description = "Render / readNode primitives for sittir — hot-path engine shared across per-grammar render crates."
 
 [features]
 # Enable napi FromNapiValue / ToNapiValue impls for core boundary types

@@ -5,8 +5,8 @@
  * (≤5-line) `function_item` whose attribute list does not already
  * contain `#[inline]`, and inserts `#[inline]\n` before the function.
  *
- * Applies its edits through the rust language engine's `applyEdits`
- * (`createEngine(rust)`), so the native backend is exercised on every run.
+ * Applies its insertions by splicing the text into the source at the
+ * positions the parse reports.
  *
  * Tree traversal uses web-tree-sitter (the same parser the codegen
  * validators run on), so the codemod is portable across native /
@@ -17,11 +17,6 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { loadLanguageForGrammar } from '../../packages/tools/src/validate/common.ts';
-import { createEngine } from '@sittir/common';
-import rust from '@sittir/rust';
-import type { Edit } from '@sittir/types';
-
-const rs = await createEngine(rust);
 
 /** A function_item match marked for inlining. */
 interface InlineMatch {
@@ -60,12 +55,10 @@ export async function runCodemodOnSource(source: string): Promise<{ output: stri
 	parser.delete();
 	tree.delete();
 	if (matches.length === 0) return { output: source, insertions: 0 };
-	const edits: Edit[] = matches.map((m) => ({
-		startPos: m.startByte,
-		endPos: m.startByte,
-		insertedText: `#[inline]\n${m.indent}`
-	}));
-	return { output: rs.applyEdits(source, edits), insertions: edits.length };
+	const output = [...matches]
+		.sort((a, b) => b.startByte - a.startByte)
+		.reduce((text, m) => `${text.slice(0, m.startByte)}#[inline]\n${m.indent}${text.slice(m.startByte)}`, source);
+	return { output, insertions: matches.length };
 }
 
 /**

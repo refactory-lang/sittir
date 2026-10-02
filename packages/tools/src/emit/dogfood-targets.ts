@@ -23,7 +23,7 @@ export type DogfoodRebuild = DogfoodTarget extends infer T
 export const DOGFOOD_TARGETS: readonly DogfoodTarget[] = [
 	{
 		grammar: 'rust',
-		source: 'rust/crates/sittir-core/src/splice.rs',
+		source: 'packages/tools/tests/emit/__fixtures__/dogfood-rust.rs',
 		stem: '17-dogfood-rust',
 		name: 'Splice',
 		surfaces: ['strict', 'loose'],

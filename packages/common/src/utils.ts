@@ -4,7 +4,6 @@ import { detachCoordinate, holdsSlots } from './transport-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { currentHandle, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
-import { toEditAt } from './edit.ts';
 import { Delimiter } from './delimiter.ts';
 import { hydrateStub, isStub, readUntypedNode, type TreeHandle } from './readUntypedNode.ts';
 import { spelledForm } from './interior.ts';
@@ -566,7 +565,6 @@ function setTriviaData(node: AnyUntypedNode, triviaData: NodeTrivia): void {
 
 export { numberText, type NumberBase } from './number.ts';
 export { hydrateStub, isStub, readUntypedNode, type Stub, type TreeHandle } from './readUntypedNode.ts';
-export { toEditAt } from './edit.ts';
 export { currentHandle } from './engine-scope.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';

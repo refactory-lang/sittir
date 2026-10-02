@@ -10,8 +10,6 @@ const leaf = (text: string) => ({
 	$named: true,
 	$text: text,
 	$render: () => text,
-	$toEdit: () => ({}),
-	$replace: () => ({}),
 	$trivia: { leading: () => [], trailing: () => [] },
 	$engine: undefined
 });
@@ -31,8 +29,6 @@ const owner = (child: ReturnType<typeof leaf>) => ({
 	toString: () => 'list',
 	[LIST_ITEMS]: [child],
 	$render: () => 'x',
-	$toEdit: () => ({}),
-	$replace: () => ({}),
 	$trivia: { leading: () => [], trailing: () => [] },
 	$engine: undefined
 });

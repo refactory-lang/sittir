@@ -76,7 +76,7 @@ A trivia entry as input: one of the grammar's trivia kinds or a string. A string
 
 ### `packages/types/src/engine-api.ts::NodeMethods`
 
-The members every built and wrapped node carries: `$render`, `$toEdit`, `$replace` and `$trivia` over the grammar's trivia union (`Trivia`, defaulting to `any` like `TriviaSetter`'s). The polymorphic `this` makes it self-referential, because a `$trivia` position setter writes the node's own trivia and hands back that same node, typed as the same kind. NodeNs' default `Built` is the node with these methods.
+The members every built and wrapped node carries: `$render` and `$trivia` over the grammar's trivia union (`Trivia`, defaulting to `any` like `TriviaSetter`'s). The polymorphic `this` makes it self-referential, because a `$trivia` position setter writes the node's own trivia and hands back that same node, typed as the same kind. NodeNs' default `Built` is the node with these methods.
 
 ### `packages/types/src/engine-api.ts::GrammarInnerTrivia`
 

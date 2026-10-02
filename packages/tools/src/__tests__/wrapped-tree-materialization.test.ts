@@ -59,7 +59,6 @@ async function loadFreshWrapWitnessModule(): Promise<{
 		'const currentHandle = () => undefined;',
 		'const rebuilt = (node, handle, build) => build();',
 		'const renderText = () => "";',
-		'const toEditAt = () => ({});',
 		'const triviaSide = () => undefined;',
 		'const methodsEngine = {};',
 		'const _factories = new Proxy({}, { get: () => () => { throw new Error("unused"); } });',

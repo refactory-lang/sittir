@@ -233,7 +233,7 @@ falling back.
                                       ▼
                           ┌────────────────────────────┐
                           │  @sittir/common             │
-                          │  readUntypedNode, applyEdits,      │
+                          │  readUntypedNode,                   │
                           │  UntypedNode,                  │
                           │  TreeHandle, native boundary│
                           └─────────────────────────────┘
@@ -242,17 +242,17 @@ falling back.
                           ┌────────────────────────────┐
                           │  @sittir/types              │
                           │  AnyUntypedNode, ConfigOf<T>,  │
-                          │  TreeNodeOf<T>, Edit, ...   │
+                          │  TreeNodeOf<T>, ...         │
                           │  (zero runtime)             │
                           └─────────────────────────────┘
 ```
 
 - **`@sittir/types`** — pure TypeScript types. Zero runtime. Owns
-  `AnyUntypedNode`, `ConfigOf<T>`, `TreeNodeOf<T>`, `FromInputOf<T>`, `Edit`,
+  `AnyUntypedNode`, `ConfigOf<T>`, `TreeNodeOf<T>`, `FromInputOf<T>`,
   `StringIndexRange`, `RenderContext`.
 - **`@sittir/common`** — backend-neutral runtime. Implements
   `readUntypedNode(tree, handle?, childIndex?)` (parse-tree → `UntypedNode`),
-  `applyEdits(source, edits)`, the native boundary
+  the native boundary
   invariant (`assertRenderableUntypedNode`), and
   `createNativeEngine()`, which the native backend implements against the
   shared `SittirEngineLike`/tree-handle interfaces.
@@ -361,18 +361,14 @@ parse tree came from `web-tree-sitter` or `@ast-grep/napi`. `wrapNode`
 attaches the typed accessor surface and hydrates each lazy stub (`$parentHandle`
 + `$childIndex`) back through the engine's reader on demand.
 
-#### Edit pipeline
+#### Editing a parsed tree
 
 ```
-TreeNode + replacement UntypedNode ──▶ replace(target, replacement) ──▶ Edit { startPos, endPos, insertedText }
-[Edit] + source ──▶ engine.applyEdits(source, edits) ──▶ new source
+parsed root ──▶ node.$with.<slot>(value) ──▶ edited node ──▶ engine.render(root) ──▶ new source
 ```
 
-Edits are byte-range patches keyed off the original tree's spans.
-Multiple edits on disjoint ranges are sorted and applied right-to-left so
-positions stay valid; overlapping edits throw. `replace` lives in
-`@sittir/common`; `engine.applyEdits` is the
-boundary used by codemods.
+A change is made with `$with` on the parsed node, and rendering the root writes
+it. A node the change did not touch renders the bytes it was read from.
 
 ### Generated package layout
 
@@ -487,7 +483,7 @@ target API in flight.
 | Package                                     | Purpose                                                                              |
 | ------------------------------------------- | ------------------------------------------------------------------------------------ |
 | [`@sittir/types`](packages/types)           | Pure TypeScript types — zero runtime                                                 |
-| [`@sittir/common`](packages/common)         | Backend-neutral runtime: `readUntypedNode`, `applyEdits`, native boundary, engine interface |
+| [`@sittir/common`](packages/common)         | Backend-neutral runtime: `readUntypedNode`, native boundary, engine interface |
 | [`@sittir/codegen`](packages/codegen)       | The compiler (enrich → evaluate → link → normalize → simplify → assemble → emit) and emitters |
 | [`@sittir/cli`](packages/cli)               | Unified `sittir` binary: `gen`, `tool *`, `validate *` (see [docs/cli-command-glossary.md](docs/cli-command-glossary.md)) |
 | [`@sittir/tools`](packages/tools)           | Diagnostics + validation implementations: `probe-*`, `walk`, `exercise`, `inspect-*`, validator counts/history (run APIs behind the CLI) |

@@ -1,13 +1,12 @@
 /**
  * Format roundtrip for the Rust fixtures: the native reader records each
- * fixture's inferred format, and a text edit changes only its own byte range.
+ * fixture's inferred format, and an edit with `$with` changes only the slot it replaces.
  */
 
 import { describe, it, expect } from 'vitest';
-import { applyEdits } from '@sittir/common';
-import type { Edit } from '@sittir/types';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
 import {
-	diffPositions,
 	loadFixtureSource,
 	loadFormatCorpusEntries,
 	parseNativeFixture,
@@ -36,19 +35,16 @@ describe('format-roundtrip rust fixtures', () => {
 });
 
 describe('US2 — edit isolation (rust)', () => {
-	it('rust-tab-indent.rs: rename greet → welcome is isolated to the edited byte range', () => {
+	it('rust-tab-indent.rs: rename greet → welcome changes only the name', async () => {
+		const engine = await createEngine(rust);
 		const source = loadFixtureSource('rust-tab-indent.rs');
-		const original = 'greet';
-		const replacement = 'welcome';
-		const startPos = source.indexOf(original);
-		expect(startPos).toBeGreaterThan(-1);
-		const endPos = startPos + original.length;
-		const edit: Edit = { startPos, endPos, insertedText: replacement };
-		const result = applyEdits(source, [edit]);
-		const diff = diffPositions(source, result.source);
-		expect(diff).not.toBeNull();
-		expect(diff!.start).toBeGreaterThanOrEqual(edit.startPos);
-		expect(diff!.end).toBeLessThan(edit.startPos + edit.insertedText.length);
+		const named = engine
+			.parse(source)
+			.statements()
+			.find((statement) => engine.is.functionItem(statement) && engine.render(statement.name()).toString() === 'greet');
+		expect(named).toBeDefined();
+		if (named === undefined || !engine.is.functionItem(named)) return;
+		const edited = named.$with.name(engine.build.identifier('welcome'));
+		expect(edited.$render()).toBe(named.$render().replace('greet', 'welcome'));
 	});
 });
-

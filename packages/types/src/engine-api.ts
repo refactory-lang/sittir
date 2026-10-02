@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, StringIndexRange, Edit, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaSetter } from './core-types.ts';
+import type { AnyUntypedNode, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
 
 export interface TriviaFacts {
@@ -51,16 +51,6 @@ export interface GrammarTypeMap {
 
 export interface NodeMethods<Trivia = any> {
 	$render(): string;
-	/**
-	 * An Edit replacing a range with this node's rendered text: byte offsets as
-	 * two numbers, or a range. A range's `index` is a string index (UTF-16 code units, as ast-grep reports it) while an `Edit` counts bytes, so the edit lands in the wrong place when non-ASCII text precedes the range.
-	 */
-	$toEdit(startOrRange: number | StringIndexRange, endPos?: number): Edit;
-	/**
-	 * An Edit replacing the target's range with this node's rendered text.
-	 * A range's `index` is a string index (UTF-16 code units, as ast-grep reports it) while an `Edit` counts bytes, so the edit lands in the wrong place when non-ASCII text precedes the range.
-	 */
-	$replace(target: { range(): StringIndexRange }): Edit;
 	$trivia: TriviaSetter<this, Trivia>;
 }
 
@@ -113,7 +103,6 @@ export interface LanguageHooks<API extends LanguageAPI> {
 
 export interface NativeLanguageEngine<API extends LanguageAPI> {
 	render(node: AnyUntypedNode | number, options?: API['options'] & RenderCallOptions): Rendered;
-	applyEdits(source: string, edits: readonly Edit[]): string;
 	parseAndRead: EngineDiagnostics['parseAndRead'];
 	readonly buildProfile?: EngineDiagnostics['buildProfile'];
 	dispose(): void;
@@ -184,7 +173,6 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	readonly create: (path: string, fn: (build: API['build']) => API['root']) => Pending;
 	readonly edit: (path: string, fn: (root: API['root']) => API['root']) => Pending;
 	readonly write: (path: string, node: API['root']) => Pending;
-	readonly applyEdits: (source: string, edits: readonly Edit[]) => string;
 	readonly dispose: () => void;
 }
 
