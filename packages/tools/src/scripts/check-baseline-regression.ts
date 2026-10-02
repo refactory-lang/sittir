@@ -351,6 +351,17 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
 				details: { path: gPath, after: ge }
 			};
 		}
+		for (const key of ['hoistedKindCount', 'supertypeKindCount'] as const) {
+			const count = (ge as Record<string, unknown>)[key];
+			if (count !== undefined && !(typeof count === 'number' && Number.isInteger(count) && count >= 0)) {
+				return {
+					ok: false,
+					reason: 'schema-violation',
+					summary: `schema violation: ${gPath}.${key} is not a non-negative integer`,
+					details: { path: `${gPath}.${key}`, after: count, note: 'a kind count is a non-negative integer, or absent' }
+				};
+			}
+		}
 		const validators = (ge as Record<string, unknown>)['validators'];
 		if (validators === null || typeof validators !== 'object') {
 			return {

@@ -394,6 +394,36 @@ describe('checkRegression', () => {
 		expect(verdict.ok).toBe(true);
 	});
 
+	it.each([
+		['hoistedKindCount', '40'],
+		['hoistedKindCount', -1],
+		['hoistedKindCount', 1.5],
+		['supertypeKindCount', '5'],
+		['supertypeKindCount', null]
+	] as const)('schema violation detected: a %s of %j is rejected, on either side', (key, value) => {
+		for (const side of ['base', 'head'] as const) {
+			const base = baseline();
+			const head = clone(base);
+			const target = side === 'base' ? base : head;
+			(target.grammars.python as unknown as Record<string, unknown>)[key] = value;
+			const verdict = checkRegression(base, head);
+			expectFail(verdict);
+			expect(verdict.reason).toBe('schema-violation');
+			expect(verdict.details.path).toBe(`${side}.grammars.python.${key}`);
+		}
+	});
+
+	it('a malformed hoisted count never excuses a pass drop', () => {
+		const base = baseline();
+		base.grammars.python!.validators.from = vr(181, 181);
+		const head = clone(base);
+		(head.grammars.python as unknown as Record<string, unknown>)['hoistedKindCount'] = 'many';
+		head.grammars.python!.validators.from = vr(100, 100);
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.reason).toBe('schema-violation');
+	});
+
 	it('schema violation detected — unsorted failingKinds is rejected', () => {
 		const base = baseline();
 		const head = clone(base);

@@ -34,6 +34,8 @@ How many kinds left a grammar's direct-render set between the base and head base
 
 The two counts are read differently when the base lacks them. A base without `supertypeKindCount` reads as 0, because only the rise matters. A fall cannot be read from one count, so a base without `hoistedKindCount` contributes nothing and the drop stays unexplained: the fact has to be in the base baseline before a change can lean on it.
 
+Both counts are checked by `validateBaselineShape` before any arithmetic: each is a non-negative integer or absent, on the base and on the head. A count of another type would make the departed count `NaN`, and every comparison against `NaN` is false, which would let a drop of any size through.
+
 ### `packages/tools/src/scripts/check-baseline-regression.ts::DEPARTURE_EXPLAINED_DROP`
 
 The validators whose pass count may fall when kinds leave the direct-render set, each with the largest drop a given `departedKindCount` explains. `coverage` and `factoryRoundtrip` are unbounded: a departed kind has no template and no raw builder, and one kind can remove several cases there. `from` is bounded by the count: a departed kind removes exactly one `from` case, its own, so a larger drop is not explained by it. A validator not listed (`roundtrip`) is never exempt.
