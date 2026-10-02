@@ -93,13 +93,13 @@ export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = Object
 	argument_list: Object.freeze(['arguments']),
 	case_list_pattern: Object.freeze(['list_pattern_case_patterns']),
 	case_tuple_pattern: Object.freeze(['list_pattern_case_patterns']),
-	dict_pattern: Object.freeze(['dict_pattern_elements']),
+	dict_pattern: Object.freeze(['elements']),
 	dictionary: Object.freeze(['elements']),
 	list: Object.freeze(['collection_elements']),
 	list_pattern: Object.freeze(['patterns']),
 	match_block_block: Object.freeze(['alternative']),
 	module: Object.freeze(['statements']),
 	parameters: Object.freeze(['elements']),
-	tuple: Object.freeze(['collection_elements']),
+	tuple: Object.freeze(['elements']),
 	tuple_pattern: Object.freeze(['patterns'])
 });

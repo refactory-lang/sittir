@@ -619,10 +619,10 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		213, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 234, 235, 239, 242, 243, 245, 246, 247, 248, 249, 254,
 		255, 256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 295, 297, 298, 299, 300, 305, 306, 307, 308, 310, 312,
 		314, 317, 376, 388, 389, 392, 393, 394, 405, 409, 410, 411, 412, 413, 414, 415, 416, 417, 421, 422, 423, 424, 425,
-		430, 431, 464
+		430, 431, 465
 	]),
-	break_statement: new Set([1, 464]),
-	continue_statement: new Set([1, 464]),
+	break_statement: new Set([1, 465]),
+	continue_statement: new Set([1, 465]),
 	debugger_statement: new Set([173]),
 	return_statement: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
@@ -694,88 +694,88 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 118, 119, 120, 121, 122,
 		123, 124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256,
 		257, 259, 261, 265, 266, 267, 269, 271, 273, 289, 292, 297, 298, 299, 300, 308, 316, 380, 382, 405, 409, 410, 411,
-		412, 413, 414, 415, 416, 417, 430, 431, 461
+		412, 413, 414, 415, 416, 417, 430, 431, 462
 	]),
 	omitting_type_annotation: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 466
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
 	]),
 	adding_type_annotation: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 466
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
 	]),
 	opting_type_annotation: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 466
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
 	]),
 	type_annotation: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 466
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
 	]),
 	asserts: new Set([1, 119, 344]),
 	asserts_annotation: new Set([1, 119, 329, 344]),
 	optional_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 466
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
 	]),
 	rest_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 466
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
 	]),
 	template_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 466
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
 	]),
 	type_predicate_annotation: new Set([344]),
 	type_query: new Set([1, 119, 346, 347, 348, 349]),
 	index_type_query: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 466
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
 	]),
 	literal_type: new Set([121, 122, 123, 124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 395, 414, 415]),
 	flow_maybe_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 466
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
 	]),
 	parenthesized_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 466
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
 	]),
 	type_arguments: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 383, 385, 395, 414, 415, 466
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 383, 385, 395, 414, 415, 467
 	]),
-	type_parameters: new Set([1, 365, 384, 466]),
+	type_parameters: new Set([1, 365, 384, 467]),
 	default_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 466
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
 	]),
 	array_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 466
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
 	]),
 	tuple_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 466
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
 	]),
 	readonly_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 466
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
 	]),
 	export_specifiers: new Set([1, 192, 414, 415]),
 	import_specifiers: new Set([407, 408]),
@@ -784,24 +784,24 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 118, 119, 120, 121, 122,
 		123, 124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256,
 		257, 259, 261, 265, 266, 267, 269, 271, 273, 289, 292, 297, 298, 299, 300, 308, 405, 409, 410, 411, 412, 413, 414,
-		415, 416, 417, 430, 431, 461
+		415, 416, 417, 430, 431, 462
 	]),
 	enum_body_elements: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 118, 119, 120, 121, 122,
 		123, 124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256,
 		257, 259, 261, 265, 266, 267, 269, 271, 273, 289, 292, 297, 298, 299, 300, 308, 316, 380, 405, 409, 410, 411, 412,
-		413, 414, 415, 416, 417, 430, 431, 461
+		413, 414, 415, 416, 417, 430, 431, 462
 	]),
 	types: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 466
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
 	]),
-	type_parameters_elements: new Set([1, 365, 466]),
+	type_parameters_elements: new Set([1, 365, 467]),
 	tuple_type_members: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 466
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
 	]),
 	import_clause_group: new Set([1, 199, 200, 377, 407, 408]),
 	ambient_declaration_global: new Set([208]),
@@ -5663,9 +5663,9 @@ export function coerceToClassBody(...input: T.ClassBody.LooseArgs): ReturnType<t
 	);
 }
 
-export function resolveFormalParameters_formalParametersElements(
-	value: T.FormalParameters.LooseConfig['formalParametersElements']
-): T.FormalParameters['_formal_parameters_elements'] {
+export function resolveFormalParameters_elements(
+	value: T.FormalParameters.LooseConfig['elements']
+): T.FormalParameters['_elements'] {
 	return _resolveOneBranch<T.FormalParametersElements>(value, 'formal_parameters_elements', undefined, true);
 }
 
@@ -5684,7 +5684,7 @@ export function coerceToFormalParameters(...args: unknown[]): ReturnType<typeof 
 		return input as unknown as ReturnType<typeof F.buildFormalParameters>;
 	return F.buildFormalParameters(
 		_resolveOneBranch<T.FormalParametersElements>(
-			configFieldOr(input, 'formalParametersElements', () => input),
+			configFieldOr(input, 'elements', () => input),
 			'formal_parameters_elements',
 			undefined,
 			true
@@ -7444,9 +7444,7 @@ export function coerceToEnumDeclaration(input: T.EnumDeclaration.Loose): ReturnT
 	});
 }
 
-export function resolveEnumBody_enumBodyElements(
-	value: T.EnumBody.LooseConfig['enumBodyElements']
-): T.EnumBody['_enum_body_elements'] {
+export function resolveEnumBody_elements(value: T.EnumBody.LooseConfig['elements']): T.EnumBody['_elements'] {
 	return _resolveOneBranch<T.EnumBodyElements>(value, 'enum_body_elements', undefined, true);
 }
 
@@ -7461,7 +7459,7 @@ export function coerceToEnumBody(...args: unknown[]): ReturnType<typeof F.buildE
 		return input as unknown as ReturnType<typeof F.buildEnumBody>;
 	return F.buildEnumBody(
 		_resolveOneBranch<T.EnumBodyElements>(
-			configFieldOr(input, 'enumBodyElements', () => input),
+			configFieldOr(input, 'elements', () => input),
 			'enum_body_elements',
 			undefined,
 			true
@@ -9126,9 +9124,9 @@ export function coerceToPropertySignature(
 	});
 }
 
-export function resolveTypeParameters_typeParametersElements(
-	value: T.TypeParameters.LooseConfig['typeParametersElements']
-): T.TypeParameters['_type_parameters_elements'] {
+export function resolveTypeParameters_elements(
+	value: T.TypeParameters.LooseConfig['elements']
+): T.TypeParameters['_elements'] {
 	return _resolveOneBranch<T.TypeParametersElements>(value, 'type_parameters_elements');
 }
 
@@ -9146,9 +9144,9 @@ export function coerceToTypeParameters(...args: unknown[]): ReturnType<typeof F.
 	return F.buildTypeParameters(
 		_requireField(
 			'type_parameters',
-			'typeParametersElements',
+			'elements',
 			_resolveOneBranch<T.TypeParametersElements>(
-				configFieldOr(input, 'typeParametersElements', () => input),
+				configFieldOr(input, 'elements', () => input),
 				'type_parameters_elements'
 			)
 		)
@@ -9436,7 +9434,7 @@ export function coerceToExportSpecifiers(
 ): ReturnType<typeof F.buildExportSpecifiers> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExportSpecifiers)) {
 		const data = input[0];
-		const stored = (data as unknown as { _export_specifier?: unknown })._export_specifier;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildExportSpecifiers(
 			{
@@ -9465,7 +9463,7 @@ export function coerceToImportSpecifiers(
 ): ReturnType<typeof F.buildImportSpecifiers> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ImportSpecifiers)) {
 		const data = input[0];
-		const stored = (data as unknown as { _import_specifier?: unknown })._import_specifier;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildImportSpecifiers(
 			{
@@ -9493,7 +9491,7 @@ export function coerceToFormalParametersElements(
 ): ReturnType<typeof F.buildFormalParametersElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FormalParametersElements)) {
 		const data = input[0];
-		const stored = (data as unknown as { _formal_parameter?: unknown })._formal_parameter;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildFormalParametersElements(
 			{
@@ -9716,7 +9714,7 @@ export function coerceToEnumBodyElements(
 ): ReturnType<typeof F.buildEnumBodyElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.EnumBodyElements)) {
 		const data = input[0];
-		const stored = (data as unknown as { _element?: unknown })._element;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildEnumBodyElements(
 			{
@@ -9742,7 +9740,7 @@ export function coerceToEnumBodyElements(
 export function coerceToTypes(...input: T.Types.LooseArgs): ReturnType<typeof F.buildTypes> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Types)) {
 		const data = input[0];
-		const stored = (data as unknown as { _type?: unknown })._type;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildTypes(
 			{
@@ -9800,7 +9798,7 @@ export function coerceToTypeParametersElements(
 ): ReturnType<typeof F.buildTypeParametersElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeParametersElements)) {
 		const data = input[0];
-		const stored = (data as unknown as { _type_parameter?: unknown })._type_parameter;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildTypeParametersElements(
 			{
@@ -9829,7 +9827,7 @@ export function coerceToTupleTypeMembers(
 ): ReturnType<typeof F.buildTupleTypeMembers> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TupleTypeMembers)) {
 		const data = input[0];
-		const stored = (data as unknown as { _tuple_type_member?: unknown })._tuple_type_member;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildTupleTypeMembers(
 			{
@@ -9998,7 +9996,7 @@ export function coerceToObjectTypeContent(
 ): ReturnType<typeof F.buildObjectTypeContent> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ObjectTypeContent)) {
 		const data = input[0];
-		const stored = (data as unknown as { _members?: unknown })._members;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildObjectTypeContent(
 			{

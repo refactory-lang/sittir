@@ -16,6 +16,7 @@ function diagnose(input: {
 	undeclaredRules?: readonly string[];
 	renderAs?: readonly string[];
 	enriched: StageDiagnosis;
+	upstreamRules?: Record<string, unknown>;
 }): GrammarDiagnostic[] {
 	return diagnoseRuleCauses({
 		grammar: 'synth',
@@ -24,7 +25,8 @@ function diagnose(input: {
 			undeclaredRules: input.undeclaredRules,
 			renderAs: input.renderAs === undefined ? undefined : Object.fromEntries(input.renderAs.map((n) => [n, { type: 'BLANK' } as never]))
 		},
-		enriched: input.enriched
+		enriched: input.enriched,
+		upstreamRules: input.upstreamRules as never
 	});
 }
 const codesOf = (ds: readonly GrammarDiagnostic[]) => ds.map((d) => `${d.code}:${d.ownerKind}`).sort();
@@ -108,5 +110,69 @@ describe('diagnoseRuleCauses', () => {
 		expect(ds.every((d) => d.canProceed === false)).toBe(true);
 		expect(ds.find((d) => d.ownerKind === 'string')!.message).toMatch(/reauthored\(cause, body\)/);
 		expect(ds.find((d) => d.ownerKind === 'helper')!.message).toMatch(/vocabulary\(body\)/);
+	});
+});
+
+describe('a rule reauthored because upstream accepts a form that is always another kind', () => {
+	const str = (value: string) => ({ type: 'STRING', value });
+	const sym = (name: string) => ({ type: 'SYMBOL', name });
+	const seq = (...members: unknown[]) => ({ type: 'SEQ', members });
+	const upstreamRules = {
+		tuple: seq(str('('), { type: 'OPTIONAL', content: sym('_elements') }, str(')')),
+		_elements: seq(sym('expression'), { type: 'REPEAT', content: seq(str(','), sym('expression')) }, { type: 'OPTIONAL', content: str(',') }),
+		parenthesized: seq(str('('), { type: 'CHOICE', members: [sym('expression'), sym('yield')] }, str(')')),
+		list: seq(str('['), { type: 'OPTIONAL', content: sym('_elements') }, str(']'))
+	};
+	const ruleNames = new Set(Object.keys(upstreamRules));
+	const declared = (form: readonly (string | { symbol: string })[], kind: string): Record<string, RuleCauseDeclaration> => ({
+		tuple: { kind: 'reauthored', cause: 'accepts-other-kind', witness: { text: '(a)', form, kind } }
+	});
+	const parenthesizedForm = ['(', { symbol: 'expression' }, ')'];
+
+	it('is silent when the upstream rule and the other kind\'s rule both derive the witness form', () => {
+		const ds = diagnose({ ruleCauses: declared(parenthesizedForm, 'parenthesized'), enriched: enriched({ ruleNames }), upstreamRules });
+		expect(ds).toEqual([]);
+	});
+
+	it('is a mismatch when the upstream rule does not derive the form', () => {
+		const ds = diagnose({
+			ruleCauses: declared(['(', { symbol: 'yield' }, ')'], 'parenthesized'),
+			enriched: enriched({ ruleNames }),
+			upstreamRules
+		});
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:tuple']);
+		expect(ds[0]!.message).toContain("upstream 'tuple' does not derive");
+	});
+
+	it('is a mismatch when the other kind\'s rule does not derive the form', () => {
+		const ds = diagnose({ ruleCauses: declared(parenthesizedForm, 'list'), enriched: enriched({ ruleNames }), upstreamRules });
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:tuple']);
+		expect(ds[0]!.message).toContain("upstream 'list' does not derive");
+	});
+
+	it('is a mismatch when the other kind is not an upstream rule', () => {
+		const ds = diagnose({ ruleCauses: declared(parenthesizedForm, 'absent'), enriched: enriched({ ruleNames }), upstreamRules });
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:tuple']);
+	});
+
+	it('is a mismatch when no witness is declared', () => {
+		const ds = diagnose({
+			ruleCauses: { tuple: { kind: 'reauthored', cause: 'accepts-other-kind' } },
+			enriched: enriched({ ruleNames }),
+			upstreamRules
+		});
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:tuple']);
+	});
+
+	it('derives through a repeat: a longer form of the same rule is accepted, and one the rule cannot produce is not', () => {
+		const longer = ['(', { symbol: 'expression' }, ',', { symbol: 'expression' }, ',', ')'];
+		const viaRepeat = diagnose({ ruleCauses: declared(longer, 'tuple'), enriched: enriched({ ruleNames }), upstreamRules });
+		expect(viaRepeat).toEqual([]);
+		const doubled = diagnose({
+			ruleCauses: declared(['(', { symbol: 'expression' }, ',', ',', ')'], 'tuple'),
+			enriched: enriched({ ruleNames }),
+			upstreamRules
+		});
+		expect(codesOf(doubled)).toEqual(['rule-cause-mismatch:tuple']);
 	});
 });

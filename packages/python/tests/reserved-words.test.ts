@@ -10,10 +10,10 @@ function readName(text: string): { $type: number; $text?: string } {
 	const statement = (
 		root as unknown as {
 			_statements: {
-				_simple_statements_elements: { _simple_statement: { _content: { _expression: { _name: unknown } } } };
+				_elements: { _item: { _content: { _expression: { _name: unknown } } } };
 			};
 		}
-	)._statements._simple_statements_elements._simple_statement;
+	)._statements._elements._item;
 	return statement._content._expression._name as { $type: number; $text?: string };
 }
 

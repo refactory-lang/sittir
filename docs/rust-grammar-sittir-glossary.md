@@ -678,31 +678,20 @@ parenthesized expression. Enrich reads the run as a `terminated` separated
 list and hoists it as its own kind, and link lifts it to one repeat whose
 single element keeps its separator; nothing about the list is authored.
 
-Two `patches:` entries are authored, and both are naming only:
+The names are the ones enrich derives: the list kind is `expressions`, the
+plural of the element's name, which no other rust list proposes; its item field
+is `item`, as in every list kind, and the owner's slot is `expressions`.
 
-- `tuple_expression: { 1: field('attributes'), 2: alias('tuple_expression_elements') }`.
-  The alias names the hoisted list kind. Left to derive, the kind would be
-  `expressions`: the plural of the element's name, which no other rust list
-  proposes. `attributes` fields the attribute repeat, which the
-  `tuple_expression/attributes:/separator` option site names.
-- `_tuple_expression_elements: { '0/0', '1/0/0', '2/0': field('element') }`.
-  The three element positions of the hoisted rule. Left to derive, the field
-  would be `expression` and the slot `expressions`.
+One `patches:` entry is authored: `tuple_expression: { 1: field('attributes') }`
+fields the attribute repeat, which the
+`tuple_expression/attributes:/separator` option site names.
 
-Deleting both entries leaves a working grammar with the derived names.
+### `tuple_type` (`packages/rust/grammar.sittir.ts`)
 
-### `tuple_type` (`packages/rust/grammar.sittir.ts:748`)
-
-```text
-				// tuple_type: seq('(', sepBy1(',', $._type), optional(','), ')').
-				// sepBy1 expands to seq($._type, repeat(seq(',', $._type))).
-				// read_untyped_node routes unfielded _type children by concrete kind
-				// (primitive_type, type_identifier, …) into separate supertype
-				// buckets — losing CST order and reversing the tuple element list.
-				// Kind-match wraps EVERY $._type occurrence with the same 'type'
-				// field name so read_untyped_node collapses them into one ordered slot.
-				// Uses transforms: (not rules:) so the parse is unchanged.
-```
+Nothing is authored. Upstream writes `seq('(', sepBy1(',', _type),
+optional(','), ')')`; enrich hoists the separated run as the list kind
+`types` (item field `item`), and the owner's slot is `types`. The trailing
+comma is the list's optional one, so a one-element `(T)` renders without it.
 
 ### `type_item` (`packages/rust/grammar.sittir.ts:760`)
 
@@ -963,8 +952,6 @@ upstream rule (or an enrich mint on it) whose shape no current diagnostic
 provokes. Each stays because deleting it makes the output worse or breaks
 generation; the floor only shrinks.
 
-- `tuple_type` (declared `'alias-shape'`, unverified: no detector): without it the visible `tuple_type_elements`
-  kind becomes an enrich-minted `types`. missing detector: 'alias-shape' ← an alias spanning part of a seq, or a restructure that changes the parse.
 - `_non_special_token` (declared `'alias-shape'`, unverified: no detector): kept: `options:` is coupled to the
   re-authored shape (`token_tree_punctuation/","/after` names no site without
   it). missing detector: 'alias-shape' ← an alias spanning part of a seq, or a restructure that changes the parse.

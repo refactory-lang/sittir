@@ -17,12 +17,12 @@ describe('__slotHints__', () => {
 	});
 	it('a slot set with rest arguments stamps its rest type and says so', () => {
 		expect(interfaceBlock(rustTypes(), 'Lifetimes')).toMatch(
-			/readonly lifetimes: SlotHint<\s*NonEmptyArray<[^;]*>,\s*false,\s*true\s*>;/
+			/readonly items: SlotHint<\s*NonEmptyArray<[^;]*>,\s*false,\s*true\s*>;/
 		);
 	});
 	it('an elements seat stamps the config object of its group beside its rest type', () => {
 		expect(interfaceBlock(rustTypes(), 'ParametersElements')).toMatch(
-			/readonly elements: SlotHint<\s*NonEmptyArray<[^;]*>,\s*false,\s*true,\s*T\.AttributedParameter\.Config\s*>;/
+			/readonly items: SlotHint<\s*NonEmptyArray<[^;]*>,\s*false,\s*true,\s*T\.AttributedParameter\.Config\s*>;/
 		);
 	});
 	it('a multiple slot whose storage is not verbatim is set with rest arguments too, typed off its config field', () => {
@@ -42,7 +42,7 @@ describe('__slotHints__', () => {
 	});
 	it('a list slot reads as the stored list node', () => {
 		const ps = interfaceBlock(rustTypes(), 'Parameters').replace(/\s+/g, ' ');
-		expect(ps).toContain('parametersElements(): ParametersElements | undefined;');
+		expect(ps).toContain('elements(): ParametersElements | undefined;');
 	});
 	it('a slot that holds a list stamps the builder arguments its setter takes', () => {
 		const fn = interfaceBlock(rustTypes(), 'FunctionItem').replace(/\s+/g, ' ');

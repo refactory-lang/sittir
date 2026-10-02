@@ -2608,16 +2608,17 @@
   {
     "type": "enum_body",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "enum_body_elements",
-          "named": true
-        }
-      ]
+    "fields": {
+      "elements": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "enum_body_elements",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -2656,7 +2657,7 @@
     "type": "enum_body_elements",
     "named": true,
     "fields": {
-      "element": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -2776,7 +2777,7 @@
     "type": "export_specifiers",
     "named": true,
     "fields": {
-      "export_specifier": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -3519,23 +3520,24 @@
   {
     "type": "formal_parameters",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "formal_parameters_elements",
-          "named": true
-        }
-      ]
+    "fields": {
+      "elements": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "formal_parameters_elements",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
     "type": "formal_parameters_elements",
     "named": true,
     "fields": {
-      "formal_parameter": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -4319,7 +4321,7 @@
     "type": "import_specifiers",
     "named": true,
     "fields": {
-      "import_specifier": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -5717,7 +5719,7 @@
     "type": "object_type_content",
     "named": true,
     "fields": {
-      "members": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -7039,7 +7041,7 @@
     "type": "tuple_type_members",
     "named": true,
     "fields": {
-      "tuple_type_member": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -7223,23 +7225,24 @@
   {
     "type": "type_parameters",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "type_parameters_elements",
-          "named": true
-        }
-      ]
+    "fields": {
+      "elements": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type_parameters_elements",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
     "type": "type_parameters_elements",
     "named": true,
     "fields": {
-      "type_parameter": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -7590,7 +7593,7 @@
     "type": "types",
     "named": true,
     "fields": {
-      "type": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [

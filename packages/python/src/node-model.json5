@@ -1,7 +1,7 @@
 {
   "name": "python",
   "root": "module",
-  "nodeCount": 305,
+  "nodeCount": 306,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -237,7 +237,7 @@
       }
     },
     "_simple_statements": {
-      "simple_statements_elements": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -878,7 +878,7 @@
       }
     },
     "expression_list": {
-      "expression": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -939,7 +939,7 @@
       }
     },
     "dict_pattern": {
-      "dict_pattern_elements": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1042,7 +1042,7 @@
       }
     },
     "parameters_elements": {
-      "parameter": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1051,7 +1051,7 @@
       }
     },
     "patterns": {
-      "pattern": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1293,7 +1293,7 @@
       }
     },
     "pattern_list": {
-      "pattern": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1521,7 +1521,7 @@
       }
     },
     "tuple": {
-      "collection_elements": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1628,7 +1628,7 @@
       }
     },
     "collection_elements": {
-      "element": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1797,7 +1797,7 @@
       }
     },
     "simple_statements_elements": {
-      "simple_statement": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1815,7 +1815,7 @@
       }
     },
     "case_patterns": {
-      "case_pattern": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1824,7 +1824,7 @@
       }
     },
     "with_clause_with_items": {
-      "with_item": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1833,7 +1833,7 @@
       }
     },
     "types": {
-      "type": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1842,7 +1842,7 @@
       }
     },
     "argument_list_elements": {
-      "element": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1851,7 +1851,7 @@
       }
     },
     "list_pattern_case_patterns": {
-      "case_pattern": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1860,7 +1860,7 @@
       }
     },
     "dict_pattern_elements": {
-      "element": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1878,7 +1878,7 @@
       }
     },
     "dictionary_elements": {
-      "element": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1893,6 +1893,15 @@
         "required": false,
         "multiple": false,
         "nonEmpty": false
+      }
+    },
+    "tuple_elements": {
+      "item": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
       }
     },
     "except_clause_exception_as": {
@@ -2298,7 +2307,7 @@
       }
     },
     "expression_statement_tuple": {
-      "expression": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2307,7 +2316,7 @@
       }
     },
     "with_clause_bare": {
-      "with_item": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2316,7 +2325,7 @@
       }
     },
     "with_clause_paren": {
-      "with_clause_with_items": {
+      "with_items": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2343,7 +2352,7 @@
       }
     },
     "suite_inline": {
-      "simple_statements_elements": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2819,9 +2828,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "simple_statements_elements",
-          "propertyName": "simpleStatementsElements",
-          "paramName": "simpleStatementsElements",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -2842,7 +2851,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "simple_statements_elements",
       "factoryFields": [
-        "simple_statements_elements"
+        "elements"
       ],
       "bareAccepts": [
         "aliased_import",
@@ -2924,6 +2933,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_alias_statement",
         "type_keyword",
         "unary_operator",
@@ -3193,6 +3203,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -3223,7 +3234,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "element"
+        "item"
       ],
       "bareAccepts": [
         "as_pattern",
@@ -3277,6 +3288,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -3433,6 +3445,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -4144,6 +4157,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -4844,7 +4858,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "case_pattern"
+        "item"
       ],
       "bareAccepts": [
         "_simple_pattern",
@@ -5014,6 +5028,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -5207,7 +5222,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "element"
+        "item"
       ],
       "bareAccepts": [
         "as_pattern",
@@ -5260,6 +5275,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -6052,6 +6068,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -6233,6 +6250,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -6248,9 +6266,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "dict_pattern_elements",
-          "propertyName": "dictPatternElements",
-          "paramName": "dictPatternElements",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -6271,7 +6289,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "dict_pattern_elements",
       "factoryFields": [
-        "dict_pattern_elements"
+        "elements"
       ],
       "bareAccepts": [
         "dict_pattern_elements",
@@ -6300,7 +6318,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "element"
+        "item"
       ],
       "bareAccepts": [
         "key_value_pattern",
@@ -6392,6 +6410,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -6474,7 +6493,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "element"
+        "item"
       ],
       "bareAccepts": [
         "as_pattern",
@@ -6527,6 +6546,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -6617,6 +6637,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -6953,6 +6974,7 @@
         "suite_inline",
         "true",
         "tuple",
+        "tuple_elements",
         "type_alias_statement",
         "type_keyword",
         "unary_operator",
@@ -7828,7 +7850,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "expression"
+        "item"
       ],
       "bareAccepts": [
         "as_pattern",
@@ -7881,6 +7903,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -8009,6 +8032,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -8035,7 +8059,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "expression"
+        "item"
       ],
       "bareAccepts": [
         "as_pattern",
@@ -8088,6 +8112,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -8225,6 +8250,7 @@
         "suite_inline",
         "true",
         "tuple",
+        "tuple_elements",
         "type_alias_statement",
         "type_keyword",
         "unary_operator",
@@ -9526,6 +9552,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -11069,6 +11096,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -11200,7 +11228,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "case_pattern"
+        "item"
       ],
       "bareAccepts": [
         "_simple_pattern",
@@ -11311,6 +11339,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -12060,6 +12089,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -12225,7 +12255,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "parameter"
+        "item"
       ],
       "bareAccepts": [
         "async_keyword",
@@ -12340,6 +12370,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -12477,6 +12508,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -12546,7 +12578,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "pattern"
+        "item"
       ],
       "bareAccepts": [
         "async_keyword",
@@ -12581,7 +12613,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "pattern"
+        "item"
       ],
       "bareAccepts": [
         "async_keyword",
@@ -12783,6 +12815,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -12859,6 +12892,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -12970,6 +13004,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -13123,6 +13158,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -13379,6 +13415,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -13480,6 +13517,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -13625,7 +13663,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "simple_statement"
+        "item"
       ],
       "bareAccepts": [
         "aliased_import",
@@ -13706,6 +13744,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_alias_statement",
         "type_keyword",
         "unary_operator",
@@ -13921,6 +13960,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -14338,6 +14378,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -14478,6 +14519,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -14581,9 +14623,9 @@
       },
       "slots": [
         {
-          "name": "simple_statements_elements",
-          "propertyName": "simpleStatementsElements",
-          "paramName": "simpleStatementsElements",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -14605,7 +14647,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "simple_statements_elements",
       "factoryFields": [
-        "simple_statements_elements"
+        "elements"
       ],
       "bareAccepts": [
         "aliased_import",
@@ -14687,6 +14729,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_alias_statement",
         "type_keyword",
         "unary_operator",
@@ -14834,30 +14877,30 @@
       "hidden": false,
       "slots": [
         {
-          "name": "collection_elements",
-          "propertyName": "collectionElements",
-          "paramName": "collectionElements",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "collection_elements"
+            "tuple_elements"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "collection_elements",
-              "parseKind": "collection_elements"
+              "name": "tuple_elements",
+              "parseKind": "tuple_elements"
             }
           ]
         }
       ],
       "factoryShape": "forwarded",
-      "forwardsTo": "collection_elements",
+      "forwardsTo": "tuple_elements",
       "factoryFields": [
-        "collection_elements"
+        "elements"
       ],
       "bareAccepts": [
         "as_pattern",
@@ -14910,6 +14953,87 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
+        "type_keyword",
+        "unary_operator",
+        "yield",
+        "yield_from_clause"
+      ]
+    },
+    {
+      "kind": "tuple_elements",
+      "modelType": "list",
+      "typeName": "TupleElements",
+      "factoryName": "tupleElements",
+      "irKey": "tupleElements",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
+      "elementKinds": [
+        "expression",
+        "yield",
+        "list_splat",
+        "parenthesized_list_splat"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "item"
+      ],
+      "bareAccepts": [
+        "as_pattern",
+        "async_keyword",
+        "attribute",
+        "await",
+        "await_keyword",
+        "binary_operator",
+        "boolean_operator",
+        "call",
+        "collection_elements",
+        "comparison_operator",
+        "concatenated_string",
+        "conditional_expression",
+        "dictionary",
+        "dictionary_comprehension",
+        "dictionary_elements",
+        "dictionary_splat",
+        "ellipsis",
+        "exec_keyword",
+        "expression_list",
+        "false",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
+        "generator_expression",
+        "identifier",
+        "integer_binary",
+        "integer_decimal_imaginary",
+        "integer_decimal_long",
+        "integer_decimal_plain",
+        "integer_hex",
+        "integer_octal",
+        "lambda",
+        "list",
+        "list_comprehension",
+        "list_splat",
+        "list_splat_pattern",
+        "match_keyword",
+        "named_expression",
+        "none",
+        "not_operator",
+        "pair",
+        "parenthesized_expression",
+        "parenthesized_list_splat",
+        "print_keyword",
+        "set",
+        "set_comprehension",
+        "string",
+        "subscript",
+        "true",
+        "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -15089,6 +15213,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "union_type",
@@ -15263,6 +15388,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type",
         "type_keyword",
         "types",
@@ -15437,7 +15563,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "type"
+        "item"
       ],
       "bareAccepts": [
         "as_pattern",
@@ -15494,6 +15620,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type",
         "type_keyword",
         "unary_operator",
@@ -15914,7 +16041,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "with_item"
+        "item"
       ],
       "bareAccepts": [
         "as_pattern",
@@ -15967,6 +16094,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "with_item",
@@ -15986,9 +16114,9 @@
       },
       "slots": [
         {
-          "name": "with_clause_with_items",
-          "propertyName": "withClauseWithItems",
-          "paramName": "withClauseWithItems",
+          "name": "with_items",
+          "propertyName": "withItems",
+          "paramName": "withItems",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -16010,7 +16138,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "with_clause_with_items",
       "factoryFields": [
-        "with_clause_with_items"
+        "with_items"
       ],
       "bareAccepts": [
         "as_pattern",
@@ -16063,6 +16191,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "with_clause_with_items",
@@ -16091,7 +16220,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "with_item"
+        "item"
       ],
       "bareAccepts": [
         "as_pattern",
@@ -16144,6 +16273,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "with_item",
@@ -16235,6 +16365,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -16430,6 +16561,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",
@@ -16524,6 +16656,7 @@
         "subscript",
         "true",
         "tuple",
+        "tuple_elements",
         "type_keyword",
         "unary_operator",
         "yield",

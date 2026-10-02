@@ -14,7 +14,7 @@ it('the emitted Options type is pinned', async () => {
 it('types every site by kind id at its address and rejects a wrong member at compile time', async () => {
 	const ok: Options = {
 		argumentsElements: {
-			element: { separator: { comma: { before: rs.kinds.Tight, after: rs.kinds.Newline } }, delimiter: Delimiter.Trailing }
+			item: { separator: { comma: { before: rs.kinds.Tight, after: rs.kinds.Newline } }, delimiter: Delimiter.Trailing }
 		},
 		binaryExpression: { operator: { before: rs.kinds.Space, after: rs.kinds.Space } },
 		parameters: { lparen: { after: rs.kinds.Tight } },
@@ -26,7 +26,7 @@ it('types every site by kind id at its address and rejects a wrong member at com
 	};
 	const bad: Options = {
 		argumentsElements: {
-			element: {
+			item: {
 				// @ts-expect-error a comma is not a whitespace kind, and a separator admits no indent
 				separator: { comma: { after: rs.kinds.Comma, before: rs.kinds.Indent } },
 				// @ts-expect-error the leading flank is fixed here
@@ -46,13 +46,13 @@ it('types every site by kind id at its address and rejects a wrong member at com
 
 it('engine options set the spacing of a built separated list and per-call options override them', async () => {
 	const args = rs.build.arguments(rs.build.argumentsElements(rs.build.identifier('a'), rs.build.identifier('b')));
-	const tight = await createEngine(rust, { render: { argumentsElements: { element: { separator: { comma: { after: rs.kinds.Tight } } } } } });
-	const spaced = await createEngine(rust, { render: { argumentsElements: { element: { separator: { comma: { after: rs.kinds.Space } } } } } });
+	const tight = await createEngine(rust, { render: { argumentsElements: { item: { separator: { comma: { after: rs.kinds.Tight } } } } } });
+	const spaced = await createEngine(rust, { render: { argumentsElements: { item: { separator: { comma: { after: rs.kinds.Space } } } } } });
 	expect(tight.render(args).toString()).toBe('(a,b)');
 	expect(spaced.render(args).toString()).toBe('(a, b)');
 	expect(
 		tight
-			.render(args, { argumentsElements: { element: { separator: { comma: { after: rs.kinds.Newline } } } } })
+			.render(args, { argumentsElements: { item: { separator: { comma: { after: rs.kinds.Newline } } } } })
 			.toString()
 	).toBe('(a,\nb)');
 });
@@ -61,7 +61,7 @@ it('a kind-scoped separator override applies only to its own kind, leaving an un
 	const args = rs.build.arguments(rs.build.argumentsElements(rs.build.identifier('a'), rs.build.identifier('b')));
 	const lifetimes = rs.build.lifetimes(rs.build.lifetime('a'), rs.build.lifetime('b'));
 	const engine = await createEngine(rust, {
-		render: { lifetimes: { lifetime: { separator: { comma: { after: rs.kinds.Tight } } } } }
+		render: { lifetimes: { item: { separator: { comma: { after: rs.kinds.Tight } } } } }
 	});
 	expect(engine.render(lifetimes).toString()).toBe("'a,'b");
 	expect(engine.render(args).toString()).toBe('(a, b)');
@@ -72,7 +72,7 @@ it('two adjacent seam requests at the same gap coalesce to a single line break',
 	const engine = await createEngine(rust, {
 		render: {
 			argumentsElements: {
-				element: {
+				item: {
 					attributedArgument: { after: rs.kinds.Newline },
 					separator: { comma: { before: rs.kinds.Newline } }
 				}

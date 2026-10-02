@@ -32,7 +32,7 @@ export function rebuildKeywordOpenersRustLoose() {
 				statements: [rs.build.letDeclaration({
 					pattern: "x",
 					value: rs.build.tupleExpression({
-						tupleExpressionElements: [rs.build.integerLiteral.decimal({
+						expressions: [rs.build.integerLiteral.decimal({
 							content: "1",
 						}), rs.build.integerLiteral.decimal({
 							content: "2",
@@ -41,7 +41,7 @@ export function rebuildKeywordOpenersRustLoose() {
 				}), rs.build.letDeclaration({
 					pattern: "y",
 					value: rs.build.arrayExpression.list({
-						argumentsElements: [{
+						elements: [{
 							expression: rs.build.integerLiteral.decimal({
 								content: "1",
 							}),
@@ -71,7 +71,7 @@ export function rebuildKeywordOpenersRustLoose() {
 					})),
 					consequence: rs.build.block({
 						statements: [rs.build.expressionStatement.withSemi(rs.build.returnExpression(rs.build.tupleExpression({
-							tupleExpressionElements: [rs.build.integerLiteral.decimal({
+							expressions: [rs.build.integerLiteral.decimal({
 								content: "1",
 							}), rs.build.integerLiteral.decimal({
 								content: "2",
@@ -131,7 +131,7 @@ export function rebuildKeywordOpenersRustLoose() {
 					pattern: "t",
 					type: rs.build.tupleType(["Foo", "Foo"]),
 					value: rs.build.tupleExpression({
-						tupleExpressionElements: [rs.build.integerLiteral.decimal({
+						expressions: [rs.build.integerLiteral.decimal({
 							content: "1",
 						}), rs.build.integerLiteral.decimal({
 							content: "2",
@@ -160,7 +160,7 @@ export function rebuildKeywordOpenersRustLoose() {
 				trailingExpression: rs.build.callExpression({
 					function: "Some",
 					arguments: rs.build.tupleExpression({
-						tupleExpressionElements: [rs.build.integerLiteral.decimal({
+						expressions: [rs.build.integerLiteral.decimal({
 							content: "1",
 						}), rs.build.integerLiteral.decimal({
 							content: "2",

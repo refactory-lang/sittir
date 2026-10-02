@@ -243,6 +243,24 @@ hoist restructuring the patch forms cannot express) or `'ambiguity'` (a
 precedence or ambiguity fix). It returns `body` itself, tagged; the rule-cause
 diagnostics judge the declaration against the enriched stage.
 
+`reauthored('accepts-other-kind', witness, body)` is the third cause, and the
+only one that takes a witness: the upstream rule accepts a form that is never
+this kind, because another rule accepts the same form and the parser always
+picks that one. Python's `tuple` is the case: upstream's rule derives `(a)`,
+which is a parenthesized expression and never a tuple; precedence hides the
+overlap from the parser, so nothing reports it, and the model inherits a tuple
+that needs no comma. The declaration states the claim so it can be checked
+(`OtherKindWitness`).
+
+### `packages/codegen/src/dsl/primitives/rule-cause.ts::OtherKindWitness`
+
+The evidence for `'accepts-other-kind'`: `text`, source the upstream parser
+reads as the other kind; `form`, the same text as the sequence both rules
+derive, each item a literal token or `{ symbol }` naming a rule; and `kind`,
+the kind that text always is. The form is checked against upstream's rules when
+the grammar compiles; the text is checked against upstream's own parser by a
+test that covers every declared witness.
+
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::vocabulary`
 
 `vocabulary(body)` declares a `rules:` entry sittir adds and that replaces no

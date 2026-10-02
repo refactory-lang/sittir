@@ -725,12 +725,12 @@ describe('higher_ranked_trait_bound', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type_parameters_elements: {
+				_elements: {
 					$type: TSKindId.TypeParametersElements,
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_element: [
+					_item: [
 						{
 							$type: TSKindId.AttributedTypeParameter,
 							$text: 'test',
@@ -753,12 +753,12 @@ describe('higher_ranked_trait_bound', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type_parameters_elements: {
+				_elements: {
 					$type: TSKindId.TypeParametersElements,
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_element: [
+					_item: [
 						{
 							$type: TSKindId.AttributedTypeParameter,
 							$text: 'test',
@@ -797,7 +797,7 @@ describe('type_parameters', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_element: [
+			_item: [
 				{
 					$type: TSKindId.AttributedTypeParameter,
 					$text: 'test',
@@ -816,7 +816,7 @@ describe('type_parameters', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_element: [
+			_item: [
 				{
 					$type: TSKindId.AttributedTypeParameter,
 					$text: 'test',
@@ -1212,7 +1212,7 @@ describe('for_lifetimes', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_lifetime: [
+			_item: [
 				{
 					$type: TSKindId.Lifetime,
 					$text: 'test',
@@ -1231,7 +1231,7 @@ describe('for_lifetimes', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_lifetime: [
+			_item: [
 				{
 					$type: TSKindId.Lifetime,
 					$text: 'test',
@@ -1328,22 +1328,22 @@ describe('function_type sub-factories', () => {
 describe('tuple_type', () => {
 	it('factory produces correct type', () => {
 		const node = ir.tupleType({
-			$type: TSKindId.TupleTypeElements,
+			$type: TSKindId.Types,
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_type: [{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]
+			_item: [{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]
 		} as any);
 		expect(node.$type).toBe(TSKindId.TupleType);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.tupleType({
-			$type: TSKindId.TupleTypeElements,
+			$type: TSKindId.Types,
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_type: [{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]
+			_item: [{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]
 		} as any);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -1366,12 +1366,12 @@ describe('generic_function', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type_arguments_elements: {
+				_elements: {
 					$type: TSKindId.TypeArgumentsElements,
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_element: [
+					_item: [
 						{
 							$type: TSKindId.TypeArgument,
 							$text: 'test',
@@ -1394,12 +1394,12 @@ describe('generic_function', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type_arguments_elements: {
+				_elements: {
 					$type: TSKindId.TypeArgumentsElements,
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_element: [
+					_item: [
 						{
 							$type: TSKindId.TypeArgument,
 							$text: 'test',
@@ -1431,12 +1431,12 @@ describe('generic_type', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type_arguments_elements: {
+				_elements: {
 					$type: TSKindId.TypeArgumentsElements,
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_element: [
+					_item: [
 						{
 							$type: TSKindId.TypeArgument,
 							$text: 'test',
@@ -1465,12 +1465,12 @@ describe('generic_type', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type_arguments_elements: {
+				_elements: {
 					$type: TSKindId.TypeArgumentsElements,
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_element: [
+					_item: [
 						{
 							$type: TSKindId.TypeArgument,
 							$text: 'test',
@@ -1502,12 +1502,12 @@ describe('generic_type_with_turbofish', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type_arguments_elements: {
+				_elements: {
 					$type: TSKindId.TypeArgumentsElements,
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_element: [
+					_item: [
 						{
 							$type: TSKindId.TypeArgument,
 							$text: 'test',
@@ -1536,12 +1536,12 @@ describe('generic_type_with_turbofish', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type_arguments_elements: {
+				_elements: {
 					$type: TSKindId.TypeArgumentsElements,
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_element: [
+					_item: [
 						{
 							$type: TSKindId.TypeArgument,
 							$text: 'test',
@@ -1596,7 +1596,7 @@ describe('type_arguments', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_element: [
+			_item: [
 				{
 					$type: TSKindId.TypeArgument,
 					$text: 'test',
@@ -1615,7 +1615,7 @@ describe('type_arguments', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_element: [
+			_item: [
 				{
 					$type: TSKindId.TypeArgument,
 					$text: 'test',
@@ -1722,12 +1722,12 @@ describe('dynamic_type', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type_parameters_elements: {
+				_elements: {
 					$type: TSKindId.TypeParametersElements,
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_element: [
+					_item: [
 						{
 							$type: TSKindId.AttributedTypeParameter,
 							$text: 'test',
@@ -1754,12 +1754,12 @@ describe('dynamic_type', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type_parameters_elements: {
+				_elements: {
 					$type: TSKindId.TypeParametersElements,
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_element: [
+					_item: [
 						{
 							$type: TSKindId.AttributedTypeParameter,
 							$text: 'test',
@@ -2073,12 +2073,12 @@ describe('parenthesized_expression', () => {
 describe('tuple_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.tupleExpression({
-			tupleExpressionElements: {
-				$type: TSKindId.TupleExpressionElements,
+			expressions: {
+				$type: TSKindId.Expressions,
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_element: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+				_item: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 			} as any
 		});
 		expect(node.$type).toBe(TSKindId.TupleExpression);
@@ -2086,12 +2086,12 @@ describe('tuple_expression', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.tupleExpression({
-			tupleExpressionElements: {
-				$type: TSKindId.TupleExpressionElements,
+			expressions: {
+				$type: TSKindId.Expressions,
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_element: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+				_item: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 			} as any
 		});
 		const rendered = node.$render!();
@@ -2711,12 +2711,12 @@ describe('generic_pattern', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type_arguments_elements: {
+				_elements: {
 					$type: TSKindId.TypeArgumentsElements,
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_element: [
+					_item: [
 						{
 							$type: TSKindId.TypeArgument,
 							$text: 'test',
@@ -2739,12 +2739,12 @@ describe('generic_pattern', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_type_arguments_elements: {
+				_elements: {
 					$type: TSKindId.TypeArgumentsElements,
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_element: [
+					_item: [
 						{
 							$type: TSKindId.TypeArgument,
 							$text: 'test',
@@ -3456,6 +3456,18 @@ describe('lifetimes', () => {
 	});
 });
 
+describe('types', () => {
+	it('factory produces correct type', () => {
+		const node = ir.types(...[{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]);
+		expect(node.$type).toBe(TSKindId.Types);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.types(...[{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
 describe('use_bounds_elements', () => {
 	it('factory produces correct type', () => {
 		const node = ir.useBoundsElements(
@@ -3548,6 +3560,18 @@ describe('arguments_elements', () => {
 				} as any
 			]
 		);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('expressions', () => {
+	it('factory produces correct type', () => {
+		const node = ir.expressions(...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]);
+		expect(node.$type).toBe(TSKindId.Expressions);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.expressions(...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -3655,34 +3679,6 @@ describe('string_open', () => {
 		expect(node.$type).toBe(TSKindId.StringOpen);
 		expect(node.$source).toBe(2);
 		expect(node.$text).toBe('"');
-	});
-});
-
-describe('tuple_type_elements', () => {
-	it('factory produces correct type', () => {
-		const node = ir.tupleTypeElements(...[{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]);
-		expect(node.$type).toBe(TSKindId.TupleTypeElements);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.tupleTypeElements(...[{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('tuple_expression_elements', () => {
-	it('factory produces correct type', () => {
-		const node = ir.tupleExpressionElements(
-			...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-		);
-		expect(node.$type).toBe(TSKindId.TupleExpressionElements);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.tupleExpressionElements(
-			...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-		);
-		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 

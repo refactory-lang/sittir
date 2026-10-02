@@ -611,18 +611,19 @@ export enum TSKindId {
 	ImportSpecifiersRepeat1 = 451,
 	FormalParametersElementsRepeat1 = 452,
 	EnumBodyElementsRepeat1 = 453,
-	TypeParametersElementsRepeat1 = 454,
-	TupleTypeMembersRepeat1 = 455,
-	ObjectTypeContentRepeat1 = 456,
-	StringDoubleRepeat1 = 457,
-	StringSingleRepeat1 = 458,
-	InterfaceBody = 459,
-	PropertyIdentifier = 461,
-	ShorthandPropertyIdentifier = 462,
-	ShorthandPropertyIdentifierPattern = 463,
-	StatementIdentifier = 464,
-	ThisType = 465,
-	TypeIdentifier = 466,
+	TypesRepeat1 = 454,
+	TypeParametersElementsRepeat1 = 455,
+	TupleTypeMembersRepeat1 = 456,
+	ObjectTypeContentRepeat1 = 457,
+	StringDoubleRepeat1 = 458,
+	StringSingleRepeat1 = 459,
+	InterfaceBody = 460,
+	PropertyIdentifier = 462,
+	ShorthandPropertyIdentifier = 463,
+	ShorthandPropertyIdentifierPattern = 464,
+	StatementIdentifier = 465,
+	ThisType = 466,
+	TypeIdentifier = 467,
 	Error = 65535
 }
 Object.freeze(TSKindId);
@@ -888,7 +889,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[256, 'member_expression'],
 	[257, 'subscript_expression'],
 	[258, '_lhs_expression'],
-	[460, '_lhs_expression'],
+	[461, '_lhs_expression'],
 	[259, 'assignment_expression'],
 	[260, '_augmented_assignment_lhs'],
 	[261, 'augmented_assignment_expression'],
@@ -1084,18 +1085,19 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[451, 'import_specifiers_repeat1'],
 	[452, 'formal_parameters_elements_repeat1'],
 	[453, 'enum_body_elements_repeat1'],
-	[454, 'type_parameters_elements_repeat1'],
-	[455, 'tuple_type_members_repeat1'],
-	[456, 'object_type_content_repeat1'],
-	[457, 'string_double_repeat1'],
-	[458, 'string_single_repeat1'],
-	[459, 'interface_body'],
-	[461, 'property_identifier'],
-	[462, 'shorthand_property_identifier'],
-	[463, 'shorthand_property_identifier_pattern'],
-	[464, 'statement_identifier'],
-	[465, 'this_type'],
-	[466, 'type_identifier'],
+	[454, 'types_repeat1'],
+	[455, 'type_parameters_elements_repeat1'],
+	[456, 'tuple_type_members_repeat1'],
+	[457, 'object_type_content_repeat1'],
+	[458, 'string_double_repeat1'],
+	[459, 'string_single_repeat1'],
+	[460, 'interface_body'],
+	[462, 'property_identifier'],
+	[463, 'shorthand_property_identifier'],
+	[464, 'shorthand_property_identifier_pattern'],
+	[465, 'statement_identifier'],
+	[466, 'this_type'],
+	[467, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -1359,7 +1361,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[256, 'member_expression'],
 	[257, 'subscript_expression'],
 	[258, '_lhs_expression'],
-	[460, 'lhs_expression'],
+	[461, 'lhs_expression'],
 	[259, 'assignment_expression'],
 	[260, '_augmented_assignment_lhs'],
 	[261, 'augmented_assignment_expression'],
@@ -1555,18 +1557,19 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[451, 'import_specifiers_repeat1'],
 	[452, 'formal_parameters_elements_repeat1'],
 	[453, 'enum_body_elements_repeat1'],
-	[454, 'type_parameters_elements_repeat1'],
-	[455, 'tuple_type_members_repeat1'],
-	[456, 'object_type_content_repeat1'],
-	[457, 'string_double_repeat1'],
-	[458, 'string_single_repeat1'],
-	[459, 'interface_body'],
-	[461, 'property_identifier'],
-	[462, 'shorthand_property_identifier'],
-	[463, 'shorthand_property_identifier_pattern'],
-	[464, 'statement_identifier'],
-	[465, 'this_type'],
-	[466, 'type_identifier'],
+	[454, 'types_repeat1'],
+	[455, 'type_parameters_elements_repeat1'],
+	[456, 'tuple_type_members_repeat1'],
+	[457, 'object_type_content_repeat1'],
+	[458, 'string_double_repeat1'],
+	[459, 'string_single_repeat1'],
+	[460, 'interface_body'],
+	[462, 'property_identifier'],
+	[463, 'shorthand_property_identifier'],
+	[464, 'shorthand_property_identifier_pattern'],
+	[465, 'statement_identifier'],
+	[466, 'this_type'],
+	[467, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -2484,6 +2487,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.FormalParametersElementsRepeat1;
 		case 'enum_body_elements_repeat1':
 			return TSKindId.EnumBodyElementsRepeat1;
+		case 'types_repeat1':
+			return TSKindId.TypesRepeat1;
 		case 'type_parameters_elements_repeat1':
 			return TSKindId.TypeParametersElementsRepeat1;
 		case 'tuple_type_members_repeat1':
@@ -5531,24 +5536,24 @@ export interface ClassBody {
 
 export interface FormalParameters {
 	readonly $type: TSKindId.FormalParameters;
-	readonly _formal_parameters_elements?: FormalParametersElements;
+	readonly _elements?: FormalParametersElements;
 	readonly __looseHints__?: {
-		readonly formal_parameters_elements?: readonly (RequiredParameter | OptionalParameter)[];
+		readonly elements?: readonly (RequiredParameter | OptionalParameter)[];
 	};
 	readonly __slotHints__?: {
-		readonly formalParametersElements: SlotHint<T.FormalParametersElements, true>;
+		readonly elements: SlotHint<T.FormalParametersElements, true>;
 		readonly $listView: ListViewHint<
 			T.RequiredParameter | T.OptionalParameter,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 		readonly $listSlots: {
-			readonly formalParametersElements: ListSlotHint<
+			readonly elements: ListSlotHint<
 				T.RequiredParameter | T.OptionalParameter,
 				{ delimiter?: Delimiter.None | Delimiter.Trailing }
 			>;
 		};
 	};
-	formalParametersElements(): FormalParametersElements | undefined;
+	elements(): FormalParametersElements | undefined;
 }
 
 export interface ClassStaticBlock {
@@ -7148,18 +7153,18 @@ export interface EnumDeclaration {
 
 export interface EnumBody {
 	readonly $type: TSKindId.EnumBody;
-	readonly _enum_body_elements?: EnumBodyElements;
+	readonly _elements?: EnumBodyElements;
 	readonly __looseHints__?: {
-		readonly enum_body_elements?: readonly EnumBodyElement[];
+		readonly elements?: readonly EnumBodyElement[];
 	};
 	readonly __slotHints__?: {
-		readonly enumBodyElements: SlotHint<T.EnumBodyElements, true>;
+		readonly elements: SlotHint<T.EnumBodyElements, true>;
 		readonly $listView: ListViewHint<T.EnumBodyElement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
-			readonly enumBodyElements: ListSlotHint<T.EnumBodyElement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly elements: ListSlotHint<T.EnumBodyElement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	enumBodyElements(): EnumBodyElements | undefined;
+	elements(): EnumBodyElements | undefined;
 }
 
 export interface EnumAssignment {
@@ -8890,24 +8895,24 @@ export interface PropertySignature {
 
 export interface TypeParameters {
 	readonly $type: TSKindId.TypeParameters;
-	readonly _type_parameters_elements: TypeParametersElements;
+	readonly _elements: TypeParametersElements;
 	readonly __looseHints__?: {
-		readonly type_parameters_elements: readonly TypeParameter[];
+		readonly elements: readonly TypeParameter[];
 	};
 	readonly __slotHints__?: {
-		readonly typeParametersElements: SlotHint<T.TypeParametersElements>;
+		readonly elements: SlotHint<T.TypeParametersElements>;
 		readonly $listView: ListViewHint<
 			T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 		readonly $listSlots: {
-			readonly typeParametersElements: ListSlotHint<
+			readonly elements: ListSlotHint<
 				T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
 				{ delimiter?: Delimiter.None | Delimiter.Trailing }
 			>;
 		};
 	};
-	typeParametersElements(): TypeParametersElements;
+	elements(): TypeParametersElements;
 }
 
 export interface TypeParameter {
@@ -9338,44 +9343,44 @@ export interface FunctionType {
 
 export interface ExportSpecifiers {
 	readonly $type: TSKindId.ExportSpecifiers;
-	readonly _export_specifier: NonEmptyArray<ExportSpecifier>;
+	readonly _item: NonEmptyArray<ExportSpecifier>;
 	readonly __inputHints__?: {
-		readonly export_specifier: NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>;
+		readonly item: NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>;
 	};
 	readonly __slotHints__?: {
-		readonly exportSpecifiers: SlotHint<NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>, false, true>;
+		readonly items: SlotHint<NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<
 			T.ExportSpecifier | T.Identifier | T.String,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 	};
-	exportSpecifiers(): NonEmptyArray<ExportSpecifier>;
+	items(): NonEmptyArray<ExportSpecifier>;
 }
 
 export interface ImportSpecifiers {
 	readonly $type: TSKindId.ImportSpecifiers;
-	readonly _import_specifier: NonEmptyArray<ImportSpecifier>;
+	readonly _item: NonEmptyArray<ImportSpecifier>;
 	readonly __slotHints__?: {
-		readonly importSpecifiers: SlotHint<NonEmptyArray<T.ImportSpecifier>, false, true>;
+		readonly items: SlotHint<NonEmptyArray<T.ImportSpecifier>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<T.ImportSpecifier, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
-	importSpecifiers(): NonEmptyArray<ImportSpecifier>;
+	items(): NonEmptyArray<ImportSpecifier>;
 }
 
 export interface FormalParametersElements {
 	readonly $type: TSKindId.FormalParametersElements;
-	readonly _formal_parameter: NonEmptyArray<RequiredParameter | OptionalParameter>;
+	readonly _item: NonEmptyArray<RequiredParameter | OptionalParameter>;
 	readonly __slotHints__?: {
-		readonly formalParameters: SlotHint<NonEmptyArray<T.RequiredParameter | T.OptionalParameter>, false, true>;
+		readonly items: SlotHint<NonEmptyArray<T.RequiredParameter | T.OptionalParameter>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<
 			T.RequiredParameter | T.OptionalParameter,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 	};
-	formalParameters(): NonEmptyArray<RequiredParameter | OptionalParameter>;
+	items(): NonEmptyArray<RequiredParameter | OptionalParameter>;
 }
 
 export interface EnumBodyElementName {
@@ -9530,55 +9535,51 @@ export interface EnumBodyElementName {
 
 export interface EnumBodyElements {
 	readonly $type: TSKindId.EnumBodyElements;
-	readonly _element: NonEmptyArray<EnumBodyElement>;
+	readonly _item: NonEmptyArray<EnumBodyElement>;
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<NonEmptyArray<T.EnumBodyElement>, false, true>;
+		readonly items: SlotHint<NonEmptyArray<T.EnumBodyElement>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<T.EnumBodyElement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
-	elements(): NonEmptyArray<EnumBodyElement>;
+	items(): NonEmptyArray<EnumBodyElement>;
 }
 
 export interface Types {
 	readonly $type: TSKindId.Types;
-	readonly _type: NonEmptyArray<Type>;
+	readonly _item: NonEmptyArray<Type>;
 	readonly __slotHints__?: {
-		readonly types: SlotHint<NonEmptyArray<T.Type | T.TypeIdentifier.Types>, false, true>;
+		readonly items: SlotHint<NonEmptyArray<T.Type | T.TypeIdentifier.Types>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<
 			T.Type | T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 	};
-	types(): NonEmptyArray<Type>;
+	items(): NonEmptyArray<Type>;
 }
 
 export interface TypeParametersElements {
 	readonly $type: TSKindId.TypeParametersElements;
-	readonly _type_parameter: NonEmptyArray<TypeParameter>;
+	readonly _item: NonEmptyArray<TypeParameter>;
 	readonly __inputHints__?: {
-		readonly type_parameter: NonEmptyArray<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>;
+		readonly item: NonEmptyArray<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>;
 	};
 	readonly __slotHints__?: {
-		readonly typeParameters: SlotHint<
-			NonEmptyArray<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>,
-			false,
-			true
-		>;
+		readonly items: SlotHint<NonEmptyArray<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<
 			T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 	};
-	typeParameters(): NonEmptyArray<TypeParameter>;
+	items(): NonEmptyArray<TypeParameter>;
 }
 
 export interface TupleTypeMembers {
 	readonly $type: TSKindId.TupleTypeMembers;
-	readonly _tuple_type_member: NonEmptyArray<TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type>;
+	readonly _item: NonEmptyArray<TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type>;
 	readonly __slotHints__?: {
-		readonly tupleTypeMembers: SlotHint<
+		readonly items: SlotHint<
 			NonEmptyArray<
 				T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types
 			>,
@@ -9591,7 +9592,7 @@ export interface TupleTypeMembers {
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 	};
-	tupleTypeMembers(): NonEmptyArray<TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type>;
+	items(): NonEmptyArray<TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type>;
 }
 
 export interface ImportClauseGroup {
@@ -9700,11 +9701,11 @@ export interface AmbientDeclarationModule {
 
 export interface ObjectTypeContent {
 	readonly $type: TSKindId.ObjectTypeContent;
-	readonly _members: NonEmptyArray<
+	readonly _item: NonEmptyArray<
 		ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature
 	>;
 	readonly __slotHints__?: {
-		readonly members: SlotHint<
+		readonly items: SlotHint<
 			NonEmptyArray<
 				| T.ExportStatement
 				| T.PropertySignature
@@ -9731,7 +9732,7 @@ export interface ObjectTypeContent {
 			}
 		>;
 	};
-	members(): NonEmptyArray<
+	items(): NonEmptyArray<
 		ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature
 	>;
 }
@@ -13975,7 +13976,7 @@ export namespace ExportSpecifiers {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly exportSpecifier?: {
+			readonly item?: {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: WhitespaceArm;
 				readonly exportSpecifier?: { readonly after?: WhitespaceArm };
@@ -13991,7 +13992,7 @@ export namespace ImportSpecifiers {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly importSpecifier?: {
+			readonly item?: {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: WhitespaceArm;
 				readonly importSpecifierAs?: { readonly after?: WhitespaceArm };
@@ -14008,7 +14009,7 @@ export namespace FormalParametersElements {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly formalParameter?: {
+			readonly item?: {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: WhitespaceArm;
 				readonly optionalParameter?: { readonly after?: WhitespaceArm };
@@ -14025,7 +14026,7 @@ export namespace EnumBodyElements {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly element?: {
+			readonly item?: {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: WhitespaceArm;
 				readonly enumAssignment?: { readonly after?: WhitespaceArm };
@@ -14041,7 +14042,7 @@ export namespace Types {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly type?: {
+			readonly item?: {
 				readonly arrayType?: { readonly after?: WhitespaceArm };
 				readonly conditionalType?: { readonly after?: WhitespaceArm };
 				readonly constructorType?: { readonly after?: WhitespaceArm };
@@ -14079,7 +14080,7 @@ export namespace TypeParametersElements {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly typeParameter?: {
+			readonly item?: {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: WhitespaceArm;
 				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
@@ -14095,7 +14096,7 @@ export namespace TupleTypeMembers {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly tupleTypeMember?: {
+			readonly item?: {
 				readonly arrayType?: { readonly after?: WhitespaceArm };
 				readonly conditionalType?: { readonly after?: WhitespaceArm };
 				readonly constructorType?: { readonly after?: WhitespaceArm };
@@ -14182,7 +14183,7 @@ export namespace ObjectTypeContent {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly members?: {
+			readonly item?: {
 				readonly callSignature?: { readonly after?: WhitespaceArm };
 				readonly constructSignature?: { readonly after?: WhitespaceArm };
 				readonly delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
@@ -15600,7 +15601,7 @@ export interface FormalParametersNs extends NodeNs<
 	FormalParameters.Bound,
 	FormalParameters.BuildArgs,
 	FormalParameters.LooseArgs,
-	'formal_parameters_elements',
+	'elements',
 	TSKindId.FormalParameters,
 	FormalParameters.Parsed,
 	EmptyFormalParameters
@@ -15990,7 +15991,7 @@ export interface EnumBodyNs extends NodeNs<
 	EnumBody.Bound,
 	EnumBody.BuildArgs,
 	EnumBody.LooseArgs,
-	'enum_body_elements',
+	'elements',
 	TSKindId.EnumBody,
 	EnumBody.Parsed,
 	EmptyEnumBody
@@ -16510,7 +16511,7 @@ export interface TypeParametersNs extends NodeNs<
 	TypeParameters.Bound,
 	TypeParameters.BuildArgs,
 	TypeParameters.LooseArgs,
-	'type_parameters_elements',
+	'elements',
 	TSKindId.TypeParameters,
 	TypeParameters.Parsed,
 	never
@@ -16653,7 +16654,7 @@ export interface ExportSpecifiersNs extends NodeNs<
 	ExportSpecifiers.Bound,
 	ExportSpecifiers.BuildArgs,
 	ExportSpecifiers.LooseArgs,
-	'export_specifier',
+	'item',
 	TSKindId.ExportSpecifiers,
 	ExportSpecifiers.Parsed,
 	never
@@ -16666,7 +16667,7 @@ export interface ImportSpecifiersNs extends NodeNs<
 	ImportSpecifiers.Bound,
 	ImportSpecifiers.BuildArgs,
 	ImportSpecifiers.LooseArgs,
-	'import_specifier',
+	'item',
 	TSKindId.ImportSpecifiers,
 	ImportSpecifiers.Parsed,
 	never
@@ -16679,7 +16680,7 @@ export interface FormalParametersElementsNs extends NodeNs<
 	FormalParametersElements.Bound,
 	FormalParametersElements.BuildArgs,
 	FormalParametersElements.LooseArgs,
-	'formal_parameter',
+	'item',
 	TSKindId.FormalParametersElements,
 	FormalParametersElements.Parsed,
 	never
@@ -16705,7 +16706,7 @@ export interface EnumBodyElementsNs extends NodeNs<
 	EnumBodyElements.Bound,
 	EnumBodyElements.BuildArgs,
 	EnumBodyElements.LooseArgs,
-	'element',
+	'item',
 	TSKindId.EnumBodyElements,
 	EnumBodyElements.Parsed,
 	never
@@ -16718,7 +16719,7 @@ export interface TypesNs extends NodeNs<
 	Types.Bound,
 	Types.BuildArgs,
 	Types.LooseArgs,
-	'type',
+	'item',
 	TSKindId.Types,
 	Types.Parsed,
 	never
@@ -16731,7 +16732,7 @@ export interface TypeParametersElementsNs extends NodeNs<
 	TypeParametersElements.Bound,
 	TypeParametersElements.BuildArgs,
 	TypeParametersElements.LooseArgs,
-	'type_parameter',
+	'item',
 	TSKindId.TypeParametersElements,
 	TypeParametersElements.Parsed,
 	never
@@ -16744,7 +16745,7 @@ export interface TupleTypeMembersNs extends NodeNs<
 	TupleTypeMembers.Bound,
 	TupleTypeMembers.BuildArgs,
 	TupleTypeMembers.LooseArgs,
-	'tuple_type_member',
+	'item',
 	TSKindId.TupleTypeMembers,
 	TupleTypeMembers.Parsed,
 	never
@@ -16809,7 +16810,7 @@ export interface ObjectTypeContentNs extends NodeNs<
 	ObjectTypeContent.Bound,
 	ObjectTypeContent.BuildArgs,
 	ObjectTypeContent.LooseArgs,
-	'members',
+	'item',
 	TSKindId.ObjectTypeContent,
 	ObjectTypeContent.Parsed,
 	never

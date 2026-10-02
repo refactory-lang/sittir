@@ -32,16 +32,16 @@ export function rebuildKeywordOpenersRustGenerated() {
 				statements: [rs.build.letDeclaration.strict({
 					pattern: rs.build.identifier("x"),
 					value: rs.build.tupleExpression.strict({
-						tupleExpressionElements: rs.build.tupleExpressionElements.strict(rs.build.integerLiteral.decimal.strict({
+						expressions: [rs.build.integerLiteral.decimal.strict({
 							content: "1",
 						}), rs.build.integerLiteral.decimal.strict({
 							content: "2",
-						})),
+						})],
 					}),
 				}), rs.build.letDeclaration.strict({
 					pattern: rs.build.identifier("y"),
 					value: rs.build.arrayExpression.list.strict({
-						argumentsElements: [{
+						elements: [{
 							expression: rs.build.integerLiteral.decimal.strict({
 								content: "1",
 							}),
@@ -71,11 +71,11 @@ export function rebuildKeywordOpenersRustGenerated() {
 					})),
 					consequence: rs.build.block.strict({
 						statements: [rs.build.expressionStatement.withSemi.strict(rs.build.returnExpression.strict(rs.build.tupleExpression.strict({
-							tupleExpressionElements: rs.build.tupleExpressionElements.strict(rs.build.integerLiteral.decimal.strict({
+							expressions: [rs.build.integerLiteral.decimal.strict({
 								content: "1",
 							}), rs.build.integerLiteral.decimal.strict({
 								content: "2",
-							})),
+							})],
 						})))],
 					}),
 				})), rs.build.expressionStatement.strict(rs.build.forExpression.strict({
@@ -131,11 +131,11 @@ export function rebuildKeywordOpenersRustGenerated() {
 					pattern: rs.build.identifier("t"),
 					type: rs.build.tupleType.strict(rs.build.identifier("Foo"), rs.build.identifier("Foo")),
 					value: rs.build.tupleExpression.strict({
-						tupleExpressionElements: rs.build.tupleExpressionElements.strict(rs.build.integerLiteral.decimal.strict({
+						expressions: [rs.build.integerLiteral.decimal.strict({
 							content: "1",
 						}), rs.build.integerLiteral.decimal.strict({
 							content: "2",
-						})),
+						})],
 					}),
 				}), rs.build.letDeclaration.strict({
 					pattern: rs.build.identifier("u"),
@@ -160,11 +160,11 @@ export function rebuildKeywordOpenersRustGenerated() {
 				trailingExpression: rs.build.callExpression.strict({
 					function: rs.build.identifier("Some"),
 					arguments: rs.build.arguments.strict(rs.build.tupleExpression.strict({
-						tupleExpressionElements: rs.build.tupleExpressionElements.strict(rs.build.integerLiteral.decimal.strict({
+						expressions: [rs.build.integerLiteral.decimal.strict({
 							content: "1",
 						}), rs.build.integerLiteral.decimal.strict({
 							content: "2",
-						})),
+						})],
 					})),
 				}),
 			}),

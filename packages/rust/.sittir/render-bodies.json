@@ -96,11 +96,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "arguments_elements",
+					"test": "elements",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "arguments_elements"
+							"name": "elements"
 						}
 					]
 				}
@@ -126,7 +126,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -154,11 +154,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "arguments_elements",
+					"test": "elements",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "arguments_elements"
+							"name": "elements"
 						}
 					]
 				}
@@ -2035,11 +2035,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "enum_variant_list_elements",
+					"test": "elements",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "enum_variant_list_elements"
+							"name": "elements"
 						}
 					]
 				}
@@ -2065,7 +2065,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -2150,6 +2150,20 @@
 		{
 			"kind": "seam",
 			"field": "expression_statement_with_semi_after"
+		}
+	],
+	"expressions": [
+		{
+			"kind": "seam",
+			"field": "expressions_before"
+		},
+		{
+			"kind": "slot",
+			"name": "item"
+		},
+		{
+			"kind": "seam",
+			"field": "expressions_after"
 		}
 	],
 	"extern_crate_declaration": [
@@ -2341,11 +2355,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "field_declaration_list_elements",
+					"test": "elements",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "field_declaration_list_elements"
+							"name": "elements"
 						}
 					]
 				}
@@ -2371,7 +2385,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -2495,7 +2509,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -4174,7 +4188,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "lifetime"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -4540,7 +4554,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "macro_rule"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -5011,7 +5025,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -5083,11 +5097,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "parameters_elements",
+					"test": "elements",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "parameters_elements"
+							"name": "elements"
 						}
 					]
 				}
@@ -5113,7 +5127,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -5157,7 +5171,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "pattern"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -6517,7 +6531,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -7070,7 +7084,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "tuple_expression_elements"
+			"name": "expressions"
 		},
 		{
 			"kind": "seam",
@@ -7083,20 +7097,6 @@
 		{
 			"kind": "seam",
 			"field": "tuple_expression_after"
-		}
-	],
-	"tuple_expression_elements": [
-		{
-			"kind": "seam",
-			"field": "tuple_expression_elements_before"
-		},
-		{
-			"kind": "slot",
-			"name": "element"
-		},
-		{
-			"kind": "seam",
-			"field": "tuple_expression_elements_after"
 		}
 	],
 	"tuple_pattern": [
@@ -7146,7 +7146,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -7216,7 +7216,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "tuple_type_elements"
+			"name": "types"
 		},
 		{
 			"kind": "seam",
@@ -7229,20 +7229,6 @@
 		{
 			"kind": "seam",
 			"field": "tuple_type_after"
-		}
-	],
-	"tuple_type_elements": [
-		{
-			"kind": "seam",
-			"field": "tuple_type_elements_before"
-		},
-		{
-			"kind": "slot",
-			"name": "type"
-		},
-		{
-			"kind": "seam",
-			"field": "tuple_type_elements_after"
 		}
 	],
 	"type_argument": [
@@ -7288,7 +7274,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type_arguments_elements"
+			"name": "elements"
 		},
 		{
 			"kind": "seam",
@@ -7310,7 +7296,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -7582,7 +7568,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type_parameters_elements"
+			"name": "elements"
 		},
 		{
 			"kind": "seam",
@@ -7604,11 +7590,25 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
 			"field": "type_parameters_elements_after"
+		}
+	],
+	"types": [
+		{
+			"kind": "seam",
+			"field": "types_before"
+		},
+		{
+			"kind": "slot",
+			"name": "item"
+		},
+		{
+			"kind": "seam",
+			"field": "types_after"
 		}
 	],
 	"unary_expression": [
@@ -7816,7 +7816,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "element"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -7830,7 +7830,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "use_clause"
+			"name": "item"
 		},
 		{
 			"kind": "seam",
@@ -8211,7 +8211,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "where_predicate"
+			"name": "item"
 		},
 		{
 			"kind": "seam",

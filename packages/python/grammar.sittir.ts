@@ -193,20 +193,8 @@ export default sittirGrammar(base, {
 		lambda_parameters: {
 			'.': alias('parameters_elements')
 		},
-		tuple_pattern: {
-			'1/0': alias('patterns')
-		},
-		list_pattern: {
-			'1/0': alias('patterns')
-		},
-		list: {
-			'1/0': alias('collection_elements')
-		},
 		set: {
 			1: alias('collection_elements')
-		},
-		tuple: {
-			'1/0': alias('collection_elements')
 		},
 
 		argument_list: {
@@ -264,7 +252,6 @@ export default sittirGrammar(base, {
 		},
 
 		for_in_clause: {
-			'0/0': field('async'),
 			'5/0': field('comma')
 		},
 
@@ -369,6 +356,16 @@ export default sittirGrammar(base, {
 		]
 	},
 	rules: {
+		// See docs/python-grammar-sittir-glossary.md::tuple
+		_tuple_elements: vocabulary(($) => {
+			const element = () => field('item', choice($.expression, $.yield, $.list_splat, $.parenthesized_list_splat));
+			return seq(seq(element(), ','), repeat(seq(element(), ',')), optional(element()));
+		}),
+		tuple: reauthored(
+			'accepts-other-kind',
+			{ text: '(a)', form: ['(', { symbol: 'expression' }, ')'], kind: 'parenthesized_expression' },
+			($) => seq('(', optional(field('elements', alias($._tuple_elements, $.tuple_elements))), ')')
+		),
 		// See docs/python-grammar-sittir-glossary.md::primary_expression
 		primary_expression: reauthored('ambiguity', ($, original) => {
 			let base = original.members;

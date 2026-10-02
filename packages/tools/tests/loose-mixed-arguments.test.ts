@@ -8,7 +8,7 @@ const python = await createEngine(await languageByName('python'));
 const rustParameters = () => {
 	const fn = rust.parse('fn process(input: &str, b: u8) {}\n').statements()[0]!;
 	if (!rust.is.functionItem(fn)) throw new Error('expected a function item');
-	return fn.parameters().parametersElements()!.elements();
+	return fn.parameters().elements()!.items();
 };
 
 describe('a loose builder takes every argument its strict builder takes', () => {
@@ -26,7 +26,7 @@ describe('a loose builder takes every argument its strict builder takes', () => 
 	it('python: parameters spreads its elements into the list it wraps', () => {
 		const fn = python.parse('def f(a, b):\n    pass\n').statements()[0]!;
 		if (!python.is.functionDefinition(fn)) throw new Error('expected a function definition');
-		const [a, b] = fn.parameters().elements()!.parameters();
+		const [a, b] = fn.parameters().elements()!.items();
 		expect(python.render(python.build.parameters(a!, b!)).toString()).toBe('(a, b)');
 	});
 

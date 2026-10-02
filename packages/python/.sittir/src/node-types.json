@@ -543,7 +543,7 @@
     "type": "argument_list_elements",
     "named": true,
     "fields": {
-      "element": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -1175,7 +1175,7 @@
     "type": "case_patterns",
     "named": true,
     "fields": {
-      "case_pattern": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -1294,7 +1294,7 @@
     "type": "collection_elements",
     "named": true,
     "fields": {
-      "element": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -1678,23 +1678,24 @@
   {
     "type": "dict_pattern",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "dict_pattern_elements",
-          "named": true
-        }
-      ]
+    "fields": {
+      "elements": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "dict_pattern_elements",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
     "type": "dict_pattern_elements",
     "named": true,
     "fields": {
-      "element": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -1756,7 +1757,7 @@
     "type": "dictionary_elements",
     "named": true,
     "fields": {
-      "element": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -2001,7 +2002,7 @@
     "type": "expression_list",
     "named": true,
     "fields": {
-      "expression": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -2048,7 +2049,7 @@
     "type": "expression_statement_tuple",
     "named": true,
     "fields": {
-      "expression": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -2958,7 +2959,7 @@
     "type": "list_pattern_case_patterns",
     "named": true,
     "fields": {
-      "case_pattern": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -3244,7 +3245,7 @@
     "type": "parameters_elements",
     "named": true,
     "fields": {
-      "parameter": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -3320,7 +3321,7 @@
     "type": "pattern_list",
     "named": true,
     "fields": {
-      "pattern": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -3336,7 +3337,7 @@
     "type": "patterns",
     "named": true,
     "fields": {
-      "pattern": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -3658,17 +3659,24 @@
   {
     "type": "simple_statements",
     "named": true,
-    "fields": {},
+    "fields": {
+      "elements": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "simple_statements_elements",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
           "type": "newline",
-          "named": true
-        },
-        {
-          "type": "simple_statements_elements",
           "named": true
         }
       ]
@@ -3678,7 +3686,7 @@
     "type": "simple_statements_elements",
     "named": true,
     "fields": {
-      "simple_statement": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -3967,17 +3975,24 @@
   {
     "type": "suite_inline",
     "named": true,
-    "fields": {},
+    "fields": {
+      "elements": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "simple_statements_elements",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
           "type": "newline",
-          "named": true
-        },
-        {
-          "type": "simple_statements_elements",
           "named": true
         }
       ]
@@ -4032,16 +4047,45 @@
   {
     "type": "tuple",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "collection_elements",
-          "named": true
-        }
-      ]
+    "fields": {
+      "elements": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "tuple_elements",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "tuple_elements",
+    "named": true,
+    "fields": {
+      "item": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          },
+          {
+            "type": "list_splat",
+            "named": true
+          },
+          {
+            "type": "parenthesized_list_splat",
+            "named": true
+          },
+          {
+            "type": "yield",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -4209,7 +4253,7 @@
     "type": "types",
     "named": true,
     "fields": {
-      "type": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -4403,7 +4447,7 @@
     "type": "with_clause_bare",
     "named": true,
     "fields": {
-      "with_item": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [
@@ -4418,23 +4462,24 @@
   {
     "type": "with_clause_paren",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "with_clause_with_items",
-          "named": true
-        }
-      ]
+    "fields": {
+      "with_items": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "with_clause_with_items",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
     "type": "with_clause_with_items",
     "named": true,
     "fields": {
-      "with_item": {
+      "item": {
         "multiple": true,
         "required": true,
         "types": [

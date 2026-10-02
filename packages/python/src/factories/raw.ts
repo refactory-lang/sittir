@@ -178,22 +178,18 @@ export function buildSimpleStatements(...args: unknown[]) {
 function _buildSimpleStatements(
 	value: AdmitBound<T.SimpleStatementsElements, T.AdmittedNodes>
 ): T.SimpleStatements.Bound {
-	const _simple_statements_elements = rejectBareText(
-		value,
-		'SimpleStatements.simpleStatementsElements',
-		'a built SimpleStatementsElements'
-	);
-	const listView = ownerView(_simple_statements_elements, '_simple_statement');
+	const _elements = rejectBareText(value, 'SimpleStatements.elements', 'a built SimpleStatementsElements');
+	const listView = ownerView(_elements, '_item');
 	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'simpleStatements'), undefined);
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SimpleStatements as const,
 		$source: 2 as const,
 		$named: true as const,
-		_simple_statements_elements,
+		_elements,
 		$with: {
-			simpleStatementsElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -202,10 +198,10 @@ function _buildSimpleStatements(
 					)
 				)
 		},
-		simpleStatementsElements: () => _simple_statements_elements,
+		elements: () => _elements,
 		length: listedItems?.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_simple_statements_elements') : undefined,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_elements') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -218,7 +214,7 @@ function _buildSimpleStatements(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_simple_statements_elements');
+	if (listedItems === undefined) readStubLength(node, '_elements');
 	else
 		for (let index = 0; index < listedItems.length; index++)
 			(node as Record<number, unknown>)[index] = listedItems[index];
@@ -1245,9 +1241,9 @@ export function buildParameters(...args: unknown[]) {
 }
 function _buildParameters(value?: AdmitBound<T.ParametersElements, T.AdmittedNodes>): T.Parameters.Bound {
 	const _elements = rejectBareText(value, 'Parameters.elements', 'a built ParametersElements');
-	const listView = ownerView(_elements, '_parameter');
+	const listView = ownerView(_elements, '_item');
 	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'parameters'), undefined);
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Parameters as const,
@@ -1319,9 +1315,9 @@ function _buildLambdaParameters(value: AdmitBound<T.ParametersElements, T.Admitt
 		'LambdaParameters.parametersElements',
 		'a built ParametersElements'
 	);
-	const listView = ownerView(_parameters_elements, '_parameter');
+	const listView = ownerView(_parameters_elements, '_item');
 	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'parameters'), undefined);
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.LambdaParameters as const,
@@ -1596,9 +1592,9 @@ export function buildTypeParameter(...args: unknown[]) {
 }
 function _buildTypeParameter(value: AdmitBound<T.Types, T.AdmittedNodes>): T.TypeParameter.Bound {
 	const _types = rejectBareText(value, 'TypeParameter.types', 'a built Types');
-	const listView = ownerView(_types, '_type');
+	const listView = ownerView(_types, '_item');
 	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'types'), undefined);
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TypeParameter as const,
@@ -1703,9 +1699,9 @@ export function buildArgumentList(...args: unknown[]) {
 }
 function _buildArgumentList(value?: AdmitBound<T.ArgumentListElements, T.AdmittedNodes>): T.ArgumentList.Bound {
 	const _arguments = rejectBareText(value, 'ArgumentList.arguments', 'a built ArgumentListElements');
-	const listView = ownerView(_arguments, '_element');
+	const listView = ownerView(_arguments, '_item');
 	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'elements'), undefined);
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ArgumentList as const,
@@ -1855,23 +1851,23 @@ function _buildExpressionList(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ExpressionList.Bound {
 	_assertNonEmpty(elements, 'expression_list.elements');
-	const _expression = elements;
+	const _item = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_expression);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExpressionList as const,
 		$source: 2 as const,
 		$named: true as const,
-		_expression,
+		_item,
 		_delimiter,
 		$with: {
-			expressions: (...vs: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>) =>
+			items: (...vs: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>) =>
 				rebuilt(node, handle, () => buildExpressionList(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildExpressionList({ ...options, delimiter: v }, ...elements))
 		},
-		expressions: () => _expression,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -2132,22 +2128,18 @@ export function buildDictPattern(...args: unknown[]) {
 		: _buildDictPattern((buildDictPatternElements as (...a: unknown[]) => unknown)(...args) as T.DictPatternElements);
 }
 function _buildDictPattern(value?: AdmitBound<T.DictPatternElements, T.AdmittedNodes>): T.DictPattern.Bound {
-	const _dict_pattern_elements = rejectBareText(
-		value,
-		'DictPattern.dictPatternElements',
-		'a built DictPatternElements'
-	);
-	const listView = ownerView(_dict_pattern_elements, '_element');
+	const _elements = rejectBareText(value, 'DictPattern.elements', 'a built DictPatternElements');
+	const listView = ownerView(_elements, '_item');
 	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'elements'), undefined);
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DictPattern as const,
 		$source: 2 as const,
 		$named: true as const,
-		_dict_pattern_elements,
+		_elements,
 		$with: {
-			dictPatternElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -2156,10 +2148,10 @@ function _buildDictPattern(value?: AdmitBound<T.DictPatternElements, T.AdmittedN
 					)
 				)
 		},
-		dictPatternElements: () => _dict_pattern_elements,
+		elements: () => _elements,
 		length: listedItems?.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_dict_pattern_elements') : undefined,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_elements') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -2173,7 +2165,7 @@ function _buildDictPattern(value?: AdmitBound<T.DictPatternElements, T.AdmittedN
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_dict_pattern_elements');
+	if (listedItems === undefined) readStubLength(node, '_elements');
 	else
 		for (let index = 0; index < listedItems.length; index++)
 			(node as Record<number, unknown>)[index] = listedItems[index];
@@ -2385,23 +2377,23 @@ function _buildParametersElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ParametersElements.Bound {
 	_assertNonEmpty(elements, 'parameters_elements.elements');
-	const _parameter = elements;
+	const _item = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_parameter);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ParametersElements as const,
 		$source: 2 as const,
 		$named: true as const,
-		_parameter,
+		_item,
 		_delimiter,
 		$with: {
-			parameters: (...vs: NonEmptyArray<AdmitBound<T.Parameter, T.AdmittedNodes>>) =>
+			items: (...vs: NonEmptyArray<AdmitBound<T.Parameter, T.AdmittedNodes>>) =>
 				rebuilt(node, handle, () => buildParametersElements(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildParametersElements({ ...options, delimiter: v }, ...elements))
 		},
-		parameters: () => _parameter,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -2448,23 +2440,23 @@ function _buildPatterns(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.Patterns.Bound {
 	_assertNonEmpty(elements, 'patterns.elements');
-	const _pattern = elements;
+	const _item = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_pattern);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Patterns as const,
 		$source: 2 as const,
 		$named: true as const,
-		_pattern,
+		_item,
 		_delimiter,
 		$with: {
-			patterns: (...vs: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>) =>
+			items: (...vs: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>) =>
 				rebuilt(node, handle, () => buildPatterns(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildPatterns({ ...options, delimiter: v }, ...elements))
 		},
-		patterns: () => _pattern,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -2510,9 +2502,9 @@ export function buildTuplePattern(...args: unknown[]) {
 }
 function _buildTuplePattern(value?: AdmitBound<T.Patterns, T.AdmittedNodes>): T.TuplePattern.Bound {
 	const _patterns = rejectBareText(value, 'TuplePattern.patterns', 'a built Patterns');
-	const listView = ownerView(_patterns, '_pattern');
+	const listView = ownerView(_patterns, '_item');
 	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'patterns'), undefined);
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TuplePattern as const,
@@ -2577,9 +2569,9 @@ export function buildListPattern(...args: unknown[]) {
 }
 function _buildListPattern(value?: AdmitBound<T.Patterns, T.AdmittedNodes>): T.ListPattern.Bound {
 	const _patterns = rejectBareText(value, 'ListPattern.patterns', 'a built Patterns');
-	const listView = ownerView(_patterns, '_pattern');
+	const listView = ownerView(_patterns, '_item');
 	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'patterns'), undefined);
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ListPattern as const,
@@ -3188,23 +3180,23 @@ function _buildPatternList(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.PatternList.Bound {
 	_assertNonEmpty(elements, 'pattern_list.elements');
-	const _pattern = elements;
+	const _item = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_pattern);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.PatternList as const,
 		$source: 2 as const,
 		$named: true as const,
-		_pattern,
+		_item,
 		_delimiter,
 		$with: {
-			patterns: (...vs: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>) =>
+			items: (...vs: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>) =>
 				rebuilt(node, handle, () => buildPatternList(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildPatternList({ ...options, delimiter: v }, ...elements))
 		},
-		patterns: () => _pattern,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -3696,9 +3688,9 @@ export function buildList(...args: unknown[]) {
 }
 function _buildList(value?: AdmitBound<T.CollectionElements, T.AdmittedNodes>): T.List.Bound {
 	const _collection_elements = rejectBareText(value, 'List.collectionElements', 'a built CollectionElements');
-	const listView = ownerView(_collection_elements, '_element');
+	const listView = ownerView(_collection_elements, '_item');
 	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'elements'), undefined);
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.List as const,
@@ -3766,9 +3758,9 @@ export function buildSet(...args: unknown[]) {
 }
 function _buildSet(value: AdmitBound<T.CollectionElements, T.AdmittedNodes>): T.Set.Bound {
 	const _collection_elements = rejectBareText(value, 'Set.collectionElements', 'a built CollectionElements');
-	const listView = ownerView(_collection_elements, '_element');
+	const listView = ownerView(_collection_elements, '_item');
 	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'elements'), undefined);
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Set as const,
@@ -3809,7 +3801,7 @@ function _buildSet(value: AdmitBound<T.CollectionElements, T.AdmittedNodes>): T.
 }
 
 export function buildTuple(): T.EmptyTuple;
-export function buildTuple(value?: AdmitBound<T.CollectionElements, T.AdmittedNodes>): ReturnType<typeof _buildTuple>;
+export function buildTuple(value?: AdmitBound<T.TupleElements, T.AdmittedNodes>): ReturnType<typeof _buildTuple>;
 export function buildTuple(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
@@ -3823,42 +3815,42 @@ export function buildTuple(
 ): ReturnType<typeof _buildTuple>;
 export function buildTuple(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildTuple(args[0] as T.CollectionElements);
+		return _buildTuple(args[0] as T.TupleElements);
 	}
 	const prebuilt =
 		args.length === 1 &&
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.CollectionElements as const);
+		(args[0] as { $type?: unknown }).$type === (TSKindId.TupleElements as const);
 	return prebuilt
-		? _buildTuple(args[0] as T.CollectionElements)
-		: _buildTuple((buildCollectionElements as (...a: unknown[]) => unknown)(...args) as T.CollectionElements);
+		? _buildTuple(args[0] as T.TupleElements)
+		: _buildTuple((buildTupleElements as (...a: unknown[]) => unknown)(...args) as T.TupleElements);
 }
-function _buildTuple(value?: AdmitBound<T.CollectionElements, T.AdmittedNodes>): T.Tuple.Bound {
-	const _collection_elements = rejectBareText(value, 'Tuple.collectionElements', 'a built CollectionElements');
-	const listView = ownerView(_collection_elements, '_element');
+function _buildTuple(value?: AdmitBound<T.TupleElements, T.AdmittedNodes>): T.Tuple.Bound {
+	const _elements = rejectBareText(value, 'Tuple.elements', 'a built TupleElements');
+	const listView = ownerView(_elements, '_item');
 	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'elements'), undefined);
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Tuple as const,
 		$source: 2 as const,
 		$named: true as const,
-		_collection_elements,
+		_elements,
 		$with: {
-			collectionElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.CollectionElements as const, optional: true, make: buildCollectionElements },
-						(value?: T.CollectionElements) => _buildTuple(value)
+						{ kind: TSKindId.TupleElements as const, optional: true, make: buildTupleElements },
+						(value?: T.TupleElements) => _buildTuple(value)
 					)
 				)
 		},
-		collectionElements: () => _collection_elements,
+		elements: () => _elements,
 		length: listedItems?.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_collection_elements') : undefined,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_elements') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -3872,7 +3864,7 @@ function _buildTuple(value?: AdmitBound<T.CollectionElements, T.AdmittedNodes>):
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_collection_elements');
+	if (listedItems === undefined) readStubLength(node, '_elements');
 	else
 		for (let index = 0; index < listedItems.length; index++)
 			(node as Record<number, unknown>)[index] = listedItems[index];
@@ -3905,9 +3897,9 @@ export function buildDictionary(...args: unknown[]) {
 }
 function _buildDictionary(value?: AdmitBound<T.DictionaryElements, T.AdmittedNodes>): T.Dictionary.Bound {
 	const _elements = rejectBareText(value, 'Dictionary.elements', 'a built DictionaryElements');
-	const listView = ownerView(_elements, '_element');
+	const listView = ownerView(_elements, '_item');
 	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'elements'), undefined);
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Dictionary as const,
@@ -4184,18 +4176,18 @@ function _buildCollectionElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.CollectionElements.Bound {
 	_assertNonEmpty(elements, 'collection_elements.elements');
-	const _element = elements;
+	const _item = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_element);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CollectionElements as const,
 		$source: 2 as const,
 		$named: true as const,
-		_element,
+		_item,
 		_delimiter,
 		$with: {
-			elements: (
+			items: (
 				...vs: NonEmptyArray<
 					AdmitBound<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat, T.AdmittedNodes>
 				>
@@ -4203,7 +4195,7 @@ function _buildCollectionElements(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildCollectionElements({ ...options, delimiter: v }, ...elements))
 		},
-		elements: () => _element,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -4638,23 +4630,23 @@ function _buildSimpleStatementsElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.SimpleStatementsElements.Bound {
 	_assertNonEmpty(elements, 'simple_statements_elements.elements');
-	const _simple_statement = elements;
+	const _item = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_simple_statement);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SimpleStatementsElements as const,
 		$source: 2 as const,
 		$named: true as const,
-		_simple_statement,
+		_item,
 		_delimiter,
 		$with: {
-			simpleStatements: (...vs: NonEmptyArray<AdmitBound<T.SimpleStatement, T.AdmittedNodes>>) =>
+			items: (...vs: NonEmptyArray<AdmitBound<T.SimpleStatement, T.AdmittedNodes>>) =>
 				rebuilt(node, handle, () => buildSimpleStatementsElements(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildSimpleStatementsElements({ ...options, delimiter: v }, ...elements))
 		},
-		simpleStatements: () => _simple_statement,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -4764,23 +4756,23 @@ function _buildCasePatterns(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.CasePatterns.Bound {
 	_assertNonEmpty(elements, 'case_patterns.elements');
-	const _case_pattern = elements;
+	const _item = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_case_pattern);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CasePatterns as const,
 		$source: 2 as const,
 		$named: true as const,
-		_case_pattern,
+		_item,
 		_delimiter,
 		$with: {
-			casePatterns: (...vs: NonEmptyArray<AdmitBound<T.CasePattern, T.AdmittedNodes>>) =>
+			items: (...vs: NonEmptyArray<AdmitBound<T.CasePattern, T.AdmittedNodes>>) =>
 				rebuilt(node, handle, () => buildCasePatterns(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildCasePatterns({ ...options, delimiter: v }, ...elements))
 		},
-		casePatterns: () => _case_pattern,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -4827,23 +4819,23 @@ function _buildWithClauseWithItems(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.WithClauseWithItems.Bound {
 	_assertNonEmpty(elements, 'with_clause_with_items.elements');
-	const _with_item = elements;
+	const _item = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_with_item);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.WithClauseWithItems as const,
 		$source: 2 as const,
 		$named: true as const,
-		_with_item,
+		_item,
 		_delimiter,
 		$with: {
-			withItems: (...vs: NonEmptyArray<AdmitBound<T.WithItem, T.AdmittedNodes>>) =>
+			items: (...vs: NonEmptyArray<AdmitBound<T.WithItem, T.AdmittedNodes>>) =>
 				rebuilt(node, handle, () => buildWithClauseWithItems(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildWithClauseWithItems({ ...options, delimiter: v }, ...elements))
 		},
-		withItems: () => _with_item,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -4888,23 +4880,23 @@ function _buildTypes(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.Types.Bound {
 	_assertNonEmpty(elements, 'types.elements');
-	const _type = elements;
+	const _item = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_type);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Types as const,
 		$source: 2 as const,
 		$named: true as const,
-		_type,
+		_item,
 		_delimiter,
 		$with: {
-			types: (...vs: NonEmptyArray<AdmitBound<T.Type, T.AdmittedNodes>>) =>
+			items: (...vs: NonEmptyArray<AdmitBound<T.Type, T.AdmittedNodes>>) =>
 				rebuilt(node, handle, () => buildTypes(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildTypes({ ...options, delimiter: v }, ...elements))
 		},
-		types: () => _type,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -4975,18 +4967,18 @@ function _buildArgumentListElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ArgumentListElements.Bound {
 	_assertNonEmpty(elements, 'argument_list_elements.elements');
-	const _element = elements;
+	const _item = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_element);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ArgumentListElements as const,
 		$source: 2 as const,
 		$named: true as const,
-		_element,
+		_item,
 		_delimiter,
 		$with: {
-			elements: (
+			items: (
 				...vs: NonEmptyArray<
 					AdmitBound<
 						T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
@@ -4997,7 +4989,7 @@ function _buildArgumentListElements(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildArgumentListElements({ ...options, delimiter: v }, ...elements))
 		},
-		elements: () => _element,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -5044,23 +5036,23 @@ function _buildListPatternCasePatterns(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ListPatternCasePatterns.Bound {
 	_assertNonEmpty(elements, 'list_pattern_case_patterns.elements');
-	const _case_pattern = elements;
+	const _item = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_case_pattern);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ListPatternCasePatterns as const,
 		$source: 2 as const,
 		$named: true as const,
-		_case_pattern,
+		_item,
 		_delimiter,
 		$with: {
-			casePatterns: (...vs: NonEmptyArray<AdmitBound<T.CasePattern, T.AdmittedNodes>>) =>
+			items: (...vs: NonEmptyArray<AdmitBound<T.CasePattern, T.AdmittedNodes>>) =>
 				rebuilt(node, handle, () => buildListPatternCasePatterns(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildListPatternCasePatterns({ ...options, delimiter: v }, ...elements))
 		},
-		casePatterns: () => _case_pattern,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -5110,23 +5102,23 @@ function _buildDictPatternElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.DictPatternElements.Bound {
 	_assertNonEmpty(elements, 'dict_pattern_elements.elements');
-	const _element = elements;
+	const _item = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_element);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DictPatternElements as const,
 		$source: 2 as const,
 		$named: true as const,
-		_element,
+		_item,
 		_delimiter,
 		$with: {
-			elements: (...vs: NonEmptyArray<AdmitBound<T.KeyValuePattern | T.SplatPattern, T.AdmittedNodes>>) =>
+			items: (...vs: NonEmptyArray<AdmitBound<T.KeyValuePattern | T.SplatPattern, T.AdmittedNodes>>) =>
 				rebuilt(node, handle, () => buildDictPatternElements(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildDictPatternElements({ ...options, delimiter: v }, ...elements))
 		},
-		elements: () => _element,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -5239,23 +5231,23 @@ function _buildDictionaryElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.DictionaryElements.Bound {
 	_assertNonEmpty(elements, 'dictionary_elements.elements');
-	const _element = elements;
+	const _item = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_element);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DictionaryElements as const,
 		$source: 2 as const,
 		$named: true as const,
-		_element,
+		_item,
 		_delimiter,
 		$with: {
-			elements: (...vs: NonEmptyArray<AdmitBound<T.Pair | T.DictionarySplat, T.AdmittedNodes>>) =>
+			items: (...vs: NonEmptyArray<AdmitBound<T.Pair | T.DictionarySplat, T.AdmittedNodes>>) =>
 				rebuilt(node, handle, () => buildDictionaryElements(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildDictionaryElements({ ...options, delimiter: v }, ...elements))
 		},
-		elements: () => _element,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -5319,6 +5311,79 @@ export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bo
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.FormatSpecifierText.Bound;
+}
+
+export function buildTupleElements(
+	...elements: NonEmptyArray<
+		AdmitBound<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat, T.AdmittedNodes>
+	>
+): ReturnType<typeof _buildTupleElements>;
+export function buildTupleElements(
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	...elements: NonEmptyArray<
+		AdmitBound<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat, T.AdmittedNodes>
+	>
+): ReturnType<typeof _buildTupleElements>;
+export function buildTupleElements(
+	...args: (
+		| { delimiter?: Delimiter.None | Delimiter.Trailing }
+		| AdmitBound<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat, T.AdmittedNodes>
+	)[]
+) {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		AdmitBound<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat, T.AdmittedNodes>
+	>;
+	return _buildTupleElements(elements, options);
+}
+function _buildTupleElements(
+	elements: NonEmptyArray<AdmitBound<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat, T.AdmittedNodes>>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.TupleElements.Bound {
+	_assertNonEmpty(elements, 'tuple_elements.elements');
+	const _item = elements;
+	const _delimiter = options.delimiter ?? Delimiter.None;
+	const listedStored = storedElements(_item);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TupleElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_item,
+		_delimiter,
+		$with: {
+			items: (
+				...vs: NonEmptyArray<
+					AdmitBound<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat, T.AdmittedNodes>
+				>
+			) => rebuilt(node, handle, () => buildTupleElements(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildTupleElements({ ...options, delimiter: v }, ...elements))
+		},
+		items: () => _item,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.TupleElements.Bound;
 }
 
 export function buildExceptClauseExceptionAs(
@@ -5393,9 +5458,9 @@ function _buildCaseTuplePattern(
 		'CaseTuplePattern.listPatternCasePatterns',
 		'a built ListPatternCasePatterns'
 	);
-	const listView = ownerView(_list_pattern_case_patterns, '_case_pattern');
+	const listView = ownerView(_list_pattern_case_patterns, '_item');
 	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'casePatterns'), undefined);
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CaseTuplePattern as const,
@@ -5470,9 +5535,9 @@ function _buildCaseListPattern(
 		'CaseListPattern.listPatternCasePatterns',
 		'a built ListPatternCasePatterns'
 	);
-	const listView = ownerView(_list_pattern_case_patterns, '_case_pattern');
+	const listView = ownerView(_list_pattern_case_patterns, '_item');
 	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'casePatterns'), undefined);
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CaseListPattern as const,
@@ -6648,23 +6713,23 @@ function _buildExpressionStatementTuple(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ExpressionStatementTuple.Bound {
 	_assertNonEmpty(elements, 'expression_statement_tuple.elements');
-	const _expression = elements;
+	const _item = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_expression);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExpressionStatementTuple as const,
 		$source: 2 as const,
 		$named: true as const,
-		_expression,
+		_item,
 		_delimiter,
 		$with: {
-			expressions: (...vs: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>) =>
+			items: (...vs: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>) =>
 				rebuilt(node, handle, () => buildExpressionStatementTuple(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildExpressionStatementTuple({ ...options, delimiter: v }, ...elements))
 		},
-		expressions: () => _expression,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -6711,23 +6776,23 @@ function _buildWithClauseBare(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.WithClauseBare.Bound {
 	_assertNonEmpty(elements, 'with_clause_bare.elements');
-	const _with_item = elements;
+	const _item = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_with_item);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.WithClauseBare as const,
 		$source: 2 as const,
 		$named: true as const,
-		_with_item,
+		_item,
 		_delimiter,
 		$with: {
-			withItems: (...vs: NonEmptyArray<AdmitBound<T.WithItem, T.AdmittedNodes>>) =>
+			items: (...vs: NonEmptyArray<AdmitBound<T.WithItem, T.AdmittedNodes>>) =>
 				rebuilt(node, handle, () => buildWithClauseBare(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildWithClauseBare({ ...options, delimiter: v }, ...elements))
 		},
-		withItems: () => _with_item,
+		items: () => _item,
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -6773,22 +6838,18 @@ export function buildWithClauseParen(...args: unknown[]) {
 			);
 }
 function _buildWithClauseParen(value: AdmitBound<T.WithClauseWithItems, T.AdmittedNodes>): T.WithClauseParen.Bound {
-	const _with_clause_with_items = rejectBareText(
-		value,
-		'WithClauseParen.withClauseWithItems',
-		'a built WithClauseWithItems'
-	);
-	const listView = ownerView(_with_clause_with_items, '_with_item');
+	const _with_items = rejectBareText(value, 'WithClauseParen.withItems', 'a built WithClauseWithItems');
+	const listView = ownerView(_with_items, '_item');
 	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'withItems'), undefined);
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.WithClauseParen as const,
 		$source: 2 as const,
 		$named: true as const,
-		_with_clause_with_items,
+		_with_items,
 		$with: {
-			withClauseWithItems: (...args: unknown[]) =>
+			withItems: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -6797,10 +6858,10 @@ function _buildWithClauseParen(value: AdmitBound<T.WithClauseWithItems, T.Admitt
 					)
 				)
 		},
-		withClauseWithItems: () => _with_clause_with_items,
+		withItems: () => _with_items,
 		length: listedItems?.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_with_clause_with_items') : undefined,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_with_items') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -6813,7 +6874,7 @@ function _buildWithClauseParen(value: AdmitBound<T.WithClauseWithItems, T.Admitt
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_with_clause_with_items');
+	if (listedItems === undefined) readStubLength(node, '_with_items');
 	else
 		for (let index = 0; index < listedItems.length; index++)
 			(node as Record<number, unknown>)[index] = listedItems[index];
@@ -6917,22 +6978,18 @@ export function buildSuiteInline(...args: unknown[]) {
 			);
 }
 function _buildSuiteInline(value: AdmitBound<T.SimpleStatementsElements, T.AdmittedNodes>): T.SuiteInline.Bound {
-	const _simple_statements_elements = rejectBareText(
-		value,
-		'SuiteInline.simpleStatementsElements',
-		'a built SimpleStatementsElements'
-	);
-	const listView = ownerView(_simple_statements_elements, '_simple_statement');
+	const _elements = rejectBareText(value, 'SuiteInline.elements', 'a built SimpleStatementsElements');
+	const listView = ownerView(_elements, '_item');
 	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'simpleStatements'), undefined);
+		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SuiteInline as const,
 		$source: 2 as const,
 		$named: true as const,
-		_simple_statements_elements,
+		_elements,
 		$with: {
-			simpleStatementsElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -6941,10 +6998,10 @@ function _buildSuiteInline(value: AdmitBound<T.SimpleStatementsElements, T.Admit
 					)
 				)
 		},
-		simpleStatementsElements: () => _simple_statements_elements,
+		elements: () => _elements,
 		length: listedItems?.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_simple_statements_elements') : undefined,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_elements') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -6957,7 +7014,7 @@ function _buildSuiteInline(value: AdmitBound<T.SimpleStatementsElements, T.Admit
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_simple_statements_elements');
+	if (listedItems === undefined) readStubLength(node, '_elements');
 	else
 		for (let index = 0; index < listedItems.length; index++)
 			(node as Record<number, unknown>)[index] = listedItems[index];
@@ -7452,6 +7509,7 @@ export type FluentKindMap = {
 	dictionary_elements: T.DictionaryElements.Bound;
 	slice_group: T.SliceGroup.Bound;
 	format_specifier_text: T.FormatSpecifierText;
+	tuple_elements: T.TupleElements.Bound;
 	except_clause_exception_as: T.ExceptClauseExceptionAs.Bound;
 	case_tuple_pattern: T.CaseTuplePattern.Bound;
 	case_list_pattern: T.CaseListPattern.Bound;
@@ -7649,6 +7707,7 @@ export const _factoryMap = {
 	dictionary_elements: buildDictionaryElements,
 	slice_group: buildSliceGroup,
 	format_specifier_text: buildFormatSpecifierText,
+	tuple_elements: buildTupleElements,
 	except_clause_exception_as: buildExceptClauseExceptionAs,
 	case_tuple_pattern: buildCaseTuplePattern,
 	case_list_pattern: buildCaseListPattern,
