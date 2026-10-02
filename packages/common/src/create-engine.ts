@@ -6,7 +6,7 @@ import type {
 	EngineOptions,
 	Language,
 	LanguageAPI,
-	LanguageDescriptor,
+	LanguageIdentity,
 	LanguageHooks,
 	NativeEngineOptions,
 	ParseOptions,
@@ -26,9 +26,9 @@ import {
 	isParsedNode
 } from './utils.ts';
 
-const loaded = new WeakMap<LanguageDescriptor<LanguageAPI>, Promise<LanguageHooks<LanguageAPI>>>();
+const loaded = new WeakMap<LanguageIdentity<LanguageAPI>, Promise<LanguageHooks<LanguageAPI>>>();
 
-function loadLanguage<API extends LanguageAPI>(language: LanguageDescriptor<API>): Promise<LanguageHooks<API>> {
+function loadLanguage<API extends LanguageAPI>(language: LanguageIdentity<API>): Promise<LanguageHooks<API>> {
 	const cached = loaded.get(language);
 	if (cached !== undefined) return cached as Promise<LanguageHooks<API>>;
 	const loading = language.load().catch((cause: unknown) => {

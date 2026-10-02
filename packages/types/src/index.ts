@@ -1229,7 +1229,7 @@ export type {
 	Interceptor,
 	KindTypes,
 	Language,
-	LanguageDescriptor,
+	LanguageIdentity,
 	LanguageAPI,
 	LanguageHooks,
 	NativeEngineOptions,

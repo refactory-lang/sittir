@@ -37,7 +37,7 @@ export interface ParseOptions {
 }
 
 export interface EngineIdentity<API extends LanguageAPI = LanguageAPI> {
-	readonly language: LanguageDescriptor<API>;
+	readonly language: LanguageIdentity<API>;
 	readonly renderModuleHash: string;
 	readonly options: API['options'] | undefined;
 	readonly trivia: TriviaFacts;
@@ -88,8 +88,8 @@ export interface LanguageAPI {
 	readonly empty: GrammarTypeMap['empty'];
 }
 
-/** A language descriptor without its engine constructor: what names a language, and what an engine records of it. Unlike `Language`, it is assignable across `LanguageAPI`s. */
-export type LanguageDescriptor<API extends LanguageAPI> = Omit<Language<API>, 'createEngine'>;
+/** What names a language and what an engine records of it: a `Language` without its engine constructor. Unlike `Language`, it is assignable across `LanguageAPI`s. */
+export type LanguageIdentity<API extends LanguageAPI> = Omit<Language<API>, 'createEngine'>;
 
 /** The options `createEngine` takes: the engine options, with the `render` block checked against the language's render options. */
 export type CreateEngineOptions<API extends LanguageAPI, R = API['options']> = EngineOptions<API> & {
@@ -279,4 +279,4 @@ export type NodeOfNamespaces<NsMap extends object> = Extract<
 >;
 
 export type Types<E> = E extends Engine<infer API, ApiSurface> ? API['types'] : never;
-export type ApiOf<L> = L extends LanguageDescriptor<infer API> ? API : never;
+export type ApiOf<L> = L extends LanguageIdentity<infer API> ? API : never;
