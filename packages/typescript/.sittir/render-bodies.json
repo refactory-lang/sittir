@@ -2081,11 +2081,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "enum_body_elements",
+					"test": "elements",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "enum_body_elements"
+							"name": "elements"
 						}
 					]
 				}
@@ -3198,11 +3198,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "formal_parameters_elements",
+					"test": "elements",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "formal_parameters_elements"
+							"name": "elements"
 						}
 					]
 				}
@@ -7903,7 +7903,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type_parameters_elements"
+			"name": "elements"
 		},
 		{
 			"kind": "seam",

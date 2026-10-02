@@ -529,7 +529,7 @@ export interface EnumBodyElementsTransport {
 export interface EnumBodyTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _enum_body_elements?: SlotValue<EnumBodyElementsTransport>
+  _elements?: SlotValue<EnumBodyElementsTransport>
 }
 
 export interface EnumDeclarationTransport {
@@ -728,7 +728,7 @@ export interface FormalParametersElementsTransport {
 export interface FormalParametersTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _formal_parameters_elements?: SlotValue<FormalParametersElementsTransport>
+  _elements?: SlotValue<FormalParametersElementsTransport>
 }
 
 export interface ForStatementTransport {
@@ -1626,7 +1626,7 @@ export interface TypeParametersElementsTransport {
 export interface TypeParametersTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _type_parameters_elements: SlotValue<TypeParametersElementsTransport>
+  _elements: SlotValue<TypeParametersElementsTransport>
 }
 
 export interface TypeParameterTransport {

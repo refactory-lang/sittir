@@ -12,7 +12,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "simple_statements_elements"
+			"name": "elements"
 		},
 		{
 			"kind": "adjacent"
@@ -1094,11 +1094,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "dict_pattern_elements",
+					"test": "elements",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "dict_pattern_elements"
+							"name": "elements"
 						}
 					]
 				}
@@ -3846,7 +3846,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "simple_statements_elements"
+			"name": "elements"
 		},
 		{
 			"kind": "adjacent"
@@ -3943,11 +3943,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "tuple_elements",
+					"test": "elements",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "tuple_elements"
+							"name": "elements"
 						}
 					]
 				}
@@ -4299,7 +4299,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "with_clause_with_items"
+			"name": "with_items"
 		},
 		{
 			"kind": "seam",

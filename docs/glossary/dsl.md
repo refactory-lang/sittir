@@ -6319,7 +6319,13 @@ The clause-hoist view: the same ctx — the registries are shared, not copied, s
 
 ### `packages/codegen/src/dsl/enrich-ctx.ts::ClauseHoistState`
 
-State that exists only while the clause hoist runs. `separatedListNameCounts` is the grammar-global count of each proposed separated-list name, computed after the field-wrap and token-form passes and read by every list mint so a name is taken bare only when globally unique. `hiddenListPromotionNames` caches, per hidden rule whose whole body is a flank-carrying separated list, the visible kind every bare reference to it aliases to, so all references agree.
+State that exists only while the clause hoist runs. `separatedListNameCounts` is the grammar-global count of each proposed separated-list name, computed after the field-wrap and token-form passes and read by every list mint so a name is taken bare only when globally unique. `hiddenListPromotionNames` caches, per hidden rule whose whole body is a flank-carrying separated list, the visible kind every bare reference to it aliases to, so all references agree. `ownerPrefixedListSlots` maps each list kind that was named after its owner (`<owner>_<plural>`, or `<owner>_elements` when the element has no single name) to the slot name its owner gives it: the plural, or `elements`. `visibleGroupSynthName` writes it where it picks the name; `fieldOwnerPrefixedLists` reads it.
+
+### `packages/codegen/src/dsl/enrich.ts::fieldOwnerPrefixedLists`
+
+A kind name must be unique in the grammar; a slot name only within its owner. When a hoisted list kind had to take its owner as a prefix to be unique, the owner's slot should not repeat the owner's name, so the reference is wrapped in a field carrying the short name recorded in `ownerPrefixedListSlots`; the kind keeps its unique name.
+
+It runs once over every owner after the clause hoist, over the grammar's rules and the rules enrich minted alike, since a list can be hoisted out of a minted rule. Positions follow the patch-path convention, so a reference at or under a position an authored `field(...)` patch names is left to the patch. When the short name is already a slot of the owner, the reference stays unfielded, the slot keeps the name its kind gives it, and a `list-slot-name` skip is reported.
 
 ### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtxInit`
 

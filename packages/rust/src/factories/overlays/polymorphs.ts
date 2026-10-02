@@ -945,6 +945,33 @@ export const arguments_ = Object.freeze({
 	coerce: typeof arguments_$seatedCoerce;
 };
 
+const tupleExpression$expressions = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
+	parent: PF,
+	child: CF
+) => {
+	return (config: unknown, options?: unknown): ReturnType<PF> => {
+		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
+		const seat = _o(config)['expressions'];
+		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
+		return _fwd<ReturnType<PF>>(parent, { ..._o(config), expressions: _c(child)(...seat) }, options);
+	};
+};
+const tupleExpression$seated: (...args: T.TupleExpression.BuildArgs) => ReturnType<typeof F.buildTupleExpression> =
+	tupleExpression$expressions(F.buildTupleExpression, F.buildExpressions);
+const tupleExpression$seatedCoerce: (
+	...args: T.TupleExpression.LooseArgs
+) => ReturnType<typeof C.coerceToTupleExpression> = tupleExpression$expressions(
+	C.coerceToTupleExpression,
+	C.coerceToExpressions
+);
+export const tupleExpression = Object.freeze({
+	...B.tupleExpression,
+	...bundle(tupleExpression$seated, tupleExpression$seatedCoerce, { key: 'tupleExpression', max: 1 })
+}) as unknown as Omit<typeof B.tupleExpression, 'strict' | 'coerce'> & {
+	strict: typeof tupleExpression$seated;
+	coerce: typeof tupleExpression$seatedCoerce;
+};
+
 const matchBlock$flatten$matchBlockArms =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: unknown, options?: unknown): ReturnType<PF> =>
@@ -1158,18 +1185,15 @@ export const blockComment = Object.freeze({
 	};
 };
 
-const arrayExpressionList$argumentsElements = <
-	PF extends (config: never) => unknown,
-	CF extends (...args: never[]) => unknown
->(
+const arrayExpressionList$elements = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
 ) => {
 	return (config: unknown, options?: unknown): ReturnType<PF> => {
 		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
-		const seat = _o(config)['argumentsElements'];
+		const seat = _o(config)['elements'];
 		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
-		return _fwd<ReturnType<PF>>(parent, { ..._o(config), argumentsElements: _c(child)(...seat) }, options);
+		return _fwd<ReturnType<PF>>(parent, { ..._o(config), elements: _c(child)(...seat) }, options);
 	};
 };
 function arrayExpressionList$seated(): T.EmptyArrayExpressionList;
@@ -1179,7 +1203,7 @@ function arrayExpressionList$seated(
 function arrayExpressionList$seated(
 	...args: T.ArrayExpressionList.BuildArgs
 ): ReturnType<typeof F.buildArrayExpressionList> {
-	return arrayExpressionList$argumentsElements(F.buildArrayExpressionList, argumentsElements.strict)(...args);
+	return arrayExpressionList$elements(F.buildArrayExpressionList, argumentsElements.strict)(...args);
 }
 function arrayExpressionList$seatedCoerce(): T.EmptyArrayExpressionList;
 function arrayExpressionList$seatedCoerce(
@@ -1188,7 +1212,7 @@ function arrayExpressionList$seatedCoerce(
 function arrayExpressionList$seatedCoerce(
 	...args: T.ArrayExpressionList.LooseArgs
 ): ReturnType<typeof C.coerceToArrayExpressionList> {
-	return arrayExpressionList$argumentsElements(C.coerceToArrayExpressionList, argumentsElements.coerce)(...args);
+	return arrayExpressionList$elements(C.coerceToArrayExpressionList, argumentsElements.coerce)(...args);
 }
 const arrayExpressionList: {
 	strict: typeof arrayExpressionList$seated;

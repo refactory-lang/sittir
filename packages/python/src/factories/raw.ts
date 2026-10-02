@@ -178,12 +178,8 @@ export function buildSimpleStatements(...args: unknown[]) {
 function _buildSimpleStatements(
 	value: AdmitBound<T.SimpleStatementsElements, T.AdmittedNodes>
 ): T.SimpleStatements.Bound {
-	const _simple_statements_elements = rejectBareText(
-		value,
-		'SimpleStatements.simpleStatementsElements',
-		'a built SimpleStatementsElements'
-	);
-	const listView = ownerView(_simple_statements_elements, '_simple_statement');
+	const _elements = rejectBareText(value, 'SimpleStatements.elements', 'a built SimpleStatementsElements');
+	const listView = ownerView(_elements, '_simple_statement');
 	const listedItems =
 		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'simpleStatements'), undefined);
 	const handle = currentHandle();
@@ -191,9 +187,9 @@ function _buildSimpleStatements(
 		$type: TSKindId.SimpleStatements as const,
 		$source: 2 as const,
 		$named: true as const,
-		_simple_statements_elements,
+		_elements,
 		$with: {
-			simpleStatementsElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -202,10 +198,10 @@ function _buildSimpleStatements(
 					)
 				)
 		},
-		simpleStatementsElements: () => _simple_statements_elements,
+		elements: () => _elements,
 		length: listedItems?.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_simple_statements_elements') : undefined,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_elements') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -218,7 +214,7 @@ function _buildSimpleStatements(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_simple_statements_elements');
+	if (listedItems === undefined) readStubLength(node, '_elements');
 	else
 		for (let index = 0; index < listedItems.length; index++)
 			(node as Record<number, unknown>)[index] = listedItems[index];
@@ -2140,12 +2136,8 @@ export function buildDictPattern(...args: unknown[]) {
 		: _buildDictPattern((buildDictPatternElements as (...a: unknown[]) => unknown)(...args) as T.DictPatternElements);
 }
 function _buildDictPattern(value?: AdmitBound<T.DictPatternElements, T.AdmittedNodes>): T.DictPattern.Bound {
-	const _dict_pattern_elements = rejectBareText(
-		value,
-		'DictPattern.dictPatternElements',
-		'a built DictPatternElements'
-	);
-	const listView = ownerView(_dict_pattern_elements, '_element');
+	const _elements = rejectBareText(value, 'DictPattern.elements', 'a built DictPatternElements');
+	const listView = ownerView(_elements, '_element');
 	const listedItems =
 		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'elements'), undefined);
 	const handle = currentHandle();
@@ -2153,9 +2145,9 @@ function _buildDictPattern(value?: AdmitBound<T.DictPatternElements, T.AdmittedN
 		$type: TSKindId.DictPattern as const,
 		$source: 2 as const,
 		$named: true as const,
-		_dict_pattern_elements,
+		_elements,
 		$with: {
-			dictPatternElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -2164,10 +2156,10 @@ function _buildDictPattern(value?: AdmitBound<T.DictPatternElements, T.AdmittedN
 					)
 				)
 		},
-		dictPatternElements: () => _dict_pattern_elements,
+		elements: () => _elements,
 		length: listedItems?.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_dict_pattern_elements') : undefined,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_elements') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -2181,7 +2173,7 @@ function _buildDictPattern(value?: AdmitBound<T.DictPatternElements, T.AdmittedN
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_dict_pattern_elements');
+	if (listedItems === undefined) readStubLength(node, '_elements');
 	else
 		for (let index = 0; index < listedItems.length; index++)
 			(node as Record<number, unknown>)[index] = listedItems[index];
@@ -3843,8 +3835,8 @@ export function buildTuple(...args: unknown[]) {
 		: _buildTuple((buildTupleElements as (...a: unknown[]) => unknown)(...args) as T.TupleElements);
 }
 function _buildTuple(value?: AdmitBound<T.TupleElements, T.AdmittedNodes>): T.Tuple.Bound {
-	const _tuple_elements = rejectBareText(value, 'Tuple.tupleElements', 'a built TupleElements');
-	const listView = ownerView(_tuple_elements, '_element');
+	const _elements = rejectBareText(value, 'Tuple.elements', 'a built TupleElements');
+	const listView = ownerView(_elements, '_element');
 	const listedItems =
 		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'elements'), undefined);
 	const handle = currentHandle();
@@ -3852,9 +3844,9 @@ function _buildTuple(value?: AdmitBound<T.TupleElements, T.AdmittedNodes>): T.Tu
 		$type: TSKindId.Tuple as const,
 		$source: 2 as const,
 		$named: true as const,
-		_tuple_elements,
+		_elements,
 		$with: {
-			tupleElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -3863,10 +3855,10 @@ function _buildTuple(value?: AdmitBound<T.TupleElements, T.AdmittedNodes>): T.Tu
 					)
 				)
 		},
-		tupleElements: () => _tuple_elements,
+		elements: () => _elements,
 		length: listedItems?.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_tuple_elements') : undefined,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_elements') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -3880,7 +3872,7 @@ function _buildTuple(value?: AdmitBound<T.TupleElements, T.AdmittedNodes>): T.Tu
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_tuple_elements');
+	if (listedItems === undefined) readStubLength(node, '_elements');
 	else
 		for (let index = 0; index < listedItems.length; index++)
 			(node as Record<number, unknown>)[index] = listedItems[index];
@@ -6798,12 +6790,8 @@ export function buildWithClauseParen(...args: unknown[]) {
 			);
 }
 function _buildWithClauseParen(value: AdmitBound<T.WithClauseWithItems, T.AdmittedNodes>): T.WithClauseParen.Bound {
-	const _with_clause_with_items = rejectBareText(
-		value,
-		'WithClauseParen.withClauseWithItems',
-		'a built WithClauseWithItems'
-	);
-	const listView = ownerView(_with_clause_with_items, '_with_item');
+	const _with_items = rejectBareText(value, 'WithClauseParen.withItems', 'a built WithClauseWithItems');
+	const listView = ownerView(_with_items, '_with_item');
 	const listedItems =
 		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'withItems'), undefined);
 	const handle = currentHandle();
@@ -6811,9 +6799,9 @@ function _buildWithClauseParen(value: AdmitBound<T.WithClauseWithItems, T.Admitt
 		$type: TSKindId.WithClauseParen as const,
 		$source: 2 as const,
 		$named: true as const,
-		_with_clause_with_items,
+		_with_items,
 		$with: {
-			withClauseWithItems: (...args: unknown[]) =>
+			withItems: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -6822,10 +6810,10 @@ function _buildWithClauseParen(value: AdmitBound<T.WithClauseWithItems, T.Admitt
 					)
 				)
 		},
-		withClauseWithItems: () => _with_clause_with_items,
+		withItems: () => _with_items,
 		length: listedItems?.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_with_clause_with_items') : undefined,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_with_items') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -6838,7 +6826,7 @@ function _buildWithClauseParen(value: AdmitBound<T.WithClauseWithItems, T.Admitt
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_with_clause_with_items');
+	if (listedItems === undefined) readStubLength(node, '_with_items');
 	else
 		for (let index = 0; index < listedItems.length; index++)
 			(node as Record<number, unknown>)[index] = listedItems[index];
@@ -6942,12 +6930,8 @@ export function buildSuiteInline(...args: unknown[]) {
 			);
 }
 function _buildSuiteInline(value: AdmitBound<T.SimpleStatementsElements, T.AdmittedNodes>): T.SuiteInline.Bound {
-	const _simple_statements_elements = rejectBareText(
-		value,
-		'SuiteInline.simpleStatementsElements',
-		'a built SimpleStatementsElements'
-	);
-	const listView = ownerView(_simple_statements_elements, '_simple_statement');
+	const _elements = rejectBareText(value, 'SuiteInline.elements', 'a built SimpleStatementsElements');
+	const listView = ownerView(_elements, '_simple_statement');
 	const listedItems =
 		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'simpleStatements'), undefined);
 	const handle = currentHandle();
@@ -6955,9 +6939,9 @@ function _buildSuiteInline(value: AdmitBound<T.SimpleStatementsElements, T.Admit
 		$type: TSKindId.SuiteInline as const,
 		$source: 2 as const,
 		$named: true as const,
-		_simple_statements_elements,
+		_elements,
 		$with: {
-			simpleStatementsElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -6966,10 +6950,10 @@ function _buildSuiteInline(value: AdmitBound<T.SimpleStatementsElements, T.Admit
 					)
 				)
 		},
-		simpleStatementsElements: () => _simple_statements_elements,
+		elements: () => _elements,
 		length: listedItems?.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_simple_statements_elements') : undefined,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_elements') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -6982,7 +6966,7 @@ function _buildSuiteInline(value: AdmitBound<T.SimpleStatementsElements, T.Admit
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_simple_statements_elements');
+	if (listedItems === undefined) readStubLength(node, '_elements');
 	else
 		for (let index = 0; index < listedItems.length; index++)
 			(node as Record<number, unknown>)[index] = listedItems[index];

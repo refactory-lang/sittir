@@ -226,6 +226,7 @@ export const typeArgumentsElements: Hoisted<typeof O.typeArgumentsElements> = ho
 export const argumentsElements: Hoisted<typeof O.argumentsElements> = hoistAs<typeof O.argumentsElements>(
 	O.argumentsElements
 );
+export const expressions: Hoisted<typeof O.expressions> = hoistAs<typeof O.expressions>(O.expressions);
 export const fieldInitializerListElements: Hoisted<typeof O.fieldInitializerListElements> = hoistAs<
 	typeof O.fieldInitializerListElements
 >(O.fieldInitializerListElements);
@@ -239,9 +240,6 @@ export const structPatternElements: Hoisted<typeof O.structPatternElements> = ho
 export const useWildcardGroup: Hoisted<typeof O.useWildcardGroup> = hoistAs<typeof O.useWildcardGroup>(
 	O.useWildcardGroup
 );
-export const tupleExpressionElements: Hoisted<typeof O.tupleExpressionElements> = hoistAs<
-	typeof O.tupleExpressionElements
->(O.tupleExpressionElements);
 export const macroDefinition: Hoisted<typeof O.macroDefinition> = hoistAs<typeof O.macroDefinition>(O.macroDefinition);
 export const tokenTreePattern: Hoisted<typeof O.tokenTreePattern> = hoistAs<typeof O.tokenTreePattern>(
 	O.tokenTreePattern

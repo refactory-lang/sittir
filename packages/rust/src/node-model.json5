@@ -606,7 +606,7 @@
       }
     },
     "enum_variant_list": {
-      "enum_variant_list_elements": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -645,7 +645,7 @@
       }
     },
     "field_declaration_list": {
-      "field_declaration_list_elements": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1085,7 +1085,7 @@
       }
     },
     "type_parameters": {
-      "type_parameters_elements": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1259,7 +1259,7 @@
       }
     },
     "parameters": {
-      "parameters_elements": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1519,7 +1519,7 @@
       }
     },
     "type_arguments": {
-      "type_arguments_elements": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1800,7 +1800,7 @@
       }
     },
     "arguments": {
-      "arguments_elements": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1825,7 +1825,7 @@
         "multiple": true,
         "nonEmpty": false
       },
-      "tuple_expression_elements": {
+      "expressions": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2593,6 +2593,15 @@
         "nonEmpty": true
       }
     },
+    "expressions": {
+      "expression": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
     "field_initializer_list_elements": {
       "element": {
         "unnamed": false,
@@ -2636,15 +2645,6 @@
         "required": false,
         "multiple": false,
         "nonEmpty": false
-      }
-    },
-    "tuple_expression_elements": {
-      "element": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
       }
     },
     "integer_literal_decimal": {
@@ -2858,7 +2858,7 @@
         "multiple": true,
         "nonEmpty": false
       },
-      "arguments_elements": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4812,9 +4812,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "arguments_elements",
-          "propertyName": "argumentsElements",
-          "paramName": "argumentsElements",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -4835,7 +4835,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "arguments_elements",
       "factoryFields": [
-        "arguments_elements"
+        "elements"
       ],
       "bareAccepts": [
         "_range_expression_bare",
@@ -5088,9 +5088,9 @@
           ]
         },
         {
-          "name": "arguments_elements",
-          "propertyName": "argumentsElements",
-          "paramName": "argumentsElements",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -5116,7 +5116,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "attributes",
-        "arguments_elements"
+        "elements"
       ]
     },
     {
@@ -9736,9 +9736,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "enum_variant_list_elements",
-          "propertyName": "enumVariantListElements",
-          "paramName": "enumVariantListElements",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -9759,7 +9759,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "enum_variant_list_elements",
       "factoryFields": [
-        "enum_variant_list_elements"
+        "elements"
       ],
       "bareAccepts": [
         "attributed_enum_variant",
@@ -10461,6 +10461,116 @@
       ]
     },
     {
+      "kind": "expressions",
+      "modelType": "list",
+      "typeName": "Expressions",
+      "factoryName": "expressions",
+      "irKey": "expressions",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
+      "elementKinds": [
+        "_expression"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "expression"
+      ],
+      "bareAccepts": [
+        "_range_expression_bare",
+        "array_expression_list",
+        "array_expression_semi",
+        "assignment_expression",
+        "async_block",
+        "await_expression",
+        "binary_expression",
+        "block",
+        "bool_keyword",
+        "boolean_literal",
+        "break_expression",
+        "call_expression",
+        "char_keyword",
+        "char_literal_empty",
+        "char_literal_escaped_hex",
+        "char_literal_escaped_simple",
+        "char_literal_escaped_unicode_braced",
+        "char_literal_escaped_unicode_fixed",
+        "char_literal_plain",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "compound_assignment_expr",
+        "const_block",
+        "continue_expression",
+        "default_keyword",
+        "f32_keyword",
+        "f64_keyword",
+        "false_keyword",
+        "field_expression",
+        "float_literal",
+        "for_expression",
+        "gen_block",
+        "gen_keyword",
+        "generic_function",
+        "i128_keyword",
+        "i16_keyword",
+        "i32_keyword",
+        "i64_keyword",
+        "i8_keyword",
+        "identifier",
+        "if_expression",
+        "index_expression",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
+        "isize_keyword",
+        "label",
+        "loop_expression",
+        "macro_invocation",
+        "match_expression",
+        "metavariable",
+        "parenthesized_expression",
+        "range_expression_bare",
+        "range_expression_binary",
+        "range_expression_postfix",
+        "range_expression_prefix",
+        "raw_string_literal",
+        "reference_expression_bare",
+        "reference_expression_mut",
+        "reference_expression_raw_const",
+        "reference_expression_raw_mut",
+        "return_expression",
+        "scoped_identifier",
+        "self",
+        "str_keyword",
+        "string_literal",
+        "struct_expression",
+        "true_keyword",
+        "try_block",
+        "try_expression",
+        "tuple_expression",
+        "type_cast_expression",
+        "u128_keyword",
+        "u16_keyword",
+        "u32_keyword",
+        "u64_keyword",
+        "u8_keyword",
+        "unary_expression",
+        "union_keyword",
+        "unit_expression",
+        "unsafe_block",
+        "usize_keyword",
+        "while_expression",
+        "yield_expression"
+      ]
+    },
+    {
       "kind": "extern_crate_declaration",
       "modelType": "branch",
       "typeName": "ExternCrateDeclaration",
@@ -10703,9 +10813,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "field_declaration_list_elements",
-          "propertyName": "fieldDeclarationListElements",
-          "paramName": "fieldDeclarationListElements",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -10726,7 +10836,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "field_declaration_list_elements",
       "factoryFields": [
-        "field_declaration_list_elements"
+        "elements"
       ],
       "bareAccepts": [
         "attributed_field_declaration",
@@ -17040,9 +17150,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "parameters_elements",
-          "propertyName": "parametersElements",
-          "paramName": "parametersElements",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -17063,7 +17173,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "parameters_elements",
       "factoryFields": [
-        "parameters_elements"
+        "elements"
       ],
       "bareAccepts": [
         "abstract_type",
@@ -23352,22 +23462,26 @@
           ]
         },
         {
-          "name": "tuple_expression_elements",
-          "propertyName": "tupleExpressionElements",
-          "paramName": "tupleExpressionElements",
+          "name": "expressions",
+          "propertyName": "expressions",
+          "paramName": "expressions",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "tuple_expression_elements"
+            "expressions"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "tuple_expression_elements",
-              "parseKind": "tuple_expression_elements"
+              "name": "expressions",
+              "parseKind": "expressions",
+              "seat": {
+                "kind": "expressions",
+                "shape": "tuple"
+              }
             }
           ]
         }
@@ -23375,114 +23489,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "attributes",
-        "tuple_expression_elements"
-      ]
-    },
-    {
-      "kind": "tuple_expression_elements",
-      "modelType": "list",
-      "typeName": "TupleExpressionElements",
-      "factoryName": "tupleExpressionElements",
-      "irKey": "tupleExpressionElements",
-      "hidden": false,
-      "nonEmpty": true,
-      "hasNonterminalSeparator": false,
-      "leadingDelimiter": "none",
-      "trailingDelimiter": "optional",
-      "defaultDelimiter": "Delimiter.None",
-      "elementKinds": [
-        "_expression"
-      ],
-      "factoryShape": "elements",
-      "factoryFields": [
-        "element"
-      ],
-      "bareAccepts": [
-        "_range_expression_bare",
-        "array_expression_list",
-        "array_expression_semi",
-        "assignment_expression",
-        "async_block",
-        "await_expression",
-        "binary_expression",
-        "block",
-        "bool_keyword",
-        "boolean_literal",
-        "break_expression",
-        "call_expression",
-        "char_keyword",
-        "char_literal_empty",
-        "char_literal_escaped_hex",
-        "char_literal_escaped_simple",
-        "char_literal_escaped_unicode_braced",
-        "char_literal_escaped_unicode_fixed",
-        "char_literal_plain",
-        "closure_expression_block",
-        "closure_expression_expr",
-        "compound_assignment_expr",
-        "const_block",
-        "continue_expression",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
-        "false_keyword",
-        "field_expression",
-        "float_literal",
-        "for_expression",
-        "gen_block",
-        "gen_keyword",
-        "generic_function",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
-        "identifier",
-        "if_expression",
-        "index_expression",
-        "integer_literal_binary",
-        "integer_literal_decimal",
-        "integer_literal_hex",
-        "integer_literal_octal",
-        "isize_keyword",
-        "label",
-        "loop_expression",
-        "macro_invocation",
-        "match_expression",
-        "metavariable",
-        "parenthesized_expression",
-        "range_expression_bare",
-        "range_expression_binary",
-        "range_expression_postfix",
-        "range_expression_prefix",
-        "raw_string_literal",
-        "reference_expression_bare",
-        "reference_expression_mut",
-        "reference_expression_raw_const",
-        "reference_expression_raw_mut",
-        "return_expression",
-        "scoped_identifier",
-        "self",
-        "str_keyword",
-        "string_literal",
-        "struct_expression",
-        "true_keyword",
-        "try_block",
-        "try_expression",
-        "tuple_expression",
-        "type_cast_expression",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
-        "unary_expression",
-        "union_keyword",
-        "unit_expression",
-        "unsafe_block",
-        "usize_keyword",
-        "while_expression",
-        "yield_expression"
+        "expressions"
       ]
     },
     {
@@ -23925,9 +23932,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "type_arguments_elements",
-          "propertyName": "typeArgumentsElements",
-          "paramName": "typeArgumentsElements",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -23948,7 +23955,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "type_arguments_elements",
       "factoryFields": [
-        "type_arguments_elements"
+        "elements"
       ],
       "bareAccepts": [
         "abstract_type",
@@ -24504,9 +24511,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "type_parameters_elements",
-          "propertyName": "typeParametersElements",
-          "paramName": "typeParametersElements",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -24527,7 +24534,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "type_parameters_elements",
       "factoryFields": [
-        "type_parameters_elements"
+        "elements"
       ],
       "bareAccepts": [
         "attributed_type_parameter",

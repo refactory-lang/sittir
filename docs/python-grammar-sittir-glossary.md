@@ -225,14 +225,10 @@ one repeat, and the render keeps the comma after a single member.
 
 ### `for_in_clause` (`packages/python/grammar.sittir.ts:128`)
 
-`for_in_clause` is `prec.left(seq(optional('async'), 'for', …))`. The
-`prec.left` wrapper hides the seq from enrich's auto-promotion walker, so the
-`async` position has to be hand-promoted here.
-
-`for_statement`, `function_definition`, and `with_statement` also start with
-`optional('async')` at position 0, but their seqs are unwrapped, so enrich
-auto-promotes them as `field('async_marker', SYMBOL(_kw_async_marker))` and
-they need no entry in `transforms`.
+`for_in_clause` is `prec.left(seq(optional('async'), 'for', …))`. Enrich
+fields the `async` position as `field('async_marker', SYMBOL(_kw_async_marker))`,
+as it does for `for_statement`, `function_definition`, and `with_statement`;
+the one authored entry fields the trailing comma at `5/0`.
 
 ### `splat_pattern` (`packages/python/grammar.sittir.ts:343`)
 
@@ -390,6 +386,10 @@ one-element tuple with no comma.
 comma: `(a,)`, `(a, b)`, `(a, b,)`, and `()` for no list at all. The model reads
 that as a list that needs its trailing separator at one element, and a built
 `tuple(x)` renders `(x,)`. `list` and `set` keep `_collection_elements`.
+
+A `rules:` body does not pass through enrich, so the names are written by hand
+as enrich would derive them for a list whose element is a choice: the kind is
+`<owner>_elements`, its item field `element`, and the owner's slot `elements`.
 
 One upstream reading changes: `(*a)`, which is not valid Python, was a tuple of
 one splat and is now a parenthesized expression.

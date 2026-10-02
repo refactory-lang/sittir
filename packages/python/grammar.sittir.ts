@@ -374,7 +374,7 @@ export default sittirGrammar(base, {
 		tuple: reauthored(
 			'accepts-other-kind',
 			{ text: '(a)', form: ['(', { symbol: 'expression' }, ')'], kind: 'parenthesized_expression' },
-			($) => seq('(', optional(alias($._tuple_elements, $.tuple_elements)), ')')
+			($) => seq('(', optional(field('elements', alias($._tuple_elements, $.tuple_elements))), ')')
 		),
 		// See docs/python-grammar-sittir-glossary.md::primary_expression
 		primary_expression: reauthored('ambiguity', ($, original) => {

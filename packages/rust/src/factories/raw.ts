@@ -977,12 +977,8 @@ export function buildEnumVariantList(...args: unknown[]) {
 function _buildEnumVariantList(
 	value?: AdmitBound<T.EnumVariantListElements, T.AdmittedNodes>
 ): T.EnumVariantList.Bound {
-	const _enum_variant_list_elements = rejectBareText(
-		value,
-		'EnumVariantList.enumVariantListElements',
-		'a built EnumVariantListElements'
-	);
-	const listView = ownerView(_enum_variant_list_elements, '_element');
+	const _elements = rejectBareText(value, 'EnumVariantList.elements', 'a built EnumVariantListElements');
+	const listView = ownerView(_elements, '_element');
 	const listedItems =
 		listView.stored === undefined
 			? undefined
@@ -996,9 +992,9 @@ function _buildEnumVariantList(
 		$type: TSKindId.EnumVariantList as const,
 		$source: 2 as const,
 		$named: true as const,
-		_enum_variant_list_elements,
+		_elements,
 		$with: {
-			enumVariantListElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -1012,10 +1008,10 @@ function _buildEnumVariantList(
 					)
 				)
 		},
-		enumVariantListElements: () => _enum_variant_list_elements,
+		elements: () => _elements,
 		length: listedItems?.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_enum_variant_list_elements') : undefined,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_elements') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -1029,7 +1025,7 @@ function _buildEnumVariantList(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_enum_variant_list_elements');
+	if (listedItems === undefined) readStubLength(node, '_elements');
 	else
 		for (let index = 0; index < listedItems.length; index++)
 			(node as Record<number, unknown>)[index] = listedItems[index];
@@ -1114,12 +1110,8 @@ export function buildFieldDeclarationList(...args: unknown[]) {
 function _buildFieldDeclarationList(
 	value?: AdmitBound<T.FieldDeclarationListElements, T.AdmittedNodes>
 ): T.FieldDeclarationList.Bound {
-	const _field_declaration_list_elements = rejectBareText(
-		value,
-		'FieldDeclarationList.fieldDeclarationListElements',
-		'a built FieldDeclarationListElements'
-	);
-	const listView = ownerView(_field_declaration_list_elements, '_element');
+	const _elements = rejectBareText(value, 'FieldDeclarationList.elements', 'a built FieldDeclarationListElements');
+	const listView = ownerView(_elements, '_element');
 	const listedItems =
 		listView.stored === undefined
 			? undefined
@@ -1133,9 +1125,9 @@ function _buildFieldDeclarationList(
 		$type: TSKindId.FieldDeclarationList as const,
 		$source: 2 as const,
 		$named: true as const,
-		_field_declaration_list_elements,
+		_elements,
 		$with: {
-			fieldDeclarationListElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -1149,10 +1141,10 @@ function _buildFieldDeclarationList(
 					)
 				)
 		},
-		fieldDeclarationListElements: () => _field_declaration_list_elements,
+		elements: () => _elements,
 		length: listedItems?.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_field_declaration_list_elements') : undefined,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_elements') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -1166,7 +1158,7 @@ function _buildFieldDeclarationList(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_field_declaration_list_elements');
+	if (listedItems === undefined) readStubLength(node, '_elements');
 	else
 		for (let index = 0; index < listedItems.length; index++)
 			(node as Record<number, unknown>)[index] = listedItems[index];
@@ -2193,12 +2185,8 @@ export function buildTypeParameters(...args: unknown[]) {
 			);
 }
 function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.AdmittedNodes>): T.TypeParameters.Bound {
-	const _type_parameters_elements = rejectBareText(
-		value,
-		'TypeParameters.typeParametersElements',
-		'a built TypeParametersElements'
-	);
-	const listView = ownerView(_type_parameters_elements, '_element');
+	const _elements = rejectBareText(value, 'TypeParameters.elements', 'a built TypeParametersElements');
+	const listView = ownerView(_elements, '_element');
 	const listedItems =
 		listView.stored === undefined
 			? undefined
@@ -2212,9 +2200,9 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 		$type: TSKindId.TypeParameters as const,
 		$source: 2 as const,
 		$named: true as const,
-		_type_parameters_elements,
+		_elements,
 		$with: {
-			typeParametersElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -2228,10 +2216,10 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 					)
 				)
 		},
-		typeParametersElements: () => _type_parameters_elements,
+		elements: () => _elements,
 		length: listedItems?.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_type_parameters_elements') : undefined,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_elements') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -2244,7 +2232,7 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_type_parameters_elements');
+	if (listedItems === undefined) readStubLength(node, '_elements');
 	else
 		for (let index = 0; index < listedItems.length; index++)
 			(node as Record<number, unknown>)[index] = listedItems[index];
@@ -2870,8 +2858,8 @@ export function buildParameters(...args: unknown[]) {
 		: _buildParameters((buildParametersElements as (...a: unknown[]) => unknown)(...args) as T.ParametersElements);
 }
 function _buildParameters(value?: AdmitBound<T.ParametersElements, T.AdmittedNodes>): T.Parameters.Bound {
-	const _parameters_elements = rejectBareText(value, 'Parameters.parametersElements', 'a built ParametersElements');
-	const listView = ownerView(_parameters_elements, '_element');
+	const _elements = rejectBareText(value, 'Parameters.elements', 'a built ParametersElements');
+	const listView = ownerView(_elements, '_element');
 	const listedItems =
 		listView.stored === undefined
 			? undefined
@@ -2885,9 +2873,9 @@ function _buildParameters(value?: AdmitBound<T.ParametersElements, T.AdmittedNod
 		$type: TSKindId.Parameters as const,
 		$source: 2 as const,
 		$named: true as const,
-		_parameters_elements,
+		_elements,
 		$with: {
-			parametersElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -2901,10 +2889,10 @@ function _buildParameters(value?: AdmitBound<T.ParametersElements, T.AdmittedNod
 					)
 				)
 		},
-		parametersElements: () => _parameters_elements,
+		elements: () => _elements,
 		length: listedItems?.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_parameters_elements') : undefined,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_elements') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -2918,7 +2906,7 @@ function _buildParameters(value?: AdmitBound<T.ParametersElements, T.AdmittedNod
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_parameters_elements');
+	if (listedItems === undefined) readStubLength(node, '_elements');
 	else
 		for (let index = 0; index < listedItems.length; index++)
 			(node as Record<number, unknown>)[index] = listedItems[index];
@@ -3726,12 +3714,8 @@ export function buildTypeArguments(...args: unknown[]) {
 			);
 }
 function _buildTypeArguments(value: AdmitBound<T.TypeArgumentsElements, T.AdmittedNodes>): T.TypeArguments.Bound {
-	const _type_arguments_elements = rejectBareText(
-		value,
-		'TypeArguments.typeArgumentsElements',
-		'a built TypeArgumentsElements'
-	);
-	const listView = ownerView(_type_arguments_elements, '_element');
+	const _elements = rejectBareText(value, 'TypeArguments.elements', 'a built TypeArgumentsElements');
+	const listView = ownerView(_elements, '_element');
 	const listedItems =
 		listView.stored === undefined
 			? undefined
@@ -3745,9 +3729,9 @@ function _buildTypeArguments(value: AdmitBound<T.TypeArgumentsElements, T.Admitt
 		$type: TSKindId.TypeArguments as const,
 		$source: 2 as const,
 		$named: true as const,
-		_type_arguments_elements,
+		_elements,
 		$with: {
-			typeArgumentsElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -3761,10 +3745,10 @@ function _buildTypeArguments(value: AdmitBound<T.TypeArgumentsElements, T.Admitt
 					)
 				)
 		},
-		typeArgumentsElements: () => _type_arguments_elements,
+		elements: () => _elements,
 		length: listedItems?.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_type_arguments_elements') : undefined,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_elements') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -3777,7 +3761,7 @@ function _buildTypeArguments(value: AdmitBound<T.TypeArgumentsElements, T.Admitt
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_type_arguments_elements');
+	if (listedItems === undefined) readStubLength(node, '_elements');
 	else
 		for (let index = 0; index < listedItems.length; index++)
 			(node as Record<number, unknown>)[index] = listedItems[index];
@@ -4606,8 +4590,8 @@ export function buildArguments(...args: unknown[]) {
 		: _buildArguments((buildArgumentsElements as (...a: unknown[]) => unknown)(...args) as T.ArgumentsElements);
 }
 function _buildArguments(value?: AdmitBound<T.ArgumentsElements, T.AdmittedNodes>): T.Arguments.Bound {
-	const _arguments_elements = rejectBareText(value, 'Arguments.argumentsElements', 'a built ArgumentsElements');
-	const listView = ownerView(_arguments_elements, '_element');
+	const _elements = rejectBareText(value, 'Arguments.elements', 'a built ArgumentsElements');
+	const listView = ownerView(_elements, '_element');
 	const listedItems =
 		listView.stored === undefined
 			? undefined
@@ -4621,9 +4605,9 @@ function _buildArguments(value?: AdmitBound<T.ArgumentsElements, T.AdmittedNodes
 		$type: TSKindId.Arguments as const,
 		$source: 2 as const,
 		$named: true as const,
-		_arguments_elements,
+		_elements,
 		$with: {
-			argumentsElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -4637,10 +4621,10 @@ function _buildArguments(value?: AdmitBound<T.ArgumentsElements, T.AdmittedNodes
 					)
 				)
 		},
-		argumentsElements: () => _arguments_elements,
+		elements: () => _elements,
 		length: listedItems?.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_arguments_elements') : undefined,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_elements') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -4654,7 +4638,7 @@ function _buildArguments(value?: AdmitBound<T.ArgumentsElements, T.AdmittedNodes
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_arguments_elements');
+	if (listedItems === undefined) readStubLength(node, '_elements');
 	else
 		for (let index = 0; index < listedItems.length; index++)
 			(node as Record<number, unknown>)[index] = listedItems[index];
@@ -4691,32 +4675,28 @@ export function buildParenthesizedExpression(
 
 export function buildTupleExpression(config: T.TupleExpression.Config): T.TupleExpression.Bound {
 	const _attributes = rejectBareText(config.attributes ?? [], 'TupleExpression.attributes', 'a built AttributeItem');
-	const _tuple_expression_elements = rejectBareText(
-		config.tupleExpressionElements,
-		'TupleExpression.tupleExpressionElements',
-		'a built TupleExpressionElements'
-	);
+	const _expressions = rejectBareText(config.expressions, 'TupleExpression.expressions', 'a built Expressions');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TupleExpression as const,
 		$source: 2 as const,
 		$named: true as const,
 		_attributes,
-		_tuple_expression_elements,
+		_expressions,
 		$with: {
 			attributes: (...values: T.AttributeItem[]) =>
 				rebuilt(node, handle, () => buildTupleExpression({ ...config, attributes: restItems('attributes', values) })),
-			tupleExpressionElements: (...args: unknown[]) =>
+			expressions: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.TupleExpressionElements as const, optional: false, make: buildTupleExpressionElements },
-						(value: T.TupleExpressionElements) => buildTupleExpression({ ...config, tupleExpressionElements: value })
+						{ kind: TSKindId.Expressions as const, optional: false, make: buildExpressions },
+						(value: T.Expressions) => buildTupleExpression({ ...config, expressions: value })
 					)
 				)
 		},
 		attributes: () => _attributes,
-		tupleExpressionElements: () => _tuple_expression_elements,
+		expressions: () => _expressions,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -7810,6 +7790,69 @@ function _buildArgumentsElements(
 	return node as unknown as T.ArgumentsElements.Bound;
 }
 
+export function buildExpressions(
+	...elements: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>
+): ReturnType<typeof _buildExpressions>;
+export function buildExpressions(
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	...elements: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>
+): ReturnType<typeof _buildExpressions>;
+export function buildExpressions(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | AdmitBound<T.Expression, T.AdmittedNodes>)[]
+) {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		AdmitBound<T.Expression, T.AdmittedNodes>
+	>;
+	return _buildExpressions(elements, options);
+}
+function _buildExpressions(
+	elements: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.Expressions.Bound {
+	_assertNonEmpty(elements, 'expressions.elements');
+	const _expression = elements;
+	const _delimiter = options.delimiter ?? Delimiter.None;
+	const listedStored = storedElements(_expression);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.Expressions as const,
+		$source: 2 as const,
+		$named: true as const,
+		_expression,
+		_delimiter,
+		$with: {
+			expressions: (...vs: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>) =>
+				rebuilt(node, handle, () => buildExpressions(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildExpressions({ ...options, delimiter: v }, ...elements))
+		},
+		expressions: () => _expression,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.Expressions.Bound;
+}
+
 export function buildFieldInitializerListElements(
 	...elements: NonEmptyArray<
 		AdmitBound<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer, T.AdmittedNodes>
@@ -8232,69 +8275,6 @@ export function buildStringOpen(text: string): T.StringOpen.Bound {
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.StringOpen.Bound;
-}
-
-export function buildTupleExpressionElements(
-	...elements: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>
-): ReturnType<typeof _buildTupleExpressionElements>;
-export function buildTupleExpressionElements(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>
-): ReturnType<typeof _buildTupleExpressionElements>;
-export function buildTupleExpressionElements(
-	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | AdmitBound<T.Expression, T.AdmittedNodes>)[]
-) {
-	const _optsFirst =
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		!Array.isArray(args[0]) &&
-		!('$type' in (args[0] as object)) &&
-		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		AdmitBound<T.Expression, T.AdmittedNodes>
-	>;
-	return _buildTupleExpressionElements(elements, options);
-}
-function _buildTupleExpressionElements(
-	elements: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>,
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.TupleExpressionElements.Bound {
-	_assertNonEmpty(elements, 'tuple_expression_elements.elements');
-	const _element = elements;
-	const _delimiter = options.delimiter ?? Delimiter.None;
-	const listedStored = storedElements(_element);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.TupleExpressionElements as const,
-		$source: 2 as const,
-		$named: true as const,
-		_element,
-		_delimiter,
-		$with: {
-			elements: (...vs: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>) =>
-				rebuilt(node, handle, () => buildTupleExpressionElements(options, ...vs)),
-			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => buildTupleExpressionElements({ ...options, delimiter: v }, ...elements))
-		},
-		elements: () => _element,
-		length: listedStored.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(listedStored, undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
-		$render: () => renderText(handle, node),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	defineListIndices(node, listedStored.length);
-	return node as unknown as T.TupleExpressionElements.Bound;
 }
 
 export function buildIntegerLiteralDecimal(
@@ -8845,24 +8825,20 @@ export function buildArrayExpressionList(
 		'ArrayExpressionList.attributes',
 		'a built AttributeItem'
 	);
-	const _arguments_elements = rejectBareText(
-		config.argumentsElements,
-		'ArrayExpressionList.argumentsElements',
-		'a built ArgumentsElements'
-	);
+	const _elements = rejectBareText(config.elements, 'ArrayExpressionList.elements', 'a built ArgumentsElements');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ArrayExpressionList as const,
 		$source: 2 as const,
 		$named: true as const,
 		_attributes,
-		_arguments_elements,
+		_elements,
 		$with: {
 			attributes: (...values: T.AttributeItem[]) =>
 				rebuilt(node, handle, () =>
 					buildArrayExpressionList({ ...config, attributes: restItems('attributes', values) })
 				),
-			argumentsElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -8872,12 +8848,12 @@ export function buildArrayExpressionList(
 							make: buildArgumentsElements,
 							element: { keys: ['attributeItem', 'expression'], make: buildAttributedArgument }
 						},
-						(value?: T.ArgumentsElements) => buildArrayExpressionList({ ...config, argumentsElements: value })
+						(value?: T.ArgumentsElements) => buildArrayExpressionList({ ...config, elements: value })
 					)
 				)
 		},
 		attributes: () => _attributes,
-		argumentsElements: () => _arguments_elements,
+		elements: () => _elements,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -12132,6 +12108,7 @@ export type FluentKindMap = {
 	use_bounds_elements: T.UseBoundsElements.Bound;
 	type_arguments_elements: T.TypeArgumentsElements.Bound;
 	arguments_elements: T.ArgumentsElements.Bound;
+	expressions: T.Expressions.Bound;
 	field_initializer_list_elements: T.FieldInitializerListElements.Bound;
 	tuple_pattern_elements: T.TuplePatternElements.Bound;
 	patterns: T.Patterns.Bound;
@@ -12139,7 +12116,6 @@ export type FluentKindMap = {
 	use_wildcard_group: T.UseWildcardGroup.Bound;
 	token_repetition_pattern_text: T.TokenRepetitionPatternText;
 	string_open: T.StringOpen;
-	tuple_expression_elements: T.TupleExpressionElements.Bound;
 	integer_literal_decimal: T.IntegerLiteralDecimal.Bound;
 	integer_literal_hex: T.IntegerLiteralHex.Bound;
 	integer_literal_binary: T.IntegerLiteralBinary.Bound;
@@ -12399,6 +12375,7 @@ export const _factoryMap = {
 	use_bounds_elements: buildUseBoundsElements,
 	type_arguments_elements: buildTypeArgumentsElements,
 	arguments_elements: buildArgumentsElements,
+	expressions: buildExpressions,
 	field_initializer_list_elements: buildFieldInitializerListElements,
 	tuple_pattern_elements: buildTuplePatternElements,
 	patterns: buildPatterns,
@@ -12406,7 +12383,6 @@ export const _factoryMap = {
 	use_wildcard_group: buildUseWildcardGroup,
 	token_repetition_pattern_text: buildTokenRepetitionPatternText,
 	string_open: buildStringOpen,
-	tuple_expression_elements: buildTupleExpressionElements,
 	integer_literal_decimal: buildIntegerLiteralDecimal,
 	integer_literal_hex: buildIntegerLiteralHex,
 	integer_literal_binary: buildIntegerLiteralBinary,

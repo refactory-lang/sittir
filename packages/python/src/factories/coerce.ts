@@ -2096,9 +2096,9 @@ export function coerceToModule(...input: T.Module.LooseArgs): ReturnType<typeof 
 	return F.buildModule(...(_resolveMany<T.Statement>(_elems, _K0, _K1) as unknown as Parameters<typeof F.buildModule>));
 }
 
-export function resolveSimpleStatements_simpleStatementsElements(
-	value: T.SimpleStatements.LooseConfig['simpleStatementsElements']
-): T.SimpleStatements['_simple_statements_elements'] {
+export function resolveSimpleStatements_elements(
+	value: T.SimpleStatements.LooseConfig['elements']
+): T.SimpleStatements['_elements'] {
 	return _resolveOneBranch<T.SimpleStatementsElements>(value, 'simple_statements_elements');
 }
 
@@ -2117,9 +2117,9 @@ export function coerceToSimpleStatements(...args: unknown[]): ReturnType<typeof 
 	return F.buildSimpleStatements(
 		_requireField(
 			'_simple_statements',
-			'simpleStatementsElements',
+			'elements',
 			_resolveOneBranch<T.SimpleStatementsElements>(
-				configFieldOr(input, 'simpleStatementsElements', () => input),
+				configFieldOr(input, 'elements', () => input),
 				'simple_statements_elements'
 			)
 		)
@@ -3600,9 +3600,7 @@ export function coerceToUnionPattern(...input: T.UnionPattern.LooseArgs): Return
 	);
 }
 
-export function resolveDictPattern_dictPatternElements(
-	value: T.DictPattern.LooseConfig['dictPatternElements']
-): T.DictPattern['_dict_pattern_elements'] {
+export function resolveDictPattern_elements(value: T.DictPattern.LooseConfig['elements']): T.DictPattern['_elements'] {
 	return _resolveOneBranch<T.DictPatternElements>(value, 'dict_pattern_elements', undefined, true);
 }
 
@@ -3617,7 +3615,7 @@ export function coerceToDictPattern(...args: unknown[]): ReturnType<typeof F.bui
 		return input as unknown as ReturnType<typeof F.buildDictPattern>;
 	return F.buildDictPattern(
 		_resolveOneBranch<T.DictPatternElements>(
-			configFieldOr(input, 'dictPatternElements', () => input),
+			configFieldOr(input, 'elements', () => input),
 			'dict_pattern_elements',
 			undefined,
 			true
@@ -4828,7 +4826,7 @@ export function coerceToSet(...args: unknown[]): ReturnType<typeof F.buildSet> {
 	);
 }
 
-export function resolveTuple_tupleElements(value: T.Tuple.LooseConfig['tupleElements']): T.Tuple['_tuple_elements'] {
+export function resolveTuple_elements(value: T.Tuple.LooseConfig['elements']): T.Tuple['_elements'] {
 	return _resolveOneBranch<T.TupleElements>(value, 'tuple_elements', undefined, true);
 }
 
@@ -4841,7 +4839,7 @@ export function coerceToTuple(...args: unknown[]): ReturnType<typeof F.buildTupl
 	const input = args[0] as T.Tuple.Loose | undefined;
 	return F.buildTuple(
 		_resolveOneBranch<T.TupleElements>(
-			configFieldOr(input, 'tupleElements', () => input),
+			configFieldOr(input, 'elements', () => input),
 			'tuple_elements',
 			undefined,
 			true
@@ -7105,9 +7103,9 @@ export function coerceToWithClauseBare(...input: T.WithClauseBare.LooseArgs): Re
 	);
 }
 
-export function resolveWithClauseParen_withClauseWithItems(
-	value: T.WithClauseParen.LooseConfig['withClauseWithItems']
-): T.WithClauseParen['_with_clause_with_items'] {
+export function resolveWithClauseParen_withItems(
+	value: T.WithClauseParen.LooseConfig['withItems']
+): T.WithClauseParen['_with_items'] {
 	return _resolveOneBranch<T.WithClauseWithItems>(value, 'with_clause_with_items');
 }
 
@@ -7126,9 +7124,9 @@ export function coerceToWithClauseParen(...args: unknown[]): ReturnType<typeof F
 	return F.buildWithClauseParen(
 		_requireField(
 			'with_clause_paren',
-			'withClauseWithItems',
+			'withItems',
 			_resolveOneBranch<T.WithClauseWithItems>(
-				configFieldOr(input, 'withClauseWithItems', () => input),
+				configFieldOr(input, 'withItems', () => input),
 				'with_clause_with_items'
 			)
 		)
@@ -7191,9 +7189,7 @@ export function coerceToMatchBlockEmpty(input?: T.MatchBlockEmpty.Loose): Return
 	);
 }
 
-export function resolveSuiteInline_simpleStatementsElements(
-	value: T.SuiteInline.LooseConfig['simpleStatementsElements']
-): T.SuiteInline['_simple_statements_elements'] {
+export function resolveSuiteInline_elements(value: T.SuiteInline.LooseConfig['elements']): T.SuiteInline['_elements'] {
 	return _resolveOneBranch<T.SimpleStatementsElements>(value, 'simple_statements_elements');
 }
 
@@ -7211,9 +7207,9 @@ export function coerceToSuiteInline(...args: unknown[]): ReturnType<typeof F.bui
 	return F.buildSuiteInline(
 		_requireField(
 			'suite_inline',
-			'simpleStatementsElements',
+			'elements',
 			_resolveOneBranch<T.SimpleStatementsElements>(
-				configFieldOr(input, 'simpleStatementsElements', () => input),
+				configFieldOr(input, 'elements', () => input),
 				'simple_statements_elements'
 			)
 		)

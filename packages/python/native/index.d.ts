@@ -411,7 +411,7 @@ export interface DictPatternElementsTransport {
 export interface DictPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _dict_pattern_elements?: SlotValue<DictPatternElementsTransport>
+  _elements?: SlotValue<DictPatternElementsTransport>
 }
 
 /**
@@ -1040,7 +1040,7 @@ export interface SimpleStatementsElementsTransport {
 export interface SimpleStatementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _simple_statements_elements: SlotValue<SimpleStatementsElementsTransport>
+  _elements: SlotValue<SimpleStatementsElementsTransport>
 }
 
 export interface SliceGroupTransport {
@@ -1125,7 +1125,7 @@ export interface SuiteEmptyTransport {
 export interface SuiteInlineTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _simple_statements_elements: SlotValue<SimpleStatementsElementsTransport>
+  _elements: SlotValue<SimpleStatementsElementsTransport>
 }
 
 export interface TryStatementTransport {
@@ -1156,7 +1156,7 @@ export interface TuplePatternTransport {
 export interface TupleTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _tuple_elements?: SlotValue<TupleElementsTransport>
+  _elements?: SlotValue<TupleElementsTransport>
 }
 
 export interface TypeAliasStatementTransport {
@@ -1244,7 +1244,7 @@ export interface WithClauseBareTransport {
 export interface WithClauseParenTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _with_clause_with_items: SlotValue<WithClauseWithItemsTransport>
+  _with_items: SlotValue<WithClauseWithItemsTransport>
 }
 
 export interface WithClauseWithItemsTransport {

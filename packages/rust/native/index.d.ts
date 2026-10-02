@@ -109,14 +109,14 @@ export interface ArgumentsElementsTransport {
 export interface ArgumentsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _arguments_elements?: SlotValue<ArgumentsElementsTransport>
+  _elements?: SlotValue<ArgumentsElementsTransport>
 }
 
 export interface ArrayExpressionListTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _attributes?: Array<SlotValue<AttributeItemTransport>>
-  _arguments_elements?: SlotValue<ArgumentsElementsTransport>
+  _elements?: SlotValue<ArgumentsElementsTransport>
   _attributes_separator_space?: number
 }
 
@@ -490,7 +490,7 @@ export interface EnumVariantListElementsTransport {
 export interface EnumVariantListTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _enum_variant_list_elements?: SlotValue<EnumVariantListElementsTransport>
+  _elements?: SlotValue<EnumVariantListElementsTransport>
 }
 
 export interface EnumVariantTransport {
@@ -538,6 +538,15 @@ export interface ExpressionStatementWithSemiTransport {
   _expression: SlotValue<ExpressionTransport>
 }
 
+export interface ExpressionsTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _expression: Array<SlotValue<ExpressionTransport>>
+  _delimiter?: number
+  _expression_separator_space_before?: number
+  _expression_separator_space_after?: number
+}
+
 export interface ExternCrateDeclarationTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
@@ -564,7 +573,7 @@ export interface FieldDeclarationListElementsTransport {
 export interface FieldDeclarationListTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _field_declaration_list_elements?: SlotValue<FieldDeclarationListElementsTransport>
+  _elements?: SlotValue<FieldDeclarationListElementsTransport>
 }
 
 export interface FieldDeclarationTransport {
@@ -1101,7 +1110,7 @@ export interface ParametersElementsTransport {
 export interface ParametersTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _parameters_elements?: SlotValue<ParametersElementsTransport>
+  _elements?: SlotValue<ParametersElementsTransport>
 }
 
 export interface ParameterTransport {
@@ -1496,20 +1505,11 @@ export interface TryExpressionTransport {
   _value: SlotValue<Box<ExpressionTransport>>
 }
 
-export interface TupleExpressionElementsTransport {
-  '$_trivia'?: TransportTrivia
-  '$_edges'?: Edges
-  _element: Array<SlotValue<ExpressionTransport>>
-  _delimiter?: number
-  _element_separator_space_before?: number
-  _element_separator_space_after?: number
-}
-
 export interface TupleExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _attributes?: Array<SlotValue<AttributeItemTransport>>
-  _tuple_expression_elements: SlotValue<TupleExpressionElementsTransport>
+  _expressions: SlotValue<ExpressionsTransport>
   _attributes_separator_space?: number
 }
 
@@ -1553,7 +1553,7 @@ export interface TypeArgumentsElementsTransport {
 export interface TypeArgumentsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _type_arguments_elements: SlotValue<TypeArgumentsElementsTransport>
+  _elements: SlotValue<TypeArgumentsElementsTransport>
 }
 
 export interface TypeArgumentTransport {
@@ -1607,7 +1607,7 @@ export interface TypeParametersElementsTransport {
 export interface TypeParametersTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _type_parameters_elements: SlotValue<TypeParametersElementsTransport>
+  _elements: SlotValue<TypeParametersElementsTransport>
 }
 
 export interface TypeParameterTransport {

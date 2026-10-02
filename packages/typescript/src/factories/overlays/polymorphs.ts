@@ -1003,22 +1003,6 @@ export const ambientDeclaration = Object.freeze({
 	module: typeof B.ambientDeclarationModule;
 };
 
-const enumBody$elements =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const enumBody$elements$strict = enumBody$elements(F.buildEnumBody, F.buildEnumBodyElements);
-const enumBody$elements$coerce = enumBody$elements(F.buildEnumBody, C.coerceToEnumBodyElements);
-export const enumBody = Object.freeze({
-	...B.enumBody,
-	elements: bundle(enumBody$elements$strict, enumBody$elements$coerce)
-}) as unknown as typeof B.enumBody & {
-	elements: {
-		strict: (...args: ArgsOf<typeof F.buildEnumBodyElements>) => ReturnType<typeof F.buildEnumBody>;
-		coerce: (...args: ArgsOf<typeof C.coerceToEnumBodyElements>) => ReturnType<typeof F.buildEnumBody>;
-	};
-};
-
 const typeQueryMemberExpression$dot =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>

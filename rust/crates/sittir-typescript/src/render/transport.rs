@@ -69412,8 +69412,8 @@ pub struct FormalParametersTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameters_elements"))]
-    pub formal_parameters_elements: Option<::sittir_core::SlotValue<FormalParametersElementsTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    pub elements: Option<::sittir_core::SlotValue<FormalParametersElementsTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for FormalParametersTransport {
@@ -69438,7 +69438,7 @@ impl ::sittir_core::prepare::Prepare for FormalParametersTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.formal_parameters_elements.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
     }
 }
@@ -71417,8 +71417,8 @@ pub struct EnumBodyTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_body_elements"))]
-    pub enum_body_elements: Option<::sittir_core::SlotValue<EnumBodyElementsTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    pub elements: Option<::sittir_core::SlotValue<EnumBodyElementsTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for EnumBodyTransport {
@@ -71443,7 +71443,7 @@ impl ::sittir_core::prepare::Prepare for EnumBodyTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.enum_body_elements.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
     }
 }
@@ -74384,8 +74384,8 @@ pub struct TypeParametersTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters_elements"))]
-    pub type_parameters_elements: ::sittir_core::SlotValue<TypeParametersElementsTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    pub elements: ::sittir_core::SlotValue<TypeParametersElementsTransport>,
 }
 
 impl ::sittir_core::view::KindOf for TypeParametersTransport {
@@ -74410,7 +74410,7 @@ impl ::sittir_core::prepare::Prepare for TypeParametersTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.type_parameters_elements.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
     }
 }
@@ -100479,12 +100479,12 @@ fn render_class_body(node: &ClassBodyTransport, w: &mut dyn ::sittir_core::rende
 }
 
 fn render_formal_parameters(node: &FormalParametersTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let formal_parameters_elements = View::new(&node.formal_parameters_elements, "{}");
+    let elements = View::new(&node.elements, "{}");
     w.edge(::sittir_core::types::KindId(281), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_FORMAL_PARAMETERS_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "formal_parameters_elements", w)?;
-    formal_parameters_elements.render(w)?;
+    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "elements", w)?;
+    elements.render(w)?;
     w.site_at(options::SITE_FORMAL_PARAMETERS_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(281), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -101098,12 +101098,12 @@ fn render_enum_declaration(node: &EnumDeclarationTransport, w: &mut dyn ::sittir
 }
 
 fn render_enum_body(node: &EnumBodyTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let enum_body_elements = View::new(&node.enum_body_elements, "{}");
+    let elements = View::new(&node.elements, "{}");
     w.edge(::sittir_core::types::KindId(315), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("{")?;
     w.site_at(options::SITE_ENUM_BODY_LBRACE_AFTER);
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "enum_body_elements", w)?;
-    enum_body_elements.render(w)?;
+    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "elements", w)?;
+    elements.render(w)?;
     w.site_at(options::SITE_ENUM_BODY_RBRACE_BEFORE);
     w.text("}")?;
     w.edge(::sittir_core::types::KindId(315), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -101707,11 +101707,11 @@ fn render_property_signature(node: &PropertySignatureTransport, w: &mut dyn ::si
 }
 
 fn render_type_parameters(node: &TypeParametersTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let type_parameters_elements = &node.type_parameters_elements;
+    let elements = &node.elements;
     w.edge(::sittir_core::types::KindId(364), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("<")?;
     w.site_at(options::SITE_TYPE_PARAMETERS_LT_AFTER);
-    type_parameters_elements.render(w)?;
+    elements.render(w)?;
     w.site_at(options::SITE_TYPE_PARAMETERS_GT_BEFORE);
     w.text(">")?;
     w.edge(::sittir_core::types::KindId(364), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));

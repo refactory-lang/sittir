@@ -51,10 +51,17 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "simple_statements_elements",
+          "type": "FIELD",
+          "name": "elements",
+          "content": {
+            "type": "SYMBOL",
+            "name": "simple_statements_elements",
+            "metadata": {
+              "symbolSource": "group-lift"
+            }
+          },
           "metadata": {
-            "symbolSource": "group-lift"
+            "fieldSource": "enriched"
           }
         },
         {
@@ -2372,10 +2379,17 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "dict_pattern_elements",
+              "type": "FIELD",
+              "name": "elements",
+              "content": {
+                "type": "SYMBOL",
+                "name": "dict_pattern_elements",
+                "metadata": {
+                  "symbolSource": "group-lift"
+                }
+              },
               "metadata": {
-                "symbolSource": "group-lift"
+                "fieldSource": "enriched"
               }
             },
             {
@@ -4971,13 +4985,20 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "ALIAS",
+              "type": "FIELD",
+              "name": "elements",
               "content": {
-                "type": "SYMBOL",
-                "name": "_tuple_elements"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_tuple_elements"
+                },
+                "named": true,
+                "value": "tuple_elements"
               },
-              "named": true,
-              "value": "tuple_elements"
+              "metadata": {
+                "fieldSource": "override"
+              }
             },
             {
               "type": "BLANK"
@@ -8515,10 +8536,17 @@
           "value": "("
         },
         {
-          "type": "SYMBOL",
-          "name": "with_clause_with_items",
+          "type": "FIELD",
+          "name": "with_items",
+          "content": {
+            "type": "SYMBOL",
+            "name": "with_clause_with_items",
+            "metadata": {
+              "symbolSource": "group-lift"
+            }
+          },
           "metadata": {
-            "symbolSource": "group-lift"
+            "fieldSource": "enriched"
           }
         },
         {

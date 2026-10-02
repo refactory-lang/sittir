@@ -2608,16 +2608,17 @@
   {
     "type": "enum_body",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "enum_body_elements",
-          "named": true
-        }
-      ]
+    "fields": {
+      "elements": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "enum_body_elements",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -3519,16 +3520,17 @@
   {
     "type": "formal_parameters",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "formal_parameters_elements",
-          "named": true
-        }
-      ]
+    "fields": {
+      "elements": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "formal_parameters_elements",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -7211,16 +7213,17 @@
   {
     "type": "type_parameters",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "type_parameters_elements",
-          "named": true
-        }
-      ]
+    "fields": {
+      "elements": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type_parameters_elements",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {

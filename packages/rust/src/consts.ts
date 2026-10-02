@@ -89,7 +89,7 @@ export const TOKEN_INTERIORS = {
 
 /** The gaps an empty node of each kind holds inner trivia in, in render order. */
 export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = Object.freeze({
-	arguments: Object.freeze(['arguments_elements']),
+	arguments: Object.freeze(['elements']),
 	array_expression_list: Object.freeze(['attributes']),
 	block: Object.freeze(['statements']),
 	closure_parameters: Object.freeze(['parameters']),
@@ -97,12 +97,12 @@ export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = Object
 	delim_token_tree_brace: Object.freeze(['delim_tokens']),
 	delim_token_tree_bracket: Object.freeze(['delim_tokens']),
 	delim_token_tree_paren: Object.freeze(['delim_tokens']),
-	enum_variant_list: Object.freeze(['enum_variant_list_elements']),
-	field_declaration_list: Object.freeze(['field_declaration_list_elements']),
+	enum_variant_list: Object.freeze(['elements']),
+	field_declaration_list: Object.freeze(['elements']),
 	field_initializer_list: Object.freeze(['initializers']),
 	match_block: Object.freeze(['match_block_arms']),
 	ordered_field_declaration_list: Object.freeze(['attributes']),
-	parameters: Object.freeze(['parameters_elements']),
+	parameters: Object.freeze(['elements']),
 	slice_pattern: Object.freeze(['patterns']),
 	source_file: Object.freeze(['statements']),
 	token_tree_brace: Object.freeze(['tokens']),

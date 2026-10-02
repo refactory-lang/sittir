@@ -3557,12 +3557,8 @@ export function buildFormalParameters(...args: unknown[]) {
 function _buildFormalParameters(
 	value?: AdmitBound<T.FormalParametersElements, T.AdmittedNodes>
 ): T.FormalParameters.Bound {
-	const _formal_parameters_elements = rejectBareText(
-		value,
-		'FormalParameters.formalParametersElements',
-		'a built FormalParametersElements'
-	);
-	const listView = ownerView(_formal_parameters_elements, '_formal_parameter');
+	const _elements = rejectBareText(value, 'FormalParameters.elements', 'a built FormalParametersElements');
+	const listView = ownerView(_elements, '_formal_parameter');
 	const listedItems =
 		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'formalParameters'), undefined);
 	const handle = currentHandle();
@@ -3570,9 +3566,9 @@ function _buildFormalParameters(
 		$type: TSKindId.FormalParameters as const,
 		$source: 2 as const,
 		$named: true as const,
-		_formal_parameters_elements,
+		_elements,
 		$with: {
-			formalParametersElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -3581,10 +3577,10 @@ function _buildFormalParameters(
 					)
 				)
 		},
-		formalParametersElements: () => _formal_parameters_elements,
+		elements: () => _elements,
 		length: listedItems?.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_formal_parameters_elements') : undefined,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_elements') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -3598,7 +3594,7 @@ function _buildFormalParameters(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_formal_parameters_elements');
+	if (listedItems === undefined) readStubLength(node, '_elements');
 	else
 		for (let index = 0; index < listedItems.length; index++)
 			(node as Record<number, unknown>)[index] = listedItems[index];
@@ -5118,8 +5114,8 @@ export function buildEnumBody(...args: unknown[]) {
 		: _buildEnumBody((buildEnumBodyElements as (...a: unknown[]) => unknown)(...args) as T.EnumBodyElements);
 }
 function _buildEnumBody(value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>): T.EnumBody.Bound {
-	const _enum_body_elements = rejectBareText(value, 'EnumBody.enumBodyElements', 'a built EnumBodyElements');
-	const listView = ownerView(_enum_body_elements, '_element');
+	const _elements = rejectBareText(value, 'EnumBody.elements', 'a built EnumBodyElements');
+	const listView = ownerView(_elements, '_element');
 	const listedItems =
 		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'elements'), undefined);
 	const handle = currentHandle();
@@ -5127,9 +5123,9 @@ function _buildEnumBody(value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>)
 		$type: TSKindId.EnumBody as const,
 		$source: 2 as const,
 		$named: true as const,
-		_enum_body_elements,
+		_elements,
 		$with: {
-			enumBodyElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -5138,10 +5134,10 @@ function _buildEnumBody(value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>)
 					)
 				)
 		},
-		enumBodyElements: () => _enum_body_elements,
+		elements: () => _elements,
 		length: listedItems?.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_enum_body_elements') : undefined,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_elements') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -5155,7 +5151,7 @@ function _buildEnumBody(value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>)
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_enum_body_elements');
+	if (listedItems === undefined) readStubLength(node, '_elements');
 	else
 		for (let index = 0; index < listedItems.length; index++)
 			(node as Record<number, unknown>)[index] = listedItems[index];
@@ -6952,12 +6948,8 @@ export function buildTypeParameters(...args: unknown[]) {
 			);
 }
 function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.AdmittedNodes>): T.TypeParameters.Bound {
-	const _type_parameters_elements = rejectBareText(
-		value,
-		'TypeParameters.typeParametersElements',
-		'a built TypeParametersElements'
-	);
-	const listView = ownerView(_type_parameters_elements, '_type_parameter');
+	const _elements = rejectBareText(value, 'TypeParameters.elements', 'a built TypeParametersElements');
+	const listView = ownerView(_elements, '_type_parameter');
 	const listedItems =
 		listView.stored === undefined
 			? undefined
@@ -6971,9 +6963,9 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 		$type: TSKindId.TypeParameters as const,
 		$source: 2 as const,
 		$named: true as const,
-		_type_parameters_elements,
+		_elements,
 		$with: {
-			typeParametersElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -6982,10 +6974,10 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 					)
 				)
 		},
-		typeParametersElements: () => _type_parameters_elements,
+		elements: () => _elements,
 		length: listedItems?.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_type_parameters_elements') : undefined,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_elements') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -6998,7 +6990,7 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_type_parameters_elements');
+	if (listedItems === undefined) readStubLength(node, '_elements');
 	else
 		for (let index = 0; index < listedItems.length; index++)
 			(node as Record<number, unknown>)[index] = listedItems[index];

@@ -7267,28 +7267,28 @@ export function wrapClassBody(data: T.ClassBody, tree: TreeHandle): T.ClassBody.
 }
 
 export function wrapFormalParameters(data: T.FormalParameters, tree: TreeHandle): T.FormalParameters.Parsed {
-	data = _keepModelledSlots(data, ['_formal_parameters_elements']);
+	data = _keepModelledSlots(data, ['_elements']);
 	const handle = currentHandle();
-	const _formal_parameters_elements = storeExpanded(
-		normalizeSingularWrapSlot(data._formal_parameters_elements, 'formal_parameters_elements', false, data.$type, {
+	const _elements = storeExpanded(
+		normalizeSingularWrapSlot(data._elements, 'elements', false, data.$type, {
 			tree,
 			nodeType: data.$type,
-			slotName: 'formal_parameters_elements',
+			slotName: 'elements',
 			span: (data as _UntypedNode).$span
 		}),
 		tree
 	);
-	const listView = ownerView(_formal_parameters_elements, '_formal_parameter', tree);
+	const listView = ownerView(_elements, '_formal_parameter', tree);
 	const node = {
 		...data,
 		$type: TSKindId.FormalParameters as const,
-		_formal_parameters_elements,
+		_elements,
 
-		formalParametersElements() {
-			return hydrateChild<T.FormalParametersElements | undefined>(this._formal_parameters_elements, tree);
+		elements() {
+			return hydrateChild<T.FormalParametersElements | undefined>(this._elements, tree);
 		},
 		$with: {
-			formalParametersElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -7297,14 +7297,14 @@ export function wrapFormalParameters(data: T.FormalParameters, tree: TreeHandle)
 							optional: true,
 							make: RAW.buildFormalParametersElements
 						},
-						(v: NonNullable<T.FormalParameters['_formal_parameters_elements']>) =>
-							wrapFormalParameters({ ...$edited(data), _formal_parameters_elements: v }, tree)
+						(v: NonNullable<T.FormalParameters['_elements']>) =>
+							wrapFormalParameters({ ...$edited(data), _elements: v }, tree)
 					)
 				)
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.formalParametersElements(), 'formalParameters'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'formalParameters'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -10229,40 +10229,39 @@ export function wrapEnumDeclaration(data: T.EnumDeclaration, tree: TreeHandle): 
 }
 
 export function wrapEnumBody(data: T.EnumBody, tree: TreeHandle): T.EnumBody.Parsed {
-	data = _keepModelledSlots(data, ['_enum_body_elements']);
+	data = _keepModelledSlots(data, ['_elements']);
 	const handle = currentHandle();
-	const _enum_body_elements = storeExpanded(
-		normalizeSingularWrapSlot(data._enum_body_elements, 'enum_body_elements', false, data.$type, {
+	const _elements = storeExpanded(
+		normalizeSingularWrapSlot(data._elements, 'elements', false, data.$type, {
 			tree,
 			nodeType: data.$type,
-			slotName: 'enum_body_elements',
+			slotName: 'elements',
 			span: (data as _UntypedNode).$span
 		}),
 		tree
 	);
-	const listView = ownerView(_enum_body_elements, '_element', tree);
+	const listView = ownerView(_elements, '_element', tree);
 	const node = {
 		...data,
 		$type: TSKindId.EnumBody as const,
-		_enum_body_elements,
+		_elements,
 
-		enumBodyElements() {
-			return hydrateChild<T.EnumBodyElements | undefined>(this._enum_body_elements, tree);
+		elements() {
+			return hydrateChild<T.EnumBodyElements | undefined>(this._elements, tree);
 		},
 		$with: {
-			enumBodyElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.EnumBodyElements as const, optional: true, make: RAW.buildEnumBodyElements },
-						(v: NonNullable<T.EnumBody['_enum_body_elements']>) =>
-							wrapEnumBody({ ...$edited(data), _enum_body_elements: v }, tree)
+						(v: NonNullable<T.EnumBody['_elements']>) => wrapEnumBody({ ...$edited(data), _elements: v }, tree)
 					)
 				)
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.enumBodyElements(), 'elements'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'elements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -13569,41 +13568,41 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
 }
 
 export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.TypeParameters.Parsed {
-	data = _keepModelledSlots(data, ['_type_parameters_elements']);
+	data = _keepModelledSlots(data, ['_elements']);
 	const handle = currentHandle();
-	const _type_parameters_elements = storeExpanded(
-		normalizeSingularWrapSlot(data._type_parameters_elements, 'type_parameters_elements', true, data.$type, {
+	const _elements = storeExpanded(
+		normalizeSingularWrapSlot(data._elements, 'elements', true, data.$type, {
 			tree,
 			nodeType: data.$type,
-			slotName: 'type_parameters_elements',
+			slotName: 'elements',
 			span: (data as _UntypedNode).$span
 		}),
 		tree
 	);
-	const listView = ownerView(_type_parameters_elements, '_type_parameter', tree);
+	const listView = ownerView(_elements, '_type_parameter', tree);
 	const node = {
 		...data,
 		$type: TSKindId.TypeParameters as const,
-		_type_parameters_elements,
+		_elements,
 
-		typeParametersElements() {
-			return hydrateChild<T.TypeParametersElements>(this._type_parameters_elements, tree);
+		elements() {
+			return hydrateChild<T.TypeParametersElements>(this._elements, tree);
 		},
 		$with: {
-			typeParametersElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeParametersElements as const, optional: false, make: RAW.buildTypeParametersElements },
-						(v: NonNullable<T.TypeParameters['_type_parameters_elements']>) =>
-							wrapTypeParameters({ ...$edited(data), _type_parameters_elements: v }, tree)
+						(v: NonNullable<T.TypeParameters['_elements']>) =>
+							wrapTypeParameters({ ...$edited(data), _elements: v }, tree)
 					)
 				)
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
-			listItems(ownerElements(node.typeParametersElements(), 'typeParameters'), {
+			listItems(ownerElements(node.elements(), 'typeParameters'), {
 				kind: TSKindId.TypeParameter,
 				content: 'name',
 				decorations: ['_const_marker', '_constraint', '_value']

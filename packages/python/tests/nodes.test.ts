@@ -755,7 +755,7 @@ describe('if_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -775,7 +775,7 @@ describe('if_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -798,7 +798,7 @@ describe('elif_clause', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -818,7 +818,7 @@ describe('elif_clause', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -839,7 +839,7 @@ describe('else_clause', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_simple_statements_elements: {
+			_elements: {
 				$type: TSKindId.SimpleStatementsElements,
 				$text: 'test',
 				$source: 2,
@@ -856,7 +856,7 @@ describe('else_clause', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_simple_statements_elements: {
+			_elements: {
 				$type: TSKindId.SimpleStatementsElements,
 				$text: 'test',
 				$source: 2,
@@ -959,7 +959,7 @@ describe('match_block sub-factories', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -1008,7 +1008,7 @@ describe('case_clause', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -1049,7 +1049,7 @@ describe('case_clause', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -1073,7 +1073,7 @@ describe('for_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -1094,7 +1094,7 @@ describe('for_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -1117,7 +1117,7 @@ describe('while_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -1137,7 +1137,7 @@ describe('while_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -1159,7 +1159,7 @@ describe('try_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -1178,7 +1178,7 @@ describe('try_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -1200,7 +1200,7 @@ describe('except_clause', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -1219,7 +1219,7 @@ describe('except_clause', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -1241,7 +1241,7 @@ describe('except_clause sub-factories', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -1296,7 +1296,7 @@ describe('except_clause sub-factories', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -1317,7 +1317,7 @@ describe('except_clause sub-factories', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -1340,7 +1340,7 @@ describe('finally_clause', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_simple_statements_elements: {
+			_elements: {
 				$type: TSKindId.SimpleStatementsElements,
 				$text: 'test',
 				$source: 2,
@@ -1357,7 +1357,7 @@ describe('finally_clause', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_simple_statements_elements: {
+			_elements: {
 				$type: TSKindId.SimpleStatementsElements,
 				$text: 'test',
 				$source: 2,
@@ -1394,7 +1394,7 @@ describe('with_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -1428,7 +1428,7 @@ describe('with_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -1466,7 +1466,7 @@ describe('function_definition', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -1487,7 +1487,7 @@ describe('function_definition', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -1664,7 +1664,7 @@ describe('class_definition', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -1684,7 +1684,7 @@ describe('class_definition', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_simple_statements_elements: {
+				_elements: {
 					$type: TSKindId.SimpleStatementsElements,
 					$text: 'test',
 					$source: 2,
@@ -1801,7 +1801,7 @@ describe('decorated_definition', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statements_elements: {
+					_elements: {
 						$type: TSKindId.SimpleStatementsElements,
 						$text: 'test',
 						$source: 2,
@@ -1836,7 +1836,7 @@ describe('decorated_definition', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_simple_statements_elements: {
+					_elements: {
 						$type: TSKindId.SimpleStatementsElements,
 						$text: 'test',
 						$source: 2,

@@ -9,7 +9,7 @@ const y = py.build.identifier('y');
 
 const parsedExpression = (expression: string) => {
 	const statements = py.parse(`${expression}\n`).statements()[0];
-	const statement = typeof statements === 'object' && 'simpleStatementsElements' in statements ? statements[0] : undefined;
+	const statement = statements !== undefined && py.is.SimpleStatements(statements) ? statements.elements()[0] : undefined;
 	const content = statement !== undefined && is.expressionStatement(statement) ? statement.content() : undefined;
 	if (content === undefined) throw new Error(`expected an expression statement: ${expression}`);
 	return content;

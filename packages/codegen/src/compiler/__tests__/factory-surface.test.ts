@@ -151,7 +151,7 @@ describe('terminated separated lists', () => {
 	};
 
 	it('a list whose first element carries a required separator needs it when it has one element', () => {
-		expect(needsTrailing('tuple_expression_elements')).toBe(true);
+		expect(needsTrailing('expressions')).toBe(true);
 	});
 
 	it('the same list written as a choice after the first element needs it too', () => {

@@ -314,6 +314,7 @@ export const types = bundle(F.buildTypes, C.coerceToTypes);
 export const useBoundsElements = bundle(F.buildUseBoundsElements, C.coerceToUseBoundsElements);
 export const typeArgumentsElements = bundle(F.buildTypeArgumentsElements, C.coerceToTypeArgumentsElements);
 export const argumentsElements = bundle(F.buildArgumentsElements, C.coerceToArgumentsElements);
+export const expressions = bundle(F.buildExpressions, C.coerceToExpressions);
 export const fieldInitializerListElements = bundle(
 	F.buildFieldInitializerListElements,
 	C.coerceToFieldInitializerListElements
@@ -325,4 +326,3 @@ export const useWildcardGroup = bundle(F.buildUseWildcardGroup, C.coerceToUseWil
 	key: 'useWildcardGroup',
 	max: 1
 });
-export const tupleExpressionElements = bundle(F.buildTupleExpressionElements, C.coerceToTupleExpressionElements);

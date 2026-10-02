@@ -1118,28 +1118,28 @@ export function wrapStatement(
 }
 
 export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle): T.SimpleStatements.Parsed {
-	data = _keepModelledSlots(data, ['_simple_statements_elements']);
+	data = _keepModelledSlots(data, ['_elements']);
 	const handle = currentHandle();
-	const _simple_statements_elements = storeExpanded(
-		normalizeSingularWrapSlot(data._simple_statements_elements, 'simple_statements_elements', true, data.$type, {
+	const _elements = storeExpanded(
+		normalizeSingularWrapSlot(data._elements, 'elements', true, data.$type, {
 			tree,
 			nodeType: data.$type,
-			slotName: 'simple_statements_elements',
+			slotName: 'elements',
 			span: (data as _UntypedNode).$span
 		}),
 		tree
 	);
-	const listView = ownerView(_simple_statements_elements, '_simple_statement', tree);
+	const listView = ownerView(_elements, '_simple_statement', tree);
 	const node = {
 		...data,
 		$type: TSKindId.SimpleStatements as const,
-		_simple_statements_elements,
+		_elements,
 
-		simpleStatementsElements() {
-			return hydrateChild<T.SimpleStatementsElements>(this._simple_statements_elements, tree);
+		elements() {
+			return hydrateChild<T.SimpleStatementsElements>(this._elements, tree);
 		},
 		$with: {
-			simpleStatementsElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -1148,14 +1148,14 @@ export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle)
 							optional: false,
 							make: RAW.buildSimpleStatementsElements
 						},
-						(v: NonNullable<T.SimpleStatements['_simple_statements_elements']>) =>
-							wrapSimpleStatements({ ...$edited(data), _simple_statements_elements: v }, tree)
+						(v: NonNullable<T.SimpleStatements['_elements']>) =>
+							wrapSimpleStatements({ ...$edited(data), _elements: v }, tree)
 					)
 				)
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.simpleStatementsElements(), 'simpleStatements'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'simpleStatements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -3848,40 +3848,39 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle): T.Unio
 }
 
 export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle): T.DictPattern.Parsed {
-	data = _keepModelledSlots(data, ['_dict_pattern_elements']);
+	data = _keepModelledSlots(data, ['_elements']);
 	const handle = currentHandle();
-	const _dict_pattern_elements = storeExpanded(
-		normalizeSingularWrapSlot(data._dict_pattern_elements, 'dict_pattern_elements', false, data.$type, {
+	const _elements = storeExpanded(
+		normalizeSingularWrapSlot(data._elements, 'elements', false, data.$type, {
 			tree,
 			nodeType: data.$type,
-			slotName: 'dict_pattern_elements',
+			slotName: 'elements',
 			span: (data as _UntypedNode).$span
 		}),
 		tree
 	);
-	const listView = ownerView(_dict_pattern_elements, '_element', tree);
+	const listView = ownerView(_elements, '_element', tree);
 	const node = {
 		...data,
 		$type: TSKindId.DictPattern as const,
-		_dict_pattern_elements,
+		_elements,
 
-		dictPatternElements() {
-			return hydrateChild<T.DictPatternElements | undefined>(this._dict_pattern_elements, tree);
+		elements() {
+			return hydrateChild<T.DictPatternElements | undefined>(this._elements, tree);
 		},
 		$with: {
-			dictPatternElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.DictPatternElements as const, optional: true, make: RAW.buildDictPatternElements },
-						(v: NonNullable<T.DictPattern['_dict_pattern_elements']>) =>
-							wrapDictPattern({ ...$edited(data), _dict_pattern_elements: v }, tree)
+						(v: NonNullable<T.DictPattern['_elements']>) => wrapDictPattern({ ...$edited(data), _elements: v }, tree)
 					)
 				)
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.dictPatternElements(), 'elements'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'elements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7004,39 +7003,39 @@ export function wrapSet(data: T.Set, tree: TreeHandle): T.Set.Parsed {
 }
 
 export function wrapTuple(data: T.Tuple, tree: TreeHandle): T.Tuple.Parsed {
-	data = _keepModelledSlots(data, ['_tuple_elements']);
+	data = _keepModelledSlots(data, ['_elements']);
 	const handle = currentHandle();
-	const _tuple_elements = storeExpanded(
-		normalizeSingularWrapSlot(data._tuple_elements, 'tuple_elements', false, data.$type, {
+	const _elements = storeExpanded(
+		normalizeSingularWrapSlot(data._elements, 'elements', false, data.$type, {
 			tree,
 			nodeType: data.$type,
-			slotName: 'tuple_elements',
+			slotName: 'elements',
 			span: (data as _UntypedNode).$span
 		}),
 		tree
 	);
-	const listView = ownerView(_tuple_elements, '_element', tree);
+	const listView = ownerView(_elements, '_element', tree);
 	const node = {
 		...data,
 		$type: TSKindId.Tuple as const,
-		_tuple_elements,
+		_elements,
 
-		tupleElements() {
-			return hydrateChild<T.TupleElements | undefined>(this._tuple_elements, tree);
+		elements() {
+			return hydrateChild<T.TupleElements | undefined>(this._elements, tree);
 		},
 		$with: {
-			tupleElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TupleElements as const, optional: true, make: RAW.buildTupleElements },
-						(v: NonNullable<T.Tuple['_tuple_elements']>) => wrapTuple({ ...$edited(data), _tuple_elements: v }, tree)
+						(v: NonNullable<T.Tuple['_elements']>) => wrapTuple({ ...$edited(data), _elements: v }, tree)
 					)
 				)
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.tupleElements(), 'elements'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'elements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -10548,40 +10547,40 @@ export function wrapWithClauseBare(
 }
 
 export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle): T.WithClauseParen.Parsed {
-	data = _keepModelledSlots(data, ['_with_clause_with_items']);
+	data = _keepModelledSlots(data, ['_with_items']);
 	const handle = currentHandle();
-	const _with_clause_with_items = storeExpanded(
-		normalizeSingularWrapSlot(data._with_clause_with_items, 'with_clause_with_items', true, data.$type, {
+	const _with_items = storeExpanded(
+		normalizeSingularWrapSlot(data._with_items, 'with_items', true, data.$type, {
 			tree,
 			nodeType: data.$type,
-			slotName: 'with_clause_with_items',
+			slotName: 'with_items',
 			span: (data as _UntypedNode).$span
 		}),
 		tree
 	);
-	const listView = ownerView(_with_clause_with_items, '_with_item', tree);
+	const listView = ownerView(_with_items, '_with_item', tree);
 	const node = {
 		...data,
 		$type: TSKindId.WithClauseParen as const,
-		_with_clause_with_items,
+		_with_items,
 
-		withClauseWithItems() {
-			return hydrateChild<T.WithClauseWithItems>(this._with_clause_with_items, tree);
+		withItems() {
+			return hydrateChild<T.WithClauseWithItems>(this._with_items, tree);
 		},
 		$with: {
-			withClauseWithItems: (...args: unknown[]) =>
+			withItems: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WithClauseWithItems as const, optional: false, make: RAW.buildWithClauseWithItems },
-						(v: NonNullable<T.WithClauseParen['_with_clause_with_items']>) =>
-							wrapWithClauseParen({ ...$edited(data), _with_clause_with_items: v }, tree)
+						(v: NonNullable<T.WithClauseParen['_with_items']>) =>
+							wrapWithClauseParen({ ...$edited(data), _with_items: v }, tree)
 					)
 				)
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.withClauseWithItems(), 'withItems'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.withItems(), 'withItems'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -10682,28 +10681,28 @@ export function wrapMatchBlockEmpty(data: T.MatchBlockEmpty, tree: TreeHandle): 
 }
 
 export function wrapSuiteInline(data: T.SuiteInline, tree: TreeHandle): T.SuiteInline.Parsed {
-	data = _keepModelledSlots(data, ['_simple_statements_elements']);
+	data = _keepModelledSlots(data, ['_elements']);
 	const handle = currentHandle();
-	const _simple_statements_elements = storeExpanded(
-		normalizeSingularWrapSlot(data._simple_statements_elements, 'simple_statements_elements', true, data.$type, {
+	const _elements = storeExpanded(
+		normalizeSingularWrapSlot(data._elements, 'elements', true, data.$type, {
 			tree,
 			nodeType: data.$type,
-			slotName: 'simple_statements_elements',
+			slotName: 'elements',
 			span: (data as _UntypedNode).$span
 		}),
 		tree
 	);
-	const listView = ownerView(_simple_statements_elements, '_simple_statement', tree);
+	const listView = ownerView(_elements, '_simple_statement', tree);
 	const node = {
 		...data,
 		$type: TSKindId.SuiteInline as const,
-		_simple_statements_elements,
+		_elements,
 
-		simpleStatementsElements() {
-			return hydrateChild<T.SimpleStatementsElements>(this._simple_statements_elements, tree);
+		elements() {
+			return hydrateChild<T.SimpleStatementsElements>(this._elements, tree);
 		},
 		$with: {
-			simpleStatementsElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -10712,14 +10711,13 @@ export function wrapSuiteInline(data: T.SuiteInline, tree: TreeHandle): T.SuiteI
 							optional: false,
 							make: RAW.buildSimpleStatementsElements
 						},
-						(v: NonNullable<T.SuiteInline['_simple_statements_elements']>) =>
-							wrapSuiteInline({ ...$edited(data), _simple_statements_elements: v }, tree)
+						(v: NonNullable<T.SuiteInline['_elements']>) => wrapSuiteInline({ ...$edited(data), _elements: v }, tree)
 					)
 				)
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.simpleStatementsElements(), 'simpleStatements'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'simpleStatements'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,

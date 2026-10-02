@@ -46,7 +46,7 @@ describe('a list owner', () => {
 	it('the list slot setter on a built owner takes the list factory arguments', () => {
 		const q = rs.build.parameter({ name: 'q', type: 'u8' });
 		const ps = rs.build.parameters.strict(q);
-		expect(ps.$with.parametersElements({ delimiter: Delimiter.Trailing }, q).$render()).toBe('(q: u8,)');
+		expect(ps.$with.elements({ delimiter: Delimiter.Trailing }, q).$render()).toBe('(q: u8,)');
 	});
 	it('$with on an owner is not callable: the list is set through its slot', () => {
 		const ps = fnOf('fn f(a: u8) {}\n').parameters();

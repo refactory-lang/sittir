@@ -25597,8 +25597,8 @@ pub struct SimpleStatementsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statements_elements"))]
-    pub simple_statements_elements: ::sittir_core::SlotValue<SimpleStatementsElementsTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    pub elements: ::sittir_core::SlotValue<SimpleStatementsElementsTransport>,
 }
 
 impl ::sittir_core::view::KindOf for SimpleStatementsTransport {
@@ -25623,7 +25623,7 @@ impl ::sittir_core::prepare::Prepare for SimpleStatementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.simple_statements_elements.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
     }
 }
@@ -29273,8 +29273,8 @@ pub struct DictPatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dict_pattern_elements"))]
-    pub dict_pattern_elements: Option<::sittir_core::SlotValue<DictPatternElementsTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    pub elements: Option<::sittir_core::SlotValue<DictPatternElementsTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for DictPatternTransport {
@@ -29299,7 +29299,7 @@ impl ::sittir_core::prepare::Prepare for DictPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.dict_pattern_elements.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
     }
 }
@@ -31795,8 +31795,8 @@ pub struct TupleTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_elements"))]
-    pub tuple_elements: Option<::sittir_core::SlotValue<TupleElementsTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    pub elements: Option<::sittir_core::SlotValue<TupleElementsTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for TupleTransport {
@@ -31821,7 +31821,7 @@ impl ::sittir_core::prepare::Prepare for TupleTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.tuple_elements.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
     }
 }
@@ -37332,8 +37332,8 @@ pub struct WithClauseParenTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_clause_with_items"))]
-    pub with_clause_with_items: ::sittir_core::SlotValue<WithClauseWithItemsTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_items"))]
+    pub with_items: ::sittir_core::SlotValue<WithClauseWithItemsTransport>,
 }
 
 impl ::sittir_core::view::KindOf for WithClauseParenTransport {
@@ -37358,7 +37358,7 @@ impl ::sittir_core::prepare::Prepare for WithClauseParenTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.with_clause_with_items.prepare(ctx)?;
+        self.with_items.prepare(ctx)?;
         Ok(())
     }
 }
@@ -37515,8 +37515,8 @@ pub struct SuiteInlineTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statements_elements"))]
-    pub simple_statements_elements: ::sittir_core::SlotValue<SimpleStatementsElementsTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    pub elements: ::sittir_core::SlotValue<SimpleStatementsElementsTransport>,
 }
 
 impl ::sittir_core::view::KindOf for SuiteInlineTransport {
@@ -37541,7 +37541,7 @@ impl ::sittir_core::prepare::Prepare for SuiteInlineTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.simple_statements_elements.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
     }
 }
@@ -50496,9 +50496,9 @@ fn render_module(node: &ModuleTransport, w: &mut dyn ::sittir_core::render::Rend
 }
 
 fn render_simple_statements(node: &SimpleStatementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let simple_statements_elements = &node.simple_statements_elements;
+    let elements = &node.elements;
     w.edge(::sittir_core::types::KindId(129), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    simple_statements_elements.render(w)?;
+    elements.render(w)?;
     w.adjacent();
     w.token_seam("\n");
     w.edge(::sittir_core::types::KindId(129), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -51262,12 +51262,12 @@ fn render_union_pattern(node: &UnionPatternTransport, w: &mut dyn ::sittir_core:
 }
 
 fn render_dict_pattern(node: &DictPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let dict_pattern_elements = View::new(&node.dict_pattern_elements, "{}");
+    let elements = View::new(&node.elements, "{}");
     w.edge(::sittir_core::types::KindId(186), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("{")?;
     w.site_at(options::SITE_DICT_PATTERN_LBRACE_AFTER);
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "dict_pattern_elements", w)?;
-    dict_pattern_elements.render(w)?;
+    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "elements", w)?;
+    elements.render(w)?;
     w.site_at(options::SITE_DICT_PATTERN_RBRACE_BEFORE);
     w.text("}")?;
     w.edge(::sittir_core::types::KindId(186), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -51781,12 +51781,12 @@ fn render_set(node: &SetTransport, w: &mut dyn ::sittir_core::render::RenderSink
 }
 
 fn render_tuple(node: &TupleTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let tuple_elements = View::new(&node.tuple_elements, "{}");
+    let elements = View::new(&node.elements, "{}");
     w.edge(::sittir_core::types::KindId(234), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_TUPLE_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "tuple_elements", w)?;
-    tuple_elements.render(w)?;
+    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "elements", w)?;
+    elements.render(w)?;
     w.site_at(options::SITE_TUPLE_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(234), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -52725,11 +52725,11 @@ fn render_with_clause_bare(node: &WithClauseBareTransport, w: &mut dyn ::sittir_
 }
 
 fn render_with_clause_paren(node: &WithClauseParenTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let with_clause_with_items = &node.with_clause_with_items;
+    let with_items = &node.with_items;
     w.edge(::sittir_core::types::KindId(290), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_WITH_CLAUSE_PAREN_LPAREN_AFTER);
-    with_clause_with_items.render(w)?;
+    with_items.render(w)?;
     w.site_at(options::SITE_WITH_CLAUSE_PAREN_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(290), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -52766,9 +52766,9 @@ fn render_match_block_empty(node: &MatchBlockEmptyTransport, w: &mut dyn ::sitti
 }
 
 fn render_suite_inline(node: &SuiteInlineTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let simple_statements_elements = &node.simple_statements_elements;
+    let elements = &node.elements;
     w.edge(::sittir_core::types::KindId(293), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    simple_statements_elements.render(w)?;
+    elements.render(w)?;
     w.adjacent();
     w.token_seam("\n");
     w.edge(::sittir_core::types::KindId(293), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));

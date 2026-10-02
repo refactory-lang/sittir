@@ -2238,21 +2238,18 @@ export interface Module {
 
 export interface SimpleStatements {
 	readonly $type: TSKindId.SimpleStatements;
-	readonly _simple_statements_elements: SimpleStatementsElements;
+	readonly _elements: SimpleStatementsElements;
 	readonly __looseHints__?: {
-		readonly simple_statements_elements: readonly SimpleStatement[];
+		readonly elements: readonly SimpleStatement[];
 	};
 	readonly __slotHints__?: {
-		readonly simpleStatementsElements: SlotHint<T.SimpleStatementsElements>;
+		readonly elements: SlotHint<T.SimpleStatementsElements>;
 		readonly $listView: ListViewHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
-			readonly simpleStatementsElements: ListSlotHint<
-				T.SimpleStatement,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
-			>;
+			readonly elements: ListSlotHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	simpleStatementsElements(): SimpleStatementsElements;
+	elements(): SimpleStatementsElements;
 }
 
 export interface ImportStatement {
@@ -3193,24 +3190,24 @@ export interface UnionPattern {
 
 export interface DictPattern {
 	readonly $type: TSKindId.DictPattern;
-	readonly _dict_pattern_elements?: DictPatternElements;
+	readonly _elements?: DictPatternElements;
 	readonly __looseHints__?: {
-		readonly dict_pattern_elements?: readonly (KeyValuePattern | SplatPattern)[];
+		readonly elements?: readonly (KeyValuePattern | SplatPattern)[];
 	};
 	readonly __slotHints__?: {
-		readonly dictPatternElements: SlotHint<T.DictPatternElements, true>;
+		readonly elements: SlotHint<T.DictPatternElements, true>;
 		readonly $listView: ListViewHint<
 			T.KeyValuePattern | T.SplatPattern,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 		readonly $listSlots: {
-			readonly dictPatternElements: ListSlotHint<
+			readonly elements: ListSlotHint<
 				T.KeyValuePattern | T.SplatPattern,
 				{ delimiter?: Delimiter.None | Delimiter.Trailing }
 			>;
 		};
 	};
-	dictPatternElements(): DictPatternElements | undefined;
+	elements(): DictPatternElements | undefined;
 }
 
 export interface KeyValuePattern {
@@ -4138,24 +4135,24 @@ export interface Set {
 
 export interface Tuple {
 	readonly $type: TSKindId.Tuple;
-	readonly _tuple_elements?: TupleElements;
+	readonly _elements?: TupleElements;
 	readonly __looseHints__?: {
-		readonly tuple_elements?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+		readonly elements?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 	};
 	readonly __slotHints__?: {
-		readonly tupleElements: SlotHint<T.TupleElements, true>;
+		readonly elements: SlotHint<T.TupleElements, true>;
 		readonly $listView: ListViewHint<
 			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 		readonly $listSlots: {
-			readonly tupleElements: ListSlotHint<
+			readonly elements: ListSlotHint<
 				T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
 				{ delimiter?: Delimiter.None | Delimiter.Trailing }
 			>;
 		};
 	};
-	tupleElements(): TupleElements | undefined;
+	elements(): TupleElements | undefined;
 }
 
 export interface Dictionary {
@@ -5075,18 +5072,18 @@ export interface WithClauseBare {
 
 export interface WithClauseParen {
 	readonly $type: TSKindId.WithClauseParen;
-	readonly _with_clause_with_items: WithClauseWithItems;
+	readonly _with_items: WithClauseWithItems;
 	readonly __looseHints__?: {
-		readonly with_clause_with_items: readonly WithItem[];
+		readonly with_items: readonly WithItem[];
 	};
 	readonly __slotHints__?: {
-		readonly withClauseWithItems: SlotHint<T.WithClauseWithItems>;
+		readonly withItems: SlotHint<T.WithClauseWithItems>;
 		readonly $listView: ListViewHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
-			readonly withClauseWithItems: ListSlotHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly withItems: ListSlotHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	withClauseWithItems(): WithClauseWithItems;
+	withItems(): WithClauseWithItems;
 }
 
 export interface MatchBlockBlock {
@@ -5112,21 +5109,18 @@ export interface MatchBlockEmpty {
 
 export interface SuiteInline {
 	readonly $type: TSKindId.SuiteInline;
-	readonly _simple_statements_elements: SimpleStatementsElements;
+	readonly _elements: SimpleStatementsElements;
 	readonly __looseHints__?: {
-		readonly simple_statements_elements: readonly SimpleStatement[];
+		readonly elements: readonly SimpleStatement[];
 	};
 	readonly __slotHints__?: {
-		readonly simpleStatementsElements: SlotHint<T.SimpleStatementsElements>;
+		readonly elements: SlotHint<T.SimpleStatementsElements>;
 		readonly $listView: ListViewHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
-			readonly simpleStatementsElements: ListSlotHint<
-				T.SimpleStatement,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
-			>;
+			readonly elements: ListSlotHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	simpleStatementsElements(): SimpleStatementsElements;
+	elements(): SimpleStatementsElements;
 }
 
 export interface SuiteBlock {
@@ -7558,7 +7552,7 @@ export interface SimpleStatementsNs extends NodeNs<
 	SimpleStatements.Bound,
 	SimpleStatements.BuildArgs,
 	SimpleStatements.LooseArgs,
-	'simple_statements_elements',
+	'elements',
 	TSKindId.SimpleStatements,
 	SimpleStatements.Parsed,
 	never
@@ -8208,7 +8202,7 @@ export interface DictPatternNs extends NodeNs<
 	DictPattern.Bound,
 	DictPattern.BuildArgs,
 	DictPattern.LooseArgs,
-	'dict_pattern_elements',
+	'elements',
 	TSKindId.DictPattern,
 	DictPattern.Parsed,
 	EmptyDictPattern
@@ -8715,7 +8709,7 @@ export interface TupleNs extends NodeNs<
 	Tuple.Bound,
 	Tuple.BuildArgs,
 	Tuple.LooseArgs,
-	'tuple_elements',
+	'elements',
 	TSKindId.Tuple,
 	Tuple.Parsed,
 	EmptyTuple
@@ -9508,7 +9502,7 @@ export interface WithClauseParenNs extends NodeNs<
 	WithClauseParen.Bound,
 	WithClauseParen.BuildArgs,
 	WithClauseParen.LooseArgs,
-	'with_clause_with_items',
+	'with_items',
 	TSKindId.WithClauseParen,
 	WithClauseParen.Parsed,
 	never
@@ -9547,7 +9541,7 @@ export interface SuiteInlineNs extends NodeNs<
 	SuiteInline.Bound,
 	SuiteInline.BuildArgs,
 	SuiteInline.LooseArgs,
-	'simple_statements_elements',
+	'elements',
 	TSKindId.SuiteInline,
 	SuiteInline.Parsed,
 	never

@@ -174,7 +174,8 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 	}
 	const hoistCtx = ctx.withHoist({
 		separatedListNameCounts: collectSeparatedListNameProposals(enrichedRules, ctx.sourceSymbols),
-		hiddenListPromotionNames: new Map()
+		hiddenListPromotionNames: new Map(),
+		ownerPrefixedListSlots: new Map()
 	});
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
@@ -186,6 +187,13 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 			supertypeNames,
 			elementChoices: elementChoiceSlots(rule, authored.fieldSites?.get(name) ?? [], ruleOrigins)
 		});
+	}
+	for (const owners of [enrichedRules, clauseGroupRules]) {
+		for (const name of Object.keys(owners)) {
+			const rule = owners[name];
+			if (!rule) continue;
+			owners[name] = fieldOwnerPrefixedLists(name, rule, hoistCtx.hoist?.ownerPrefixedListSlots ?? new Map(), authored.fieldSites?.get(name) ?? []);
+		}
 	}
 	for (const groupName of Object.keys(clauseGroupRules)) {
 		const groupBody = clauseGroupRules[groupName];
@@ -2086,15 +2094,18 @@ function visibleGroupSynthName(
 		const nameFree = (n: string) =>
 			!(n in rulesBag) && !(`_${n}` in rulesBag) && !(n in clauseGroupRules) && !(`_${n}` in clauseGroupRules);
 		const bare = listKindElementPlural(listInfo, ctx.ruleOrigins);
-		const candidates: string[] = [];
-		if (bare !== null && separatedListNameCounts!.get(bare) === 1) candidates.push(bare);
-		if (bare !== null && base !== bare && !base.endsWith(`_${bare}`)) candidates.push(`${base}_${bare}`);
-		if (bare !== `${base}_elements`) candidates.push(base.endsWith('_elements') ? base : `${base}_elements`);
+		const candidates: { name: string; ownerSlot?: string }[] = [];
+		if (bare !== null && separatedListNameCounts!.get(bare) === 1) candidates.push({ name: bare });
+		if (bare !== null && base !== bare && !base.endsWith(`_${bare}`)) candidates.push({ name: `${base}_${bare}`, ownerSlot: bare });
+		if (bare !== `${base}_elements`) {
+			candidates.push(base.endsWith('_elements') ? { name: base } : { name: `${base}_elements`, ownerSlot: 'elements' });
+		}
 		const flatBody = { ...content, members: listInfo.flatMembers } as Rule;
 		const registeredFlat = ambientPrec ? withContent(ambientPrec, flatBody) : flatBody;
-		for (const candidate of candidates) {
-			if (!nameFree(candidate)) continue;
-			return register(candidate, registeredFlat);
+		for (const { name, ownerSlot } of candidates) {
+			if (!nameFree(name)) continue;
+			if (ownerSlot !== undefined) ctx.hoist?.ownerPrefixedListSlots.set(name, ownerSlot);
+			return register(name, registeredFlat);
 		}
 	}
 	if (enclosingFieldName !== undefined) {
@@ -2333,6 +2344,51 @@ function mintFieldRoutedArm(
 
 function coveredByAuthoredGroup(body: Rule, ctx: EnrichCtx): boolean {
 	return ctx.authoredGroupBodies.some((pattern) => rulesEqual(unwrapPrec(body) as RuntimeRule, pattern));
+}
+
+function fieldOwnerPrefixedLists(
+	owner: string,
+	rule: Rule,
+	slots: ReadonlyMap<string, string>,
+	authoredSites: readonly AuthoredFieldSite[]
+): Rule {
+	if (slots.size === 0) return rule;
+	const taken = new Set(authoredSites.map((site) => site.name));
+	collectAllFieldNamesDeep(rule, taken);
+	const authoredAbove = (path: readonly number[]): boolean =>
+		authoredSites.some((site) => site.path.length <= path.length && site.path.every((step, i) => step === path[i]));
+	const walk = (node: AnyRule, path: readonly number[]): AnyRule => {
+		if (isPrecWrapper(node)) {
+			const content = (node as { content: AnyRule }).content;
+			const walked = walk(content, path);
+			return walked === content ? node : (withContent(node as object, walked as Rule) as AnyRule);
+		}
+		switch (node.type) {
+			case SYMBOL: {
+				const slot = slots.get(node.name);
+				if (slot === undefined || authoredAbove(path)) return node;
+				if (taken.has(slot)) {
+					reportSkip('list-slot-name', owner, `'${slot}' is already a slot of the owner; the reference to '${node.name}' keeps the name its kind gives it`);
+					return node;
+				}
+				return makeField(slot, node as Rule) as AnyRule;
+			}
+			case CHOICE:
+			case SEQ: {
+				const members = node.members.map((member, i) => walk(member, [...path, i]));
+				return members.every((member, i) => member === node.members[i]) ? node : ({ ...node, members } as AnyRule);
+			}
+			case REPEAT:
+			case REPEAT1:
+			case OPTIONAL: {
+				const walked = walk(node.content, [...path, 0]);
+				return walked === node.content ? node : (withContent(node as object, walked as Rule) as AnyRule);
+			}
+			default:
+				return node;
+		}
+	};
+	return walk(rule as AnyRule, []) as Rule;
 }
 
 function makeGroupLiftSymbol(_referenceRule: Rule, name: string): Rule {

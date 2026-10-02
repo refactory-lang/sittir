@@ -1217,10 +1217,17 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "enum_variant_list_elements",
+              "type": "FIELD",
+              "name": "elements",
+              "content": {
+                "type": "SYMBOL",
+                "name": "enum_variant_list_elements",
+                "metadata": {
+                  "symbolSource": "group-lift"
+                }
+              },
               "metadata": {
-                "symbolSource": "group-lift"
+                "fieldSource": "enriched"
               }
             },
             {
@@ -1320,10 +1327,17 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "field_declaration_list_elements",
+              "type": "FIELD",
+              "name": "elements",
+              "content": {
+                "type": "SYMBOL",
+                "name": "field_declaration_list_elements",
+                "metadata": {
+                  "symbolSource": "group-lift"
+                }
+              },
               "metadata": {
-                "symbolSource": "group-lift"
+                "fieldSource": "enriched"
               }
             },
             {
@@ -2483,10 +2497,17 @@
             "value": "<"
           },
           {
-            "type": "SYMBOL",
-            "name": "type_parameters_elements",
+            "type": "FIELD",
+            "name": "elements",
+            "content": {
+              "type": "SYMBOL",
+              "name": "type_parameters_elements",
+              "metadata": {
+                "symbolSource": "group-lift"
+              }
+            },
             "metadata": {
-              "symbolSource": "group-lift"
+              "fieldSource": "enriched"
             }
           },
           {
@@ -2912,10 +2933,17 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "parameters_elements",
+              "type": "FIELD",
+              "name": "elements",
+              "content": {
+                "type": "SYMBOL",
+                "name": "parameters_elements",
+                "metadata": {
+                  "symbolSource": "group-lift"
+                }
+              },
               "metadata": {
-                "symbolSource": "group-lift"
+                "fieldSource": "enriched"
               }
             },
             {
@@ -3816,10 +3844,17 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "type_arguments_elements",
+          "type": "FIELD",
+          "name": "elements",
+          "content": {
+            "type": "SYMBOL",
+            "name": "type_arguments_elements",
+            "metadata": {
+              "symbolSource": "group-lift"
+            }
+          },
           "metadata": {
-            "symbolSource": "group-lift"
+            "fieldSource": "enriched"
           }
         },
         {
@@ -5686,10 +5721,17 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "arguments_elements",
+              "type": "FIELD",
+              "name": "elements",
+              "content": {
+                "type": "SYMBOL",
+                "name": "arguments_elements",
+                "metadata": {
+                  "symbolSource": "group-lift"
+                }
+              },
               "metadata": {
-                "symbolSource": "group-lift"
+                "fieldSource": "enriched"
               }
             },
             {
@@ -5771,13 +5813,11 @@
           }
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_tuple_expression_elements"
-          },
-          "named": true,
-          "value": "tuple_expression_elements"
+          "type": "SYMBOL",
+          "name": "expressions",
+          "metadata": {
+            "symbolSource": "group-lift"
+          }
         },
         {
           "type": "STRING",
@@ -9772,6 +9812,76 @@
         "hoisted": true
       }
     },
+    "expressions": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "expression",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_expression"
+              },
+              "metadata": {
+                "fieldSource": "enriched"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": ","
+            }
+          ]
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "expression",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_expression"
+                },
+                "metadata": {
+                  "fieldSource": "enriched"
+                }
+              },
+              {
+                "type": "STRING",
+                "value": ","
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "expression",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_expression"
+              },
+              "metadata": {
+                "fieldSource": "enriched"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
     "field_initializer_list_elements": {
       "type": "SEQ",
       "members": [
@@ -10616,73 +10726,6 @@
       "type": "STRING",
       "value": "unsafe"
     },
-    "_tuple_expression_elements": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "FIELD",
-              "name": "element",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_expression"
-              },
-              "metadata": {
-                "fieldSource": "override"
-              }
-            },
-            {
-              "type": "STRING",
-              "value": ","
-            }
-          ]
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "FIELD",
-                "name": "element",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_expression"
-                },
-                "metadata": {
-                  "fieldSource": "override"
-                }
-              },
-              {
-                "type": "STRING",
-                "value": ","
-              }
-            ]
-          }
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "FIELD",
-              "name": "element",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_expression"
-              },
-              "metadata": {
-                "fieldSource": "override"
-              }
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        }
-      ]
-    },
     "integer_literal_decimal": {
       "type": "TOKEN",
       "content": {
@@ -11502,10 +11545,17 @@
               "type": "CHOICE",
               "members": [
                 {
-                  "type": "SYMBOL",
-                  "name": "arguments_elements",
+                  "type": "FIELD",
+                  "name": "elements",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "arguments_elements",
+                    "metadata": {
+                      "symbolSource": "group-lift"
+                    }
+                  },
                   "metadata": {
-                    "symbolSource": "group-lift"
+                    "fieldSource": "enriched"
                   }
                 },
                 {

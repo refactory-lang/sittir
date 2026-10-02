@@ -186,12 +186,6 @@
         "ambient_declaration_module": "module"
       }
     },
-    "enum_body": {
-      "definedBy": "enrich",
-      "childKind": {
-        "enum_body_elements": "elements"
-      }
-    },
     "literal_type": {
       "definedBy": "override",
       "childKind": {
@@ -1619,7 +1613,7 @@
       }
     },
     "formal_parameters": {
-      "formal_parameters_elements": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2360,7 +2354,7 @@
       }
     },
     "enum_body": {
-      "enum_body_elements": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3057,7 +3051,7 @@
       }
     },
     "type_parameters": {
-      "type_parameters_elements": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -10549,9 +10543,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "enum_body_elements",
-          "propertyName": "enumBodyElements",
-          "paramName": "enumBodyElements",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -10564,12 +10558,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "enum_body_elements",
-              "parseKind": "enum_body_elements",
-              "seat": {
-                "kind": "enum_body_elements",
-                "shape": "arm",
-                "mount": "elements"
-              }
+              "parseKind": "enum_body_elements"
             }
           ]
         }
@@ -10577,7 +10566,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "enum_body_elements",
       "factoryFields": [
-        "enum_body_elements"
+        "elements"
       ],
       "bareAccepts": [
         "any_keyword",
@@ -13466,9 +13455,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "formal_parameters_elements",
-          "propertyName": "formalParametersElements",
-          "paramName": "formalParametersElements",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -13489,7 +13478,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "formal_parameters_elements",
       "factoryFields": [
-        "formal_parameters_elements"
+        "elements"
       ],
       "bareAccepts": [
         "formal_parameters_elements",
@@ -26982,9 +26971,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "type_parameters_elements",
-          "propertyName": "typeParametersElements",
-          "paramName": "typeParametersElements",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -27005,7 +26994,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "type_parameters_elements",
       "factoryFields": [
-        "type_parameters_elements"
+        "elements"
       ],
       "bareAccepts": [
         "identifier",

@@ -424,6 +424,9 @@ export interface IsGuards {
 	argumentsElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ArgumentsElements };
+	expressions<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Expressions };
 	fieldInitializerListElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FieldInitializerListElements };
@@ -920,6 +923,7 @@ export const is = Object.freeze({
 	useBoundsElements: _g(TSKindId.UseBoundsElements),
 	typeArgumentsElements: _g(TSKindId.TypeArgumentsElements),
 	argumentsElements: _g(TSKindId.ArgumentsElements),
+	expressions: _g(TSKindId.Expressions),
 	fieldInitializerListElements: _g(TSKindId.FieldInitializerListElements),
 	tuplePatternElements: _g(TSKindId.TuplePatternElements),
 	patterns: _g(TSKindId.Patterns),

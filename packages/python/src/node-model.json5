@@ -237,7 +237,7 @@
       }
     },
     "_simple_statements": {
-      "simple_statements_elements": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -939,7 +939,7 @@
       }
     },
     "dict_pattern": {
-      "dict_pattern_elements": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1521,7 +1521,7 @@
       }
     },
     "tuple": {
-      "tuple_elements": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2325,7 +2325,7 @@
       }
     },
     "with_clause_paren": {
-      "with_clause_with_items": {
+      "with_items": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2352,7 +2352,7 @@
       }
     },
     "suite_inline": {
-      "simple_statements_elements": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2828,9 +2828,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "simple_statements_elements",
-          "propertyName": "simpleStatementsElements",
-          "paramName": "simpleStatementsElements",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -2851,7 +2851,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "simple_statements_elements",
       "factoryFields": [
-        "simple_statements_elements"
+        "elements"
       ],
       "bareAccepts": [
         "aliased_import",
@@ -6266,9 +6266,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "dict_pattern_elements",
-          "propertyName": "dictPatternElements",
-          "paramName": "dictPatternElements",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -6289,7 +6289,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "dict_pattern_elements",
       "factoryFields": [
-        "dict_pattern_elements"
+        "elements"
       ],
       "bareAccepts": [
         "dict_pattern_elements",
@@ -14623,9 +14623,9 @@
       },
       "slots": [
         {
-          "name": "simple_statements_elements",
-          "propertyName": "simpleStatementsElements",
-          "paramName": "simpleStatementsElements",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -14647,7 +14647,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "simple_statements_elements",
       "factoryFields": [
-        "simple_statements_elements"
+        "elements"
       ],
       "bareAccepts": [
         "aliased_import",
@@ -14877,9 +14877,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "tuple_elements",
-          "propertyName": "tupleElements",
-          "paramName": "tupleElements",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -14900,7 +14900,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "tuple_elements",
       "factoryFields": [
-        "tuple_elements"
+        "elements"
       ],
       "bareAccepts": [
         "as_pattern",
@@ -16114,9 +16114,9 @@
       },
       "slots": [
         {
-          "name": "with_clause_with_items",
-          "propertyName": "withClauseWithItems",
-          "paramName": "withClauseWithItems",
+          "name": "with_items",
+          "propertyName": "withItems",
+          "paramName": "withItems",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -16138,7 +16138,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "with_clause_with_items",
       "factoryFields": [
-        "with_clause_with_items"
+        "with_items"
       ],
       "bareAccepts": [
         "as_pattern",

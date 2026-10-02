@@ -190,13 +190,7 @@ export default sittirGrammar(base, {
 		comment: { 0: arm.default },
 		// See docs/rust-grammar-sittir-glossary.md::tuple_expression
 		tuple_expression: {
-			1: field('attributes'),
-			2: alias('tuple_expression_elements')
-		},
-		_tuple_expression_elements: {
-			'0/0': field('element'),
-			'1/0/0': field('element'),
-			'2/0': field('element')
+			1: field('attributes')
 		},
 		bracketed_type: { 1: field('type') },
 		else_clause: { 1: field('body') },

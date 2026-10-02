@@ -5531,24 +5531,24 @@ export interface ClassBody {
 
 export interface FormalParameters {
 	readonly $type: TSKindId.FormalParameters;
-	readonly _formal_parameters_elements?: FormalParametersElements;
+	readonly _elements?: FormalParametersElements;
 	readonly __looseHints__?: {
-		readonly formal_parameters_elements?: readonly (RequiredParameter | OptionalParameter)[];
+		readonly elements?: readonly (RequiredParameter | OptionalParameter)[];
 	};
 	readonly __slotHints__?: {
-		readonly formalParametersElements: SlotHint<T.FormalParametersElements, true>;
+		readonly elements: SlotHint<T.FormalParametersElements, true>;
 		readonly $listView: ListViewHint<
 			T.RequiredParameter | T.OptionalParameter,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 		readonly $listSlots: {
-			readonly formalParametersElements: ListSlotHint<
+			readonly elements: ListSlotHint<
 				T.RequiredParameter | T.OptionalParameter,
 				{ delimiter?: Delimiter.None | Delimiter.Trailing }
 			>;
 		};
 	};
-	formalParametersElements(): FormalParametersElements | undefined;
+	elements(): FormalParametersElements | undefined;
 }
 
 export interface ClassStaticBlock {
@@ -7148,18 +7148,18 @@ export interface EnumDeclaration {
 
 export interface EnumBody {
 	readonly $type: TSKindId.EnumBody;
-	readonly _enum_body_elements?: EnumBodyElements;
+	readonly _elements?: EnumBodyElements;
 	readonly __looseHints__?: {
-		readonly enum_body_elements?: readonly EnumBodyElement[];
+		readonly elements?: readonly EnumBodyElement[];
 	};
 	readonly __slotHints__?: {
-		readonly enumBodyElements: SlotHint<T.EnumBodyElements, true>;
+		readonly elements: SlotHint<T.EnumBodyElements, true>;
 		readonly $listView: ListViewHint<T.EnumBodyElement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
-			readonly enumBodyElements: ListSlotHint<T.EnumBodyElement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly elements: ListSlotHint<T.EnumBodyElement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	enumBodyElements(): EnumBodyElements | undefined;
+	elements(): EnumBodyElements | undefined;
 }
 
 export interface EnumAssignment {
@@ -8893,24 +8893,24 @@ export interface PropertySignature {
 
 export interface TypeParameters {
 	readonly $type: TSKindId.TypeParameters;
-	readonly _type_parameters_elements: TypeParametersElements;
+	readonly _elements: TypeParametersElements;
 	readonly __looseHints__?: {
-		readonly type_parameters_elements: readonly TypeParameter[];
+		readonly elements: readonly TypeParameter[];
 	};
 	readonly __slotHints__?: {
-		readonly typeParametersElements: SlotHint<T.TypeParametersElements>;
+		readonly elements: SlotHint<T.TypeParametersElements>;
 		readonly $listView: ListViewHint<
 			T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
 		readonly $listSlots: {
-			readonly typeParametersElements: ListSlotHint<
+			readonly elements: ListSlotHint<
 				T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
 				{ delimiter?: Delimiter.None | Delimiter.Trailing }
 			>;
 		};
 	};
-	typeParametersElements(): TypeParametersElements;
+	elements(): TypeParametersElements;
 }
 
 export interface TypeParameter {
@@ -15601,7 +15601,7 @@ export interface FormalParametersNs extends NodeNs<
 	FormalParameters.Bound,
 	FormalParameters.BuildArgs,
 	FormalParameters.LooseArgs,
-	'formal_parameters_elements',
+	'elements',
 	TSKindId.FormalParameters,
 	FormalParameters.Parsed,
 	EmptyFormalParameters
@@ -15991,7 +15991,7 @@ export interface EnumBodyNs extends NodeNs<
 	EnumBody.Bound,
 	EnumBody.BuildArgs,
 	EnumBody.LooseArgs,
-	'enum_body_elements',
+	'elements',
 	TSKindId.EnumBody,
 	EnumBody.Parsed,
 	EmptyEnumBody
@@ -16511,7 +16511,7 @@ export interface TypeParametersNs extends NodeNs<
 	TypeParameters.Bound,
 	TypeParameters.BuildArgs,
 	TypeParameters.LooseArgs,
-	'type_parameters_elements',
+	'elements',
 	TSKindId.TypeParameters,
 	TypeParameters.Parsed,
 	never

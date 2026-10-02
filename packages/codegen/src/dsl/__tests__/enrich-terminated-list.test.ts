@@ -83,3 +83,78 @@ describe('the same inline run when the owner may be empty', () => {
 		);
 	});
 });
+
+describe('a hoisted list kind that takes its owner as a prefix to stay unique in the grammar', () => {
+	const listOf = (open: string, separator: string, close: string) =>
+		seq(str(open), sym('item'), { type: 'REPEAT', content: seq(str(separator), sym('item')) }, optional(str(separator)), str(close));
+	let rules: Record<string, unknown>;
+	beforeAll(() => {
+		rules = enrichedRules({
+			owner: seq(sym('first'), sym('second'), sym('third')),
+			first: listOf('(', ',', ')'),
+			second: listOf('[', ';', ']'),
+			third: seq({ type: 'FIELD', name: 'items', content: sym('item') }, listOf('{', '|', '}'))
+		});
+	});
+
+	it('names the kind after its owner and fields the reference with the bare plural', () => {
+		expect(Object.keys(rules)).toEqual(expect.arrayContaining(['first_items', 'second_items']));
+		expect(rules.first).toMatchObject(seq(str('('), { type: 'FIELD', name: 'items', content: sym('first_items') }, str(')')));
+		expect(rules.second).toMatchObject(seq(str('['), { type: 'FIELD', name: 'items', content: sym('second_items') }, str(']')));
+	});
+
+	it('leaves the reference unfielded when the owner already has a slot of that name', () => {
+		expect(JSON.stringify(stripped(rules.third))).not.toContain('{"type":"FIELD","name":"items","content":{"type":"SYMBOL","name":"third_items"}}');
+		expect(JSON.stringify(stripped(rules.third))).toContain('"name":"third_items"');
+	});
+});
+
+describe('an owner-prefixed list kind at a position a patch fields', () => {
+	it('leaves the reference to the patch', () => {
+		const listOf = (open: string, separator: string, close: string) =>
+			seq(str(open), sym('item'), { type: 'REPEAT', content: seq(str(separator), sym('item')) }, optional(str(separator)), str(close));
+		const input = {
+			grammar: {
+				name: 'test',
+				rules: { source: seq(sym('first'), sym('second')), first: listOf('(', ',', ')'), second: listOf('[', ';', ']'), item },
+				externals: []
+			}
+		};
+		const fieldSites = new Map([['second', [{ path: [1], name: 'arguments' }]]]);
+		const rules = (
+			enrich(input as unknown as Parameters<typeof enrich>[0], { fieldSites } as Parameters<typeof enrich>[1]) as unknown as {
+				grammar: { rules: Record<string, unknown> };
+			}
+		).grammar.rules;
+		expect(rules.first).toMatchObject(seq(str('('), { type: 'FIELD', name: 'items', content: sym('first_items') }, str(')')));
+		expect(rules.second).toMatchObject(seq(str('['), sym('second_items'), str(']')));
+	});
+});
+
+describe('an owner-prefixed list kind inside a rule enrich itself minted', () => {
+	it('is fielded with the bare plural there too', () => {
+		const listOf = (open: string, separator: string, close: string) =>
+			seq(str(open), sym('item'), { type: 'REPEAT', content: seq(str(separator), sym('item')) }, optional(str(separator)), str(close));
+		const rules = enrichedRules({
+			owner: seq(sym('first'), sym('host')),
+			first: listOf('(', ',', ')'),
+			host: { type: 'CHOICE', members: [seq(str('a'), listOf('[', ';', ']')), seq(str('b'), sym('item'))] }
+		});
+		const minted = Object.entries(rules).filter(([name]) => name.startsWith('host_') && !name.endsWith('_items'));
+		const holder = minted.find(([, body]) => JSON.stringify(body).includes('"name":"host_'));
+		expect(holder, `minted rules: ${minted.map(([name]) => name).join(', ')}`).toBeDefined();
+		expect(JSON.stringify(stripped(holder![1]))).toMatch(/\{"type":"FIELD","name":"items","content":\{"type":"SYMBOL","name":"host_[a-z0-9_]*items"/);
+	});
+});
+
+describe('a hoisted list kind named after its owner because its element has no single name', () => {
+	it('is fielded as elements in its owner', () => {
+		const element = { type: 'CHOICE', members: [sym('item'), sym('other')] };
+		const rules = enrichedRules({
+			owner: seq(str('('), element, { type: 'REPEAT', content: seq(str(','), element) }, optional(str(',')), str(')')),
+			other: str('o')
+		});
+		expect(Object.keys(rules)).toContain('owner_elements');
+		expect(rules.owner).toMatchObject(seq(str('('), { type: 'FIELD', name: 'elements', content: sym('owner_elements') }, str(')')));
+	});
+});

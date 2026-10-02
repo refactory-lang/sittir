@@ -5667,9 +5667,9 @@ export function coerceToClassBody(...input: T.ClassBody.LooseArgs): ReturnType<t
 	);
 }
 
-export function resolveFormalParameters_formalParametersElements(
-	value: T.FormalParameters.LooseConfig['formalParametersElements']
-): T.FormalParameters['_formal_parameters_elements'] {
+export function resolveFormalParameters_elements(
+	value: T.FormalParameters.LooseConfig['elements']
+): T.FormalParameters['_elements'] {
 	return _resolveOneBranch<T.FormalParametersElements>(value, 'formal_parameters_elements', undefined, true);
 }
 
@@ -5688,7 +5688,7 @@ export function coerceToFormalParameters(...args: unknown[]): ReturnType<typeof 
 		return input as unknown as ReturnType<typeof F.buildFormalParameters>;
 	return F.buildFormalParameters(
 		_resolveOneBranch<T.FormalParametersElements>(
-			configFieldOr(input, 'formalParametersElements', () => input),
+			configFieldOr(input, 'elements', () => input),
 			'formal_parameters_elements',
 			undefined,
 			true
@@ -7448,9 +7448,7 @@ export function coerceToEnumDeclaration(input: T.EnumDeclaration.Loose): ReturnT
 	});
 }
 
-export function resolveEnumBody_enumBodyElements(
-	value: T.EnumBody.LooseConfig['enumBodyElements']
-): T.EnumBody['_enum_body_elements'] {
+export function resolveEnumBody_elements(value: T.EnumBody.LooseConfig['elements']): T.EnumBody['_elements'] {
 	return _resolveOneBranch<T.EnumBodyElements>(value, 'enum_body_elements', undefined, true);
 }
 
@@ -7465,7 +7463,7 @@ export function coerceToEnumBody(...args: unknown[]): ReturnType<typeof F.buildE
 		return input as unknown as ReturnType<typeof F.buildEnumBody>;
 	return F.buildEnumBody(
 		_resolveOneBranch<T.EnumBodyElements>(
-			configFieldOr(input, 'enumBodyElements', () => input),
+			configFieldOr(input, 'elements', () => input),
 			'enum_body_elements',
 			undefined,
 			true
@@ -9130,9 +9128,9 @@ export function coerceToPropertySignature(
 	});
 }
 
-export function resolveTypeParameters_typeParametersElements(
-	value: T.TypeParameters.LooseConfig['typeParametersElements']
-): T.TypeParameters['_type_parameters_elements'] {
+export function resolveTypeParameters_elements(
+	value: T.TypeParameters.LooseConfig['elements']
+): T.TypeParameters['_elements'] {
 	return _resolveOneBranch<T.TypeParametersElements>(value, 'type_parameters_elements');
 }
 
@@ -9150,9 +9148,9 @@ export function coerceToTypeParameters(...args: unknown[]): ReturnType<typeof F.
 	return F.buildTypeParameters(
 		_requireField(
 			'type_parameters',
-			'typeParametersElements',
+			'elements',
 			_resolveOneBranch<T.TypeParametersElements>(
-				configFieldOr(input, 'typeParametersElements', () => input),
+				configFieldOr(input, 'elements', () => input),
 				'type_parameters_elements'
 			)
 		)

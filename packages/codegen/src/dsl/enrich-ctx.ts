@@ -40,6 +40,7 @@ export type EnrichRuleOrigin =
 export interface ClauseHoistState {
 	readonly separatedListNameCounts: ReadonlyMap<string, number>;
 	readonly hiddenListPromotionNames: Map<string, string>;
+	readonly ownerPrefixedListSlots: Map<string, string>;
 }
 
 interface EnrichCtxFields extends EnrichCtxInit {
