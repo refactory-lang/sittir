@@ -1,14 +1,14 @@
-// A coordinate names a tree by a tag minted from one process-wide counter,
-// so no two engines ever hold the same tag. A node read by one engine and
-// rendered through another of the same language is handed to the engine that
-// holds its tree — never answered from whatever tree happens to sit at that
-// index in the calling engine.
+// A coordinate names a tree by a tag minted from one counter per JavaScript
+// thread, so no two engines ever mint the same tag, and the language's table
+// holds every tree. A node read by one engine renders through any engine of
+// the language from its own tree — never from whatever tree the calling
+// engine parsed last.
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import rust from '../src/index.ts';
 
-describe('coordinates name their engine', () => {
-	it('renders a node read by another engine through the engine that read it', async () => {
+describe('coordinates name their tree', () => {
+	it('renders a node read by another engine from the tree it was read from', async () => {
 		const reader = await createEngine(rust);
 		const other = await createEngine(rust);
 		other.parse('fn decoy() {}');

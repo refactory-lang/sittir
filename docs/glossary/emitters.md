@@ -7298,6 +7298,8 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
 // and drops those before they can be spread into the wrapped node.
 ```
 
+It copies the data by spread and then deletes the unmodelled keys, where a copy built key by key from the string keys would lose the tree the data holds: the hold is a symbol member, which a spread carries and a walk over string keys does not see. `_aliasEnvelope` assembles its result member by member for the same data, so it passes the hold on by name (`carryTree`).
+
 ### `packages/codegen/src/emitters/wrap.ts::buildWrapParamType`
 
 ```text

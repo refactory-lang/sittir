@@ -34,34 +34,31 @@ Sections marked **Invariant** must hold at every commit. Sections marked **Workf
 
 **A4a. Override mechanisms: `polymorphs:`, `transforms:`, `groups:`.** `packages/<grammar>/overrides.ts` exports three position-keyed override blocks. `polymorphs:` aliases a sub-rule to a variant kind; `transforms:` rewrites a sub-rule's body. The new `groups:` block (2026-05-15) lifts a nested sub-rule into a synthesized hidden kind materialized as `AssembledGroup`, affecting factories, from, wrap, and render symmetrically. Path semantics match `polymorphs:` (slash-separated indices rooted at the parent kind). Synthesized names follow the pattern `_<parent>_<discriminator>` with `__` collapse when the parent already starts with `_`. Synthesis runs BEFORE polymorph composition in `link.ts`. Closed bug #3 (rust `visibility_modifier` rendering `pub()` when it should render `pub`). Details: `docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md`.
 
-**A5. Generated content is hash-verified at every grammar load.** Each grammar carries a per-grammar manifest at `packages/<grammar>/.sittir/generated.manifest.json` containing:
+**A5. Generated content is verified against its source at every grammar load.** Nothing about the check is committed. Each grammar has a local manifest at `node_modules/.cache/sittir/generated-manifest/<grammar>.json` in the checkout, ignored by git and separate per worktree, containing:
 
-- `source_hash` — SHA256 of the inputs that drove this generation: `packages/<grammar>/overrides.ts`, `packages/<grammar>/package.json` (pins upstream tree-sitter version), and a content hash of `packages/codegen/src/**`. This catches "you edited the inputs but didn't regen" — the cross-layer synchronicity guarantee.
-- `files` — SHA256 of every cross-platform generated file (sittir js, parser.wasm, factory-map, Rust crate src/templates/test-fixtures, napi `index.d.ts` / `index.js`).
+- `files` — SHA256 of every generated file git tracks or would track (sittir js, parser.wasm, factory-map, Rust crate src/templates, napi `index.d.ts` / `index.js`). Native binaries (`*.node`) are not recorded; their staleness is judged by modification time against the crate sources.
+- `known` — up to eight pairs of (source hash, digest of `files`), newest last. The source hash covers `packages/<grammar>/grammar.sittir.ts`, `packages/<grammar>/package.json`, and the generation side of `packages/codegen/src/**`.
 
-The manifest holds nothing that depends on the host that generated it: native binaries (`*.node`) are not recorded, and their staleness is judged by modification time against the crate sources.
+The codegen CLI records the pair it produced at the end of every successful regen. There is no separate command for writing it.
 
-The codegen CLI rewrites the manifest at the end of every successful regen (always, not gated by any flag). There is intentionally no separate "write manifest" command — the manifest cannot drift from generated content unless someone hand-edits it.
+Verification fires automatically inside `loadLanguageForGrammar(grammar)` in `packages/tools/src/validate/common.ts` — the choke point that every validator, probe and dev tool that loads a grammar goes through — and in the pre-commit hook over the index. It passes when the pair in the tree is a known pair, or when the tree's source inputs and generated roots equal one trusted commit: HEAD, or MERGE_HEAD during a merge, the same commit for both. Otherwise:
 
-Verification fires automatically inside `loadLanguageForGrammar(grammar)` in `packages/codegen/src/validate/common.ts` — the universal choke point that every validator, every probe (`probe-kind`, `probe-validate`, etc.), every dev tool, and every script that loads a grammar funnels through.
+- **A local manifest exists** → throws naming what moved since the last recorded generation: "SOURCE INPUTS CHANGED", and each generated file as MODIFIED, MISSING or EXTRA.
+- **None exists** (fresh clone, cleaned `node_modules`) → throws listing each path as "DIFFERS FROM HEAD".
 
-- **`source_hash` mismatch** (overrides.ts, package.json, or codegen source edited since last regen) → throws "SOURCE INPUTS CHANGED" with the regen command.
-- **`files` mismatch** (any cross-platform generated file modified, missing, or extra) → throws with the offending path.
-- **Manifest missing** → throws "MANIFEST MISSING" with the regen command. Previously a warn-and-continue "bootstrap mode" but that turned out to be a verification-bypass surface (any caller wanting to skip verification could just delete the manifest file). The legitimate bootstrap path is "run codegen first" — codegen's own internal validators bypass via `SITTIR_INTERNAL_CODEGEN_RUN=1` (see below), and codegen writes the manifest at the end of its run. After that initial run, the manifest exists and external runs verify normally.
+Either way the fix is the regen command in the message.
 
-**Codegen-internal bypass.** When `SITTIR_INTERNAL_CODEGEN_RUN=1` is set, verification is skipped. This env is set ONLY by `packages/codegen/src/cli.ts` for its own internal validator runs (e.g. `extractParityFixtures` calls `validateReadRenderParse` to harvest fixtures BEFORE the manifest is rewritten at codegen's end — verifying mid-write would check the codegen process against its own incomplete output). External callers (validator CLI, probe-validate, etc.) never set this env and always get full verification.
+**Codegen-internal bypass.** When `SITTIR_INTERNAL_CODEGEN_RUN=1` is set, verification is skipped. This env is set ONLY by `packages/codegen/src/cli.ts` for its own internal validator runs (e.g. `extractParityFixtures` calls `validateReadRenderParse` to harvest fixtures BEFORE the generation is recorded at codegen's end — verifying mid-write would check the codegen process against its own incomplete output). External callers (validator CLI, probe-validate, etc.) never set this env and always get full verification.
 
-**Cross-layer synchronicity coverage:**
+**What catches what:**
 
-| Layer | Tracked via | Catches |
-|---|---|---|
-| Compiled tree-sitter grammar (`parser.wasm`) | `files` | hand-edit, build-time drift |
-| sittir js (`packages/<grammar>/src/*`) | `files` | hand-edit |
-| Rust crate source (`rust/crates/sittir-<grammar>/src/*`) | `files` | hand-edit |
-| napi JS surface (`index.d.ts`, `index.js`) | `files` | hand-edit, napi rebuild without codegen |
-| **Inputs that drove the generation** | **`source_hash`** | **edits without regen** |
+| Situation | Caught by |
+|---|---|
+| Source or grammar edited, output not regenerated | local check: the pair is unknown and the tree differs from HEAD |
+| Generated file edited by hand | local check: MODIFIED, or DIFFERS FROM HEAD |
+| Commit made with `--no-verify`, or two pull requests whose outputs are each right alone and stale together | CI: the job that regenerates every grammar and compares the tree |
 
-**Limit worth knowing:** a coordinated commit that updates the file AND its manifest entry AND the source_hash to match passes verification. The manifest catches honest hand-edits and forgotten-regen situations (the realistic threats in this codebase); a CI gate that reruns codegen and diffs the on-disk content is the additional layer if adversarial-level integrity is needed.
+**Limit worth knowing:** the local check trusts HEAD. Whether a commit's output is what its source generates is CI's question, on pull requests and on the default branch.
 
 ## B. Source-resolution approach
 

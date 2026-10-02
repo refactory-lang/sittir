@@ -1,4 +1,6 @@
 import type { AnyUntypedNode } from '@sittir/types';
+import { assertHoldsTree, holdTreeOn, releaseTreeOn, type TreeToken } from './tree-token.ts';
+import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -7,6 +9,26 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 export const HANDLE_KEYS = ['$handle', '$parentHandle', '$treeHandle'] as const;
 
 const COORDINATE_KEYS = [...HANDLE_KEYS, '$span', '$childIndex', '$textOnly'] as const;
+
+/**
+ * Give every parsed object under `value` the tree's token, through slots and
+ * trivia. A coordinate is a number, which keeps nothing alive: a leaf is
+ * plain data, and once a built node is all that holds it, nothing else of
+ * its tree is reachable. Every object needs the token because any of them
+ * can cross as a coordinate on its own.
+ */
+export function holdTree(value: unknown, token: TreeToken): void {
+	if (Array.isArray(value)) {
+		for (const entry of value) holdTree(entry, token);
+		return;
+	}
+	if (!isRecord(value)) return;
+	if (typeof value.$type === 'number') holdTreeOn(value, token);
+	for (const key in value) {
+		if (isStorageKey(key)) holdTree(value[key], token);
+	}
+	if (value.$_trivia != null) forEachTriviaList(value.$_trivia as TriviaSides<unknown>, (entries) => holdTree(entries, token));
+}
 
 /**
  * The tree a node's handle names, whichever handle it carries: every handle is
@@ -118,6 +140,9 @@ function foldToCoordinate(record: Record<string, unknown>): Record<string, unkno
  * this the new node would still fold to the pre-edit bytes. Recorded here,
  * at the edit, because an emptied node and a node that parsed childless have
  * the same shape afterwards and only the first is dirty.
+ *
+ * The rest-spread copies the tree token with the other members, so the token
+ * is removed from the copy: a rebuilt node names no tree.
  */
 export function markEdited<T extends object>(data: T): Omit<T, (typeof COORDINATE_KEYS)[number]> {
 	const {
@@ -129,6 +154,7 @@ export function markEdited<T extends object>(data: T): Omit<T, (typeof COORDINAT
 		$textOnly: _textOnly,
 		...rest
 	} = data as T & Record<(typeof COORDINATE_KEYS)[number], unknown>;
+	releaseTreeOn(rest);
 	return rest;
 }
 
@@ -140,6 +166,7 @@ export function markEdited<T extends object>(data: T): Omit<T, (typeof COORDINAT
  */
 export function detachCoordinate(data: object): void {
 	for (const key of COORDINATE_KEYS) delete (data as Record<string, unknown>)[key];
+	releaseTreeOn(data);
 }
 
 /**
@@ -163,10 +190,19 @@ export function toTransportData(node: AnyUntypedNode): AnyUntypedNode {
 	return toTransportValue(node) as AnyUntypedNode;
 }
 
+function assertTriviaHoldsTree(entries: readonly unknown[]): void {
+	for (const entry of entries) if (isRecord(entry) && treeHandleOf(entry) !== undefined) assertHoldsTree(entry);
+}
+
 function toTransportValue(value: unknown): unknown {
 	if (Array.isArray(value)) return value.map(toTransportValue);
 	if (!isRecord(value)) return value;
-	if (canFold(value)) return foldToCoordinate(value);
+	if (canFold(value)) {
+		assertHoldsTree(value);
+		return foldToCoordinate(value);
+	}
+	// Trivia entries cross as they are, coordinates included.
+	if (value.$_trivia != null) forEachTriviaList(value.$_trivia as TriviaSides<unknown>, assertTriviaHoldsTree);
 	const out: Record<string, unknown> = {};
 	for (const [key, raw] of Object.entries(value)) {
 		if (key === '$with' || typeof raw === 'function') continue;
@@ -185,6 +221,22 @@ function toTransportValue(value: unknown): unknown {
 	return out;
 }
 
+/** Remove the tree token from everything under `value`, through slots and trivia: transport data holds no tree. */
+function dropTreeTokens(value: unknown): void {
+	if (Array.isArray(value)) {
+		for (const entry of value) dropTreeTokens(entry);
+		return;
+	}
+	if (!isRecord(value)) return;
+	releaseTreeOn(value);
+	for (const key in value) if (isStorageKey(key)) dropTreeTokens(value[key]);
+	dropTriviaTreeTokens(value);
+}
+
+function dropTriviaTreeTokens(node: Record<string, unknown>): void {
+	if (node.$_trivia != null) forEachTriviaList(node.$_trivia as TriviaSides<unknown>, dropTreeTokens);
+}
+
 /**
  * Drop the pre-edit spelling and the coordinate that would slice it from
  * every node that carries storage, in place, and return `root`. For
@@ -192,6 +244,9 @@ function toTransportValue(value: unknown): unknown {
  * {@link toTransportData}. A coordinate that survives addresses its node's
  * text only: it crosses as the `$treeHandle` its span slices, stamped
  * `$textOnly` so no edge or gap reader takes layout evidence from it.
+ *
+ * The result holds no tree: a surviving coordinate is valid only while the
+ * caller keeps its tree live by other means.
  */
 export function detachCoordinates<T>(root: T): T {
 	const seen = new WeakSet<object>();
@@ -203,6 +258,8 @@ export function detachCoordinates<T>(root: T): T {
 			delete value.$text;
 			for (const key of COORDINATE_KEYS) delete value[key];
 		}
+		releaseTreeOn(value);
+		dropTriviaTreeTokens(value);
 		const tree = treeHandleOf(value);
 		if (tree !== undefined) {
 			delete value.$handle;

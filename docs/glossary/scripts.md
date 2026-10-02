@@ -260,20 +260,13 @@ The repo-relative paths git tracks or would track: `git ls-files --cached --othe
 /** parser/binary artifact — counts only, no line ranges (kept terse). */
 ```
 
-### `packages/codegen/src/scripts/generated-manifest.ts::source_hash`
+### `packages/codegen/src/scripts/generated-manifest.ts::GenerationPair`
 
-```text
-/**
-	 * SHA256 of the source inputs that drove this generation —
-	 * `packages/<grammar>/grammar.sittir.ts` (hand-edited adjuster) +
-	 * `packages/<grammar>/package.json` (pins the upstream tree-sitter version).
-	 * If either changes, source_hash changes; verifiers detect the mismatch
-	 * and require a regen. This is the cross-layer synchronicity guarantee:
-	 * the manifest doesn't just say "files match what was last written";
-	 * it says "files match what was last written AND those writes were
-	 * driven by the current source inputs."
-	 */
-```
+One generation as two digests: `source`, the source hash (`computeSourceHash`), and `outputs`, a digest over the path and content hash of every generated file the manifest lists. A pair says "these outputs came from this source". It is the unit the local manifest remembers and the unit verification asks about.
+
+### `packages/codegen/src/scripts/generated-manifest.ts::KNOWN_PAIR_LIMIT`
+
+How many known-good pairs a grammar's local manifest keeps: eight. A pair that is recorded again moves to the newest end; past the limit the oldest is dropped. A dropped pair costs nothing but a comparison with the trusted commits the next time the tree is in that state, and a regenerate if it equals neither.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::stale`
 
@@ -321,14 +314,14 @@ The repo-relative paths git tracks or would track: `git ls-files --cached --othe
 /** Emitter buckets, in display order. */
 ```
 
-### `packages/codegen/src/scripts/generated-manifest.ts::cachedCodegenHash`
+### `packages/codegen/src/scripts/generated-manifest.ts::codegenHashBySource`
 
 ```text
 /**
  * Memoized hash of the GENERATION-side `packages/codegen/src/**` — the third
  * input to every generation. If codegen source changes (e.g., a bugfix in a
  * wrap emitter), the same per-grammar overrides should produce different
- * output, so the source_hash needs to reflect this. Memoized per process
+ * output, so the source hash needs to reflect this. Memoized per source
  * because it walks many files and never changes within a single run.
  *
  * Scoped to PRODUCER code: `validate/**` is excluded — validators CONSUME
@@ -387,45 +380,15 @@ reconciliation gate. Three clusters, one per root cause:
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::module`
 
-```text
-/**
- * generated-manifest — module that writes/verifies per-grammar SHA256
- * manifests for every generated file.
- *
- * Manifest lives at `packages/<grammar>/.sittir/generated.manifest.json`.
- *
- * ## Lifecycle
- *
- * - `writeManifestForGrammar(grammar)` is called by `packages/codegen/src/cli.ts`
- *   at the end of each successful per-grammar regen. There is intentionally no
- *   separate CLI for writing — the manifest must always be in lockstep with the
- *   codegen output it describes.
- * - `assertGeneratedManifestsClean()` is called by the validator
- *   (`packages/tools/src/validate/common.ts`) at startup, before any
- *   counts/probe-factory work. Verification failure aborts the validator;
- *   the only legitimate way to update a manifest is to re-run codegen.
- *
- * The manifest excludes itself (would otherwise be a chicken-and-egg).
- *
- * ## Tracked in git
- *
- * The manifest file is force-added to git despite `packages/*\/.sittir/`
- * being gitignored — same pattern as `grammar.js`, `package.json`,
- * `tree-sitter.json` inside the same directory. Tracking the manifest is
- * what makes cross-commit drift detectable: if a commit changes a generated
- * file without re-running codegen, the committed file hash diverges from
- * the committed manifest entry and `verifyManifestForGrammar` flags it.
- *
- * ## Limits
- *
- * The manifest catches honest-mistake hand-edits AND cross-commit drift
- * (since the manifest is itself committed). It does NOT catch a coordinated
- * commit that updates both the file and its manifest entry but ships an
- * INTERNALLY inconsistent codegen output (e.g., wrap.ts and templates that
- * disagree on slot optionality). That class of bug requires a CI gate that
- * re-runs codegen and diffs the on-disk content.
- */
-```
+Records and verifies that a grammar's generated files came from its current source inputs.
+
+Nothing about this is committed. Each grammar has a local manifest at `node_modules/.cache/sittir/generated-manifest/<grammar>.json` under the checkout (`manifestPath`): ignored by git, never inside a published package, and separate for every worktree. It holds a content hash per generated file as of the last generation recorded, and a bounded list of known-good pairs (`GenerationPair`, `KNOWN_PAIR_LIMIT`).
+
+`writeManifestForGrammar` is called by `runCodegen` at the end of each successful regeneration and records the pair it produced. There is no separate command for writing it.
+
+`assertGeneratedManifestsClean` is called by the validators' grammar loader before any work, and by the pre-commit hook over the index. `verifyManifestForGrammar` states the rule once.
+
+What this does not do: say whether a commit's generated output is what its source generates. A commit can carry stale output past every local check (with `--no-verify`, or from a machine whose manifest was written by hand). The CI job that regenerates every grammar and compares the tree is the check for that, on pull requests and on the default branch, and it is why a commit that passed it can be trusted here.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::codegenSourceHash`
 
@@ -446,27 +409,39 @@ reconciliation gate. Three clusters, one per root cause:
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::writeManifestForGrammar`
 
-Writes a grammar's manifest: its name, the source hash, and a content hash per generated file git tracks or would track. Nothing in it depends on the machine that ran `gen`: native bindings (`*.node`) are ignored by git and so are not listed, and their staleness is a local check against the crate's sources (`native-binary-freshness.ts`), not a manifest entry. The same sources therefore produce the same manifest on every platform.
+Records the generation that just ran: hashes every generated file git tracks or would track, and adds the pair (current source hash, digest of those hashes) to the grammar's local manifest as its newest known-good pair. Native bindings (`*.node`) are ignored by git and so are not listed; their staleness is a separate local check against the crate's sources (`native-binary-freshness.ts`).
+
+### `packages/codegen/src/scripts/generated-manifest.ts::recordGeneration`
+
+Writes a grammar's local manifest with the given file hashes and the given pair as the newest known-good pair, keeping the earlier pairs up to `KNOWN_PAIR_LIMIT`. The file is written beside its destination and renamed into place, so two processes verifying at once (validators run in parallel) never leave a half-written manifest.
+
+### `packages/codegen/src/scripts/generated-manifest.ts::manifestPath`
+
+Where a grammar's local manifest lives: under the checkout's `node_modules/.cache`, never under the source's root. For an index snapshot those differ, and the manifest read is the checkout's, because an ignored file is not in the index.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::verifyManifestForGrammar`
 
-#### body
+Whether the grammar's generated files came from its current source inputs. The rule, stated here and nowhere else: the pair in the tree (its source hash and the digest of its generated files) is a known-good pair in the local manifest, or the tree's source inputs and generated roots equal one trusted commit (`differencesFromTrustedCommit`).
 
-```text
-// Source-hash cross-layer synchronicity check: did the source inputs
-// (grammar.sittir.ts + package.json) change since this manifest was written?
-// If yes, the generated content is stale relative to current inputs and
-// the user needs to re-run codegen.
-```
+A tree found equal to a trusted commit has its pair recorded, so that a later hand edit is named file by file and a branch switch does not cost a comparison every time. Only a checkout records; a snapshot of the index never writes.
 
-#### body
+When neither holds, what is reported depends on what is known locally. With a manifest, the files are compared with the hashes it holds (`modified`, `missing`, `extra`) and `sourceChanged` says the source hash is not the one of the last recorded generation. With none, there is nothing to compare file by file, so `differs` lists the paths that differ from HEAD.
 
-```text
-// Native bindings on this host: a FRESHNESS check, not content hashes.
-// Missing binaries are silently tolerated (per-platform); present-but-stale
-// binaries fail — they would validate stale code. Checks every binding on
-// this host, read from the directory, so a local build is gated too.
-```
+Host binaries are checked for staleness only in a checkout, and in that checkout, since binaries are never part of a commit.
+
+### `packages/codegen/src/scripts/generated-manifest.ts::differencesFromTrustedCommit`
+
+The source inputs and generated files that keep the tree from equalling a trusted commit; empty when it equals one. The trusted commits are HEAD and, while a merge is in progress, MERGE_HEAD (`trustedCommits`): each has passed, or will have to pass, the CI check that regenerates and compares. Source inputs and generated roots must equal the same commit. Source from one parent with output from the other is a combination no check has seen, and it does not pass. A commit being rebased or cherry-picked is deliberately not trusted: its source lands on a different base, which is a new combination and needs a regenerate.
+
+The comparison is git's (`git diff --name-only --no-renames <commit>`, with `--cached` for an index snapshot, plus untracked files in a checkout; without `--no-renames` a source input renamed into a test directory would be reported only under its new path and go unseen), filtered to the paths that matter: the source inputs the source hash reads (`isCodegenSourceInput` and the grammar's entry and `package.json`) and the generated roots, less the files that land on their own cadence (`landsOnItsOwnCadence`). Editing a codegen test therefore never fails verification. When the tree equals neither commit, the paths returned are the differences from HEAD.
+
+### `packages/codegen/src/scripts/generated-manifest.ts::isCodegenSourceInput`
+
+Whether a repo-relative path is a codegen source that takes part in generation: a `.ts` file under `packages/codegen/src` that is not a declaration file, a test, or a validator. The source hash and the trusted-commit comparison both use it, so they cannot disagree about what a source input is.
+
+### `packages/codegen/src/scripts/generated-manifest.ts::landsOnItsOwnCadence`
+
+`test-fixtures.json` and `test-fixtures.left-out.json`: generated, tracked, and committed with a validation run instead of with the source change that produced them. They are left out of the file hashes and out of the trusted-commit comparison alike.
 
 ### `packages/codegen/src/scripts/native-binary-freshness.ts::module`
 
@@ -557,7 +532,7 @@ Writes a grammar's manifest: its name, the source hash, and a content hash per g
  * Baseline rationale: working-tree-vs-HEAD answers "what did THIS regen
  * produce relative to the last commit" — the question you actually have while
  * iterating on codegen. It is intentionally not a commit-range diff; for
- * historical drift across commits, the committed manifest is the mechanism.
+ * historical drift across commits, the CI job that regenerates and compares is the mechanism.
  *
  * Grouping is by emitter, derived purely from the output file path (each
  * emitter owns one file, per the emitter-pattern-consistency convention), so
@@ -577,15 +552,19 @@ Writes a grammar's manifest: its name, the source hash, and a content hash per g
 /**
  * Standalone manifest-verification CLI — used by the git pre-commit hook.
  * Exits non-zero (with the formatted MODIFIED/MISSING/SOURCE-CHANGED report) when
- * any grammar's generated artifacts no longer match its committed manifest, so an
- * inconsistent generated state (e.g. a staged manifest without its regenerated
- * test-fixtures.json) can't be committed. Fast: hash comparison only, no cargo.
+ * any grammar's staged source inputs and generated artifacts are neither a pair a
+ * local `gen` recorded nor equal to a trusted commit, so a source edit without its
+ * regenerated output can't be committed. Fast: hash comparison only, no cargo.
  */
 ```
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::ManifestSource`
 
-Where a manifest verification reads from: the root directory holding the grammar packages, the set of repo-relative paths git would track there, and whether host binaries (untracked `.node` files) take part in the freshness check. The working tree is the default; a snapshot of the index passes its scratch root and drops the binary check, since binaries are never part of a commit.
+Where a verification reads from: `root`, the directory holding the grammar packages; `visible`, the repo-relative paths git would track there; and `checkout`, the git checkout that git is asked about and whose local manifest is read. For the working tree the two directories are the same (`checkoutSource`). A snapshot of the index passes its scratch directory as `root` and the real checkout as `checkout`; that difference is also what turns off the host-binary check and the recording of pairs.
+
+### `packages/codegen/src/scripts/generated-manifest.ts::checkoutSource`
+
+A git checkout as a `ManifestSource`.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::worktreeSource`
 

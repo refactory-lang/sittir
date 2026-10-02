@@ -13,9 +13,7 @@
 // (tree-sitter's root node starts at the first token, so leading blank lines
 // and indentation sit outside it), and a root with no structural children at
 // all still has to count as untouched.
-import { createNativeEngine } from '@sittir/common/engine';
 import { describe, expect, it } from 'vitest';
-import { getActiveBackend } from '../src/backend.js';
 import { createEngine } from '@sittir/common';
 import rust from '../src/index.ts';
 
@@ -93,96 +91,5 @@ describe('untouched parses render verbatim', () => {
 
 		expect(root.$span).toEqual({ start: 0, end: source.length });
 		expect(tree.source).toBe(source);
-	});
-});
-
-describe('parsed trees are released', () => {
-	/** The id of the tree a raw native read retained, from the JSON it returns. */
-	const treeIdOf = (read: string): number => (JSON.parse(read) as { treeId: number }).treeId;
-
-	/** The native engine the boundary talks to, so its tree table is visible. */
-	function nativeEngine() {
-		const status = getActiveBackend();
-		return status.name === 'native' ? new status.native.SittirEngine() : null;
-	}
-
-	it('holds one tree per parse and drops them on request', async () => {
-		const native = nativeEngine();
-		if (!native) return;
-
-		expect(native.liveTreeCount).toBe(0);
-		const first = treeIdOf(native.parseAndRead('fn f0() {}'));
-		for (let i = 1; i < 20; i += 1) native.parseAndRead(`fn f${i}() {}`);
-		expect(native.liveTreeCount).toBe(20);
-
-		native.disposeTree(first);
-		expect(native.liveTreeCount).toBe(19);
-		// Dropping the same tree twice is not an error: the registry cannot
-		// know whether a tree was already released.
-		native.disposeTree(first);
-		expect(native.liveTreeCount).toBe(19);
-
-		native.dispose();
-		expect(native.liveTreeCount).toBe(0);
-	});
-
-	it('ignores a nonsense tree id rather than dropping the first tree', async () => {
-		const native = nativeEngine();
-		if (!native) return;
-
-		const treeId = treeIdOf(native.parseAndRead('fn a() {}'));
-		expect(native.liveTreeCount).toBe(1);
-		// `as` saturates, so an unchecked cast would turn both of these into
-		// 0 — a tree id, and the live one when this is the process's first
-		// parse.
-		native.disposeTree(Number.NaN);
-		native.disposeTree(-1);
-		expect(native.liveTreeCount).toBe(1);
-
-		native.disposeTree(treeId);
-		expect(native.liveTreeCount).toBe(0);
-	});
-
-	it('releases trees the caller no longer holds', async () => {
-		// Disposal is driven by the collector, so without a way to run it this
-		// asserts nothing. Run vitest under `--expose-gc` to exercise it.
-		if (typeof globalThis.gc !== 'function') return;
-		const status = getActiveBackend();
-		if (status.name !== 'native') return;
-
-		// Hand the boundary an engine this test also holds, so the tree table
-		// it fills is observable from here. `SittirEngine` is reached with
-		// `new`, so this stand-in has to be constructible — an arrow function
-		// is not, and swapping one in makes the boundary report no engine and
-		// this test quietly assert nothing.
-		const shared = new status.native.SittirEngine();
-		const { engine, reason } = createNativeEngine({
-			templatesPath: '',
-			kindNames: new Map<number, string>(),
-			getActiveBackend: () => ({
-				name: 'native',
-				native: {
-					SittirEngine: function StandInEngine() {
-						return shared;
-					}
-				}
-			})
-		} as never);
-		expect(reason).toBeUndefined();
-		expect(engine).not.toBeNull();
-		if (!engine) return;
-
-		const kept = engine.diagnostics.parseAndRead('fn kept() {}');
-		for (let i = 0; i < 200; i += 1) engine.diagnostics.parseAndRead(`fn dropped${i}() {}`);
-		expect(shared.liveTreeCount).toBe(201);
-
-		for (let round = 0; round < 10 && shared.liveTreeCount > 1; round += 1) {
-			globalThis.gc?.();
-			await new Promise((resolve) => setTimeout(resolve, 20));
-		}
-
-		// Everything unreferenced is gone; the one still held is not.
-		expect(shared.liveTreeCount).toBe(1);
-		expect(kept.tree.read?.()).toBeDefined();
 	});
 });

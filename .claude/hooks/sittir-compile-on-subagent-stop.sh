@@ -13,7 +13,7 @@ repo="$(git rev-parse --show-toplevel 2>/dev/null || true)"
 [ -n "$repo" ] || exit 0
 cd "$repo" || exit 0
 
-manifest="packages/python/.sittir/generated.manifest.json"
+manifest="node_modules/.cache/sittir/generated-manifest/python.json"
 [ -f "$manifest" ] || exit 0
 
 # Staleness check (mtime): any codegen source .ts newer than the last regen?
