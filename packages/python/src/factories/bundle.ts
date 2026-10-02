@@ -104,10 +104,7 @@ export const decoratedDefinition = bundle(F.buildDecoratedDefinition, C.coerceTo
 });
 export const decorator = bundle(F.buildDecorator, C.coerceToDecorator, { key: 'decorator', max: 1 });
 export const block = bundle(F.buildBlock, C.coerceToBlock);
-export const expressionList = bundle(F.buildExpressionList, C.coerceToExpressionList, {
-	key: 'expressionList',
-	max: 1
-});
+export const expressionList = bundle(F.buildExpressionList, C.coerceToExpressionList);
 export const dottedName = bundle(F.buildDottedName, C.coerceToDottedName);
 export const casePattern = bundle(F.buildCasePattern, C.coerceToCasePattern, { key: 'casePattern', max: 1 });
 export const simplePattern = bundle(F.buildSimplePattern, C.coerceToSimplePattern, { key: 'simplePattern', max: 1 });
@@ -172,7 +169,7 @@ export const augmentedAssignment = bundle(F.buildAugmentedAssignment, C.coerceTo
 	key: 'augmentedAssignment',
 	max: 1
 });
-export const patternList = bundle(F.buildPatternList, C.coerceToPatternList, { key: 'patternList', max: 1 });
+export const patternList = bundle(F.buildPatternList, C.coerceToPatternList);
 export const yield_ = bundle(F.buildYield, C.coerceToYield, { key: 'yield_', max: 1 });
 export const attribute = bundle(F.buildAttribute, C.coerceToAttribute, { key: 'attribute', max: 1 });
 export const subscript = bundle(F.buildSubscript, C.coerceToSubscript, { key: 'subscript', max: 1 });
@@ -239,10 +236,8 @@ export const casePatterns = bundle(F.buildCasePatterns, C.coerceToCasePatterns);
 export const withClauseWithItems = bundle(F.buildWithClauseWithItems, C.coerceToWithClauseWithItems);
 export const types = bundle(F.buildTypes, C.coerceToTypes);
 export const argumentListElements = bundle(F.buildArgumentListElements, C.coerceToArgumentListElements);
-export const expressionListExpressions = bundle(F.buildExpressionListExpressions, C.coerceToExpressionListExpressions);
 export const listPatternCasePatterns = bundle(F.buildListPatternCasePatterns, C.coerceToListPatternCasePatterns);
 export const dictPatternElements = bundle(F.buildDictPatternElements, C.coerceToDictPatternElements);
-export const patternListPatterns = bundle(F.buildPatternListPatterns, C.coerceToPatternListPatterns);
 export const subscripts = bundle(F.buildSubscripts, C.coerceToSubscripts);
 export const dictionaryElements = bundle(F.buildDictionaryElements, C.coerceToDictionaryElements);
 export const exceptClauseExceptionAs = bundle(F.buildExceptClauseExceptionAs, C.coerceToExceptClauseExceptionAs, {

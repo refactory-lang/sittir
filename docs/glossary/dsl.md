@@ -533,6 +533,12 @@ not immediate.
  */
 ```
 
+A seq that is a `terminated` separated list (`separatedListBodyInfo`) is
+returned as it is: the whole seq is the list, so the choice after its first
+element is not a set of arms to mint and nothing inside it is hoisted. Without
+this the arm holding the further elements would become a kind of its own and
+the list would be split across two nodes.
+
 #### body
 
 ```text
@@ -2723,7 +2729,9 @@ itself a CHOICE, which `visit` recurses into so only the innermost arms are
 labelled. A choice with fewer than two non-blank members is walked but not
 labelled. A bare SYMBOL naming a hoisted choice-holding rule is labelled as
 a stand-in for that choice (`isHoistedChoiceGroup`); `SLOT_BOUNDARIES` stop
-the walk. The label is `labelOf(owner, armDisplayOf(core), <owner is in
+the walk. A seq that is a `terminated` list (`separatedListBodyInfo`) is not
+entered: the choice after its first element is the list's own spelling, not a
+set of variants. The label is `labelOf(owner, armDisplayOf(core), <owner is in
 supertypeOwners>)`, written and recorded by `withAutomaticLabel`.
 
 ### `packages/codegen/src/dsl/automatic-variants.ts::stampAutomaticVariants`
@@ -4056,6 +4064,17 @@ Terminal-ness is the `SymbolSource`'s `isTerminal`, a predicted kind catalog's `
 	 *  separator-terminated, last optionally bare). */
 ```
 
+`terminated` is the list whose first element carries a required separator:
+one element is the list only with its separator (`x,`), and from two elements
+on the trailing separator is optional. Two spellings are that form
+(`terminatedListOf`), and neither is rewritten into the other, so each
+grammar's parser keeps the spelling its upstream wrote:
+
+- suffix: `[seq(elem, sep), repeat(seq(elem, sep)), optional(elem)]`
+- choice: `[elem, choice(sep, seq(repeat1(seq(sep, elem)), optional(sep)))]`
+
+`flatMembers` is the body's members as written.
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::SeparatedListBodyInfo.element`
 
 ```text
@@ -4076,15 +4095,65 @@ Terminal-ness is the `SymbolSource`'s `isTerminal`, a predicted kind catalog's `
 	 *  Language-identical to the original (seq nesting is associative). */
 ```
 
+### `packages/codegen/src/dsl/rule-patterns.ts::isInlineSafe`
+
+A seq that is a `terminated` separated list (`separatedListBodyInfo`) is never
+inline-safe. Its last member is an optional ELEMENT, not an optional
+separator, so the separator-flank test (`seqHasGenuineSeparatorVariability`)
+does not see that the list carries per-instance data (whether the last element
+has its separator); asking the form directly does. This is what makes
+`optional(<terminated run>)` hoist as a list kind of its own, the way an
+optional head-form list does. The rest of the predicate is described under its
+earlier home, `dsl/group-classify.ts::isInlineSafe`.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::terminatedListOf`
+
+The one recognizer of the `terminated` list form, in either spelling
+(`suffixTerminatedList`, `choiceTerminatedList`). Besides the element and the
+separator it returns `elementSites`: the path from the body to every position
+an element stands in, three in the suffix spelling and two in the choice
+spelling. Elements are compared by `sameElementRule`, so a body whose elements
+are only partly fielded is still the form. The suffix spelling's middle
+repetition must be a `repeat`, zero or more: with `repeat1` the parser demands
+a second element, and lifting that to one `repeat1` would offer a one-element
+list the parser refuses. Enrich reads it through
+`separatedListBodyInfo` and `mapTerminatedListElements`; link reads it through
+`separatedListBodyInfo`, so the stamp `terminated` on the lifted repeat and the
+decisions enrich takes about the same body come from one test.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::mapTerminatedListElements`
+
+Rebuilds a `terminated` list body with `fn` applied to each element position
+and everything else kept; `null` when the body is not that form. Enrich fields
+the elements with it, which is why element fielding needs no window matcher of
+its own for this form.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::sameElementRule`
+
+Whether two element positions of a `terminated` list admit the same rule: the
+rules are structurally equal once a `field` wrapper is taken off each. A field
+changes no language, so a fielded and an unfielded position still match; a
+shared field name over different rules does not, and neither do `item` and
+`_item`. The lift replaces every position with the repeat's element, so it is
+sound only when the positions really are the same rule. The `head`, `leading`
+and `tail` forms use the looser `sameListElement`.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::sameListElement`
+
+Whether two rules are the same list element: the same element name
+(`separatedListElementName`, which reads a field's name or a symbol's), or the
+same rule structurally when neither has a name.
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::separatedListBodyInfo`
 
 ```text
 /**
- * @internal — recognize a whole seq body as ONE separated list, in the two
+ * @internal — recognize a whole seq body as ONE separated list, in the
  * spellings the raw grammars use:
  *   head-form: `[elem, repeat(seq(sep, elem)), optional(sep)?]`
  *              (incl. the nested-head variant `[[elem, repeat(...)], optional(sep)]`)
  *   tail-form: `[repeat(seq(elem, sep)), optional(elem)?]`
+ *   terminated-form: either spelling `terminatedListOf` reads, tried first
  * Works on the pre-pushdown wrapper-intact rule tree (this phase has no
  * `separator`/flank attributes yet) and on both runtime spellings of
  * `optional`. Returns null when the body is not a single separated list.
@@ -5050,6 +5119,15 @@ a stamp made there would be lost. The stamp is the declaration link collects
  * that referent; the field must land on the same name or coverage sees a
  * declared-but-unreferenced field (one fact, two derivations). */
 ```
+
+### `packages/codegen/src/dsl/enrich.ts::fieldTerminatedListElements`
+
+Fields every element of a `terminated` list body with one name, taking the
+element positions from `mapTerminatedListElements`. When some element is
+already fielded (an earlier pass or an authored patch fielded it), the others
+take that name, so all positions agree and link's lift sees one element; when
+none is, the name is `elementSlotName` of the element, reserved in the rule's
+scope. A body whose elements are all fielded is left alone.
 
 ### `packages/codegen/src/dsl/enrich.ts::fieldSeparatedListElements`
 
