@@ -188,6 +188,16 @@ export default sittirGrammar(base, {
 
 	patches: {
 		comment: { 0: arm.default },
+		// See docs/rust-grammar-sittir-glossary.md::tuple_expression
+		tuple_expression: {
+			1: field('attributes'),
+			2: alias('tuple_expression_elements')
+		},
+		_tuple_expression_elements: {
+			'0/0': field('element'),
+			'1/0/0': field('element'),
+			'2/0': field('element')
+		},
 		bracketed_type: { 1: field('type') },
 		else_clause: { 1: field('body') },
 		generic_pattern: { 0: field('name') },
@@ -526,7 +536,6 @@ export default sittirGrammar(base, {
 			'_primitive_type',
 			'impl_item',
 			'reference_expression',
-			'tuple_expression',
 			'tuple_type'
 		]
 	},
@@ -542,28 +551,6 @@ export default sittirGrammar(base, {
 		),
 		tuple_type: reauthored('alias-shape', ($) =>
 			seq('(', alias($._tuple_type_elements, $.tuple_type_elements), ')')
-		),
-
-		// tuple_expression's list is comma-TERMINATED with an optional
-		// bare final element (`(e ',')+ e?`) — the shape that makes
-		// `(1,)` a tuple and `(1)` a parenthesized expression. The
-		// structure is mirrored verbatim from the base rule inside the
-		// extracted kind; the separator lift's suffix windows merge it
-		// to one repeat with an optional trailing delimiter.
-		_tuple_expression_elements: vocabulary(($) =>
-			seq(
-				seq(field('element', $._expression), ','),
-				repeat(seq(field('element', $._expression), ',')),
-				optional(field('element', $._expression))
-			)
-		),
-		tuple_expression: reauthored('alias-shape', ($) =>
-			seq(
-				'(',
-				field('attributes', repeat($.attribute_item)),
-				alias($._tuple_expression_elements, $.tuple_expression_elements),
-				')'
-			)
 		),
 
 		_token_tree_punctuation: vocabulary(($) =>

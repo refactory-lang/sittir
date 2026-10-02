@@ -1879,161 +1879,12 @@ describe('block', () => {
 
 describe('expression_list', () => {
 	it('factory produces correct type', () => {
-		const node = ir.expressionList({
-			expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			tail: {
-				$type: TSKindId.ExpressionListExpressions,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_expression: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-			} as any
-		});
+		const node = ir.expressionList(...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]);
 		expect(node.$type).toBe(TSKindId.ExpressionList);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.expressionList({
-			expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			tail: {
-				$type: TSKindId.ExpressionListExpressions,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_expression: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-			} as any
-		});
-		const rendered = node.$render!();
-		expect(rendered.length).toBeGreaterThan(0);
-	});
-});
-
-describe('expression_list sub-factories', () => {
-	it('comparison builds the parent', () => {
-		const node = ir.expressionList.comparison({
-			tail: {
-				$type: TSKindId.ExpressionListExpressions,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_expression: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-			} as any,
-			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			comparators: [
-				{
-					$type: TSKindId.ComparisonOperatorComparator,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_operators: TSKindId.Lt as never,
-					_primary_expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-				} as any
-			]
-		});
-		expect(node.$type).toBe(TSKindId.ExpressionList);
-		expect((node as any).expression()).toBeDefined();
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('not builds the parent', () => {
-		const node = ir.expressionList.not({
-			tail: {
-				$type: TSKindId.ExpressionListExpressions,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_expression: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-			} as any,
-			expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		});
-		expect(node.$type).toBe(TSKindId.ExpressionList);
-		expect((node as any).expression()).toBeDefined();
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('boolean builds the parent', () => {
-		const node = ir.expressionList.boolean({
-			tail: {
-				$type: TSKindId.ExpressionListExpressions,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_expression: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-			} as any,
-			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			operator: 'and',
-			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		});
-		expect(node.$type).toBe(TSKindId.ExpressionList);
-		expect((node as any).expression()).toBeDefined();
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('lambda builds the parent', () => {
-		const node = ir.expressionList.lambda({
-			tail: {
-				$type: TSKindId.ExpressionListExpressions,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_expression: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-			} as any,
-			body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		});
-		expect(node.$type).toBe(TSKindId.ExpressionList);
-		expect((node as any).expression()).toBeDefined();
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('conditional builds the parent', () => {
-		const node = ir.expressionList.conditional({
-			tail: {
-				$type: TSKindId.ExpressionListExpressions,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_expression: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-			} as any,
-			body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			condition: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			alternative: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		});
-		expect(node.$type).toBe(TSKindId.ExpressionList);
-		expect((node as any).expression()).toBeDefined();
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('named builds the parent', () => {
-		const node = ir.expressionList.named({
-			tail: {
-				$type: TSKindId.ExpressionListExpressions,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_expression: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-			} as any,
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		});
-		expect(node.$type).toBe(TSKindId.ExpressionList);
-		expect((node as any).expression()).toBeDefined();
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('as builds the parent', () => {
-		const node = ir.expressionList.as({
-			tail: {
-				$type: TSKindId.ExpressionListExpressions,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_expression: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-			} as any,
-			expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			alias: {
-				$type: TSKindId.AsPatternTarget,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-			} as any
-		});
-		expect(node.$type).toBe(TSKindId.ExpressionList);
-		expect((node as any).expression()).toBeDefined();
+		const node = ir.expressionList(...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -2707,32 +2558,13 @@ describe('augmented_assignment', () => {
 
 describe('pattern_list', () => {
 	it('factory produces correct type', () => {
-		const node = ir.patternList({
-			pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			tail: {
-				$type: TSKindId.PatternListPatterns,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_pattern: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-			} as any
-		});
+		const node = ir.patternList(...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]);
 		expect(node.$type).toBe(TSKindId.PatternList);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.patternList({
-			pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			tail: {
-				$type: TSKindId.PatternListPatterns,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_pattern: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-			} as any
-		});
-		const rendered = node.$render!();
-		expect(rendered.length).toBeGreaterThan(0);
+		const node = ir.patternList(...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]);
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -3960,22 +3792,6 @@ describe('argument_list_elements', () => {
 	});
 });
 
-describe('expression_list_expressions', () => {
-	it('factory produces correct type', () => {
-		const node = ir.expressionListExpressions(
-			...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-		);
-		expect(node.$type).toBe(TSKindId.ExpressionListExpressions);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.expressionListExpressions(
-			...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-		);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
 describe('list_pattern_case_patterns', () => {
 	it('factory produces correct type', () => {
 		const node = ir.listPatternCasePatterns(
@@ -4077,22 +3893,6 @@ describe('dict_pattern_elements', () => {
 					} as any
 				} as any
 			]
-		);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('pattern_list_patterns', () => {
-	it('factory produces correct type', () => {
-		const node = ir.patternListPatterns(
-			...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-		);
-		expect(node.$type).toBe(TSKindId.PatternListPatterns);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.patternListPatterns(
-			...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 		);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});

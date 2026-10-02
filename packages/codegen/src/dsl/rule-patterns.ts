@@ -923,10 +923,102 @@ export function separatedListElementName<P extends PhaseName>(rule: Rule<P>): st
 	return null;
 }
 
+type RuleStep = number | 'content';
+
+interface TerminatedList<P extends PhaseName> {
+	element: Rule<P>;
+	separator: Rule<P>;
+	elementSites: RuleStep[][];
+}
+
+function sameListElement<P extends PhaseName>(a: Rule<P>, b: Rule<P>): boolean {
+	const name = separatedListElementName(a);
+	return (name !== null && name === separatedListElementName(b)) || ruleKey(a as RuntimeRule) === ruleKey(b as RuntimeRule);
+}
+
+function membersOf<P extends PhaseName>(rule: Rule<P>): Rule<P>[] {
+	const members = (rule as unknown as { members?: Rule<P>[] }).members;
+	return Array.isArray(members) ? members : [];
+}
+
+function separatorPairOfRepeat<P extends PhaseName>(rule: Rule<P>, symbols: SymbolSource) {
+	if (!isRepeatType((rule as { type?: string }).type)) return null;
+	const content = (rule as { content?: RuntimeRule }).content;
+	const pair = content ? separatorOf(content, symbols) : null;
+	return pair === null ? null : { ...pair, elementStep: membersOf(content as Rule<P>).indexOf(pair.content as Rule<P>) };
+}
+
+function optionalStepOf<P extends PhaseName>(rule: Rule<P>): { content: Rule<P>; step: RuleStep } | undefined {
+	const content = optionalContentOf(rule);
+	if (content === undefined) return undefined;
+	return { content, step: rule.type === OPTIONAL ? 'content' : membersOf(rule).indexOf(content) };
+}
+
+function suffixTerminatedList<P extends PhaseName>(members: Rule<P>[], symbols: SymbolSource): TerminatedList<P> | null {
+	if (members.length !== 3) return null;
+	const [head, repeat, tail] = members as [Rule<P>, Rule<P>, Rule<P>];
+	const headPair = separatorOf(head as RuntimeRule, symbols);
+	const pair = separatorPairOfRepeat(repeat, symbols);
+	const last = optionalStepOf(tail);
+	if (headPair?.trailing !== true || pair?.trailing !== true || last === undefined) return null;
+	const element = pair.content as Rule<P>;
+	if (!rulesEqual(headPair.separator, pair.separator)) return null;
+	if (!sameListElement(headPair.content as Rule<P>, element) || !sameListElement(last.content, element)) return null;
+	return {
+		element,
+		separator: pair.separator as Rule<P>,
+		elementSites: [[0, membersOf(head).indexOf(headPair.content as Rule<P>)], [1, 'content', pair.elementStep], [2, last.step]]
+	};
+}
+
+function choiceTerminatedList<P extends PhaseName>(members: Rule<P>[], symbols: SymbolSource): TerminatedList<P> | null {
+	if (members.length !== 2) return null;
+	const [head, rest] = members as [Rule<P>, Rule<P>];
+	const arms = membersOf(rest);
+	if (!isChoiceType((rest as { type?: string }).type) || arms.length !== 2) return null;
+	const moreAt = arms.findIndex((arm) => isSeqType((arm as { type?: string }).type));
+	if (moreAt === -1) return null;
+	const more = membersOf(arms[moreAt]!);
+	if (more.length !== 2 || !typeEq((more[0] as { type?: string }).type, 'REPEAT1')) return null;
+	const pair = separatorPairOfRepeat(more[0]!, symbols);
+	const flank = optionalContentOf(more[1]!);
+	if (pair === null || pair.trailing === true || flank === undefined) return null;
+	const element = pair.content as Rule<P>;
+	if (!rulesEqual(flank as RuntimeRule, pair.separator) || !rulesEqual(arms[1 - moreAt] as RuntimeRule, pair.separator)) return null;
+	if (!sameListElement(head, element)) return null;
+	return { element, separator: pair.separator as Rule<P>, elementSites: [[0], [1, moreAt, 0, 'content', pair.elementStep]] };
+}
+
+function terminatedListOf<P extends PhaseName>(body: Rule<P>, symbols: SymbolSource): TerminatedList<P> | null {
+	if (!isSeqType((body as { type?: string }).type)) return null;
+	const members = membersOf(body);
+	return suffixTerminatedList(members, symbols) ?? choiceTerminatedList(members, symbols);
+}
+
+function mapRuleAt<P extends PhaseName>(rule: Rule<P>, path: readonly RuleStep[], fn: (site: Rule<P>) => Rule<P>): Rule<P> {
+	const [step, ...rest] = path;
+	if (step === undefined) return fn(rule);
+	if (step === 'content') {
+		return { ...rule, content: mapRuleAt((rule as unknown as { content: Rule<P> }).content, rest, fn) } as Rule<P>;
+	}
+	const members = membersOf(rule).slice();
+	members[step] = mapRuleAt(members[step]!, rest, fn);
+	return { ...rule, members } as Rule<P>;
+}
+
+export function mapTerminatedListElements<P extends PhaseName>(
+	body: Rule<P>,
+	symbols: SymbolSource,
+	fn: (element: Rule<P>) => Rule<P>
+): Rule<P> | null {
+	const list = terminatedListOf(body, symbols);
+	return list === null ? null : list.elementSites.reduce((rule, site) => mapRuleAt(rule, site, fn), body);
+}
+
 export interface SeparatedListBodyInfo<P extends PhaseName = 'normalize'> {
 	elementName: string | null;
 	flankCarrying: boolean;
-	form: 'head' | 'leading' | 'tail';
+	form: 'head' | 'leading' | 'tail' | 'terminated';
 	element: Rule<P>;
 	separatorRule: Rule<P>;
 	flatMembers: Rule<P>[];
@@ -936,6 +1028,18 @@ export function separatedListBodyInfo<P extends PhaseName>(body: Rule<P>, symbol
 	if (!isSeqType((body as { type?: string }).type)) return null;
 	const members = (body as unknown as { members?: Rule<P>[] }).members;
 	if (!Array.isArray(members) || members.length === 0) return null;
+
+	const terminated = terminatedListOf(body, symbols);
+	if (terminated !== null) {
+		return {
+			elementName: separatedListElementName(terminated.element),
+			flankCarrying: true,
+			form: 'terminated' as const,
+			element: terminated.element,
+			separatorRule: terminated.separator,
+			flatMembers: members
+		};
+	}
 
 	const separatorRepeatOf = (m: Rule<P>) => {
 		if (!isRepeatType((m as { type?: string }).type)) return null;
@@ -985,9 +1089,7 @@ export function separatedListBodyInfo<P extends PhaseName>(body: Rule<P>, symbol
 			};
 		}
 		const head = members[repeatIdx - 1]!;
-		if (separatedListElementName(head) !== elementName || elementName === null) {
-			if (ruleKey(head as RuntimeRule) !== ruleKey(detected.content as RuntimeRule)) return null;
-		}
+		if (!sameListElement(head, detected.content as Rule<P>)) return null;
 		let flankCarrying = separatorIsChoice;
 		for (const [i, m] of members.entries()) {
 			if (i === repeatIdx || i === repeatIdx - 1) continue;
@@ -1021,8 +1123,7 @@ export function separatedListBodyInfo<P extends PhaseName>(body: Rule<P>, symbol
 	if (repeatIdx !== 0 || members.length !== 2) return null;
 	const tail = optionalContentOf(members[1]!);
 	if (tail === undefined) return null;
-	if (elementName !== null && separatedListElementName(tail) !== elementName) return null;
-	if (elementName === null && ruleKey(tail as RuntimeRule) !== ruleKey(detected.content as RuntimeRule)) return null;
+	if (!sameListElement(tail, detected.content as Rule<P>)) return null;
 	return {
 		elementName,
 		flankCarrying: true,

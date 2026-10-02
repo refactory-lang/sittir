@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { separatorOf, rulesEqual } from '../rule-patterns.ts';
+import { mapTerminatedListElements, separatedListBodyInfo, separatorOf, rulesEqual } from '../rule-patterns.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
 
 const symbols = predictedSymbolSourceOf({
@@ -164,5 +164,58 @@ describe('rulesEqual handles previously-unhandled rule shapes (no false-negative
 		expect(rulesEqual(base as never, diffValue as never)).toBe(false);
 		expect(rulesEqual(base as never, diffNamed as never)).toBe(false);
 		expect(rulesEqual(base as never, diffContent as never)).toBe(false);
+	});
+});
+
+describe('a separated list whose first element carries a required separator', () => {
+	const sym = (name: string) => ({ type: 'SYMBOL', name });
+	const str = (value: string) => ({ type: 'STRING', value });
+	const seq = (...members: unknown[]) => ({ type: 'SEQ', members });
+	const optional = (content: unknown) => ({ type: 'CHOICE', members: [content, { type: 'BLANK' }] });
+	const suffix = seq(seq(sym('item'), str(',')), { type: 'REPEAT', content: seq(sym('item'), str(',')) }, optional(sym('item')));
+	const choice = seq(sym('item'), {
+		type: 'CHOICE',
+		members: [str(','), seq({ type: 'REPEAT1', content: seq(str(','), sym('item')) }, optional(str(',')))]
+	});
+	const field = (rule: unknown) => ({ type: 'FIELD', name: 'item', content: rule });
+
+	it.each([
+		['the suffix spelling', suffix],
+		['the choice spelling', choice]
+	])('reads %s as the terminated form', (_name, body) => {
+		const info = separatedListBodyInfo(body as never, symbols);
+		expect(info).toMatchObject({ form: 'terminated', flankCarrying: true, elementName: 'item', element: sym('item'), separatorRule: str(',') });
+		expect(info!.flatMembers).toBe((body as { members: unknown[] }).members);
+	});
+
+	it('rewrites every element of the suffix spelling and nothing else', () => {
+		expect(mapTerminatedListElements(suffix as never, symbols, field as never)).toEqual(
+			seq(seq(field(sym('item')), str(',')), { type: 'REPEAT', content: seq(field(sym('item')), str(',')) }, optional(field(sym('item'))))
+		);
+	});
+
+	it('rewrites every element of the choice spelling and nothing else', () => {
+		expect(mapTerminatedListElements(choice as never, symbols, field as never)).toEqual(
+			seq(field(sym('item')), {
+				type: 'CHOICE',
+				members: [str(','), seq({ type: 'REPEAT1', content: seq(str(','), field(sym('item'))) }, optional(str(',')))]
+			})
+		);
+	});
+
+	it('still reads a list whose elements are partly fielded', () => {
+		const partly = seq(seq(field(sym('item')), str(',')), { type: 'REPEAT', content: seq(sym('item'), str(',')) }, optional(sym('item')));
+		expect(separatedListBodyInfo(partly as never, symbols)?.form).toBe('terminated');
+	});
+
+	it('is not the form when the first element has no separator of its own', () => {
+		const tailForm = seq({ type: 'REPEAT', content: seq(sym('item'), str(',')) }, optional(sym('item')));
+		expect(separatedListBodyInfo(tailForm as never, symbols)?.form).toBe('tail');
+		expect(mapTerminatedListElements(tailForm as never, symbols, field as never)).toBeNull();
+	});
+
+	it('is not the form when the separators differ', () => {
+		const mixed = seq(seq(sym('item'), str(';')), { type: 'REPEAT', content: seq(sym('item'), str(',')) }, optional(sym('item')));
+		expect(separatedListBodyInfo(mixed as never, symbols)).toBeNull();
 	});
 });

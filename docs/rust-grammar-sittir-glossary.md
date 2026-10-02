@@ -669,13 +669,27 @@ is an anonymous token not routed to any field.
 				// try_expression: 2 field(s)
 ```
 
-### `tuple_expression` (`packages/rust/grammar.sittir.ts:740`)
+### `tuple_expression` (`packages/rust/grammar.sittir.ts`)
 
-```text
-				// tuple_expression: flat list of expressions comma-separated.
-				// Kind-match labels every `_expression` as `elements` without
-				// capturing the `,` separators (same pattern as array_expression).
-```
+Upstream writes the element list inline, with a separator required after the
+first element: `seq(_expression, ','), repeat(seq(_expression, ',')),
+optional(_expression)`. That separator is what makes `(1,)` a tuple and `(1)` a
+parenthesized expression. Enrich reads the run as a `terminated` separated
+list and hoists it as its own kind, and link lifts it to one repeat whose
+single element keeps its separator; nothing about the list is authored.
+
+Two `patches:` entries are authored, and both are naming only:
+
+- `tuple_expression: { 1: field('attributes'), 2: alias('tuple_expression_elements') }`.
+  The alias names the hoisted list kind. Left to derive, the kind would be
+  `expressions`: the plural of the element's name, which no other rust list
+  proposes. `attributes` fields the attribute repeat, which the
+  `tuple_expression/attributes:/separator` option site names.
+- `_tuple_expression_elements: { '0/0', '1/0/0', '2/0': field('element') }`.
+  The three element positions of the hoisted rule. Left to derive, the field
+  would be `expression` and the slot `expressions`.
+
+Deleting both entries leaves a working grammar with the derived names.
 
 ### `tuple_type` (`packages/rust/grammar.sittir.ts:748`)
 
@@ -951,9 +965,6 @@ generation; the floor only shrinks.
 
 - `tuple_type` (declared `'alias-shape'`, unverified: no detector): without it the visible `tuple_type_elements`
   kind becomes an enrich-minted `types`. missing detector: 'alias-shape' ← an alias spanning part of a seq, or a restructure that changes the parse.
-- `tuple_expression` (declared `'alias-shape'`, unverified: no detector): kept: `options:` is coupled to the
-  re-authored shape (`tuple_expression/attributes:/separator` names no site
-  without it). missing detector: 'alias-shape' ← an alias spanning part of a seq, or a restructure that changes the parse.
 - `_non_special_token` (declared `'alias-shape'`, unverified: no detector): kept: `options:` is coupled to the
   re-authored shape (`token_tree_punctuation/","/after` names no site without
   it). missing detector: 'alias-shape' ← an alias spanning part of a seq, or a restructure that changes the parse.

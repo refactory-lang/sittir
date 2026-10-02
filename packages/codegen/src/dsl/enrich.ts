@@ -44,6 +44,7 @@ import {
 	optionalSeqBodyOf,
 	listSeparatorOfOptionalSeq,
 	optionalStringLiteral,
+	mapTerminatedListElements,
 	separatedListBodyInfo,
 	separatedListElementName,
 	armLeadingSymbolName,
@@ -201,7 +202,7 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 	}
 	synthesizeFieldEnumRules(mergedRules, ruleOrigins);
 	const elementSupertypes = [...ruleOrigins].flatMap(([name, origin]) => (origin.kind === 'element-supertype' && name in mergedRules ? [name] : []));
-	const automaticVariants = stampAutomaticVariants(mergedRules, new Set([...supertypeNames, ...elementSupertypes]), inlineNames, new Set(elementSupertypes));
+	const automaticVariants = stampAutomaticVariants(mergedRules, new Set([...supertypeNames, ...elementSupertypes]), inlineNames, new Set(elementSupertypes), ctx.sourceSymbols);
 	const textTokens = mintInlineTextTokens(mergedRules, { symbol: nativeRuleFn<(name: string) => Rule>('sym'), namingRules: baseRules });
 	Object.assign(mergedRules, textTokens.rules);
 	for (const name of textTokens.mintedNames) ruleOrigins.set(name, { kind: 'text', owners: textTokens.owners[name]! });
@@ -750,6 +751,22 @@ function separatedListTail(members: readonly Rule[], i: number, symbols: SymbolS
 	return { repeatCursor, inner, innerElement, outerPrecStack, innerPrecStack };
 }
 
+function fieldTerminatedListElements(
+	seqRule: Rule,
+	info: SeparatedListBodyInfo,
+	reserve: (base: string) => string,
+	symbols: SymbolSource,
+	ruleOrigins: ReadonlyMap<string, EnrichRuleOrigin>
+): Rule | null {
+	const sites: Rule[] = [];
+	mapTerminatedListElements(seqRule, symbols, (site) => (sites.push(site), site));
+	const unfielded = sites.filter((site) => !isFieldType((site as { type: string }).type));
+	if (unfielded.length === 0) return null;
+	const fielded = sites.find((site) => isFieldType((site as { type: string }).type)) as { name?: string } | undefined;
+	const fieldName = fielded?.name ?? reserve(elementSlotName(info.element, true, ruleOrigins));
+	return mapTerminatedListElements(seqRule, symbols, (site) => (unfielded.includes(site) ? makeField(fieldName, site) : site));
+}
+
 function fieldSeparatedListElements(
 	seqRule: Rule,
 	reserve: (base: string) => string,
@@ -758,6 +775,8 @@ function fieldSeparatedListElements(
 ): Rule | null {
 	const members = (seqRule as unknown as { members?: Rule[] }).members;
 	if (!Array.isArray(members)) return null;
+	const info = separatedListBodyInfo(seqRule, symbols);
+	if (info?.form === 'terminated') return fieldTerminatedListElements(seqRule, info, reserve, symbols, ruleOrigins);
 	for (let i = 0; i < members.length - 1; i++) {
 		const leading = members[i]!;
 		if (isFieldType((leading as { type: string }).type)) continue;
@@ -1830,6 +1849,7 @@ function applyClauseHoist(
 	if (isSeqType(rule.type)) {
 		const rawMembers = (rule as unknown as { members?: Rule[] }).members;
 		if (!Array.isArray(rawMembers)) return rule;
+		if (separatedListBodyInfo(rule, ctx.sourceSymbols)?.form === 'terminated') return rule;
 		const absorbed = absorbTrailingListSeparators(rawMembers, ctx.sourceSymbols);
 		const members = absorbed ?? rawMembers;
 		let changed = absorbed !== null;

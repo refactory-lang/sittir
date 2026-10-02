@@ -883,6 +883,45 @@ describe('liftSeparators lifts a choice-of-literals separator without a diagnost
 	});
 });
 
+describe('liftSeparators: a list whose first element carries a required separator', () => {
+	const ctx = (): LinkCtx =>
+		new LinkCtx({
+			grammar: makeRaw({}),
+			diagnostics: new DiagnosticSink(),
+			supertypes: new Set(),
+			externalRoles: new Map(),
+			derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
+			applyPromotedRules: true,
+			hiddenNamedArmChoices: new Set()
+		});
+	const item: Rule<'link'> = { type: FIELD, name: 'item', content: { type: SYMBOL, name: 'item' } } as Rule<'link'>;
+	const comma: Rule<'link'> = { type: STRING, value: ',' };
+	const seqOf = (...members: Rule<'link'>[]): Rule<'link'> => ({ type: SEQ, members }) as Rule<'link'>;
+	const terminated = {
+		type: SEQ,
+		members: [{ type: REPEAT1, content: item, separator: { value: comma, trailing: 'optional', terminated: true } }]
+	};
+
+	it('lifts the suffix spelling to one terminated repeat', () => {
+		const rule = seqOf(seqOf(item, comma), { type: REPEAT, content: seqOf(item, comma) }, { type: OPTIONAL, content: item });
+		expect(liftSeparators(rule, ctx())).toEqual(terminated);
+	});
+
+	it('lifts the choice spelling to the same repeat', () => {
+		const more = seqOf({ type: REPEAT1, content: seqOf(comma, item) }, { type: OPTIONAL, content: comma });
+		const rule = seqOf(item, { type: CHOICE, members: [comma, more] });
+		expect(liftSeparators(rule, ctx())).toEqual(terminated);
+	});
+
+	it('does not mark the list terminated when no first element stands before the repeat', () => {
+		const rule = seqOf({ type: REPEAT, content: seqOf(item, comma) }, { type: OPTIONAL, content: item });
+		expect(liftSeparators(rule, ctx())).toEqual({
+			type: SEQ,
+			members: [{ type: REPEAT, content: item, separator: { value: comma, trailing: 'optional', leading: undefined } }]
+		});
+	});
+});
+
 describe('liftSeparators \u2014 flank absorption widened to structural rulesEqual', () => {
 	function makeCtx(): LinkCtx {
 		return new LinkCtx({

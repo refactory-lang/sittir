@@ -1,7 +1,7 @@
 {
   "name": "python",
   "root": "module",
-  "nodeCount": 307,
+  "nodeCount": 305,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -882,15 +882,8 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "tail": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
+        "multiple": true,
+        "nonEmpty": true
       }
     },
     "dotted_name": {
@@ -1304,15 +1297,8 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "tail": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
+        "multiple": true,
+        "nonEmpty": true
       }
     },
     "yield": {
@@ -1864,15 +1850,6 @@
         "nonEmpty": true
       }
     },
-    "expression_list_expressions": {
-      "expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      }
-    },
     "list_pattern_case_patterns": {
       "case_pattern": {
         "unnamed": false,
@@ -1884,15 +1861,6 @@
     },
     "dict_pattern_elements": {
       "element": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      }
-    },
-    "pattern_list_patterns": {
-      "pattern": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -7842,78 +7810,14 @@
     },
     {
       "kind": "expression_list",
-      "modelType": "branch",
+      "modelType": "list",
       "typeName": "ExpressionList",
       "factoryName": "expressionList",
       "irKey": "expressionList",
       "hidden": false,
-      "slots": [
-        {
-          "name": "expression",
-          "propertyName": "expression",
-          "paramName": "expression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "mixedEnum",
-          "kinds": [
-            "expression"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "expression",
-              "parseKind": "expression"
-            }
-          ]
-        },
-        {
-          "name": "tail",
-          "propertyName": "tail",
-          "paramName": "tail",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "mixedEnum",
-          "kinds": [
-            "expression_list_expressions"
-          ],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": ",",
-              "parseKind": "comma"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "expression_list_expressions",
-              "parseKind": "expression_list_expressions"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "config",
-      "factoryFields": [
-        "expression",
-        "tail"
-      ]
-    },
-    {
-      "kind": "expression_list_expressions",
-      "modelType": "list",
-      "typeName": "ExpressionListExpressions",
-      "factoryName": "expressionListExpressions",
-      "irKey": "expressionListExpressions",
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingDelimiter": "mandatory",
+      "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
@@ -12624,78 +12528,14 @@
     },
     {
       "kind": "pattern_list",
-      "modelType": "branch",
+      "modelType": "list",
       "typeName": "PatternList",
       "factoryName": "patternList",
       "irKey": "patternList",
       "hidden": false,
-      "slots": [
-        {
-          "name": "pattern",
-          "propertyName": "pattern",
-          "paramName": "pattern",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "pattern"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "pattern",
-              "parseKind": "pattern"
-            }
-          ]
-        },
-        {
-          "name": "tail",
-          "propertyName": "tail",
-          "paramName": "tail",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "mixedEnum",
-          "kinds": [
-            "pattern_list_patterns"
-          ],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": ",",
-              "parseKind": "comma"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "pattern_list_patterns",
-              "parseKind": "pattern_list_patterns"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "config",
-      "factoryFields": [
-        "pattern",
-        "tail"
-      ]
-    },
-    {
-      "kind": "pattern_list_patterns",
-      "modelType": "list",
-      "typeName": "PatternListPatterns",
-      "factoryName": "patternListPatterns",
-      "irKey": "patternListPatterns",
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingDelimiter": "mandatory",
+      "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
