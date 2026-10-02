@@ -1,13 +1,13 @@
 {
   "grammar": "python",
-  "source_hash": "27238e0eb6937ec0e519791968c3186a4508c7e9c61783aa2f6cfdaedf331cd2",
+  "source_hash": "6150842b05b239f8ec6edc9568f2813df7c73c65211b027980cebd0c42979269",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "79e843a7af65f2872c099bbca68def0c9e537ef798b567449e225c3b975449e5",
     "packages/python/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
     "packages/python/.sittir/package.json": "331b54ae14798c93455c20f9c35e3a3bf78f63e1acb5810b3d8e014a2767860f",
     "packages/python/.sittir/parser.wasm": "8fb125349aafe09f1ae98a20627e5a866333df1fb40c6eac75b0ee2cc6c706a5",
     "packages/python/.sittir/render-bodies.json": "c42911325e7c3a9a5adc6c8575351facd0aca4e829342cbd409d51a7bac5ce38",
-    "packages/python/.sittir/resolutions.json": "9a7bb1363dd785a710a11474d1b1809f3599643720c5b5c63a10d3bee958217e",
+    "packages/python/.sittir/resolutions.json": "0c3f463c19261c51dd1a308d150207230f567c70e9267e59ece93531f24d53ae",
     "packages/python/.sittir/src/grammar.json": "dc088cd722c0380183aade227c4d14c822c9793fe2023560f0151df0ec0298b7",
     "packages/python/.sittir/src/node-types.json": "b81f207eedbfea85bbcb311d29b6567fc5adfb9fac860d5fd53f0bab6de382f2",
     "packages/python/.sittir/src/parser.c": "de697713c5453e82e1501dc0437ebb0446301940d35264de47de9b64dcd302b7",
@@ -23,9 +23,9 @@
     "packages/python/src/backend.ts": "9b53033e19957139e72ac323f2f8baa0ddab11ea9bee289f9f4ce9ead1ebe482",
     "packages/python/src/consts.ts": "73464b02111fe561753e1ac4856dd6d8251a21ad6b1655f89689e45dbbcc9c5e",
     "packages/python/src/factories/bundle.ts": "71830cb98a5c3487e52d99ff8455d13ede02a7a8a8d8d62ef6a5a4ccef3a5496",
-    "packages/python/src/factories/coerce.ts": "7fa6b77632545b64a058bdf014c05c1ce02d43994c68242e5a78c08fc10eef15",
+    "packages/python/src/factories/coerce.ts": "6965247b9b7041b668a407e84e6bbc85f67babd555e04cbec19dfa60f0f740ae",
     "packages/python/src/factories/index.ts": "7f6f7c3638bed81f862665ce4d7831a2f7fa38d17ccd88b836820d76dc34312e",
-    "packages/python/src/factories/overlays/polymorphs.ts": "7665116cad34f942ebd1d77a1dbfa37607dab4e31160d4a02e9d293dfcefda98",
+    "packages/python/src/factories/overlays/polymorphs.ts": "5a5d591f04091370a2b64773d4775b96cacc06606afe37ec1d4e7d7828c6f03f",
     "packages/python/src/factories/overlays/refines.ts": "37f8a0f79f435a13a3261d39196ce8132ef459b4934501fbd452d65e7b9abdf0",
     "packages/python/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
     "packages/python/src/factories/raw.ts": "2c65256e9bda1a68b46c8da602130618d04b793f2a19b5827f3ae86cc7abb98a",
@@ -37,7 +37,7 @@
     "packages/python/src/options.ts": "623cd2eb223bbf9c1cedbf47776494114ffe42251498ade12fdeb9e3a0b3b354",
     "packages/python/src/render-engine.ts": "04047099abb54ca46cb629ec5c477a41f8932c0487c89205eb4e1544f779dbd3",
     "packages/python/src/types-internal.ts": "5882ac994fddd6d6991ea0dcf2848a6858a8f42c477ddfc6989cecf1bd184e97",
-    "packages/python/src/types.ts": "0fd9ee3441da5faa168474d844536df423d2da453f5275f910b33691a3a2e568",
+    "packages/python/src/types.ts": "f182cc978006b246763625ec23802b522295717bb08658ba5fb2764d283b0483",
     "packages/python/src/utils.ts": "98b8454fb2074507643f7e26a46cfbe06217749d03fd6403515bbc3feffe24cb",
     "packages/python/src/wrap.ts": "8130ebcbdca25e85364c78f03c8684f78625b80b7b79e9445d190b61bf57fbdb",
     "rust/crates/sittir-python/src/lib.rs": "5331823fb44c545c403bfc467ecd1a948bc840cc48c512b4f41cd28c4db104cc",
@@ -46,9 +46,5 @@
     "rust/crates/sittir-python/src/render/mod.rs": "dfc0341bd2d54b5bcb07095803e9fe77872288f84f839adbf7b032be3a2eb4e6",
     "rust/crates/sittir-python/src/render/options.rs": "9075083943815e1c0d28372333e5d08d1e458764eb8dc6021cd90401f6b1795d",
     "rust/crates/sittir-python/src/render/transport.rs": "c99f6336b6aa659da411e1c04be5bbdc1dc14f49ecbb7832ca1db48764d0ea50"
-  },
-  "host_files": {
-    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "freshness-checked",
-    "packages/python/native/sittir-python.darwin-arm64.node": "freshness-checked"
   }
 }

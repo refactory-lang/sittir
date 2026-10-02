@@ -1,3 +1,4 @@
+import { collectPolymorphWires, seatedRowsOf, type PolymorphWires } from './overlays/polymorphs.ts';
 import { findOwnKindEntry, modelKindOfEntry } from '../dsl/symbol-table.ts';
 import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
@@ -118,6 +119,7 @@ export interface EmitTypesConfig {
 	sites?: readonly SitePreference[];
 	addresses?: AddressTables;
 	triviaKinds?: readonly string[];
+	wires?: PolymorphWires;
 }
 
 const missingKindTypes = new Map<string, string>();
@@ -368,6 +370,7 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	lines.push('// <TypeName>.Config / .Bound / .Parsed / .Loose alongside using <TypeName> as a type.');
 	const refineInfoByKind = new Map<string, RefineKindInfo>();
 	for (const info of refineInfos ?? []) refineInfoByKind.set(info.kind, info);
+	const wires = config.wires ?? collectPolymorphWires(nodeMap, generatedIdTables, { silent: true });
 	for (const kind of namespaceKinds) {
 		const node = nodeMap.nodes.get(kind)!;
 		emitNamespaceSugarBlock(
@@ -377,7 +380,8 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 			refineInfoByKind.get(kind),
 			kindDiscriminantOrLiteral(kind, nodeMap, kindEntries),
 			nodeMap,
-			kindEntries
+			kindEntries,
+			wires
 		);
 	}
 	for (const kind of [...keywordNamespaceKinds, ...leafNamespaceKinds]) {
@@ -476,6 +480,9 @@ const VOCABULARY_IMPORTS = [
 	'KindEnum',
 	'NodeOfNamespaces',
 	'OmitEach',
+	'NoneOf',
+	'WithoutGroup',
+	'RenameKeys',
 	'GrammarTypeMap',
 	'NodeMethods',
 	'TriviaSetter',
@@ -1298,7 +1305,8 @@ function emitNamespaceSugarBlock(
 	refineInfo: RefineKindInfo | undefined,
 	nsKey: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	wires: PolymorphWires
 ): void {
 	lines.push(`export namespace ${node.typeName} {`);
 	if (refineInfo && refineInfo.forms.length > 0) {
@@ -1332,8 +1340,9 @@ function emitNamespaceSugarBlock(
 	lines.push(`  export type Loose = ${omitRegistered(`LooseFor<${nsKey}>`, node)}${looseWidened}${bareText}${bareShape === undefined ? '' : ` | ${numberInputType(bareShape)}`};`);
 	lines.push(`  export type LooseConfig = ${widenedLooseConfig};`);
 	if (surface !== undefined) {
-		lines.push(`  export type BuildArgs = ${surface.buildArgs};`);
-		lines.push(`  export type LooseArgs = ${surface.looseArgs};`);
+		const rows = seatedRowsOf(node, wires, surface) ?? surface;
+		lines.push(`  export type BuildArgs = ${rows.buildArgs};`);
+		lines.push(`  export type LooseArgs = ${rows.looseArgs};`);
 	} else {
 		lines.push(`  export type BuildArgs = BuildArgsFor<${nsKey}>;`);
 		lines.push(`  export type LooseArgs = LooseArgsFor<${nsKey}>;`);

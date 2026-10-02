@@ -6,7 +6,7 @@ import { lexedConfig, numberText, spelledForm, spelledInterior } from '@sittir/c
 import type * as T from '../types-internal.js';
 import { TSKindId, KIND_NAMES } from '../types.js';
 import { Delimiter } from '@sittir/common/utils';
-import type { AnyUntypedNode, LooseValue, NonEmptyArray, SpelledAffix, WithSpelling } from '@sittir/types';
+import type { AnyUntypedNode, NonEmptyArray, SpelledAffix, WithSpelling } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind } from '@sittir/common/utils';
 import { isNode } from '../utils.js';
 
@@ -3506,22 +3506,8 @@ export function coerceToLabeledStatement(input: T.LabeledStatement.Loose): Retur
 }
 
 export function coerceToSwitchBody(): T.EmptySwitchBody;
-export function coerceToSwitchBody(
-	...input: [
-		...elements: (
-			| T.SwitchBody.Loose
-			| LooseValue<T.SwitchCase | T.SwitchDefault, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	]
-): ReturnType<typeof F.buildSwitchBody>;
-export function coerceToSwitchBody(
-	...input: [
-		...elements: (
-			| T.SwitchBody.Loose
-			| LooseValue<T.SwitchCase | T.SwitchDefault, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	]
-): ReturnType<typeof F.buildSwitchBody> {
+export function coerceToSwitchBody(...input: T.SwitchBody.LooseArgs): ReturnType<typeof F.buildSwitchBody>;
+export function coerceToSwitchBody(...input: T.SwitchBody.LooseArgs): ReturnType<typeof F.buildSwitchBody> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.SwitchBody)) {
 		const data = input[0];
 		const stored = (data as unknown as { _cases?: unknown })._cases;
@@ -3568,11 +3554,7 @@ export function coerceToSwitchCase(input: T.SwitchCase.Loose): ReturnType<typeof
 	});
 }
 
-export function coerceToSwitchDefault(
-	...input: [
-		...elements: (T.SwitchDefault.Loose | LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
-	]
-): ReturnType<typeof F.buildSwitchDefault> {
+export function coerceToSwitchDefault(...input: T.SwitchDefault.LooseArgs): ReturnType<typeof F.buildSwitchDefault> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.SwitchDefault)) {
 		const data = input[0];
 		const stored = (data as unknown as { _body?: unknown })._body;
@@ -3664,82 +3646,8 @@ export function coerceToYieldExpression(input?: T.YieldExpression.Loose): Return
 }
 
 export function coerceToObject(): T.EmptyObject;
-export function coerceToObject(
-	...input: [
-		...elements: (
-			| T.Object.Loose
-			| LooseValue<
-					| T.Pair
-					| T.SpreadElement
-					| T.MethodDefinition
-					| T.ShorthandPropertyIdentifier
-					| 'declare'
-					| 'namespace'
-					| 'type'
-					| 'public'
-					| 'private'
-					| 'protected'
-					| 'override'
-					| 'readonly'
-					| 'module'
-					| 'any'
-					| 'number'
-					| 'boolean'
-					| 'string'
-					| 'symbol'
-					| 'export'
-					| 'object'
-					| 'new'
-					| 'get'
-					| 'set'
-					| 'async'
-					| 'static'
-					| 'let',
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-			  >
-		)[]
-	]
-): ReturnType<typeof F.buildObject>;
-export function coerceToObject(
-	...input: [
-		...elements: (
-			| T.Object.Loose
-			| LooseValue<
-					| T.Pair
-					| T.SpreadElement
-					| T.MethodDefinition
-					| T.ShorthandPropertyIdentifier
-					| 'declare'
-					| 'namespace'
-					| 'type'
-					| 'public'
-					| 'private'
-					| 'protected'
-					| 'override'
-					| 'readonly'
-					| 'module'
-					| 'any'
-					| 'number'
-					| 'boolean'
-					| 'string'
-					| 'symbol'
-					| 'export'
-					| 'object'
-					| 'new'
-					| 'get'
-					| 'set'
-					| 'async'
-					| 'static'
-					| 'let',
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-			  >
-		)[]
-	]
-): ReturnType<typeof F.buildObject> {
+export function coerceToObject(...input: T.Object.LooseArgs): ReturnType<typeof F.buildObject>;
+export function coerceToObject(...input: T.Object.LooseArgs): ReturnType<typeof F.buildObject> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Object)) {
 		const data = input[0];
 		const stored = (data as unknown as { _properties?: unknown })._properties;
@@ -3929,82 +3837,8 @@ export function coerceToObject(
 }
 
 export function coerceToObjectPattern(): T.EmptyObjectPattern;
-export function coerceToObjectPattern(
-	...input: [
-		...elements: (
-			| T.ObjectPattern.Loose
-			| LooseValue<
-					| T.PairPattern
-					| T.RestPattern
-					| T.ObjectAssignmentPattern
-					| T.ShorthandPropertyIdentifierPattern
-					| 'declare'
-					| 'namespace'
-					| 'type'
-					| 'public'
-					| 'private'
-					| 'protected'
-					| 'override'
-					| 'readonly'
-					| 'module'
-					| 'any'
-					| 'number'
-					| 'boolean'
-					| 'string'
-					| 'symbol'
-					| 'export'
-					| 'object'
-					| 'new'
-					| 'get'
-					| 'set'
-					| 'async'
-					| 'static'
-					| 'let',
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-			  >
-		)[]
-	]
-): ReturnType<typeof F.buildObjectPattern>;
-export function coerceToObjectPattern(
-	...input: [
-		...elements: (
-			| T.ObjectPattern.Loose
-			| LooseValue<
-					| T.PairPattern
-					| T.RestPattern
-					| T.ObjectAssignmentPattern
-					| T.ShorthandPropertyIdentifierPattern
-					| 'declare'
-					| 'namespace'
-					| 'type'
-					| 'public'
-					| 'private'
-					| 'protected'
-					| 'override'
-					| 'readonly'
-					| 'module'
-					| 'any'
-					| 'number'
-					| 'boolean'
-					| 'string'
-					| 'symbol'
-					| 'export'
-					| 'object'
-					| 'new'
-					| 'get'
-					| 'set'
-					| 'async'
-					| 'static'
-					| 'let',
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-			  >
-		)[]
-	]
-): ReturnType<typeof F.buildObjectPattern> {
+export function coerceToObjectPattern(...input: T.ObjectPattern.LooseArgs): ReturnType<typeof F.buildObjectPattern>;
+export function coerceToObjectPattern(...input: T.ObjectPattern.LooseArgs): ReturnType<typeof F.buildObjectPattern> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ObjectPattern)) {
 		const data = input[0];
 		const stored = (data as unknown as { _properties?: unknown })._properties;
@@ -4328,22 +4162,8 @@ export function coerceToObjectAssignmentPattern(
 }
 
 export function coerceToArray(): T.EmptyArray;
-export function coerceToArray(
-	...input: [
-		...elements: (
-			| T.Array.Loose
-			| LooseValue<T.Expression | T.SpreadElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	]
-): ReturnType<typeof F.buildArray>;
-export function coerceToArray(
-	...input: [
-		...elements: (
-			| T.Array.Loose
-			| LooseValue<T.Expression | T.SpreadElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	]
-): ReturnType<typeof F.buildArray> {
+export function coerceToArray(...input: T.Array.LooseArgs): ReturnType<typeof F.buildArray>;
+export function coerceToArray(...input: T.Array.LooseArgs): ReturnType<typeof F.buildArray> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Array)) {
 		const data = input[0];
 		const stored = (data as unknown as { _elements?: unknown })._elements;
@@ -4371,22 +4191,8 @@ export function coerceToArray(
 }
 
 export function coerceToArrayPattern(): T.EmptyArrayPattern;
-export function coerceToArrayPattern(
-	...input: [
-		...elements: (
-			| T.ArrayPattern.Loose
-			| LooseValue<T.Pattern | T.AssignmentPattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	]
-): ReturnType<typeof F.buildArrayPattern>;
-export function coerceToArrayPattern(
-	...input: [
-		...elements: (
-			| T.ArrayPattern.Loose
-			| LooseValue<T.Pattern | T.AssignmentPattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	]
-): ReturnType<typeof F.buildArrayPattern> {
+export function coerceToArrayPattern(...input: T.ArrayPattern.LooseArgs): ReturnType<typeof F.buildArrayPattern>;
+export function coerceToArrayPattern(...input: T.ArrayPattern.LooseArgs): ReturnType<typeof F.buildArrayPattern> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ArrayPattern)) {
 		const data = input[0];
 		const stored = (data as unknown as { _elements?: unknown })._elements;
@@ -5520,12 +5326,7 @@ export function coerceToUnaryExpression(input: T.UnaryExpression.Loose): ReturnT
 }
 
 export function coerceToSequenceExpression(
-	...input: [
-		...elements: (
-			| T.SequenceExpression.Loose
-			| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	]
+	...input: T.SequenceExpression.LooseArgs
 ): ReturnType<typeof F.buildSequenceExpression> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.SequenceExpression)) {
 		const data = input[0];
@@ -5590,19 +5391,7 @@ export function coerceToEscapeSequence(input: T.EscapeSequence.Loose): ReturnTyp
 	);
 }
 
-export function coerceToTemplateString(
-	...input: [
-		...elements: (
-			| T.TemplateString.Loose
-			| LooseValue<
-					T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-			  >
-		)[]
-	]
-): ReturnType<typeof F.buildTemplateString> {
+export function coerceToTemplateString(...input: T.TemplateString.LooseArgs): ReturnType<typeof F.buildTemplateString> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TemplateString)) {
 		const data = input[0];
 		const stored = (data as unknown as { _elements?: unknown })._elements;
@@ -5748,22 +5537,8 @@ export function coerceToUndefined(_input?: T.Undefined.Loose): typeof F.buildUnd
 }
 
 export function coerceToArguments(): T.EmptyArguments;
-export function coerceToArguments(
-	...input: [
-		...elements: (
-			| T.Arguments.Loose
-			| LooseValue<T.Expression | T.SpreadElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	]
-): ReturnType<typeof F.buildArguments>;
-export function coerceToArguments(
-	...input: [
-		...elements: (
-			| T.Arguments.Loose
-			| LooseValue<T.Expression | T.SpreadElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	]
-): ReturnType<typeof F.buildArguments> {
+export function coerceToArguments(...input: T.Arguments.LooseArgs): ReturnType<typeof F.buildArguments>;
+export function coerceToArguments(...input: T.Arguments.LooseArgs): ReturnType<typeof F.buildArguments> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Arguments)) {
 		const data = input[0];
 		const stored = (data as unknown as { _elements?: unknown })._elements;
@@ -5879,16 +5654,8 @@ export function coerceToDecoratorCallExpression(
 }
 
 export function coerceToClassBody(): T.EmptyClassBody;
-export function coerceToClassBody(
-	...input: [
-		...elements: (T.ClassBody.Loose | LooseValue<T.ClassBodyMember, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
-	]
-): ReturnType<typeof F.buildClassBody>;
-export function coerceToClassBody(
-	...input: [
-		...elements: (T.ClassBody.Loose | LooseValue<T.ClassBodyMember, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
-	]
-): ReturnType<typeof F.buildClassBody> {
+export function coerceToClassBody(...input: T.ClassBody.LooseArgs): ReturnType<typeof F.buildClassBody>;
+export function coerceToClassBody(...input: T.ClassBody.LooseArgs): ReturnType<typeof F.buildClassBody> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ClassBody)) {
 		const data = input[0];
 		const stored = (data as unknown as { _members?: unknown })._members;
@@ -7381,14 +7148,7 @@ export function coerceToImportRequireClause(
 	});
 }
 
-export function coerceToExtendsClause(
-	...input: [
-		...elements: (
-			| T.ExtendsClause.Loose
-			| LooseValue<T.ExtendsClauseSingle, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	]
-): ReturnType<typeof F.buildExtendsClause> {
+export function coerceToExtendsClause(...input: T.ExtendsClause.LooseArgs): ReturnType<typeof F.buildExtendsClause> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExtendsClause)) {
 		const data = input[0];
 		const stored = (data as unknown as { _extends_clause_single?: unknown })._extends_clause_single;
@@ -7440,9 +7200,7 @@ export function coerceToExtendsClauseSingle(
 }
 
 export function coerceToImplementsClause(
-	...input: [
-		...elements: (T.ImplementsClause.Loose | LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
-	]
+	...input: T.ImplementsClause.LooseArgs
 ): ReturnType<typeof F.buildImplementsClause> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ImplementsClause)) {
 		const data = input[0];
@@ -7655,17 +7413,7 @@ export function coerceToInterfaceDeclaration(
 }
 
 export function coerceToExtendsTypeClause(
-	...input: [
-		...elements: (
-			| T.ExtendsTypeClause.Loose
-			| LooseValue<
-					T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-			  >
-		)[]
-	]
+	...input: T.ExtendsTypeClause.LooseArgs
 ): ReturnType<typeof F.buildExtendsTypeClause> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExtendsTypeClause)) {
 		const data = input[0];
@@ -8469,12 +8217,7 @@ export function coerceToTemplateType(input: T.TemplateType.Loose): ReturnType<ty
 }
 
 export function coerceToTemplateLiteralType(
-	...input: [
-		...elements: (
-			| T.TemplateLiteralType.Loose
-			| LooseValue<T.TemplateChars | T.TemplateType, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	]
+	...input: T.TemplateLiteralType.LooseArgs
 ): ReturnType<typeof F.buildTemplateLiteralType> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TemplateLiteralType)) {
 		const data = input[0];
@@ -9722,26 +9465,7 @@ export function coerceToFunctionType(input: T.FunctionType.Loose): ReturnType<ty
 }
 
 export function coerceToExportSpecifiers(
-	...input:
-		| [
-				element:
-					| T.ExportSpecifiers.Loose
-					| LooseValue<T.ExportSpecifier | T.Identifier | T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: (
-					| T.ExportSpecifiers.Loose
-					| LooseValue<T.ExportSpecifier | T.Identifier | T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
-		  ]
-		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				element:
-					| T.ExportSpecifiers.Loose
-					| LooseValue<T.ExportSpecifier | T.Identifier | T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: (
-					| T.ExportSpecifiers.Loose
-					| LooseValue<T.ExportSpecifier | T.Identifier | T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
-		  ]
+	...input: T.ExportSpecifiers.LooseArgs
 ): ReturnType<typeof F.buildExportSpecifiers> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExportSpecifiers)) {
 		const data = input[0];
@@ -9770,26 +9494,7 @@ export function coerceToExportSpecifiers(
 }
 
 export function coerceToImportSpecifiers(
-	...input:
-		| [
-				element:
-					| T.ImportSpecifiers.Loose
-					| LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: (
-					| T.ImportSpecifiers.Loose
-					| LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
-		  ]
-		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				element:
-					| T.ImportSpecifiers.Loose
-					| LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: (
-					| T.ImportSpecifiers.Loose
-					| LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
-		  ]
+	...input: T.ImportSpecifiers.LooseArgs
 ): ReturnType<typeof F.buildImportSpecifiers> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ImportSpecifiers)) {
 		const data = input[0];
@@ -9817,26 +9522,7 @@ export function coerceToImportSpecifiers(
 }
 
 export function coerceToFormalParametersElements(
-	...input:
-		| [
-				element:
-					| T.FormalParametersElements.Loose
-					| LooseValue<T.RequiredParameter | T.OptionalParameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: (
-					| T.FormalParametersElements.Loose
-					| LooseValue<T.RequiredParameter | T.OptionalParameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
-		  ]
-		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				element:
-					| T.FormalParametersElements.Loose
-					| LooseValue<T.RequiredParameter | T.OptionalParameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: (
-					| T.FormalParametersElements.Loose
-					| LooseValue<T.RequiredParameter | T.OptionalParameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
-		  ]
+	...input: T.FormalParametersElements.LooseArgs
 ): ReturnType<typeof F.buildFormalParametersElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FormalParametersElements)) {
 		const data = input[0];
@@ -10059,26 +9745,7 @@ export function coerceToEnumBodyElementName(
 }
 
 export function coerceToEnumBodyElements(
-	...input:
-		| [
-				element:
-					| T.EnumBodyElements.Loose
-					| LooseValue<T.EnumBodyElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: (
-					| T.EnumBodyElements.Loose
-					| LooseValue<T.EnumBodyElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
-		  ]
-		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				element:
-					| T.EnumBodyElements.Loose
-					| LooseValue<T.EnumBodyElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: (
-					| T.EnumBodyElements.Loose
-					| LooseValue<T.EnumBodyElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
-		  ]
+	...input: T.EnumBodyElements.LooseArgs
 ): ReturnType<typeof F.buildEnumBodyElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.EnumBodyElements)) {
 		const data = input[0];
@@ -10105,28 +9772,7 @@ export function coerceToEnumBodyElements(
 	);
 }
 
-export function coerceToTypes(
-	...input:
-		| [
-				element:
-					| T.Types.Loose
-					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: (
-					| T.Types.Loose
-					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
-		  ]
-		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				element:
-					| T.Types.Loose
-					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: (
-					| T.Types.Loose
-					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
-		  ]
-): ReturnType<typeof F.buildTypes> {
+export function coerceToTypes(...input: T.Types.LooseArgs): ReturnType<typeof F.buildTypes> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Types)) {
 		const data = input[0];
 		const stored = (data as unknown as { _type?: unknown })._type;
@@ -10183,46 +9829,7 @@ export function coerceToTypes(
 }
 
 export function coerceToTypeParametersElements(
-	...input:
-		| [
-				element:
-					| T.TypeParametersElements.Loose
-					| LooseValue<
-							T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >,
-				...elements: (
-					| T.TypeParametersElements.Loose
-					| LooseValue<
-							T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
-				)[]
-		  ]
-		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				element:
-					| T.TypeParametersElements.Loose
-					| LooseValue<
-							T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >,
-				...elements: (
-					| T.TypeParametersElements.Loose
-					| LooseValue<
-							T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
-				)[]
-		  ]
+	...input: T.TypeParametersElements.LooseArgs
 ): ReturnType<typeof F.buildTypeParametersElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeParametersElements)) {
 		const data = input[0];
@@ -10251,66 +9858,7 @@ export function coerceToTypeParametersElements(
 }
 
 export function coerceToTupleTypeMembers(
-	...input:
-		| [
-				element:
-					| T.TupleTypeMembers.Loose
-					| LooseValue<
-							| T.TupleParameter
-							| T.OptionalTupleParameter
-							| T.OptionalType
-							| T.RestType
-							| T.Type
-							| T.TypeIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >,
-				...elements: (
-					| T.TupleTypeMembers.Loose
-					| LooseValue<
-							| T.TupleParameter
-							| T.OptionalTupleParameter
-							| T.OptionalType
-							| T.RestType
-							| T.Type
-							| T.TypeIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
-				)[]
-		  ]
-		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				element:
-					| T.TupleTypeMembers.Loose
-					| LooseValue<
-							| T.TupleParameter
-							| T.OptionalTupleParameter
-							| T.OptionalType
-							| T.RestType
-							| T.Type
-							| T.TypeIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >,
-				...elements: (
-					| T.TupleTypeMembers.Loose
-					| LooseValue<
-							| T.TupleParameter
-							| T.OptionalTupleParameter
-							| T.OptionalType
-							| T.RestType
-							| T.Type
-							| T.TypeIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
-				)[]
-		  ]
+	...input: T.TupleTypeMembers.LooseArgs
 ): ReturnType<typeof F.buildTupleTypeMembers> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TupleTypeMembers)) {
 		const data = input[0];
@@ -10479,69 +10027,7 @@ export function coerceToAmbientDeclarationModule(
 }
 
 export function coerceToObjectTypeContent(
-	...input:
-		| [
-				element:
-					| T.ObjectTypeContent.Loose
-					| LooseValue<
-							| T.ExportStatement
-							| T.PropertySignature
-							| T.CallSignature
-							| T.ConstructSignature
-							| T.IndexSignature
-							| T.MethodSignature,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >,
-				...elements: (
-					| T.ObjectTypeContent.Loose
-					| LooseValue<
-							| T.ExportStatement
-							| T.PropertySignature
-							| T.CallSignature
-							| T.ConstructSignature
-							| T.IndexSignature
-							| T.MethodSignature,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
-				)[]
-		  ]
-		| [
-				options: {
-					separator?: TSKindId.Comma | TSKindId.Semi;
-					delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
-				},
-				element:
-					| T.ObjectTypeContent.Loose
-					| LooseValue<
-							| T.ExportStatement
-							| T.PropertySignature
-							| T.CallSignature
-							| T.ConstructSignature
-							| T.IndexSignature
-							| T.MethodSignature,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >,
-				...elements: (
-					| T.ObjectTypeContent.Loose
-					| LooseValue<
-							| T.ExportStatement
-							| T.PropertySignature
-							| T.CallSignature
-							| T.ConstructSignature
-							| T.IndexSignature
-							| T.MethodSignature,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
-				)[]
-		  ]
+	...input: T.ObjectTypeContent.LooseArgs
 ): ReturnType<typeof F.buildObjectTypeContent> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ObjectTypeContent)) {
 		const data = input[0];
@@ -11745,14 +11231,7 @@ export function coerceToCallExpressionMember(
 	});
 }
 
-export function coerceToStringDouble(
-	...input: [
-		...elements: (
-			| T.StringDouble.Loose
-			| LooseValue<T.UnescapedDoubleStringFragment | T.EscapeSequence, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	]
-): ReturnType<typeof F.buildStringDouble> {
+export function coerceToStringDouble(...input: T.StringDouble.LooseArgs): ReturnType<typeof F.buildStringDouble> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StringDouble)) {
 		const data = input[0];
 		const stored = (data as unknown as { _elements?: unknown })._elements;
@@ -11779,14 +11258,7 @@ export function coerceToStringDouble(
 	);
 }
 
-export function coerceToStringSingle(
-	...input: [
-		...elements: (
-			| T.StringSingle.Loose
-			| LooseValue<T.UnescapedSingleStringFragment | T.EscapeSequence, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	]
-): ReturnType<typeof F.buildStringSingle> {
+export function coerceToStringSingle(...input: T.StringSingle.LooseArgs): ReturnType<typeof F.buildStringSingle> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StringSingle)) {
 		const data = input[0];
 		const stored = (data as unknown as { _elements?: unknown })._elements;

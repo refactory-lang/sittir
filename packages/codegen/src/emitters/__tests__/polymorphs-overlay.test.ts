@@ -4,7 +4,6 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
@@ -14,7 +13,8 @@ import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import type { GeneratedIdEntry, GeneratedIdTables } from '../../dsl/symbol-table.ts';
 import { stampAutomaticVariants } from '../../dsl/automatic-variants.ts';
-import { emitPolymorphsOverlay } from '../overlays/polymorphs.ts';
+import { builtTypeSurfaceOf } from '../factories.ts';
+import { collectPolymorphWires, emitPolymorphsOverlay, seatedRowsOf } from '../overlays/polymorphs.ts';
 import { listRestParamType } from '../shared.ts';
 
 // ---------------------------------------------------------------------------
@@ -38,6 +38,7 @@ function buildNodeMap(rules: Record<string, Rule<'evaluate'>>, generatedIdTables
 		fileTypes: [],
 		rules: labelArms(rules),
 		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
+		evaluateSynthesized: new Set<string>(),
 		extras: [],
 		externals: [],
 		supertypes: [],
@@ -51,6 +52,13 @@ function buildNodeMap(rules: Record<string, Rule<'evaluate'>>, generatedIdTables
 	const linked = link(raw, { generatedIdTables });
 	const normalized = normalizeGrammar(linked);
 	return assemble(AssembleCtx.from(normalized, generatedIdTables));
+}
+
+function seatedRows(nodeMap: NodeMap, kind: string): { readonly buildArgs: string; readonly looseArgs: string } {
+	const node = nodeMap.nodes.get(kind)!;
+	const rows = seatedRowsOf(node, collectPolymorphWires(nodeMap, undefined, { silent: true }), builtTypeSurfaceOf(node, nodeMap, undefined)!);
+	if (rows === undefined) throw new Error(`'${kind}' has no seated rows`);
+	return rows;
 }
 
 function polymorphNodeMap(): NodeMap {
@@ -250,9 +258,12 @@ describe('a single hoisted group flattens onto its parent', () => {
 		const seatKey = nodeMap.nodes.get('clause')!.slots.find((s) => s.values.length === 1)!.configKey;
 		const out = emitPolymorphsOverlay({ nodeMap });
 		expect(out).toContain(`const clause$flatten$${seatKey} =`);
-		expect(out).toContain(
-			`WithoutGroup<ArgsOf<PF>[0], OmitEach<NonNullable<ArgsOf<CF>[0]>, '${seatKey}'>> | (OmitEach<NonNullable<ArgsOf<PF>[0]>, '${seatKey}'> & (ArgsOf<CF>[0] | NoneOf<ArgsOf<CF>[0]>))`
-		);
+		expect(out).toContain('const clause$seated: (...args: T.Clause.BuildArgs) => ReturnType<typeof F.buildClause> =');
+		const groupKeys = `OmitEach<NonNullable<T.ClauseGroup.Config>, '${seatKey}' | '$type'>`;
+		const { buildArgs } = seatedRows(nodeMap, 'clause');
+		expect(buildArgs).toContain(`WithoutGroup<`);
+		expect(buildArgs).toContain(`, ${groupKeys}> | (OmitEach<NonNullable<`);
+		expect(buildArgs).toContain(`, '${seatKey}'> & (T.ClauseGroup.BuildArgs[0] | NoneOf<${groupKeys}>))`);
 		expect(out).toContain('export const clause = Object.freeze({');
 		expect(out).toContain(`= clause$flatten$${seatKey}(F.buildClause, F.buildClauseGroup);`);
 		const seated = '...bundle(clause$seated, clause$seatedCoerce, { key: "clause", max: 1 }),';
@@ -294,7 +305,8 @@ describe('a repeated hoisted group seats as an array of its configs', () => {
 		expect(out).toContain("comparators: seat.map((e) => (isConfig(e) ? _c(child)(e) : e))");
 		expect(out).toContain('= comparison$comparators(F.buildComparison, F.buildComparisonComparator);');
 		expect(out).toContain('...bundle(comparison$seated, comparison$seatedCoerce, { key: "comparison", max: 1 }),');
-		expect(out).toContain("{ comparators: ReadonlyArray<ArgsOf<typeof F.buildComparisonComparator>[0]");
+		expect(out).toContain('const comparison$seated: (...args: T.Comparison.BuildArgs) =>');
+		expect(seatedRows(nodeMap, 'comparison').buildArgs).toContain('{ comparators: ReadonlyArray<T.ComparisonComparator.BuildArgs[0]');
 	});
 });
 
@@ -472,7 +484,7 @@ describe('a list takes its rest parameter by cardinality and options', () => {
 		expect(() => typeChecks(lines)).not.toThrow();
 	});
 
-	it('seats a list with an undeclared separator on its options-first form, at the type level', () => {
+	it('seats a list with an undeclared separator on its options-first form, through its row', () => {
 		const element: Rule<'evaluate'> = { type: CHOICE, members: [{ type: SYMBOL, name: 'negative' }, { type: SYMBOL, name: 'literal' }] };
 		const separator: Rule<'evaluate'> = { type: CHOICE, members: [{ type: STRING, value: ',' }, { type: STRING, value: ';' }] };
 		const nodeMap = buildNodeMap({
@@ -490,25 +502,11 @@ describe('a list takes its rest parameter by cardinality and options', () => {
 		});
 		const out = emitPolymorphsOverlay({ nodeMap }).split('\n');
 		const seat = out.find((line) => line.startsWith('const items$seatedCoerce: '));
-		expect(seat).toBeDefined();
-		expect(seat).toContain('(...args: [options: ListOptionsOf<');
-		expect(() =>
-			typeChecks([
-				`import type { ArgsOf, ElementsOf } from ${JSON.stringify(fileURLToPath(new URL('../../../../types/src/index.ts', import.meta.url)))};`,
-				...out.filter((line) => /^type List(Options|Element|OptionsOf)\b/.test(line)),
-				'type E = { readonly element: true };',
-				'type O = { readonly separator: 1 | 2 };',
-				'const element: E = { element: true };',
-				'declare const C: {',
-				`\tcoerceToItems(...input: ${listRestParamType(true, 'E', 'O', true)}): unknown;`,
-				"\tcoerceToNegative(config: { readonly sign: '-' | '+' }): E;",
-				'};',
-				`declare ${seat!.slice(0, seat!.lastIndexOf(' = '))};`,
-				'// @ts-expect-error a required-separator seat has no elements-only call',
-				'items$seatedCoerce(element);',
-				"items$seatedCoerce({ separator: 1 }, element, { sign: '-' });"
-			])
-		).not.toThrow();
+		expect(seat).toContain('(...args: T.Items.LooseArgs) =>');
+		const row = builtTypeSurfaceOf(nodeMap.nodes.get('items')!, nodeMap, undefined)!.looseArgs;
+		expect(row.startsWith('[options: ')).toBe(true);
+		expect(row).not.toMatch(/(^|\| )\[element: /);
+		expect(row).toContain('T.Negative.LooseArgs[0]');
 	});
 });
 

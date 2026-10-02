@@ -4,7 +4,7 @@ import * as F from './raw.js';
 import { spelledInterior } from '@sittir/common/utils';
 import type * as T from '../types-internal.js';
 import { TSKindId, KIND_NAMES } from '../types.js';
-import type { AnyUntypedNode, LooseValue } from '@sittir/types';
+import type { AnyUntypedNode } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind } from '@sittir/common/utils';
 import { isNode } from '../utils.js';
 
@@ -657,11 +657,7 @@ export function coerceToPattern(input: T.Pattern.Loose): ReturnType<typeof F.bui
 	);
 }
 
-export function coerceToAlternation(
-	...input: [
-		...elements: (T.Alternation.Loose | LooseValue<T.Term, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
-	]
-): ReturnType<typeof F.buildAlternation> {
+export function coerceToAlternation(...input: T.Alternation.LooseArgs): ReturnType<typeof F.buildAlternation> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Alternation)) {
 		const data = input[0];
 		const stored = (data as unknown as { _terms?: unknown })._terms;
@@ -682,9 +678,7 @@ export function coerceToAlternation(
 	);
 }
 
-export function coerceToTerm(
-	...input: [...elements: (T.Term.Loose | LooseValue<T.TermGroup, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]]
-): ReturnType<typeof F.buildTerm> {
+export function coerceToTerm(...input: T.Term.LooseArgs): ReturnType<typeof F.buildTerm> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Term)) {
 		const data = input[0];
 		const stored = (data as unknown as { _term_group?: unknown })._term_group;

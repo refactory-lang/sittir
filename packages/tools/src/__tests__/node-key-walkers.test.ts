@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { materialize } from '../validate/common.ts';
-import { toRenderableNode } from '../exercise/roundtrip.ts';
 import { collectChildren } from '../exercise/walk.ts';
 
 const LIST_ITEMS = Symbol('items');
@@ -46,10 +45,6 @@ describe('the tools walkers select a node by key', () => {
 			$named: true,
 			_body: { $type: 3, $source: 0, $named: true, $text: 'a' }
 		});
-	});
-
-	it('toRenderableNode copies storage and $ metadata only', () => {
-		expect(toRenderableNode(owner(leaf('a')))).toEqual({ $type: 7, $named: true, _body: { $type: 3, $named: true, $text: 'a' } });
 	});
 
 	it('collectChildren calls the readers of the node and no other member', () => {

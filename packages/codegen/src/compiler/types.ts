@@ -13,8 +13,6 @@ export type { OptionsConfig } from '../dsl/wire/options-block.ts';
 import type { OptionsConfig } from '../dsl/wire/options-block.ts';
 import type { RuleCauseDeclaration } from '../dsl/primitives/rule-cause.ts';
 
-export type RuleProvenance = 'grammar-authored' | 'override-authored-or-replaced' | 'evaluate-synthesized';
-
 export type RulePathSegment =
 	| { readonly edge: 'content' }
 	| { readonly edge: 'members'; readonly index: number }
@@ -27,7 +25,6 @@ export interface RuleCatalogEntry {
 	readonly parentId?: RuleId;
 	readonly path: readonly RulePathSegment[];
 	readonly childIds: readonly RuleId[];
-	readonly provenance: RuleProvenance;
 }
 
 export interface RuleClassification {
@@ -105,6 +102,7 @@ export interface RawGrammar {
 	readonly name: string;
 	readonly rules: Record<string, Rule<'evaluate'>>;
 	readonly ruleCatalog: RuleCatalog;
+	readonly evaluateSynthesized: ReadonlySet<string>;
 	readonly extras: RuleListEntry[];
 	readonly externals: RuleListEntry[];
 	readonly supertypes: string[];
@@ -150,7 +148,6 @@ export interface EvaluationStages<G = RawGrammar> {
 }
 
 export interface EvaluatedGrammar extends Omit<RawGrammar, 'ruleCatalog' | 'references' | 'stages' | 'fileTypes'> {
-	readonly provenanceByKind: ReadonlyMap<string, RuleProvenance>;
 	readonly protectedRuleNames?: readonly string[];
 	readonly stages?: EvaluationStages<EvaluatedGrammar>;
 }

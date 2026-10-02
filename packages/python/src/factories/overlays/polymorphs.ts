@@ -3,8 +3,9 @@ import * as B from './refines.js';
 import * as F from '../raw.js';
 import * as C from '../coerce.js';
 import { bundle } from '@sittir/common/utils';
-import type { ArgsOf, ElementsOf, OmitEach, OptionsArg } from '@sittir/types';
+import type { ArgsOf, OmitEach, OptionsArg } from '@sittir/types';
 import { isGroupConfig } from '@sittir/common/utils';
+import type * as T from '../../types.js';
 export * from './refines.js';
 
 // Erased applications, centralized: TS cannot infer a Cfg type parameter
@@ -25,11 +26,6 @@ const _built = (v: unknown): boolean => typeof v === 'object' && v !== null && '
 // bare-text call must keep its one-argument arity.
 const _fwd = <R>(f: unknown, arg: unknown, options: unknown): R =>
 	options === undefined ? _s<R>(f)(arg) : _s<R>(f)(arg, options);
-// A flattened group is present as a whole or absent as a whole: a config
-// that seats the group by its slot names none of its keys, and one that
-// flattens it names the whole group or none of it.
-type NoneOf<T> = { [K in keyof T]?: never };
-type WithoutGroup<P, G> = P extends undefined ? P : P & NoneOf<G>;
 
 const futureImportStatement$importList =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -156,21 +152,7 @@ const comparisonOperator$comparators = <
 	child: CF
 ) => {
 	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['operators', 'primaryExpression']);
-	return (
-		config:
-			| ArgsOf<PF>[0]
-			| (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'comparators'> & {
-					comparators: ReadonlyArray<
-						| ArgsOf<CF>[0]
-						| (NonNullable<ArgsOf<PF>[0]> extends { readonly comparators?: infer E }
-								? E extends readonly (infer I)[]
-									? I
-									: never
-								: never)
-					>;
-			  }),
-		options?: unknown
-	): ReturnType<PF> => {
+	return (config: unknown, options?: unknown): ReturnType<PF> => {
 		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
 		const seat = _o(config)['comparators'];
 		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
@@ -182,35 +164,13 @@ const comparisonOperator$comparators = <
 	};
 };
 const comparisonOperator$seated: (
-	config:
-		| ArgsOf<typeof F.buildComparisonOperator>[0]
-		| (OmitEach<NonNullable<ArgsOf<typeof F.buildComparisonOperator>[0]>, 'comparators'> & {
-				comparators: ReadonlyArray<
-					| ArgsOf<typeof F.buildComparisonOperatorComparator>[0]
-					| (NonNullable<ArgsOf<typeof F.buildComparisonOperator>[0]> extends { readonly comparators?: infer E }
-							? E extends readonly (infer I)[]
-								? I
-								: never
-							: never)
-				>;
-		  })
+	...args: T.ComparisonOperator.BuildArgs
 ) => ReturnType<typeof F.buildComparisonOperator> = comparisonOperator$comparators(
 	F.buildComparisonOperator,
 	F.buildComparisonOperatorComparator
 );
 const comparisonOperator$seatedCoerce: (
-	config:
-		| ArgsOf<typeof C.coerceToComparisonOperator>[0]
-		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToComparisonOperator>[0]>, 'comparators'> & {
-				comparators: ReadonlyArray<
-					| ArgsOf<typeof C.coerceToComparisonOperatorComparator>[0]
-					| (NonNullable<ArgsOf<typeof C.coerceToComparisonOperator>[0]> extends { readonly comparators?: infer E }
-							? E extends readonly (infer I)[]
-								? I
-								: never
-							: never)
-				>;
-		  })
+	...args: T.ComparisonOperator.LooseArgs
 ) => ReturnType<typeof C.coerceToComparisonOperator> = comparisonOperator$comparators(
 	C.coerceToComparisonOperator,
 	C.coerceToComparisonOperatorComparator
@@ -218,7 +178,7 @@ const comparisonOperator$seatedCoerce: (
 export const comparisonOperator = Object.freeze({
 	...B.comparisonOperator,
 	...bundle(comparisonOperator$seated, comparisonOperator$seatedCoerce, { key: 'comparisonOperator', max: 1 })
-}) as unknown as typeof B.comparisonOperator & {
+}) as unknown as Omit<typeof B.comparisonOperator, 'strict' | 'coerce'> & {
 	strict: typeof comparisonOperator$seated;
 	coerce: typeof comparisonOperator$seatedCoerce;
 };
@@ -854,29 +814,17 @@ const matchStatement$subjects = <PF extends (config: never) => unknown, CF exten
 	parent: PF,
 	child: CF
 ) => {
-	return (
-		config: ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'subjects'> & { subjects: ArgsOf<CF> }),
-		options?: unknown
-	): ReturnType<PF> => {
+	return (config: unknown, options?: unknown): ReturnType<PF> => {
 		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
 		const seat = _o(config)['subjects'];
 		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
 		return _fwd<ReturnType<PF>>(parent, { ..._o(config), subjects: _c(child)(...seat) }, options);
 	};
 };
-const matchStatement$seated: (
-	config:
-		| ArgsOf<typeof F.buildMatchStatement>[0]
-		| (OmitEach<NonNullable<ArgsOf<typeof F.buildMatchStatement>[0]>, 'subjects'> & {
-				subjects: ArgsOf<typeof F.buildSubjects>;
-		  })
-) => ReturnType<typeof F.buildMatchStatement> = matchStatement$subjects(F.buildMatchStatement, F.buildSubjects);
+const matchStatement$seated: (...args: T.MatchStatement.BuildArgs) => ReturnType<typeof F.buildMatchStatement> =
+	matchStatement$subjects(F.buildMatchStatement, F.buildSubjects);
 const matchStatement$seatedCoerce: (
-	config:
-		| ArgsOf<typeof C.coerceToMatchStatement>[0]
-		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToMatchStatement>[0]>, 'subjects'> & {
-				subjects: ArgsOf<typeof C.coerceToSubjects>;
-		  })
+	...args: T.MatchStatement.LooseArgs
 ) => ReturnType<typeof C.coerceToMatchStatement> = matchStatement$subjects(
 	C.coerceToMatchStatement,
 	C.coerceToSubjects
@@ -884,7 +832,7 @@ const matchStatement$seatedCoerce: (
 export const matchStatement = Object.freeze({
 	...B.matchStatement,
 	...bundle(matchStatement$seated, matchStatement$seatedCoerce, { key: 'matchStatement', max: 1 })
-}) as unknown as typeof B.matchStatement & {
+}) as unknown as Omit<typeof B.matchStatement, 'strict' | 'coerce'> & {
 	strict: typeof matchStatement$seated;
 	coerce: typeof matchStatement$seatedCoerce;
 };
@@ -920,34 +868,21 @@ const caseClause$casePatterns = <PF extends (config: never) => unknown, CF exten
 	parent: PF,
 	child: CF
 ) => {
-	return (
-		config: ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'casePatterns'> & { casePatterns: ArgsOf<CF> }),
-		options?: unknown
-	): ReturnType<PF> => {
+	return (config: unknown, options?: unknown): ReturnType<PF> => {
 		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
 		const seat = _o(config)['casePatterns'];
 		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
 		return _fwd<ReturnType<PF>>(parent, { ..._o(config), casePatterns: _c(child)(...seat) }, options);
 	};
 };
-const caseClause$seated: (
-	config:
-		| ArgsOf<typeof F.buildCaseClause>[0]
-		| (OmitEach<NonNullable<ArgsOf<typeof F.buildCaseClause>[0]>, 'casePatterns'> & {
-				casePatterns: ArgsOf<typeof F.buildCasePatterns>;
-		  })
-) => ReturnType<typeof F.buildCaseClause> = caseClause$casePatterns(F.buildCaseClause, F.buildCasePatterns);
-const caseClause$seatedCoerce: (
-	config:
-		| ArgsOf<typeof C.coerceToCaseClause>[0]
-		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToCaseClause>[0]>, 'casePatterns'> & {
-				casePatterns: ArgsOf<typeof C.coerceToCasePatterns>;
-		  })
-) => ReturnType<typeof C.coerceToCaseClause> = caseClause$casePatterns(C.coerceToCaseClause, C.coerceToCasePatterns);
+const caseClause$seated: (...args: T.CaseClause.BuildArgs) => ReturnType<typeof F.buildCaseClause> =
+	caseClause$casePatterns(F.buildCaseClause, F.buildCasePatterns);
+const caseClause$seatedCoerce: (...args: T.CaseClause.LooseArgs) => ReturnType<typeof C.coerceToCaseClause> =
+	caseClause$casePatterns(C.coerceToCaseClause, C.coerceToCasePatterns);
 export const caseClause = Object.freeze({
 	...B.caseClause,
 	...bundle(caseClause$seated, caseClause$seatedCoerce, { key: 'caseClause', max: 1 })
-}) as unknown as typeof B.caseClause & {
+}) as unknown as Omit<typeof B.caseClause, 'strict' | 'coerce'> & {
 	strict: typeof caseClause$seated;
 	coerce: typeof caseClause$seatedCoerce;
 };
@@ -1842,19 +1777,14 @@ const unionPattern$patterns = <PF extends (...args: never[]) => unknown, CF exte
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
-const unionPattern$seated: (
-	...args: ReadonlyArray<ElementsOf<typeof F.buildUnionPattern> | ArgsOf<typeof F.buildSimplePatternNegative>[0]>
-) => ReturnType<typeof F.buildUnionPattern> = unionPattern$patterns(F.buildUnionPattern, F.buildSimplePatternNegative);
-const unionPattern$seatedCoerce: (
-	...args: ReadonlyArray<ElementsOf<typeof C.coerceToUnionPattern> | ArgsOf<typeof C.coerceToSimplePatternNegative>[0]>
-) => ReturnType<typeof C.coerceToUnionPattern> = unionPattern$patterns(
-	C.coerceToUnionPattern,
-	C.coerceToSimplePatternNegative
-);
+const unionPattern$seated: (...args: T.UnionPattern.BuildArgs) => ReturnType<typeof F.buildUnionPattern> =
+	unionPattern$patterns(F.buildUnionPattern, F.buildSimplePatternNegative);
+const unionPattern$seatedCoerce: (...args: T.UnionPattern.LooseArgs) => ReturnType<typeof C.coerceToUnionPattern> =
+	unionPattern$patterns(C.coerceToUnionPattern, C.coerceToSimplePatternNegative);
 export const unionPattern = Object.freeze({
 	...B.unionPattern,
 	...bundle(unionPattern$seated, unionPattern$seatedCoerce)
-}) as unknown as typeof B.unionPattern & {
+}) as unknown as Omit<typeof B.unionPattern, 'strict' | 'coerce'> & {
 	strict: typeof unionPattern$seated;
 	coerce: typeof unionPattern$seatedCoerce;
 };
@@ -1897,40 +1827,21 @@ const classPattern$arguments = <PF extends (config: never) => unknown, CF extend
 	parent: PF,
 	child: CF
 ) => {
-	return (
-		config: ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'arguments'> & { arguments: ArgsOf<CF> }),
-		options?: unknown
-	): ReturnType<PF> => {
+	return (config: unknown, options?: unknown): ReturnType<PF> => {
 		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
 		const seat = _o(config)['arguments'];
 		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
 		return _fwd<ReturnType<PF>>(parent, { ..._o(config), arguments: _c(child)(...seat) }, options);
 	};
 };
-const classPattern$seated: (
-	config:
-		| ArgsOf<typeof F.buildClassPattern>[0]
-		| (OmitEach<NonNullable<ArgsOf<typeof F.buildClassPattern>[0]>, 'arguments'> & {
-				arguments: ArgsOf<typeof F.buildListPatternCasePatterns>;
-		  })
-) => ReturnType<typeof F.buildClassPattern> = classPattern$arguments(
-	F.buildClassPattern,
-	F.buildListPatternCasePatterns
-);
-const classPattern$seatedCoerce: (
-	config:
-		| ArgsOf<typeof C.coerceToClassPattern>[0]
-		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToClassPattern>[0]>, 'arguments'> & {
-				arguments: ArgsOf<typeof C.coerceToListPatternCasePatterns>;
-		  })
-) => ReturnType<typeof C.coerceToClassPattern> = classPattern$arguments(
-	C.coerceToClassPattern,
-	C.coerceToListPatternCasePatterns
-);
+const classPattern$seated: (...args: T.ClassPattern.BuildArgs) => ReturnType<typeof F.buildClassPattern> =
+	classPattern$arguments(F.buildClassPattern, F.buildListPatternCasePatterns);
+const classPattern$seatedCoerce: (...args: T.ClassPattern.LooseArgs) => ReturnType<typeof C.coerceToClassPattern> =
+	classPattern$arguments(C.coerceToClassPattern, C.coerceToListPatternCasePatterns);
 export const classPattern = Object.freeze({
 	...B.classPattern,
 	...bundle(classPattern$seated, classPattern$seatedCoerce, { key: 'classPattern', max: 1 })
-}) as unknown as typeof B.classPattern & {
+}) as unknown as Omit<typeof B.classPattern, 'strict' | 'coerce'> & {
 	strict: typeof classPattern$seated;
 	coerce: typeof classPattern$seatedCoerce;
 };
@@ -1939,47 +1850,30 @@ const subscript$subscripts = <PF extends (config: never) => unknown, CF extends 
 	parent: PF,
 	child: CF
 ) => {
-	return (
-		config: ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'subscripts'> & { subscripts: ArgsOf<CF> }),
-		options?: unknown
-	): ReturnType<PF> => {
+	return (config: unknown, options?: unknown): ReturnType<PF> => {
 		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
 		const seat = _o(config)['subscripts'];
 		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
 		return _fwd<ReturnType<PF>>(parent, { ..._o(config), subscripts: _c(child)(...seat) }, options);
 	};
 };
-const subscript$seated: (
-	config:
-		| ArgsOf<typeof F.buildSubscript>[0]
-		| (OmitEach<NonNullable<ArgsOf<typeof F.buildSubscript>[0]>, 'subscripts'> & {
-				subscripts: ArgsOf<typeof F.buildSubscripts>;
-		  })
-) => ReturnType<typeof F.buildSubscript> = subscript$subscripts(F.buildSubscript, F.buildSubscripts);
-const subscript$seatedCoerce: (
-	config:
-		| ArgsOf<typeof C.coerceToSubscript>[0]
-		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToSubscript>[0]>, 'subscripts'> & {
-				subscripts: ArgsOf<typeof C.coerceToSubscripts>;
-		  })
-) => ReturnType<typeof C.coerceToSubscript> = subscript$subscripts(C.coerceToSubscript, C.coerceToSubscripts);
+const subscript$seated: (...args: T.Subscript.BuildArgs) => ReturnType<typeof F.buildSubscript> = subscript$subscripts(
+	F.buildSubscript,
+	F.buildSubscripts
+);
+const subscript$seatedCoerce: (...args: T.Subscript.LooseArgs) => ReturnType<typeof C.coerceToSubscript> =
+	subscript$subscripts(C.coerceToSubscript, C.coerceToSubscripts);
 export const subscript = Object.freeze({
 	...B.subscript,
 	...bundle(subscript$seated, subscript$seatedCoerce, { key: 'subscript', max: 1 })
-}) as unknown as typeof B.subscript & {
+}) as unknown as Omit<typeof B.subscript, 'strict' | 'coerce'> & {
 	strict: typeof subscript$seated;
 	coerce: typeof subscript$seatedCoerce;
 };
 
 const slice$flatten$step =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config:
-			| WithoutGroup<ArgsOf<PF>[0], OmitEach<NonNullable<{ expression: ArgsOf<CF>[0] }>, 'step'>>
-			| (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'step'> &
-					({ expression: ArgsOf<CF>[0] } | NoneOf<{ expression: ArgsOf<CF>[0] }>)),
-		options?: unknown
-	): ReturnType<PF> => {
+	(config: unknown, options?: unknown): ReturnType<PF> => {
 		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
@@ -1992,34 +1886,18 @@ const slice$flatten$step =
 		}
 		return _fwd<ReturnType<PF>>(parent, seated ? { ...rest, step: _c(child)(inner['expression']) } : rest, options);
 	};
-const slice$seated: (
-	config:
-		| WithoutGroup<
-				ArgsOf<typeof F.buildSlice>[0],
-				OmitEach<NonNullable<{ expression: ArgsOf<typeof F.buildSliceGroup>[0] }>, 'step'>
-		  >
-		| (OmitEach<NonNullable<ArgsOf<typeof F.buildSlice>[0]>, 'step'> &
-				(
-					| { expression: ArgsOf<typeof F.buildSliceGroup>[0] }
-					| NoneOf<{ expression: ArgsOf<typeof F.buildSliceGroup>[0] }>
-				))
-) => ReturnType<typeof F.buildSlice> = slice$flatten$step(F.buildSlice, F.buildSliceGroup);
-const slice$seatedCoerce: (
-	config:
-		| WithoutGroup<
-				ArgsOf<typeof C.coerceToSlice>[0],
-				OmitEach<NonNullable<{ expression: ArgsOf<typeof C.coerceToSliceGroup>[0] }>, 'step'>
-		  >
-		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToSlice>[0]>, 'step'> &
-				(
-					| { expression: ArgsOf<typeof C.coerceToSliceGroup>[0] }
-					| NoneOf<{ expression: ArgsOf<typeof C.coerceToSliceGroup>[0] }>
-				))
-) => ReturnType<typeof C.coerceToSlice> = slice$flatten$step(C.coerceToSlice, C.coerceToSliceGroup);
+const slice$seated: (...args: T.Slice.BuildArgs) => ReturnType<typeof F.buildSlice> = slice$flatten$step(
+	F.buildSlice,
+	F.buildSliceGroup
+);
+const slice$seatedCoerce: (...args: T.Slice.LooseArgs) => ReturnType<typeof C.coerceToSlice> = slice$flatten$step(
+	C.coerceToSlice,
+	C.coerceToSliceGroup
+);
 export const slice = Object.freeze({
 	...B.slice,
 	...bundle(slice$seated, slice$seatedCoerce, { key: 'slice', max: 1 })
-}) as unknown as typeof B.slice & {
+}) as unknown as Omit<typeof B.slice, 'strict' | 'coerce'> & {
 	strict: typeof slice$seated;
 	coerce: typeof slice$seatedCoerce;
 };

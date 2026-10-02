@@ -1,13 +1,13 @@
 {
   "grammar": "rust",
-  "source_hash": "ee42ac5c412c8b1e99465ce1f640f76a163de8b06fab3c1f2496db99497f8ff0",
+  "source_hash": "ad87064a11f8c35c23a9d6fbd8ec3e7558a72be2f1dda51e87dfaef44276005e",
   "files": {
     "packages/rust/.sittir/grammar-diagnostics.json": "4f2eae23a0cd0db71d1991ea88120a426881fdbb2609eeab9cad6033ae64ef26",
     "packages/rust/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
     "packages/rust/.sittir/package.json": "3e50eb0dc3a8d1d011ef822926f2af201fb17d6597e5bc76d1bbb718d64d792e",
     "packages/rust/.sittir/parser.wasm": "70db0263d7da3abe6049951d7ce45af84fd5556ecf4d3821d9325ab37bf758a2",
     "packages/rust/.sittir/render-bodies.json": "96d79d16d9dd97e3546dd54e71509d2fcbdb1c58432af620c0ec675c5ed44791",
-    "packages/rust/.sittir/resolutions.json": "1f3e1bdfe812ab0c74847e0bd1821a3c09cb6f413d5852604500fff06d02eb06",
+    "packages/rust/.sittir/resolutions.json": "4b32c079501c8d79ddc2f2b0a0caab49dcfb13fb68405a4b406ec637076fa074",
     "packages/rust/.sittir/src/grammar.json": "cbfad04d2c5dd075e508705b16997a836d48de57dbebf285f5fdf61e525e07e1",
     "packages/rust/.sittir/src/node-types.json": "9d4e62ebb8be8b65904f9dd71c6642970f534acbd162201e3228cafdb543a539",
     "packages/rust/.sittir/src/parser.c": "5a55a324a55663093da7758e3cbba12700572f44cc1c4f74cf37f2f9d348729e",
@@ -23,9 +23,9 @@
     "packages/rust/src/backend.ts": "a584efd4dc29319ec2cd896d769dcb1e4c708c0e33c0059d2373d42a39309aed",
     "packages/rust/src/consts.ts": "66686f523e433b8c82acf229ef2f1a3b21fcba8e37aab80cc3978096437e9d28",
     "packages/rust/src/factories/bundle.ts": "9a7548503fccbef883ea0f46febb7437e86ba529e9becdc5056061136885d3a5",
-    "packages/rust/src/factories/coerce.ts": "542010d1f91b1b5c436f91c485cfe37bd7936ac199c33a064c881e751f8d95a1",
+    "packages/rust/src/factories/coerce.ts": "bbf5f64fe69dacaaa22ee66b3e3a3299dbf5391ecad6e473ce65fea9088e2271",
     "packages/rust/src/factories/index.ts": "93e7436d2e34ad65cdb86595889d050bc157d4c1759f584376f9e7fe3e8e8e31",
-    "packages/rust/src/factories/overlays/polymorphs.ts": "be6b0a1bda44281c4a0f994204202c25bd237be6bcedd5c3ff12e672e85343c4",
+    "packages/rust/src/factories/overlays/polymorphs.ts": "4b97769298a154ed44386cc082ee589a34a68cd31ce44f95947b92a1a3e048a7",
     "packages/rust/src/factories/overlays/refines.ts": "37f8a0f79f435a13a3261d39196ce8132ef459b4934501fbd452d65e7b9abdf0",
     "packages/rust/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
     "packages/rust/src/factories/raw.ts": "8aa15bd23917d39f4b32a7cab40dc34c8a9219ff04b4b94fa9fd4df22fc734f8",
@@ -37,7 +37,7 @@
     "packages/rust/src/options.ts": "e7468890ddfb86f88661ebe7f25b4fedb8e9dc3f5aa8b13144e233e644ea9e25",
     "packages/rust/src/render-engine.ts": "c358b743a53fe0e0c5efc59cab3e6024027fe8f30fce8a29b2766526c7ff6475",
     "packages/rust/src/types-internal.ts": "9f7fc0eb046ab9d535e7316e6ce0bb0612d1b6ef80f08ce9f2d6a600c48b8e52",
-    "packages/rust/src/types.ts": "0e5ecbc5b187d9a4d362ec16a348ef130df9a58becf80be6511f7b9621c320cd",
+    "packages/rust/src/types.ts": "9237b067e9fe60c355cebc72a963ff47b7450840ba969455f2f9eddb3731e42d",
     "packages/rust/src/utils.ts": "d869d7864f2b3e193804d2de99deca84d371bee6f797aa43075ebacfc290ddd5",
     "packages/rust/src/wrap.ts": "ae00da52a3889aac63f55e109286492c7b29c8dc238a57c34d7c437c327a5917",
     "rust/crates/sittir-rust/src/lib.rs": "e31868b4b1e57a3f6fa689558e8e0b2638e95cedc350ca0a770f940bfb29739b",
@@ -46,9 +46,5 @@
     "rust/crates/sittir-rust/src/render/mod.rs": "9d0c135b4fe0951e3466c01453458fa88cf2fad81ba4d3197a9c60a265aeb44c",
     "rust/crates/sittir-rust/src/render/options.rs": "8f26635d36d870ec23c3c8700f4301fe1b14efc493f00c211ac25356fe166771",
     "rust/crates/sittir-rust/src/render/transport.rs": "f4680be619f4c25291d058995a2da39a1448448d7f768d12d120256298d654ae"
-  },
-  "host_files": {
-    "rust/crates/sittir-rust/sittir-rust.darwin-arm64.node": "freshness-checked",
-    "packages/rust/native/sittir-rust.darwin-arm64.node": "freshness-checked"
   }
 }

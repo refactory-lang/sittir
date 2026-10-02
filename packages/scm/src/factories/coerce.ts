@@ -4,7 +4,7 @@ import * as F from './raw.js';
 import { spelledInterior } from '@sittir/common/utils';
 import type * as T from '../types-internal.js';
 import { TSKindId, KIND_NAMES } from '../types.js';
-import type { AnyUntypedNode, LooseValue } from '@sittir/types';
+import type { AnyUntypedNode } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind } from '@sittir/common/utils';
 import { isNode } from '../utils.js';
 
@@ -536,16 +536,8 @@ const _K8: readonly string[] = ['_immediate_identifier'];
 const _K9: readonly string[] = ['immediate_string'];
 
 export function coerceToProgram(): T.EmptyProgram;
-export function coerceToProgram(
-	...input: [
-		...elements: (T.Program.Loose | LooseValue<T.Definition, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
-	]
-): ReturnType<typeof F.buildProgram>;
-export function coerceToProgram(
-	...input: [
-		...elements: (T.Program.Loose | LooseValue<T.Definition, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
-	]
-): ReturnType<typeof F.buildProgram> {
+export function coerceToProgram(...input: T.Program.LooseArgs): ReturnType<typeof F.buildProgram>;
+export function coerceToProgram(...input: T.Program.LooseArgs): ReturnType<typeof F.buildProgram> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Program)) {
 		const data = input[0];
 		const stored = (data as unknown as { _definitions?: unknown })._definitions;
@@ -655,14 +647,7 @@ export function coerceToImmediateString(input?: T.ImmediateString.Loose): Return
 	);
 }
 
-export function coerceToStringContent(
-	...input: [
-		...elements: (
-			| T.StringContent.Loose
-			| LooseValue<T.StringContentText | T.EscapeSequence, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	]
-): ReturnType<typeof F.buildStringContent> {
+export function coerceToStringContent(...input: T.StringContent.LooseArgs): ReturnType<typeof F.buildStringContent> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StringContent)) {
 		const data = input[0];
 		const stored = (data as unknown as { _content?: unknown })._content;
@@ -687,14 +672,7 @@ export function coerceToStringContent(
 	);
 }
 
-export function coerceToParameters(
-	...input: [
-		...elements: (
-			| T.Parameters.Loose
-			| LooseValue<T.Capture | T.String | T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	]
-): ReturnType<typeof F.buildParameters> {
+export function coerceToParameters(...input: T.Parameters.LooseArgs): ReturnType<typeof F.buildParameters> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Parameters)) {
 		const data = input[0];
 		const stored = (data as unknown as { _elements?: unknown })._elements;
