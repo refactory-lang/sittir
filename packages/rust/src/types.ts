@@ -23937,21 +23937,8 @@ export namespace FunctionTypeFnForm {
 	}
 	export type Loose = LooseFor<TSKindId.FunctionTypeFnForm>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FunctionTypeFnForm>;
-	export type BuildArgs =
-		| [value?: AdmitBound<T.FunctionModifiers, T.AdmittedNodes>]
-		| [
-				...children: AdmitBound<
-					(
-						| TSKindId.AsyncKeyword
-						| TSKindId.DefaultKeyword
-						| TSKindId.ConstKeyword
-						| TSKindId.UnsafeKeyword
-						| T.ExternModifier
-					)[],
-					T.AdmittedNodes
-				>
-		  ];
-	export type LooseArgs = [value?: T.FunctionTypeFnForm.Loose];
+	export type BuildArgs = [value?: AdmitBound<T.FunctionModifiers, T.AdmittedNodes>] | T.FunctionModifiers.BuildArgs;
+	export type LooseArgs = [value?: T.FunctionTypeFnForm.Loose] | T.FunctionModifiers.LooseArgs;
 	export type Kind = TSKindId.FunctionTypeFnForm;
 }
 export namespace ModItemExternal {

@@ -685,6 +685,20 @@ List texts a higher-ranked candidate text kind takes from a lower-ranked one in 
 pnpm exec tsx packages/cli/src/cli.ts tool text-kind-overlap [options]
 ```
 
+### `tool spelled-trivia`
+
+List the comment kinds a trivia position builds from text spelled in full, or why the grammar has none
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool spelled-trivia [options]
+```
+
 ### `tool trivia-placement`
 
 Report the owner and position the reader gives every corpus extra; exits 1 if any is lost

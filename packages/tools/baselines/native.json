@@ -1,8 +1,9 @@
 {
     "backend": "native",
-    "commit": "e04292d",
+    "commit": "f59d24f",
     "grammars": {
         "python": {
+            "hoistedKindCount": 45,
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
@@ -15,21 +16,21 @@
                 "coverage": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 147,
-                    "total": 147
+                    "pass": 145,
+                    "total": 145
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 1417,
+                    "astMatchPass": 1402,
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1417,
-                    "total": 1417
+                    "pass": 1402,
+                    "total": 1402
                 },
                 "from": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 181,
-                    "total": 181
+                    "pass": 179,
+                    "total": 179
                 },
                 "roundtrip": {
                     "astMatchPass": 115,
@@ -41,6 +42,7 @@
             }
         },
         "regex": {
+            "hoistedKindCount": 7,
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
@@ -79,6 +81,7 @@
             }
         },
         "rust": {
+            "hoistedKindCount": 96,
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
@@ -122,6 +125,7 @@
             }
         },
         "scm": {
+            "hoistedKindCount": 5,
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
@@ -160,6 +164,7 @@
             }
         },
         "typescript": {
+            "hoistedKindCount": 60,
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
@@ -200,7 +205,7 @@
     },
     "totals": {
         "fail": 3,
-        "pass": 11992,
-        "total": 11995
+        "pass": 11973,
+        "total": 11976
     }
 }

@@ -3896,6 +3896,28 @@
     }
   },
   "innerGapsKeyed": false,
+  "spelledTrivia": {
+    "forms": [
+      {
+        "kind": "block_comment",
+        "opens": [
+          "/*"
+        ],
+        "closes": [
+          "*/"
+        ]
+      },
+      {
+        "kind": "line_comment",
+        "opens": [
+          "//"
+        ],
+        "closes": [
+          ""
+        ]
+      }
+    ]
+  },
   "nodes": [
     {
       "kind": "_blankline",

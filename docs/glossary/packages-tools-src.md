@@ -24,13 +24,25 @@ Merges the base ref into the current branch and resolves the one conflict class 
 
 The repository's `SyncBaseTarget`: every registered grammar's generated roots (stable or not: regex and scm are verified too) and a `verify` that is `verifyManifestForGrammar(...).ok` and a `regenerate` that runs `gen --grammar <name> --all` in a fresh process, the way `pnpm run regen:all` does.
 
-### `packages/tools/src/scripts/check-baseline-regression.ts::supertypeExplainsDrop`
+### `packages/tools/src/scripts/check-baseline-regression.ts::departureExplainsDrop`
 
-Whether a pass-count drop of one validator is a kind leaving and not a failure. It holds when the grammar's `supertypeKindCount` rose, the validator's own fail count (`total - pass`) did not, and the drop is within the validator's bound in `SUPERTYPE_EXPLAINED_DROP`.
+Whether a pass-count drop of one validator is a kind leaving and not a failure. It holds when at least one kind left the grammar's direct-render set (`departedKindCount`), the validator's own fail count (`total - pass`) did not rise, and the drop is within the validator's bound in `DEPARTURE_EXPLAINED_DROP`.
 
-### `packages/tools/src/scripts/check-baseline-regression.ts::SUPERTYPE_EXPLAINED_DROP`
+### `packages/tools/src/scripts/check-baseline-regression.ts::departedKindCount`
 
-The validators whose pass count may fall when a kind becomes a supertype, each with the largest drop a given rise in `supertypeKindCount` explains. `coverage` and `factoryRoundtrip` are unbounded: a kind that becomes a supertype has no template and no raw builder, and one parent can remove several cases there. `from` is bounded by the rise: a flattened parent removes exactly one `from` case, its own, so a larger drop is not explained by it. A validator not listed (`roundtrip`) is never exempt.
+How many kinds left a grammar's direct-render set between the base and head baselines: the rise in `supertypeKindCount` (a kind that became a supertype has no template and no raw builder of its own) plus the fall in `hoistedKindCount` (a hoisted kind that is no longer minted takes its cases with it). Each term counts only in its own direction, so a fall in supertypes or a rise in hoisted kinds adds nothing.
+
+The two counts are read differently when the base lacks them. A base without `supertypeKindCount` reads as 0, because only the rise matters. A fall cannot be read from one count, so a base without `hoistedKindCount` contributes nothing and the drop stays unexplained: the fact has to be in the base baseline before a change can lean on it.
+
+Both counts are checked by `validateBaselineShape` before any arithmetic: each is a non-negative integer or absent, on the base and on the head. A count of another type would make the departed count `NaN`, and every comparison against `NaN` is false, which would let a drop of any size through.
+
+### `packages/tools/src/scripts/check-baseline-regression.ts::DEPARTURE_EXPLAINED_DROP`
+
+The validators whose pass count may fall when kinds leave the direct-render set, each with the largest drop a given `departedKindCount` explains. `coverage` and `factoryRoundtrip` are unbounded: a departed kind has no template and no raw builder, and one kind can remove several cases there. `from` is bounded by the count: a departed kind removes exactly one `from` case, its own, so a larger drop is not explained by it. A validator not listed (`roundtrip`) is never exempt.
+
+### `packages/tools/src/scripts/collect-baseline.ts::GrammarEntry.hoistedKindCount`
+
+The hoisted kinds of the grammar's node model, list kinds included (`hoistedKindCount` in `census/hoisted.ts`). It differs from the hoisted census, which leaves list kinds out because it measures whether a hoisted compound has a public seat; this count measures how many hoisted kinds exist at all, which is what a validator's case count follows.
 
 ### `packages/tools/src/scripts/required-slot-census.ts::admittingSlots`
 
