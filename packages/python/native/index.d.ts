@@ -1168,6 +1168,15 @@ export interface TryStatementTransport {
   _except_clauses_separator_space?: number
 }
 
+export interface TupleElementsTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _element: Array<SlotValue<TupleElementsElementTransportSlot>>
+  _delimiter?: number
+  _element_separator_space_before?: number
+  _element_separator_space_after?: number
+}
+
 export interface TuplePatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
@@ -1177,7 +1186,7 @@ export interface TuplePatternTransport {
 export interface TupleTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _collection_elements?: SlotValue<CollectionElementsTransport>
+  _tuple_elements?: SlotValue<TupleElementsTransport>
 }
 
 export interface TypeAliasStatementTransport {

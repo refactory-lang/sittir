@@ -38,9 +38,12 @@ describe('python conflict records', () => {
 		}
 	});
 
-	it('names the one upstream conflict set that no derived resolution needs', () => {
+	it('names the upstream conflict sets that no derived resolution needs', () => {
 		const unnecessary = conflictRecords(python).filter((record) => record.code === 'conflict-unnecessary-upstream');
-		expect(unnecessary.map((record) => record.details?.symbols)).toEqual([['print_statement', 'primary_expression']]);
+		expect(unnecessary.map((record) => record.details?.symbols).sort()).toEqual([
+			['print_statement', 'primary_expression'],
+			['with_item', '_collection_elements']
+		]);
 		expect(unnecessary[0]).toMatchObject({ severity: 'info', canProceed: true });
 	});
 });

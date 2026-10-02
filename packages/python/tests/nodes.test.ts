@@ -4153,6 +4153,18 @@ describe('format_specifier_text', () => {
 	});
 });
 
+describe('tuple_elements', () => {
+	it('factory produces correct type', () => {
+		const node = ir.tupleElements(...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]);
+		expect(node.$type).toBe(TSKindId.TupleElements);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.tupleElements(...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
 describe('except_clause_exception_as', () => {
 	it('factory produces correct type', () => {
 		const node = ir.exceptClauseExceptionAs({

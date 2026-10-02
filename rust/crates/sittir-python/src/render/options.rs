@@ -2,8 +2,8 @@
 
 use ::sittir_core::options::{ResolvedOptions, NO_SITE};
 
-pub const SPACING_SITE_COUNT: usize = 948;
-pub const DELIMITER_SITE_COUNT: usize = 20;
+pub const SPACING_SITE_COUNT: usize = 978;
+pub const DELIMITER_SITE_COUNT: usize = 21;
 
 pub const SITE_ALIASED_IMPORT_AS_KEYWORD_BEFORE: usize = 0;
 pub const SITE_ALIASED_IMPORT_AS_KEYWORD_AFTER: usize = 1;
@@ -854,105 +854,135 @@ pub const SITE_TUPLE_LPAREN_AFTER: usize = 845;
 pub const SITE_TUPLE_RPAREN_BEFORE: usize = 846;
 pub const SITE_TUPLE_TUPLE_BEFORE: usize = 847;
 pub const SITE_TUPLE_TUPLE_AFTER: usize = 848;
-pub const SITE_TUPLE_PATTERN_LPAREN_AFTER: usize = 849;
-pub const SITE_TUPLE_PATTERN_RPAREN_BEFORE: usize = 850;
-pub const SITE_TUPLE_PATTERN_TUPLE_PATTERN_BEFORE: usize = 851;
-pub const SITE_TUPLE_PATTERN_TUPLE_PATTERN_AFTER: usize = 852;
-pub const SITE_TYPE_ALIAS_STATEMENT_EQ_BEFORE: usize = 853;
-pub const SITE_TYPE_ALIAS_STATEMENT_EQ_AFTER: usize = 854;
-pub const SITE_TYPE_ALIAS_STATEMENT_TYPE_KEYWORD_AFTER: usize = 855;
-pub const SITE_TYPE_ALIAS_STATEMENT_TYPE_ALIAS_STATEMENT_BEFORE: usize = 856;
-pub const SITE_TYPE_ALIAS_STATEMENT_TYPE_ALIAS_STATEMENT_AFTER: usize = 857;
-pub const SITE_TYPE_PARAMETER_LBRACK_AFTER: usize = 858;
-pub const SITE_TYPE_PARAMETER_RBRACK_BEFORE: usize = 859;
-pub const SITE_TYPE_PARAMETER_TYPE_PARAMETER_BEFORE: usize = 860;
-pub const SITE_TYPE_PARAMETER_TYPE_PARAMETER_AFTER: usize = 861;
-pub const SITE_TYPED_DEFAULT_PARAMETER_COLON_BEFORE: usize = 862;
-pub const SITE_TYPED_DEFAULT_PARAMETER_COLON_AFTER: usize = 863;
-pub const SITE_TYPED_DEFAULT_PARAMETER_EQ_BEFORE: usize = 864;
-pub const SITE_TYPED_DEFAULT_PARAMETER_EQ_AFTER: usize = 865;
-pub const SITE_TYPED_DEFAULT_PARAMETER_TYPED_DEFAULT_PARAMETER_BEFORE: usize = 866;
-pub const SITE_TYPED_DEFAULT_PARAMETER_TYPED_DEFAULT_PARAMETER_AFTER: usize = 867;
-pub const SITE_TYPED_PARAMETER_COLON_BEFORE: usize = 868;
-pub const SITE_TYPED_PARAMETER_COLON_AFTER: usize = 869;
-pub const SITE_TYPED_PARAMETER_TYPED_PARAMETER_BEFORE: usize = 870;
-pub const SITE_TYPED_PARAMETER_TYPED_PARAMETER_AFTER: usize = 871;
-pub const SITE_TYPES_TYPE_AS_PATTERN_AFTER: usize = 872;
-pub const SITE_TYPES_TYPE_ATTRIBUTE_AFTER: usize = 873;
-pub const SITE_TYPES_TYPE_AWAIT_AFTER: usize = 874;
-pub const SITE_TYPES_TYPE_BINARY_OPERATOR_AFTER: usize = 875;
-pub const SITE_TYPES_TYPE_BOOLEAN_OPERATOR_AFTER: usize = 876;
-pub const SITE_TYPES_TYPE_CALL_AFTER: usize = 877;
-pub const SITE_TYPES_TYPE_COMPARISON_OPERATOR_AFTER: usize = 878;
-pub const SITE_TYPES_TYPE_CONCATENATED_STRING_AFTER: usize = 879;
-pub const SITE_TYPES_TYPE_CONDITIONAL_EXPRESSION_AFTER: usize = 880;
-pub const SITE_TYPES_TYPE_CONSTRAINED_TYPE_AFTER: usize = 881;
-pub const SITE_TYPES_TYPE_DICTIONARY_AFTER: usize = 882;
-pub const SITE_TYPES_TYPE_DICTIONARY_COMPREHENSION_AFTER: usize = 883;
-pub const SITE_TYPES_TYPE_GENERATOR_EXPRESSION_AFTER: usize = 884;
-pub const SITE_TYPES_TYPE_GENERIC_TYPE_AFTER: usize = 885;
-pub const SITE_TYPES_TYPE_LAMBDA_AFTER: usize = 886;
-pub const SITE_TYPES_TYPE_LIST_AFTER: usize = 887;
-pub const SITE_TYPES_TYPE_LIST_COMPREHENSION_AFTER: usize = 888;
-pub const SITE_TYPES_TYPE_LIST_SPLAT_PATTERN_AFTER: usize = 889;
-pub const SITE_TYPES_TYPE_MEMBER_TYPE_AFTER: usize = 890;
-pub const SITE_TYPES_TYPE_NAMED_EXPRESSION_AFTER: usize = 891;
-pub const SITE_TYPES_TYPE_NOT_OPERATOR_AFTER: usize = 892;
-pub const SITE_TYPES_TYPE_PARENTHESIZED_EXPRESSION_AFTER: usize = 893;
-pub const SITE_TYPES_TYPE_SET_AFTER: usize = 894;
-pub const SITE_TYPES_TYPE_SET_COMPREHENSION_AFTER: usize = 895;
-pub const SITE_TYPES_TYPE_SPLAT_TYPE_AFTER: usize = 896;
-pub const SITE_TYPES_TYPE_STRING_AFTER: usize = 897;
-pub const SITE_TYPES_TYPE_SUBSCRIPT_AFTER: usize = 898;
-pub const SITE_TYPES_TYPE_TUPLE_AFTER: usize = 899;
-pub const SITE_TYPES_TYPE_UNARY_OPERATOR_AFTER: usize = 900;
-pub const SITE_TYPES_TYPE_UNION_TYPE_AFTER: usize = 901;
-pub const SITE_TYPES_TYPE_SEPARATOR_SPACE_BEFORE: usize = 902;
-pub const SITE_TYPES_TYPE_SEPARATOR_SPACE_AFTER: usize = 903;
-pub const SITE_UNARY_OPERATOR_OPERATOR_AFTER: usize = 904;
-pub const SITE_UNARY_OPERATOR_UNARY_OPERATOR_BEFORE: usize = 905;
-pub const SITE_UNARY_OPERATOR_UNARY_OPERATOR_AFTER: usize = 906;
-pub const SITE_UNION_PATTERN_PATTERNS_CASE_LIST_PATTERN_AFTER: usize = 907;
-pub const SITE_UNION_PATTERN_PATTERNS_CASE_TUPLE_PATTERN_AFTER: usize = 908;
-pub const SITE_UNION_PATTERN_PATTERNS_CLASS_PATTERN_AFTER: usize = 909;
-pub const SITE_UNION_PATTERN_PATTERNS_COMPLEX_PATTERN_AFTER: usize = 910;
-pub const SITE_UNION_PATTERN_PATTERNS_CONCATENATED_STRING_AFTER: usize = 911;
-pub const SITE_UNION_PATTERN_PATTERNS_DICT_PATTERN_AFTER: usize = 912;
-pub const SITE_UNION_PATTERN_PATTERNS_SIMPLE_PATTERN_NEGATIVE_AFTER: usize = 913;
-pub const SITE_UNION_PATTERN_PATTERNS_SPLAT_PATTERN_AFTER: usize = 914;
-pub const SITE_UNION_PATTERN_PATTERNS_STRING_AFTER: usize = 915;
-pub const SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_BEFORE: usize = 916;
-pub const SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_AFTER: usize = 917;
-pub const SITE_UNION_TYPE_PIPE_BEFORE: usize = 918;
-pub const SITE_UNION_TYPE_PIPE_AFTER: usize = 919;
-pub const SITE_UNION_TYPE_UNION_TYPE_BEFORE: usize = 920;
-pub const SITE_UNION_TYPE_UNION_TYPE_AFTER: usize = 921;
-pub const SITE_WHILE_STATEMENT_COLON_BEFORE: usize = 922;
-pub const SITE_WHILE_STATEMENT_COLON_AFTER: usize = 923;
-pub const SITE_WHILE_STATEMENT_WHILE_KEYWORD_AFTER: usize = 924;
-pub const SITE_WHILE_STATEMENT_WHILE_STATEMENT_BEFORE: usize = 925;
-pub const SITE_WHILE_STATEMENT_WHILE_STATEMENT_AFTER: usize = 926;
-pub const SITE_WITH_CLAUSE_BARE_WITH_ITEM_SEPARATOR_SPACE_BEFORE: usize = 927;
-pub const SITE_WITH_CLAUSE_BARE_WITH_ITEM_SEPARATOR_SPACE_AFTER: usize = 928;
-pub const SITE_WITH_CLAUSE_PAREN_LPAREN_AFTER: usize = 929;
-pub const SITE_WITH_CLAUSE_PAREN_RPAREN_BEFORE: usize = 930;
-pub const SITE_WITH_CLAUSE_PAREN_WITH_CLAUSE_PAREN_BEFORE: usize = 931;
-pub const SITE_WITH_CLAUSE_PAREN_WITH_CLAUSE_PAREN_AFTER: usize = 932;
-pub const SITE_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM_SEPARATOR_SPACE_BEFORE: usize = 933;
-pub const SITE_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM_SEPARATOR_SPACE_AFTER: usize = 934;
-pub const SITE_WITH_STATEMENT_ASYNC_MARKER_AFTER: usize = 935;
-pub const SITE_WITH_STATEMENT_COLON_BEFORE: usize = 936;
-pub const SITE_WITH_STATEMENT_COLON_AFTER: usize = 937;
-pub const SITE_WITH_STATEMENT_WITH_KEYWORD_BEFORE: usize = 938;
-pub const SITE_WITH_STATEMENT_WITH_KEYWORD_AFTER: usize = 939;
-pub const SITE_WITH_STATEMENT_WITH_STATEMENT_BEFORE: usize = 940;
-pub const SITE_WITH_STATEMENT_WITH_STATEMENT_AFTER: usize = 941;
-pub const SITE_YIELD_YIELD_KEYWORD_AFTER: usize = 942;
-pub const SITE_YIELD_YIELD_BEFORE: usize = 943;
-pub const SITE_YIELD_YIELD_AFTER: usize = 944;
-pub const SITE_YIELD_FROM_CLAUSE_FROM_KEYWORD_AFTER: usize = 945;
-pub const SITE_YIELD_FROM_CLAUSE_YIELD_FROM_CLAUSE_BEFORE: usize = 946;
-pub const SITE_YIELD_FROM_CLAUSE_YIELD_FROM_CLAUSE_AFTER: usize = 947;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_AS_PATTERN_AFTER: usize = 849;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_ATTRIBUTE_AFTER: usize = 850;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_AWAIT_AFTER: usize = 851;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_BINARY_OPERATOR_AFTER: usize = 852;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_BOOLEAN_OPERATOR_AFTER: usize = 853;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_CALL_AFTER: usize = 854;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_COMPARISON_OPERATOR_AFTER: usize = 855;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_CONCATENATED_STRING_AFTER: usize = 856;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_CONDITIONAL_EXPRESSION_AFTER: usize = 857;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_DICTIONARY_AFTER: usize = 858;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_DICTIONARY_COMPREHENSION_AFTER: usize = 859;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_GENERATOR_EXPRESSION_AFTER: usize = 860;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_LAMBDA_AFTER: usize = 861;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_LIST_AFTER: usize = 862;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_LIST_COMPREHENSION_AFTER: usize = 863;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_LIST_SPLAT_AFTER: usize = 864;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_LIST_SPLAT_PATTERN_AFTER: usize = 865;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_NAMED_EXPRESSION_AFTER: usize = 866;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_NOT_OPERATOR_AFTER: usize = 867;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_PARENTHESIZED_EXPRESSION_AFTER: usize = 868;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_PARENTHESIZED_LIST_SPLAT_AFTER: usize = 869;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_SET_AFTER: usize = 870;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_SET_COMPREHENSION_AFTER: usize = 871;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_STRING_AFTER: usize = 872;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_SUBSCRIPT_AFTER: usize = 873;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_TUPLE_AFTER: usize = 874;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_UNARY_OPERATOR_AFTER: usize = 875;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_YIELD_AFTER: usize = 876;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE: usize = 877;
+pub const SITE_TUPLE_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER: usize = 878;
+pub const SITE_TUPLE_PATTERN_LPAREN_AFTER: usize = 879;
+pub const SITE_TUPLE_PATTERN_RPAREN_BEFORE: usize = 880;
+pub const SITE_TUPLE_PATTERN_TUPLE_PATTERN_BEFORE: usize = 881;
+pub const SITE_TUPLE_PATTERN_TUPLE_PATTERN_AFTER: usize = 882;
+pub const SITE_TYPE_ALIAS_STATEMENT_EQ_BEFORE: usize = 883;
+pub const SITE_TYPE_ALIAS_STATEMENT_EQ_AFTER: usize = 884;
+pub const SITE_TYPE_ALIAS_STATEMENT_TYPE_KEYWORD_AFTER: usize = 885;
+pub const SITE_TYPE_ALIAS_STATEMENT_TYPE_ALIAS_STATEMENT_BEFORE: usize = 886;
+pub const SITE_TYPE_ALIAS_STATEMENT_TYPE_ALIAS_STATEMENT_AFTER: usize = 887;
+pub const SITE_TYPE_PARAMETER_LBRACK_AFTER: usize = 888;
+pub const SITE_TYPE_PARAMETER_RBRACK_BEFORE: usize = 889;
+pub const SITE_TYPE_PARAMETER_TYPE_PARAMETER_BEFORE: usize = 890;
+pub const SITE_TYPE_PARAMETER_TYPE_PARAMETER_AFTER: usize = 891;
+pub const SITE_TYPED_DEFAULT_PARAMETER_COLON_BEFORE: usize = 892;
+pub const SITE_TYPED_DEFAULT_PARAMETER_COLON_AFTER: usize = 893;
+pub const SITE_TYPED_DEFAULT_PARAMETER_EQ_BEFORE: usize = 894;
+pub const SITE_TYPED_DEFAULT_PARAMETER_EQ_AFTER: usize = 895;
+pub const SITE_TYPED_DEFAULT_PARAMETER_TYPED_DEFAULT_PARAMETER_BEFORE: usize = 896;
+pub const SITE_TYPED_DEFAULT_PARAMETER_TYPED_DEFAULT_PARAMETER_AFTER: usize = 897;
+pub const SITE_TYPED_PARAMETER_COLON_BEFORE: usize = 898;
+pub const SITE_TYPED_PARAMETER_COLON_AFTER: usize = 899;
+pub const SITE_TYPED_PARAMETER_TYPED_PARAMETER_BEFORE: usize = 900;
+pub const SITE_TYPED_PARAMETER_TYPED_PARAMETER_AFTER: usize = 901;
+pub const SITE_TYPES_TYPE_AS_PATTERN_AFTER: usize = 902;
+pub const SITE_TYPES_TYPE_ATTRIBUTE_AFTER: usize = 903;
+pub const SITE_TYPES_TYPE_AWAIT_AFTER: usize = 904;
+pub const SITE_TYPES_TYPE_BINARY_OPERATOR_AFTER: usize = 905;
+pub const SITE_TYPES_TYPE_BOOLEAN_OPERATOR_AFTER: usize = 906;
+pub const SITE_TYPES_TYPE_CALL_AFTER: usize = 907;
+pub const SITE_TYPES_TYPE_COMPARISON_OPERATOR_AFTER: usize = 908;
+pub const SITE_TYPES_TYPE_CONCATENATED_STRING_AFTER: usize = 909;
+pub const SITE_TYPES_TYPE_CONDITIONAL_EXPRESSION_AFTER: usize = 910;
+pub const SITE_TYPES_TYPE_CONSTRAINED_TYPE_AFTER: usize = 911;
+pub const SITE_TYPES_TYPE_DICTIONARY_AFTER: usize = 912;
+pub const SITE_TYPES_TYPE_DICTIONARY_COMPREHENSION_AFTER: usize = 913;
+pub const SITE_TYPES_TYPE_GENERATOR_EXPRESSION_AFTER: usize = 914;
+pub const SITE_TYPES_TYPE_GENERIC_TYPE_AFTER: usize = 915;
+pub const SITE_TYPES_TYPE_LAMBDA_AFTER: usize = 916;
+pub const SITE_TYPES_TYPE_LIST_AFTER: usize = 917;
+pub const SITE_TYPES_TYPE_LIST_COMPREHENSION_AFTER: usize = 918;
+pub const SITE_TYPES_TYPE_LIST_SPLAT_PATTERN_AFTER: usize = 919;
+pub const SITE_TYPES_TYPE_MEMBER_TYPE_AFTER: usize = 920;
+pub const SITE_TYPES_TYPE_NAMED_EXPRESSION_AFTER: usize = 921;
+pub const SITE_TYPES_TYPE_NOT_OPERATOR_AFTER: usize = 922;
+pub const SITE_TYPES_TYPE_PARENTHESIZED_EXPRESSION_AFTER: usize = 923;
+pub const SITE_TYPES_TYPE_SET_AFTER: usize = 924;
+pub const SITE_TYPES_TYPE_SET_COMPREHENSION_AFTER: usize = 925;
+pub const SITE_TYPES_TYPE_SPLAT_TYPE_AFTER: usize = 926;
+pub const SITE_TYPES_TYPE_STRING_AFTER: usize = 927;
+pub const SITE_TYPES_TYPE_SUBSCRIPT_AFTER: usize = 928;
+pub const SITE_TYPES_TYPE_TUPLE_AFTER: usize = 929;
+pub const SITE_TYPES_TYPE_UNARY_OPERATOR_AFTER: usize = 930;
+pub const SITE_TYPES_TYPE_UNION_TYPE_AFTER: usize = 931;
+pub const SITE_TYPES_TYPE_SEPARATOR_SPACE_BEFORE: usize = 932;
+pub const SITE_TYPES_TYPE_SEPARATOR_SPACE_AFTER: usize = 933;
+pub const SITE_UNARY_OPERATOR_OPERATOR_AFTER: usize = 934;
+pub const SITE_UNARY_OPERATOR_UNARY_OPERATOR_BEFORE: usize = 935;
+pub const SITE_UNARY_OPERATOR_UNARY_OPERATOR_AFTER: usize = 936;
+pub const SITE_UNION_PATTERN_PATTERNS_CASE_LIST_PATTERN_AFTER: usize = 937;
+pub const SITE_UNION_PATTERN_PATTERNS_CASE_TUPLE_PATTERN_AFTER: usize = 938;
+pub const SITE_UNION_PATTERN_PATTERNS_CLASS_PATTERN_AFTER: usize = 939;
+pub const SITE_UNION_PATTERN_PATTERNS_COMPLEX_PATTERN_AFTER: usize = 940;
+pub const SITE_UNION_PATTERN_PATTERNS_CONCATENATED_STRING_AFTER: usize = 941;
+pub const SITE_UNION_PATTERN_PATTERNS_DICT_PATTERN_AFTER: usize = 942;
+pub const SITE_UNION_PATTERN_PATTERNS_SIMPLE_PATTERN_NEGATIVE_AFTER: usize = 943;
+pub const SITE_UNION_PATTERN_PATTERNS_SPLAT_PATTERN_AFTER: usize = 944;
+pub const SITE_UNION_PATTERN_PATTERNS_STRING_AFTER: usize = 945;
+pub const SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_BEFORE: usize = 946;
+pub const SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_AFTER: usize = 947;
+pub const SITE_UNION_TYPE_PIPE_BEFORE: usize = 948;
+pub const SITE_UNION_TYPE_PIPE_AFTER: usize = 949;
+pub const SITE_UNION_TYPE_UNION_TYPE_BEFORE: usize = 950;
+pub const SITE_UNION_TYPE_UNION_TYPE_AFTER: usize = 951;
+pub const SITE_WHILE_STATEMENT_COLON_BEFORE: usize = 952;
+pub const SITE_WHILE_STATEMENT_COLON_AFTER: usize = 953;
+pub const SITE_WHILE_STATEMENT_WHILE_KEYWORD_AFTER: usize = 954;
+pub const SITE_WHILE_STATEMENT_WHILE_STATEMENT_BEFORE: usize = 955;
+pub const SITE_WHILE_STATEMENT_WHILE_STATEMENT_AFTER: usize = 956;
+pub const SITE_WITH_CLAUSE_BARE_WITH_ITEM_SEPARATOR_SPACE_BEFORE: usize = 957;
+pub const SITE_WITH_CLAUSE_BARE_WITH_ITEM_SEPARATOR_SPACE_AFTER: usize = 958;
+pub const SITE_WITH_CLAUSE_PAREN_LPAREN_AFTER: usize = 959;
+pub const SITE_WITH_CLAUSE_PAREN_RPAREN_BEFORE: usize = 960;
+pub const SITE_WITH_CLAUSE_PAREN_WITH_CLAUSE_PAREN_BEFORE: usize = 961;
+pub const SITE_WITH_CLAUSE_PAREN_WITH_CLAUSE_PAREN_AFTER: usize = 962;
+pub const SITE_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM_SEPARATOR_SPACE_BEFORE: usize = 963;
+pub const SITE_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM_SEPARATOR_SPACE_AFTER: usize = 964;
+pub const SITE_WITH_STATEMENT_ASYNC_MARKER_AFTER: usize = 965;
+pub const SITE_WITH_STATEMENT_COLON_BEFORE: usize = 966;
+pub const SITE_WITH_STATEMENT_COLON_AFTER: usize = 967;
+pub const SITE_WITH_STATEMENT_WITH_KEYWORD_BEFORE: usize = 968;
+pub const SITE_WITH_STATEMENT_WITH_KEYWORD_AFTER: usize = 969;
+pub const SITE_WITH_STATEMENT_WITH_STATEMENT_BEFORE: usize = 970;
+pub const SITE_WITH_STATEMENT_WITH_STATEMENT_AFTER: usize = 971;
+pub const SITE_YIELD_YIELD_KEYWORD_AFTER: usize = 972;
+pub const SITE_YIELD_YIELD_BEFORE: usize = 973;
+pub const SITE_YIELD_YIELD_AFTER: usize = 974;
+pub const SITE_YIELD_FROM_CLAUSE_FROM_KEYWORD_AFTER: usize = 975;
+pub const SITE_YIELD_FROM_CLAUSE_YIELD_FROM_CLAUSE_BEFORE: usize = 976;
+pub const SITE_YIELD_FROM_CLAUSE_YIELD_FROM_CLAUSE_AFTER: usize = 977;
 pub const DELIM_ARGUMENT_LIST_ELEMENTS_ELEMENT: usize = 0;
 pub const DELIM_CASE_PATTERNS_CASE_PATTERN: usize = 1;
 pub const DELIM_COLLECTION_ELEMENTS_ELEMENT: usize = 2;
@@ -970,9 +1000,10 @@ pub const DELIM_PRINT_CHEVRON_ARGUMENTS_ARGUMENT: usize = 13;
 pub const DELIM_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT: usize = 14;
 pub const DELIM_SUBJECTS_SUBJECT: usize = 15;
 pub const DELIM_SUBSCRIPTS_SUBSCRIPT: usize = 16;
-pub const DELIM_TYPES_TYPE: usize = 17;
-pub const DELIM_WITH_CLAUSE_BARE_WITH_ITEM: usize = 18;
-pub const DELIM_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM: usize = 19;
+pub const DELIM_TUPLE_ELEMENTS_ELEMENT: usize = 17;
+pub const DELIM_TYPES_TYPE: usize = 18;
+pub const DELIM_WITH_CLAUSE_BARE_WITH_ITEM: usize = 19;
+pub const DELIM_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM: usize = 20;
 
 /// (kind, address, label, allowed kind ids), in canonical path order.
 pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
@@ -1825,6 +1856,36 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("tuple", "rparen_before", "rparen_before", &[122, 123, 124, 115, 125, 126]),
     ("tuple", "tuple_before", "tuple_before", &[122, 123, 124, 115, 125, 126]),
     ("tuple", "tuple_after", "tuple_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_as_pattern_after", "as_pattern_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_attribute_after", "attribute_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_await_after", "await_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_binary_operator_after", "binary_operator_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_boolean_operator_after", "boolean_operator_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_call_after", "call_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_comparison_operator_after", "comparison_operator_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_concatenated_string_after", "concatenated_string_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_conditional_expression_after", "conditional_expression_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_dictionary_after", "dictionary_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_dictionary_comprehension_after", "dictionary_comprehension_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_generator_expression_after", "generator_expression_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_lambda_after", "lambda_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_list_after", "list_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_list_comprehension_after", "list_comprehension_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_list_splat_after", "list_splat_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_list_splat_pattern_after", "list_splat_pattern_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_named_expression_after", "named_expression_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_not_operator_after", "not_operator_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_parenthesized_expression_after", "parenthesized_expression_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_parenthesized_list_splat_after", "parenthesized_list_splat_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_set_after", "set_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_set_comprehension_after", "set_comprehension_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_string_after", "string_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_subscript_after", "subscript_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_tuple_after", "tuple_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_unary_operator_after", "unary_operator_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_yield_after", "yield_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_separator_space_before", "comma_separator_space_before", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "element_separator_space_after", "comma_separator_space_after", &[122, 123, 124, 115, 125, 126]),
     ("tuple_pattern", "lparen_after", "lparen_after", &[122, 123, 124, 115, 125, 126]),
     ("tuple_pattern", "rparen_before", "rparen_before", &[122, 123, 124, 115, 125, 126]),
     ("tuple_pattern", "tuple_pattern_before", "tuple_pattern_before", &[122, 123, 124, 115, 125, 126]),
@@ -1947,11 +2008,11 @@ pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
     ::sittir_core::options::EdgeSite { before: 553, after: 554 },
     ::sittir_core::options::EdgeSite { before: 128, after: 129 },
     ::sittir_core::options::EdgeSite { before: 441, after: 442 },
-    ::sittir_core::options::EdgeSite { before: 925, after: 926 },
+    ::sittir_core::options::EdgeSite { before: 955, after: 956 },
     ::sittir_core::options::EdgeSite { before: 843, after: 844 },
     ::sittir_core::options::EdgeSite { before: 271, after: 272 },
     ::sittir_core::options::EdgeSite { before: 396, after: 397 },
-    ::sittir_core::options::EdgeSite { before: 940, after: 941 },
+    ::sittir_core::options::EdgeSite { before: 970, after: 971 },
     ::sittir_core::options::EdgeSite { before: 453, after: 454 },
     ::sittir_core::options::EdgeSite { before: 590, after: 591 },
     ::sittir_core::options::EdgeSite { before: 541, after: 542 },
@@ -1959,9 +2020,9 @@ pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
     ::sittir_core::options::EdgeSite { before: 471, after: 472 },
     ::sittir_core::options::EdgeSite { before: 579, after: 580 },
     ::sittir_core::options::EdgeSite { before: 334, after: 335 },
-    ::sittir_core::options::EdgeSite { before: 856, after: 857 },
+    ::sittir_core::options::EdgeSite { before: 886, after: 887 },
     ::sittir_core::options::EdgeSite { before: 148, after: 149 },
-    ::sittir_core::options::EdgeSite { before: 860, after: 861 },
+    ::sittir_core::options::EdgeSite { before: 890, after: 891 },
     ::sittir_core::options::EdgeSite { before: 610, after: 611 },
     ::sittir_core::options::EdgeSite { before: 6, after: 7 },
     ::sittir_core::options::EdgeSite { before: 216, after: 217 },
@@ -1975,31 +2036,31 @@ pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
     ::sittir_core::options::EdgeSite { before: 767, after: 768 },
     ::sittir_core::options::EdgeSite { before: 153, after: 154 },
     ::sittir_core::options::EdgeSite { before: 195, after: 196 },
-    ::sittir_core::options::EdgeSite { before: 851, after: 852 },
+    ::sittir_core::options::EdgeSite { before: 881, after: 882 },
     ::sittir_core::options::EdgeSite { before: 534, after: 535 },
     ::sittir_core::options::EdgeSite { before: 223, after: 224 },
-    ::sittir_core::options::EdgeSite { before: 866, after: 867 },
+    ::sittir_core::options::EdgeSite { before: 896, after: 897 },
     ::sittir_core::options::EdgeSite { before: 544, after: 545 },
     ::sittir_core::options::EdgeSite { before: 252, after: 253 },
     ::sittir_core::options::EdgeSite { before: 41, after: 42 },
     ::sittir_core::options::EdgeSite { before: 582, after: 583 },
     ::sittir_core::options::EdgeSite { before: 117, after: 118 },
     ::sittir_core::options::EdgeSite { before: 100, after: 101 },
-    ::sittir_core::options::EdgeSite { before: 905, after: 906 },
+    ::sittir_core::options::EdgeSite { before: 935, after: 936 },
     ::sittir_core::options::EdgeSite { before: 187, after: 188 },
     ::sittir_core::options::EdgeSite { before: 517, after: 518 },
     ::sittir_core::options::EdgeSite { before: 522, after: 523 },
     ::sittir_core::options::EdgeSite { before: 93, after: 94 },
     ::sittir_core::options::EdgeSite { before: 613, after: 614 },
-    ::sittir_core::options::EdgeSite { before: 943, after: 944 },
+    ::sittir_core::options::EdgeSite { before: 973, after: 974 },
     ::sittir_core::options::EdgeSite { before: 89, after: 90 },
     ::sittir_core::options::EdgeSite { before: 804, after: 805 },
     ::sittir_core::options::EdgeSite { before: 760, after: 761 },
     ::sittir_core::options::EdgeSite { before: 119, after: 120 },
-    ::sittir_core::options::EdgeSite { before: 870, after: 871 },
+    ::sittir_core::options::EdgeSite { before: 900, after: 901 },
     ::sittir_core::options::EdgeSite { before: 770, after: 771 },
     ::sittir_core::options::EdgeSite { before: 466, after: 467 },
-    ::sittir_core::options::EdgeSite { before: 920, after: 921 },
+    ::sittir_core::options::EdgeSite { before: 950, after: 951 },
     ::sittir_core::options::EdgeSite { before: 212, after: 213 },
     ::sittir_core::options::EdgeSite { before: 557, after: 558 },
     ::sittir_core::options::EdgeSite { before: 508, after: 509 },
@@ -2032,12 +2093,12 @@ pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
     ::sittir_core::options::EdgeSite { before: 75, after: 76 },
     ::sittir_core::options::EdgeSite { before: 79, after: 80 },
     ::sittir_core::options::EdgeSite { before: 85, after: 86 },
-    ::sittir_core::options::EdgeSite { before: 931, after: 932 },
+    ::sittir_core::options::EdgeSite { before: 961, after: 962 },
     ::sittir_core::options::EdgeSite { before: 548, after: 549 },
     ::sittir_core::options::EdgeSite { before: 836, after: 837 },
     ::sittir_core::options::EdgeSite { before: 834, after: 835 },
     ::sittir_core::options::EdgeSite { before: 190, after: 191 },
-    ::sittir_core::options::EdgeSite { before: 946, after: 947 },
+    ::sittir_core::options::EdgeSite { before: 976, after: 977 },
 ];
 
 /// Per kind id, its row in EDGE_SITES.
@@ -2059,8 +2120,8 @@ pub static EDGE_ROWS: &[u16] = &[
     68, NO_SITE, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
     83, 84, NO_SITE, 85, 86, 87, 88, 89, NO_SITE, 90, NO_SITE, NO_SITE, NO_SITE, 91, NO_SITE, NO_SITE,
     92, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 93,
-    94, 95, 96, NO_SITE, NO_SITE, 97, 98, NO_SITE, 99, NO_SITE, NO_SITE, 100, NO_SITE, NO_SITE, 101, 102,
-    103, NO_SITE, NO_SITE, 104, 105, NO_SITE, 106, 107, NO_SITE, 108, 109,
+    NO_SITE, 94, 95, 96, NO_SITE, NO_SITE, 97, 98, NO_SITE, 99, NO_SITE, NO_SITE, 100, NO_SITE, NO_SITE, 101,
+    102, 103, NO_SITE, NO_SITE, 104, 105, NO_SITE, 106, 107, NO_SITE, 108, 109,
 ];
 
 /// Per kind id, its flags: KIND_ANON (the parser's anonymous token), KIND_LINE_TERMINATED, KIND_LINE_BREAK_TERMINATED, KIND_ROOT.
@@ -2074,8 +2135,8 @@ pub static KIND_FLAGS: &[u8] = &[
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 4, 4, 0, 4, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    0, 0, 0, 0, 0, 0, 4, 4, 0, 4, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 ];
 
 /// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.
@@ -2097,6 +2158,7 @@ pub static DELIMITER_SITES: &[(&str, &str, u8, u8)] = &[
     ("simple_statements_elements", "simple_statement_delimiter", 2, 0),
     ("subjects", "subject_delimiter", 2, 0),
     ("subscripts", "subscript_delimiter", 2, 0),
+    ("tuple_elements", "element_delimiter", 2, 0),
     ("types", "type_delimiter", 2, 0),
     ("with_clause_bare", "with_item_delimiter", 2, 0),
     ("with_clause_with_items", "with_item_delimiter", 2, 0),
@@ -2978,6 +3040,36 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 122, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 122, strength: 1 },
     ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 122, strength: 2 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 122, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 122, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 122, strength: 1 },
@@ -3194,7 +3286,7 @@ pub static SEATS_COMPARISON_OPERATOR_COMPARATORS: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 185,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 185,
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
@@ -3582,8 +3674,8 @@ pub static SEATS_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 737, 748, 752, 728, NO_SITE, 738, 729, 749,
     732, 743, NO_SITE, NO_SITE, NO_SITE, 726, 725, 750, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     720, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 744, 745, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 715, 716,
-    717,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 744, 745, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 715,
+    716, 717,
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
@@ -3643,6 +3735,27 @@ pub static SEATS_TRY_STATEMENT_EXCEPT_CLAUSES: &[u16] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
+pub static SEATS_TUPLE_ELEMENTS_ELEMENT: &[u16] = &[
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 866, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 864, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 869,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 865, NO_SITE, 849, NO_SITE, NO_SITE, NO_SITE, 867, 853,
+    852, 875, NO_SITE, NO_SITE, 855, 861, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 876, 850, 873, NO_SITE, 854,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 862, 870, 874, 858, NO_SITE, 863, 859, 871,
+    860, 868, NO_SITE, NO_SITE, NO_SITE, 857, 856, 872, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    851,
+];
+
+/// Per kind id, the site a seated element's after gap reads.
 pub static SEATS_TYPES_TYPE: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
@@ -3652,15 +3765,15 @@ pub static SEATS_TYPES_TYPE: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 891, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 921, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 889, NO_SITE, 872, NO_SITE, NO_SITE, NO_SITE, 892, 876,
-    875, 900, NO_SITE, NO_SITE, 878, 886, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 873, 898, NO_SITE, 877,
-    NO_SITE, NO_SITE, 896, 885, 901, 881, 890, NO_SITE, 887, 894, 899, 882, NO_SITE, 888, 883, 895,
-    884, 893, NO_SITE, NO_SITE, NO_SITE, 880, 879, 897, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    874,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 919, NO_SITE, 902, NO_SITE, NO_SITE, NO_SITE, 922, 906,
+    905, 930, NO_SITE, NO_SITE, 908, 916, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 903, 928, NO_SITE, 907,
+    NO_SITE, NO_SITE, 926, 915, 931, 911, 920, NO_SITE, 917, 924, 929, 912, NO_SITE, 918, 913, 925,
+    914, 923, NO_SITE, NO_SITE, NO_SITE, 910, 909, 927, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    904,
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
@@ -3676,13 +3789,13 @@ pub static SEATS_UNION_PATTERN_PATTERNS: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 912, NO_SITE, NO_SITE, 914, 909, 910,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 942, NO_SITE, NO_SITE, 944, 939, 940,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 911, 915, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 941, 945, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, 908, 907, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 913,
+    NO_SITE, NO_SITE, 938, 937, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 943,
 ];
 
 pub fn defaults() -> ResolvedOptions {
@@ -6056,6 +6169,101 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "rparen", path: "(tuple)/\")\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_RPAREN_BEFORE, path: "(tuple)/\")\"/before" }] },
+        ] },
+    ] },
+    ::sittir_core::options::AddressNode::Branch { key: "tupleElements", path: "(tuple_elements)", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "element", path: "(tuple_elements)/element:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "asPattern", path: "(tuple_elements)/element:/(as_pattern)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_AS_PATTERN_AFTER, path: "(tuple_elements)/element:/(as_pattern)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "attribute", path: "(tuple_elements)/element:/(attribute)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_ATTRIBUTE_AFTER, path: "(tuple_elements)/element:/(attribute)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "await", path: "(tuple_elements)/element:/(await)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_AWAIT_AFTER, path: "(tuple_elements)/element:/(await)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "binaryOperator", path: "(tuple_elements)/element:/(binary_operator)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_BINARY_OPERATOR_AFTER, path: "(tuple_elements)/element:/(binary_operator)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "booleanOperator", path: "(tuple_elements)/element:/(boolean_operator)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_BOOLEAN_OPERATOR_AFTER, path: "(tuple_elements)/element:/(boolean_operator)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "call", path: "(tuple_elements)/element:/(call)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_CALL_AFTER, path: "(tuple_elements)/element:/(call)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "comparisonOperator", path: "(tuple_elements)/element:/(comparison_operator)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_COMPARISON_OPERATOR_AFTER, path: "(tuple_elements)/element:/(comparison_operator)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "concatenatedString", path: "(tuple_elements)/element:/(concatenated_string)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_CONCATENATED_STRING_AFTER, path: "(tuple_elements)/element:/(concatenated_string)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "conditionalExpression", path: "(tuple_elements)/element:/(conditional_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_CONDITIONAL_EXPRESSION_AFTER, path: "(tuple_elements)/element:/(conditional_expression)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_TUPLE_ELEMENTS_ELEMENT, path: "(tuple_elements)/element:/delimiter" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "dictionary", path: "(tuple_elements)/element:/(dictionary)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_DICTIONARY_AFTER, path: "(tuple_elements)/element:/(dictionary)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "dictionaryComprehension", path: "(tuple_elements)/element:/(dictionary_comprehension)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_DICTIONARY_COMPREHENSION_AFTER, path: "(tuple_elements)/element:/(dictionary_comprehension)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "generatorExpression", path: "(tuple_elements)/element:/(generator_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_GENERATOR_EXPRESSION_AFTER, path: "(tuple_elements)/element:/(generator_expression)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "lambda", path: "(tuple_elements)/element:/(lambda)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_LAMBDA_AFTER, path: "(tuple_elements)/element:/(lambda)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "list", path: "(tuple_elements)/element:/(list)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_LIST_AFTER, path: "(tuple_elements)/element:/(list)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "listComprehension", path: "(tuple_elements)/element:/(list_comprehension)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_LIST_COMPREHENSION_AFTER, path: "(tuple_elements)/element:/(list_comprehension)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "listSplat", path: "(tuple_elements)/element:/(list_splat)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_LIST_SPLAT_AFTER, path: "(tuple_elements)/element:/(list_splat)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "listSplatPattern", path: "(tuple_elements)/element:/(list_splat_pattern)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_LIST_SPLAT_PATTERN_AFTER, path: "(tuple_elements)/element:/(list_splat_pattern)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "namedExpression", path: "(tuple_elements)/element:/(named_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_NAMED_EXPRESSION_AFTER, path: "(tuple_elements)/element:/(named_expression)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "notOperator", path: "(tuple_elements)/element:/(not_operator)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_NOT_OPERATOR_AFTER, path: "(tuple_elements)/element:/(not_operator)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "parenthesizedExpression", path: "(tuple_elements)/element:/(parenthesized_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_PARENTHESIZED_EXPRESSION_AFTER, path: "(tuple_elements)/element:/(parenthesized_expression)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "parenthesizedListSplat", path: "(tuple_elements)/element:/(parenthesized_list_splat)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_PARENTHESIZED_LIST_SPLAT_AFTER, path: "(tuple_elements)/element:/(parenthesized_list_splat)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(tuple_elements)/element:/separator", children: &[
+                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(tuple_elements)/element:/separator/\",\"", children: &[
+                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER, path: "(tuple_elements)/element:/separator/\",\"/after" }] },
+                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE, path: "(tuple_elements)/element:/separator/\",\"/before" }] },
+                ] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "set", path: "(tuple_elements)/element:/(set)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_SET_AFTER, path: "(tuple_elements)/element:/(set)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "setComprehension", path: "(tuple_elements)/element:/(set_comprehension)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_SET_COMPREHENSION_AFTER, path: "(tuple_elements)/element:/(set_comprehension)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "string", path: "(tuple_elements)/element:/(string)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_STRING_AFTER, path: "(tuple_elements)/element:/(string)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "subscript", path: "(tuple_elements)/element:/(subscript)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_SUBSCRIPT_AFTER, path: "(tuple_elements)/element:/(subscript)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "tuple", path: "(tuple_elements)/element:/(tuple)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_TUPLE_AFTER, path: "(tuple_elements)/element:/(tuple)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "unaryOperator", path: "(tuple_elements)/element:/(unary_operator)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_UNARY_OPERATOR_AFTER, path: "(tuple_elements)/element:/(unary_operator)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "yield", path: "(tuple_elements)/element:/(yield)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ELEMENT_YIELD_AFTER, path: "(tuple_elements)/element:/(yield)/after" }] },
+            ] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "tuplePattern", path: "(tuple_pattern)", children: &[

@@ -852,9 +852,9 @@ export namespace Expression {
 			readonly kind: 'expression.collection.tuple';
 			readonly attributes?: G['attribute'][];
 			// r only
-			readonly collectionElements?: V.Unmapped<'python:collection_elements'>;
+			readonly tupleElements?: V.Unmapped<'python:tuple_elements'>;
 			// p only
-			// unmapped: <python:collection_elements>
+			// unmapped: <python:tuple_elements>
 			readonly tupleExpressionElements?: V.Unmapped<'rust:tuple_expression_elements'>;
 			// r only
 			// unmapped: <rust:tuple_expression_elements>

@@ -1,6 +1,16 @@
-export type RuleCause = 'alias-shape' | 'ambiguity';
+export type RuleCause = 'alias-shape' | 'ambiguity' | 'accepts-other-kind';
 
-export type RuleCauseDeclaration = { readonly kind: 'reauthored'; readonly cause: RuleCause } | { readonly kind: 'vocabulary' };
+export type WitnessFormItem = string | { readonly symbol: string };
+
+export interface OtherKindWitness {
+	readonly text: string;
+	readonly form: readonly WitnessFormItem[];
+	readonly kind: string;
+}
+
+export type RuleCauseDeclaration =
+	| { readonly kind: 'reauthored'; readonly cause: RuleCause; readonly witness?: OtherKindWitness }
+	| { readonly kind: 'vocabulary' };
 
 const RULE_CAUSE = Symbol.for('sittir.ruleCause');
 
@@ -9,8 +19,11 @@ function tag<F extends (...args: never[]) => unknown>(body: F, declaration: Rule
 	return body;
 }
 
-export function reauthored<F extends (...args: never[]) => unknown>(cause: RuleCause, body: F): F {
-	return tag(body, { kind: 'reauthored', cause });
+export function reauthored<F extends (...args: never[]) => unknown>(cause: 'accepts-other-kind', witness: OtherKindWitness, body: F): F;
+export function reauthored<F extends (...args: never[]) => unknown>(cause: Exclude<RuleCause, 'accepts-other-kind'>, body: F): F;
+export function reauthored<F extends (...args: never[]) => unknown>(cause: RuleCause, ...rest: [F] | [OtherKindWitness, F]): F {
+	if (rest.length === 1) return tag(rest[0], { kind: 'reauthored', cause });
+	return tag(rest[1], { kind: 'reauthored', cause, witness: rest[0] });
 }
 
 export function vocabulary<F extends (...args: never[]) => unknown>(body: F): F {

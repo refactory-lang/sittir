@@ -292,7 +292,7 @@ they need no entry in `transforms`.
 				// alias into; these are pre-existing base-grammar rules referenced
 				// directly by their parents (`parameters`/`lambda_parameters` for
 				// `_parameters`; `tuple_pattern`/`list_pattern` for `_patterns`;
-				// `list`/`set`/`tuple` for `_collection_elements`).
+				// `list`/`set` for `_collection_elements`).
 				//
 				// IMPORTANT — alias the SYMBOL at each REFERENCE SITE, never the
 				// hidden rule's OWN body. An earlier version of this fix redefined
@@ -379,6 +379,25 @@ they need no entry in `transforms`.
 				// `parentIsOptionalSeq` and mints the kind; this site just needs
 				// to resolve through the same alias.)
 ```
+
+### `tuple`
+
+Upstream writes `tuple` as `'(' optional(_collection_elements) ')'`, the list
+shared with `list` and `set`, whose trailing comma is optional. That rule
+derives `(a)`. Python never reads `(a)` as a tuple: it is a parenthesized
+expression, and the upstream parser agrees only because
+`parenthesized_expression` carries a higher precedence. The overlap is
+invisible to the parser and wrong for the model, which would build a
+one-element tuple with no comma.
+
+`tuple` is therefore re-authored with its own element list, `_tuple_elements`
+(visible as `tuple_elements`), in which the first element carries a required
+comma: `(a,)`, `(a, b)`, `(a, b,)`, and `()` for no list at all. The model reads
+that as a list that needs its trailing separator at one element, and a built
+`tuple(x)` renders `(x,)`. `list` and `set` keep `_collection_elements`.
+
+One upstream reading changes: `(*a)`, which is not valid Python, was a tuple of
+one splat and is now a parenthesized expression.
 
 ### `set` (`packages/python/grammar.sittir.ts:503`)
 

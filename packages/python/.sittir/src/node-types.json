@@ -4096,10 +4096,38 @@
       "required": false,
       "types": [
         {
-          "type": "collection_elements",
+          "type": "tuple_elements",
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "tuple_elements",
+    "named": true,
+    "fields": {
+      "element": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          },
+          {
+            "type": "list_splat",
+            "named": true
+          },
+          {
+            "type": "parenthesized_list_splat",
+            "named": true
+          },
+          {
+            "type": "yield",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {

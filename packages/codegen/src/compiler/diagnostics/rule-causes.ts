@@ -1,5 +1,7 @@
 import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
-import type { RuleCause } from '../../dsl/primitives/rule-cause.ts';
+import type { OtherKindWitness, RuleCause, RuleCauseDeclaration, WitnessFormItem } from '../../dsl/primitives/rule-cause.ts';
+import type { Rule } from '../../types/rule.ts';
+import { CHOICE, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts';
 import type { RawGrammar } from '../types.ts';
 import type { StageDiagnosis } from '../stage.ts';
 import type { WhitespaceCollision } from '../../dsl/whitespace.ts';
@@ -14,8 +16,11 @@ export const PROVOKING_CODES: Readonly<Record<RuleCause, readonly string[]>> = {
 		'union-slot-mixed-row',
 		'multi-slot-nested-seq'
 	],
-	ambiguity: []
+	ambiguity: [],
+	'accepts-other-kind': []
 };
+
+type UpstreamRules = Readonly<Record<string, Rule<'evaluate'>>>;
 
 const ANY_PROVOKING: ReadonlySet<string> = new Set(Object.values(PROVOKING_CODES).flat());
 
@@ -30,6 +35,11 @@ export interface RuleCausesInput {
 	readonly grammar: string;
 	readonly raw: Pick<RawGrammar, 'ruleCauses' | 'undeclaredRules' | 'renderAs' | 'whitespaceCollisions'>;
 	readonly enriched?: StageDiagnosis;
+	readonly upstreamRules?: UpstreamRules;
+}
+
+export function isWitnessVerified(declaration: RuleCauseDeclaration): boolean {
+	return declaration.kind === 'reauthored' && declaration.cause === 'accepts-other-kind';
 }
 
 export function authoredRuleNames(raw: Pick<RawGrammar, 'ruleCauses' | 'undeclaredRules'>): string[] {
@@ -37,7 +47,7 @@ export function authoredRuleNames(raw: Pick<RawGrammar, 'ruleCauses' | 'undeclar
 }
 
 export function diagnoseRuleCauses(input: RuleCausesInput): GrammarDiagnostic[] {
-	const { grammar, raw, enriched } = input;
+	const { grammar, raw, enriched, upstreamRules = {} } = input;
 	const collisions = (raw.whitespaceCollisions ?? []).map(({ name, site }) =>
 		blocking(grammar, 'whitespace-mint-collision', name, WHITESPACE_COLLISION_MESSAGES[site](name))
 	);
@@ -66,7 +76,9 @@ export function diagnoseRuleCauses(input: RuleCausesInput): GrammarDiagnostic[] 
 	}
 	for (const [name, declaration] of Object.entries(raw.ruleCauses ?? {})) {
 		const diagnostic =
-			declaration.kind === 'vocabulary' ? judgeVocabulary(grammar, name, enriched) : judgeReauthored(grammar, enriched, name, declaration.cause);
+			declaration.kind === 'vocabulary'
+				? judgeVocabulary(grammar, name, enriched)
+				: judgeReauthored(grammar, enriched, name, declaration, upstreamRules);
 		if (diagnostic !== undefined) out.push(diagnostic);
 	}
 	return out;
@@ -82,7 +94,84 @@ function judgeVocabulary(grammar: string, name: string, enriched: StageDiagnosis
 	);
 }
 
-function judgeReauthored(grammar: string, enriched: StageDiagnosis, name: string, cause: RuleCause): GrammarDiagnostic | undefined {
+function derivesForm(rules: UpstreamRules, rule: Rule<'evaluate'>, form: readonly WitnessFormItem[]): boolean {
+	const expanding = new Set<string>();
+	const ends = (node: Rule<'evaluate'>, at: number): number[] => {
+		const shape = node as {
+			type: string;
+			value?: string;
+			name?: string;
+			content?: Rule<'evaluate'>;
+			members?: readonly Rule<'evaluate'>[];
+		};
+		const item = form[at];
+		switch (shape.type) {
+			case STRING:
+				return item === shape.value ? [at + 1] : [];
+			case SYMBOL: {
+				if (typeof item === 'object' && item.symbol === shape.name) return [at + 1];
+				const body = shape.name?.startsWith('_') ? rules[shape.name] : undefined;
+				const key = `${shape.name}@${at}`;
+				if (body === undefined || expanding.has(key)) return [];
+				expanding.add(key);
+				const reached = ends(body, at);
+				expanding.delete(key);
+				return reached;
+			}
+			case SEQ:
+				return (shape.members ?? []).reduce<number[]>((starts, member) => [...new Set(starts.flatMap((start) => ends(member, start)))], [at]);
+			case CHOICE:
+				return [...new Set((shape.members ?? []).flatMap((member) => ends(member, at)))];
+			case OPTIONAL:
+				return [...new Set([at, ...ends(shape.content!, at)])];
+			case REPEAT:
+			case REPEAT1: {
+				const reached = new Set<number>(shape.type === REPEAT ? [at] : []);
+				let frontier = [at];
+				while (frontier.length > 0) {
+					frontier = [...new Set(frontier.flatMap((start) => ends(shape.content!, start)))].filter((end) => !reached.has(end));
+					for (const end of frontier) reached.add(end);
+				}
+				return [...reached];
+			}
+			default:
+				return shape.content === undefined ? [] : ends(shape.content, at);
+		}
+	};
+	return ends(rule, 0).includes(form.length);
+}
+
+function judgeOtherKindWitness(
+	grammar: string,
+	name: string,
+	witness: OtherKindWitness | undefined,
+	upstreamRules: UpstreamRules
+): GrammarDiagnostic | undefined {
+	const mismatch = (reason: string): GrammarDiagnostic =>
+		blocking(
+			grammar,
+			'rule-cause-mismatch',
+			name,
+			`rules: '${name}' is declared reauthored('accepts-other-kind') but ${reason}. The cause holds only when the upstream rule and the other kind's upstream rule both derive the witness form`,
+			{ cause: 'accepts-other-kind', witness }
+		);
+	if (witness === undefined) return mismatch('declares no witness');
+	for (const rule of [name, witness.kind]) {
+		const body = upstreamRules[rule];
+		if (body === undefined) return mismatch(`upstream declares no rule '${rule}'`);
+		if (!derivesForm(upstreamRules, body, witness.form)) return mismatch(`upstream '${rule}' does not derive the witness form of '${witness.text}'`);
+	}
+	return undefined;
+}
+
+function judgeReauthored(
+	grammar: string,
+	enriched: StageDiagnosis,
+	name: string,
+	declaration: Extract<RuleCauseDeclaration, { kind: 'reauthored' }>,
+	upstreamRules: UpstreamRules
+): GrammarDiagnostic | undefined {
+	const { cause } = declaration;
 	if (!Object.hasOwn(PROVOKING_CODES, cause)) {
 		return blocking(
 			grammar,
@@ -103,6 +192,7 @@ function judgeReauthored(grammar: string, enriched: StageDiagnosis, name: string
 			{ cause }
 		);
 	}
+	if (cause === 'accepts-other-kind') return judgeOtherKindWitness(grammar, name, declaration.witness, upstreamRules);
 	const provoking = [...new Set(enriched.diagnostics.filter((d) => d.ownerKind === name && ANY_PROVOKING.has(d.code)).map((d) => d.code))].sort();
 	if (provoking.length === 0) {
 		return blocking(

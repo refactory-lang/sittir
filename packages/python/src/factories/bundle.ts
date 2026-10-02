@@ -245,6 +245,7 @@ export const dictPatternElements = bundle(F.buildDictPatternElements, C.coerceTo
 export const patternListPatterns = bundle(F.buildPatternListPatterns, C.coerceToPatternListPatterns);
 export const subscripts = bundle(F.buildSubscripts, C.coerceToSubscripts);
 export const dictionaryElements = bundle(F.buildDictionaryElements, C.coerceToDictionaryElements);
+export const tupleElements = bundle(F.buildTupleElements, C.coerceToTupleElements);
 export const exceptClauseExceptionAs = bundle(F.buildExceptClauseExceptionAs, C.coerceToExceptClauseExceptionAs, {
 	key: 'exceptClauseExceptionAs',
 	max: 1

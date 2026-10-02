@@ -4908,13 +4908,10 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_collection_elements"
+                "name": "_tuple_elements"
               },
               "named": true,
-              "value": "collection_elements",
-              "metadata": {
-                "aliasSource": "visible-group"
-              }
+              "value": "tuple_elements"
             },
             {
               "type": "BLANK"
@@ -6972,6 +6969,124 @@
         }
       ]
     },
+    "_tuple_elements": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "element",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "expression"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "yield"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "list_splat"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "parenthesized_list_splat"
+                  }
+                ]
+              },
+              "metadata": {
+                "fieldSource": "override"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": ","
+            }
+          ]
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "element",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "expression"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "yield"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "list_splat"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "parenthesized_list_splat"
+                    }
+                  ]
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              },
+              {
+                "type": "STRING",
+                "value": ","
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "element",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "expression"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "yield"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "list_splat"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "parenthesized_list_splat"
+                  }
+                ]
+              },
+              "metadata": {
+                "fieldSource": "override"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
     "except_clause_exception_as": {
       "type": "SEQ",
       "members": [
@@ -8643,7 +8758,7 @@
     ],
     [
       "with_item",
-      "_collection_elements"
+      "_tuple_elements"
     ],
     [
       "named_expression",

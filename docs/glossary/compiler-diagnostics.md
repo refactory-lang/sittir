@@ -553,6 +553,54 @@ detector lands. `kindid-unstamped-anon-literal` is deliberately absent: the
 enriched stage has no generated parser, so it fires on every anonymous literal.
 `content-collision` and `storagename-collision` are absent too: a `field()`
 patch resolves them, so they are patch-site provocations, not rule causes.
+`'accepts-other-kind'` has none either, for a different reason: no diagnostic
+provokes it, its witness is its justification (`judgeOtherKindWitness`).
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::judgeOtherKindWitness`
+
+Judges a rule declared `reauthored('accepts-other-kind', witness, body)`. The
+claim is that the upstream rule accepts a form that is always another kind. It
+holds, as far as rules alone can show, when the upstream rule of this name and
+the upstream rule of the witness's kind both derive the witness form
+(`derivesForm`): the two rules overlap on it. Anything less is
+`rule-cause-mismatch`, naming which rule fails to derive it. Which of the two
+the parser picks is not checked here: upstream's parser is the ground truth for
+which rule wins, and a test parses every declared witness text with it.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::derivesForm`
+
+Whether a rule can produce a sequence of literal tokens and symbols. A string
+matches its literal; a symbol matches an item naming it, and a hidden symbol
+(leading underscore) is also expanded into its own body, since it leaves no
+node of its own. Sequences, choices, optionals and repeats are followed; fields,
+aliases and tokens are transparent. A hidden rule re-entered at the same
+position derives nothing new and is cut, so left recursion terminates.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::UpstreamRules`
+
+The upstream grammar's rules as evaluated before any sittir change: the raw
+stage. The witness of an `'accepts-other-kind'` rewrite is judged against these,
+never against the rewritten rules.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::isWitnessVerified`
+
+Whether a rule's declaration is one the gate verifies by witness: today,
+`reauthored('accepts-other-kind', …)` alone. The hand-written rule ratchet
+reads it to tell a verified correction from debt.
+
+### `packages/codegen/src/__tests__/hand-rule-ratchet.test.ts::CEILINGS`
+
+The hand-written rule ratchet: per grammar, the most `rules:` entries that
+stand for something sittir cannot yet derive. Every `vocabulary` rule counts,
+and so does every `reauthored` rule whose cause is asserted but not verified:
+`'ambiguity'`, which has no detector, and `'alias-shape'`, verified or on its
+grammar's floor. Each is a shape the pipeline should one day produce from the
+upstream grammar by itself, at which point the entry is deleted and the ceiling
+drops; a ceiling never rises.
+
+A rule reauthored under a witness-verified cause (`isWitnessVerified`) is not
+counted. It corrects an upstream rule that is wrong, the gate and the upstream
+parser prove the claim, and no derivation can retire it: it is not debt.
 
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::authoredRuleNames`
 

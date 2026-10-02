@@ -100,6 +100,6 @@ export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = Object
 	match_block_block: Object.freeze(['alternative']),
 	module: Object.freeze(['statements']),
 	parameters: Object.freeze(['elements']),
-	tuple: Object.freeze(['collection_elements']),
+	tuple: Object.freeze(['tuple_elements']),
 	tuple_pattern: Object.freeze(['patterns'])
 });

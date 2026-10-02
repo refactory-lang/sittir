@@ -308,23 +308,23 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "python",
-    "message": "conflict between with_item, _collection_elements on ',' resolved by AddConflict (upstream-declared)",
+    "message": "conflict between with_item, _tuple_elements on ',' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
       "resolution": {
         "kind": "AddConflict",
         "symbols": [
           "with_item",
-          "_collection_elements"
+          "_tuple_elements"
         ]
       },
-      "step": "upstream-declared",
+      "step": "default",
       "sourceChains": [
         [
           "with_item"
         ],
         [
-          "_collection_elements"
+          "_tuple_elements"
         ]
       ],
       "conflict": {
@@ -336,9 +336,16 @@
         "lookahead": "','",
         "interpretations": [
           "with_item",
-          "_collection_elements",
-          "_collection_elements",
-          "_collection_elements"
+          "_tuple_elements",
+          "_tuple_elements",
+          "_tuple_elements",
+          "_tuple_elements",
+          "_tuple_elements",
+          "_tuple_elements",
+          "_tuple_elements",
+          "_tuple_elements",
+          "_tuple_elements",
+          "_tuple_elements"
         ]
       }
     }
@@ -467,6 +474,20 @@
           "except_clause_exception_as"
         ]
       }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-unnecessary-upstream",
+    "severity": "info",
+    "grammar": "python",
+    "message": "upstream declares the conflict with_item, _collection_elements, which the reshaped grammar never reports",
+    "canProceed": true,
+    "details": {
+      "symbols": [
+        "with_item",
+        "_collection_elements"
+      ]
     }
   },
   {

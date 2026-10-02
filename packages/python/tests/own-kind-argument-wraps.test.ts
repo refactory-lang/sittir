@@ -19,8 +19,7 @@ describe('an argument of the builder\'s own kind', () => {
 	});
 
 	it('is one element of a list that can hold itself', () => {
-		const inner = py.build.tuple(x, y);
-		expect(py.build.tuple(inner).collectionElements()?.elements()).toEqual([inner]);
+		expect(py.build.tuple(py.build.tuple(x, y)).$render()).toBe('((x, y),)');
 		expect(py.build.list(py.build.list(x)).$render()).toBe('[[x]]');
 	});
 

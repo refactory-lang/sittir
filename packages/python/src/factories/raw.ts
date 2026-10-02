@@ -4048,7 +4048,7 @@ function _buildSet(value: AdmitBound<T.CollectionElements, T.AdmittedNodes>): T.
 }
 
 export function buildTuple(): T.EmptyTuple;
-export function buildTuple(value?: AdmitBound<T.CollectionElements, T.AdmittedNodes>): ReturnType<typeof _buildTuple>;
+export function buildTuple(value?: AdmitBound<T.TupleElements, T.AdmittedNodes>): ReturnType<typeof _buildTuple>;
 export function buildTuple(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
@@ -4062,20 +4062,20 @@ export function buildTuple(
 ): ReturnType<typeof _buildTuple>;
 export function buildTuple(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildTuple(args[0] as T.CollectionElements);
+		return _buildTuple(args[0] as T.TupleElements);
 	}
 	const prebuilt =
 		args.length === 1 &&
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.CollectionElements as const);
+		(args[0] as { $type?: unknown }).$type === (TSKindId.TupleElements as const);
 	return prebuilt
-		? _buildTuple(args[0] as T.CollectionElements)
-		: _buildTuple((buildCollectionElements as (...a: unknown[]) => unknown)(...args) as T.CollectionElements);
+		? _buildTuple(args[0] as T.TupleElements)
+		: _buildTuple((buildTupleElements as (...a: unknown[]) => unknown)(...args) as T.TupleElements);
 }
-function _buildTuple(value?: AdmitBound<T.CollectionElements, T.AdmittedNodes>): T.Tuple.Bound {
-	const _collection_elements = rejectBareText(value, 'Tuple.collectionElements', 'a built CollectionElements');
-	const listView = ownerView(_collection_elements, '_element');
+function _buildTuple(value?: AdmitBound<T.TupleElements, T.AdmittedNodes>): T.Tuple.Bound {
+	const _tuple_elements = rejectBareText(value, 'Tuple.tupleElements', 'a built TupleElements');
+	const listView = ownerView(_tuple_elements, '_element');
 	const listedItems =
 		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'elements'), undefined);
 	const handle = currentHandle();
@@ -4083,21 +4083,21 @@ function _buildTuple(value?: AdmitBound<T.CollectionElements, T.AdmittedNodes>):
 		$type: TSKindId.Tuple as const,
 		$source: 2 as const,
 		$named: true as const,
-		_collection_elements,
+		_tuple_elements,
 		$with: {
-			collectionElements: (...args: unknown[]) =>
+			tupleElements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.CollectionElements as const, optional: true, make: buildCollectionElements },
-						(value?: T.CollectionElements) => _buildTuple(value)
+						{ kind: TSKindId.TupleElements as const, optional: true, make: buildTupleElements },
+						(value?: T.TupleElements) => _buildTuple(value)
 					)
 				)
 		},
-		collectionElements: () => _collection_elements,
+		tupleElements: () => _tuple_elements,
 		length: listedItems?.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_collection_elements') : undefined,
+		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_tuple_elements') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -4114,7 +4114,7 @@ function _buildTuple(value?: AdmitBound<T.CollectionElements, T.AdmittedNodes>):
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_collection_elements');
+	if (listedItems === undefined) readStubLength(node, '_tuple_elements');
 	else
 		for (let index = 0; index < listedItems.length; index++)
 			(node as Record<number, unknown>)[index] = listedItems[index];
@@ -5793,6 +5793,82 @@ export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bo
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.FormatSpecifierText.Bound;
+}
+
+export function buildTupleElements(
+	...elements: NonEmptyArray<
+		AdmitBound<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat, T.AdmittedNodes>
+	>
+): ReturnType<typeof _buildTupleElements>;
+export function buildTupleElements(
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	...elements: NonEmptyArray<
+		AdmitBound<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat, T.AdmittedNodes>
+	>
+): ReturnType<typeof _buildTupleElements>;
+export function buildTupleElements(
+	...args: (
+		| { delimiter?: Delimiter.None | Delimiter.Trailing }
+		| AdmitBound<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat, T.AdmittedNodes>
+	)[]
+) {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		AdmitBound<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat, T.AdmittedNodes>
+	>;
+	return _buildTupleElements(elements, options);
+}
+function _buildTupleElements(
+	elements: NonEmptyArray<AdmitBound<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat, T.AdmittedNodes>>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.TupleElements.Bound {
+	_assertNonEmpty(elements, 'tuple_elements.elements');
+	const _element = elements;
+	const _delimiter = options.delimiter ?? Delimiter.None;
+	const listedStored = storedElements(_element);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TupleElements as const,
+		$source: 2 as const,
+		$named: true as const,
+		_element,
+		_delimiter,
+		$with: {
+			elements: (
+				...vs: NonEmptyArray<
+					AdmitBound<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat, T.AdmittedNodes>
+				>
+			) => rebuilt(node, handle, () => buildTupleElements(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildTupleElements({ ...options, delimiter: v }, ...elements))
+		},
+		elements: () => _element,
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(listedStored, undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? Delimiter.None,
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return node as unknown as T.TupleElements.Bound;
 }
 
 export function buildExceptClauseExceptionAs(
@@ -8021,6 +8097,7 @@ export type FluentKindMap = {
 	dictionary_elements: T.DictionaryElements.Bound;
 	slice_group: T.SliceGroup.Bound;
 	format_specifier_text: T.FormatSpecifierText;
+	tuple_elements: T.TupleElements.Bound;
 	except_clause_exception_as: T.ExceptClauseExceptionAs.Bound;
 	case_tuple_pattern: T.CaseTuplePattern.Bound;
 	case_list_pattern: T.CaseListPattern.Bound;
@@ -8220,6 +8297,7 @@ export const _factoryMap = {
 	dictionary_elements: buildDictionaryElements,
 	slice_group: buildSliceGroup,
 	format_specifier_text: buildFormatSpecifierText,
+	tuple_elements: buildTupleElements,
 	except_clause_exception_as: buildExceptClauseExceptionAs,
 	case_tuple_pattern: buildCaseTuplePattern,
 	case_list_pattern: buildCaseListPattern,
