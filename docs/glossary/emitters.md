@@ -11693,6 +11693,14 @@ The kind a field-carrying factory forwards its argument to, when its strict buil
 
 The forward target of a kind whose strict builder accepts the spread of a list it wraps (`parameters(a, b)` for `parameters` → `parameters_elements`): `forwardedConstructorTarget` names a target whose constructor resolves (`constructorTargetKind`) to a list, and the kind registers no spelling slot (a spelling wrapper forwards only its first argument). The strict wrapper, the loose coercer's spread overload (`emitBranchFrom`), and the `BuildArgs` / `LooseArgs` tuples (`fieldCarryingBuiltTypeSurface`) all read this one answer, so the loose surface accepts at least what the strict one does.
 
+### `packages/codegen/src/emitters/factories.ts::RowParam`
+
+The single parameter of a one-argument kind's row, in parts: its label, the strict and the loose type, whether each side may leave it out, and the trailing `options?:` text when the kind has a registered spelling. `rowTuple` turns it back into the tuple text for one side, given the parameter type, which is the kind's own or a seated one built on it.
+
+### `packages/codegen/src/emitters/factories.ts::rowParamOf`
+
+Reads a `RowParam` off a kind's factory surface: the row types as `paramsToTuple` prints them (the strict one through `AdmitBound` where the parameter holds a node), the loose optionality from `rowLooseOptional`, and the options text from the same `spellingTypeOf` fact the raw factory's trailing parameter comes from.
+
 ### `packages/codegen/src/emitters/factories.ts::fieldCarryingBuiltTypeSurface`
 
 The construction surface of a field-carrying kind, from its factory surface: the `$with` setters, and the `BuildArgs` / `LooseArgs` tuples from the surface's row parameters. A kind with a `listSpreadTarget` unions its tuples with the target's own (`… | T.<Target>.BuildArgs`), by name, so the spread form is the list's derivation rather than a copy; its `maxArgs` is then unbounded.
@@ -11780,11 +11788,12 @@ last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
  * `<Kind>.BuildArgs` / `<Kind>.LooseArgs` by NAME: a base-type argument is
  * resolved eagerly, and an inline tuple whose `LooseValue<…>` walks
  * `NamespaceMap[arm]` for a union containing the kind itself reaches the
- * row being declared (TS2310). And the tuples themselves spell the config
- * as `ConfigOf<T.<Kind>>` / `LooseConfigOf<…> | T.<Kind>` rather than
- * `<Kind>.Config` / `<Kind>.Loose` (`rowStrictType` / `rowLooseType` on the
- * factory param), because those namespace members are projections OF the
- * row. The setter record's `T.<Kind>.Bound` is also what keeps declaration
+ * row being declared (TS2310). The strict tuple spells the config as
+ * `ConfigOf<T.<Kind>>` rather than `<Kind>.Config` (`rowStrictType` on the
+ * factory param), because that namespace member is a projection OF the row.
+ * The loose tuple names `T.<Kind>.Loose` (`rowLooseType`): `Loose` is
+ * computed from the kind's interface and its bare slot, never from the
+ * tuples, so the reference does not come back to the row. The setter record's `T.<Kind>.Bound` is also what keeps declaration
  * emit finite: an inferred recursive `$with` closure blows the serializer
  * (TS7056) and the package cannot publish types. And a separated list's
  * tuples spell a non-empty element list as `[element: E, ...elements: E[]]`
@@ -11799,16 +11808,20 @@ last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
  * separated list's is every form its call takes: the elements alone or the
  * options bag first. A kind that forwards to a list (`listSpreadTarget`)
  * unions the list's tuples into its own, so neither needs a second spelling
- * of the other's arguments. One overload is still outside the tuples: a
- * wrapper that forwards to a kind that is not a list also accepts that
- * target's constructor arguments (text for a leaf target, a keyword kind),
- * and its row names the direct form only. The tuples are derived from the
+ * of the other's arguments. One strict overload is still outside the
+ * tuples: a wrapper that forwards to a kind that is not a list also accepts
+ * that target's constructor arguments in its strict builder, and its strict
+ * row names the direct form only. Its loose row is the wrapper's own `Loose`,
+ * which holds the target's config, so the loose row is every form the
+ * coercing call takes. The tuples are derived from the
  * factory shape, never from the function: `Parameters<typeof build<Kind>>`
  * resolves to the last overload only.
  * `looseArgs` is the same arity and the same labels with every parameter
  * widened to what a coercing caller may pass.
  */
 ```
+
+`row` is the one-parameter row in parts (`RowParam`: label, the strict and loose types, each side's optionality, the trailing options), for a kind whose call takes a single config or value. The overlay reads it to print a seated kind's rows (`seatedRowsOf`), so the seated form is built on the same parameter the plain row prints.
 
 `setters` is the surface's slot setters as parts (`SlotSetter`): the one derivation of what each `$with` setter takes. The interface's `$with` record prints them, and the types emitter stamps the same parts as `__slotHints__`, so the two cannot disagree. A leaf has none.
 
@@ -14765,8 +14778,12 @@ key, otherwise pass the rest through — the type is the parent's own input
 (the direct spelling with the built group under the seat key, and
 `undefined` where the parent's argument is optional), which names none of the
 group's flattened keys beside the seat (`WithoutGroup`), or `OmitEach<parent
-config, seat> & (group config | NoneOf<group config>)`, so the flattened keys
-come together or not at all. The parent's own input must forbid the group keys
+config, seat> & (group config | NoneOf<group keys>)`, so the flattened keys
+come together or not at all. The group's keys are read from its config type
+without `$type`, and `WithoutGroup` lets a built node through as it is: a
+node is not a config, and its accessors share the group's key names. The type
+is written once, by `typeFor`, into the kind's rows; the method itself takes
+`unknown` and partitions at run time. The parent's own input must forbid the group keys
 itself: an object literal is checked for excess keys against the whole union,
 so a partial group would otherwise pass as the parent's own input. The wrapped `strict` must satisfy the bundle's
 signature too, which is why the parent's own input stays accepted. For a positional parent (a forwarded wrapper such as
@@ -14817,16 +14834,6 @@ expanded through `concreteKindsOf` (a supertype to its members) and mapped to
 ids. A name with no id table or no id at all is an error, since a gate that
 can never fire would silently drop the literal.
 
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::FLATTEN_HELPER`
-
-The `NoneOf<T>` alias a flattened group's second overload uses to forbid every
-key of the group at once. It is kept apart from `ERASED_HELPERS` because only
-a grammar with a flattened group references it: the overlay prints it at the
-end of the erased-helper block (located from the block's first line and its
-length), only when some emitted wire names `NoneOf<`,
-so a grammar without flattened groups carries no unused alias under the strict
-generated-package lint.
-
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::elementsShape`
 
 The method behind an elements seat. An element is the group's config when
@@ -14840,17 +14847,19 @@ type admits the parent's own input or the group's config per element.
 
 #### list options
 
-A spread seat on a list types its parameter with `listRestParamType`, from the same cardinality, options and `separatorRequired` as the coercer, over the element `(P | Child)` (`ListElement<P> | Child` when the list has options). `ListElement` and `ListOptionsOf` split the parent's argument union by the options' `separator` / `delimiter` keys, so the options object is accepted first and rejected in every later position, and a non-empty list requires an element. The parent's element union is read with `ElementsOf`, which keeps a rest parameter that is a union of tuples.
+A spread seat's parameter is the kind's own row, by name (`T.<Kind>.BuildArgs` / `LooseArgs`): `listBuiltTypeSurface` spells the list's forms once, with the seated group's config among the elements, so the options object is accepted first and rejected in every later position, and a non-empty list requires an element.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatEmission`
 
 One seat's method, its application, and its parameter-type transform.
 Seats compose: `emitPolymorphsOverlay` threads the parent's `strict` (and
 `coerce`) through each flatten seat then each elements seat, so a parent with
-both gets `m2(m1(F.parent, F.g1), F.g2)`, and threads the parameter TYPE the
-same way — each `paramFor` takes the type expression the previous seat
-produced rather than a `typeof` reference, which is why `SeatShape.paramFor`
-takes a type string where `WireShape.paramFor` takes a reference.
+both gets `m2(m1(F.parent, F.g1), F.g2)`. The parameter TYPE composes the
+same way, in `seatedRowsOf`: each `typeFor` takes the type the previous seat
+produced, the seated group's row (`T.<Group>.BuildArgs` / `LooseArgs`) and
+its config type, all as type text and none as a `typeof` reference, because
+the result is printed into `types.ts`, which cannot name a factory. A spread
+seat has no `typeFor`; its kind's row already holds the seated element.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::isHoistedCompound`
 
@@ -15101,11 +15110,11 @@ python `case_clause` seats its patterns as a tuple AND mounts its suite, and
 `content`. Without the name there is nothing a mount could reference, because
 a composed call expression has no `typeof`.
 
-The seated type takes the parent's options as `T.<Type>.Options` when the
-parent has a registered spelling (`spellingTypeOf`), the same fact the raw
-factory's trailing parameter comes from. `OptionsArg<typeof parent>` cannot
-serve: a raw factory with a bare-text overload contributes that overload's
-tuple to `ArgsOf`'s union, and the bare-text tuple has no options parameter.
+`<key>$seated` and `<key>$seatedCoerce` are annotated `(...args: T.<Type>.BuildArgs)` and `(...args: T.<Type>.LooseArgs)`: the seated call's type is the kind's row and is spelled nowhere else. The entry's type replaces the bundle's own `strict` / `coerce` with them (`Omit<typeof B.<key>, 'strict' | 'coerce'> & …`) rather than intersecting, since the seated row already holds the plain form and two stacked signatures make the hoisted call's argument type too deep to compare.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatedRowsOf`
+
+The `BuildArgs` / `LooseArgs` rows of a kind with seats, from the same wire set the overlay emits its methods from (`PolymorphWires.byKind`) and the kind's one-parameter row (`BuiltTypeSurface.row`): the row's type folded through each seat's `typeFor`, with the trailing options kept. It returns nothing for a kind without seats, without a one-parameter row, or with a spread seat, whose rows the surface already prints. The loose row is seated only when every seat's group has a coercer (`seatedArity`), which is when the overlay emits `$seatedCoerce`; otherwise it stays the plain row, as the hoisted call then stays the bundle's coercer.
 
 The seated pair is spread onto the entry through `bundle`, stamped with `seatedArity`, so it replaces the bundle's own stamp together with its flavors. A public entry whose seated pair has no coerce flavor keeps a bare `strict` line instead: the bundle's coercer stays the hoisted target, and the bundle's stamp is its bound.
 

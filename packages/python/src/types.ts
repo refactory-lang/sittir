@@ -13,6 +13,8 @@ import type {
 	KindEnum,
 	NodeOfNamespaces,
 	OmitEach,
+	NoneOf,
+	WithoutGroup,
 	GrammarTypeMap,
 	NodeMethods,
 	TriviaSetter,
@@ -11029,8 +11031,18 @@ export namespace MatchStatement {
 	}
 	export type Loose = LooseFor<TSKindId.MatchStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchStatement>;
-	export type BuildArgs = [config: ConfigOf<T.MatchStatement, T.NamespaceMap>];
-	export type LooseArgs = [config: T.MatchStatement.Loose];
+	export type BuildArgs = [
+		config:
+			| ConfigOf<T.MatchStatement, T.NamespaceMap>
+			| (OmitEach<NonNullable<ConfigOf<T.MatchStatement, T.NamespaceMap>>, 'subjects'> & {
+					subjects: T.Subjects.BuildArgs;
+			  })
+	];
+	export type LooseArgs = [
+		config:
+			| T.MatchStatement.Loose
+			| (OmitEach<NonNullable<T.MatchStatement.Loose>, 'subjects'> & { subjects: T.Subjects.LooseArgs })
+	];
 	export type Kind = TSKindId.MatchStatement;
 }
 export namespace MatchBlock {
@@ -11061,8 +11073,18 @@ export namespace CaseClause {
 	}
 	export type Loose = LooseFor<TSKindId.CaseClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CaseClause>;
-	export type BuildArgs = [config: ConfigOf<T.CaseClause, T.NamespaceMap>];
-	export type LooseArgs = [config: T.CaseClause.Loose];
+	export type BuildArgs = [
+		config:
+			| ConfigOf<T.CaseClause, T.NamespaceMap>
+			| (OmitEach<NonNullable<ConfigOf<T.CaseClause, T.NamespaceMap>>, 'casePatterns'> & {
+					casePatterns: T.CasePatterns.BuildArgs;
+			  })
+	];
+	export type LooseArgs = [
+		config:
+			| T.CaseClause.Loose
+			| (OmitEach<NonNullable<T.CaseClause.Loose>, 'casePatterns'> & { casePatterns: T.CasePatterns.LooseArgs })
+	];
 	export type Kind = TSKindId.CaseClause;
 }
 export namespace ForStatement {
@@ -11713,8 +11735,18 @@ export namespace ClassPattern {
 	}
 	export type Loose = LooseFor<TSKindId.ClassPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassPattern>;
-	export type BuildArgs = [config: ConfigOf<T.ClassPattern, T.NamespaceMap>];
-	export type LooseArgs = [config: T.ClassPattern.Loose];
+	export type BuildArgs = [
+		config:
+			| ConfigOf<T.ClassPattern, T.NamespaceMap>
+			| (OmitEach<NonNullable<ConfigOf<T.ClassPattern, T.NamespaceMap>>, 'arguments'> & {
+					arguments: T.ListPatternCasePatterns.BuildArgs;
+			  })
+	];
+	export type LooseArgs = [
+		config:
+			| T.ClassPattern.Loose
+			| (OmitEach<NonNullable<T.ClassPattern.Loose>, 'arguments'> & { arguments: T.ListPatternCasePatterns.LooseArgs })
+	];
 	export type Kind = TSKindId.ClassPattern;
 }
 export namespace ComplexPattern {
@@ -12019,8 +12051,34 @@ export namespace ComparisonOperator {
 	}
 	export type Loose = LooseFor<TSKindId.ComparisonOperator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ComparisonOperator>;
-	export type BuildArgs = [config: ConfigOf<T.ComparisonOperator, T.NamespaceMap>];
-	export type LooseArgs = [config: T.ComparisonOperator.Loose];
+	export type BuildArgs = [
+		config:
+			| ConfigOf<T.ComparisonOperator, T.NamespaceMap>
+			| (OmitEach<NonNullable<ConfigOf<T.ComparisonOperator, T.NamespaceMap>>, 'comparators'> & {
+					comparators: ReadonlyArray<
+						| T.ComparisonOperatorComparator.BuildArgs[0]
+						| (NonNullable<ConfigOf<T.ComparisonOperator, T.NamespaceMap>> extends { readonly comparators?: infer E }
+								? E extends readonly (infer I)[]
+									? I
+									: never
+								: never)
+					>;
+			  })
+	];
+	export type LooseArgs = [
+		config:
+			| T.ComparisonOperator.Loose
+			| (OmitEach<NonNullable<T.ComparisonOperator.Loose>, 'comparators'> & {
+					comparators: ReadonlyArray<
+						| T.ComparisonOperatorComparator.LooseArgs[0]
+						| (NonNullable<T.ComparisonOperator.Loose> extends { readonly comparators?: infer E }
+								? E extends readonly (infer I)[]
+									? I
+									: never
+								: never)
+					>;
+			  })
+	];
 	export type Kind = TSKindId.ComparisonOperator;
 }
 export namespace Lambda {
@@ -12131,8 +12189,18 @@ export namespace Subscript {
 	}
 	export type Loose = LooseFor<TSKindId.Subscript>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Subscript>;
-	export type BuildArgs = [config: ConfigOf<T.Subscript, T.NamespaceMap>];
-	export type LooseArgs = [config: T.Subscript.Loose];
+	export type BuildArgs = [
+		config:
+			| ConfigOf<T.Subscript, T.NamespaceMap>
+			| (OmitEach<NonNullable<ConfigOf<T.Subscript, T.NamespaceMap>>, 'subscripts'> & {
+					subscripts: T.Subscripts.BuildArgs;
+			  })
+	];
+	export type LooseArgs = [
+		config:
+			| T.Subscript.Loose
+			| (OmitEach<NonNullable<T.Subscript.Loose>, 'subscripts'> & { subscripts: T.Subscripts.LooseArgs })
+	];
 	export type Kind = TSKindId.Subscript;
 }
 export namespace Slice {
@@ -12151,8 +12219,27 @@ export namespace Slice {
 		FlatShapesOf<ParsedSurface, T.Slice, ParsedByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
 	export type Loose = LooseFor<TSKindId.Slice>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Slice>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.Slice, T.NamespaceMap>>];
-	export type LooseArgs = [config?: T.Slice.Loose];
+	export type BuildArgs = [
+		config?:
+			| WithoutGroup<
+					Partial<ConfigOf<T.Slice, T.NamespaceMap>>,
+					OmitEach<NonNullable<{ expression: T.SliceGroup.Config }>, 'step' | '$type'>
+			  >
+			| (OmitEach<NonNullable<Partial<ConfigOf<T.Slice, T.NamespaceMap>>>, 'step'> &
+					(
+						| { expression: T.SliceGroup.BuildArgs[0] }
+						| NoneOf<OmitEach<NonNullable<{ expression: T.SliceGroup.Config }>, 'step' | '$type'>>
+					))
+	];
+	export type LooseArgs = [
+		config?:
+			| WithoutGroup<T.Slice.Loose, OmitEach<NonNullable<{ expression: T.SliceGroup.LooseConfig }>, 'step' | '$type'>>
+			| (OmitEach<NonNullable<T.Slice.Loose>, 'step'> &
+					(
+						| { expression: T.SliceGroup.LooseArgs[0] }
+						| NoneOf<OmitEach<NonNullable<{ expression: T.SliceGroup.LooseConfig }>, 'step' | '$type'>>
+					))
+	];
 	export type Kind = TSKindId.Slice;
 }
 export namespace Call {

@@ -12,6 +12,9 @@ import type {
 	BooleanKeyword as BaseBooleanKeyword,
 	KindEnum,
 	NodeOfNamespaces,
+	OmitEach,
+	NoneOf,
+	WithoutGroup,
 	GrammarTypeMap,
 	NodeMethods,
 	TriviaSetter,
@@ -21278,8 +21281,8 @@ export namespace MatchBlock {
 		FlatShapesOf<ParsedSurface, T.MatchBlock, ParsedByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
 	export type Loose = LooseFor<TSKindId.MatchBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlock>;
-	export type BuildArgs = [value?: AdmitBound<T.MatchBlockArms, T.AdmittedNodes>];
-	export type LooseArgs = [value?: T.MatchBlock.Loose];
+	export type BuildArgs = [value?: AdmitBound<T.MatchBlockArms, T.AdmittedNodes> | T.MatchBlockArms.BuildArgs[0]];
+	export type LooseArgs = [value?: T.MatchBlock.Loose | T.MatchBlockArms.LooseArgs[0]];
 	export type Kind = TSKindId.MatchBlock;
 }
 export namespace LastMatchArm {
@@ -21298,8 +21301,24 @@ export namespace LastMatchArm {
 		FlatShapesOf<ParsedSurface, T.LastMatchArm, ParsedByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
 	export type Loose = LooseFor<TSKindId.LastMatchArm>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LastMatchArm>;
-	export type BuildArgs = [config: ConfigOf<T.LastMatchArm, T.NamespaceMap>];
-	export type LooseArgs = [config: T.LastMatchArm.Loose];
+	export type BuildArgs = [
+		config:
+			| WithoutGroup<
+					ConfigOf<T.LastMatchArm, T.NamespaceMap>,
+					OmitEach<NonNullable<T.MatchPattern.Config>, 'pattern' | '$type'>
+			  >
+			| (OmitEach<NonNullable<ConfigOf<T.LastMatchArm, T.NamespaceMap>>, 'pattern'> &
+					(T.MatchPattern.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, 'pattern' | '$type'>>))
+	];
+	export type LooseArgs = [
+		config:
+			| WithoutGroup<T.LastMatchArm.Loose, OmitEach<NonNullable<T.MatchPattern.LooseConfig>, 'pattern' | '$type'>>
+			| (OmitEach<NonNullable<T.LastMatchArm.Loose>, 'pattern'> &
+					(
+						| T.MatchPattern.LooseArgs[0]
+						| NoneOf<OmitEach<NonNullable<T.MatchPattern.LooseConfig>, 'pattern' | '$type'>>
+					))
+	];
 	export type Kind = TSKindId.LastMatchArm;
 }
 export namespace MatchPattern {
@@ -21641,8 +21660,18 @@ export namespace TupleStructPattern {
 	}
 	export type Loose = LooseFor<TSKindId.TupleStructPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TupleStructPattern>;
-	export type BuildArgs = [config: ConfigOf<T.TupleStructPattern, T.NamespaceMap>];
-	export type LooseArgs = [config: T.TupleStructPattern.Loose];
+	export type BuildArgs = [
+		config:
+			| ConfigOf<T.TupleStructPattern, T.NamespaceMap>
+			| (OmitEach<NonNullable<ConfigOf<T.TupleStructPattern, T.NamespaceMap>>, 'patterns'> & {
+					patterns: T.Patterns.BuildArgs;
+			  })
+	];
+	export type LooseArgs = [
+		config:
+			| T.TupleStructPattern.Loose
+			| (OmitEach<NonNullable<T.TupleStructPattern.Loose>, 'patterns'> & { patterns: T.Patterns.LooseArgs })
+	];
 	export type Kind = TSKindId.TupleStructPattern;
 }
 export namespace StructPattern {
@@ -21657,8 +21686,18 @@ export namespace StructPattern {
 	}
 	export type Loose = LooseFor<TSKindId.StructPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.StructPattern>;
-	export type BuildArgs = [config: ConfigOf<T.StructPattern, T.NamespaceMap>];
-	export type LooseArgs = [config: T.StructPattern.Loose];
+	export type BuildArgs = [
+		config:
+			| ConfigOf<T.StructPattern, T.NamespaceMap>
+			| (OmitEach<NonNullable<ConfigOf<T.StructPattern, T.NamespaceMap>>, 'fields'> & {
+					fields: T.StructPatternElements.BuildArgs;
+			  })
+	];
+	export type LooseArgs = [
+		config:
+			| T.StructPattern.Loose
+			| (OmitEach<NonNullable<T.StructPattern.Loose>, 'fields'> & { fields: T.StructPatternElements.LooseArgs })
+	];
 	export type Kind = TSKindId.StructPattern;
 }
 export namespace MutPattern {
@@ -23544,8 +23583,20 @@ export namespace ArrayExpressionList {
 	}
 	export type Loose = LooseFor<TSKindId.ArrayExpressionList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ArrayExpressionList>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.ArrayExpressionList, T.NamespaceMap>>];
-	export type LooseArgs = [config?: T.ArrayExpressionList.Loose];
+	export type BuildArgs = [
+		config?:
+			| Partial<ConfigOf<T.ArrayExpressionList, T.NamespaceMap>>
+			| (OmitEach<NonNullable<Partial<ConfigOf<T.ArrayExpressionList, T.NamespaceMap>>>, 'argumentsElements'> & {
+					argumentsElements: T.ArgumentsElements.BuildArgs;
+			  })
+	];
+	export type LooseArgs = [
+		config?:
+			| T.ArrayExpressionList.Loose
+			| (OmitEach<NonNullable<T.ArrayExpressionList.Loose>, 'argumentsElements'> & {
+					argumentsElements: T.ArgumentsElements.LooseArgs;
+			  })
+	];
 	export type Kind = TSKindId.ArrayExpressionList;
 }
 export namespace AttributeInput {
@@ -24075,8 +24126,24 @@ export namespace MatchArmWithComma {
 		FlatShapesOf<ParsedSurface, T.MatchArmWithComma, ParsedByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
 	export type Loose = LooseFor<TSKindId.MatchArmWithComma>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchArmWithComma>;
-	export type BuildArgs = [config: ConfigOf<T.MatchArmWithComma, T.NamespaceMap>];
-	export type LooseArgs = [config: T.MatchArmWithComma.Loose];
+	export type BuildArgs = [
+		config:
+			| WithoutGroup<
+					ConfigOf<T.MatchArmWithComma, T.NamespaceMap>,
+					OmitEach<NonNullable<T.MatchPattern.Config>, 'pattern' | '$type'>
+			  >
+			| (OmitEach<NonNullable<ConfigOf<T.MatchArmWithComma, T.NamespaceMap>>, 'pattern'> &
+					(T.MatchPattern.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, 'pattern' | '$type'>>))
+	];
+	export type LooseArgs = [
+		config:
+			| WithoutGroup<T.MatchArmWithComma.Loose, OmitEach<NonNullable<T.MatchPattern.LooseConfig>, 'pattern' | '$type'>>
+			| (OmitEach<NonNullable<T.MatchArmWithComma.Loose>, 'pattern'> &
+					(
+						| T.MatchPattern.LooseArgs[0]
+						| NoneOf<OmitEach<NonNullable<T.MatchPattern.LooseConfig>, 'pattern' | '$type'>>
+					))
+	];
 	export type Kind = TSKindId.MatchArmWithComma;
 }
 export namespace MatchArmBlockEnding {
@@ -24095,8 +24162,27 @@ export namespace MatchArmBlockEnding {
 		FlatShapesOf<ParsedSurface, T.MatchArmBlockEnding, ParsedByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
 	export type Loose = LooseFor<TSKindId.MatchArmBlockEnding>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchArmBlockEnding>;
-	export type BuildArgs = [config: ConfigOf<T.MatchArmBlockEnding, T.NamespaceMap>];
-	export type LooseArgs = [config: T.MatchArmBlockEnding.Loose];
+	export type BuildArgs = [
+		config:
+			| WithoutGroup<
+					ConfigOf<T.MatchArmBlockEnding, T.NamespaceMap>,
+					OmitEach<NonNullable<T.MatchPattern.Config>, 'pattern' | '$type'>
+			  >
+			| (OmitEach<NonNullable<ConfigOf<T.MatchArmBlockEnding, T.NamespaceMap>>, 'pattern'> &
+					(T.MatchPattern.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, 'pattern' | '$type'>>))
+	];
+	export type LooseArgs = [
+		config:
+			| WithoutGroup<
+					T.MatchArmBlockEnding.Loose,
+					OmitEach<NonNullable<T.MatchPattern.LooseConfig>, 'pattern' | '$type'>
+			  >
+			| (OmitEach<NonNullable<T.MatchArmBlockEnding.Loose>, 'pattern'> &
+					(
+						| T.MatchPattern.LooseArgs[0]
+						| NoneOf<OmitEach<NonNullable<T.MatchPattern.LooseConfig>, 'pattern' | '$type'>>
+					))
+	];
 	export type Kind = TSKindId.MatchArmBlockEnding;
 }
 export namespace LineCommentDocOuter {
@@ -24471,8 +24557,18 @@ export namespace MacroDefinitionParen {
 	}
 	export type Loose = LooseFor<TSKindId.MacroDefinitionParen>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MacroDefinitionParen>;
-	export type BuildArgs = [config: ConfigOf<T.MacroDefinitionParen, T.NamespaceMap>];
-	export type LooseArgs = [config: T.MacroDefinitionParen.Loose];
+	export type BuildArgs = [
+		config:
+			| ConfigOf<T.MacroDefinitionParen, T.NamespaceMap>
+			| (OmitEach<NonNullable<ConfigOf<T.MacroDefinitionParen, T.NamespaceMap>>, 'macroRules'> & {
+					macroRules: T.MacroRules.BuildArgs;
+			  })
+	];
+	export type LooseArgs = [
+		config:
+			| T.MacroDefinitionParen.Loose
+			| (OmitEach<NonNullable<T.MacroDefinitionParen.Loose>, 'macroRules'> & { macroRules: T.MacroRules.LooseArgs })
+	];
 	export type Kind = TSKindId.MacroDefinitionParen;
 }
 export namespace MacroDefinitionBracket {
@@ -24487,8 +24583,18 @@ export namespace MacroDefinitionBracket {
 	}
 	export type Loose = LooseFor<TSKindId.MacroDefinitionBracket>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MacroDefinitionBracket>;
-	export type BuildArgs = [config: ConfigOf<T.MacroDefinitionBracket, T.NamespaceMap>];
-	export type LooseArgs = [config: T.MacroDefinitionBracket.Loose];
+	export type BuildArgs = [
+		config:
+			| ConfigOf<T.MacroDefinitionBracket, T.NamespaceMap>
+			| (OmitEach<NonNullable<ConfigOf<T.MacroDefinitionBracket, T.NamespaceMap>>, 'macroRules'> & {
+					macroRules: T.MacroRules.BuildArgs;
+			  })
+	];
+	export type LooseArgs = [
+		config:
+			| T.MacroDefinitionBracket.Loose
+			| (OmitEach<NonNullable<T.MacroDefinitionBracket.Loose>, 'macroRules'> & { macroRules: T.MacroRules.LooseArgs })
+	];
 	export type Kind = TSKindId.MacroDefinitionBracket;
 }
 export namespace MacroDefinitionBrace {
@@ -24503,8 +24609,18 @@ export namespace MacroDefinitionBrace {
 	}
 	export type Loose = LooseFor<TSKindId.MacroDefinitionBrace>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MacroDefinitionBrace>;
-	export type BuildArgs = [config: ConfigOf<T.MacroDefinitionBrace, T.NamespaceMap>];
-	export type LooseArgs = [config: T.MacroDefinitionBrace.Loose];
+	export type BuildArgs = [
+		config:
+			| ConfigOf<T.MacroDefinitionBrace, T.NamespaceMap>
+			| (OmitEach<NonNullable<ConfigOf<T.MacroDefinitionBrace, T.NamespaceMap>>, 'macroRules'> & {
+					macroRules: T.MacroRules.BuildArgs;
+			  })
+	];
+	export type LooseArgs = [
+		config:
+			| T.MacroDefinitionBrace.Loose
+			| (OmitEach<NonNullable<T.MacroDefinitionBrace.Loose>, 'macroRules'> & { macroRules: T.MacroRules.LooseArgs })
+	];
 	export type Kind = TSKindId.MacroDefinitionBrace;
 }
 export namespace RangePatternPrefix {

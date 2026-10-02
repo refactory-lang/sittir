@@ -650,7 +650,22 @@ export interface SlotSetter {
 	readonly rest: boolean;
 }
 
+export interface RowParam {
+	readonly label: string;
+	readonly strictType: string;
+	readonly strictOptional: boolean;
+	readonly looseType: string;
+	readonly looseOptional: boolean;
+	readonly trailing?: string;
+}
+
+export function rowTuple(row: RowParam, flavor: 'strict' | 'loose', type: string): string {
+	const optional = flavor === 'strict' ? row.strictOptional : row.looseOptional;
+	return `[${row.label}${optional ? '?' : ''}: ${type}${row.trailing === undefined ? '' : `, ${row.trailing}`}]`;
+}
+
 export interface BuiltTypeSurface {
+	readonly row?: RowParam;
 	readonly mainType: string | undefined;
 	readonly members: readonly string[];
 	readonly setters: readonly SlotSetter[];
@@ -715,12 +730,31 @@ function fieldCarryingBuiltTypeSurface(
 		];
 	}
 	return {
+		...(spreadTarget === null && !surface.param.rest ? { row: rowParamOf(node, surface, nodeMap, kindEntries) } : {}),
 		mainType: `T.${node.typeName}`,
 		members: [],
 		setters,
 		buildArgs: `${paramsToTuple(surface.rowParams)}${spreadArgs('BuildArgs')}`,
 		looseArgs: `${paramsToTuple(surface.rowLooseParams)}${spreadArgs('LooseArgs')}`,
 		maxArgs: spreadTarget === null ? surface.arity : undefined
+	};
+}
+
+function rowParamOf(
+	node: FieldCarryingNode,
+	surface: FactorySurface,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): RowParam {
+	const { param } = surface;
+	const strictType = param.rowStrictType ?? param.strictType;
+	return {
+		label: param.label,
+		strictType: param.admitsNodes ? admitNodes(strictType) : strictType,
+		strictOptional: param.optional,
+		looseType: param.rowLooseType ?? param.looseType,
+		looseOptional: param.rowLooseOptional ?? param.optional,
+		...(spellingTypeOf(node, nodeMap, kindEntries) === undefined ? {} : { trailing: `options?: T.${node.typeName}.Options` })
 	};
 }
 

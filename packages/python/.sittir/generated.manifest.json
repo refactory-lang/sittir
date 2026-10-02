@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "5260a0b802afe9a2e833d167056af505be00a82f935e588b5540e97207032c32",
+  "source_hash": "e6a479194cfa52bdf367256e814e6449fcb581dc2bb258fd032726f77438d71b",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "79e843a7af65f2872c099bbca68def0c9e537ef798b567449e225c3b975449e5",
     "packages/python/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -25,7 +25,7 @@
     "packages/python/src/factories/bundle.ts": "71830cb98a5c3487e52d99ff8455d13ede02a7a8a8d8d62ef6a5a4ccef3a5496",
     "packages/python/src/factories/coerce.ts": "69c18831782f99bd117c715ca06f5f82a1fc1fb8578d5ddb5314d3eb91adb0d4",
     "packages/python/src/factories/index.ts": "7f6f7c3638bed81f862665ce4d7831a2f7fa38d17ccd88b836820d76dc34312e",
-    "packages/python/src/factories/overlays/polymorphs.ts": "7665116cad34f942ebd1d77a1dbfa37607dab4e31160d4a02e9d293dfcefda98",
+    "packages/python/src/factories/overlays/polymorphs.ts": "5a5d591f04091370a2b64773d4775b96cacc06606afe37ec1d4e7d7828c6f03f",
     "packages/python/src/factories/overlays/refines.ts": "37f8a0f79f435a13a3261d39196ce8132ef459b4934501fbd452d65e7b9abdf0",
     "packages/python/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
     "packages/python/src/factories/raw.ts": "74f2dea493e7602a85ec59236cc1c3735906d3caf7be0b4ae170a0569e5b8ffd",
@@ -37,7 +37,7 @@
     "packages/python/src/options.ts": "623cd2eb223bbf9c1cedbf47776494114ffe42251498ade12fdeb9e3a0b3b354",
     "packages/python/src/render-engine.ts": "04047099abb54ca46cb629ec5c477a41f8932c0487c89205eb4e1544f779dbd3",
     "packages/python/src/types-internal.ts": "5882ac994fddd6d6991ea0dcf2848a6858a8f42c477ddfc6989cecf1bd184e97",
-    "packages/python/src/types.ts": "aec13ee901206d2976324a2af0dc699f8123989abc3d31023774d542673109fd",
+    "packages/python/src/types.ts": "f182cc978006b246763625ec23802b522295717bb08658ba5fb2764d283b0483",
     "packages/python/src/utils.ts": "5536a489fe43aa377cfc3130de846ac1de4606dd92547a868eec6f531d4672ef",
     "packages/python/src/wrap.ts": "7d83fa579ab3d2900c3e2876fadf1f30930e64aa77462232d07a640cf43bf136",
     "rust/crates/sittir-python/src/lib.rs": "5331823fb44c545c403bfc467ecd1a948bc840cc48c512b4f41cd28c4db104cc",

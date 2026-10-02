@@ -13,6 +13,8 @@ import type {
 	KindEnum,
 	NodeOfNamespaces,
 	OmitEach,
+	NoneOf,
+	WithoutGroup,
 	GrammarTypeMap,
 	NodeMethods,
 	TriviaSetter,
@@ -19451,8 +19453,30 @@ export namespace CatchClause {
 		FlatShapesOf<ParsedSurface, T.CatchClause, ParsedByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
 	export type Loose = LooseFor<TSKindId.CatchClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CatchClause>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.CatchClause, T.NamespaceMap>>];
-	export type LooseArgs = [config?: T.CatchClause.Loose];
+	export type BuildArgs = [
+		config?:
+			| WithoutGroup<
+					Partial<ConfigOf<T.CatchClause, T.NamespaceMap>>,
+					OmitEach<NonNullable<T.CatchClauseGroup.Config>, 'catchClauseGroup' | '$type'>
+			  >
+			| (OmitEach<NonNullable<Partial<ConfigOf<T.CatchClause, T.NamespaceMap>>>, 'catchClauseGroup'> &
+					(
+						| T.CatchClauseGroup.BuildArgs[0]
+						| NoneOf<OmitEach<NonNullable<T.CatchClauseGroup.Config>, 'catchClauseGroup' | '$type'>>
+					))
+	];
+	export type LooseArgs = [
+		config?:
+			| WithoutGroup<
+					T.CatchClause.Loose,
+					OmitEach<NonNullable<T.CatchClauseGroup.LooseConfig>, 'catchClauseGroup' | '$type'>
+			  >
+			| (OmitEach<NonNullable<T.CatchClause.Loose>, 'catchClauseGroup'> &
+					(
+						| T.CatchClauseGroup.LooseArgs[0]
+						| NoneOf<OmitEach<NonNullable<T.CatchClauseGroup.LooseConfig>, 'catchClauseGroup' | '$type'>>
+					))
+	];
 	export type Kind = TSKindId.CatchClause;
 }
 export namespace FinallyClause {
