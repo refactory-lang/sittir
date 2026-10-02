@@ -259,7 +259,8 @@ describe('engine render boundary', () => {
 			}
 		);
 
-		const { createEngine, treeTokenOf } = await import('@sittir/common');
+		const { createEngine } = await import('@sittir/common');
+		const { treeTokenOf } = await import('@sittir/common/utils');
 		const descriptor = (await import('../src/index.ts')).default;
 		const engine = await createEngine(descriptor, { format: { boundary: { leading: '\t' } } });
 		// engine.render() returns a RenderHandle ({ save, print, toString }),

@@ -1345,7 +1345,11 @@ Detaching removes the hold on the tree with the coordinates, and a leaf whose sl
 
 ### `packages/tools/src/validate/common.ts::holdingTreeOf`
 
-Makes a copy hold the tree its original holds, through slots and trivia, and returns the copy. A parsed object holds its tree under a member only `@sittir/common` can write, which a spread copies and nothing that copies by string keys does (JSON, `Object.entries`, `detachCoordinates`). A coordinate that holds no tree is refused at render, so each tool that copies read data and still renders the copy passes the tree on here: `materializeDetached`, and the probe's JSON copy and detached deep reads.
+Makes a copy hold the tree its original holds, through slots and trivia, and returns the copy. A parsed object holds its tree under a member only `@sittir/common` can write, which a spread copies and nothing that copies by string keys does (JSON, `Object.entries`, `detachCoordinates`). A coordinate that holds no tree is refused at render, so each tool that copies read data and still renders the copy passes the tree on here: `materializeDetached`, and the probe's JSON copy.
+
+### `packages/tools/src/validate/common.ts::detachedHoldingTree`
+
+Detaches read data in place and gives it back the tree it held. `detachCoordinates` releases the hold on every node, so the token is read first and held again after. The probe's deep reads use it before a render.
 
 ### `packages/tools/src/validate/common.ts::armRouteOf`
 

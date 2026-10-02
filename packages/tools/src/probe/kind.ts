@@ -85,6 +85,7 @@ import {
 	loadNativeEngine,
 	readNativeTree,
 	type NativeEngine,
+	detachedHoldingTree,
 	holdingTreeOf,
 	materializeDetached,
 	readNodeOf,
@@ -108,7 +109,7 @@ import {
 import { load } from '../codegen-surface.ts';
 import type * as TS from 'web-tree-sitter';
 import type { AnyUntypedNode, AnyTreeNode } from '@sittir/types';
-import { detachCoordinates, holdTree, sourceSpans, treeTokenOf, type ByteSpan, type SourceSpans } from '@sittir/common';
+import { sourceSpans, type ByteSpan, type SourceSpans } from '@sittir/common';
 import { isStub, readUntypedNode, toTransportData } from '@sittir/common/utils';
 // ---------------------------------------------------------------------------
 // CLI
@@ -1303,13 +1304,6 @@ function stripBigInts(v: unknown): unknown {
 	// JSON.stringify chokes on bigint. Cast to Number for dump purposes.
 	// The JSON copy holds no tree, and it is still rendered: pass the tree on.
 	return holdingTreeOf(v, JSON.parse(JSON.stringify(v, (_k, val) => (typeof val === 'bigint' ? Number(val) : val))));
-}
-
-function detachedHoldingTree<T>(node: T): T {
-	const token = node !== null && typeof node === 'object' ? treeTokenOf(node) : undefined;
-	const detached = detachCoordinates(node);
-	if (token !== undefined) holdTree(detached, token);
-	return detached;
 }
 
 async function readStdin(): Promise<string> {
