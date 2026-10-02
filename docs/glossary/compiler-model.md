@@ -3091,7 +3091,8 @@ all read it.
 	 * `x sep (x sep)* x?`): every element trails its own separator, so a
 	 * SINGLE element requires the trailing delimiter — the undelimited
 	 * one-element form belongs to a different construct (rust `(1,)` vs
-	 * parenthesized `(1)`). The factory asserts this validity invariant.
+	 * parenthesized `(1)`). The render module enforces it
+	 * (`singleElementNeedsTrailing`); the factory accepts one element.
 	 */
 ```
 
