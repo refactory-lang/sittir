@@ -17,7 +17,7 @@ describe('a node built over parsed children', () => {
 		expect(params.$render()).toBe('(input: &str)');
 	});
 
-	it('is rendered by the one engine that parsed its children, with the calling engine options', async () => {
+	it('is rendered by the calling engine, with its options, whichever engine parsed its children', async () => {
 		const tabs = await createEngine(rust, { render: { indent: '\t' } });
 		const spaces = await createEngine(rust, { render: { indent: '  ' } });
 		const fn = spaces.parse(SOURCE).statements()[1] as any;
@@ -29,15 +29,16 @@ describe('a node built over parsed children', () => {
 		expect(block.$render()).toBe(expected);
 	});
 
-	it('is refused, naming the engines, when its parsed children come from several', async () => {
+	it('renders when its parsed children come from several engines', async () => {
 		const first = await createEngine(rust);
 		const second = await createEngine(rust);
 		const third = await createEngine(rust);
 		const one = (first.parse(SOURCE).statements()[1] as any).body().statements();
 		const two = (second.parse('fn g() {\n    b;\n}\n').statements()[0] as any).body().statements();
 		const block = third.build.block({ statements: [...one, ...two] });
-		expect(() => third.render(block)).toThrow(/several engines \(rust#\d+, rust#\d+\)/);
-		expect(() => block.$render()).toThrow(/several engines/);
+		const expected = '{\n    // keep me\n    println!("{}",   input);\n    b;\n}';
+		expect(third.render(block).toString()).toBe(expected);
+		expect(block.$render()).toBe(expected);
 	});
 });
 

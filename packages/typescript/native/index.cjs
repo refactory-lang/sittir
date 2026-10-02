@@ -577,3 +577,5 @@ if (!nativeBinding) {
 
 module.exports = nativeBinding
 module.exports.SittirEngine = nativeBinding.SittirEngine
+module.exports.disposeTree = nativeBinding.disposeTree
+module.exports.liveTreeCount = nativeBinding.liveTreeCount

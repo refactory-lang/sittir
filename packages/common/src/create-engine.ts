@@ -15,7 +15,7 @@ import type {
 	RenderCallOptions,
 	RenderOptionsCheck
 } from '@sittir/types';
-import { bindTree, engineOf, inEngine, isLive, sameLanguage, type EngineHandle } from './engine-scope.ts';
+import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle } from './engine-scope.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
 import {
 	isEmptyNode as isEmptyUntypedNode,
@@ -96,27 +96,6 @@ function scopedBuild<B>(build: B, handle: EngineHandle): B {
 	return scope(build) as B;
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === 'object' && value !== null;
-}
-
-function collectReaders(value: unknown, readers: Set<EngineHandle['current']>): void {
-	if (Array.isArray(value)) {
-		for (const item of value) collectReaders(item, readers);
-	} else if (isRecord(value) && !isNode(value)) {
-		for (const item of Object.values(value)) collectReaders(item, readers);
-	} else if (isRecord(value)) {
-		if (isParsedNode(value)) {
-			const reader = engineOf(value);
-			if (reader !== undefined) readers.add(reader);
-			return;
-		}
-		for (const [key, item] of Object.entries(value)) {
-			if (key.startsWith('_') || key === '$other' || key === '$_trivia') collectReaders(item, readers);
-		}
-	}
-}
-
 function languageGuards<G extends object>(guards: G, inLanguage: (value: unknown) => boolean): Readonly<G> {
 	const entries = Object.entries(guards).map(([name, guard]): [string, unknown] => [
 		name,
@@ -124,10 +103,6 @@ function languageGuards<G extends object>(guards: G, inLanguage: (value: unknown
 	]);
 	return Object.freeze(Object.fromEntries(entries) as G);
 }
-
-let engineCount = 0;
-const serials = new WeakMap<object, number>();
-const labelOf = (engine: EngineHandle['current']): string => `${engine.language.name}#${serials.get(engine) ?? '?'}`;
 
 function assembleEngine<API extends LanguageAPI>(
 	language: Language<API>,
@@ -195,17 +170,7 @@ function assembleEngine<API extends LanguageAPI>(
 			if (stamp !== undefined && !sameLanguage(stamp, identity)) {
 				throw new Error(`cannot render a ${stamp.language.name} node through a ${language.name} engine`);
 			}
-			const readers = new Set<EngineHandle['current']>();
-			collectReaders(target, readers);
-			if (readers.size > 1) {
-				throw new Error(
-					`the node holds parsed children of several engines (${[...readers].map(labelOf).join(', ')}); render each part through the engine that parsed it`
-				);
-			}
-			const [reader] = readers;
-			if (reader === undefined || reader === engine) return renderNative(target, renderOptions);
-			if (!isLive(reader)) throw new Error('engine disposed; render it with engine.render(node)');
-			return reader.render(target, { ...options?.render, ...renderOptions });
+			return renderNative(target, renderOptions);
 		},
 		create(): Pending {
 			throw unimplementedVerb('create');
@@ -225,9 +190,6 @@ function assembleEngine<API extends LanguageAPI>(
 		}
 	};
 	handle.current = engine;
-	const serial = ++engineCount;
-	serials.set(engine, serial);
-	serials.set(identity, serial);
 	return Object.freeze(engine);
 }
 

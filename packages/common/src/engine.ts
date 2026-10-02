@@ -14,7 +14,8 @@ import type {
 	Rendered
 } from '@sittir/types';
 import type { TreeHandle } from './readUntypedNode.ts';
-import { toTransportData } from './transport-data.ts';
+import { holdTree, toTransportData } from './transport-data.ts';
+import { mintTreeToken } from './tree-token.ts';
 
 /** The options object a grammar package types as its `Options`. */
 export type RenderOptionValues = Readonly<Record<string, unknown>>;
@@ -68,10 +69,6 @@ export interface NativeEngineLike<TTransport = unknown> {
 	render(node: TTransport, treeId?: number, options?: object): string;
 	renderToFile?(node: TTransport, path: string, treeId?: number, options?: object): void;
 	applyEdits(source: string, edits: { startPos: number; endPos: number; insertedText: string }[]): string;
-	/** Drop one parsed tree. Driven by GC — see `treeDisposalRegistry`. */
-	disposeTree(treeId: number): void;
-	/** Trees the native engine still holds. Diagnostics only. */
-	readonly liveTreeCount: number;
 	/** The binary's compile profile (`debug` | `release`); absent on a binary that predates the getter. */
 	readonly buildProfile?: string;
 	dispose(): void;
@@ -82,6 +79,10 @@ export interface NativeModuleLike<
 	TEngine extends NativeEngineLike<TTransport> = NativeEngineLike<TTransport>
 > {
 	SittirEngine: new (options?: { format?: string; options?: object }) => TEngine;
+	/** Release one parsed tree of this language. Driven by GC — see `treeDisposalRegistry`. An id that names no tree is ignored. */
+	disposeTree(treeId: number): void;
+	/** Trees of this language still held on this thread. Diagnostics only. */
+	liveTreeCount(): number;
 }
 
 export type NativeBackendStatusLike<TModule extends NativeModuleLike = NativeModuleLike> = {
@@ -126,6 +127,12 @@ export type { ParseOptions };
  */
 export interface NativeEngineDiagnostics<TRoot extends AnyUntypedNode = AnyUntypedNode>
 	extends EngineDiagnostics<TRoot & ParsedRoot, TreeHandle> {
+	/**
+	 * Reads one node by handle, for inspection. The data it returns does not
+	 * hold its tree: the tree lives only as long as the tree handle of the
+	 * parse that made it, and a render refuses the data. Read through that
+	 * tree handle's `read` for data that renders.
+	 */
 	readUntypedNode(handle: number, childIndex?: number, options?: ParseOptions): AnyUntypedNode;
 }
 
@@ -190,21 +197,19 @@ interface NativeParseResultShape {
  * unhydrated child holds a handle the native side must still be able to
  * answer. Nothing on the JS side knows when the last of those handles is
  * gone — but the garbage collector does. Each tree gets a token that its
- * `read` closure captures, so the token stays reachable exactly as long as
- * the tree handle or any node wrapped against it; when the token is
- * collected, the tree is dropped.
+ * `read` closure captures and that every parsed object a read returns holds
+ * (`holdTree`), so the token stays reachable exactly as long as the tree
+ * handle or any object naming the tree; when the token is collected, the
+ * tree is dropped.
  *
- * The engine is held weakly. A registry entry outlives its tree by
- * definition, and a strong reference here would keep the whole engine —
- * parser included — alive for as long as any entry remained unswept.
+ * No engine is held, weakly or strongly. The live trees of a language belong
+ * to its addon, so the entry carries the addon's release function: a tree is
+ * released whether the engine that parsed it is alive, disposed or collected.
  */
 const treeDisposalRegistry = new FinalizationRegistry<{
-	readonly engineRef: WeakRef<NativeEngineLike<never>>;
+	readonly release: (treeId: number) => void;
 	readonly treeId: number;
-}>(({ engineRef, treeId }) => {
-	// A collected engine has already dropped every tree it owned.
-	engineRef.deref()?.disposeTree(treeId);
-});
+}>(({ release, treeId }) => release(treeId));
 
 /**
  * Tagged-union result for `createNativeEngine` — mirrors the
@@ -256,9 +261,18 @@ export function createNativeEngine<
 			// path, so a caller handing over raw read data cannot slice a
 			// pre-edit span past a rebuilt slot.
 			const transport = (typeof node === 'number' ? node : toTransportData(node)) as TTransport;
+			// The handle renders lazily, and the transport's coordinates are
+			// numbers: the tokens stayed on `node`. Both closures name `node`,
+			// so the handle holds the trees it will slice for as long as it
+			// can still render.
+			const holdsTrees = (): unknown => node;
 			return createRenderHandle(
-				() => engine.render(transport, undefined, perCall),
+				() => {
+					holdsTrees();
+					return engine.render(transport, undefined, perCall);
+				},
 				(path) => {
+					holdsTrees();
 					if (engine.renderToFile) {
 						engine.renderToFile(transport, path, undefined, perCall);
 						return true;
@@ -297,12 +311,14 @@ export function createNativeEngine<
 						// One root per depth: the parse's own read seeds it, and a
 						// root asked for at another depth is read natively once.
 						const roots = new Map<number, AnyUntypedNode>([[depthOf(parseOptions) ?? 1, root]]);
-						// Captured by `read` below and by nothing else, so it stays
-						// reachable exactly as long as something can still read from
-						// this tree. Its collection is what releases the tree.
-						const liveToken = { treeId: parsed.treeId };
+						// Held by `read` below and by every parsed object a read
+						// returns, so it stays reachable exactly as long as
+						// something can still read from this tree or names it.
+						// Its collection is what releases the tree.
+						const liveToken = mintTreeToken(parsed.treeId);
+						holdTree(root, liveToken);
 						treeDisposalRegistry.register(liveToken, {
-							engineRef: new WeakRef(engine as NativeEngineLike<never>),
+							release: status.native.disposeTree,
 							treeId: parsed.treeId
 						});
 						return {
@@ -313,22 +329,19 @@ export function createNativeEngine<
 								},
 								source,
 								read: (handle, childIndex, depth) => {
-									// Handles name their own tree, so this needs no tree
-									// argument — but it must keep `liveToken` reachable,
-									// or the tree behind those handles can be collected
-									// while they are still in use.
-									void liveToken;
 									if (handle === undefined) {
 										const levels = depth ?? 1;
 										let cached = roots.get(levels);
 										if (cached === undefined) {
 											cached = JSON.parse(engine.readRoot(parsed.treeId, depth)) as AnyUntypedNode;
+											holdTree(cached, liveToken);
 											roots.set(levels, cached);
 										}
 										return cached;
 									}
-									const nodeJson = engine.readUntypedNode(handle, childIndex ?? 0, depth);
-									return JSON.parse(nodeJson) as AnyUntypedNode;
+									const node = JSON.parse(engine.readUntypedNode(handle, childIndex ?? 0, depth)) as AnyUntypedNode;
+									holdTree(node, liveToken);
+									return node;
 								},
 								format: parsed.format
 							} satisfies TreeHandle

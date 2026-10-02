@@ -6,10 +6,21 @@ export interface TriviaSides<Entry> {
 }
 
 /**
- * Map every list of trivia entries a node owns — leading, trailing, and each
- * inner gap's — keeping the sides that are absent absent. Trivia entries are
+ * Visit every list of trivia entries a node owns — leading, trailing, and each
+ * inner gap's — skipping the sides that are absent. Trivia entries are
  * children of their owner, so whatever a pass does to slot children it does
  * to each of these lists through this one walk.
+ */
+export function forEachTriviaList<Entry>(trivia: TriviaSides<Entry>, visit: (entries: readonly Entry[]) => void): void {
+	const { leading, trailing, inner } = trivia;
+	if (leading) visit(leading);
+	if (trailing) visit(trailing);
+	if (inner) for (const gap in inner) if (inner[gap]) visit(inner[gap]);
+}
+
+/**
+ * Map every list of trivia entries a node owns, as {@link forEachTriviaList}
+ * visits them.
  */
 export function mapTriviaEntries<In, Out>(
 	trivia: TriviaSides<In>,

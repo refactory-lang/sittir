@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { AnyUntypedNode } from '@sittir/types';
+import { carryTree } from '@sittir/common/utils';
 import { loadNativeEngine, readNodeOf, materializeDetached, readNativeTree } from '../common.ts';
 import { detachedRenderer } from './helpers/detached-renderer.ts';
 
@@ -40,7 +41,8 @@ describe('read trivia layout, rendered detached', () => {
 		};
 		const binary = data._statements[0]._body._statements[0]._content._expression._right;
 		const at = source.indexOf('+');
-		binary._operator = { $type: binary._operator, $treeHandle: binary._left.$_trivia.trailing[0].$treeHandle, $span: { start: at, end: at + 1 } };
+		const comment = binary._left.$_trivia.trailing[0];
+		binary._operator = carryTree(comment, { $type: binary._operator, $treeHandle: comment.$treeHandle, $span: { start: at, end: at + 1 } });
 		expect(engine.render(data as never as AnyUntypedNode).toString()).toBe('fn f() {\n    x = a + /* x */ b;\n}\n');
 	});
 

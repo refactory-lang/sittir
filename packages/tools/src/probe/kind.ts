@@ -85,6 +85,8 @@ import {
 	loadNativeEngine,
 	readNativeTree,
 	type NativeEngine,
+	detachedHoldingTree,
+	holdingTreeOf,
 	materializeDetached,
 	readNodeOf,
 	walkNativeForKind,
@@ -107,7 +109,7 @@ import {
 import { load } from '../codegen-surface.ts';
 import type * as TS from 'web-tree-sitter';
 import type { AnyUntypedNode, AnyTreeNode } from '@sittir/types';
-import { detachCoordinates, sourceSpans, type ByteSpan, type SourceSpans } from '@sittir/common';
+import { sourceSpans, type ByteSpan, type SourceSpans } from '@sittir/common';
 import { isStub, readUntypedNode, toTransportData } from '@sittir/common/utils';
 // ---------------------------------------------------------------------------
 // CLI
@@ -878,7 +880,7 @@ async function readProbeLanes(
 		const handle = readNativeTree(nativeEngine, source).tree;
 		if (isRoot) {
 			const shallow = stripBigInts(handle.read?.());
-			const deepUntypedNode = detachCoordinates(readUntypedNode(handle, undefined, undefined, Infinity));
+			const deepUntypedNode = detachedHoldingTree(readUntypedNode(handle, undefined, undefined, Infinity));
 			const deepTyped = readNode ? readNode(handle) : undefined;
 			const deep = resolveNativeTraceUntypedNode(deepTyped, deepUntypedNode, onAccessorThrow);
 			return { shallow, deep, deepTyped, deepUntypedNode };
@@ -892,7 +894,7 @@ async function readProbeLanes(
 				) ?? null;
 			if (targetCandidate?.coords.handle !== undefined && targetCandidate.coords.childIndex !== undefined) {
 				const shallow = handle.read?.(targetCandidate.coords.handle, targetCandidate.coords.childIndex);
-				const deepUntypedNode = detachCoordinates(
+				const deepUntypedNode = detachedHoldingTree(
 					readUntypedNode(handle, targetCandidate.coords.handle, targetCandidate.coords.childIndex, Infinity)
 				);
 				const deepTyped = readNode
@@ -910,7 +912,7 @@ async function readProbeLanes(
 		if (!target) throw new Error('probe-kind: no native node match in UntypedNode tree');
 		const targetHandle = getTargetHandle(target);
 		const shallow = targetHandle ? handle.read?.(targetHandle.handle, targetHandle.childIndex) : target;
-		const deepUntypedNode = detachCoordinates(
+		const deepUntypedNode = detachedHoldingTree(
 			targetHandle ? readUntypedNode(handle, targetHandle.handle, targetHandle.childIndex, Infinity) : target
 		);
 		const deepTyped =
@@ -1300,7 +1302,8 @@ function computeEngineCompare(ts: ProbeReport, native: ProbeReport): ProbeEngine
 function stripBigInts(v: unknown): unknown {
 	// UntypedNode carries `$nodeId` as number (or bigint on some platforms);
 	// JSON.stringify chokes on bigint. Cast to Number for dump purposes.
-	return JSON.parse(JSON.stringify(v, (_k, val) => (typeof val === 'bigint' ? Number(val) : val)));
+	// The JSON copy holds no tree, and it is still rendered: pass the tree on.
+	return holdingTreeOf(v, JSON.parse(JSON.stringify(v, (_k, val) => (typeof val === 'bigint' ? Number(val) : val))));
 }
 
 async function readStdin(): Promise<string> {

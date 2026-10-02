@@ -640,7 +640,8 @@ export { hydrateStub, isStub, readUntypedNode, type Stub, type TreeHandle } from
 export { toEditAt } from './edit.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toTransportData, markEdited, treeHandleOf, isStorageKey, holdsSlots } from './transport-data.ts';
+export { toTransportData, markEdited, treeHandleOf, isStorageKey, holdsSlots, holdTree } from './transport-data.ts';
+export { carryTree, treeTokenOf, type TreeToken } from './tree-token.ts';
 export {
 	projectInterior,
 	lexedConfig,

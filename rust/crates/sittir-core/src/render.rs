@@ -77,8 +77,8 @@ pub trait SourceTable {
 /// handle is the only thing that names that tree.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CoordinateError {
-    /// The handle's tag names no tree this engine holds: read elsewhere,
-    /// already disposed, or never parsed.
+    /// The handle's tag names no tree in this language's table on this
+    /// thread: never parsed here, or already released.
     UnknownTree {
         handle: u64,
         tree_id: u32,
@@ -94,7 +94,7 @@ impl fmt::Display for CoordinateError {
         match self {
             Self::UnknownTree { handle, tree_id } => write!(
                 f,
-                "handle {handle} names tree {tree_id}, which this engine does not hold (never parsed, disposed, or read by another engine)"
+                "handle {handle} names tree {tree_id}, which is not live in this language's table (never parsed on this thread, or already released)"
             ),
             Self::BadSpan { handle, detail } => write!(f, "handle {handle}: {detail}"),
         }

@@ -260,6 +260,7 @@ describe('engine render boundary', () => {
 		);
 
 		const { createEngine } = await import('@sittir/common');
+		const { treeTokenOf } = await import('@sittir/common/utils');
 		const descriptor = (await import('../src/index.ts')).default;
 		const engine = await createEngine(descriptor, { format: { boundary: { leading: '\t' } } });
 		// engine.render() returns a RenderHandle ({ save, print, toString }),
@@ -269,7 +270,11 @@ describe('engine render boundary', () => {
 
 		// The native engine behind the descriptor reads raw node data
 		const { root } = (await descriptor.load()).createNative().parseAndRead('x');
-		expect(root).toEqual(identifier);
+		// and nothing else under a string key: the token that keeps the
+		// root's tree live is no data key.
+		const read = root as object;
+		expect(Object.fromEntries(Object.entries(read))).toEqual(identifier);
+		expect(treeTokenOf(read)).toBeDefined();
 	});
 
 	it('falls back when native render transport ABI is stale', async () => {
