@@ -7,8 +7,8 @@ await createEngine(rust);
 
 describe('a loose entry whose one slot holds a child built from spread elements', () => {
 	it('takes the spread elements the strict builder takes', () => {
-		const built = coerceToFunctionTypeFnForm('async', 'unsafe') as unknown as { readonly _function_modifiers: { readonly _modifier: readonly unknown[] } };
-		expect(built._function_modifiers._modifier).toHaveLength(2);
+		const modifiers = coerceToFunctionTypeFnForm('async', 'unsafe').functionModifiers();
+		expect(modifiers?._modifier).toHaveLength(2);
 	});
 
 	it('passes its own node through when given one argument', () => {
