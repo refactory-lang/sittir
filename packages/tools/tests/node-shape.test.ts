@@ -1,7 +1,7 @@
 import v8 from 'node:v8';
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
-import { isDataKey, treeTokenOf } from '@sittir/common/utils';
+import { isStorageKey, toTransportData, treeTokenOf } from '@sittir/common/utils';
 import rust from '../../rust/src/index.ts';
 import typescript from '../../typescript/src/index.ts';
 import python from '../../python/src/index.ts';
@@ -40,13 +40,31 @@ const classes: Record<string, () => object> = {
 	'python group seat': () => py.build.slice({})
 };
 
-describe('a built node carries no member that crosses the boundary as data', () => {
-	for (const [label, make] of Object.entries(classes)) {
+const MEMBERS = new Set(['$with', '$trivia', '$engine', '$render', '$toEdit', '$replace']);
+
+const offenders = (value: unknown, path = '$'): string[] => {
+	if (typeof value === 'function') return [`${path} is a function`];
+	if (Array.isArray(value)) return value.flatMap((entry, index) => offenders(entry, `${path}[${index}]`));
+	if (value === null || typeof value !== 'object') return [];
+	const isNode = typeof (value as { $type?: unknown }).$type === 'number';
+	return Object.entries(value).flatMap(([key, entry]) => {
+		const stray =
+			!isNode || isStorageKey(key) || (key.startsWith('$') && !MEMBERS.has(key)) ? [] : [`${path}.${key} is neither storage nor $ metadata`];
+		return [...stray, ...offenders(entry, `${path}.${key}`)];
+	});
+};
+
+describe('what a node sends across the boundary carries no member', () => {
+	const source = 'fn f(a: i32) { let x = g(a, a + 1); match x { 1 => 1, _ => 2 } }\n';
+	const wrapped: Record<string, () => object> = {
+		'rust parsed, shallow': () => rs.parse(source),
+		'rust parsed, deep': () => rs.parse(source, { deep: true }),
+		'typescript parsed': () => ts.parse('const x = f(a, b);\n'),
+		'python parsed': () => py.parse('x = f(a, b)\n')
+	};
+	for (const [label, make] of Object.entries({ ...classes, ...wrapped })) {
 		it(label, () => {
-			const node = make() as Record<string, unknown>;
-			const members = Object.keys(node).filter((key) => typeof node[key] === 'function');
-			expect(members.length).toBeGreaterThan(0);
-			expect(members.filter(isDataKey)).toEqual([]);
+			expect(offenders(toTransportData(make() as never))).toEqual([]);
 		});
 	}
 });
