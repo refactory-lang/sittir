@@ -14,6 +14,12 @@ import {
 	projectInterior,
 	coerceBooleanKeywordStorage,
 	inTreeEngine,
+	currentHandle,
+	rebuilt,
+	renderText,
+	toEditAt,
+	triviaSide,
+	triviaInner,
 	withListView,
 	withListSlots,
 	withGroupSeat,
@@ -22,7 +28,7 @@ import {
 import type { TreeHandle, TokenInterior } from '@sittir/common/utils';
 import { TOKEN_INTERIORS } from './consts.js';
 import type { ParsedRoot } from '@sittir/common/engine';
-import type { AnyUntypedNode as _UntypedNode, NonEmptyArray, SupertypeSurface } from '@sittir/types';
+import type { AnyUntypedNode as _UntypedNode, NonEmptyArray, StringIndexRange, SupertypeSurface } from '@sittir/types';
 import { TSKindId, KIND_NAMES, KIND_DISPLAY_NAMES } from './types.js';
 import { Delimiter } from '@sittir/common/utils';
 import type * as T from './types-internal.js';
@@ -1218,7 +1224,8 @@ function dropWireDelimiters<T>(
 
 export function wrapSourceFile(data: T.SourceFile, tree: TreeHandle): T.SourceFile.Parsed {
 	data = _keepModelledSlots(data, ['_shebang', '_statements']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.SourceFile as const,
 		_shebang: storeExpanded(
@@ -1250,12 +1257,23 @@ export function wrapSourceFile(data: T.SourceFile, tree: TreeHandle): T.SourceFi
 			return hydrateChildren<T.Statement>(this._statements as readonly T.Statement[] | undefined, tree);
 		},
 		$with: {
-			shebang: (v: NonNullable<T.SourceFile['_shebang']>) => wrapSourceFile({ ...$edited(data), _shebang: v }, tree),
+			shebang: (v: NonNullable<T.SourceFile['_shebang']>) =>
+				rebuilt(node, handle, () => wrapSourceFile({ ...$edited(data), _shebang: v }, tree)),
 			statements: (...v: NonNullable<T.SourceFile['_statements']>[number][]) =>
-				wrapSourceFile({ ...$edited(data), _statements: restItems('statements', v) }, tree)
-		}
-	});
-	return _node as unknown as T.SourceFile.Parsed;
+				rebuilt(node, handle, () => wrapSourceFile({ ...$edited(data), _statements: restItems('statements', v) }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.SourceFile.Parsed;
 }
 
 export function wrapStatement(
@@ -1398,7 +1416,8 @@ export function wrapStatement(
 
 export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeHandle): T.ExpressionStatement.Parsed {
 	data = _keepModelledSlots(data, ['_content']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ExpressionStatement as const,
 		_content: storeExpanded(
@@ -1429,10 +1448,19 @@ export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeH
 		},
 		$with: {
 			content: (v: NonNullable<T.ExpressionStatement['_content']>) =>
-				wrapExpressionStatement({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.ExpressionStatement.Parsed;
+				rebuilt(node, handle, () => wrapExpressionStatement({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ExpressionStatement.Parsed;
 }
 
 export function wrapMacroDefinition(
@@ -1476,7 +1504,8 @@ export function wrapMacroDefinition(
 
 export function wrapMacroRule(data: T.MacroRule, tree: TreeHandle): T.MacroRule.Parsed {
 	data = _keepModelledSlots(data, ['_left', '_right']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.MacroRule as const,
 		_left: storeExpanded(
@@ -1505,11 +1534,22 @@ export function wrapMacroRule(data: T.MacroRule, tree: TreeHandle): T.MacroRule.
 			return hydrateChild<T.TokenTree>(this._right, tree);
 		},
 		$with: {
-			left: (v: NonNullable<T.MacroRule['_left']>) => wrapMacroRule({ ...$edited(data), _left: v }, tree),
-			right: (v: NonNullable<T.MacroRule['_right']>) => wrapMacroRule({ ...$edited(data), _right: v }, tree)
-		}
-	});
-	return _node as unknown as T.MacroRule.Parsed;
+			left: (v: NonNullable<T.MacroRule['_left']>) =>
+				rebuilt(node, handle, () => wrapMacroRule({ ...$edited(data), _left: v }, tree)),
+			right: (v: NonNullable<T.MacroRule['_right']>) =>
+				rebuilt(node, handle, () => wrapMacroRule({ ...$edited(data), _right: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MacroRule.Parsed;
 }
 
 export function wrapTokenPattern(
@@ -1610,12 +1650,24 @@ export function wrapTokenTreePattern(
 
 export function wrapTokenBindingPattern(data: T.TokenBindingPattern, tree: TreeHandle): T.TokenBindingPattern.Parsed {
 	data = _keepModelledSlots(data, ['_name', '_type']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.TokenBindingPattern as const
-		}) as unknown as T.TokenBindingPattern.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.TokenBindingPattern as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.TokenBindingPattern.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.TokenBindingPattern as const,
 		_name: storeExpanded(
@@ -1661,12 +1713,21 @@ export function wrapTokenBindingPattern(data: T.TokenBindingPattern, tree: TreeH
 		},
 		$with: {
 			name: (v: NonNullable<T.TokenBindingPattern['_name']>) =>
-				wrapTokenBindingPattern({ ...$edited(data), _name: v }, tree),
+				rebuilt(node, handle, () => wrapTokenBindingPattern({ ...$edited(data), _name: v }, tree)),
 			type: (v: NonNullable<T.TokenBindingPattern['_type']>) =>
-				wrapTokenBindingPattern({ ...$edited(data), _type: v }, tree)
-		}
-	});
-	return _node as unknown as T.TokenBindingPattern.Parsed;
+				rebuilt(node, handle, () => wrapTokenBindingPattern({ ...$edited(data), _type: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TokenBindingPattern.Parsed;
 }
 
 export function wrapTokenRepetitionPattern(
@@ -1674,12 +1735,24 @@ export function wrapTokenRepetitionPattern(
 	tree: TreeHandle
 ): T.TokenRepetitionPattern.Parsed {
 	data = _keepModelledSlots(data, ['_token_patterns', '_separator', '_operator']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.TokenRepetitionPattern as const
-		}) as unknown as T.TokenRepetitionPattern.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.TokenRepetitionPattern as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.TokenRepetitionPattern.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.TokenRepetitionPattern as const,
 		_token_patterns: storeExpanded(
@@ -1734,14 +1807,25 @@ export function wrapTokenRepetitionPattern(
 		},
 		$with: {
 			tokenPatterns: (...v: NonNullable<T.TokenRepetitionPattern['_token_patterns']>[number][]) =>
-				wrapTokenRepetitionPattern({ ...$edited(data), _token_patterns: restItems('tokenPatterns', v) }, tree),
+				rebuilt(node, handle, () =>
+					wrapTokenRepetitionPattern({ ...$edited(data), _token_patterns: restItems('tokenPatterns', v) }, tree)
+				),
 			separator: (v: NonNullable<T.TokenRepetitionPattern['_separator']>) =>
-				wrapTokenRepetitionPattern({ ...$edited(data), _separator: v }, tree),
+				rebuilt(node, handle, () => wrapTokenRepetitionPattern({ ...$edited(data), _separator: v }, tree)),
 			operator: (v: NonNullable<T.TokenRepetitionPattern['_operator']>) =>
-				wrapTokenRepetitionPattern({ ...$edited(data), _operator: v }, tree)
-		}
-	});
-	return _node as unknown as T.TokenRepetitionPattern.Parsed;
+				rebuilt(node, handle, () => wrapTokenRepetitionPattern({ ...$edited(data), _operator: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TokenRepetitionPattern.Parsed;
 }
 
 export function wrapTokenTree(
@@ -1775,9 +1859,24 @@ export function wrapTokenTree(
 
 export function wrapTokenRepetition(data: T.TokenRepetition, tree: TreeHandle): T.TokenRepetition.Parsed {
 	data = _keepModelledSlots(data, ['_tokens', '_separator', '_operator']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.TokenRepetition as const }) as unknown as T.TokenRepetition.Parsed;
-	const _node = withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
+			...data,
+			$type: TSKindId.TokenRepetition as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.TokenRepetition.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.TokenRepetition as const,
 		_tokens: storeExpanded(
@@ -1822,21 +1921,45 @@ export function wrapTokenRepetition(data: T.TokenRepetition, tree: TreeHandle): 
 		},
 		$with: {
 			tokens: (...v: NonNullable<T.TokenRepetition['_tokens']>[number][]) =>
-				wrapTokenRepetition({ ...$edited(data), _tokens: restItems('tokens', v) }, tree),
+				rebuilt(node, handle, () => wrapTokenRepetition({ ...$edited(data), _tokens: restItems('tokens', v) }, tree)),
 			separator: (v: NonNullable<T.TokenRepetition['_separator']>) =>
-				wrapTokenRepetition({ ...$edited(data), _separator: v }, tree),
+				rebuilt(node, handle, () => wrapTokenRepetition({ ...$edited(data), _separator: v }, tree)),
 			operator: (v: NonNullable<T.TokenRepetition['_operator']>) =>
-				wrapTokenRepetition({ ...$edited(data), _operator: v }, tree)
-		}
-	});
-	return _node as unknown as T.TokenRepetition.Parsed;
+				rebuilt(node, handle, () => wrapTokenRepetition({ ...$edited(data), _operator: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TokenRepetition.Parsed;
 }
 
 export function wrapNonSpecialToken(data: T.NonSpecialToken, tree: TreeHandle): T.NonSpecialToken.Parsed {
 	data = _keepModelledSlots(data, ['_content']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.NonSpecialToken as const }) as unknown as T.NonSpecialToken.Parsed;
-	const _node = withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
+			...data,
+			$type: TSKindId.NonSpecialToken as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.NonSpecialToken.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.NonSpecialToken as const,
 		_content: storeExpanded(
@@ -2249,15 +2372,25 @@ export function wrapNonSpecialToken(data: T.NonSpecialToken, tree: TreeHandle): 
 		},
 		$with: {
 			content: (v: NonNullable<T.NonSpecialToken['_content']>) =>
-				wrapNonSpecialToken({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.NonSpecialToken.Parsed;
+				rebuilt(node, handle, () => wrapNonSpecialToken({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.NonSpecialToken.Parsed;
 }
 
 export function wrapAttributeItem(data: T.AttributeItem, tree: TreeHandle): T.AttributeItem.Parsed {
 	data = _keepModelledSlots(data, ['_attribute']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.AttributeItem as const,
 		_attribute: storeExpanded(
@@ -2275,15 +2408,25 @@ export function wrapAttributeItem(data: T.AttributeItem, tree: TreeHandle): T.At
 		},
 		$with: {
 			attribute: (v: NonNullable<T.AttributeItem['_attribute']>) =>
-				wrapAttributeItem({ ...$edited(data), _attribute: v }, tree)
-		}
-	});
-	return _node as unknown as T.AttributeItem.Parsed;
+				rebuilt(node, handle, () => wrapAttributeItem({ ...$edited(data), _attribute: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AttributeItem.Parsed;
 }
 
 export function wrapInnerAttributeItem(data: T.InnerAttributeItem, tree: TreeHandle): T.InnerAttributeItem.Parsed {
 	data = _keepModelledSlots(data, ['_attribute']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.InnerAttributeItem as const,
 		_attribute: storeExpanded(
@@ -2301,17 +2444,41 @@ export function wrapInnerAttributeItem(data: T.InnerAttributeItem, tree: TreeHan
 		},
 		$with: {
 			attribute: (v: NonNullable<T.InnerAttributeItem['_attribute']>) =>
-				wrapInnerAttributeItem({ ...$edited(data), _attribute: v }, tree)
-		}
-	});
-	return _node as unknown as T.InnerAttributeItem.Parsed;
+				rebuilt(node, handle, () => wrapInnerAttributeItem({ ...$edited(data), _attribute: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.InnerAttributeItem.Parsed;
 }
 
 export function wrapAttribute(data: T.Attribute, tree: TreeHandle): T.Attribute.Parsed {
 	data = _keepModelledSlots(data, ['_path', '_input']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.Attribute as const }) as unknown as T.Attribute.Parsed;
-	const _node = withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
+			...data,
+			$type: TSKindId.Attribute as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.Attribute.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.Attribute as const,
 		_path: storeExpanded(
@@ -2394,11 +2561,22 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle): T.Attribute.
 			return hydrateChild<T.AttributeInput | undefined>(this._input, tree);
 		},
 		$with: {
-			path: (v: NonNullable<T.Attribute['_path']>) => wrapAttribute({ ...$edited(data), _path: v }, tree),
-			input: (v: NonNullable<T.Attribute['_input']>) => wrapAttribute({ ...$edited(data), _input: v }, tree)
-		}
-	});
-	return _node as unknown as T.Attribute.Parsed;
+			path: (v: NonNullable<T.Attribute['_path']>) =>
+				rebuilt(node, handle, () => wrapAttribute({ ...$edited(data), _path: v }, tree)),
+			input: (v: NonNullable<T.Attribute['_input']>) =>
+				rebuilt(node, handle, () => wrapAttribute({ ...$edited(data), _input: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Attribute.Parsed;
 }
 
 export function wrapModItem(
@@ -2460,7 +2638,8 @@ export function wrapForeignModItem(
 
 export function wrapDeclarationList(data: T.DeclarationList, tree: TreeHandle): T.DeclarationList.Parsed {
 	data = _keepModelledSlots(data, ['_declarations']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.DeclarationList as const,
 		_declarations: storeExpanded(
@@ -2484,10 +2663,22 @@ export function wrapDeclarationList(data: T.DeclarationList, tree: TreeHandle): 
 		},
 		$with: {
 			declarations: (...v: NonNullable<T.DeclarationList['_declarations']>[number][]) =>
-				wrapDeclarationList({ ...$edited(data), _declarations: restItems('declarations', v) }, tree)
-		}
-	});
-	return _node as unknown as T.DeclarationList.Parsed;
+				rebuilt(node, handle, () =>
+					wrapDeclarationList({ ...$edited(data), _declarations: restItems('declarations', v) }, tree)
+				)
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.DeclarationList.Parsed;
 }
 
 export function wrapStructItem(
@@ -2773,7 +2964,8 @@ export function wrapEnumVariantList(data: T.EnumVariantList, tree: TreeHandle): 
 
 export function wrapEnumVariant(data: T.EnumVariant, tree: TreeHandle): T.EnumVariant.Parsed {
 	data = _keepModelledSlots(data, ['_visibility_modifier', '_name', '_body', '_value']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.EnumVariant as const,
 		_visibility_modifier: storeExpanded(
@@ -2832,13 +3024,25 @@ export function wrapEnumVariant(data: T.EnumVariant, tree: TreeHandle): T.EnumVa
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.EnumVariant['_visibility_modifier']>) =>
-				wrapEnumVariant({ ...$edited(data), _visibility_modifier: v }, tree),
-			name: (v: NonNullable<T.EnumVariant['_name']>) => wrapEnumVariant({ ...$edited(data), _name: v }, tree),
-			body: (v: NonNullable<T.EnumVariant['_body']>) => wrapEnumVariant({ ...$edited(data), _body: v }, tree),
-			value: (v: NonNullable<T.EnumVariant['_value']>) => wrapEnumVariant({ ...$edited(data), _value: v }, tree)
-		}
-	});
-	return _node as unknown as T.EnumVariant.Parsed;
+				rebuilt(node, handle, () => wrapEnumVariant({ ...$edited(data), _visibility_modifier: v }, tree)),
+			name: (v: NonNullable<T.EnumVariant['_name']>) =>
+				rebuilt(node, handle, () => wrapEnumVariant({ ...$edited(data), _name: v }, tree)),
+			body: (v: NonNullable<T.EnumVariant['_body']>) =>
+				rebuilt(node, handle, () => wrapEnumVariant({ ...$edited(data), _body: v }, tree)),
+			value: (v: NonNullable<T.EnumVariant['_value']>) =>
+				rebuilt(node, handle, () => wrapEnumVariant({ ...$edited(data), _value: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.EnumVariant.Parsed;
 }
 
 export function wrapFieldDeclarationList(
@@ -2909,7 +3113,8 @@ export function wrapFieldDeclarationList(
 
 export function wrapFieldDeclaration(data: T.FieldDeclaration, tree: TreeHandle): T.FieldDeclaration.Parsed {
 	data = _keepModelledSlots(data, ['_visibility_modifier', '_name', '_type']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.FieldDeclaration as const,
 		_visibility_modifier: storeExpanded(
@@ -2975,12 +3180,23 @@ export function wrapFieldDeclaration(data: T.FieldDeclaration, tree: TreeHandle)
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.FieldDeclaration['_visibility_modifier']>) =>
-				wrapFieldDeclaration({ ...$edited(data), _visibility_modifier: v }, tree),
-			name: (v: NonNullable<T.FieldDeclaration['_name']>) => wrapFieldDeclaration({ ...$edited(data), _name: v }, tree),
-			type: (v: NonNullable<T.FieldDeclaration['_type']>) => wrapFieldDeclaration({ ...$edited(data), _type: v }, tree)
-		}
-	});
-	return _node as unknown as T.FieldDeclaration.Parsed;
+				rebuilt(node, handle, () => wrapFieldDeclaration({ ...$edited(data), _visibility_modifier: v }, tree)),
+			name: (v: NonNullable<T.FieldDeclaration['_name']>) =>
+				rebuilt(node, handle, () => wrapFieldDeclaration({ ...$edited(data), _name: v }, tree)),
+			type: (v: NonNullable<T.FieldDeclaration['_type']>) =>
+				rebuilt(node, handle, () => wrapFieldDeclaration({ ...$edited(data), _type: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FieldDeclaration.Parsed;
 }
 
 export function wrapOrderedFieldDeclarationList(
@@ -3044,7 +3260,8 @@ export function wrapExternCrateDeclaration(
 	tree: TreeHandle
 ): T.ExternCrateDeclaration.Parsed {
 	data = _keepModelledSlots(data, ['_visibility_modifier', '_name', '_alias']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ExternCrateDeclaration as const,
 		_visibility_modifier: storeExpanded(
@@ -3086,19 +3303,29 @@ export function wrapExternCrateDeclaration(
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.ExternCrateDeclaration['_visibility_modifier']>) =>
-				wrapExternCrateDeclaration({ ...$edited(data), _visibility_modifier: v }, tree),
+				rebuilt(node, handle, () => wrapExternCrateDeclaration({ ...$edited(data), _visibility_modifier: v }, tree)),
 			name: (v: NonNullable<T.ExternCrateDeclaration['_name']>) =>
-				wrapExternCrateDeclaration({ ...$edited(data), _name: v }, tree),
+				rebuilt(node, handle, () => wrapExternCrateDeclaration({ ...$edited(data), _name: v }, tree)),
 			alias: (v: NonNullable<T.ExternCrateDeclaration['_alias']>) =>
-				wrapExternCrateDeclaration({ ...$edited(data), _alias: v }, tree)
-		}
-	});
-	return _node as unknown as T.ExternCrateDeclaration.Parsed;
+				rebuilt(node, handle, () => wrapExternCrateDeclaration({ ...$edited(data), _alias: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ExternCrateDeclaration.Parsed;
 }
 
 export function wrapConstItem(data: T.ConstItem, tree: TreeHandle): T.ConstItem.Parsed {
 	data = _keepModelledSlots(data, ['_visibility_modifier', '_name', '_type', '_value']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ConstItem as const,
 		_visibility_modifier: storeExpanded(
@@ -3181,13 +3408,25 @@ export function wrapConstItem(data: T.ConstItem, tree: TreeHandle): T.ConstItem.
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.ConstItem['_visibility_modifier']>) =>
-				wrapConstItem({ ...$edited(data), _visibility_modifier: v }, tree),
-			name: (v: NonNullable<T.ConstItem['_name']>) => wrapConstItem({ ...$edited(data), _name: v }, tree),
-			type: (v: NonNullable<T.ConstItem['_type']>) => wrapConstItem({ ...$edited(data), _type: v }, tree),
-			value: (v: NonNullable<T.ConstItem['_value']>) => wrapConstItem({ ...$edited(data), _value: v }, tree)
-		}
-	});
-	return _node as unknown as T.ConstItem.Parsed;
+				rebuilt(node, handle, () => wrapConstItem({ ...$edited(data), _visibility_modifier: v }, tree)),
+			name: (v: NonNullable<T.ConstItem['_name']>) =>
+				rebuilt(node, handle, () => wrapConstItem({ ...$edited(data), _name: v }, tree)),
+			type: (v: NonNullable<T.ConstItem['_type']>) =>
+				rebuilt(node, handle, () => wrapConstItem({ ...$edited(data), _type: v }, tree)),
+			value: (v: NonNullable<T.ConstItem['_value']>) =>
+				rebuilt(node, handle, () => wrapConstItem({ ...$edited(data), _value: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ConstItem.Parsed;
 }
 
 export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle): T.StaticItem.Parsed {
@@ -3199,9 +3438,24 @@ export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle): T.StaticIt
 		'_type',
 		'_value'
 	]);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.StaticItem as const }) as unknown as T.StaticItem.Parsed;
-	const _node = withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
+			...data,
+			$type: TSKindId.StaticItem as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.StaticItem.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.StaticItem as const,
 		_visibility_modifier: storeExpanded(
@@ -3306,17 +3560,29 @@ export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle): T.StaticIt
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.StaticItem['_visibility_modifier']>) =>
-				wrapStaticItem({ ...$edited(data), _visibility_modifier: v }, tree),
+				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _visibility_modifier: v }, tree)),
 			refMarker: (v: NonNullable<T.StaticItem['_ref_marker']>) =>
-				wrapStaticItem({ ...$edited(data), _ref_marker: v }, tree),
+				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _ref_marker: v }, tree)),
 			mutableSpecifier: (v: NonNullable<T.StaticItem['_mutable_specifier']>) =>
-				wrapStaticItem({ ...$edited(data), _mutable_specifier: v }, tree),
-			name: (v: NonNullable<T.StaticItem['_name']>) => wrapStaticItem({ ...$edited(data), _name: v }, tree),
-			type: (v: NonNullable<T.StaticItem['_type']>) => wrapStaticItem({ ...$edited(data), _type: v }, tree),
-			value: (v: NonNullable<T.StaticItem['_value']>) => wrapStaticItem({ ...$edited(data), _value: v }, tree)
-		}
-	});
-	return _node as unknown as T.StaticItem.Parsed;
+				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _mutable_specifier: v }, tree)),
+			name: (v: NonNullable<T.StaticItem['_name']>) =>
+				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _name: v }, tree)),
+			type: (v: NonNullable<T.StaticItem['_type']>) =>
+				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _type: v }, tree)),
+			value: (v: NonNullable<T.StaticItem['_value']>) =>
+				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _value: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.StaticItem.Parsed;
 }
 
 export function wrapTypeItem(data: T.TypeItem, tree: TreeHandle): T.TypeItem.Parsed {
@@ -3803,12 +4069,24 @@ export function wrapFunctionSignatureItem(
 
 export function wrapFunctionModifiers(data: T.FunctionModifiers, tree: TreeHandle): T.FunctionModifiers.Parsed {
 	data = _keepModelledSlots(data, ['_modifier']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.FunctionModifiers as const
-		}) as unknown as T.FunctionModifiers.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.FunctionModifiers as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.FunctionModifiers.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.FunctionModifiers as const,
 		_modifier: storeExpanded(
@@ -3846,10 +4124,21 @@ export function wrapFunctionModifiers(data: T.FunctionModifiers, tree: TreeHandl
 		},
 		$with: {
 			modifiers: (...v: NonEmptyArray<NonNullable<T.FunctionModifiers['_modifier']>[number]>) =>
-				wrapFunctionModifiers({ ...$edited(data), _modifier: restItems('modifiers', v) }, tree)
-		}
-	});
-	return _node as unknown as T.FunctionModifiers.Parsed;
+				rebuilt(node, handle, () =>
+					wrapFunctionModifiers({ ...$edited(data), _modifier: restItems('modifiers', v) }, tree)
+				)
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FunctionModifiers.Parsed;
 }
 
 export function wrapWhereClause(data: T.WhereClause, tree: TreeHandle): T.WhereClause.Parsed {
@@ -3901,9 +4190,24 @@ export function wrapWhereClause(data: T.WhereClause, tree: TreeHandle): T.WhereC
 
 export function wrapWherePredicate(data: T.WherePredicate, tree: TreeHandle): T.WherePredicate.Parsed {
 	data = _keepModelledSlots(data, ['_left', '_bounds']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.WherePredicate as const }) as unknown as T.WherePredicate.Parsed;
-	const _node = withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
+			...data,
+			$type: TSKindId.WherePredicate as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.WherePredicate.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.WherePredicate as const,
 		_left: storeExpanded(
@@ -3982,12 +4286,22 @@ export function wrapWherePredicate(data: T.WherePredicate, tree: TreeHandle): T.
 			return hydrateChild<T.TraitBounds>(this._bounds, tree);
 		},
 		$with: {
-			left: (v: NonNullable<T.WherePredicate['_left']>) => wrapWherePredicate({ ...$edited(data), _left: v }, tree),
+			left: (v: NonNullable<T.WherePredicate['_left']>) =>
+				rebuilt(node, handle, () => wrapWherePredicate({ ...$edited(data), _left: v }, tree)),
 			bounds: (v: NonNullable<T.WherePredicate['_bounds']>) =>
-				wrapWherePredicate({ ...$edited(data), _bounds: v }, tree)
-		}
-	});
-	return _node as unknown as T.WherePredicate.Parsed;
+				rebuilt(node, handle, () => wrapWherePredicate({ ...$edited(data), _bounds: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.WherePredicate.Parsed;
 }
 
 export function wrapImplItem(
@@ -4231,8 +4545,9 @@ export function wrapAssociatedType(data: T.AssociatedType, tree: TreeHandle): T.
 
 export function wrapTraitBounds(data: T.TraitBounds, tree: TreeHandle): T.TraitBounds.Parsed {
 	data = _keepModelledSlots(data, ['_bounds']);
+	const handle = currentHandle();
 	const _order = (data as _UntypedNode).$slotOrder?.slice();
-	const _node = withMethods({
+	const node = {
 		...data,
 		$type: TSKindId.TraitBounds as const,
 		_bounds: storeExpanded(
@@ -4278,10 +4593,19 @@ export function wrapTraitBounds(data: T.TraitBounds, tree: TreeHandle): T.TraitB
 		},
 		$with: {
 			bounds: (...v: NonEmptyArray<NonNullable<T.TraitBounds['_bounds']>[number]>) =>
-				wrapTraitBounds({ ...$edited(data), _bounds: restItems('bounds', v) }, tree)
-		}
-	});
-	return _node as unknown as T.TraitBounds.Parsed;
+				rebuilt(node, handle, () => wrapTraitBounds({ ...$edited(data), _bounds: restItems('bounds', v) }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TraitBounds.Parsed;
 }
 
 export function wrapHigherRankedTraitBound(
@@ -4366,7 +4690,8 @@ export function wrapHigherRankedTraitBound(
 
 export function wrapRemovedTraitBound(data: T.RemovedTraitBound, tree: TreeHandle): T.RemovedTraitBound.Parsed {
 	data = _keepModelledSlots(data, ['_type']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.RemovedTraitBound as const,
 		_type: storeExpanded(
@@ -4408,10 +4733,19 @@ export function wrapRemovedTraitBound(data: T.RemovedTraitBound, tree: TreeHandl
 		},
 		$with: {
 			type: (v: NonNullable<T.RemovedTraitBound['_type']>) =>
-				wrapRemovedTraitBound({ ...$edited(data), _type: v }, tree)
-		}
-	});
-	return _node as unknown as T.RemovedTraitBound.Parsed;
+				rebuilt(node, handle, () => wrapRemovedTraitBound({ ...$edited(data), _type: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RemovedTraitBound.Parsed;
 }
 
 export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.TypeParameters.Parsed {
@@ -4465,7 +4799,8 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 
 export function wrapConstParameter(data: T.ConstParameter, tree: TreeHandle): T.ConstParameter.Parsed {
 	data = _keepModelledSlots(data, ['_name', '_type', '_value']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ConstParameter as const,
 		_name: storeExpanded(
@@ -4535,17 +4870,30 @@ export function wrapConstParameter(data: T.ConstParameter, tree: TreeHandle): T.
 			return hydrateChild<T.Block | T.Identifier | T.Literal | T.NegativeLiteral | undefined>(this._value, tree);
 		},
 		$with: {
-			name: (v: NonNullable<T.ConstParameter['_name']>) => wrapConstParameter({ ...$edited(data), _name: v }, tree),
-			type: (v: NonNullable<T.ConstParameter['_type']>) => wrapConstParameter({ ...$edited(data), _type: v }, tree),
-			value: (v: NonNullable<T.ConstParameter['_value']>) => wrapConstParameter({ ...$edited(data), _value: v }, tree)
-		}
-	});
-	return _node as unknown as T.ConstParameter.Parsed;
+			name: (v: NonNullable<T.ConstParameter['_name']>) =>
+				rebuilt(node, handle, () => wrapConstParameter({ ...$edited(data), _name: v }, tree)),
+			type: (v: NonNullable<T.ConstParameter['_type']>) =>
+				rebuilt(node, handle, () => wrapConstParameter({ ...$edited(data), _type: v }, tree)),
+			value: (v: NonNullable<T.ConstParameter['_value']>) =>
+				rebuilt(node, handle, () => wrapConstParameter({ ...$edited(data), _value: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ConstParameter.Parsed;
 }
 
 export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.TypeParameter.Parsed {
 	data = _keepModelledSlots(data, ['_name', '_bounds', '_default_type']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.TypeParameter as const,
 		_name: storeExpanded(
@@ -4610,18 +4958,30 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.Ty
 			return hydrateChild<T.Type | undefined>(this._default_type, tree);
 		},
 		$with: {
-			name: (v: NonNullable<T.TypeParameter['_name']>) => wrapTypeParameter({ ...$edited(data), _name: v }, tree),
-			bounds: (v: NonNullable<T.TypeParameter['_bounds']>) => wrapTypeParameter({ ...$edited(data), _bounds: v }, tree),
+			name: (v: NonNullable<T.TypeParameter['_name']>) =>
+				rebuilt(node, handle, () => wrapTypeParameter({ ...$edited(data), _name: v }, tree)),
+			bounds: (v: NonNullable<T.TypeParameter['_bounds']>) =>
+				rebuilt(node, handle, () => wrapTypeParameter({ ...$edited(data), _bounds: v }, tree)),
 			defaultType: (v: NonNullable<T.TypeParameter['_default_type']>) =>
-				wrapTypeParameter({ ...$edited(data), _default_type: v }, tree)
-		}
-	});
-	return _node as unknown as T.TypeParameter.Parsed;
+				rebuilt(node, handle, () => wrapTypeParameter({ ...$edited(data), _default_type: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TypeParameter.Parsed;
 }
 
 export function wrapLifetimeParameter(data: T.LifetimeParameter, tree: TreeHandle): T.LifetimeParameter.Parsed {
 	data = _keepModelledSlots(data, ['_name', '_bounds']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.LifetimeParameter as const,
 		_name: storeExpanded(
@@ -4651,19 +5011,43 @@ export function wrapLifetimeParameter(data: T.LifetimeParameter, tree: TreeHandl
 		},
 		$with: {
 			name: (v: NonNullable<T.LifetimeParameter['_name']>) =>
-				wrapLifetimeParameter({ ...$edited(data), _name: v }, tree),
+				rebuilt(node, handle, () => wrapLifetimeParameter({ ...$edited(data), _name: v }, tree)),
 			bounds: (v: NonNullable<T.LifetimeParameter['_bounds']>) =>
-				wrapLifetimeParameter({ ...$edited(data), _bounds: v }, tree)
-		}
-	});
-	return _node as unknown as T.LifetimeParameter.Parsed;
+				rebuilt(node, handle, () => wrapLifetimeParameter({ ...$edited(data), _bounds: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LifetimeParameter.Parsed;
 }
 
 export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle): T.LetDeclaration.Parsed {
 	data = _keepModelledSlots(data, ['_mutable_specifier', '_pattern', '_type', '_value', '_alternative']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.LetDeclaration as const }) as unknown as T.LetDeclaration.Parsed;
-	const _node = withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
+			...data,
+			$type: TSKindId.LetDeclaration as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.LetDeclaration.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.LetDeclaration as const,
 		_mutable_specifier: coerceBooleanKeywordStorage(
@@ -4762,23 +5146,49 @@ export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle): T.
 		},
 		$with: {
 			mutableSpecifier: (v: NonNullable<T.LetDeclaration['_mutable_specifier']>) =>
-				wrapLetDeclaration({ ...$edited(data), _mutable_specifier: v }, tree),
+				rebuilt(node, handle, () => wrapLetDeclaration({ ...$edited(data), _mutable_specifier: v }, tree)),
 			pattern: (v: NonNullable<T.LetDeclaration['_pattern']>) =>
-				wrapLetDeclaration({ ...$edited(data), _pattern: v }, tree),
-			type: (v: NonNullable<T.LetDeclaration['_type']>) => wrapLetDeclaration({ ...$edited(data), _type: v }, tree),
-			value: (v: NonNullable<T.LetDeclaration['_value']>) => wrapLetDeclaration({ ...$edited(data), _value: v }, tree),
+				rebuilt(node, handle, () => wrapLetDeclaration({ ...$edited(data), _pattern: v }, tree)),
+			type: (v: NonNullable<T.LetDeclaration['_type']>) =>
+				rebuilt(node, handle, () => wrapLetDeclaration({ ...$edited(data), _type: v }, tree)),
+			value: (v: NonNullable<T.LetDeclaration['_value']>) =>
+				rebuilt(node, handle, () => wrapLetDeclaration({ ...$edited(data), _value: v }, tree)),
 			alternative: (v: NonNullable<T.LetDeclaration['_alternative']>) =>
-				wrapLetDeclaration({ ...$edited(data), _alternative: v }, tree)
-		}
-	});
-	return _node as unknown as T.LetDeclaration.Parsed;
+				rebuilt(node, handle, () => wrapLetDeclaration({ ...$edited(data), _alternative: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LetDeclaration.Parsed;
 }
 
 export function wrapUseDeclaration(data: T.UseDeclaration, tree: TreeHandle): T.UseDeclaration.Parsed {
 	data = _keepModelledSlots(data, ['_visibility_modifier', '_argument']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.UseDeclaration as const }) as unknown as T.UseDeclaration.Parsed;
-	const _node = withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
+			...data,
+			$type: TSKindId.UseDeclaration as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.UseDeclaration.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.UseDeclaration as const,
 		_visibility_modifier: storeExpanded(
@@ -4866,12 +5276,21 @@ export function wrapUseDeclaration(data: T.UseDeclaration, tree: TreeHandle): T.
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.UseDeclaration['_visibility_modifier']>) =>
-				wrapUseDeclaration({ ...$edited(data), _visibility_modifier: v }, tree),
+				rebuilt(node, handle, () => wrapUseDeclaration({ ...$edited(data), _visibility_modifier: v }, tree)),
 			argument: (v: NonNullable<T.UseDeclaration['_argument']>) =>
-				wrapUseDeclaration({ ...$edited(data), _argument: v }, tree)
-		}
-	});
-	return _node as unknown as T.UseDeclaration.Parsed;
+				rebuilt(node, handle, () => wrapUseDeclaration({ ...$edited(data), _argument: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.UseDeclaration.Parsed;
 }
 
 export function wrapUseClause(
@@ -5139,9 +5558,24 @@ export function wrapUseList(data: T.UseList, tree: TreeHandle): T.UseList.Parsed
 
 export function wrapUseAsClause(data: T.UseAsClause, tree: TreeHandle): T.UseAsClause.Parsed {
 	data = _keepModelledSlots(data, ['_path', '_alias']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.UseAsClause as const }) as unknown as T.UseAsClause.Parsed;
-	const _node = withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
+			...data,
+			$type: TSKindId.UseAsClause as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.UseAsClause.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.UseAsClause as const,
 		_path: storeExpanded(
@@ -5224,16 +5658,28 @@ export function wrapUseAsClause(data: T.UseAsClause, tree: TreeHandle): T.UseAsC
 			return hydrateChild<T.Identifier>(this._alias, tree);
 		},
 		$with: {
-			path: (v: NonNullable<T.UseAsClause['_path']>) => wrapUseAsClause({ ...$edited(data), _path: v }, tree),
-			alias: (v: NonNullable<T.UseAsClause['_alias']>) => wrapUseAsClause({ ...$edited(data), _alias: v }, tree)
-		}
-	});
-	return _node as unknown as T.UseAsClause.Parsed;
+			path: (v: NonNullable<T.UseAsClause['_path']>) =>
+				rebuilt(node, handle, () => wrapUseAsClause({ ...$edited(data), _path: v }, tree)),
+			alias: (v: NonNullable<T.UseAsClause['_alias']>) =>
+				rebuilt(node, handle, () => wrapUseAsClause({ ...$edited(data), _alias: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.UseAsClause.Parsed;
 }
 
 export function wrapUseWildcard(data: T.UseWildcard, tree: TreeHandle): T.UseWildcard.Parsed {
 	data = _keepModelledSlots(data, ['_use_wildcard_group']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.UseWildcard as const,
 		_use_wildcard_group: storeExpanded(
@@ -5251,10 +5697,19 @@ export function wrapUseWildcard(data: T.UseWildcard, tree: TreeHandle): T.UseWil
 		},
 		$with: {
 			useWildcardGroup: (v: NonNullable<T.UseWildcard['_use_wildcard_group']>) =>
-				wrapUseWildcard({ ...$edited(data), _use_wildcard_group: v }, tree)
-		}
-	});
-	return _node as unknown as T.UseWildcard.Parsed;
+				rebuilt(node, handle, () => wrapUseWildcard({ ...$edited(data), _use_wildcard_group: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.UseWildcard.Parsed;
 }
 
 export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Parameters.Parsed {
@@ -5308,9 +5763,24 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 
 export function wrapSelfParameter(data: T.SelfParameter, tree: TreeHandle): T.SelfParameter.Parsed {
 	data = _keepModelledSlots(data, ['_reference', '_lifetime', '_mutable_specifier']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.SelfParameter as const }) as unknown as T.SelfParameter.Parsed;
-	const _node = withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
+			...data,
+			$type: TSKindId.SelfParameter as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.SelfParameter.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.SelfParameter as const,
 		_reference: coerceBooleanKeywordStorage(
@@ -5350,24 +5820,45 @@ export function wrapSelfParameter(data: T.SelfParameter, tree: TreeHandle): T.Se
 		},
 		$with: {
 			reference: (v: NonNullable<T.SelfParameter['_reference']>) =>
-				wrapSelfParameter({ ...$edited(data), _reference: v }, tree),
+				rebuilt(node, handle, () => wrapSelfParameter({ ...$edited(data), _reference: v }, tree)),
 			lifetime: (v: NonNullable<T.SelfParameter['_lifetime']>) =>
-				wrapSelfParameter({ ...$edited(data), _lifetime: v }, tree),
+				rebuilt(node, handle, () => wrapSelfParameter({ ...$edited(data), _lifetime: v }, tree)),
 			mutableSpecifier: (v: NonNullable<T.SelfParameter['_mutable_specifier']>) =>
-				wrapSelfParameter({ ...$edited(data), _mutable_specifier: v }, tree)
-		}
-	});
-	return _node as unknown as T.SelfParameter.Parsed;
+				rebuilt(node, handle, () => wrapSelfParameter({ ...$edited(data), _mutable_specifier: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.SelfParameter.Parsed;
 }
 
 export function wrapVariadicParameter(data: T.VariadicParameter, tree: TreeHandle): T.VariadicParameter.Parsed {
 	data = _keepModelledSlots(data, ['_mutable_specifier', '_pattern']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.VariadicParameter as const
-		}) as unknown as T.VariadicParameter.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.VariadicParameter as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.VariadicParameter.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.VariadicParameter as const,
 		_mutable_specifier: coerceBooleanKeywordStorage(
@@ -5401,19 +5892,43 @@ export function wrapVariadicParameter(data: T.VariadicParameter, tree: TreeHandl
 		},
 		$with: {
 			mutableSpecifier: (v: NonNullable<T.VariadicParameter['_mutable_specifier']>) =>
-				wrapVariadicParameter({ ...$edited(data), _mutable_specifier: v }, tree),
+				rebuilt(node, handle, () => wrapVariadicParameter({ ...$edited(data), _mutable_specifier: v }, tree)),
 			pattern: (v: NonNullable<T.VariadicParameter['_pattern']>) =>
-				wrapVariadicParameter({ ...$edited(data), _pattern: v }, tree)
-		}
-	});
-	return _node as unknown as T.VariadicParameter.Parsed;
+				rebuilt(node, handle, () => wrapVariadicParameter({ ...$edited(data), _pattern: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.VariadicParameter.Parsed;
 }
 
 export function wrapParameter(data: T.Parameter, tree: TreeHandle): T.Parameter.Parsed {
 	data = _keepModelledSlots(data, ['_mutable_specifier', '_name', '_type']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.Parameter as const }) as unknown as T.Parameter.Parsed;
-	const _node = withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
+			...data,
+			$type: TSKindId.Parameter as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.Parameter.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.Parameter as const,
 		_mutable_specifier: coerceBooleanKeywordStorage(
@@ -5483,17 +5998,29 @@ export function wrapParameter(data: T.Parameter, tree: TreeHandle): T.Parameter.
 		},
 		$with: {
 			mutableSpecifier: (v: NonNullable<T.Parameter['_mutable_specifier']>) =>
-				wrapParameter({ ...$edited(data), _mutable_specifier: v }, tree),
-			name: (v: NonNullable<T.Parameter['_name']>) => wrapParameter({ ...$edited(data), _name: v }, tree),
-			type: (v: NonNullable<T.Parameter['_type']>) => wrapParameter({ ...$edited(data), _type: v }, tree)
-		}
-	});
-	return _node as unknown as T.Parameter.Parsed;
+				rebuilt(node, handle, () => wrapParameter({ ...$edited(data), _mutable_specifier: v }, tree)),
+			name: (v: NonNullable<T.Parameter['_name']>) =>
+				rebuilt(node, handle, () => wrapParameter({ ...$edited(data), _name: v }, tree)),
+			type: (v: NonNullable<T.Parameter['_type']>) =>
+				rebuilt(node, handle, () => wrapParameter({ ...$edited(data), _type: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Parameter.Parsed;
 }
 
 export function wrapExternModifier(data: T.ExternModifier, tree: TreeHandle): T.ExternModifier.Parsed {
 	data = _keepModelledSlots(data, ['_abi']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ExternModifier as const,
 		_abi: storeExpanded(
@@ -5510,20 +6037,42 @@ export function wrapExternModifier(data: T.ExternModifier, tree: TreeHandle): T.
 			return hydrateChild<T.StringLiteral | undefined>(this._abi, tree);
 		},
 		$with: {
-			abi: (v: NonNullable<T.ExternModifier['_abi']>) => wrapExternModifier({ ...$edited(data), _abi: v }, tree)
-		}
-	});
-	return _node as unknown as T.ExternModifier.Parsed;
+			abi: (v: NonNullable<T.ExternModifier['_abi']>) =>
+				rebuilt(node, handle, () => wrapExternModifier({ ...$edited(data), _abi: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ExternModifier.Parsed;
 }
 
 export function wrapVisibilityModifier(data: T.VisibilityModifier, tree: TreeHandle): T.VisibilityModifier.Parsed {
 	data = _keepModelledSlots(data, ['_content']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.VisibilityModifier as const
-		}) as unknown as T.VisibilityModifier.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.VisibilityModifier as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.VisibilityModifier.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.VisibilityModifier as const,
 		_content: storeExpanded(
@@ -5545,10 +6094,19 @@ export function wrapVisibilityModifier(data: T.VisibilityModifier, tree: TreeHan
 		},
 		$with: {
 			content: (v: NonNullable<T.VisibilityModifier['_content']>) =>
-				wrapVisibilityModifier({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.VisibilityModifier.Parsed;
+				rebuilt(node, handle, () => wrapVisibilityModifier({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.VisibilityModifier.Parsed;
 }
 
 export function wrapType(
@@ -5643,7 +6201,8 @@ export function wrapType(
 
 export function wrapBracketedType(data: T.BracketedType, tree: TreeHandle): T.BracketedType.Parsed {
 	data = _keepModelledSlots(data, ['_type']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.BracketedType as const,
 		_type: storeExpanded(
@@ -5684,15 +6243,26 @@ export function wrapBracketedType(data: T.BracketedType, tree: TreeHandle): T.Br
 			return hydrateChild<T.Type | T.QualifiedType>(this._type, tree);
 		},
 		$with: {
-			type: (v: NonNullable<T.BracketedType['_type']>) => wrapBracketedType({ ...$edited(data), _type: v }, tree)
-		}
-	});
-	return _node as unknown as T.BracketedType.Parsed;
+			type: (v: NonNullable<T.BracketedType['_type']>) =>
+				rebuilt(node, handle, () => wrapBracketedType({ ...$edited(data), _type: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.BracketedType.Parsed;
 }
 
 export function wrapQualifiedType(data: T.QualifiedType, tree: TreeHandle): T.QualifiedType.Parsed {
 	data = _keepModelledSlots(data, ['_type', '_alias']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.QualifiedType as const,
 		_type: storeExpanded(
@@ -5769,16 +6339,28 @@ export function wrapQualifiedType(data: T.QualifiedType, tree: TreeHandle): T.Qu
 			return hydrateChild<T.Type>(this._alias, tree);
 		},
 		$with: {
-			type: (v: NonNullable<T.QualifiedType['_type']>) => wrapQualifiedType({ ...$edited(data), _type: v }, tree),
-			alias: (v: NonNullable<T.QualifiedType['_alias']>) => wrapQualifiedType({ ...$edited(data), _alias: v }, tree)
-		}
-	});
-	return _node as unknown as T.QualifiedType.Parsed;
+			type: (v: NonNullable<T.QualifiedType['_type']>) =>
+				rebuilt(node, handle, () => wrapQualifiedType({ ...$edited(data), _type: v }, tree)),
+			alias: (v: NonNullable<T.QualifiedType['_alias']>) =>
+				rebuilt(node, handle, () => wrapQualifiedType({ ...$edited(data), _alias: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.QualifiedType.Parsed;
 }
 
 export function wrapLifetime(data: T.Lifetime, tree: TreeHandle): T.Lifetime.Parsed {
 	data = _keepModelledSlots(data, ['_name']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.Lifetime as const,
 		_name: storeExpanded(
@@ -5795,15 +6377,26 @@ export function wrapLifetime(data: T.Lifetime, tree: TreeHandle): T.Lifetime.Par
 			return hydrateChild<T.Identifier>(this._name, tree);
 		},
 		$with: {
-			name: (v: NonNullable<T.Lifetime['_name']>) => wrapLifetime({ ...$edited(data), _name: v }, tree)
-		}
-	});
-	return _node as unknown as T.Lifetime.Parsed;
+			name: (v: NonNullable<T.Lifetime['_name']>) =>
+				rebuilt(node, handle, () => wrapLifetime({ ...$edited(data), _name: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Lifetime.Parsed;
 }
 
 export function wrapArrayType(data: T.ArrayType, tree: TreeHandle): T.ArrayType.Parsed {
 	data = _keepModelledSlots(data, ['_element', '_length']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ArrayType as const,
 		_element: storeExpanded(
@@ -5861,11 +6454,22 @@ export function wrapArrayType(data: T.ArrayType, tree: TreeHandle): T.ArrayType.
 			return hydrateChild<T.Expression | undefined>(this._length, tree);
 		},
 		$with: {
-			element: (v: NonNullable<T.ArrayType['_element']>) => wrapArrayType({ ...$edited(data), _element: v }, tree),
-			length: (v: NonNullable<T.ArrayType['_length']>) => wrapArrayType({ ...$edited(data), _length: v }, tree)
-		}
-	});
-	return _node as unknown as T.ArrayType.Parsed;
+			element: (v: NonNullable<T.ArrayType['_element']>) =>
+				rebuilt(node, handle, () => wrapArrayType({ ...$edited(data), _element: v }, tree)),
+			length: (v: NonNullable<T.ArrayType['_length']>) =>
+				rebuilt(node, handle, () => wrapArrayType({ ...$edited(data), _length: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ArrayType.Parsed;
 }
 
 export function wrapForLifetimes(data: T.ForLifetimes, tree: TreeHandle): T.ForLifetimes.Parsed {
@@ -6235,7 +6839,8 @@ export function wrapGenericTypeWithTurbofish(
 
 export function wrapBoundedType(data: T.BoundedType, tree: TreeHandle): T.BoundedType.Parsed {
 	data = _keepModelledSlots(data, ['_left', '_right']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.BoundedType as const,
 		_left: storeExpanded(
@@ -6312,11 +6917,22 @@ export function wrapBoundedType(data: T.BoundedType, tree: TreeHandle): T.Bounde
 			return hydrateChild<T.Lifetime | T.Type | T.UseBounds>(this._right, tree);
 		},
 		$with: {
-			left: (v: NonNullable<T.BoundedType['_left']>) => wrapBoundedType({ ...$edited(data), _left: v }, tree),
-			right: (v: NonNullable<T.BoundedType['_right']>) => wrapBoundedType({ ...$edited(data), _right: v }, tree)
-		}
-	});
-	return _node as unknown as T.BoundedType.Parsed;
+			left: (v: NonNullable<T.BoundedType['_left']>) =>
+				rebuilt(node, handle, () => wrapBoundedType({ ...$edited(data), _left: v }, tree)),
+			right: (v: NonNullable<T.BoundedType['_right']>) =>
+				rebuilt(node, handle, () => wrapBoundedType({ ...$edited(data), _right: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.BoundedType.Parsed;
 }
 
 export function wrapUseBounds(data: T.UseBounds, tree: TreeHandle): T.UseBounds.Parsed {
@@ -6505,9 +7121,24 @@ export function wrapTypeBinding(data: T.TypeBinding, tree: TreeHandle): T.TypeBi
 
 export function wrapReferenceType(data: T.ReferenceType, tree: TreeHandle): T.ReferenceType.Parsed {
 	data = _keepModelledSlots(data, ['_lifetime', '_mutable_specifier', '_type']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.ReferenceType as const }) as unknown as T.ReferenceType.Parsed;
-	const _node = withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
+			...data,
+			$type: TSKindId.ReferenceType as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.ReferenceType.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.ReferenceType as const,
 		_lifetime: storeExpanded(
@@ -6572,13 +7203,23 @@ export function wrapReferenceType(data: T.ReferenceType, tree: TreeHandle): T.Re
 		},
 		$with: {
 			lifetime: (v: NonNullable<T.ReferenceType['_lifetime']>) =>
-				wrapReferenceType({ ...$edited(data), _lifetime: v }, tree),
+				rebuilt(node, handle, () => wrapReferenceType({ ...$edited(data), _lifetime: v }, tree)),
 			mutableSpecifier: (v: NonNullable<T.ReferenceType['_mutable_specifier']>) =>
-				wrapReferenceType({ ...$edited(data), _mutable_specifier: v }, tree),
-			type: (v: NonNullable<T.ReferenceType['_type']>) => wrapReferenceType({ ...$edited(data), _type: v }, tree)
-		}
-	});
-	return _node as unknown as T.ReferenceType.Parsed;
+				rebuilt(node, handle, () => wrapReferenceType({ ...$edited(data), _mutable_specifier: v }, tree)),
+			type: (v: NonNullable<T.ReferenceType['_type']>) =>
+				rebuilt(node, handle, () => wrapReferenceType({ ...$edited(data), _type: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ReferenceType.Parsed;
 }
 
 export function wrapPointerType(
@@ -6671,7 +7312,8 @@ export function wrapAbstractType(data: T.AbstractType, tree: TreeHandle): T.Abst
 
 export function wrapDynamicType(data: T.DynamicType, tree: TreeHandle): T.DynamicType.Parsed {
 	data = _keepModelledSlots(data, ['_trait']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.DynamicType as const,
 		_trait: storeExpanded(
@@ -6695,10 +7337,20 @@ export function wrapDynamicType(data: T.DynamicType, tree: TreeHandle): T.Dynami
 			>(this._trait, tree);
 		},
 		$with: {
-			trait: (v: NonNullable<T.DynamicType['_trait']>) => wrapDynamicType({ ...$edited(data), _trait: v }, tree)
-		}
-	});
-	return _node as unknown as T.DynamicType.Parsed;
+			trait: (v: NonNullable<T.DynamicType['_trait']>) =>
+				rebuilt(node, handle, () => wrapDynamicType({ ...$edited(data), _trait: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.DynamicType.Parsed;
 }
 
 export function wrapExpressionExceptRange(
@@ -7273,9 +7925,24 @@ export function wrapExpression(
 
 export function wrapMacroInvocation(data: T.MacroInvocation, tree: TreeHandle): T.MacroInvocation.Parsed {
 	data = _keepModelledSlots(data, ['_macro', '_arguments']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.MacroInvocation as const }) as unknown as T.MacroInvocation.Parsed;
-	const _node = withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
+			...data,
+			$type: TSKindId.MacroInvocation as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.MacroInvocation.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.MacroInvocation as const,
 		_macro: storeExpanded(
@@ -7310,12 +7977,21 @@ export function wrapMacroInvocation(data: T.MacroInvocation, tree: TreeHandle): 
 		},
 		$with: {
 			macro: (v: NonNullable<T.MacroInvocation['_macro']>) =>
-				wrapMacroInvocation({ ...$edited(data), _macro: v }, tree),
+				rebuilt(node, handle, () => wrapMacroInvocation({ ...$edited(data), _macro: v }, tree)),
 			arguments: (v: NonNullable<T.MacroInvocation['_arguments']>) =>
-				wrapMacroInvocation({ ...$edited(data), _arguments: v }, tree)
-		}
-	});
-	return _node as unknown as T.MacroInvocation.Parsed;
+				rebuilt(node, handle, () => wrapMacroInvocation({ ...$edited(data), _arguments: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MacroInvocation.Parsed;
 }
 
 export function wrapDelimTokenTree(
@@ -7441,9 +8117,24 @@ export function wrapNonDelimToken(
 
 export function wrapScopedIdentifier(data: T.ScopedIdentifier, tree: TreeHandle): T.ScopedIdentifier.Parsed {
 	data = _keepModelledSlots(data, ['_path', '_name']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.ScopedIdentifier as const }) as unknown as T.ScopedIdentifier.Parsed;
-	const _node = withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
+			...data,
+			$type: TSKindId.ScopedIdentifier as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.ScopedIdentifier.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.ScopedIdentifier as const,
 		_path: storeExpanded(
@@ -7532,11 +8223,22 @@ export function wrapScopedIdentifier(data: T.ScopedIdentifier, tree: TreeHandle)
 			return hydrateChild<T.Identifier | TSKindId.Super>(this._name, tree);
 		},
 		$with: {
-			path: (v: NonNullable<T.ScopedIdentifier['_path']>) => wrapScopedIdentifier({ ...$edited(data), _path: v }, tree),
-			name: (v: NonNullable<T.ScopedIdentifier['_name']>) => wrapScopedIdentifier({ ...$edited(data), _name: v }, tree)
-		}
-	});
-	return _node as unknown as T.ScopedIdentifier.Parsed;
+			path: (v: NonNullable<T.ScopedIdentifier['_path']>) =>
+				rebuilt(node, handle, () => wrapScopedIdentifier({ ...$edited(data), _path: v }, tree)),
+			name: (v: NonNullable<T.ScopedIdentifier['_name']>) =>
+				rebuilt(node, handle, () => wrapScopedIdentifier({ ...$edited(data), _name: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ScopedIdentifier.Parsed;
 }
 
 export function wrapScopedTypeIdentifierInExpressionPosition(
@@ -7544,12 +8246,24 @@ export function wrapScopedTypeIdentifierInExpressionPosition(
 	tree: TreeHandle
 ): T.ScopedTypeIdentifierInExpressionPosition.Parsed {
 	data = _keepModelledSlots(data, ['_path', '_name']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.ScopedTypeIdentifierInExpressionPosition as const
-		}) as unknown as T.ScopedTypeIdentifierInExpressionPosition.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.ScopedTypeIdentifierInExpressionPosition as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.ScopedTypeIdentifierInExpressionPosition.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.ScopedTypeIdentifierInExpressionPosition as const,
 		_path: storeExpanded(
@@ -7635,12 +8349,21 @@ export function wrapScopedTypeIdentifierInExpressionPosition(
 		},
 		$with: {
 			path: (v: NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_path']>) =>
-				wrapScopedTypeIdentifierInExpressionPosition({ ...$edited(data), _path: v }, tree),
+				rebuilt(node, handle, () => wrapScopedTypeIdentifierInExpressionPosition({ ...$edited(data), _path: v }, tree)),
 			name: (v: NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_name']>) =>
-				wrapScopedTypeIdentifierInExpressionPosition({ ...$edited(data), _name: v }, tree)
-		}
-	});
-	return _node as unknown as T.ScopedTypeIdentifierInExpressionPosition.Parsed;
+				rebuilt(node, handle, () => wrapScopedTypeIdentifierInExpressionPosition({ ...$edited(data), _name: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ScopedTypeIdentifierInExpressionPosition.Parsed;
 }
 
 export function wrapScopedTypeIdentifier(
@@ -7648,12 +8371,24 @@ export function wrapScopedTypeIdentifier(
 	tree: TreeHandle
 ): T.ScopedTypeIdentifier.Parsed {
 	data = _keepModelledSlots(data, ['_path', '_name']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.ScopedTypeIdentifier as const
-		}) as unknown as T.ScopedTypeIdentifier.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.ScopedTypeIdentifier as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.ScopedTypeIdentifier.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.ScopedTypeIdentifier as const,
 		_path: storeExpanded(
@@ -7741,12 +8476,21 @@ export function wrapScopedTypeIdentifier(
 		},
 		$with: {
 			path: (v: NonNullable<T.ScopedTypeIdentifier['_path']>) =>
-				wrapScopedTypeIdentifier({ ...$edited(data), _path: v }, tree),
+				rebuilt(node, handle, () => wrapScopedTypeIdentifier({ ...$edited(data), _path: v }, tree)),
 			name: (v: NonNullable<T.ScopedTypeIdentifier['_name']>) =>
-				wrapScopedTypeIdentifier({ ...$edited(data), _name: v }, tree)
-		}
-	});
-	return _node as unknown as T.ScopedTypeIdentifier.Parsed;
+				rebuilt(node, handle, () => wrapScopedTypeIdentifier({ ...$edited(data), _name: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ScopedTypeIdentifier.Parsed;
 }
 
 export function wrapRangeExpression(
@@ -7793,9 +8537,24 @@ export function wrapRangeExpression(
 
 export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle): T.UnaryExpression.Parsed {
 	data = _keepModelledSlots(data, ['_operator', '_operand']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.UnaryExpression as const }) as unknown as T.UnaryExpression.Parsed;
-	const _node = withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
+			...data,
+			$type: TSKindId.UnaryExpression as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.UnaryExpression.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.UnaryExpression as const,
 		_operator: projectKindEnumStorage(
@@ -7830,17 +8589,27 @@ export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle): 
 		},
 		$with: {
 			operator: (v: NonNullable<T.UnaryExpression['_operator']>) =>
-				wrapUnaryExpression({ ...$edited(data), _operator: v }, tree),
+				rebuilt(node, handle, () => wrapUnaryExpression({ ...$edited(data), _operator: v }, tree)),
 			operand: (v: NonNullable<T.UnaryExpression['_operand']>) =>
-				wrapUnaryExpression({ ...$edited(data), _operand: v }, tree)
-		}
-	});
-	return _node as unknown as T.UnaryExpression.Parsed;
+				rebuilt(node, handle, () => wrapUnaryExpression({ ...$edited(data), _operand: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.UnaryExpression.Parsed;
 }
 
 export function wrapTryExpression(data: T.TryExpression, tree: TreeHandle): T.TryExpression.Parsed {
 	data = _keepModelledSlots(data, ['_value']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.TryExpression as const,
 		_value: storeExpanded(
@@ -7862,10 +8631,20 @@ export function wrapTryExpression(data: T.TryExpression, tree: TreeHandle): T.Tr
 			return hydrateChild<T.Expression>(this._value, tree);
 		},
 		$with: {
-			value: (v: NonNullable<T.TryExpression['_value']>) => wrapTryExpression({ ...$edited(data), _value: v }, tree)
-		}
-	});
-	return _node as unknown as T.TryExpression.Parsed;
+			value: (v: NonNullable<T.TryExpression['_value']>) =>
+				rebuilt(node, handle, () => wrapTryExpression({ ...$edited(data), _value: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TryExpression.Parsed;
 }
 
 export function wrapReferenceExpression(
@@ -7915,9 +8694,24 @@ export function wrapReferenceExpression(
 
 export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle): T.BinaryExpression.Parsed {
 	data = _keepModelledSlots(data, ['_left', '_operator', '_right']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.BinaryExpression as const }) as unknown as T.BinaryExpression.Parsed;
-	const _node = withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
+			...data,
+			$type: TSKindId.BinaryExpression as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.BinaryExpression.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.BinaryExpression as const,
 		_left: storeExpanded(
@@ -7987,14 +8781,24 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 			return hydrateChild<T.Expression>(this._right, tree);
 		},
 		$with: {
-			left: (v: NonNullable<T.BinaryExpression['_left']>) => wrapBinaryExpression({ ...$edited(data), _left: v }, tree),
+			left: (v: NonNullable<T.BinaryExpression['_left']>) =>
+				rebuilt(node, handle, () => wrapBinaryExpression({ ...$edited(data), _left: v }, tree)),
 			operator: (v: NonNullable<T.BinaryExpression['_operator']>) =>
-				wrapBinaryExpression({ ...$edited(data), _operator: v }, tree),
+				rebuilt(node, handle, () => wrapBinaryExpression({ ...$edited(data), _operator: v }, tree)),
 			right: (v: NonNullable<T.BinaryExpression['_right']>) =>
-				wrapBinaryExpression({ ...$edited(data), _right: v }, tree)
-		}
-	});
-	return _node as unknown as T.BinaryExpression.Parsed;
+				rebuilt(node, handle, () => wrapBinaryExpression({ ...$edited(data), _right: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.BinaryExpression.Parsed;
 }
 
 export function wrapAssignmentExpression(
@@ -8002,7 +8806,8 @@ export function wrapAssignmentExpression(
 	tree: TreeHandle
 ): T.AssignmentExpression.Parsed {
 	data = _keepModelledSlots(data, ['_left', '_right']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.AssignmentExpression as const,
 		_left: storeExpanded(
@@ -8042,12 +8847,21 @@ export function wrapAssignmentExpression(
 		},
 		$with: {
 			left: (v: NonNullable<T.AssignmentExpression['_left']>) =>
-				wrapAssignmentExpression({ ...$edited(data), _left: v }, tree),
+				rebuilt(node, handle, () => wrapAssignmentExpression({ ...$edited(data), _left: v }, tree)),
 			right: (v: NonNullable<T.AssignmentExpression['_right']>) =>
-				wrapAssignmentExpression({ ...$edited(data), _right: v }, tree)
-		}
-	});
-	return _node as unknown as T.AssignmentExpression.Parsed;
+				rebuilt(node, handle, () => wrapAssignmentExpression({ ...$edited(data), _right: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AssignmentExpression.Parsed;
 }
 
 export function wrapCompoundAssignmentExpr(
@@ -8055,12 +8869,24 @@ export function wrapCompoundAssignmentExpr(
 	tree: TreeHandle
 ): T.CompoundAssignmentExpr.Parsed {
 	data = _keepModelledSlots(data, ['_left', '_operator', '_right']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.CompoundAssignmentExpr as const
-		}) as unknown as T.CompoundAssignmentExpr.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.CompoundAssignmentExpr as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.CompoundAssignmentExpr.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.CompoundAssignmentExpr as const,
 		_left: storeExpanded(
@@ -8112,19 +8938,29 @@ export function wrapCompoundAssignmentExpr(
 		},
 		$with: {
 			left: (v: NonNullable<T.CompoundAssignmentExpr['_left']>) =>
-				wrapCompoundAssignmentExpr({ ...$edited(data), _left: v }, tree),
+				rebuilt(node, handle, () => wrapCompoundAssignmentExpr({ ...$edited(data), _left: v }, tree)),
 			operator: (v: NonNullable<T.CompoundAssignmentExpr['_operator']>) =>
-				wrapCompoundAssignmentExpr({ ...$edited(data), _operator: v }, tree),
+				rebuilt(node, handle, () => wrapCompoundAssignmentExpr({ ...$edited(data), _operator: v }, tree)),
 			right: (v: NonNullable<T.CompoundAssignmentExpr['_right']>) =>
-				wrapCompoundAssignmentExpr({ ...$edited(data), _right: v }, tree)
-		}
-	});
-	return _node as unknown as T.CompoundAssignmentExpr.Parsed;
+				rebuilt(node, handle, () => wrapCompoundAssignmentExpr({ ...$edited(data), _right: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CompoundAssignmentExpr.Parsed;
 }
 
 export function wrapTypeCastExpression(data: T.TypeCastExpression, tree: TreeHandle): T.TypeCastExpression.Parsed {
 	data = _keepModelledSlots(data, ['_value', '_type']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.TypeCastExpression as const,
 		_value: storeExpanded(
@@ -8183,17 +9019,27 @@ export function wrapTypeCastExpression(data: T.TypeCastExpression, tree: TreeHan
 		},
 		$with: {
 			value: (v: NonNullable<T.TypeCastExpression['_value']>) =>
-				wrapTypeCastExpression({ ...$edited(data), _value: v }, tree),
+				rebuilt(node, handle, () => wrapTypeCastExpression({ ...$edited(data), _value: v }, tree)),
 			type: (v: NonNullable<T.TypeCastExpression['_type']>) =>
-				wrapTypeCastExpression({ ...$edited(data), _type: v }, tree)
-		}
-	});
-	return _node as unknown as T.TypeCastExpression.Parsed;
+				rebuilt(node, handle, () => wrapTypeCastExpression({ ...$edited(data), _type: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TypeCastExpression.Parsed;
 }
 
 export function wrapReturnExpression(data: T.ReturnExpression, tree: TreeHandle): T.ReturnExpression.Parsed {
 	data = _keepModelledSlots(data, ['_expression']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ReturnExpression as const,
 		_expression: storeExpanded(
@@ -8216,15 +9062,25 @@ export function wrapReturnExpression(data: T.ReturnExpression, tree: TreeHandle)
 		},
 		$with: {
 			expression: (v: NonNullable<T.ReturnExpression['_expression']>) =>
-				wrapReturnExpression({ ...$edited(data), _expression: v }, tree)
-		}
-	});
-	return _node as unknown as T.ReturnExpression.Parsed;
+				rebuilt(node, handle, () => wrapReturnExpression({ ...$edited(data), _expression: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ReturnExpression.Parsed;
 }
 
 export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle): T.YieldExpression.Parsed {
 	data = _keepModelledSlots(data, ['_expression']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.YieldExpression as const,
 		_expression: storeExpanded(
@@ -8247,10 +9103,19 @@ export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle): 
 		},
 		$with: {
 			expression: (v: NonNullable<T.YieldExpression['_expression']>) =>
-				wrapYieldExpression({ ...$edited(data), _expression: v }, tree)
-		}
-	});
-	return _node as unknown as T.YieldExpression.Parsed;
+				rebuilt(node, handle, () => wrapYieldExpression({ ...$edited(data), _expression: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.YieldExpression.Parsed;
 }
 
 export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle): T.CallExpression.Parsed {
@@ -8481,7 +9346,8 @@ export function wrapParenthesizedExpression(
 	tree: TreeHandle
 ): T.ParenthesizedExpression.Parsed {
 	data = _keepModelledSlots(data, ['_expression']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ParenthesizedExpression as const,
 		_expression: storeExpanded(
@@ -8504,10 +9370,19 @@ export function wrapParenthesizedExpression(
 		},
 		$with: {
 			expression: (v: NonNullable<T.ParenthesizedExpression['_expression']>) =>
-				wrapParenthesizedExpression({ ...$edited(data), _expression: v }, tree)
-		}
-	});
-	return _node as unknown as T.ParenthesizedExpression.Parsed;
+				rebuilt(node, handle, () => wrapParenthesizedExpression({ ...$edited(data), _expression: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ParenthesizedExpression.Parsed;
 }
 
 export function wrapTupleExpression(data: T.TupleExpression, tree: TreeHandle): T.TupleExpression.Parsed {
@@ -8671,7 +9546,8 @@ export function wrapShorthandFieldInitializer(
 	tree: TreeHandle
 ): T.ShorthandFieldInitializer.Parsed {
 	data = _keepModelledSlots(data, ['_attributes', '_name']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ShorthandFieldInitializer as const,
 		_attributes: storeExpanded(
@@ -8701,17 +9577,29 @@ export function wrapShorthandFieldInitializer(
 		},
 		$with: {
 			attributes: (...v: NonNullable<T.ShorthandFieldInitializer['_attributes']>[number][]) =>
-				wrapShorthandFieldInitializer({ ...$edited(data), _attributes: restItems('attributes', v) }, tree),
+				rebuilt(node, handle, () =>
+					wrapShorthandFieldInitializer({ ...$edited(data), _attributes: restItems('attributes', v) }, tree)
+				),
 			name: (v: NonNullable<T.ShorthandFieldInitializer['_name']>) =>
-				wrapShorthandFieldInitializer({ ...$edited(data), _name: v }, tree)
-		}
-	});
-	return _node as unknown as T.ShorthandFieldInitializer.Parsed;
+				rebuilt(node, handle, () => wrapShorthandFieldInitializer({ ...$edited(data), _name: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ShorthandFieldInitializer.Parsed;
 }
 
 export function wrapFieldInitializer(data: T.FieldInitializer, tree: TreeHandle): T.FieldInitializer.Parsed {
 	data = _keepModelledSlots(data, ['_attribute_item', '_field', '_value']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.FieldInitializer as const,
 		_attribute_item: storeExpanded(
@@ -8758,14 +9646,25 @@ export function wrapFieldInitializer(data: T.FieldInitializer, tree: TreeHandle)
 		},
 		$with: {
 			attributeItems: (...v: NonNullable<T.FieldInitializer['_attribute_item']>[number][]) =>
-				wrapFieldInitializer({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree),
+				rebuilt(node, handle, () =>
+					wrapFieldInitializer({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree)
+				),
 			field: (v: NonNullable<T.FieldInitializer['_field']>) =>
-				wrapFieldInitializer({ ...$edited(data), _field: v }, tree),
+				rebuilt(node, handle, () => wrapFieldInitializer({ ...$edited(data), _field: v }, tree)),
 			value: (v: NonNullable<T.FieldInitializer['_value']>) =>
-				wrapFieldInitializer({ ...$edited(data), _value: v }, tree)
-		}
-	});
-	return _node as unknown as T.FieldInitializer.Parsed;
+				rebuilt(node, handle, () => wrapFieldInitializer({ ...$edited(data), _value: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FieldInitializer.Parsed;
 }
 
 export function wrapBaseFieldInitializer(
@@ -8773,7 +9672,8 @@ export function wrapBaseFieldInitializer(
 	tree: TreeHandle
 ): T.BaseFieldInitializer.Parsed {
 	data = _keepModelledSlots(data, ['_value']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.BaseFieldInitializer as const,
 		_value: storeExpanded(
@@ -8796,15 +9696,25 @@ export function wrapBaseFieldInitializer(
 		},
 		$with: {
 			value: (v: NonNullable<T.BaseFieldInitializer['_value']>) =>
-				wrapBaseFieldInitializer({ ...$edited(data), _value: v }, tree)
-		}
-	});
-	return _node as unknown as T.BaseFieldInitializer.Parsed;
+				rebuilt(node, handle, () => wrapBaseFieldInitializer({ ...$edited(data), _value: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.BaseFieldInitializer.Parsed;
 }
 
 export function wrapIfExpression(data: T.IfExpression, tree: TreeHandle): T.IfExpression.Parsed {
 	data = _keepModelledSlots(data, ['_condition', '_consequence', '_alternative']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.IfExpression as const,
 		_condition: storeExpanded(
@@ -8851,19 +9761,29 @@ export function wrapIfExpression(data: T.IfExpression, tree: TreeHandle): T.IfEx
 		},
 		$with: {
 			condition: (v: NonNullable<T.IfExpression['_condition']>) =>
-				wrapIfExpression({ ...$edited(data), _condition: v }, tree),
+				rebuilt(node, handle, () => wrapIfExpression({ ...$edited(data), _condition: v }, tree)),
 			consequence: (v: NonNullable<T.IfExpression['_consequence']>) =>
-				wrapIfExpression({ ...$edited(data), _consequence: v }, tree),
+				rebuilt(node, handle, () => wrapIfExpression({ ...$edited(data), _consequence: v }, tree)),
 			alternative: (v: NonNullable<T.IfExpression['_alternative']>) =>
-				wrapIfExpression({ ...$edited(data), _alternative: v }, tree)
-		}
-	});
-	return _node as unknown as T.IfExpression.Parsed;
+				rebuilt(node, handle, () => wrapIfExpression({ ...$edited(data), _alternative: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.IfExpression.Parsed;
 }
 
 export function wrapLetCondition(data: T.LetCondition, tree: TreeHandle): T.LetCondition.Parsed {
 	data = _keepModelledSlots(data, ['_pattern', '_value']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.LetCondition as const,
 		_pattern: storeExpanded(
@@ -8903,17 +9823,28 @@ export function wrapLetCondition(data: T.LetCondition, tree: TreeHandle): T.LetC
 		},
 		$with: {
 			pattern: (v: NonNullable<T.LetCondition['_pattern']>) =>
-				wrapLetCondition({ ...$edited(data), _pattern: v }, tree),
-			value: (v: NonNullable<T.LetCondition['_value']>) => wrapLetCondition({ ...$edited(data), _value: v }, tree)
-		}
-	});
-	return _node as unknown as T.LetCondition.Parsed;
+				rebuilt(node, handle, () => wrapLetCondition({ ...$edited(data), _pattern: v }, tree)),
+			value: (v: NonNullable<T.LetCondition['_value']>) =>
+				rebuilt(node, handle, () => wrapLetCondition({ ...$edited(data), _value: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LetCondition.Parsed;
 }
 
 export function wrapLetChain(data: T.LetChain, tree: TreeHandle): T.LetChain.Parsed {
 	data = _keepModelledSlots(data, ['_left', '_right']);
+	const handle = currentHandle();
 	const _order = (data as _UntypedNode).$slotOrder?.slice();
-	const _node = withMethods({
+	const node = {
 		...data,
 		$type: TSKindId.LetChain as const,
 		_left: storeExpanded(
@@ -8956,12 +9887,22 @@ export function wrapLetChain(data: T.LetChain, tree: TreeHandle): T.LetChain.Par
 			);
 		},
 		$with: {
-			left: (v: NonNullable<T.LetChain['_left']>) => wrapLetChain({ ...$edited(data), _left: v }, tree),
+			left: (v: NonNullable<T.LetChain['_left']>) =>
+				rebuilt(node, handle, () => wrapLetChain({ ...$edited(data), _left: v }, tree)),
 			rights: (...v: NonNullable<T.LetChain['_right']>[number][]) =>
-				wrapLetChain({ ...$edited(data), _right: restItems('rights', v) }, tree)
-		}
-	});
-	return _node as unknown as T.LetChain.Parsed;
+				rebuilt(node, handle, () => wrapLetChain({ ...$edited(data), _right: restItems('rights', v) }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LetChain.Parsed;
 }
 
 export function wrapCondition(
@@ -9254,7 +10195,8 @@ export function wrapCondition(
 
 export function wrapElseClause(data: T.ElseClause, tree: TreeHandle): T.ElseClause.Parsed {
 	data = _keepModelledSlots(data, ['_body']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ElseClause as const,
 		_body: storeExpanded(
@@ -9271,15 +10213,26 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle): T.ElseClau
 			return hydrateChild<T.Block | T.IfExpression>(this._body, tree);
 		},
 		$with: {
-			body: (v: NonNullable<T.ElseClause['_body']>) => wrapElseClause({ ...$edited(data), _body: v }, tree)
-		}
-	});
-	return _node as unknown as T.ElseClause.Parsed;
+			body: (v: NonNullable<T.ElseClause['_body']>) =>
+				rebuilt(node, handle, () => wrapElseClause({ ...$edited(data), _body: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ElseClause.Parsed;
 }
 
 export function wrapMatchExpression(data: T.MatchExpression, tree: TreeHandle): T.MatchExpression.Parsed {
 	data = _keepModelledSlots(data, ['_value', '_body']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.MatchExpression as const,
 		_value: storeExpanded(
@@ -9314,11 +10267,21 @@ export function wrapMatchExpression(data: T.MatchExpression, tree: TreeHandle): 
 		},
 		$with: {
 			value: (v: NonNullable<T.MatchExpression['_value']>) =>
-				wrapMatchExpression({ ...$edited(data), _value: v }, tree),
-			body: (v: NonNullable<T.MatchExpression['_body']>) => wrapMatchExpression({ ...$edited(data), _body: v }, tree)
-		}
-	});
-	return _node as unknown as T.MatchExpression.Parsed;
+				rebuilt(node, handle, () => wrapMatchExpression({ ...$edited(data), _value: v }, tree)),
+			body: (v: NonNullable<T.MatchExpression['_body']>) =>
+				rebuilt(node, handle, () => wrapMatchExpression({ ...$edited(data), _body: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MatchExpression.Parsed;
 }
 
 export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlock.Parsed {
@@ -9481,7 +10444,8 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 
 export function wrapMatchPattern(data: T.MatchPattern, tree: TreeHandle): T.MatchPattern.Parsed {
 	data = _keepModelledSlots(data, ['_pattern', '_condition']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.MatchPattern as const,
 		_pattern: storeExpanded(
@@ -9521,17 +10485,27 @@ export function wrapMatchPattern(data: T.MatchPattern, tree: TreeHandle): T.Matc
 		},
 		$with: {
 			pattern: (v: NonNullable<T.MatchPattern['_pattern']>) =>
-				wrapMatchPattern({ ...$edited(data), _pattern: v }, tree),
+				rebuilt(node, handle, () => wrapMatchPattern({ ...$edited(data), _pattern: v }, tree)),
 			condition: (v: NonNullable<T.MatchPattern['_condition']>) =>
-				wrapMatchPattern({ ...$edited(data), _condition: v }, tree)
-		}
-	});
-	return _node as unknown as T.MatchPattern.Parsed;
+				rebuilt(node, handle, () => wrapMatchPattern({ ...$edited(data), _condition: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MatchPattern.Parsed;
 }
 
 export function wrapWhileExpression(data: T.WhileExpression, tree: TreeHandle): T.WhileExpression.Parsed {
 	data = _keepModelledSlots(data, ['_label', '_condition', '_body']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.WhileExpression as const,
 		_label: storeExpanded(
@@ -9578,18 +10552,29 @@ export function wrapWhileExpression(data: T.WhileExpression, tree: TreeHandle): 
 		},
 		$with: {
 			label: (v: NonNullable<T.WhileExpression['_label']>) =>
-				wrapWhileExpression({ ...$edited(data), _label: v }, tree),
+				rebuilt(node, handle, () => wrapWhileExpression({ ...$edited(data), _label: v }, tree)),
 			condition: (v: NonNullable<T.WhileExpression['_condition']>) =>
-				wrapWhileExpression({ ...$edited(data), _condition: v }, tree),
-			body: (v: NonNullable<T.WhileExpression['_body']>) => wrapWhileExpression({ ...$edited(data), _body: v }, tree)
-		}
-	});
-	return _node as unknown as T.WhileExpression.Parsed;
+				rebuilt(node, handle, () => wrapWhileExpression({ ...$edited(data), _condition: v }, tree)),
+			body: (v: NonNullable<T.WhileExpression['_body']>) =>
+				rebuilt(node, handle, () => wrapWhileExpression({ ...$edited(data), _body: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.WhileExpression.Parsed;
 }
 
 export function wrapLoopExpression(data: T.LoopExpression, tree: TreeHandle): T.LoopExpression.Parsed {
 	data = _keepModelledSlots(data, ['_label', '_body']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.LoopExpression as const,
 		_label: storeExpanded(
@@ -9618,16 +10603,28 @@ export function wrapLoopExpression(data: T.LoopExpression, tree: TreeHandle): T.
 			return hydrateChild<T.Block>(this._body, tree);
 		},
 		$with: {
-			label: (v: NonNullable<T.LoopExpression['_label']>) => wrapLoopExpression({ ...$edited(data), _label: v }, tree),
-			body: (v: NonNullable<T.LoopExpression['_body']>) => wrapLoopExpression({ ...$edited(data), _body: v }, tree)
-		}
-	});
-	return _node as unknown as T.LoopExpression.Parsed;
+			label: (v: NonNullable<T.LoopExpression['_label']>) =>
+				rebuilt(node, handle, () => wrapLoopExpression({ ...$edited(data), _label: v }, tree)),
+			body: (v: NonNullable<T.LoopExpression['_body']>) =>
+				rebuilt(node, handle, () => wrapLoopExpression({ ...$edited(data), _body: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LoopExpression.Parsed;
 }
 
 export function wrapForExpression(data: T.ForExpression, tree: TreeHandle): T.ForExpression.Parsed {
 	data = _keepModelledSlots(data, ['_label', '_pattern', '_value', '_body']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ForExpression as const,
 		_label: storeExpanded(
@@ -9690,19 +10687,32 @@ export function wrapForExpression(data: T.ForExpression, tree: TreeHandle): T.Fo
 			return hydrateChild<T.Block>(this._body, tree);
 		},
 		$with: {
-			label: (v: NonNullable<T.ForExpression['_label']>) => wrapForExpression({ ...$edited(data), _label: v }, tree),
+			label: (v: NonNullable<T.ForExpression['_label']>) =>
+				rebuilt(node, handle, () => wrapForExpression({ ...$edited(data), _label: v }, tree)),
 			pattern: (v: NonNullable<T.ForExpression['_pattern']>) =>
-				wrapForExpression({ ...$edited(data), _pattern: v }, tree),
-			value: (v: NonNullable<T.ForExpression['_value']>) => wrapForExpression({ ...$edited(data), _value: v }, tree),
-			body: (v: NonNullable<T.ForExpression['_body']>) => wrapForExpression({ ...$edited(data), _body: v }, tree)
-		}
-	});
-	return _node as unknown as T.ForExpression.Parsed;
+				rebuilt(node, handle, () => wrapForExpression({ ...$edited(data), _pattern: v }, tree)),
+			value: (v: NonNullable<T.ForExpression['_value']>) =>
+				rebuilt(node, handle, () => wrapForExpression({ ...$edited(data), _value: v }, tree)),
+			body: (v: NonNullable<T.ForExpression['_body']>) =>
+				rebuilt(node, handle, () => wrapForExpression({ ...$edited(data), _body: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ForExpression.Parsed;
 }
 
 export function wrapConstBlock(data: T.ConstBlock, tree: TreeHandle): T.ConstBlock.Parsed {
 	data = _keepModelledSlots(data, ['_body']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ConstBlock as const,
 		_body: storeExpanded(
@@ -9719,10 +10729,20 @@ export function wrapConstBlock(data: T.ConstBlock, tree: TreeHandle): T.ConstBlo
 			return hydrateChild<T.Block>(this._body, tree);
 		},
 		$with: {
-			body: (v: NonNullable<T.ConstBlock['_body']>) => wrapConstBlock({ ...$edited(data), _body: v }, tree)
-		}
-	});
-	return _node as unknown as T.ConstBlock.Parsed;
+			body: (v: NonNullable<T.ConstBlock['_body']>) =>
+				rebuilt(node, handle, () => wrapConstBlock({ ...$edited(data), _body: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ConstBlock.Parsed;
 }
 
 export function wrapClosureExpression(
@@ -9756,8 +10776,9 @@ export function wrapClosureExpression(
 
 export function wrapClosureParameters(data: T.ClosureParameters, tree: TreeHandle): T.ClosureParameters.Parsed {
 	data = _keepModelledSlots(data, ['_parameters']);
+	const handle = currentHandle();
 	const _order = (data as _UntypedNode).$slotOrder?.slice();
-	const _node = withMethods({
+	const node = {
 		...data,
 		$type: TSKindId.ClosureParameters as const,
 		_parameters: storeExpanded(
@@ -9784,15 +10805,28 @@ export function wrapClosureParameters(data: T.ClosureParameters, tree: TreeHandl
 		},
 		$with: {
 			parameters: (...v: NonNullable<T.ClosureParameters['_parameters']>[number][]) =>
-				wrapClosureParameters({ ...$edited(data), _parameters: restItems('parameters', v) }, tree)
-		}
-	});
-	return _node as unknown as T.ClosureParameters.Parsed;
+				rebuilt(node, handle, () =>
+					wrapClosureParameters({ ...$edited(data), _parameters: restItems('parameters', v) }, tree)
+				)
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ClosureParameters.Parsed;
 }
 
 export function wrapLabel(data: T.Label, tree: TreeHandle): T.Label.Parsed {
 	data = _keepModelledSlots(data, ['_name']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.Label as const,
 		_name: storeExpanded(
@@ -9809,15 +10843,26 @@ export function wrapLabel(data: T.Label, tree: TreeHandle): T.Label.Parsed {
 			return hydrateChild<T.Identifier>(this._name, tree);
 		},
 		$with: {
-			name: (v: NonNullable<T.Label['_name']>) => wrapLabel({ ...$edited(data), _name: v }, tree)
-		}
-	});
-	return _node as unknown as T.Label.Parsed;
+			name: (v: NonNullable<T.Label['_name']>) =>
+				rebuilt(node, handle, () => wrapLabel({ ...$edited(data), _name: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Label.Parsed;
 }
 
 export function wrapBreakExpression(data: T.BreakExpression, tree: TreeHandle): T.BreakExpression.Parsed {
 	data = _keepModelledSlots(data, ['_label', '_expression']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.BreakExpression as const,
 		_label: storeExpanded(
@@ -9854,17 +10899,27 @@ export function wrapBreakExpression(data: T.BreakExpression, tree: TreeHandle): 
 		},
 		$with: {
 			label: (v: NonNullable<T.BreakExpression['_label']>) =>
-				wrapBreakExpression({ ...$edited(data), _label: v }, tree),
+				rebuilt(node, handle, () => wrapBreakExpression({ ...$edited(data), _label: v }, tree)),
 			expression: (v: NonNullable<T.BreakExpression['_expression']>) =>
-				wrapBreakExpression({ ...$edited(data), _expression: v }, tree)
-		}
-	});
-	return _node as unknown as T.BreakExpression.Parsed;
+				rebuilt(node, handle, () => wrapBreakExpression({ ...$edited(data), _expression: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.BreakExpression.Parsed;
 }
 
 export function wrapContinueExpression(data: T.ContinueExpression, tree: TreeHandle): T.ContinueExpression.Parsed {
 	data = _keepModelledSlots(data, ['_label']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ContinueExpression as const,
 		_label: storeExpanded(
@@ -9882,15 +10937,25 @@ export function wrapContinueExpression(data: T.ContinueExpression, tree: TreeHan
 		},
 		$with: {
 			label: (v: NonNullable<T.ContinueExpression['_label']>) =>
-				wrapContinueExpression({ ...$edited(data), _label: v }, tree)
-		}
-	});
-	return _node as unknown as T.ContinueExpression.Parsed;
+				rebuilt(node, handle, () => wrapContinueExpression({ ...$edited(data), _label: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ContinueExpression.Parsed;
 }
 
 export function wrapIndexExpression(data: T.IndexExpression, tree: TreeHandle): T.IndexExpression.Parsed {
 	data = _keepModelledSlots(data, ['_object', '_index']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.IndexExpression as const,
 		_object: storeExpanded(
@@ -9930,16 +10995,27 @@ export function wrapIndexExpression(data: T.IndexExpression, tree: TreeHandle): 
 		},
 		$with: {
 			object: (v: NonNullable<T.IndexExpression['_object']>) =>
-				wrapIndexExpression({ ...$edited(data), _object: v }, tree),
-			index: (v: NonNullable<T.IndexExpression['_index']>) => wrapIndexExpression({ ...$edited(data), _index: v }, tree)
-		}
-	});
-	return _node as unknown as T.IndexExpression.Parsed;
+				rebuilt(node, handle, () => wrapIndexExpression({ ...$edited(data), _object: v }, tree)),
+			index: (v: NonNullable<T.IndexExpression['_index']>) =>
+				rebuilt(node, handle, () => wrapIndexExpression({ ...$edited(data), _index: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.IndexExpression.Parsed;
 }
 
 export function wrapAwaitExpression(data: T.AwaitExpression, tree: TreeHandle): T.AwaitExpression.Parsed {
 	data = _keepModelledSlots(data, ['_expression']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.AwaitExpression as const,
 		_expression: storeExpanded(
@@ -9962,15 +11038,25 @@ export function wrapAwaitExpression(data: T.AwaitExpression, tree: TreeHandle): 
 		},
 		$with: {
 			expression: (v: NonNullable<T.AwaitExpression['_expression']>) =>
-				wrapAwaitExpression({ ...$edited(data), _expression: v }, tree)
-		}
-	});
-	return _node as unknown as T.AwaitExpression.Parsed;
+				rebuilt(node, handle, () => wrapAwaitExpression({ ...$edited(data), _expression: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AwaitExpression.Parsed;
 }
 
 export function wrapFieldExpression(data: T.FieldExpression, tree: TreeHandle): T.FieldExpression.Parsed {
 	data = _keepModelledSlots(data, ['_value', '_field']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.FieldExpression as const,
 		_value: storeExpanded(
@@ -10005,16 +11091,27 @@ export function wrapFieldExpression(data: T.FieldExpression, tree: TreeHandle): 
 		},
 		$with: {
 			value: (v: NonNullable<T.FieldExpression['_value']>) =>
-				wrapFieldExpression({ ...$edited(data), _value: v }, tree),
-			field: (v: NonNullable<T.FieldExpression['_field']>) => wrapFieldExpression({ ...$edited(data), _field: v }, tree)
-		}
-	});
-	return _node as unknown as T.FieldExpression.Parsed;
+				rebuilt(node, handle, () => wrapFieldExpression({ ...$edited(data), _value: v }, tree)),
+			field: (v: NonNullable<T.FieldExpression['_field']>) =>
+				rebuilt(node, handle, () => wrapFieldExpression({ ...$edited(data), _field: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FieldExpression.Parsed;
 }
 
 export function wrapUnsafeBlock(data: T.UnsafeBlock, tree: TreeHandle): T.UnsafeBlock.Parsed {
 	data = _keepModelledSlots(data, ['_body']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.UnsafeBlock as const,
 		_body: storeExpanded(
@@ -10031,17 +11128,42 @@ export function wrapUnsafeBlock(data: T.UnsafeBlock, tree: TreeHandle): T.Unsafe
 			return hydrateChild<T.Block>(this._body, tree);
 		},
 		$with: {
-			body: (v: NonNullable<T.UnsafeBlock['_body']>) => wrapUnsafeBlock({ ...$edited(data), _body: v }, tree)
-		}
-	});
-	return _node as unknown as T.UnsafeBlock.Parsed;
+			body: (v: NonNullable<T.UnsafeBlock['_body']>) =>
+				rebuilt(node, handle, () => wrapUnsafeBlock({ ...$edited(data), _body: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.UnsafeBlock.Parsed;
 }
 
 export function wrapAsyncBlock(data: T.AsyncBlock, tree: TreeHandle): T.AsyncBlock.Parsed {
 	data = _keepModelledSlots(data, ['_move_marker', '_body']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.AsyncBlock as const }) as unknown as T.AsyncBlock.Parsed;
-	const _node = withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
+			...data,
+			$type: TSKindId.AsyncBlock as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.AsyncBlock.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.AsyncBlock as const,
 		_move_marker: coerceBooleanKeywordStorage(
@@ -10070,18 +11192,43 @@ export function wrapAsyncBlock(data: T.AsyncBlock, tree: TreeHandle): T.AsyncBlo
 		},
 		$with: {
 			moveMarker: (v: NonNullable<T.AsyncBlock['_move_marker']>) =>
-				wrapAsyncBlock({ ...$edited(data), _move_marker: v }, tree),
-			body: (v: NonNullable<T.AsyncBlock['_body']>) => wrapAsyncBlock({ ...$edited(data), _body: v }, tree)
-		}
-	});
-	return _node as unknown as T.AsyncBlock.Parsed;
+				rebuilt(node, handle, () => wrapAsyncBlock({ ...$edited(data), _move_marker: v }, tree)),
+			body: (v: NonNullable<T.AsyncBlock['_body']>) =>
+				rebuilt(node, handle, () => wrapAsyncBlock({ ...$edited(data), _body: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AsyncBlock.Parsed;
 }
 
 export function wrapGenBlock(data: T.GenBlock, tree: TreeHandle): T.GenBlock.Parsed {
 	data = _keepModelledSlots(data, ['_move_marker', '_body']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.GenBlock as const }) as unknown as T.GenBlock.Parsed;
-	const _node = withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
+			...data,
+			$type: TSKindId.GenBlock as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.GenBlock.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.GenBlock as const,
 		_move_marker: coerceBooleanKeywordStorage(
@@ -10110,16 +11257,27 @@ export function wrapGenBlock(data: T.GenBlock, tree: TreeHandle): T.GenBlock.Par
 		},
 		$with: {
 			moveMarker: (v: NonNullable<T.GenBlock['_move_marker']>) =>
-				wrapGenBlock({ ...$edited(data), _move_marker: v }, tree),
-			body: (v: NonNullable<T.GenBlock['_body']>) => wrapGenBlock({ ...$edited(data), _body: v }, tree)
-		}
-	});
-	return _node as unknown as T.GenBlock.Parsed;
+				rebuilt(node, handle, () => wrapGenBlock({ ...$edited(data), _move_marker: v }, tree)),
+			body: (v: NonNullable<T.GenBlock['_body']>) =>
+				rebuilt(node, handle, () => wrapGenBlock({ ...$edited(data), _body: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.GenBlock.Parsed;
 }
 
 export function wrapTryBlock(data: T.TryBlock, tree: TreeHandle): T.TryBlock.Parsed {
 	data = _keepModelledSlots(data, ['_body']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.TryBlock as const,
 		_body: storeExpanded(
@@ -10136,15 +11294,26 @@ export function wrapTryBlock(data: T.TryBlock, tree: TreeHandle): T.TryBlock.Par
 			return hydrateChild<T.Block>(this._body, tree);
 		},
 		$with: {
-			body: (v: NonNullable<T.TryBlock['_body']>) => wrapTryBlock({ ...$edited(data), _body: v }, tree)
-		}
-	});
-	return _node as unknown as T.TryBlock.Parsed;
+			body: (v: NonNullable<T.TryBlock['_body']>) =>
+				rebuilt(node, handle, () => wrapTryBlock({ ...$edited(data), _body: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TryBlock.Parsed;
 }
 
 export function wrapBlock(data: T.Block, tree: TreeHandle): T.Block.Parsed {
 	data = _keepModelledSlots(data, ['_label', '_statements', '_trailing_expression']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.Block as const,
 		_label: storeExpanded(
@@ -10193,14 +11362,25 @@ export function wrapBlock(data: T.Block, tree: TreeHandle): T.Block.Parsed {
 			return hydrateChild<T.Expression | undefined>(this._trailing_expression, tree);
 		},
 		$with: {
-			label: (v: NonNullable<T.Block['_label']>) => wrapBlock({ ...$edited(data), _label: v }, tree),
+			label: (v: NonNullable<T.Block['_label']>) =>
+				rebuilt(node, handle, () => wrapBlock({ ...$edited(data), _label: v }, tree)),
 			statements: (...v: NonNullable<T.Block['_statements']>[number][]) =>
-				wrapBlock({ ...$edited(data), _statements: restItems('statements', v) }, tree),
+				rebuilt(node, handle, () => wrapBlock({ ...$edited(data), _statements: restItems('statements', v) }, tree)),
 			trailingExpression: (v: NonNullable<T.Block['_trailing_expression']>) =>
-				wrapBlock({ ...$edited(data), _trailing_expression: v }, tree)
-		}
-	});
-	return _node as unknown as T.Block.Parsed;
+				rebuilt(node, handle, () => wrapBlock({ ...$edited(data), _trailing_expression: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Block.Parsed;
 }
 
 export function wrapPattern(
@@ -10673,7 +11853,8 @@ export function wrapFieldPattern(
 
 export function wrapMutPattern(data: T.MutPattern, tree: TreeHandle): T.MutPattern.Parsed {
 	data = _keepModelledSlots(data, ['_pattern']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.MutPattern as const,
 		_pattern: storeExpanded(
@@ -10695,10 +11876,20 @@ export function wrapMutPattern(data: T.MutPattern, tree: TreeHandle): T.MutPatte
 			return hydrateChild<T.Pattern>(this._pattern, tree);
 		},
 		$with: {
-			pattern: (v: NonNullable<T.MutPattern['_pattern']>) => wrapMutPattern({ ...$edited(data), _pattern: v }, tree)
-		}
-	});
-	return _node as unknown as T.MutPattern.Parsed;
+			pattern: (v: NonNullable<T.MutPattern['_pattern']>) =>
+				rebuilt(node, handle, () => wrapMutPattern({ ...$edited(data), _pattern: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MutPattern.Parsed;
 }
 
 export function wrapRangePattern(
@@ -10732,7 +11923,8 @@ export function wrapRangePattern(
 
 export function wrapRefPattern(data: T.RefPattern, tree: TreeHandle): T.RefPattern.Parsed {
 	data = _keepModelledSlots(data, ['_pattern']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.RefPattern as const,
 		_pattern: storeExpanded(
@@ -10754,15 +11946,26 @@ export function wrapRefPattern(data: T.RefPattern, tree: TreeHandle): T.RefPatte
 			return hydrateChild<T.Pattern>(this._pattern, tree);
 		},
 		$with: {
-			pattern: (v: NonNullable<T.RefPattern['_pattern']>) => wrapRefPattern({ ...$edited(data), _pattern: v }, tree)
-		}
-	});
-	return _node as unknown as T.RefPattern.Parsed;
+			pattern: (v: NonNullable<T.RefPattern['_pattern']>) =>
+				rebuilt(node, handle, () => wrapRefPattern({ ...$edited(data), _pattern: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RefPattern.Parsed;
 }
 
 export function wrapCapturedPattern(data: T.CapturedPattern, tree: TreeHandle): T.CapturedPattern.Parsed {
 	data = _keepModelledSlots(data, ['_name', '_pattern']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.CapturedPattern as const,
 		_name: storeExpanded(
@@ -10796,19 +11999,44 @@ export function wrapCapturedPattern(data: T.CapturedPattern, tree: TreeHandle): 
 			return hydrateChild<T.Pattern>(this._pattern, tree);
 		},
 		$with: {
-			name: (v: NonNullable<T.CapturedPattern['_name']>) => wrapCapturedPattern({ ...$edited(data), _name: v }, tree),
+			name: (v: NonNullable<T.CapturedPattern['_name']>) =>
+				rebuilt(node, handle, () => wrapCapturedPattern({ ...$edited(data), _name: v }, tree)),
 			pattern: (v: NonNullable<T.CapturedPattern['_pattern']>) =>
-				wrapCapturedPattern({ ...$edited(data), _pattern: v }, tree)
-		}
-	});
-	return _node as unknown as T.CapturedPattern.Parsed;
+				rebuilt(node, handle, () => wrapCapturedPattern({ ...$edited(data), _pattern: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CapturedPattern.Parsed;
 }
 
 export function wrapReferencePattern(data: T.ReferencePattern, tree: TreeHandle): T.ReferencePattern.Parsed {
 	data = _keepModelledSlots(data, ['_mutable_specifier', '_pattern']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.ReferencePattern as const }) as unknown as T.ReferencePattern.Parsed;
-	const _node = withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
+			...data,
+			$type: TSKindId.ReferencePattern as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.ReferencePattern.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.ReferencePattern as const,
 		_mutable_specifier: coerceBooleanKeywordStorage(
@@ -10842,12 +12070,21 @@ export function wrapReferencePattern(data: T.ReferencePattern, tree: TreeHandle)
 		},
 		$with: {
 			mutableSpecifier: (v: NonNullable<T.ReferencePattern['_mutable_specifier']>) =>
-				wrapReferencePattern({ ...$edited(data), _mutable_specifier: v }, tree),
+				rebuilt(node, handle, () => wrapReferencePattern({ ...$edited(data), _mutable_specifier: v }, tree)),
 			pattern: (v: NonNullable<T.ReferencePattern['_pattern']>) =>
-				wrapReferencePattern({ ...$edited(data), _pattern: v }, tree)
-		}
-	});
-	return _node as unknown as T.ReferencePattern.Parsed;
+				rebuilt(node, handle, () => wrapReferencePattern({ ...$edited(data), _pattern: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ReferencePattern.Parsed;
 }
 
 export function wrapOrPattern(
@@ -11039,7 +12276,8 @@ export function wrapLiteralPattern(
 
 export function wrapNegativeLiteral(data: T.NegativeLiteral, tree: TreeHandle): T.NegativeLiteral.Parsed {
 	data = _keepModelledSlots(data, ['_value']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.NegativeLiteral as const,
 		_value: storeExpanded(
@@ -11056,10 +12294,20 @@ export function wrapNegativeLiteral(data: T.NegativeLiteral, tree: TreeHandle): 
 			return hydrateChild<T.IntegerLiteral | T.FloatLiteral>(this._value, tree);
 		},
 		$with: {
-			value: (v: NonNullable<T.NegativeLiteral['_value']>) => wrapNegativeLiteral({ ...$edited(data), _value: v }, tree)
-		}
-	});
-	return _node as unknown as T.NegativeLiteral.Parsed;
+			value: (v: NonNullable<T.NegativeLiteral['_value']>) =>
+				rebuilt(node, handle, () => wrapNegativeLiteral({ ...$edited(data), _value: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.NegativeLiteral.Parsed;
 }
 
 export function wrapIntegerLiteral(
@@ -11106,7 +12354,8 @@ export function wrapIntegerLiteral(
 
 export function wrapStringLiteral(data: T.StringLiteral, tree: TreeHandle): T.StringLiteral.Parsed {
 	data = _keepModelledSlots(data, ['_string_open', '_elements']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.StringLiteral as const,
 		_string_open: storeExpanded(
@@ -11139,17 +12388,27 @@ export function wrapStringLiteral(data: T.StringLiteral, tree: TreeHandle): T.St
 		},
 		$with: {
 			stringOpen: (v: NonNullable<T.StringLiteral['_string_open']>) =>
-				wrapStringLiteral({ ...$edited(data), _string_open: v }, tree),
+				rebuilt(node, handle, () => wrapStringLiteral({ ...$edited(data), _string_open: v }, tree)),
 			elements: (...v: NonNullable<T.StringLiteral['_elements']>[number][]) =>
-				wrapStringLiteral({ ...$edited(data), _elements: restItems('elements', v) }, tree)
-		}
-	});
-	return _node as unknown as T.StringLiteral.Parsed;
+				rebuilt(node, handle, () => wrapStringLiteral({ ...$edited(data), _elements: restItems('elements', v) }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.StringLiteral.Parsed;
 }
 
 export function wrapRawStringLiteral(data: T.RawStringLiteral, tree: TreeHandle): T.RawStringLiteral.Parsed {
 	data = _keepModelledSlots(data, ['_raw_string_literal_start', '_string_content', '_raw_string_literal_end']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.RawStringLiteral as const,
 		_raw_string_literal_start: storeExpanded(
@@ -11191,14 +12450,23 @@ export function wrapRawStringLiteral(data: T.RawStringLiteral, tree: TreeHandle)
 		},
 		$with: {
 			rawStringLiteralStart: (v: NonNullable<T.RawStringLiteral['_raw_string_literal_start']>) =>
-				wrapRawStringLiteral({ ...$edited(data), _raw_string_literal_start: v }, tree),
+				rebuilt(node, handle, () => wrapRawStringLiteral({ ...$edited(data), _raw_string_literal_start: v }, tree)),
 			stringContent: (v: NonNullable<T.RawStringLiteral['_string_content']>) =>
-				wrapRawStringLiteral({ ...$edited(data), _string_content: v }, tree),
+				rebuilt(node, handle, () => wrapRawStringLiteral({ ...$edited(data), _string_content: v }, tree)),
 			rawStringLiteralEnd: (v: NonNullable<T.RawStringLiteral['_raw_string_literal_end']>) =>
-				wrapRawStringLiteral({ ...$edited(data), _raw_string_literal_end: v }, tree)
-		}
-	});
-	return _node as unknown as T.RawStringLiteral.Parsed;
+				rebuilt(node, handle, () => wrapRawStringLiteral({ ...$edited(data), _raw_string_literal_end: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RawStringLiteral.Parsed;
 }
 
 export function wrapCharLiteral(
@@ -11296,7 +12564,8 @@ export function wrapEscapeSequence(
 
 export function wrapLineComment(data: T.LineComment, tree: TreeHandle): T.LineComment.Parsed {
 	data = _keepModelledSlots(data, ['_content']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.LineComment as const,
 		_content: storeExpanded(
@@ -11315,15 +12584,26 @@ export function wrapLineComment(data: T.LineComment, tree: TreeHandle): T.LineCo
 			>(this._content, tree);
 		},
 		$with: {
-			content: (v: NonNullable<T.LineComment['_content']>) => wrapLineComment({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.LineComment.Parsed;
+			content: (v: NonNullable<T.LineComment['_content']>) =>
+				rebuilt(node, handle, () => wrapLineComment({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LineComment.Parsed;
 }
 
 export function wrapBlockComment(data: T.BlockComment, tree: TreeHandle): T.BlockComment.Parsed {
 	data = _keepModelledSlots(data, ['_content']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.BlockComment as const,
 		_content: storeExpanded(
@@ -11343,16 +12623,27 @@ export function wrapBlockComment(data: T.BlockComment, tree: TreeHandle): T.Bloc
 			);
 		},
 		$with: {
-			content: (v: NonNullable<T.BlockComment['_content']>) => wrapBlockComment({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.BlockComment.Parsed;
+			content: (v: NonNullable<T.BlockComment['_content']>) =>
+				rebuilt(node, handle, () => wrapBlockComment({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.BlockComment.Parsed;
 }
 
 export function wrapShebang(data: T.Shebang, tree: TreeHandle): T.Shebang.Parsed {
 	data = _keepModelledSlots(data, ['_content']);
 	data = _projectLexed(data, TOKEN_INTERIORS['shebang'], 'shebang');
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.Shebang as const,
 		_content: storeExpanded(
@@ -11369,16 +12660,27 @@ export function wrapShebang(data: T.Shebang, tree: TreeHandle): T.Shebang.Parsed
 			return hydrateChild<string>(this._content, tree);
 		},
 		$with: {
-			content: (v: NonNullable<T.Shebang['_content']>) => wrapShebang({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.Shebang.Parsed;
+			content: (v: NonNullable<T.Shebang['_content']>) =>
+				rebuilt(node, handle, () => wrapShebang({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Shebang.Parsed;
 }
 
 export function wrapMetavariable(data: T.Metavariable, tree: TreeHandle): T.Metavariable.Parsed {
 	data = _keepModelledSlots(data, ['_name']);
 	data = _projectLexed(data, TOKEN_INTERIORS['metavariable'], 'metavariable');
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.Metavariable as const,
 		_name: storeExpanded(
@@ -11395,10 +12697,20 @@ export function wrapMetavariable(data: T.Metavariable, tree: TreeHandle): T.Meta
 			return hydrateChild<string>(this._name, tree);
 		},
 		$with: {
-			name: (v: NonNullable<T.Metavariable['_name']>) => wrapMetavariable({ ...$edited(data), _name: v }, tree)
-		}
-	});
-	return _node as unknown as T.Metavariable.Parsed;
+			name: (v: NonNullable<T.Metavariable['_name']>) =>
+				rebuilt(node, handle, () => wrapMetavariable({ ...$edited(data), _name: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Metavariable.Parsed;
 }
 
 export function wrapMacroRules(
@@ -12180,9 +13492,24 @@ export function wrapStructPatternElements(
 
 export function wrapUseWildcardGroup(data: T.UseWildcardGroup, tree: TreeHandle): T.UseWildcardGroup.Parsed {
 	data = _keepModelledSlots(data, ['_path']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.UseWildcardGroup as const }) as unknown as T.UseWildcardGroup.Parsed;
-	const _node = withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
+			...data,
+			$type: TSKindId.UseWildcardGroup as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.UseWildcardGroup.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.UseWildcardGroup as const,
 		_path: storeExpanded(
@@ -12254,10 +13581,20 @@ export function wrapUseWildcardGroup(data: T.UseWildcardGroup, tree: TreeHandle)
 			>(this._path, tree);
 		},
 		$with: {
-			path: (v: NonNullable<T.UseWildcardGroup['_path']>) => wrapUseWildcardGroup({ ...$edited(data), _path: v }, tree)
-		}
-	});
-	return _node as unknown as T.UseWildcardGroup.Parsed;
+			path: (v: NonNullable<T.UseWildcardGroup['_path']>) =>
+				rebuilt(node, handle, () => wrapUseWildcardGroup({ ...$edited(data), _path: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.UseWildcardGroup.Parsed;
 }
 
 export function wrapTupleTypeElements(
@@ -12342,12 +13679,24 @@ export function wrapIntegerLiteralDecimal(
 ): T.IntegerLiteralDecimal.Parsed {
 	data = _keepModelledSlots(data, ['_content', '_suffix']);
 	data = _projectLexed(data, TOKEN_INTERIORS['integer_literal_decimal'], 'integer_literal_decimal');
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.IntegerLiteralDecimal as const
-		}) as unknown as T.IntegerLiteralDecimal.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.IntegerLiteralDecimal as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.IntegerLiteralDecimal.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.IntegerLiteralDecimal as const,
 		_content: storeExpanded(
@@ -12393,23 +13742,44 @@ export function wrapIntegerLiteralDecimal(
 		},
 		$with: {
 			content: (v: NonNullable<T.IntegerLiteralDecimal['_content']>) =>
-				wrapIntegerLiteralDecimal({ ...$edited(data), _content: v }, tree),
+				rebuilt(node, handle, () => wrapIntegerLiteralDecimal({ ...$edited(data), _content: v }, tree)),
 			suffix: (v: NonNullable<T.IntegerLiteralDecimal['_suffix']>) =>
-				wrapIntegerLiteralDecimal({ ...$edited(data), _suffix: v }, tree)
-		}
-	});
-	return _node as unknown as T.IntegerLiteralDecimal.Parsed;
+				rebuilt(node, handle, () => wrapIntegerLiteralDecimal({ ...$edited(data), _suffix: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.IntegerLiteralDecimal.Parsed;
 }
 
 export function wrapIntegerLiteralHex(data: T.IntegerLiteralHex, tree: TreeHandle): T.IntegerLiteralHex.Parsed {
 	data = _keepModelledSlots(data, ['_content', '_suffix']);
 	data = _projectLexed(data, TOKEN_INTERIORS['integer_literal_hex'], 'integer_literal_hex');
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.IntegerLiteralHex as const
-		}) as unknown as T.IntegerLiteralHex.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.IntegerLiteralHex as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.IntegerLiteralHex.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.IntegerLiteralHex as const,
 		_content: storeExpanded(
@@ -12455,12 +13825,21 @@ export function wrapIntegerLiteralHex(data: T.IntegerLiteralHex, tree: TreeHandl
 		},
 		$with: {
 			content: (v: NonNullable<T.IntegerLiteralHex['_content']>) =>
-				wrapIntegerLiteralHex({ ...$edited(data), _content: v }, tree),
+				rebuilt(node, handle, () => wrapIntegerLiteralHex({ ...$edited(data), _content: v }, tree)),
 			suffix: (v: NonNullable<T.IntegerLiteralHex['_suffix']>) =>
-				wrapIntegerLiteralHex({ ...$edited(data), _suffix: v }, tree)
-		}
-	});
-	return _node as unknown as T.IntegerLiteralHex.Parsed;
+				rebuilt(node, handle, () => wrapIntegerLiteralHex({ ...$edited(data), _suffix: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.IntegerLiteralHex.Parsed;
 }
 
 export function wrapIntegerLiteralBinary(
@@ -12469,12 +13848,24 @@ export function wrapIntegerLiteralBinary(
 ): T.IntegerLiteralBinary.Parsed {
 	data = _keepModelledSlots(data, ['_content', '_suffix']);
 	data = _projectLexed(data, TOKEN_INTERIORS['integer_literal_binary'], 'integer_literal_binary');
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.IntegerLiteralBinary as const
-		}) as unknown as T.IntegerLiteralBinary.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.IntegerLiteralBinary as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.IntegerLiteralBinary.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.IntegerLiteralBinary as const,
 		_content: storeExpanded(
@@ -12520,23 +13911,44 @@ export function wrapIntegerLiteralBinary(
 		},
 		$with: {
 			content: (v: NonNullable<T.IntegerLiteralBinary['_content']>) =>
-				wrapIntegerLiteralBinary({ ...$edited(data), _content: v }, tree),
+				rebuilt(node, handle, () => wrapIntegerLiteralBinary({ ...$edited(data), _content: v }, tree)),
 			suffix: (v: NonNullable<T.IntegerLiteralBinary['_suffix']>) =>
-				wrapIntegerLiteralBinary({ ...$edited(data), _suffix: v }, tree)
-		}
-	});
-	return _node as unknown as T.IntegerLiteralBinary.Parsed;
+				rebuilt(node, handle, () => wrapIntegerLiteralBinary({ ...$edited(data), _suffix: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.IntegerLiteralBinary.Parsed;
 }
 
 export function wrapIntegerLiteralOctal(data: T.IntegerLiteralOctal, tree: TreeHandle): T.IntegerLiteralOctal.Parsed {
 	data = _keepModelledSlots(data, ['_content', '_suffix']);
 	data = _projectLexed(data, TOKEN_INTERIORS['integer_literal_octal'], 'integer_literal_octal');
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.IntegerLiteralOctal as const
-		}) as unknown as T.IntegerLiteralOctal.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.IntegerLiteralOctal as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.IntegerLiteralOctal.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.IntegerLiteralOctal as const,
 		_content: storeExpanded(
@@ -12582,12 +13994,21 @@ export function wrapIntegerLiteralOctal(data: T.IntegerLiteralOctal, tree: TreeH
 		},
 		$with: {
 			content: (v: NonNullable<T.IntegerLiteralOctal['_content']>) =>
-				wrapIntegerLiteralOctal({ ...$edited(data), _content: v }, tree),
+				rebuilt(node, handle, () => wrapIntegerLiteralOctal({ ...$edited(data), _content: v }, tree)),
 			suffix: (v: NonNullable<T.IntegerLiteralOctal['_suffix']>) =>
-				wrapIntegerLiteralOctal({ ...$edited(data), _suffix: v }, tree)
-		}
-	});
-	return _node as unknown as T.IntegerLiteralOctal.Parsed;
+				rebuilt(node, handle, () => wrapIntegerLiteralOctal({ ...$edited(data), _suffix: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.IntegerLiteralOctal.Parsed;
 }
 
 export function wrapCharLiteralEscaped(
@@ -12638,9 +14059,24 @@ export function wrapCharLiteralEscaped(
 export function wrapCharLiteralPlain(data: T.CharLiteralPlain, tree: TreeHandle): T.CharLiteralPlain.Parsed {
 	data = _keepModelledSlots(data, ['_b', '_content']);
 	data = _projectLexed(data, TOKEN_INTERIORS['char_literal_plain'], 'char_literal_plain');
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.CharLiteralPlain as const }) as unknown as T.CharLiteralPlain.Parsed;
-	const _node = withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
+			...data,
+			$type: TSKindId.CharLiteralPlain as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.CharLiteralPlain.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.CharLiteralPlain as const,
 		_b: coerceBooleanKeywordStorage(
@@ -12668,12 +14104,22 @@ export function wrapCharLiteralPlain(data: T.CharLiteralPlain, tree: TreeHandle)
 			return hydrateChild<string>(this._content, tree);
 		},
 		$with: {
-			b: (v: NonNullable<T.CharLiteralPlain['_b']>) => wrapCharLiteralPlain({ ...$edited(data), _b: v }, tree),
+			b: (v: NonNullable<T.CharLiteralPlain['_b']>) =>
+				rebuilt(node, handle, () => wrapCharLiteralPlain({ ...$edited(data), _b: v }, tree)),
 			content: (v: NonNullable<T.CharLiteralPlain['_content']>) =>
-				wrapCharLiteralPlain({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.CharLiteralPlain.Parsed;
+				rebuilt(node, handle, () => wrapCharLiteralPlain({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CharLiteralPlain.Parsed;
 }
 
 export function wrapCharLiteralEscapedSimple(
@@ -12682,12 +14128,24 @@ export function wrapCharLiteralEscapedSimple(
 ): T.CharLiteralEscapedSimple.Parsed {
 	data = _keepModelledSlots(data, ['_b', '_content']);
 	data = _projectLexed(data, TOKEN_INTERIORS['char_literal_escaped_simple'], 'char_literal_escaped_simple');
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.CharLiteralEscapedSimple as const
-		}) as unknown as T.CharLiteralEscapedSimple.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.CharLiteralEscapedSimple as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.CharLiteralEscapedSimple.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.CharLiteralEscapedSimple as const,
 		_b: coerceBooleanKeywordStorage(
@@ -12716,12 +14174,21 @@ export function wrapCharLiteralEscapedSimple(
 		},
 		$with: {
 			b: (v: NonNullable<T.CharLiteralEscapedSimple['_b']>) =>
-				wrapCharLiteralEscapedSimple({ ...$edited(data), _b: v }, tree),
+				rebuilt(node, handle, () => wrapCharLiteralEscapedSimple({ ...$edited(data), _b: v }, tree)),
 			content: (v: NonNullable<T.CharLiteralEscapedSimple['_content']>) =>
-				wrapCharLiteralEscapedSimple({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.CharLiteralEscapedSimple.Parsed;
+				rebuilt(node, handle, () => wrapCharLiteralEscapedSimple({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CharLiteralEscapedSimple.Parsed;
 }
 
 export function wrapCharLiteralEscapedUnicodeFixed(
@@ -12734,12 +14201,24 @@ export function wrapCharLiteralEscapedUnicodeFixed(
 		TOKEN_INTERIORS['char_literal_escaped_unicode_fixed'],
 		'char_literal_escaped_unicode_fixed'
 	);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.CharLiteralEscapedUnicodeFixed as const
-		}) as unknown as T.CharLiteralEscapedUnicodeFixed.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.CharLiteralEscapedUnicodeFixed as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.CharLiteralEscapedUnicodeFixed.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.CharLiteralEscapedUnicodeFixed as const,
 		_b: coerceBooleanKeywordStorage(
@@ -12768,12 +14247,21 @@ export function wrapCharLiteralEscapedUnicodeFixed(
 		},
 		$with: {
 			b: (v: NonNullable<T.CharLiteralEscapedUnicodeFixed['_b']>) =>
-				wrapCharLiteralEscapedUnicodeFixed({ ...$edited(data), _b: v }, tree),
+				rebuilt(node, handle, () => wrapCharLiteralEscapedUnicodeFixed({ ...$edited(data), _b: v }, tree)),
 			content: (v: NonNullable<T.CharLiteralEscapedUnicodeFixed['_content']>) =>
-				wrapCharLiteralEscapedUnicodeFixed({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.CharLiteralEscapedUnicodeFixed.Parsed;
+				rebuilt(node, handle, () => wrapCharLiteralEscapedUnicodeFixed({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CharLiteralEscapedUnicodeFixed.Parsed;
 }
 
 export function wrapCharLiteralEscapedUnicodeBraced(
@@ -12786,12 +14274,24 @@ export function wrapCharLiteralEscapedUnicodeBraced(
 		TOKEN_INTERIORS['char_literal_escaped_unicode_braced'],
 		'char_literal_escaped_unicode_braced'
 	);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.CharLiteralEscapedUnicodeBraced as const
-		}) as unknown as T.CharLiteralEscapedUnicodeBraced.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.CharLiteralEscapedUnicodeBraced as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.CharLiteralEscapedUnicodeBraced.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.CharLiteralEscapedUnicodeBraced as const,
 		_b: coerceBooleanKeywordStorage(
@@ -12820,12 +14320,21 @@ export function wrapCharLiteralEscapedUnicodeBraced(
 		},
 		$with: {
 			b: (v: NonNullable<T.CharLiteralEscapedUnicodeBraced['_b']>) =>
-				wrapCharLiteralEscapedUnicodeBraced({ ...$edited(data), _b: v }, tree),
+				rebuilt(node, handle, () => wrapCharLiteralEscapedUnicodeBraced({ ...$edited(data), _b: v }, tree)),
 			content: (v: NonNullable<T.CharLiteralEscapedUnicodeBraced['_content']>) =>
-				wrapCharLiteralEscapedUnicodeBraced({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.CharLiteralEscapedUnicodeBraced.Parsed;
+				rebuilt(node, handle, () => wrapCharLiteralEscapedUnicodeBraced({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CharLiteralEscapedUnicodeBraced.Parsed;
 }
 
 export function wrapCharLiteralEscapedHex(
@@ -12834,12 +14343,24 @@ export function wrapCharLiteralEscapedHex(
 ): T.CharLiteralEscapedHex.Parsed {
 	data = _keepModelledSlots(data, ['_b', '_content']);
 	data = _projectLexed(data, TOKEN_INTERIORS['char_literal_escaped_hex'], 'char_literal_escaped_hex');
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.CharLiteralEscapedHex as const
-		}) as unknown as T.CharLiteralEscapedHex.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.CharLiteralEscapedHex as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.CharLiteralEscapedHex.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.CharLiteralEscapedHex as const,
 		_b: coerceBooleanKeywordStorage(
@@ -12868,12 +14389,21 @@ export function wrapCharLiteralEscapedHex(
 		},
 		$with: {
 			b: (v: NonNullable<T.CharLiteralEscapedHex['_b']>) =>
-				wrapCharLiteralEscapedHex({ ...$edited(data), _b: v }, tree),
+				rebuilt(node, handle, () => wrapCharLiteralEscapedHex({ ...$edited(data), _b: v }, tree)),
 			content: (v: NonNullable<T.CharLiteralEscapedHex['_content']>) =>
-				wrapCharLiteralEscapedHex({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.CharLiteralEscapedHex.Parsed;
+				rebuilt(node, handle, () => wrapCharLiteralEscapedHex({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CharLiteralEscapedHex.Parsed;
 }
 
 export function wrapEscapeSequenceSimple(
@@ -12882,7 +14412,8 @@ export function wrapEscapeSequenceSimple(
 ): T.EscapeSequenceSimple.Parsed {
 	data = _keepModelledSlots(data, ['_content']);
 	data = _projectLexed(data, TOKEN_INTERIORS['escape_sequence_simple'], 'escape_sequence_simple');
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.EscapeSequenceSimple as const,
 		_content: storeExpanded(
@@ -12900,10 +14431,19 @@ export function wrapEscapeSequenceSimple(
 		},
 		$with: {
 			content: (v: NonNullable<T.EscapeSequenceSimple['_content']>) =>
-				wrapEscapeSequenceSimple({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.EscapeSequenceSimple.Parsed;
+				rebuilt(node, handle, () => wrapEscapeSequenceSimple({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.EscapeSequenceSimple.Parsed;
 }
 
 export function wrapEscapeSequenceUnicodeFixed(
@@ -12912,7 +14452,8 @@ export function wrapEscapeSequenceUnicodeFixed(
 ): T.EscapeSequenceUnicodeFixed.Parsed {
 	data = _keepModelledSlots(data, ['_content']);
 	data = _projectLexed(data, TOKEN_INTERIORS['escape_sequence_unicode_fixed'], 'escape_sequence_unicode_fixed');
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.EscapeSequenceUnicodeFixed as const,
 		_content: storeExpanded(
@@ -12930,10 +14471,19 @@ export function wrapEscapeSequenceUnicodeFixed(
 		},
 		$with: {
 			content: (v: NonNullable<T.EscapeSequenceUnicodeFixed['_content']>) =>
-				wrapEscapeSequenceUnicodeFixed({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.EscapeSequenceUnicodeFixed.Parsed;
+				rebuilt(node, handle, () => wrapEscapeSequenceUnicodeFixed({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.EscapeSequenceUnicodeFixed.Parsed;
 }
 
 export function wrapEscapeSequenceUnicodeBraced(
@@ -12942,7 +14492,8 @@ export function wrapEscapeSequenceUnicodeBraced(
 ): T.EscapeSequenceUnicodeBraced.Parsed {
 	data = _keepModelledSlots(data, ['_content']);
 	data = _projectLexed(data, TOKEN_INTERIORS['escape_sequence_unicode_braced'], 'escape_sequence_unicode_braced');
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.EscapeSequenceUnicodeBraced as const,
 		_content: storeExpanded(
@@ -12960,16 +14511,26 @@ export function wrapEscapeSequenceUnicodeBraced(
 		},
 		$with: {
 			content: (v: NonNullable<T.EscapeSequenceUnicodeBraced['_content']>) =>
-				wrapEscapeSequenceUnicodeBraced({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.EscapeSequenceUnicodeBraced.Parsed;
+				rebuilt(node, handle, () => wrapEscapeSequenceUnicodeBraced({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.EscapeSequenceUnicodeBraced.Parsed;
 }
 
 export function wrapEscapeSequenceHex(data: T.EscapeSequenceHex, tree: TreeHandle): T.EscapeSequenceHex.Parsed {
 	data = _keepModelledSlots(data, ['_content']);
 	data = _projectLexed(data, TOKEN_INTERIORS['escape_sequence_hex'], 'escape_sequence_hex');
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.EscapeSequenceHex as const,
 		_content: storeExpanded(
@@ -12987,15 +14548,25 @@ export function wrapEscapeSequenceHex(data: T.EscapeSequenceHex, tree: TreeHandl
 		},
 		$with: {
 			content: (v: NonNullable<T.EscapeSequenceHex['_content']>) =>
-				wrapEscapeSequenceHex({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.EscapeSequenceHex.Parsed;
+				rebuilt(node, handle, () => wrapEscapeSequenceHex({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.EscapeSequenceHex.Parsed;
 }
 
 export function wrapArrayExpressionSemi(data: T.ArrayExpressionSemi, tree: TreeHandle): T.ArrayExpressionSemi.Parsed {
 	data = _keepModelledSlots(data, ['_attributes', '_element', '_length']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ArrayExpressionSemi as const,
 		_attributes: storeExpanded(
@@ -13047,14 +14618,25 @@ export function wrapArrayExpressionSemi(data: T.ArrayExpressionSemi, tree: TreeH
 		},
 		$with: {
 			attributes: (...v: NonNullable<T.ArrayExpressionSemi['_attributes']>[number][]) =>
-				wrapArrayExpressionSemi({ ...$edited(data), _attributes: restItems('attributes', v) }, tree),
+				rebuilt(node, handle, () =>
+					wrapArrayExpressionSemi({ ...$edited(data), _attributes: restItems('attributes', v) }, tree)
+				),
 			element: (v: NonNullable<T.ArrayExpressionSemi['_element']>) =>
-				wrapArrayExpressionSemi({ ...$edited(data), _element: v }, tree),
+				rebuilt(node, handle, () => wrapArrayExpressionSemi({ ...$edited(data), _element: v }, tree)),
 			length: (v: NonNullable<T.ArrayExpressionSemi['_length']>) =>
-				wrapArrayExpressionSemi({ ...$edited(data), _length: v }, tree)
-		}
-	});
-	return _node as unknown as T.ArrayExpressionSemi.Parsed;
+				rebuilt(node, handle, () => wrapArrayExpressionSemi({ ...$edited(data), _length: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ArrayExpressionSemi.Parsed;
 }
 
 export function wrapArrayExpressionList(data: T.ArrayExpressionList, tree: TreeHandle): T.ArrayExpressionList.Parsed {
@@ -13112,7 +14694,8 @@ export function wrapArrayExpressionList(data: T.ArrayExpressionList, tree: TreeH
 
 export function wrapAttributeInput(data: T.AttributeInput, tree: TreeHandle): T.AttributeInput.Parsed {
 	data = _keepModelledSlots(data, ['_value', '_arguments']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.AttributeInput as const,
 		_value: storeExpanded(
@@ -13146,12 +14729,22 @@ export function wrapAttributeInput(data: T.AttributeInput, tree: TreeHandle): T.
 			return hydrateChild<T.DelimTokenTree | undefined>(this._arguments, tree);
 		},
 		$with: {
-			value: (v: NonNullable<T.AttributeInput['_value']>) => wrapAttributeInput({ ...$edited(data), _value: v }, tree),
+			value: (v: NonNullable<T.AttributeInput['_value']>) =>
+				rebuilt(node, handle, () => wrapAttributeInput({ ...$edited(data), _value: v }, tree)),
 			arguments: (v: NonNullable<T.AttributeInput['_arguments']>) =>
-				wrapAttributeInput({ ...$edited(data), _arguments: v }, tree)
-		}
-	});
-	return _node as unknown as T.AttributeInput.Parsed;
+				rebuilt(node, handle, () => wrapAttributeInput({ ...$edited(data), _arguments: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AttributeInput.Parsed;
 }
 
 export function wrapClosureExpressionBlock(
@@ -13166,12 +14759,24 @@ export function wrapClosureExpressionBlock(
 		'_return_type',
 		'_body'
 	]);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.ClosureExpressionBlock as const
-		}) as unknown as T.ClosureExpressionBlock.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.ClosureExpressionBlock as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.ClosureExpressionBlock.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.ClosureExpressionBlock as const,
 		_static_marker: coerceBooleanKeywordStorage(
@@ -13270,20 +14875,29 @@ export function wrapClosureExpressionBlock(
 		},
 		$with: {
 			staticMarker: (v: NonNullable<T.ClosureExpressionBlock['_static_marker']>) =>
-				wrapClosureExpressionBlock({ ...$edited(data), _static_marker: v }, tree),
+				rebuilt(node, handle, () => wrapClosureExpressionBlock({ ...$edited(data), _static_marker: v }, tree)),
 			asyncMarker: (v: NonNullable<T.ClosureExpressionBlock['_async_marker']>) =>
-				wrapClosureExpressionBlock({ ...$edited(data), _async_marker: v }, tree),
+				rebuilt(node, handle, () => wrapClosureExpressionBlock({ ...$edited(data), _async_marker: v }, tree)),
 			moveMarker: (v: NonNullable<T.ClosureExpressionBlock['_move_marker']>) =>
-				wrapClosureExpressionBlock({ ...$edited(data), _move_marker: v }, tree),
+				rebuilt(node, handle, () => wrapClosureExpressionBlock({ ...$edited(data), _move_marker: v }, tree)),
 			parameters: (v: NonNullable<T.ClosureExpressionBlock['_parameters']>) =>
-				wrapClosureExpressionBlock({ ...$edited(data), _parameters: v }, tree),
+				rebuilt(node, handle, () => wrapClosureExpressionBlock({ ...$edited(data), _parameters: v }, tree)),
 			returnType: (v: NonNullable<T.ClosureExpressionBlock['_return_type']>) =>
-				wrapClosureExpressionBlock({ ...$edited(data), _return_type: v }, tree),
+				rebuilt(node, handle, () => wrapClosureExpressionBlock({ ...$edited(data), _return_type: v }, tree)),
 			body: (v: NonNullable<T.ClosureExpressionBlock['_body']>) =>
-				wrapClosureExpressionBlock({ ...$edited(data), _body: v }, tree)
-		}
-	});
-	return _node as unknown as T.ClosureExpressionBlock.Parsed;
+				rebuilt(node, handle, () => wrapClosureExpressionBlock({ ...$edited(data), _body: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ClosureExpressionBlock.Parsed;
 }
 
 export function wrapClosureExpressionExpr(
@@ -13291,12 +14905,24 @@ export function wrapClosureExpressionExpr(
 	tree: TreeHandle
 ): T.ClosureExpressionExpr.Parsed {
 	data = _keepModelledSlots(data, ['_static_marker', '_async_marker', '_move_marker', '_parameters', '_body']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.ClosureExpressionExpr as const
-		}) as unknown as T.ClosureExpressionExpr.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.ClosureExpressionExpr as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.ClosureExpressionExpr.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.ClosureExpressionExpr as const,
 		_static_marker: coerceBooleanKeywordStorage(
@@ -13364,18 +14990,27 @@ export function wrapClosureExpressionExpr(
 		},
 		$with: {
 			staticMarker: (v: NonNullable<T.ClosureExpressionExpr['_static_marker']>) =>
-				wrapClosureExpressionExpr({ ...$edited(data), _static_marker: v }, tree),
+				rebuilt(node, handle, () => wrapClosureExpressionExpr({ ...$edited(data), _static_marker: v }, tree)),
 			asyncMarker: (v: NonNullable<T.ClosureExpressionExpr['_async_marker']>) =>
-				wrapClosureExpressionExpr({ ...$edited(data), _async_marker: v }, tree),
+				rebuilt(node, handle, () => wrapClosureExpressionExpr({ ...$edited(data), _async_marker: v }, tree)),
 			moveMarker: (v: NonNullable<T.ClosureExpressionExpr['_move_marker']>) =>
-				wrapClosureExpressionExpr({ ...$edited(data), _move_marker: v }, tree),
+				rebuilt(node, handle, () => wrapClosureExpressionExpr({ ...$edited(data), _move_marker: v }, tree)),
 			parameters: (v: NonNullable<T.ClosureExpressionExpr['_parameters']>) =>
-				wrapClosureExpressionExpr({ ...$edited(data), _parameters: v }, tree),
+				rebuilt(node, handle, () => wrapClosureExpressionExpr({ ...$edited(data), _parameters: v }, tree)),
 			body: (v: NonNullable<T.ClosureExpressionExpr['_body']>) =>
-				wrapClosureExpressionExpr({ ...$edited(data), _body: v }, tree)
-		}
-	});
-	return _node as unknown as T.ClosureExpressionExpr.Parsed;
+				rebuilt(node, handle, () => wrapClosureExpressionExpr({ ...$edited(data), _body: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ClosureExpressionExpr.Parsed;
 }
 
 export function wrapReferenceExpressionRawConst(
@@ -13383,7 +15018,8 @@ export function wrapReferenceExpressionRawConst(
 	tree: TreeHandle
 ): T.ReferenceExpressionRawConst.Parsed {
 	data = _keepModelledSlots(data, ['_value']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ReferenceExpressionRawConst as const,
 		_value: storeExpanded(
@@ -13406,10 +15042,19 @@ export function wrapReferenceExpressionRawConst(
 		},
 		$with: {
 			value: (v: NonNullable<T.ReferenceExpressionRawConst['_value']>) =>
-				wrapReferenceExpressionRawConst({ ...$edited(data), _value: v }, tree)
-		}
-	});
-	return _node as unknown as T.ReferenceExpressionRawConst.Parsed;
+				rebuilt(node, handle, () => wrapReferenceExpressionRawConst({ ...$edited(data), _value: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ReferenceExpressionRawConst.Parsed;
 }
 
 export function wrapReferenceExpressionRawMut(
@@ -13417,7 +15062,8 @@ export function wrapReferenceExpressionRawMut(
 	tree: TreeHandle
 ): T.ReferenceExpressionRawMut.Parsed {
 	data = _keepModelledSlots(data, ['_value']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ReferenceExpressionRawMut as const,
 		_value: storeExpanded(
@@ -13440,10 +15086,19 @@ export function wrapReferenceExpressionRawMut(
 		},
 		$with: {
 			value: (v: NonNullable<T.ReferenceExpressionRawMut['_value']>) =>
-				wrapReferenceExpressionRawMut({ ...$edited(data), _value: v }, tree)
-		}
-	});
-	return _node as unknown as T.ReferenceExpressionRawMut.Parsed;
+				rebuilt(node, handle, () => wrapReferenceExpressionRawMut({ ...$edited(data), _value: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ReferenceExpressionRawMut.Parsed;
 }
 
 export function wrapReferenceExpressionMut(
@@ -13451,7 +15106,8 @@ export function wrapReferenceExpressionMut(
 	tree: TreeHandle
 ): T.ReferenceExpressionMut.Parsed {
 	data = _keepModelledSlots(data, ['_value']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ReferenceExpressionMut as const,
 		_value: storeExpanded(
@@ -13474,10 +15130,19 @@ export function wrapReferenceExpressionMut(
 		},
 		$with: {
 			value: (v: NonNullable<T.ReferenceExpressionMut['_value']>) =>
-				wrapReferenceExpressionMut({ ...$edited(data), _value: v }, tree)
-		}
-	});
-	return _node as unknown as T.ReferenceExpressionMut.Parsed;
+				rebuilt(node, handle, () => wrapReferenceExpressionMut({ ...$edited(data), _value: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ReferenceExpressionMut.Parsed;
 }
 
 export function wrapReferenceExpressionBare(
@@ -13485,7 +15150,8 @@ export function wrapReferenceExpressionBare(
 	tree: TreeHandle
 ): T.ReferenceExpressionBare.Parsed {
 	data = _keepModelledSlots(data, ['_value']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ReferenceExpressionBare as const,
 		_value: storeExpanded(
@@ -13508,10 +15174,19 @@ export function wrapReferenceExpressionBare(
 		},
 		$with: {
 			value: (v: NonNullable<T.ReferenceExpressionBare['_value']>) =>
-				wrapReferenceExpressionBare({ ...$edited(data), _value: v }, tree)
-		}
-	});
-	return _node as unknown as T.ReferenceExpressionBare.Parsed;
+				rebuilt(node, handle, () => wrapReferenceExpressionBare({ ...$edited(data), _value: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ReferenceExpressionBare.Parsed;
 }
 
 export function wrapImplItemPositiveClause(
@@ -13519,7 +15194,8 @@ export function wrapImplItemPositiveClause(
 	tree: TreeHandle
 ): T.ImplItemPositiveClause.Parsed {
 	data = _keepModelledSlots(data, ['_trait']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ImplItemPositiveClause as const,
 		_trait: storeExpanded(
@@ -13537,10 +15213,19 @@ export function wrapImplItemPositiveClause(
 		},
 		$with: {
 			trait: (v: NonNullable<T.ImplItemPositiveClause['_trait']>) =>
-				wrapImplItemPositiveClause({ ...$edited(data), _trait: v }, tree)
-		}
-	});
-	return _node as unknown as T.ImplItemPositiveClause.Parsed;
+				rebuilt(node, handle, () => wrapImplItemPositiveClause({ ...$edited(data), _trait: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ImplItemPositiveClause.Parsed;
 }
 
 export function wrapImplItemNegativeClause(
@@ -13548,7 +15233,8 @@ export function wrapImplItemNegativeClause(
 	tree: TreeHandle
 ): T.ImplItemNegativeClause.Parsed {
 	data = _keepModelledSlots(data, ['_trait']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ImplItemNegativeClause as const,
 		_trait: storeExpanded(
@@ -13566,10 +15252,19 @@ export function wrapImplItemNegativeClause(
 		},
 		$with: {
 			trait: (v: NonNullable<T.ImplItemNegativeClause['_trait']>) =>
-				wrapImplItemNegativeClause({ ...$edited(data), _trait: v }, tree)
-		}
-	});
-	return _node as unknown as T.ImplItemNegativeClause.Parsed;
+				rebuilt(node, handle, () => wrapImplItemNegativeClause({ ...$edited(data), _trait: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ImplItemNegativeClause.Parsed;
 }
 
 export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle): T.ImplItemBody.Parsed {
@@ -13844,12 +15539,24 @@ export function wrapVisibilityModifierPubScopeInPath(
 	tree: TreeHandle
 ): T.VisibilityModifierPubScopeInPath.Parsed {
 	data = _keepModelledSlots(data, ['_path']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.VisibilityModifierPubScopeInPath as const
-		}) as unknown as T.VisibilityModifierPubScopeInPath.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.VisibilityModifierPubScopeInPath as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.VisibilityModifierPubScopeInPath.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.VisibilityModifierPubScopeInPath as const,
 		_path: storeExpanded(
@@ -13974,10 +15681,19 @@ export function wrapVisibilityModifierPubScopeInPath(
 		},
 		$with: {
 			path: (v: NonNullable<T.VisibilityModifierPubScopeInPath['_path']>) =>
-				wrapVisibilityModifierPubScopeInPath({ ...$edited(data), _path: v }, tree)
-		}
-	});
-	return _node as unknown as T.VisibilityModifierPubScopeInPath.Parsed;
+				rebuilt(node, handle, () => wrapVisibilityModifierPubScopeInPath({ ...$edited(data), _path: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.VisibilityModifierPubScopeInPath.Parsed;
 }
 
 export function wrapVisibilityModifierPubScope(
@@ -13985,12 +15701,24 @@ export function wrapVisibilityModifierPubScope(
 	tree: TreeHandle
 ): T.VisibilityModifierPubScope.Parsed {
 	data = _keepModelledSlots(data, ['_content']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.VisibilityModifierPubScope as const
-		}) as unknown as T.VisibilityModifierPubScope.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.VisibilityModifierPubScope as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.VisibilityModifierPubScope.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.VisibilityModifierPubScope as const,
 		_content: storeExpanded(
@@ -14019,10 +15747,19 @@ export function wrapVisibilityModifierPubScope(
 		},
 		$with: {
 			content: (v: NonNullable<T.VisibilityModifierPubScope['_content']>) =>
-				wrapVisibilityModifierPubScope({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.VisibilityModifierPubScope.Parsed;
+				rebuilt(node, handle, () => wrapVisibilityModifierPubScope({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.VisibilityModifierPubScope.Parsed;
 }
 
 export function wrapVisibilityModifierPub(
@@ -14030,7 +15767,8 @@ export function wrapVisibilityModifierPub(
 	tree: TreeHandle
 ): T.VisibilityModifierPub.Parsed {
 	data = _keepModelledSlots(data, ['_visibility_modifier_pub_scope']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.VisibilityModifierPub as const,
 		_visibility_modifier_pub_scope: storeExpanded(
@@ -14049,10 +15787,21 @@ export function wrapVisibilityModifierPub(
 		},
 		$with: {
 			visibilityModifierPubScope: (v: NonNullable<T.VisibilityModifierPub['_visibility_modifier_pub_scope']>) =>
-				wrapVisibilityModifierPub({ ...$edited(data), _visibility_modifier_pub_scope: v }, tree)
-		}
-	});
-	return _node as unknown as T.VisibilityModifierPub.Parsed;
+				rebuilt(node, handle, () =>
+					wrapVisibilityModifierPub({ ...$edited(data), _visibility_modifier_pub_scope: v }, tree)
+				)
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.VisibilityModifierPub.Parsed;
 }
 
 export function wrapFunctionTypeTraitForm(
@@ -14060,7 +15809,8 @@ export function wrapFunctionTypeTraitForm(
 	tree: TreeHandle
 ): T.FunctionTypeTraitForm.Parsed {
 	data = _keepModelledSlots(data, ['_trait']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.FunctionTypeTraitForm as const,
 		_trait: storeExpanded(
@@ -14078,15 +15828,25 @@ export function wrapFunctionTypeTraitForm(
 		},
 		$with: {
 			trait: (v: NonNullable<T.FunctionTypeTraitForm['_trait']>) =>
-				wrapFunctionTypeTraitForm({ ...$edited(data), _trait: v }, tree)
-		}
-	});
-	return _node as unknown as T.FunctionTypeTraitForm.Parsed;
+				rebuilt(node, handle, () => wrapFunctionTypeTraitForm({ ...$edited(data), _trait: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FunctionTypeTraitForm.Parsed;
 }
 
 export function wrapFunctionTypeFnForm(data: T.FunctionTypeFnForm, tree: TreeHandle): T.FunctionTypeFnForm.Parsed {
 	data = _keepModelledSlots(data, ['_function_modifiers']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.FunctionTypeFnForm as const,
 		_function_modifiers: storeExpanded(
@@ -14104,15 +15864,25 @@ export function wrapFunctionTypeFnForm(data: T.FunctionTypeFnForm, tree: TreeHan
 		},
 		$with: {
 			functionModifiers: (v: NonNullable<T.FunctionTypeFnForm['_function_modifiers']>) =>
-				wrapFunctionTypeFnForm({ ...$edited(data), _function_modifiers: v }, tree)
-		}
-	});
-	return _node as unknown as T.FunctionTypeFnForm.Parsed;
+				rebuilt(node, handle, () => wrapFunctionTypeFnForm({ ...$edited(data), _function_modifiers: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FunctionTypeFnForm.Parsed;
 }
 
 export function wrapModItemExternal(data: T.ModItemExternal, tree: TreeHandle): T.ModItemExternal.Parsed {
 	data = _keepModelledSlots(data, ['_visibility_modifier', '_name']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ModItemExternal as const,
 		_visibility_modifier: storeExpanded(
@@ -14142,16 +15912,27 @@ export function wrapModItemExternal(data: T.ModItemExternal, tree: TreeHandle): 
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.ModItemExternal['_visibility_modifier']>) =>
-				wrapModItemExternal({ ...$edited(data), _visibility_modifier: v }, tree),
-			name: (v: NonNullable<T.ModItemExternal['_name']>) => wrapModItemExternal({ ...$edited(data), _name: v }, tree)
-		}
-	});
-	return _node as unknown as T.ModItemExternal.Parsed;
+				rebuilt(node, handle, () => wrapModItemExternal({ ...$edited(data), _visibility_modifier: v }, tree)),
+			name: (v: NonNullable<T.ModItemExternal['_name']>) =>
+				rebuilt(node, handle, () => wrapModItemExternal({ ...$edited(data), _name: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ModItemExternal.Parsed;
 }
 
 export function wrapModItemInline(data: T.ModItemInline, tree: TreeHandle): T.ModItemInline.Parsed {
 	data = _keepModelledSlots(data, ['_visibility_modifier', '_name', '_body']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ModItemInline as const,
 		_visibility_modifier: storeExpanded(
@@ -14193,17 +15974,29 @@ export function wrapModItemInline(data: T.ModItemInline, tree: TreeHandle): T.Mo
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.ModItemInline['_visibility_modifier']>) =>
-				wrapModItemInline({ ...$edited(data), _visibility_modifier: v }, tree),
-			name: (v: NonNullable<T.ModItemInline['_name']>) => wrapModItemInline({ ...$edited(data), _name: v }, tree),
-			body: (v: NonNullable<T.ModItemInline['_body']>) => wrapModItemInline({ ...$edited(data), _body: v }, tree)
-		}
-	});
-	return _node as unknown as T.ModItemInline.Parsed;
+				rebuilt(node, handle, () => wrapModItemInline({ ...$edited(data), _visibility_modifier: v }, tree)),
+			name: (v: NonNullable<T.ModItemInline['_name']>) =>
+				rebuilt(node, handle, () => wrapModItemInline({ ...$edited(data), _name: v }, tree)),
+			body: (v: NonNullable<T.ModItemInline['_body']>) =>
+				rebuilt(node, handle, () => wrapModItemInline({ ...$edited(data), _body: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ModItemInline.Parsed;
 }
 
 export function wrapOrPatternBinary(data: T.OrPatternBinary, tree: TreeHandle): T.OrPatternBinary.Parsed {
 	data = _keepModelledSlots(data, ['_left', '_right']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.OrPatternBinary as const,
 		_left: storeExpanded(
@@ -14242,16 +16035,28 @@ export function wrapOrPatternBinary(data: T.OrPatternBinary, tree: TreeHandle): 
 			return hydrateChild<T.Pattern>(this._right, tree);
 		},
 		$with: {
-			left: (v: NonNullable<T.OrPatternBinary['_left']>) => wrapOrPatternBinary({ ...$edited(data), _left: v }, tree),
-			right: (v: NonNullable<T.OrPatternBinary['_right']>) => wrapOrPatternBinary({ ...$edited(data), _right: v }, tree)
-		}
-	});
-	return _node as unknown as T.OrPatternBinary.Parsed;
+			left: (v: NonNullable<T.OrPatternBinary['_left']>) =>
+				rebuilt(node, handle, () => wrapOrPatternBinary({ ...$edited(data), _left: v }, tree)),
+			right: (v: NonNullable<T.OrPatternBinary['_right']>) =>
+				rebuilt(node, handle, () => wrapOrPatternBinary({ ...$edited(data), _right: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.OrPatternBinary.Parsed;
 }
 
 export function wrapOrPatternPrefix(data: T.OrPatternPrefix, tree: TreeHandle): T.OrPatternPrefix.Parsed {
 	data = _keepModelledSlots(data, ['_right']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.OrPatternPrefix as const,
 		_right: storeExpanded(
@@ -14273,15 +16078,26 @@ export function wrapOrPatternPrefix(data: T.OrPatternPrefix, tree: TreeHandle): 
 			return hydrateChild<T.Pattern>(this._right, tree);
 		},
 		$with: {
-			right: (v: NonNullable<T.OrPatternPrefix['_right']>) => wrapOrPatternPrefix({ ...$edited(data), _right: v }, tree)
-		}
-	});
-	return _node as unknown as T.OrPatternPrefix.Parsed;
+			right: (v: NonNullable<T.OrPatternPrefix['_right']>) =>
+				rebuilt(node, handle, () => wrapOrPatternPrefix({ ...$edited(data), _right: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.OrPatternPrefix.Parsed;
 }
 
 export function wrapPointerTypeConst(data: T.PointerTypeConst, tree: TreeHandle): T.PointerTypeConst.Parsed {
 	data = _keepModelledSlots(data, ['_type']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.PointerTypeConst as const,
 		_type: storeExpanded(
@@ -14322,15 +16138,26 @@ export function wrapPointerTypeConst(data: T.PointerTypeConst, tree: TreeHandle)
 			return hydrateChild<T.Type>(this._type, tree);
 		},
 		$with: {
-			type: (v: NonNullable<T.PointerTypeConst['_type']>) => wrapPointerTypeConst({ ...$edited(data), _type: v }, tree)
-		}
-	});
-	return _node as unknown as T.PointerTypeConst.Parsed;
+			type: (v: NonNullable<T.PointerTypeConst['_type']>) =>
+				rebuilt(node, handle, () => wrapPointerTypeConst({ ...$edited(data), _type: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.PointerTypeConst.Parsed;
 }
 
 export function wrapPointerTypeMut(data: T.PointerTypeMut, tree: TreeHandle): T.PointerTypeMut.Parsed {
 	data = _keepModelledSlots(data, ['_type']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.PointerTypeMut as const,
 		_type: storeExpanded(
@@ -14371,10 +16198,20 @@ export function wrapPointerTypeMut(data: T.PointerTypeMut, tree: TreeHandle): T.
 			return hydrateChild<T.Type>(this._type, tree);
 		},
 		$with: {
-			type: (v: NonNullable<T.PointerTypeMut['_type']>) => wrapPointerTypeMut({ ...$edited(data), _type: v }, tree)
-		}
-	});
-	return _node as unknown as T.PointerTypeMut.Parsed;
+			type: (v: NonNullable<T.PointerTypeMut['_type']>) =>
+				rebuilt(node, handle, () => wrapPointerTypeMut({ ...$edited(data), _type: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.PointerTypeMut.Parsed;
 }
 
 export function wrapRangeExpressionBinary(
@@ -14382,12 +16219,24 @@ export function wrapRangeExpressionBinary(
 	tree: TreeHandle
 ): T.RangeExpressionBinary.Parsed {
 	data = _keepModelledSlots(data, ['_start', '_operator', '_end']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.RangeExpressionBinary as const
-		}) as unknown as T.RangeExpressionBinary.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.RangeExpressionBinary as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.RangeExpressionBinary.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.RangeExpressionBinary as const,
 		_start: storeExpanded(
@@ -14439,14 +16288,23 @@ export function wrapRangeExpressionBinary(
 		},
 		$with: {
 			start: (v: NonNullable<T.RangeExpressionBinary['_start']>) =>
-				wrapRangeExpressionBinary({ ...$edited(data), _start: v }, tree),
+				rebuilt(node, handle, () => wrapRangeExpressionBinary({ ...$edited(data), _start: v }, tree)),
 			operator: (v: NonNullable<T.RangeExpressionBinary['_operator']>) =>
-				wrapRangeExpressionBinary({ ...$edited(data), _operator: v }, tree),
+				rebuilt(node, handle, () => wrapRangeExpressionBinary({ ...$edited(data), _operator: v }, tree)),
 			end: (v: NonNullable<T.RangeExpressionBinary['_end']>) =>
-				wrapRangeExpressionBinary({ ...$edited(data), _end: v }, tree)
-		}
-	});
-	return _node as unknown as T.RangeExpressionBinary.Parsed;
+				rebuilt(node, handle, () => wrapRangeExpressionBinary({ ...$edited(data), _end: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RangeExpressionBinary.Parsed;
 }
 
 export function wrapRangeExpressionPostfix(
@@ -14454,7 +16312,8 @@ export function wrapRangeExpressionPostfix(
 	tree: TreeHandle
 ): T.RangeExpressionPostfix.Parsed {
 	data = _keepModelledSlots(data, ['_start']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.RangeExpressionPostfix as const,
 		_start: storeExpanded(
@@ -14477,10 +16336,19 @@ export function wrapRangeExpressionPostfix(
 		},
 		$with: {
 			start: (v: NonNullable<T.RangeExpressionPostfix['_start']>) =>
-				wrapRangeExpressionPostfix({ ...$edited(data), _start: v }, tree)
-		}
-	});
-	return _node as unknown as T.RangeExpressionPostfix.Parsed;
+				rebuilt(node, handle, () => wrapRangeExpressionPostfix({ ...$edited(data), _start: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RangeExpressionPostfix.Parsed;
 }
 
 export function wrapRangeExpressionPrefix(
@@ -14488,7 +16356,8 @@ export function wrapRangeExpressionPrefix(
 	tree: TreeHandle
 ): T.RangeExpressionPrefix.Parsed {
 	data = _keepModelledSlots(data, ['_end']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.RangeExpressionPrefix as const,
 		_end: storeExpanded(
@@ -14511,20 +16380,41 @@ export function wrapRangeExpressionPrefix(
 		},
 		$with: {
 			end: (v: NonNullable<T.RangeExpressionPrefix['_end']>) =>
-				wrapRangeExpressionPrefix({ ...$edited(data), _end: v }, tree)
-		}
-	});
-	return _node as unknown as T.RangeExpressionPrefix.Parsed;
+				rebuilt(node, handle, () => wrapRangeExpressionPrefix({ ...$edited(data), _end: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RangeExpressionPrefix.Parsed;
 }
 
 export function wrapRangeExpressionBare(data: T.RangeExpressionBare, tree: TreeHandle): T.RangeExpressionBare.Parsed {
 	data = _keepModelledSlots(data, ['_range_expression_bare']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.RangeExpressionBare as const
-		}) as unknown as T.RangeExpressionBare.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.RangeExpressionBare as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.RangeExpressionBare.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.RangeExpressionBare as const,
 		_range_expression_bare: projectKindEnumStorage(
@@ -14544,10 +16434,19 @@ export function wrapRangeExpressionBare(data: T.RangeExpressionBare, tree: TreeH
 		},
 		$with: {
 			rangeExpressionBare: (v: NonNullable<T.RangeExpressionBare['_range_expression_bare']>) =>
-				wrapRangeExpressionBare({ ...$edited(data), _range_expression_bare: v }, tree)
-		}
-	});
-	return _node as unknown as T.RangeExpressionBare.Parsed;
+				rebuilt(node, handle, () => wrapRangeExpressionBare({ ...$edited(data), _range_expression_bare: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RangeExpressionBare.Parsed;
 }
 
 export function wrapExpressionStatementWithSemi(
@@ -14555,7 +16454,8 @@ export function wrapExpressionStatementWithSemi(
 	tree: TreeHandle
 ): T.ExpressionStatementWithSemi.Parsed {
 	data = _keepModelledSlots(data, ['_expression']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ExpressionStatementWithSemi as const,
 		_expression: storeExpanded(
@@ -14578,15 +16478,25 @@ export function wrapExpressionStatementWithSemi(
 		},
 		$with: {
 			expression: (v: NonNullable<T.ExpressionStatementWithSemi['_expression']>) =>
-				wrapExpressionStatementWithSemi({ ...$edited(data), _expression: v }, tree)
-		}
-	});
-	return _node as unknown as T.ExpressionStatementWithSemi.Parsed;
+				rebuilt(node, handle, () => wrapExpressionStatementWithSemi({ ...$edited(data), _expression: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ExpressionStatementWithSemi.Parsed;
 }
 
 export function wrapForeignModItemSemi(data: T.ForeignModItemSemi, tree: TreeHandle): T.ForeignModItemSemi.Parsed {
 	data = _keepModelledSlots(data, ['_visibility_modifier', '_extern_modifier']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ForeignModItemSemi as const,
 		_visibility_modifier: storeExpanded(
@@ -14616,17 +16526,27 @@ export function wrapForeignModItemSemi(data: T.ForeignModItemSemi, tree: TreeHan
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.ForeignModItemSemi['_visibility_modifier']>) =>
-				wrapForeignModItemSemi({ ...$edited(data), _visibility_modifier: v }, tree),
+				rebuilt(node, handle, () => wrapForeignModItemSemi({ ...$edited(data), _visibility_modifier: v }, tree)),
 			externModifier: (v: NonNullable<T.ForeignModItemSemi['_extern_modifier']>) =>
-				wrapForeignModItemSemi({ ...$edited(data), _extern_modifier: v }, tree)
-		}
-	});
-	return _node as unknown as T.ForeignModItemSemi.Parsed;
+				rebuilt(node, handle, () => wrapForeignModItemSemi({ ...$edited(data), _extern_modifier: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ForeignModItemSemi.Parsed;
 }
 
 export function wrapForeignModItemBody(data: T.ForeignModItemBody, tree: TreeHandle): T.ForeignModItemBody.Parsed {
 	data = _keepModelledSlots(data, ['_visibility_modifier', '_extern_modifier', '_body']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ForeignModItemBody as const,
 		_visibility_modifier: storeExpanded(
@@ -14668,14 +16588,23 @@ export function wrapForeignModItemBody(data: T.ForeignModItemBody, tree: TreeHan
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.ForeignModItemBody['_visibility_modifier']>) =>
-				wrapForeignModItemBody({ ...$edited(data), _visibility_modifier: v }, tree),
+				rebuilt(node, handle, () => wrapForeignModItemBody({ ...$edited(data), _visibility_modifier: v }, tree)),
 			externModifier: (v: NonNullable<T.ForeignModItemBody['_extern_modifier']>) =>
-				wrapForeignModItemBody({ ...$edited(data), _extern_modifier: v }, tree),
+				rebuilt(node, handle, () => wrapForeignModItemBody({ ...$edited(data), _extern_modifier: v }, tree)),
 			body: (v: NonNullable<T.ForeignModItemBody['_body']>) =>
-				wrapForeignModItemBody({ ...$edited(data), _body: v }, tree)
-		}
-	});
-	return _node as unknown as T.ForeignModItemBody.Parsed;
+				rebuilt(node, handle, () => wrapForeignModItemBody({ ...$edited(data), _body: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ForeignModItemBody.Parsed;
 }
 
 export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandle): T.MatchArmWithComma.Parsed {
@@ -14839,7 +16768,8 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 
 export function wrapLineCommentDocOuter(data: T.LineCommentDocOuter, tree: TreeHandle): T.LineCommentDocOuter.Parsed {
 	data = _keepModelledSlots(data, ['_doc']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.LineCommentDocOuter as const,
 		_doc: storeExpanded(
@@ -14857,15 +16787,25 @@ export function wrapLineCommentDocOuter(data: T.LineCommentDocOuter, tree: TreeH
 		},
 		$with: {
 			doc: (v: NonNullable<T.LineCommentDocOuter['_doc']>) =>
-				wrapLineCommentDocOuter({ ...$edited(data), _doc: v }, tree)
-		}
-	});
-	return _node as unknown as T.LineCommentDocOuter.Parsed;
+				rebuilt(node, handle, () => wrapLineCommentDocOuter({ ...$edited(data), _doc: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LineCommentDocOuter.Parsed;
 }
 
 export function wrapLineCommentDocInner(data: T.LineCommentDocInner, tree: TreeHandle): T.LineCommentDocInner.Parsed {
 	data = _keepModelledSlots(data, ['_doc']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.LineCommentDocInner as const,
 		_doc: storeExpanded(
@@ -14883,10 +16823,19 @@ export function wrapLineCommentDocInner(data: T.LineCommentDocInner, tree: TreeH
 		},
 		$with: {
 			doc: (v: NonNullable<T.LineCommentDocInner['_doc']>) =>
-				wrapLineCommentDocInner({ ...$edited(data), _doc: v }, tree)
-		}
-	});
-	return _node as unknown as T.LineCommentDocInner.Parsed;
+				rebuilt(node, handle, () => wrapLineCommentDocInner({ ...$edited(data), _doc: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LineCommentDocInner.Parsed;
 }
 
 export function wrapBlockCommentDocOuter(
@@ -14894,7 +16843,8 @@ export function wrapBlockCommentDocOuter(
 	tree: TreeHandle
 ): T.BlockCommentDocOuter.Parsed {
 	data = _keepModelledSlots(data, ['_doc']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.BlockCommentDocOuter as const,
 		_doc: storeExpanded(
@@ -14912,10 +16862,19 @@ export function wrapBlockCommentDocOuter(
 		},
 		$with: {
 			doc: (v: NonNullable<T.BlockCommentDocOuter['_doc']>) =>
-				wrapBlockCommentDocOuter({ ...$edited(data), _doc: v }, tree)
-		}
-	});
-	return _node as unknown as T.BlockCommentDocOuter.Parsed;
+				rebuilt(node, handle, () => wrapBlockCommentDocOuter({ ...$edited(data), _doc: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.BlockCommentDocOuter.Parsed;
 }
 
 export function wrapBlockCommentDocInner(
@@ -14923,7 +16882,8 @@ export function wrapBlockCommentDocInner(
 	tree: TreeHandle
 ): T.BlockCommentDocInner.Parsed {
 	data = _keepModelledSlots(data, ['_doc']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.BlockCommentDocInner as const,
 		_doc: storeExpanded(
@@ -14941,10 +16901,19 @@ export function wrapBlockCommentDocInner(
 		},
 		$with: {
 			doc: (v: NonNullable<T.BlockCommentDocInner['_doc']>) =>
-				wrapBlockCommentDocInner({ ...$edited(data), _doc: v }, tree)
-		}
-	});
-	return _node as unknown as T.BlockCommentDocInner.Parsed;
+				rebuilt(node, handle, () => wrapBlockCommentDocInner({ ...$edited(data), _doc: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.BlockCommentDocInner.Parsed;
 }
 
 export function wrapTokenTreePatternParen(
@@ -14952,7 +16921,8 @@ export function wrapTokenTreePatternParen(
 	tree: TreeHandle
 ): T.TokenTreePatternParen.Parsed {
 	data = _keepModelledSlots(data, ['_token_patterns']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.TokenTreePatternParen as const,
 		_token_patterns: storeExpanded(
@@ -14983,10 +16953,22 @@ export function wrapTokenTreePatternParen(
 		},
 		$with: {
 			tokenPatterns: (...v: NonNullable<T.TokenTreePatternParen['_token_patterns']>[number][]) =>
-				wrapTokenTreePatternParen({ ...$edited(data), _token_patterns: restItems('tokenPatterns', v) }, tree)
-		}
-	});
-	return _node as unknown as T.TokenTreePatternParen.Parsed;
+				rebuilt(node, handle, () =>
+					wrapTokenTreePatternParen({ ...$edited(data), _token_patterns: restItems('tokenPatterns', v) }, tree)
+				)
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TokenTreePatternParen.Parsed;
 }
 
 export function wrapTokenTreePatternBracket(
@@ -14994,7 +16976,8 @@ export function wrapTokenTreePatternBracket(
 	tree: TreeHandle
 ): T.TokenTreePatternBracket.Parsed {
 	data = _keepModelledSlots(data, ['_token_patterns']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.TokenTreePatternBracket as const,
 		_token_patterns: storeExpanded(
@@ -15025,10 +17008,22 @@ export function wrapTokenTreePatternBracket(
 		},
 		$with: {
 			tokenPatterns: (...v: NonNullable<T.TokenTreePatternBracket['_token_patterns']>[number][]) =>
-				wrapTokenTreePatternBracket({ ...$edited(data), _token_patterns: restItems('tokenPatterns', v) }, tree)
-		}
-	});
-	return _node as unknown as T.TokenTreePatternBracket.Parsed;
+				rebuilt(node, handle, () =>
+					wrapTokenTreePatternBracket({ ...$edited(data), _token_patterns: restItems('tokenPatterns', v) }, tree)
+				)
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TokenTreePatternBracket.Parsed;
 }
 
 export function wrapTokenTreePatternBrace(
@@ -15036,7 +17031,8 @@ export function wrapTokenTreePatternBrace(
 	tree: TreeHandle
 ): T.TokenTreePatternBrace.Parsed {
 	data = _keepModelledSlots(data, ['_token_patterns']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.TokenTreePatternBrace as const,
 		_token_patterns: storeExpanded(
@@ -15067,15 +17063,28 @@ export function wrapTokenTreePatternBrace(
 		},
 		$with: {
 			tokenPatterns: (...v: NonNullable<T.TokenTreePatternBrace['_token_patterns']>[number][]) =>
-				wrapTokenTreePatternBrace({ ...$edited(data), _token_patterns: restItems('tokenPatterns', v) }, tree)
-		}
-	});
-	return _node as unknown as T.TokenTreePatternBrace.Parsed;
+				rebuilt(node, handle, () =>
+					wrapTokenTreePatternBrace({ ...$edited(data), _token_patterns: restItems('tokenPatterns', v) }, tree)
+				)
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TokenTreePatternBrace.Parsed;
 }
 
 export function wrapTokenTreeParen(data: T.TokenTreeParen, tree: TreeHandle): T.TokenTreeParen.Parsed {
 	data = _keepModelledSlots(data, ['_tokens']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.TokenTreeParen as const,
 		_tokens: storeExpanded(
@@ -15096,15 +17105,26 @@ export function wrapTokenTreeParen(data: T.TokenTreeParen, tree: TreeHandle): T.
 		},
 		$with: {
 			tokens: (...v: NonNullable<T.TokenTreeParen['_tokens']>[number][]) =>
-				wrapTokenTreeParen({ ...$edited(data), _tokens: restItems('tokens', v) }, tree)
-		}
-	});
-	return _node as unknown as T.TokenTreeParen.Parsed;
+				rebuilt(node, handle, () => wrapTokenTreeParen({ ...$edited(data), _tokens: restItems('tokens', v) }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TokenTreeParen.Parsed;
 }
 
 export function wrapTokenTreeBracket(data: T.TokenTreeBracket, tree: TreeHandle): T.TokenTreeBracket.Parsed {
 	data = _keepModelledSlots(data, ['_tokens']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.TokenTreeBracket as const,
 		_tokens: storeExpanded(
@@ -15125,15 +17145,26 @@ export function wrapTokenTreeBracket(data: T.TokenTreeBracket, tree: TreeHandle)
 		},
 		$with: {
 			tokens: (...v: NonNullable<T.TokenTreeBracket['_tokens']>[number][]) =>
-				wrapTokenTreeBracket({ ...$edited(data), _tokens: restItems('tokens', v) }, tree)
-		}
-	});
-	return _node as unknown as T.TokenTreeBracket.Parsed;
+				rebuilt(node, handle, () => wrapTokenTreeBracket({ ...$edited(data), _tokens: restItems('tokens', v) }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TokenTreeBracket.Parsed;
 }
 
 export function wrapTokenTreeBrace(data: T.TokenTreeBrace, tree: TreeHandle): T.TokenTreeBrace.Parsed {
 	data = _keepModelledSlots(data, ['_tokens']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.TokenTreeBrace as const,
 		_tokens: storeExpanded(
@@ -15154,20 +17185,43 @@ export function wrapTokenTreeBrace(data: T.TokenTreeBrace, tree: TreeHandle): T.
 		},
 		$with: {
 			tokens: (...v: NonNullable<T.TokenTreeBrace['_tokens']>[number][]) =>
-				wrapTokenTreeBrace({ ...$edited(data), _tokens: restItems('tokens', v) }, tree)
-		}
-	});
-	return _node as unknown as T.TokenTreeBrace.Parsed;
+				rebuilt(node, handle, () => wrapTokenTreeBrace({ ...$edited(data), _tokens: restItems('tokens', v) }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TokenTreeBrace.Parsed;
 }
 
 export function wrapDelimTokenTreeParen(data: T.DelimTokenTreeParen, tree: TreeHandle): T.DelimTokenTreeParen.Parsed {
 	data = _keepModelledSlots(data, ['_delim_tokens']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.DelimTokenTreeParen as const
-		}) as unknown as T.DelimTokenTreeParen.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.DelimTokenTreeParen as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+				inner: (...items: unknown[]) => triviaInner(node, handle, items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.DelimTokenTreeParen.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.DelimTokenTreeParen as const,
 		_delim_tokens: storeExpanded(
@@ -15191,10 +17245,22 @@ export function wrapDelimTokenTreeParen(data: T.DelimTokenTreeParen, tree: TreeH
 		},
 		$with: {
 			delimTokens: (...v: NonNullable<T.DelimTokenTreeParen['_delim_tokens']>[number][]) =>
-				wrapDelimTokenTreeParen({ ...$edited(data), _delim_tokens: restItems('delimTokens', v) }, tree)
-		}
-	});
-	return _node as unknown as T.DelimTokenTreeParen.Parsed;
+				rebuilt(node, handle, () =>
+					wrapDelimTokenTreeParen({ ...$edited(data), _delim_tokens: restItems('delimTokens', v) }, tree)
+				)
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.DelimTokenTreeParen.Parsed;
 }
 
 export function wrapDelimTokenTreeBracket(
@@ -15202,12 +17268,25 @@ export function wrapDelimTokenTreeBracket(
 	tree: TreeHandle
 ): T.DelimTokenTreeBracket.Parsed {
 	data = _keepModelledSlots(data, ['_delim_tokens']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.DelimTokenTreeBracket as const
-		}) as unknown as T.DelimTokenTreeBracket.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.DelimTokenTreeBracket as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+				inner: (...items: unknown[]) => triviaInner(node, handle, items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.DelimTokenTreeBracket.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.DelimTokenTreeBracket as const,
 		_delim_tokens: storeExpanded(
@@ -15231,20 +17310,45 @@ export function wrapDelimTokenTreeBracket(
 		},
 		$with: {
 			delimTokens: (...v: NonNullable<T.DelimTokenTreeBracket['_delim_tokens']>[number][]) =>
-				wrapDelimTokenTreeBracket({ ...$edited(data), _delim_tokens: restItems('delimTokens', v) }, tree)
-		}
-	});
-	return _node as unknown as T.DelimTokenTreeBracket.Parsed;
+				rebuilt(node, handle, () =>
+					wrapDelimTokenTreeBracket({ ...$edited(data), _delim_tokens: restItems('delimTokens', v) }, tree)
+				)
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.DelimTokenTreeBracket.Parsed;
 }
 
 export function wrapDelimTokenTreeBrace(data: T.DelimTokenTreeBrace, tree: TreeHandle): T.DelimTokenTreeBrace.Parsed {
 	data = _keepModelledSlots(data, ['_delim_tokens']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.DelimTokenTreeBrace as const
-		}) as unknown as T.DelimTokenTreeBrace.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.DelimTokenTreeBrace as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+				inner: (...items: unknown[]) => triviaInner(node, handle, items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.DelimTokenTreeBrace.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.DelimTokenTreeBrace as const,
 		_delim_tokens: storeExpanded(
@@ -15268,10 +17372,22 @@ export function wrapDelimTokenTreeBrace(data: T.DelimTokenTreeBrace, tree: TreeH
 		},
 		$with: {
 			delimTokens: (...v: NonNullable<T.DelimTokenTreeBrace['_delim_tokens']>[number][]) =>
-				wrapDelimTokenTreeBrace({ ...$edited(data), _delim_tokens: restItems('delimTokens', v) }, tree)
-		}
-	});
-	return _node as unknown as T.DelimTokenTreeBrace.Parsed;
+				rebuilt(node, handle, () =>
+					wrapDelimTokenTreeBrace({ ...$edited(data), _delim_tokens: restItems('delimTokens', v) }, tree)
+				)
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.DelimTokenTreeBrace.Parsed;
 }
 
 export function wrapFieldPatternShorthand(
@@ -15279,12 +17395,24 @@ export function wrapFieldPatternShorthand(
 	tree: TreeHandle
 ): T.FieldPatternShorthand.Parsed {
 	data = _keepModelledSlots(data, ['_ref_marker', '_mutable_specifier', '_name']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.FieldPatternShorthand as const
-		}) as unknown as T.FieldPatternShorthand.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.FieldPatternShorthand as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.FieldPatternShorthand.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.FieldPatternShorthand as const,
 		_ref_marker: coerceBooleanKeywordStorage(
@@ -15324,24 +17452,45 @@ export function wrapFieldPatternShorthand(
 		},
 		$with: {
 			refMarker: (v: NonNullable<T.FieldPatternShorthand['_ref_marker']>) =>
-				wrapFieldPatternShorthand({ ...$edited(data), _ref_marker: v }, tree),
+				rebuilt(node, handle, () => wrapFieldPatternShorthand({ ...$edited(data), _ref_marker: v }, tree)),
 			mutableSpecifier: (v: NonNullable<T.FieldPatternShorthand['_mutable_specifier']>) =>
-				wrapFieldPatternShorthand({ ...$edited(data), _mutable_specifier: v }, tree),
+				rebuilt(node, handle, () => wrapFieldPatternShorthand({ ...$edited(data), _mutable_specifier: v }, tree)),
 			name: (v: NonNullable<T.FieldPatternShorthand['_name']>) =>
-				wrapFieldPatternShorthand({ ...$edited(data), _name: v }, tree)
-		}
-	});
-	return _node as unknown as T.FieldPatternShorthand.Parsed;
+				rebuilt(node, handle, () => wrapFieldPatternShorthand({ ...$edited(data), _name: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FieldPatternShorthand.Parsed;
 }
 
 export function wrapFieldPatternNamed(data: T.FieldPatternNamed, tree: TreeHandle): T.FieldPatternNamed.Parsed {
 	data = _keepModelledSlots(data, ['_ref_marker', '_mutable_specifier', '_name', '_pattern']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.FieldPatternNamed as const
-		}) as unknown as T.FieldPatternNamed.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.FieldPatternNamed as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.FieldPatternNamed.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.FieldPatternNamed as const,
 		_ref_marker: coerceBooleanKeywordStorage(
@@ -15398,16 +17547,25 @@ export function wrapFieldPatternNamed(data: T.FieldPatternNamed, tree: TreeHandl
 		},
 		$with: {
 			refMarker: (v: NonNullable<T.FieldPatternNamed['_ref_marker']>) =>
-				wrapFieldPatternNamed({ ...$edited(data), _ref_marker: v }, tree),
+				rebuilt(node, handle, () => wrapFieldPatternNamed({ ...$edited(data), _ref_marker: v }, tree)),
 			mutableSpecifier: (v: NonNullable<T.FieldPatternNamed['_mutable_specifier']>) =>
-				wrapFieldPatternNamed({ ...$edited(data), _mutable_specifier: v }, tree),
+				rebuilt(node, handle, () => wrapFieldPatternNamed({ ...$edited(data), _mutable_specifier: v }, tree)),
 			name: (v: NonNullable<T.FieldPatternNamed['_name']>) =>
-				wrapFieldPatternNamed({ ...$edited(data), _name: v }, tree),
+				rebuilt(node, handle, () => wrapFieldPatternNamed({ ...$edited(data), _name: v }, tree)),
 			pattern: (v: NonNullable<T.FieldPatternNamed['_pattern']>) =>
-				wrapFieldPatternNamed({ ...$edited(data), _pattern: v }, tree)
-		}
-	});
-	return _node as unknown as T.FieldPatternNamed.Parsed;
+				rebuilt(node, handle, () => wrapFieldPatternNamed({ ...$edited(data), _pattern: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FieldPatternNamed.Parsed;
 }
 
 export function wrapMacroDefinitionParen(
@@ -15589,12 +17747,24 @@ export function wrapMacroDefinitionBrace(
 
 export function wrapRangePatternPrefix(data: T.RangePatternPrefix, tree: TreeHandle): T.RangePatternPrefix.Parsed {
 	data = _keepModelledSlots(data, ['_content', '_right']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.RangePatternPrefix as const
-		}) as unknown as T.RangePatternPrefix.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.RangePatternPrefix as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.RangePatternPrefix.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.RangePatternPrefix as const,
 		_content: projectKindEnumStorage(
@@ -15684,12 +17854,21 @@ export function wrapRangePatternPrefix(data: T.RangePatternPrefix, tree: TreeHan
 		},
 		$with: {
 			content: (v: NonNullable<T.RangePatternPrefix['_content']>) =>
-				wrapRangePatternPrefix({ ...$edited(data), _content: v }, tree),
+				rebuilt(node, handle, () => wrapRangePatternPrefix({ ...$edited(data), _content: v }, tree)),
 			right: (v: NonNullable<T.RangePatternPrefix['_right']>) =>
-				wrapRangePatternPrefix({ ...$edited(data), _right: v }, tree)
-		}
-	});
-	return _node as unknown as T.RangePatternPrefix.Parsed;
+				rebuilt(node, handle, () => wrapRangePatternPrefix({ ...$edited(data), _right: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RangePatternPrefix.Parsed;
 }
 
 export function wrapRangePatternWithLeftWithRight(
@@ -15697,12 +17876,24 @@ export function wrapRangePatternWithLeftWithRight(
 	tree: TreeHandle
 ): T.RangePatternWithLeftWithRight.Parsed {
 	data = _keepModelledSlots(data, ['_content', '_right']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.RangePatternWithLeftWithRight as const
-		}) as unknown as T.RangePatternWithLeftWithRight.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.RangePatternWithLeftWithRight as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.RangePatternWithLeftWithRight.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.RangePatternWithLeftWithRight as const,
 		_content: projectKindEnumStorage(
@@ -15793,12 +17984,21 @@ export function wrapRangePatternWithLeftWithRight(
 		},
 		$with: {
 			content: (v: NonNullable<T.RangePatternWithLeftWithRight['_content']>) =>
-				wrapRangePatternWithLeftWithRight({ ...$edited(data), _content: v }, tree),
+				rebuilt(node, handle, () => wrapRangePatternWithLeftWithRight({ ...$edited(data), _content: v }, tree)),
 			right: (v: NonNullable<T.RangePatternWithLeftWithRight['_right']>) =>
-				wrapRangePatternWithLeftWithRight({ ...$edited(data), _right: v }, tree)
-		}
-	});
-	return _node as unknown as T.RangePatternWithLeftWithRight.Parsed;
+				rebuilt(node, handle, () => wrapRangePatternWithLeftWithRight({ ...$edited(data), _right: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RangePatternWithLeftWithRight.Parsed;
 }
 
 export function wrapRangePatternWithLeft(
@@ -15806,12 +18006,24 @@ export function wrapRangePatternWithLeft(
 	tree: TreeHandle
 ): T.RangePatternWithLeft.Parsed {
 	data = _keepModelledSlots(data, ['_left', '_content']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.RangePatternWithLeft as const
-		}) as unknown as T.RangePatternWithLeft.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.RangePatternWithLeft as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.RangePatternWithLeft.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.RangePatternWithLeft as const,
 		_left: storeExpanded(
@@ -15908,12 +18120,21 @@ export function wrapRangePatternWithLeft(
 		},
 		$with: {
 			left: (v: NonNullable<T.RangePatternWithLeft['_left']>) =>
-				wrapRangePatternWithLeft({ ...$edited(data), _left: v }, tree),
+				rebuilt(node, handle, () => wrapRangePatternWithLeft({ ...$edited(data), _left: v }, tree)),
 			content: (v: NonNullable<T.RangePatternWithLeft['_content']>) =>
-				wrapRangePatternWithLeft({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.RangePatternWithLeft.Parsed;
+				rebuilt(node, handle, () => wrapRangePatternWithLeft({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.RangePatternWithLeft.Parsed;
 }
 
 export function wrapStructItemBrace(data: T.StructItemBrace, tree: TreeHandle): T.StructItemBrace.Parsed {
@@ -16193,7 +18414,8 @@ export function wrapAttributedFieldDeclaration(
 	tree: TreeHandle
 ): T.AttributedFieldDeclaration.Parsed {
 	data = _keepModelledSlots(data, ['_attribute_item', '_field_declaration']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.AttributedFieldDeclaration as const,
 		_attribute_item: storeExpanded(
@@ -16223,12 +18445,23 @@ export function wrapAttributedFieldDeclaration(
 		},
 		$with: {
 			attributeItems: (...v: NonNullable<T.AttributedFieldDeclaration['_attribute_item']>[number][]) =>
-				wrapAttributedFieldDeclaration({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree),
+				rebuilt(node, handle, () =>
+					wrapAttributedFieldDeclaration({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree)
+				),
 			fieldDeclaration: (v: NonNullable<T.AttributedFieldDeclaration['_field_declaration']>) =>
-				wrapAttributedFieldDeclaration({ ...$edited(data), _field_declaration: v }, tree)
-		}
-	});
-	return _node as unknown as T.AttributedFieldDeclaration.Parsed;
+				rebuilt(node, handle, () => wrapAttributedFieldDeclaration({ ...$edited(data), _field_declaration: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AttributedFieldDeclaration.Parsed;
 }
 
 export function wrapAttributedEnumVariant(
@@ -16236,7 +18469,8 @@ export function wrapAttributedEnumVariant(
 	tree: TreeHandle
 ): T.AttributedEnumVariant.Parsed {
 	data = _keepModelledSlots(data, ['_attribute_item', '_enum_variant']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.AttributedEnumVariant as const,
 		_attribute_item: storeExpanded(
@@ -16266,22 +18500,45 @@ export function wrapAttributedEnumVariant(
 		},
 		$with: {
 			attributeItems: (...v: NonNullable<T.AttributedEnumVariant['_attribute_item']>[number][]) =>
-				wrapAttributedEnumVariant({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree),
+				rebuilt(node, handle, () =>
+					wrapAttributedEnumVariant({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree)
+				),
 			enumVariant: (v: NonNullable<T.AttributedEnumVariant['_enum_variant']>) =>
-				wrapAttributedEnumVariant({ ...$edited(data), _enum_variant: v }, tree)
-		}
-	});
-	return _node as unknown as T.AttributedEnumVariant.Parsed;
+				rebuilt(node, handle, () => wrapAttributedEnumVariant({ ...$edited(data), _enum_variant: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AttributedEnumVariant.Parsed;
 }
 
 export function wrapAttributedParameter(data: T.AttributedParameter, tree: TreeHandle): T.AttributedParameter.Parsed {
 	data = _keepModelledSlots(data, ['_attribute_item', '_content']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
+	const handle = currentHandle();
+	if (_isReadTextLeaf(data)) {
+		const node = {
 			...data,
-			$type: TSKindId.AttributedParameter as const
-		}) as unknown as T.AttributedParameter.Parsed;
-	const _node = withMethods({
+			$type: TSKindId.AttributedParameter as const,
+			$render: () => renderText(handle, node),
+			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+				toEditAt(renderText(handle, node), startOrRange, endPos),
+			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+			$trivia: {
+				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+			},
+			$engine: handle && (() => handle.current)
+		};
+		return node as unknown as T.AttributedParameter.Parsed;
+	}
+	const node = {
 		...data,
 		$type: TSKindId.AttributedParameter as const,
 		_attribute_item: storeExpanded(
@@ -16364,12 +18621,21 @@ export function wrapAttributedParameter(data: T.AttributedParameter, tree: TreeH
 		},
 		$with: {
 			attributeItem: (v: NonNullable<T.AttributedParameter['_attribute_item']>) =>
-				wrapAttributedParameter({ ...$edited(data), _attribute_item: v }, tree),
+				rebuilt(node, handle, () => wrapAttributedParameter({ ...$edited(data), _attribute_item: v }, tree)),
 			content: (v: NonNullable<T.AttributedParameter['_content']>) =>
-				wrapAttributedParameter({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.AttributedParameter.Parsed;
+				rebuilt(node, handle, () => wrapAttributedParameter({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AttributedParameter.Parsed;
 }
 
 export function wrapAttributedTypeParameter(
@@ -16377,7 +18643,8 @@ export function wrapAttributedTypeParameter(
 	tree: TreeHandle
 ): T.AttributedTypeParameter.Parsed {
 	data = _keepModelledSlots(data, ['_attribute_item', '_content']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.AttributedTypeParameter as const,
 		_attribute_item: storeExpanded(
@@ -16410,17 +18677,29 @@ export function wrapAttributedTypeParameter(
 		},
 		$with: {
 			attributeItems: (...v: NonNullable<T.AttributedTypeParameter['_attribute_item']>[number][]) =>
-				wrapAttributedTypeParameter({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree),
+				rebuilt(node, handle, () =>
+					wrapAttributedTypeParameter({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree)
+				),
 			content: (v: NonNullable<T.AttributedTypeParameter['_content']>) =>
-				wrapAttributedTypeParameter({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.AttributedTypeParameter.Parsed;
+				rebuilt(node, handle, () => wrapAttributedTypeParameter({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AttributedTypeParameter.Parsed;
 }
 
 export function wrapAttributedArgument(data: T.AttributedArgument, tree: TreeHandle): T.AttributedArgument.Parsed {
 	data = _keepModelledSlots(data, ['_attribute_item', '_expression']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.AttributedArgument as const,
 		_attribute_item: storeExpanded(
@@ -16457,12 +18736,23 @@ export function wrapAttributedArgument(data: T.AttributedArgument, tree: TreeHan
 		},
 		$with: {
 			attributeItems: (...v: NonNullable<T.AttributedArgument['_attribute_item']>[number][]) =>
-				wrapAttributedArgument({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree),
+				rebuilt(node, handle, () =>
+					wrapAttributedArgument({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree)
+				),
 			expression: (v: NonNullable<T.AttributedArgument['_expression']>) =>
-				wrapAttributedArgument({ ...$edited(data), _expression: v }, tree)
-		}
-	});
-	return _node as unknown as T.AttributedArgument.Parsed;
+				rebuilt(node, handle, () => wrapAttributedArgument({ ...$edited(data), _expression: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AttributedArgument.Parsed;
 }
 
 export function wrapAttributedOrderedField(
@@ -16470,7 +18760,8 @@ export function wrapAttributedOrderedField(
 	tree: TreeHandle
 ): T.AttributedOrderedField.Parsed {
 	data = _keepModelledSlots(data, ['_attribute_item', '_visibility_modifier', '_type']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.AttributedOrderedField as const,
 		_attribute_item: storeExpanded(
@@ -16536,19 +18827,31 @@ export function wrapAttributedOrderedField(
 		},
 		$with: {
 			attributeItems: (...v: NonNullable<T.AttributedOrderedField['_attribute_item']>[number][]) =>
-				wrapAttributedOrderedField({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree),
+				rebuilt(node, handle, () =>
+					wrapAttributedOrderedField({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree)
+				),
 			visibilityModifier: (v: NonNullable<T.AttributedOrderedField['_visibility_modifier']>) =>
-				wrapAttributedOrderedField({ ...$edited(data), _visibility_modifier: v }, tree),
+				rebuilt(node, handle, () => wrapAttributedOrderedField({ ...$edited(data), _visibility_modifier: v }, tree)),
 			type: (v: NonNullable<T.AttributedOrderedField['_type']>) =>
-				wrapAttributedOrderedField({ ...$edited(data), _type: v }, tree)
-		}
-	});
-	return _node as unknown as T.AttributedOrderedField.Parsed;
+				rebuilt(node, handle, () => wrapAttributedOrderedField({ ...$edited(data), _type: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AttributedOrderedField.Parsed;
 }
 
 export function wrapTypeArgument(data: T.TypeArgument, tree: TreeHandle): T.TypeArgument.Parsed {
 	data = _keepModelledSlots(data, ['_content', '_trait_bounds']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.TypeArgument as const,
 		_content: storeExpanded(
@@ -16627,17 +18930,27 @@ export function wrapTypeArgument(data: T.TypeArgument, tree: TreeHandle): T.Type
 		},
 		$with: {
 			content: (v: NonNullable<T.TypeArgument['_content']>) =>
-				wrapTypeArgument({ ...$edited(data), _content: v }, tree),
+				rebuilt(node, handle, () => wrapTypeArgument({ ...$edited(data), _content: v }, tree)),
 			traitBounds: (v: NonNullable<T.TypeArgument['_trait_bounds']>) =>
-				wrapTypeArgument({ ...$edited(data), _trait_bounds: v }, tree)
-		}
-	});
-	return _node as unknown as T.TypeArgument.Parsed;
+				rebuilt(node, handle, () => wrapTypeArgument({ ...$edited(data), _trait_bounds: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TypeArgument.Parsed;
 }
 
 export function wrapMatchBlockArms(data: T.MatchBlockArms, tree: TreeHandle): T.MatchBlockArms.Parsed {
 	data = _keepModelledSlots(data, ['_match_arm', '_last_arm']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.MatchBlockArms as const,
 		_match_arm: storeExpanded(
@@ -16667,17 +18980,29 @@ export function wrapMatchBlockArms(data: T.MatchBlockArms, tree: TreeHandle): T.
 		},
 		$with: {
 			matchArms: (...v: NonNullable<T.MatchBlockArms['_match_arm']>[number][]) =>
-				wrapMatchBlockArms({ ...$edited(data), _match_arm: restItems('matchArms', v) }, tree),
+				rebuilt(node, handle, () =>
+					wrapMatchBlockArms({ ...$edited(data), _match_arm: restItems('matchArms', v) }, tree)
+				),
 			lastArm: (v: NonNullable<T.MatchBlockArms['_last_arm']>) =>
-				wrapMatchBlockArms({ ...$edited(data), _last_arm: v }, tree)
-		}
-	});
-	return _node as unknown as T.MatchBlockArms.Parsed;
+				rebuilt(node, handle, () => wrapMatchBlockArms({ ...$edited(data), _last_arm: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MatchBlockArms.Parsed;
 }
 
 export function wrapTypeIdentifier(data: T.TypeIdentifier, tree: TreeHandle): T.TypeIdentifier.Parsed {
 	data = _keepModelledSlots(data, ['_content']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.TypeIdentifier as const,
 		_content: storeExpanded(
@@ -16695,15 +19020,25 @@ export function wrapTypeIdentifier(data: T.TypeIdentifier, tree: TreeHandle): T.
 		},
 		$with: {
 			content: (v: NonNullable<T.TypeIdentifier['_content']>) =>
-				wrapTypeIdentifier({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.TypeIdentifier.Parsed;
+				rebuilt(node, handle, () => wrapTypeIdentifier({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TypeIdentifier.Parsed;
 }
 
 export function wrapFieldIdentifier(data: T.FieldIdentifier, tree: TreeHandle): T.FieldIdentifier.Parsed {
 	data = _keepModelledSlots(data, ['_content']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.FieldIdentifier as const,
 		_content: storeExpanded(
@@ -16721,10 +19056,19 @@ export function wrapFieldIdentifier(data: T.FieldIdentifier, tree: TreeHandle): 
 		},
 		$with: {
 			content: (v: NonNullable<T.FieldIdentifier['_content']>) =>
-				wrapFieldIdentifier({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.FieldIdentifier.Parsed;
+				rebuilt(node, handle, () => wrapFieldIdentifier({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FieldIdentifier.Parsed;
 }
 
 export function wrapShorthandFieldIdentifier(
@@ -16732,7 +19076,8 @@ export function wrapShorthandFieldIdentifier(
 	tree: TreeHandle
 ): T.ShorthandFieldIdentifier.Parsed {
 	data = _keepModelledSlots(data, ['_content']);
-	const _node = withMethods({
+	const handle = currentHandle();
+	const node = {
 		...data,
 		$type: TSKindId.ShorthandFieldIdentifier as const,
 		_content: storeExpanded(
@@ -16750,10 +19095,19 @@ export function wrapShorthandFieldIdentifier(
 		},
 		$with: {
 			content: (v: NonNullable<T.ShorthandFieldIdentifier['_content']>) =>
-				wrapShorthandFieldIdentifier({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.ShorthandFieldIdentifier.Parsed;
+				rebuilt(node, handle, () => wrapShorthandFieldIdentifier({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
+			toEditAt(renderText(handle, node), startOrRange, endPos),
+		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ShorthandFieldIdentifier.Parsed;
 }
 
 const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unknown> = {

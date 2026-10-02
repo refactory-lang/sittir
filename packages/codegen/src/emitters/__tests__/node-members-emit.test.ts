@@ -40,3 +40,15 @@ describe('nodeMemberLines', () => {
 		expect(text(true, true)).toContain('innerAt: (gap: string, ...items: unknown[]) => triviaInnerAt(node, handle, gap, items),');
 	});
 });
+
+describe('a wrapped node writes its members in its literal', () => {
+	it('a plain kind captures the engine handle and rebuilds through rebuilt', async () => {
+		const { emitWrap } = await import('../../__tests__/helpers/emit-wrap.ts');
+		const wrap = emitWrap({ grammar: 'synth', nodeMap: makeMinimalNodeMap() });
+		const body = functionBody(wrap, 'wrapCallExpression');
+		expect(body).toContain('const handle = currentHandle();');
+		expect(body).toContain('$render: () => renderText(handle, node),');
+		expect(body).toMatch(/rebuilt\(node, handle, \(\) =>\s+wrapCallExpression\(\{ \.\.\.\$edited\(data\)/);
+		expect(body).not.toMatch(/withMethods|defineProperty/);
+	});
+});

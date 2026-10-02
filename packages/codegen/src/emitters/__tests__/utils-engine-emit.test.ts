@@ -36,7 +36,8 @@ describe('utils runtime binding emission', () => {
 		expect(factoriesSrc).not.toContain('withMethods');
 		expect(factoriesSrc).toMatch(/import \{ currentHandle[^}]*\} from '@sittir\/common\/utils';/);
 		expect(factoriesSrc).not.toContain('methodsEngine');
-		expect(wrapSrc).toContain("import { withMethods } from './utils.js';");
+		expect(wrapSrc).not.toContain('withMethods');
+		expect(wrapSrc).toContain('currentHandle');
 		expect(wrapSrc).not.toContain('_treeEngine');
 		expect(wrapSrc).toContain('inTreeEngine(tree, ');
 	});

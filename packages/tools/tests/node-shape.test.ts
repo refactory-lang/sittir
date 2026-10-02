@@ -88,6 +88,15 @@ const typedNodesOf = (root: unknown): object[] => {
 	return [...seen].filter((node) => typeof (node as { $type?: unknown }).$type === 'number');
 };
 
+describe('a parsed plain kind keeps fast properties', () => {
+	it('binary expressions and let declarations read from source', () => {
+		const nodes = typedNodesOf(rs.parse('fn f() { let x = a + b * c; }\nfn g() { 1 + 2 }\n', { deep: true }));
+		const plain = nodes.filter((node) => [rs.kinds.BinaryExpression, rs.kinds.LetDeclaration].includes((node as { $type: number }).$type));
+		expect(plain.length).toBeGreaterThanOrEqual(4);
+		expect(plain.filter((node) => !hasFastProperties(node))).toEqual([]);
+	});
+});
+
 describe('a parsed node keeps fast properties', () => {
 	const source = 'fn f(a: i32) { let x = g(a, a + 1); match x { 1 => 1, _ => 2 } }\n';
 	for (const deep of [false, true]) {

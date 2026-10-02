@@ -18,6 +18,7 @@ type BranchLikeForWrap = AuthoredCompound;
 import { deriveUnnamedChildrenCardinality } from '../compiler/model/node-map.ts';
 import { buildSupertypeMembersMap } from '../compiler/model/supertype-members.ts';
 import { interiorOf } from './interior.ts';
+import { innerPositionsOf, nodeMemberLines, type SetterEntry } from './node-members.ts';
 
 import {
 	DELIMITER_IMPORT,
@@ -657,17 +658,29 @@ function emitFieldCarryingWrap(
 			`  data = _projectLexed(data, TOKEN_INTERIORS[${JSON.stringify(node.kind)}], ${JSON.stringify(node.kind)});`
 		);
 	}
+	const seats = seatRuntimes(nodeMap.nodes.get(node.kind)!, nodeMap, kindEntries, 'RAW.', 'tree');
+	const inner = innerPositionsOf(node.kind, nodeMap);
+	if (seats.length === 0) lines.push('  const handle = currentHandle();');
 	if (wrapsAnonLiteralContent(slots, nodeMap)) {
-		lines.push(
-			`  if (_isReadTextLeaf(data)) return ${castToParsed(`withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} })`, parsedType)};`
-		);
+		if (seats.length === 0) {
+			lines.push(
+				'  if (_isReadTextLeaf(data)) {',
+				`    const node = { ...data${wrapTextLeafTypeStamp(node, kindEntries)}, ${nodeMemberLines({ accessors: [], inner }).map((line) => line.trim()).join(' ')} };`,
+				`    return ${castToParsed('node', parsedType)};`,
+				'  }'
+			);
+		} else {
+			lines.push(
+				`  if (_isReadTextLeaf(data)) return ${castToParsed(`withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} })`, parsedType)};`
+			);
+		}
 	}
 
 	const hasWithSetters = node.rawFactoryName && (slots.length > 0 || children.length > 0);
 
-	const seats = seatRuntimes(nodeMap.nodes.get(node.kind)!, nodeMap, kindEntries, 'RAW.', 'tree');
 	emitSlotOrderDraftLine(slots, node.kind, lines, kindEntries, nodeMap);
-	lines.push(hasWithSetters ? `  const _node = withMethods(${seatOpening(seats)}{` : `  return withMethods(${seatOpening(seats)}{`);
+	if (seats.length === 0) lines.push('  const node = {');
+	else lines.push(hasWithSetters ? `  const _node = withMethods(${seatOpening(seats)}{` : `  return withMethods(${seatOpening(seats)}{`);
 	lines.push('    ...data,');
 	if (kindEntries) {
 		const entry = findKindEntry(kindEntries, node.kind);
@@ -702,6 +715,19 @@ function emitFieldCarryingWrap(
 		lines.push(`    children() { ${accessorBody}; },`);
 	}
 
+	if (seats.length === 0) {
+		lines.push(
+			...nodeMemberLines({
+				setters: node.rawFactoryName ? inlineSetters(node, slots, children, nodeMap, kindEntries) : undefined,
+				accessors: [],
+				inner
+			})
+		);
+		lines.push('  };');
+		lines.push(`  return ${castToParsed('node', parsedType)};`);
+		lines.push('}');
+		return lines.join('\n');
+	}
 	emitInlineWithProperty(lines, node, slots, children, nodeMap, kindEntries);
 
 	const closing = `  }${seatClosing(seats)})`;
@@ -715,15 +741,14 @@ function emitFieldCarryingWrap(
 	return lines.join('\n');
 }
 
-function emitInlineWithProperty(
-	lines: string[],
+function inlineSetters(
 	node: WrapNode,
 	slots: readonly AssembledNonterminal[],
 	children: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
-): void {
-	if (!node.rawFactoryName) return;
+): SetterEntry[] {
+	if (!node.rawFactoryName) return [];
 
 	const wrapFn = `wrap${node.typeName}`;
 
@@ -735,35 +760,36 @@ function emitInlineWithProperty(
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
 		const setter = childrenConfig.slot.propertyName;
 		if (childrenConfig.slot.arity === 'one') {
-			lines.push(`    $with: { ${setter}: (v: ${childElem}) => ${wrapFn}({ ${spreadData}, $other: v }, tree) },`);
-		} else {
-			const restType = childrenSetterRestType(children, childElem, childRest);
-			lines.push(`    $with: { ${setter}: (...vs: ${restType}) => ${wrapFn}({ ${spreadData}, $other: restItems(${JSON.stringify(setter)}, vs) }, tree) },`);
+			return [{ name: setter, params: `v: ${childElem}`, body: `${wrapFn}({ ${spreadData}, $other: v }, tree)` }];
 		}
-		return;
+		const restType = childrenSetterRestType(children, childElem, childRest);
+		return [
+			{ name: setter, params: `...vs: ${restType}`, body: `${wrapFn}({ ${spreadData}, $other: restItems(${JSON.stringify(setter)}, vs) }, tree)` }
+		];
 	}
 
-	if (slots.length === 0 && children.length === 0) {
-		lines.push('    $with: {},');
-		return;
-	}
+	if (slots.length === 0 && children.length === 0) return [];
 
 	const restSlots = new Set(
 		(builtTypeSurfaceOf(nodeMap.nodes.get(node.kind)!, nodeMap, kindEntries)?.setters ?? [])
 			.filter((setter) => setter.rest)
 			.map((setter) => setter.name)
 	);
-	lines.push('    $with: {');
+	const setters: SetterEntry[] = [];
 	for (const f of slots) {
 		const method = f.propertyName;
 		if (isMultiple(f) && restSlots.has(method)) {
 			const setterValueType = `NonNullable<T.${node.typeName}['${f.storageKey}']>[number]`;
 			const setterRestElement = setterValueType.includes(' | ') ? `(${setterValueType})` : setterValueType;
 			const restType = isNonEmpty(f) ? `NonEmptyArray<${setterValueType}>` : `${setterRestElement}[]`;
-			lines.push(`      ${method}: (...v: ${restType}) => ${wrapFn}({ ${spreadData}, ${f.storageKey}: restItems(${JSON.stringify(method)}, v) }, tree),`);
+			setters.push({
+				name: method,
+				params: `...v: ${restType}`,
+				body: `${wrapFn}({ ${spreadData}, ${f.storageKey}: restItems(${JSON.stringify(method)}, v) }, tree)`
+			});
 		} else {
 			const setterValueType = `NonNullable<T.${node.typeName}['${f.storageKey}']>`;
-			lines.push(`      ${method}: (v: ${setterValueType}) => ${wrapFn}({ ${spreadData}, ${f.storageKey}: v }, tree),`);
+			setters.push({ name: method, params: `v: ${setterValueType}`, body: `${wrapFn}({ ${spreadData}, ${f.storageKey}: v }, tree)` });
 		}
 	}
 	if (children.length > 0) {
@@ -771,13 +797,30 @@ function emitInlineWithProperty(
 		const childElem = childrenConfig.elemType;
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
 		if (childrenConfig.slot.arity === 'one') {
-			lines.push(`      children: (item: ${childElem}) => ${wrapFn}({ ${spreadData}, $other: item }, tree),`);
+			setters.push({ name: 'children', params: `item: ${childElem}`, body: `${wrapFn}({ ${spreadData}, $other: item }, tree)` });
 		} else {
 			const restType = childrenSetterRestType(children, childElem, childRest);
-			lines.push(`      children: (...items: ${restType}) => ${wrapFn}({ ${spreadData}, $other: restItems('children', items) }, tree),`);
+			setters.push({
+				name: 'children',
+				params: `...items: ${restType}`,
+				body: `${wrapFn}({ ${spreadData}, $other: restItems('children', items) }, tree)`
+			});
 		}
 	}
-	lines.push('    },');
+	return setters;
+}
+
+function emitInlineWithProperty(
+	lines: string[],
+	node: WrapNode,
+	slots: readonly AssembledNonterminal[],
+	children: readonly AssembledNonterminal[],
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): void {
+	if (!node.rawFactoryName) return;
+	const setters = inlineSetters(node, slots, children, nodeMap, kindEntries);
+	lines.push('    $with: {', ...setters.map((entry) => `      ${entry.name}: (${entry.params}) => ${entry.body},`), '    },');
 }
 
 export class WrapEmitter implements CodegenEmitter<string> {
@@ -1031,11 +1074,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'// Auto-generated by @sittir/codegen — do not edit',
 			'// Lazy view layer over readUntypedNode output — shape A surface.',
 			'',
-			"import { readUntypedNode, restItems, isNode, isStub, isTypedNode, holdsSlots, markEdited as $edited, treeHandleOf, mapTriviaEntries, projectInterior, coerceBooleanKeywordStorage, coerceBitflagStorage, inTreeEngine, withListView, withListSlots, withGroupSeat, withElementsSeat } from '@sittir/common/utils';",
+			"import { readUntypedNode, restItems, isNode, isStub, isTypedNode, holdsSlots, markEdited as $edited, treeHandleOf, mapTriviaEntries, projectInterior, coerceBooleanKeywordStorage, coerceBitflagStorage, inTreeEngine, currentHandle, rebuilt, renderText, toEditAt, triviaSide, triviaInner, triviaInnerAt, withListView, withListSlots, withGroupSeat, withElementsSeat } from '@sittir/common/utils';",
 			"import type { TreeHandle, TokenInterior } from '@sittir/common/utils';",
 			"import { TOKEN_INTERIORS } from './consts.js';",
 			"import type { ParsedRoot } from '@sittir/common/engine';",
-			"import type { AnyUntypedNode as _UntypedNode, AnyUntypedNode, NonEmptyArray, SupertypeSurface } from '@sittir/types';",
+			"import type { AnyUntypedNode as _UntypedNode, AnyUntypedNode, NonEmptyArray, StringIndexRange, SupertypeSurface } from '@sittir/types';",
 			...(this.#kindEntries ? ["import { TSKindId, KIND_NAMES, KIND_DISPLAY_NAMES } from './types.js';"] : []),
 			DELIMITER_IMPORT,
 			"import type * as T from './types-internal.js';",
@@ -1789,12 +1832,16 @@ export class WrapEmitter implements CodegenEmitter<string> {
 
 		return pruneUnusedImports(lines, [
 			'AnyUntypedNode',
+			'StringIndexRange',
 			'Delimiter',
 			'projectInterior',
 			'TokenInterior',
 			'TOKEN_INTERIORS',
 			'coerceBooleanKeywordStorage',
 			'coerceBitflagStorage',
+			'withMethods',
+			'triviaInner',
+			'triviaInnerAt',
 			'withListView',
 			'withListSlots',
 			'withGroupSeat',
