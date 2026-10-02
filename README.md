@@ -364,11 +364,12 @@ attaches the typed accessor surface and hydrates each lazy stub (`$parentHandle`
 #### Editing a parsed tree
 
 ```
-parsed root ──▶ node.$with.<slot>(value) ──▶ edited node ──▶ engine.render(root) ──▶ new source
+parsed node ──▶ node.$with.<slot>(value) ──▶ edited node ──▶ edited.$render() ──▶ the node's new text
 ```
 
-A change is made with `$with` on the parsed node, and rendering the root writes
-it. A node the change did not touch renders the bytes it was read from.
+A change is made with `$with` on the parsed node, which returns the edited node;
+rendering that node writes the change. A child the change did not touch renders
+the bytes it was read from. Neither the parsed node nor its parents change.
 
 ### Generated package layout
 

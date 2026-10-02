@@ -20,7 +20,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { runCodemodOnDir } from './codemod-inline.ts';
+import { runCodemodOnDir, runCodemodOnSource } from './codemod-inline.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CORPUS_DIR = join(__dirname, 'fixtures', 'codemod-sample');
@@ -47,5 +47,11 @@ describe('US1 acceptance — native-backend codemod (T050)', () => {
 			// Equality at byte level — JS baseline IS the contract.
 			expect(r.output).toBe(expected);
 		}
+	});
+
+	it('inserts at the right place when non-ASCII text precedes the function', async () => {
+		const { output, insertions } = await runCodemodOnSource('// ψψ\nfn f() { 1 }\n');
+		expect(insertions).toBe(1);
+		expect(output).toBe('// ψψ\n#[inline]\nfn f() { 1 }\n');
 	});
 });
