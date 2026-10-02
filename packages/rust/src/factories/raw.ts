@@ -3330,22 +3330,7 @@ export function buildQualifiedType(config: T.QualifiedType.Config): T.QualifiedT
 	return node as unknown as T.QualifiedType.Bound;
 }
 
-export function buildLifetime(value: AdmitBound<T.Identifier, T.AdmittedNodes>): ReturnType<typeof _buildLifetime>;
-export function buildLifetime(text: string): ReturnType<typeof _buildLifetime>;
-export function buildLifetime(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildLifetime(args[0] as T.Identifier);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.Identifier as const);
-	return prebuilt
-		? _buildLifetime(args[0] as T.Identifier)
-		: _buildLifetime((buildIdentifier as (...a: unknown[]) => unknown)(...args) as T.Identifier);
-}
-function _buildLifetime(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T.Lifetime.Bound {
+export function buildLifetime(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T.Lifetime.Bound {
 	const _name = rejectBareText(value, 'Lifetime.name', 'buildIdentifier(…)');
 	const handle = currentHandle();
 	const node = {
@@ -3354,7 +3339,7 @@ function _buildLifetime(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T.Lif
 		$named: true as const,
 		_name,
 		$with: {
-			name: (value: T.Identifier) => rebuilt(node, handle, () => _buildLifetime(value))
+			name: (value: T.Identifier) => rebuilt(node, handle, () => buildLifetime(value))
 		},
 		name: () => _name,
 		$render: () => renderText(handle, node),
@@ -5838,22 +5823,7 @@ export function buildClosureParameters(
 	return node as unknown as T.ClosureParameters.Bound;
 }
 
-export function buildLabel(value: AdmitBound<T.Identifier, T.AdmittedNodes>): ReturnType<typeof _buildLabel>;
-export function buildLabel(text: string): ReturnType<typeof _buildLabel>;
-export function buildLabel(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildLabel(args[0] as T.Identifier);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.Identifier as const);
-	return prebuilt
-		? _buildLabel(args[0] as T.Identifier)
-		: _buildLabel((buildIdentifier as (...a: unknown[]) => unknown)(...args) as T.Identifier);
-}
-function _buildLabel(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T.Label.Bound {
+export function buildLabel(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T.Label.Bound {
 	const _name = rejectBareText(value, 'Label.name', 'buildIdentifier(…)');
 	const handle = currentHandle();
 	const node = {
@@ -5862,7 +5832,7 @@ function _buildLabel(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T.Label.
 		$named: true as const,
 		_name,
 		$with: {
-			name: (value: T.Identifier) => rebuilt(node, handle, () => _buildLabel(value))
+			name: (value: T.Identifier) => rebuilt(node, handle, () => buildLabel(value))
 		},
 		name: () => _name,
 		$render: () => renderText(handle, node),
@@ -5912,24 +5882,7 @@ export function buildBreakExpression(config: Partial<T.BreakExpression.Config> =
 	return node as unknown as T.BreakExpression.Bound;
 }
 
-export function buildContinueExpression(
-	value?: AdmitBound<T.Label, T.AdmittedNodes>
-): ReturnType<typeof _buildContinueExpression>;
-export function buildContinueExpression(text: string): ReturnType<typeof _buildContinueExpression>;
-export function buildContinueExpression(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildContinueExpression(args[0] as T.Label);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.Label as const);
-	return prebuilt
-		? _buildContinueExpression(args[0] as T.Label)
-		: _buildContinueExpression((buildLabel as (...a: unknown[]) => unknown)(...args) as T.Label);
-}
-function _buildContinueExpression(value?: AdmitBound<T.Label, T.AdmittedNodes>): T.ContinueExpression.Bound {
+export function buildContinueExpression(value?: AdmitBound<T.Label, T.AdmittedNodes>): T.ContinueExpression.Bound {
 	const _label = rejectBareText(value, 'ContinueExpression.label', 'a built Label');
 	const handle = currentHandle();
 	const node = {
@@ -5938,7 +5891,7 @@ function _buildContinueExpression(value?: AdmitBound<T.Label, T.AdmittedNodes>):
 		$named: true as const,
 		_label,
 		$with: {
-			label: (value?: T.Label) => rebuilt(node, handle, () => _buildContinueExpression(value))
+			label: (value?: T.Label) => rebuilt(node, handle, () => buildContinueExpression(value))
 		},
 		label: () => _label,
 		$render: () => renderText(handle, node),
@@ -10949,22 +10902,7 @@ export function buildLineCommentExtraSlashes(text: string): T.LineCommentExtraSl
 
 export function buildLineCommentDocOuter(
 	value: AdmitBound<T.DocComment, T.AdmittedNodes>
-): ReturnType<typeof _buildLineCommentDocOuter>;
-export function buildLineCommentDocOuter(text: string): ReturnType<typeof _buildLineCommentDocOuter>;
-export function buildLineCommentDocOuter(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildLineCommentDocOuter(args[0] as T.DocComment);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.DocComment as const);
-	return prebuilt
-		? _buildLineCommentDocOuter(args[0] as T.DocComment)
-		: _buildLineCommentDocOuter((buildDocComment as (...a: unknown[]) => unknown)(...args) as T.DocComment);
-}
-function _buildLineCommentDocOuter(value: AdmitBound<T.DocComment, T.AdmittedNodes>): T.LineCommentDocOuter.Bound {
+): T.LineCommentDocOuter.Bound {
 	const _doc = rejectBareText(value, 'LineCommentDocOuter.doc', 'buildDocComment(…)');
 	const handle = currentHandle();
 	const node = {
@@ -10973,7 +10911,7 @@ function _buildLineCommentDocOuter(value: AdmitBound<T.DocComment, T.AdmittedNod
 		$named: true as const,
 		_doc,
 		$with: {
-			doc: (value: T.DocComment) => rebuilt(node, handle, () => _buildLineCommentDocOuter(value))
+			doc: (value: T.DocComment) => rebuilt(node, handle, () => buildLineCommentDocOuter(value))
 		},
 		doc: () => _doc,
 		$render: () => renderText(handle, node),
@@ -10991,22 +10929,7 @@ function _buildLineCommentDocOuter(value: AdmitBound<T.DocComment, T.AdmittedNod
 
 export function buildLineCommentDocInner(
 	value: AdmitBound<T.DocComment, T.AdmittedNodes>
-): ReturnType<typeof _buildLineCommentDocInner>;
-export function buildLineCommentDocInner(text: string): ReturnType<typeof _buildLineCommentDocInner>;
-export function buildLineCommentDocInner(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildLineCommentDocInner(args[0] as T.DocComment);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.DocComment as const);
-	return prebuilt
-		? _buildLineCommentDocInner(args[0] as T.DocComment)
-		: _buildLineCommentDocInner((buildDocComment as (...a: unknown[]) => unknown)(...args) as T.DocComment);
-}
-function _buildLineCommentDocInner(value: AdmitBound<T.DocComment, T.AdmittedNodes>): T.LineCommentDocInner.Bound {
+): T.LineCommentDocInner.Bound {
 	const _doc = rejectBareText(value, 'LineCommentDocInner.doc', 'buildDocComment(…)');
 	const handle = currentHandle();
 	const node = {
@@ -11015,7 +10938,7 @@ function _buildLineCommentDocInner(value: AdmitBound<T.DocComment, T.AdmittedNod
 		$named: true as const,
 		_doc,
 		$with: {
-			doc: (value: T.DocComment) => rebuilt(node, handle, () => _buildLineCommentDocInner(value))
+			doc: (value: T.DocComment) => rebuilt(node, handle, () => buildLineCommentDocInner(value))
 		},
 		doc: () => _doc,
 		$render: () => renderText(handle, node),
@@ -11055,25 +10978,6 @@ export function buildLineCommentRegular(text: string): T.LineCommentRegular.Boun
 
 export function buildBlockCommentDocOuter(
 	value?: AdmitBound<T.BlockCommentContent, T.AdmittedNodes>
-): ReturnType<typeof _buildBlockCommentDocOuter>;
-export function buildBlockCommentDocOuter(text: string): ReturnType<typeof _buildBlockCommentDocOuter>;
-export function buildBlockCommentDocOuter(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildBlockCommentDocOuter(args[0] as T.BlockCommentContent);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.BlockCommentContent as const);
-	return prebuilt
-		? _buildBlockCommentDocOuter(args[0] as T.BlockCommentContent)
-		: _buildBlockCommentDocOuter(
-				(buildBlockCommentContent as (...a: unknown[]) => unknown)(...args) as T.BlockCommentContent
-			);
-}
-function _buildBlockCommentDocOuter(
-	value?: AdmitBound<T.BlockCommentContent, T.AdmittedNodes>
 ): T.BlockCommentDocOuter.Bound {
 	const _doc = rejectBareText(value, 'BlockCommentDocOuter.doc', 'buildBlockCommentContent(…)');
 	const handle = currentHandle();
@@ -11083,7 +10987,7 @@ function _buildBlockCommentDocOuter(
 		$named: true as const,
 		_doc,
 		$with: {
-			doc: (value?: T.BlockCommentContent) => rebuilt(node, handle, () => _buildBlockCommentDocOuter(value))
+			doc: (value?: T.BlockCommentContent) => rebuilt(node, handle, () => buildBlockCommentDocOuter(value))
 		},
 		doc: () => _doc,
 		$render: () => renderText(handle, node),
@@ -11101,25 +11005,6 @@ function _buildBlockCommentDocOuter(
 
 export function buildBlockCommentDocInner(
 	value?: AdmitBound<T.BlockCommentContent, T.AdmittedNodes>
-): ReturnType<typeof _buildBlockCommentDocInner>;
-export function buildBlockCommentDocInner(text: string): ReturnType<typeof _buildBlockCommentDocInner>;
-export function buildBlockCommentDocInner(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildBlockCommentDocInner(args[0] as T.BlockCommentContent);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.BlockCommentContent as const);
-	return prebuilt
-		? _buildBlockCommentDocInner(args[0] as T.BlockCommentContent)
-		: _buildBlockCommentDocInner(
-				(buildBlockCommentContent as (...a: unknown[]) => unknown)(...args) as T.BlockCommentContent
-			);
-}
-function _buildBlockCommentDocInner(
-	value?: AdmitBound<T.BlockCommentContent, T.AdmittedNodes>
 ): T.BlockCommentDocInner.Bound {
 	const _doc = rejectBareText(value, 'BlockCommentDocInner.doc', 'buildBlockCommentContent(…)');
 	const handle = currentHandle();
@@ -11129,7 +11014,7 @@ function _buildBlockCommentDocInner(
 		$named: true as const,
 		_doc,
 		$with: {
-			doc: (value?: T.BlockCommentContent) => rebuilt(node, handle, () => _buildBlockCommentDocInner(value))
+			doc: (value?: T.BlockCommentContent) => rebuilt(node, handle, () => buildBlockCommentDocInner(value))
 		},
 		doc: () => _doc,
 		$render: () => renderText(handle, node),

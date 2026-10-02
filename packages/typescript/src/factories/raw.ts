@@ -394,24 +394,7 @@ export function buildImportClause(
 	return node as unknown as T.ImportClause.Bound;
 }
 
-export function buildNamespaceImport(
-	value: AdmitBound<T.Identifier, T.AdmittedNodes>
-): ReturnType<typeof _buildNamespaceImport>;
-export function buildNamespaceImport(text: string): ReturnType<typeof _buildNamespaceImport>;
-export function buildNamespaceImport(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildNamespaceImport(args[0] as T.Identifier);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.Identifier as const);
-	return prebuilt
-		? _buildNamespaceImport(args[0] as T.Identifier)
-		: _buildNamespaceImport((buildIdentifier as (...a: unknown[]) => unknown)(...args) as T.Identifier);
-}
-function _buildNamespaceImport(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T.NamespaceImport.Bound {
+export function buildNamespaceImport(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T.NamespaceImport.Bound {
 	const _name = rejectBareText(value, 'NamespaceImport.name', 'buildIdentifier(…)');
 	const handle = currentHandle();
 	const node = {
@@ -420,7 +403,7 @@ function _buildNamespaceImport(value: AdmitBound<T.Identifier, T.AdmittedNodes>)
 		$named: true as const,
 		_name,
 		$with: {
-			name: (value: T.Identifier) => rebuilt(node, handle, () => _buildNamespaceImport(value))
+			name: (value: T.Identifier) => rebuilt(node, handle, () => buildNamespaceImport(value))
 		},
 		name: () => _name,
 		$render: () => renderText(handle, node),
@@ -8884,28 +8867,6 @@ function _buildObjectTypeContent(
 export function buildExportStatementNamespaceExport(
 	value: AdmitBound<T.Identifier, T.AdmittedNodes>,
 	options?: T.ExportStatementNamespaceExport.Options
-): ReturnType<typeof _buildExportStatementNamespaceExport>;
-export function buildExportStatementNamespaceExport(
-	text: string
-): ReturnType<typeof _buildExportStatementNamespaceExport>;
-export function buildExportStatementNamespaceExport(...args: unknown[]) {
-	if (args[0] === undefined) {
-		return _buildExportStatementNamespaceExport(args[0] as unknown as T.Identifier, args[1] as never);
-	}
-	const prebuilt =
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.Identifier as const);
-	return prebuilt
-		? _buildExportStatementNamespaceExport(args[0] as T.Identifier, args[1] as never)
-		: _buildExportStatementNamespaceExport(
-				(buildIdentifier as (...a: unknown[]) => unknown)(args[0]) as T.Identifier,
-				args[1] as never
-			);
-}
-function _buildExportStatementNamespaceExport(
-	value: AdmitBound<T.Identifier, T.AdmittedNodes>,
-	options?: T.ExportStatementNamespaceExport.Options
 ): T.ExportStatementNamespaceExport.Bound {
 	const _name = rejectBareText(value, 'ExportStatementNamespaceExport.name', 'buildIdentifier(…)');
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementNamespaceExport['_terminator']>>(
@@ -8920,9 +8881,9 @@ function _buildExportStatementNamespaceExport(
 		_name,
 		_terminator,
 		$with: {
-			name: (value: T.Identifier) => rebuilt(node, handle, () => _buildExportStatementNamespaceExport(value, options)),
+			name: (value: T.Identifier) => rebuilt(node, handle, () => buildExportStatementNamespaceExport(value, options)),
 			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-				rebuilt(node, handle, () => _buildExportStatementNamespaceExport(value, { ...options, terminator: spelling }))
+				rebuilt(node, handle, () => buildExportStatementNamespaceExport(value, { ...options, terminator: spelling }))
 		},
 		name: () => _name,
 		terminator: () => _terminator,

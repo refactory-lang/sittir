@@ -19854,7 +19854,7 @@ export namespace AttributeItem {
 	}
 	export type Loose = LooseFor<TSKindId.AttributeItem>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AttributeItem>;
-	export type BuildArgs = [value: AdmitBound<T.Attribute, T.AdmittedNodes>];
+	export type BuildArgs = [value: AdmitBound<T.Attribute, T.AdmittedNodes>] | [config: T.Attribute.Config];
 	export type LooseArgs = [value: T.AttributeItem.Loose];
 	export type Kind = TSKindId.AttributeItem;
 }
@@ -19870,7 +19870,7 @@ export namespace InnerAttributeItem {
 	}
 	export type Loose = LooseFor<TSKindId.InnerAttributeItem>;
 	export type LooseConfig = LooseConfigFor<TSKindId.InnerAttributeItem>;
-	export type BuildArgs = [value: AdmitBound<T.Attribute, T.AdmittedNodes>];
+	export type BuildArgs = [value: AdmitBound<T.Attribute, T.AdmittedNodes>] | [config: T.Attribute.Config];
 	export type LooseArgs = [value: T.InnerAttributeItem.Loose];
 	export type Kind = TSKindId.InnerAttributeItem;
 }
@@ -20460,7 +20460,39 @@ export namespace UseWildcard {
 	}
 	export type Loose = LooseFor<TSKindId.UseWildcard>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UseWildcard>;
-	export type BuildArgs = [value?: AdmitBound<T.UseWildcardGroup, T.AdmittedNodes>];
+	export type BuildArgs =
+		| [value?: AdmitBound<T.UseWildcardGroup, T.AdmittedNodes>]
+		| [
+				value?: AdmitBound<
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| T.Metavariable
+					| TSKindId.Super
+					| TSKindId.Crate
+					| T.Identifier
+					| T.ScopedIdentifier
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword,
+					T.AdmittedNodes
+				>
+		  ];
 	export type LooseArgs = [value?: T.UseWildcard.Loose];
 	export type Kind = TSKindId.UseWildcard;
 }
@@ -20540,7 +20572,7 @@ export namespace ExternModifier {
 	}
 	export type Loose = LooseFor<TSKindId.ExternModifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExternModifier>;
-	export type BuildArgs = [value?: AdmitBound<T.StringLiteral, T.AdmittedNodes>];
+	export type BuildArgs = [value?: AdmitBound<T.StringLiteral, T.AdmittedNodes>] | [config: T.StringLiteral.Config];
 	export type LooseArgs = [value?: T.ExternModifier.Loose];
 	export type Kind = TSKindId.ExternModifier;
 }
@@ -21397,7 +21429,7 @@ export namespace ConstBlock {
 	}
 	export type Loose = LooseFor<TSKindId.ConstBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConstBlock>;
-	export type BuildArgs = [value: AdmitBound<T.Block, T.AdmittedNodes>];
+	export type BuildArgs = [value: AdmitBound<T.Block, T.AdmittedNodes>] | [config?: Partial<T.Block.Config>];
 	export type LooseArgs = [value?: T.ConstBlock.Loose];
 	export type Kind = TSKindId.ConstBlock;
 }
@@ -21530,7 +21562,7 @@ export namespace UnsafeBlock {
 	}
 	export type Loose = LooseFor<TSKindId.UnsafeBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnsafeBlock>;
-	export type BuildArgs = [value: AdmitBound<T.Block, T.AdmittedNodes>];
+	export type BuildArgs = [value: AdmitBound<T.Block, T.AdmittedNodes>] | [config?: Partial<T.Block.Config>];
 	export type LooseArgs = [value?: T.UnsafeBlock.Loose];
 	export type Kind = TSKindId.UnsafeBlock;
 }
@@ -21578,7 +21610,7 @@ export namespace TryBlock {
 	}
 	export type Loose = LooseFor<TSKindId.TryBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TryBlock>;
-	export type BuildArgs = [value: AdmitBound<T.Block, T.AdmittedNodes>];
+	export type BuildArgs = [value: AdmitBound<T.Block, T.AdmittedNodes>] | [config?: Partial<T.Block.Config>];
 	export type LooseArgs = [value?: T.TryBlock.Loose];
 	export type Kind = TSKindId.TryBlock;
 }
@@ -23864,7 +23896,14 @@ export namespace VisibilityModifierPub {
 	}
 	export type Loose = LooseFor<TSKindId.VisibilityModifierPub>;
 	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifierPub>;
-	export type BuildArgs = [value?: AdmitBound<T.VisibilityModifierPubScope, T.AdmittedNodes>];
+	export type BuildArgs =
+		| [value?: AdmitBound<T.VisibilityModifierPubScope, T.AdmittedNodes>]
+		| [
+				value: AdmitBound<
+					TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath,
+					T.AdmittedNodes
+				>
+		  ];
 	export type LooseArgs = [value?: T.VisibilityModifierPub.Loose];
 	export type Kind = TSKindId.VisibilityModifierPub;
 }
@@ -23898,7 +23937,20 @@ export namespace FunctionTypeFnForm {
 	}
 	export type Loose = LooseFor<TSKindId.FunctionTypeFnForm>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FunctionTypeFnForm>;
-	export type BuildArgs = [value?: AdmitBound<T.FunctionModifiers, T.AdmittedNodes>];
+	export type BuildArgs =
+		| [value?: AdmitBound<T.FunctionModifiers, T.AdmittedNodes>]
+		| [
+				...children: AdmitBound<
+					(
+						| TSKindId.AsyncKeyword
+						| TSKindId.DefaultKeyword
+						| TSKindId.ConstKeyword
+						| TSKindId.UnsafeKeyword
+						| T.ExternModifier
+					)[],
+					T.AdmittedNodes
+				>
+		  ];
 	export type LooseArgs = [value?: T.FunctionTypeFnForm.Loose];
 	export type Kind = TSKindId.FunctionTypeFnForm;
 }

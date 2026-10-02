@@ -43,9 +43,10 @@ describe('factories emitter — single-field factory direct-value parameter', ()
 		const nodeMap = makeReservedWordSingleFieldNodeMap();
 		const emitted = emitFactories({ grammar: 'test', nodeMap });
 
-		// `call` forwards its sole slot's single kind, so the direct parameter
-		// lives on the private implementation behind the forwarding wrapper.
-		expect(emitted).toContain('function _buildCall(value');
+		// `call`'s sole slot holds a pattern leaf, which a strict builder
+		// does not build from text: there is no forwarding wrapper, and the
+		// direct parameter is the builder's own.
+		expect(emitted).toContain('function buildCall(value');
 		// A bare `arguments` parameter would make the module unloadable; the
 		// escaped spelling would merely be noise. Neither should appear.
 		expect(emitted).not.toMatch(/function _?buildCall\(arguments_?[?:]/);

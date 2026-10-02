@@ -310,22 +310,7 @@ export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {
 
 export function buildPosixCharacterClass(
 	value: AdmitBound<T.PosixClassName, T.AdmittedNodes>
-): ReturnType<typeof _buildPosixCharacterClass>;
-export function buildPosixCharacterClass(text: string): ReturnType<typeof _buildPosixCharacterClass>;
-export function buildPosixCharacterClass(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildPosixCharacterClass(args[0] as T.PosixClassName);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.PosixClassName as const);
-	return prebuilt
-		? _buildPosixCharacterClass(args[0] as T.PosixClassName)
-		: _buildPosixCharacterClass((buildPosixClassName as (...a: unknown[]) => unknown)(...args) as T.PosixClassName);
-}
-function _buildPosixCharacterClass(value: AdmitBound<T.PosixClassName, T.AdmittedNodes>): T.PosixCharacterClass.Bound {
+): T.PosixCharacterClass.Bound {
 	const _posix_class_name = rejectBareText(value, 'PosixCharacterClass.posixClassName', 'buildPosixClassName(…)');
 	const handle = currentHandle();
 	const node = {
@@ -334,7 +319,7 @@ function _buildPosixCharacterClass(value: AdmitBound<T.PosixClassName, T.Admitte
 		$named: true as const,
 		_posix_class_name,
 		$with: {
-			posixClassName: (value: T.PosixClassName) => rebuilt(node, handle, () => _buildPosixCharacterClass(value))
+			posixClassName: (value: T.PosixClassName) => rebuilt(node, handle, () => buildPosixCharacterClass(value))
 		},
 		posixClassName: () => _posix_class_name,
 		$render: () => renderText(handle, node),
@@ -685,24 +670,7 @@ export function buildCountQuantifier(config: T.CountQuantifier.Config): T.CountQ
 	return node as unknown as T.CountQuantifier.Bound;
 }
 
-export function buildBackreferenceEscape(
-	value: AdmitBound<T.GroupName, T.AdmittedNodes>
-): ReturnType<typeof _buildBackreferenceEscape>;
-export function buildBackreferenceEscape(text: string): ReturnType<typeof _buildBackreferenceEscape>;
-export function buildBackreferenceEscape(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildBackreferenceEscape(args[0] as T.GroupName);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.GroupName as const);
-	return prebuilt
-		? _buildBackreferenceEscape(args[0] as T.GroupName)
-		: _buildBackreferenceEscape((buildGroupName as (...a: unknown[]) => unknown)(...args) as T.GroupName);
-}
-function _buildBackreferenceEscape(value: AdmitBound<T.GroupName, T.AdmittedNodes>): T.BackreferenceEscape.Bound {
+export function buildBackreferenceEscape(value: AdmitBound<T.GroupName, T.AdmittedNodes>): T.BackreferenceEscape.Bound {
 	const _group_name = rejectBareText(value, 'BackreferenceEscape.groupName', 'buildGroupName(…)');
 	const handle = currentHandle();
 	const node = {
@@ -711,7 +679,7 @@ function _buildBackreferenceEscape(value: AdmitBound<T.GroupName, T.AdmittedNode
 		$named: true as const,
 		_group_name,
 		$with: {
-			groupName: (value: T.GroupName) => rebuilt(node, handle, () => _buildBackreferenceEscape(value))
+			groupName: (value: T.GroupName) => rebuilt(node, handle, () => buildBackreferenceEscape(value))
 		},
 		groupName: () => _group_name,
 		$render: () => renderText(handle, node),
@@ -729,23 +697,6 @@ function _buildBackreferenceEscape(value: AdmitBound<T.GroupName, T.AdmittedNode
 
 export function buildNamedGroupBackreference(
 	value: AdmitBound<T.GroupName, T.AdmittedNodes>
-): ReturnType<typeof _buildNamedGroupBackreference>;
-export function buildNamedGroupBackreference(text: string): ReturnType<typeof _buildNamedGroupBackreference>;
-export function buildNamedGroupBackreference(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildNamedGroupBackreference(args[0] as T.GroupName);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.GroupName as const);
-	return prebuilt
-		? _buildNamedGroupBackreference(args[0] as T.GroupName)
-		: _buildNamedGroupBackreference((buildGroupName as (...a: unknown[]) => unknown)(...args) as T.GroupName);
-}
-function _buildNamedGroupBackreference(
-	value: AdmitBound<T.GroupName, T.AdmittedNodes>
 ): T.NamedGroupBackreference.Bound {
 	const _group_name = rejectBareText(value, 'NamedGroupBackreference.groupName', 'buildGroupName(…)');
 	const handle = currentHandle();
@@ -755,7 +706,7 @@ function _buildNamedGroupBackreference(
 		$named: true as const,
 		_group_name,
 		$with: {
-			groupName: (value: T.GroupName) => rebuilt(node, handle, () => _buildNamedGroupBackreference(value))
+			groupName: (value: T.GroupName) => rebuilt(node, handle, () => buildNamedGroupBackreference(value))
 		},
 		groupName: () => _group_name,
 		$render: () => renderText(handle, node),
@@ -1079,25 +1030,6 @@ export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Bound {
 
 export function buildCountQuantifierGroup(
 	value?: AdmitBound<T.DecimalDigits, T.AdmittedNodes>
-): ReturnType<typeof _buildCountQuantifierGroup>;
-export function buildCountQuantifierGroup(
-	text: string | number | bigint
-): ReturnType<typeof _buildCountQuantifierGroup>;
-export function buildCountQuantifierGroup(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildCountQuantifierGroup(args[0] as T.DecimalDigits);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.DecimalDigits as const);
-	return prebuilt
-		? _buildCountQuantifierGroup(args[0] as T.DecimalDigits)
-		: _buildCountQuantifierGroup((buildDecimalDigits as (...a: unknown[]) => unknown)(...args) as T.DecimalDigits);
-}
-function _buildCountQuantifierGroup(
-	value?: AdmitBound<T.DecimalDigits, T.AdmittedNodes>
 ): T.CountQuantifierGroup.Bound {
 	const _decimal_digits = rejectBareText(value, 'CountQuantifierGroup.decimalDigits', 'buildDecimalDigits(…)');
 	const handle = currentHandle();
@@ -1107,7 +1039,7 @@ function _buildCountQuantifierGroup(
 		$named: true as const,
 		_decimal_digits,
 		$with: {
-			decimalDigits: (value?: T.DecimalDigits) => rebuilt(node, handle, () => _buildCountQuantifierGroup(value))
+			decimalDigits: (value?: T.DecimalDigits) => rebuilt(node, handle, () => buildCountQuantifierGroup(value))
 		},
 		decimalDigits: () => _decimal_digits,
 		$render: () => renderText(handle, node),

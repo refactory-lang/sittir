@@ -134,24 +134,7 @@ export function buildImmediateIdentifier(text: string): T.ImmediateIdentifier.Bo
 	return node as unknown as T.ImmediateIdentifier.Bound;
 }
 
-export function buildCapture(
-	value: AdmitBound<T.ImmediateIdentifier, T.AdmittedNodes>
-): ReturnType<typeof _buildCapture>;
-export function buildCapture(text: string): ReturnType<typeof _buildCapture>;
-export function buildCapture(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildCapture(args[0] as T.ImmediateIdentifier);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.ImmediateIdentifier as const);
-	return prebuilt
-		? _buildCapture(args[0] as T.ImmediateIdentifier)
-		: _buildCapture((buildImmediateIdentifier as (...a: unknown[]) => unknown)(...args) as T.ImmediateIdentifier);
-}
-function _buildCapture(value: AdmitBound<T.ImmediateIdentifier, T.AdmittedNodes>): T.Capture.Bound {
+export function buildCapture(value: AdmitBound<T.ImmediateIdentifier, T.AdmittedNodes>): T.Capture.Bound {
 	const _name = rejectBareText(value, 'Capture.name', 'buildImmediateIdentifier(…)');
 	const handle = currentHandle();
 	const node = {
@@ -160,7 +143,7 @@ function _buildCapture(value: AdmitBound<T.ImmediateIdentifier, T.AdmittedNodes>
 		$named: true as const,
 		_name,
 		$with: {
-			name: (value: T.ImmediateIdentifier) => rebuilt(node, handle, () => _buildCapture(value))
+			name: (value: T.ImmediateIdentifier) => rebuilt(node, handle, () => buildCapture(value))
 		},
 		name: () => _name,
 		$render: () => renderText(handle, node),
@@ -510,24 +493,7 @@ export function buildFieldDefinition(config: T.FieldDefinition.Config): T.FieldD
 	return node as unknown as T.FieldDefinition.Bound;
 }
 
-export function buildNegatedField(
-	value: AdmitBound<T.Identifier, T.AdmittedNodes>
-): ReturnType<typeof _buildNegatedField>;
-export function buildNegatedField(text: string): ReturnType<typeof _buildNegatedField>;
-export function buildNegatedField(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildNegatedField(args[0] as T.Identifier);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.Identifier as const);
-	return prebuilt
-		? _buildNegatedField(args[0] as T.Identifier)
-		: _buildNegatedField((buildIdentifier as (...a: unknown[]) => unknown)(...args) as T.Identifier);
-}
-function _buildNegatedField(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T.NegatedField.Bound {
+export function buildNegatedField(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T.NegatedField.Bound {
 	const _identifier = rejectBareText(value, 'NegatedField.identifier', 'buildIdentifier(…)');
 	const handle = currentHandle();
 	const node = {
@@ -536,7 +502,7 @@ function _buildNegatedField(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T
 		$named: true as const,
 		_identifier,
 		$with: {
-			identifier: (value: T.Identifier) => rebuilt(node, handle, () => _buildNegatedField(value))
+			identifier: (value: T.Identifier) => rebuilt(node, handle, () => buildNegatedField(value))
 		},
 		identifier: () => _identifier,
 		$render: () => renderText(handle, node),
