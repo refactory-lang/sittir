@@ -319,9 +319,9 @@ overlap with `_type` is a derived conflict).
 ```text
 				// async_block: seq('async', optional('move'), $.block).
 				// Field-promotion wave 1 (016 task #23): label the standalone
-				// optional `move` punct as `move_marker` so render preserves it
+				// optional `move` punct as `move` so render preserves it
 				// (`async move { ... }` vs `async { ... }`). Naming follows the
-				// `<token>_marker` convention enrich uses for auto-promotion
+				// `<token>` convention enrich uses for auto-promotion
 				// (016 task #30); kept hand-promoted because the hand-emitted
 				// template renders without the spacing that auto-promotion
 				// introduces (the `async move {}` parity fixture round-trips
@@ -384,7 +384,7 @@ overlap with `_type` is a derived conflict).
 				// Field-promotion wave 1 (016 task #23) + wave-1 follow-up (task
 				// #27): label each standalone optional marker so render preserves
 				// them (`static async move |x| ...` vs `|x| ...`). Naming follows
-				// the `<token>_marker` convention enrich uses for auto-promoted
+				// the `<token>` convention enrich uses for auto-promoted
 				// sites (016 task #30).
 				//
 				// 016 task #35: enrich's optional-keyword pass now descends through
@@ -395,11 +395,11 @@ overlap with `_type` is a derived conflict).
 				// hidden rules / FIELD wrappers in grammar.json. Removing this
 				// override leaves the parser emitting bare anon `static`/`async`/
 				// `move` tokens; readUntypedNode promotes them to `$fields.<bare-text>`
-				// (not `$fields.<text>_marker`), the generated `.jinja` template
-				// references the `_marker` keys → render drops them → round-trip
+				// (not the fielded keyword slot), the generated `.jinja` template
+				// references the fielded keys → render drops them → round-trip
 				// regresses. Keep this entry until enrich runs on tree-sitter-cli's
 				// post-evaluation rule shape too (deferred).
-				// The `_kw_async_marker` inline declaration above (wave-1
+				// The `_kw_async` inline declaration above (wave-1
 				// follow-up, task #27) is required to keep `let a = async move
 				// || async move {}` from regressing to ERROR.
 ```
@@ -497,7 +497,7 @@ overlap with `_type` is a derived conflict).
 ```text
 				// gen_block: seq('gen', optional('move'), $.block).
 				// Symmetric to async_block — label the optional `move` punct as
-				// `move_marker` so render preserves it. Kept hand-promoted for
+				// `move` so render preserves it. Kept hand-promoted for
 				// the same render-spacing reason as async_block (see note above).
 ```
 
@@ -656,7 +656,7 @@ is an anonymous token not routed to any field.
 				//   'trait', ...
 				// )
 				// Field-promotion wave 1 (016 task #23): label the standalone
-				// optional `unsafe` punct as `unsafe_marker` so render preserves
+				// optional `unsafe` punct as `unsafe` so render preserves
 				// it (`unsafe trait Foo { ... }` vs `trait Foo { ... }`). Kept
 				// hand-promoted for the same render-spacing reason as async_block
 				// (see note above).

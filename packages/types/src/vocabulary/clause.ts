@@ -138,7 +138,7 @@ export namespace Clause {
 		readonly kind: 'clause.except';
 		readonly exception?: V.Unmapped<'python:except_clause_exception'>;
 		// unmapped: <python:except_clause_exception>
-		readonly star?: boolean;
+		readonly group?: boolean;
 		readonly suite: V.Unmapped<'python:suite'>;
 		// unmapped: <python:suite>
 	}

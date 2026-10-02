@@ -2660,9 +2660,7 @@ export function coerceToCaseClause(input: T.CaseClause.Loose): ReturnType<typeof
 	});
 }
 
-export function resolveForStatement_asyncMarker(
-	value: T.ForStatement.LooseConfig['asyncMarker']
-): T.ForStatement['_async_marker'] {
+export function resolveForStatement_async(value: T.ForStatement.LooseConfig['async']): T.ForStatement['_async'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -2691,7 +2689,7 @@ export function coerceToForStatement(input: T.ForStatement.Loose): ReturnType<ty
 	if (!_isLooseConfig<T.ForStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildForStatement>;
 	return F.buildForStatement({
-		asyncMarker: resolveForStatement_asyncMarker(input.asyncMarker),
+		async: resolveForStatement_async(input.async),
 		left: _requireField('for_statement', 'left', resolveForStatement_left(input.left)),
 		right: _requireField('for_statement', 'right', resolveForStatement_right(input.right)),
 		body: _requireField('for_statement', 'body', resolveForStatement_body(input.body)),
@@ -2761,9 +2759,7 @@ export function coerceToTryStatement(input: T.TryStatement.Loose): ReturnType<ty
 	});
 }
 
-export function resolveExceptClause_starMarker(
-	value: T.ExceptClause.LooseConfig['starMarker']
-): T.ExceptClause['_star_marker'] {
+export function resolveExceptClause_group(value: T.ExceptClause.LooseConfig['group']): T.ExceptClause['_group'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -2781,7 +2777,7 @@ export function coerceToExceptClause(input: T.ExceptClause.Loose): ReturnType<ty
 	if (!_isLooseConfig<T.ExceptClause.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildExceptClause>;
 	return F.buildExceptClause({
-		starMarker: resolveExceptClause_starMarker(input.starMarker),
+		group: resolveExceptClause_group(input.group),
 		exception: resolveExceptClause_exception(input.exception),
 		suite: _requireField('except_clause', 'suite', resolveExceptClause_suite(input.suite))
 	});
@@ -2806,9 +2802,7 @@ export function coerceToFinallyClause(input: T.FinallyClause.Loose): ReturnType<
 	);
 }
 
-export function resolveWithStatement_asyncMarker(
-	value: T.WithStatement.LooseConfig['asyncMarker']
-): T.WithStatement['_async_marker'] {
+export function resolveWithStatement_async(value: T.WithStatement.LooseConfig['async']): T.WithStatement['_async'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -2826,7 +2820,7 @@ export function coerceToWithStatement(input: T.WithStatement.Loose): ReturnType<
 	if (!_isLooseConfig<T.WithStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildWithStatement>;
 	return F.buildWithStatement({
-		asyncMarker: resolveWithStatement_asyncMarker(input.asyncMarker),
+		async: resolveWithStatement_async(input.async),
 		withClause: _requireField('with_statement', 'withClause', resolveWithStatement_withClause(input.withClause)),
 		body: _requireField('with_statement', 'body', resolveWithStatement_body(input.body))
 	});
@@ -2861,9 +2855,9 @@ export function coerceToWithItem(input: T.WithItem.Loose): ReturnType<typeof F.b
 	);
 }
 
-export function resolveFunctionDefinition_asyncMarker(
-	value: T.FunctionDefinition.LooseConfig['asyncMarker']
-): T.FunctionDefinition['_async_marker'] {
+export function resolveFunctionDefinition_async(
+	value: T.FunctionDefinition.LooseConfig['async']
+): T.FunctionDefinition['_async'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -2903,7 +2897,7 @@ export function coerceToFunctionDefinition(
 	if (!_isLooseConfig<T.FunctionDefinition.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFunctionDefinition>;
 	return F.buildFunctionDefinition({
-		asyncMarker: resolveFunctionDefinition_asyncMarker(input.asyncMarker),
+		async: resolveFunctionDefinition_async(input.async),
 		name: _requireField('function_definition', 'name', resolveFunctionDefinition_name(input.name)),
 		typeParameters: resolveFunctionDefinition_typeParameters(input.typeParameters),
 		parameters: resolveFunctionDefinition_parameters(input.parameters) ?? F.buildParameters(),
@@ -5105,9 +5099,7 @@ export function coerceToCollectionElements(
 	);
 }
 
-export function resolveForInClause_asyncMarker(
-	value: T.ForInClause.LooseConfig['asyncMarker']
-): T.ForInClause['_async_marker'] {
+export function resolveForInClause_async(value: T.ForInClause.LooseConfig['async']): T.ForInClause['_async'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -5132,7 +5124,7 @@ export function coerceToForInClause(input: T.ForInClause.Loose): ReturnType<type
 	if (!_isLooseConfig<T.ForInClause.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildForInClause>;
 	return F.buildForInClause({
-		asyncMarker: resolveForInClause_asyncMarker(input.asyncMarker),
+		async: resolveForInClause_async(input.async),
 		left: _requireField('for_in_clause', 'left', resolveForInClause_left(input.left)),
 		right: _requireField('for_in_clause', 'right', resolveForInClause_rights(input.right)),
 		comma: resolveForInClause_comma(input.comma)
@@ -5309,9 +5301,7 @@ export function resolveInterpolation_expression(
 	);
 }
 
-export function resolveInterpolation_eqMarker(
-	value: T.Interpolation.LooseConfig['eqMarker']
-): T.Interpolation['_eq_marker'] {
+export function resolveInterpolation_debug(value: T.Interpolation.LooseConfig['debug']): T.Interpolation['_debug'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -5332,7 +5322,7 @@ export function coerceToInterpolation(input: T.Interpolation.Loose): ReturnType<
 		return input as unknown as ReturnType<typeof F.buildInterpolation>;
 	return F.buildInterpolation({
 		expression: _requireField('interpolation', 'expression', resolveInterpolation_expression(input.expression)),
-		eqMarker: resolveInterpolation_eqMarker(input.eqMarker),
+		debug: resolveInterpolation_debug(input.debug),
 		typeConversion: resolveInterpolation_typeConversion(input.typeConversion),
 		formatSpecifier: resolveInterpolation_formatSpecifier(input.formatSpecifier)
 	});

@@ -15,7 +15,7 @@ import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 
 /**
  * Mirrors rust's `async_block`: an optional keyword-presence slot
- * (`moveMarker`) alongside one required slot (`body`) that forwards
+ * (`move`) alongside one required slot (`body`) that forwards
  * positionally to a target (`block`) constructible with no argument.
  * `argumentOptional`'s original definition only recognized "every slot
  * optional" or "exactly one slot total" — it undercounted this shape, since
@@ -41,7 +41,7 @@ function makeNodeMap() {
 		hasTrailingDelimiter: false,
 		hasLeadingDelimiter: false,
 		sourceRuleIds: [],
-		fieldName: 'moveMarker'
+		fieldName: 'move'
 	});
 	const asyncBlock = new AssembledBranch('async_block', rule, rule, {
 		slots: [moveMarkerSlot, bodySlot]

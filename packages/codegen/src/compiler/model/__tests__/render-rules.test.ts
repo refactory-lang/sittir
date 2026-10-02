@@ -390,7 +390,7 @@ describe('seamRenderRules', () => {
 			linked: seq(sym('a'), { type: 'CHOICE', nonterminal: true, members: [sym('plus', { literal: '+', fieldName: 'operator' }), { type: 'CHOICE', nonterminal: true, fieldName: 'operator', members: [sym('minus', { literal: '-' })] }] } as unknown as RenderRule, sym('b')),
 			mixed: seq(sym('a'), { type: 'CHOICE', nonterminal: true, members: [op('+'), sym('kw')] } as unknown as RenderRule, sym('b')),
 			words: seq(sym('a'), { type: 'CHOICE', nonterminal: true, members: [op('and'), op('or')] } as unknown as RenderRule, sym('b')),
-			marker: seq(sym('readonly', { literal: 'readonly', fieldName: 'readonly_marker' }), sym('x'))
+			marker: seq(sym('readonly', { literal: 'readonly', fieldName: 'readonly' }), sym('x'))
 		};
 		const { out, config } = seamed(rules);
 		expect(memberNames(out.rules.binary!).filter((m) => m.startsWith('S('))).toEqual(['S(operator_before)', 'S(operator_after)']);
@@ -398,7 +398,7 @@ describe('seamRenderRules', () => {
 		expect(memberNames(out.rules.linked!).filter((m) => m.startsWith('S('))).toEqual(['S(operator_before)', 'S(operator_after)']);
 		expect(out.rules.mixed).toBe(rules.mixed);
 		expect(memberNames(out.rules.words!).filter((m) => m.startsWith('S('))).toEqual(['S(operator_before)', 'S(operator_after)']);
-		expect(memberNames(out.rules.marker!).filter((m) => m.startsWith('S('))).toEqual(['S(readonly_marker_after)']);
+		expect(memberNames(out.rules.marker!).filter((m) => m.startsWith('S('))).toEqual(['S(readonly_after)']);
 		expect(spacingSitesOf(out, config.nodeMap).map((s) => `${s.kind}.${s.slot} @${s.address}`)).toEqual([
 			'binary.operator @operator_before',
 			'binary.operator @operator_after',
@@ -407,7 +407,7 @@ describe('seamRenderRules', () => {
 			'linked.operator @operator_after',
 			'words.operator @operator_before',
 			'words.operator @operator_after',
-			'marker.readonly_marker @readonly_marker_after'
+			'marker.readonly @readonly_after'
 		]);
 	});
 

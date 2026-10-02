@@ -25,11 +25,11 @@ function makeNodeMap() {
 		]
 	});
 	punct.userFacing = true;
-	const marker = new AssembledKeyword('_kw_async_marker', { type: STRING, value: 'async' });
+	const marker = new AssembledKeyword('_kw_async', { type: STRING, value: 'async' });
 	marker.userFacing = true;
 	const content = new AssembledPattern('_string_content', { type: PATTERN, value: '[^"]+' });
 	content.userFacing = true;
-	nodes.set('_kw_async_marker', marker);
+	nodes.set('_kw_async', marker);
 	nodes.set('_string_content', content);
 	nodes.set('_string_open', open);
 	nodes.set('_space', space);
@@ -49,7 +49,7 @@ describe('ir leaf exposure follows userFacing, not the name prefix', () => {
 	});
 	it('gives a hidden keyword marker and an underscore-keyed hidden pattern no builder', () => {
 		const source = emitIr({ grammar: 'rust', nodeMap: makeNodeMap() });
-		expect(source).not.toContain('kwAsyncMarker: F.');
+		expect(source).not.toContain('kwAsync: F.');
 		expect(source).not.toContain('_stringContent: F.');
 	});
 });

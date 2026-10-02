@@ -1624,7 +1624,7 @@ function tryPromoteInnerKeyword(
 	if (!isStringType(innerNorm.type)) return null;
 	const kw = innerNorm.value;
 	if (typeof kw !== 'string' || !matchesWordShape(kw, ctx.wordMatcher)) return null;
-	const fieldName = `${kw}_marker`;
+	const fieldName = kw;
 	if (claimed.has(fieldName)) {
 		reportSkip('optional-keyword-prefix', ruleName, `field '${fieldName}' already exists`);
 		return null;
@@ -2153,7 +2153,7 @@ function promotePermutationArmKeywords(choiceRule: Rule, ctx: EnrichCtx): Rule {
 			const norm = normalizeMember(m);
 			if (!isStringType(norm.type) || typeof norm.value !== 'string') return m;
 			if (!matchesWordShape(norm.value, ctx.wordMatcher)) return m;
-			const fieldName = `${norm.value}_marker`;
+			const fieldName = norm.value;
 			const symbolRef = registerKwRule(m, fieldName, ctx.kwRules, ctx.rulesBag, ctx.ruleOrigins);
 			if (symbolRef === null) return m;
 			armChanged = true;

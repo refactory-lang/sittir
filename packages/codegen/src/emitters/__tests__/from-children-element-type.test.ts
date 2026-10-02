@@ -13,7 +13,7 @@ import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
 
 /**
  * Mirrors rust's real `field_pattern` shape: two optional NAMED marker
- * fields (`ref_marker`, `mutable_specifier`) precede the real unnamed
+ * fields (`ref`, `mutable_specifier`) precede the real unnamed
  * content slot in `node.fields` order. The from() resolver's element-type
  * union must come from ALL fields (matching the factory's own derivation
  * via `childElementType`), not from whichever field happens to be
@@ -21,7 +21,7 @@ import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
  */
 function makeFieldPatternNodeMap(withMarkers: boolean) {
 	const markers: SeqRule<'link'>['members'] = [
-		{ type: FIELD, name: 'ref_marker', content: { type: OPTIONAL, content: { type: STRING, value: 'ref' } } },
+		{ type: FIELD, name: 'ref', content: { type: OPTIONAL, content: { type: STRING, value: 'ref' } } },
 		{
 			type: FIELD,
 			name: 'mutable_specifier',
@@ -59,7 +59,7 @@ describe('from() children element type', () => {
 	});
 
 	it('emits no children element type for a kind whose sole slot sits beside configurable markers', () => {
-		// ref_marker / mutable_specifier are configurable keyword markers: the
+		// ref / mutable_specifier are configurable keyword markers: the
 		// kind is multi-slot for surface purposes and takes a config object,
 		// so from() must not treat it as child-spread.
 		const src = emitFrom({ grammar: 'synth', nodeMap: makeFieldPatternNodeMap(true) });

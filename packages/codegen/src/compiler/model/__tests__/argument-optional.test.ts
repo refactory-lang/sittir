@@ -46,7 +46,7 @@ describe('argumentOptional', () => {
 	});
 
 	it('an optional sibling slot does not block the one required slot from forwarding (rust async_block)', () => {
-		// async_block: moveMarker (optional keyword presence) + body (required,
+		// async_block: move (optional keyword presence) + body (required,
 		// forwards to a target that is itself argument-optional). `soleSlot`
 		// (exactly one slot total) would miss this — there are two slots here.
 		const target = branch('block', []);

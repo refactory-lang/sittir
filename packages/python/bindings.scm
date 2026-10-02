@@ -5,8 +5,8 @@
 ; root kind. Namespaces are the supertypes: no grammar supertype is ever claimed.
 ; A kind claim is unconditional: an optional member named in the same pattern carries a quantifier
 ; (`?`, `*`, `+`) so the claim matches whether or not the member is present.
-; The names rules for markers and modifiers (`async_marker` is `async`, `visibility_modifier` is
-; `visibility`) are applied by the derivation to every slot, so no claim spells them.
+; A keyword-presence slot is named by its keyword (`async`), and the name rule for modifiers
+; (`visibility_modifier` is `visibility`) is applied by the derivation to every slot, so no claim spells it.
 ; A container that wraps one declaration or statement is never claimed: a pattern that captures the wrapped
 ; node as `@element` assigns its other captures (`@declare`, `@decorator`, `@label`) to that element.
 
