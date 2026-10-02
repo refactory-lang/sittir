@@ -11640,7 +11640,7 @@ The overload list of a forwarding strict builder, as a value: the kind's own par
 
 ### `packages/codegen/src/emitters/factories.ts::listSpreadTarget`
 
-The forward target of a kind whose strict builder accepts the spread of a list it wraps (`parameters(a, b)` for `parameters` → `parameters_elements`): `forwardedConstructorTarget` names a target whose constructor resolves (`constructorTargetKind`) to a list, and the kind registers no spelling slot (a spelling wrapper forwards only its first argument). The strict wrapper, the loose coercer's spread overload (`emitBranchFrom`), and the `BuildArgs` / `LooseArgs` tuples (`fieldCarryingBuiltTypeSurface`) all read this one answer, so the loose surface accepts at least what the strict one does.
+The forward target of a kind whose strict builder accepts the spread of the child it wraps (`parameters(a, b)` for `parameters` → `parameters_elements`, `string(a, b)` for `string` → `string_content`): `forwardedConstructorTarget` names a target whose constructor chain ends in a kind built from its elements, a list or a compound with one multiple slot (factory shape `elements` or `spread`), and the kind registers no spelling slot (a spelling wrapper forwards only its first argument). The strict wrapper, the loose coercer's spread overload (`emitBranchFrom`), and the `BuildArgs` / `LooseArgs` tuples (`fieldCarryingBuiltTypeSurface`) all read this one answer, so the loose surface accepts at least what the strict one does.
 
 ### `packages/codegen/src/emitters/factories.ts::RowParam`
 
