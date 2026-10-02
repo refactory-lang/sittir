@@ -411,7 +411,7 @@ either way.
 #### body
 
 ```text
-// Write the per-grammar generated.manifest.json after all bulk writes complete
+// Record the generation in the grammar's local manifest after all bulk writes complete
 // and before any validation runs. Always happens regardless of --roundtrip,
 // because the manifest needs to track the current on-disk state for any
 // downstream validator (this function's roundtrip probes OR the external

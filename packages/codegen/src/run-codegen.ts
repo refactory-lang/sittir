@@ -24,7 +24,7 @@ import { pruneOrphanedPlaceholderRules } from './transpile/prune-grammar-json.ts
 import { generateWithDerivedConflicts } from './transpile/conflict-driver.ts';
 import { assertGrammarRuntimeFloor } from './transpile/tree-sitter-cli.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
-import { writeManifestForGrammar } from './scripts/generated-manifest.ts';
+import { manifestPath, writeManifestForGrammar } from './scripts/generated-manifest.ts';
 import { grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, sittirDirOf, type GrammarPackage } from './grammars.ts';
 import { nativeCrateFiles } from './emitters/native-crate.ts';
 import type { NodeMap } from './compiler/types.ts';
@@ -401,7 +401,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 	}
 
 	writeManifestForGrammar(grammar);
-	console.log(`  → packages/${grammar}/.sittir/generated.manifest.json updated`);
+	console.log(`  → generation recorded in ${manifestPath(grammar)}`);
 
 	if (all && !noEmitDiff) {
 		const emitDiff = formatEmitDiff(grammar);

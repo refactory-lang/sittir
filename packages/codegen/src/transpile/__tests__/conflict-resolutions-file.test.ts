@@ -1,10 +1,10 @@
-import { createHash } from 'node:crypto';
 import { mkdtempSync, readFileSync, rmSync, statSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { EMPTY_CONFLICT_RESOLUTIONS, type ConflictResolutionsFile } from '../../dsl/conflict-resolutions.ts';
-import { REPO_ROOT, grammarPackage } from '../../grammars.ts';
+import { REPO_ROOT, allGrammars, grammarPackage } from '../../grammars.ts';
+import { generatedRootsFor, worktreeSource } from '../../scripts/generated-manifest.ts';
 import {
 	conflictResolutionsPath,
 	ensureConflictResolutions,
@@ -53,13 +53,10 @@ describe('the resolutions file of a package', () => {
 	});
 });
 
-describe.each(['python', 'rust', 'typescript', 'scm', 'regex'])('%s resolutions are a manifest-checked generated output', (grammar) => {
-	it('the committed manifest records resolutions.json with its current content hash', () => {
-		const pkg = grammarPackage(grammar);
-		const path = conflictResolutionsPath(pkg);
-		const manifest = JSON.parse(readFileSync(join(pkg.dir, '.sittir', 'generated.manifest.json'), 'utf8')) as {
-			readonly files: Readonly<Record<string, string>>;
-		};
-		expect(manifest.files[relative(REPO_ROOT, path)]).toBe(createHash('sha256').update(readFileSync(path)).digest('hex'));
+describe.each(allGrammars())('%s resolutions are a verified generated output', (grammar) => {
+	it('resolutions.json is a tracked file under one of the grammar\'s generated roots', () => {
+		const path = relative(REPO_ROOT, conflictResolutionsPath(grammarPackage(grammar)));
+		expect(generatedRootsFor(grammar).some((root) => path.startsWith(`${root}/`))).toBe(true);
+		expect(worktreeSource().visible.has(path)).toBe(true);
 	});
 });

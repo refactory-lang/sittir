@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # sittir-managed-hook
-# sittir pre-commit guard: block commits whose generated artifacts don't match
-# their committed manifest (e.g. a staged manifest without its regenerated
-# test-fixtures.json — the 49299942 inconsistency class). Fast hash compare, no
-# cargo. Override with `git commit --no-verify` for an intentional partial state.
+# sittir pre-commit guard: block commits whose staged source inputs and
+# generated artifacts are neither a pair a local `gen` produced nor equal to a
+# trusted commit (e.g. a staged codegen edit without its regenerated output).
+# Fast hash compare, no cargo. Override with `git commit --no-verify` for an
+# intentional partial state.
 set -euo pipefail
 
 repo="$(git rev-parse --show-toplevel 2>/dev/null || true)"
@@ -24,7 +25,7 @@ fi
 
 if ! pnpm exec tsx packages/codegen/src/scripts/verify-manifests-cli.ts --staged; then
   echo "" >&2
-  echo "🚫 pre-commit: generated artifacts are inconsistent with the manifest (see above)." >&2
+  echo "🚫 pre-commit: generated artifacts are inconsistent with their source (see above)." >&2
   echo "   Regenerate the affected grammar(s) and stage ALL their outputs, or use --no-verify." >&2
   exit 1
 fi
