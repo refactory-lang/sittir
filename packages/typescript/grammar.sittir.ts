@@ -49,8 +49,8 @@ export default sittirGrammar(base, {
 		statements: { terminator: preference(';') },
 		quotes: { style: preference('double') },
 		enum_body_elements: {
-			'element:/separator/","/after': preference('newline'),
-			'element:/delimiter': preference('Delimiter.Trailing')
+			'item:/separator/","/after': preference('newline'),
+			'item:/delimiter': preference('Delimiter.Trailing')
 		},
 		program: { 'statements:/separator': preference('tight'), 'statements:/(_)/after': preference('blankline') },
 
@@ -107,19 +107,19 @@ export default sittirGrammar(base, {
 		update_expression_prefix: { 'operator:/after': preference('tight') },
 
 		object_type_content: {
-			'members:/separator/before': preference('tight'),
-			'members:/separator/after': preference('newline'),
-			'members:/separator/kind': preference('semi'),
-			'members:/delimiter': preference('Delimiter.Trailing')
+			'item:/separator/before': preference('tight'),
+			'item:/separator/after': preference('newline'),
+			'item:/separator/kind': preference('semi'),
+			'item:/delimiter': preference('Delimiter.Trailing')
 		},
 
 		statement_block: { before: preference('space') },
 		class_body: { before: preference('space') },
 		switch_body: { before: preference('space') },
 		named_imports: { before: preference('space'), after: preference('space') },
-		import_specifiers: { 'import_specifier:/start': preference('space'), 'import_specifier:/end': preference('space') },
+		import_specifiers: { 'item:/start': preference('space'), 'item:/end': preference('space') },
 		export_clause: { before: preference('space'), after: preference('space') },
-		export_specifiers: { 'export_specifier:/start': preference('space'), 'export_specifier:/end': preference('space') },
+		export_specifiers: { 'item:/start': preference('space'), 'item:/end': preference('space') },
 		object: { 'properties:/start': preference('space'), 'properties:/end': preference('space') },
 		object_pattern: { 'properties:/start': preference('space'), 'properties:/end': preference('space') },
 		ternary_expression: { '":"/before': preference('space') },
@@ -197,9 +197,6 @@ export default sittirGrammar(base, {
 		hash_bang_line: { '.': regex(/#!(?<content>.*)/) },
 		binary_expression: {
 			24: variant('in')
-		},
-		arguments: {
-			1: field('elements')
 		},
 		object: {
 			1: field('properties')
@@ -323,28 +320,18 @@ export default sittirGrammar(base, {
 		},
 
 		method_definition: {
-			1: field('static'),
 			'2/0': field('override'),
-			'3/0': field('readonly'),
-			'4/0': field('async'),
 			'5/0': field('accessor_kind'),
 			'7/0': field('optional')
 		},
 
 		method_signature: {
-			1: field('static'),
 			'2/0': field('override'),
 			'5/0': field('accessor_kind'),
 			'7/0': field('optional')
 		},
 
-		program: {
-			0: field('hash_bang_line'),
-			1: field('statements')
-		},
-
 		property_signature: {
-			1: field('static'),
 			'2/0': field('override'),
 			'5/0': field('optional')
 		},
@@ -354,7 +341,6 @@ export default sittirGrammar(base, {
 		},
 
 		statement_block: {
-			1: field('statements'),
 			3: field('automatic_semicolon')
 		},
 
@@ -393,22 +379,6 @@ export default sittirGrammar(base, {
 			2: field('terminator')
 		},
 
-		function_expression: {
-			'0/0': field('async')
-		},
-
-		function_declaration: {
-			'0/0': field('async')
-		},
-
-		generator_function: {
-			'0/0': field('async')
-		},
-
-		generator_function_declaration: {
-			'0/0': field('async')
-		},
-
 		break_statement: {
 			2: field('terminator')
 		},
@@ -425,20 +395,8 @@ export default sittirGrammar(base, {
 			4: field('terminator')
 		},
 
-		constructor_type: {
-			'0/0': field('abstract')
-		},
-
-		enum_declaration: {
-			'0/0': field('const')
-		},
-
 		function_signature: {
 			4: field('terminator')
-		},
-
-		assignment_expression: {
-			'0/0': field('using')
 		},
 
 		export_specifier: {
@@ -647,7 +605,7 @@ export default sittirGrammar(base, {
 			);
 			return seq(
 				optional(SEP()),
-				seq(field('members', member), repeat(seq(SEP(), field('members', member)))),
+				seq(field('item', member), repeat(seq(SEP(), field('item', member)))),
 				optional(SEP())
 			);
 		})

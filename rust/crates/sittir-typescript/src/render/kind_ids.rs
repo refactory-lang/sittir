@@ -461,18 +461,19 @@ pub const EXPORT_SPECIFIERS_REPEAT1: KindId = KindId(450);
 pub const IMPORT_SPECIFIERS_REPEAT1: KindId = KindId(451);
 pub const FORMAL_PARAMETERS_ELEMENTS_REPEAT1: KindId = KindId(452);
 pub const ENUM_BODY_ELEMENTS_REPEAT1: KindId = KindId(453);
-pub const TYPE_PARAMETERS_ELEMENTS_REPEAT1: KindId = KindId(454);
-pub const TUPLE_TYPE_MEMBERS_REPEAT1: KindId = KindId(455);
-pub const OBJECT_TYPE_CONTENT_REPEAT1: KindId = KindId(456);
-pub const STRING_DOUBLE_REPEAT1: KindId = KindId(457);
-pub const STRING_SINGLE_REPEAT1: KindId = KindId(458);
-pub const _INTERFACE_BODY: KindId = KindId(459);
-pub const _PROPERTY_IDENTIFIER: KindId = KindId(461);
-pub const _SHORTHAND_PROPERTY_IDENTIFIER: KindId = KindId(462);
-pub const _SHORTHAND_PROPERTY_IDENTIFIER_PATTERN: KindId = KindId(463);
-pub const _STATEMENT_IDENTIFIER: KindId = KindId(464);
-pub const _THIS_TYPE: KindId = KindId(465);
-pub const _TYPE_IDENTIFIER: KindId = KindId(466);
+pub const TYPES_REPEAT1: KindId = KindId(454);
+pub const TYPE_PARAMETERS_ELEMENTS_REPEAT1: KindId = KindId(455);
+pub const TUPLE_TYPE_MEMBERS_REPEAT1: KindId = KindId(456);
+pub const OBJECT_TYPE_CONTENT_REPEAT1: KindId = KindId(457);
+pub const STRING_DOUBLE_REPEAT1: KindId = KindId(458);
+pub const STRING_SINGLE_REPEAT1: KindId = KindId(459);
+pub const _INTERFACE_BODY: KindId = KindId(460);
+pub const _PROPERTY_IDENTIFIER: KindId = KindId(462);
+pub const _SHORTHAND_PROPERTY_IDENTIFIER: KindId = KindId(463);
+pub const _SHORTHAND_PROPERTY_IDENTIFIER_PATTERN: KindId = KindId(464);
+pub const _STATEMENT_IDENTIFIER: KindId = KindId(465);
+pub const _THIS_TYPE: KindId = KindId(466);
+pub const _TYPE_IDENTIFIER: KindId = KindId(467);
 pub const ERROR: KindId = KindId(65535);
 const _: () = assert!(ERROR.0 == KindId::ERROR.0);
 
@@ -738,7 +739,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         256 => "member_expression", // "member_expression"
         257 => "subscript_expression", // "subscript_expression"
         258 => "_lhs_expression", // "_lhs_expression"
-        460 => "lhs_expression", // "_lhs_expression"
+        461 => "lhs_expression", // "_lhs_expression"
         259 => "assignment_expression", // "assignment_expression"
         260 => "_augmented_assignment_lhs", // "_augmented_assignment_lhs"
         261 => "augmented_assignment_expression", // "augmented_assignment_expression"
@@ -934,18 +935,19 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         451 => "import_specifiers_repeat1", // "import_specifiers_repeat1"
         452 => "formal_parameters_elements_repeat1", // "formal_parameters_elements_repeat1"
         453 => "enum_body_elements_repeat1", // "enum_body_elements_repeat1"
-        454 => "type_parameters_elements_repeat1", // "type_parameters_elements_repeat1"
-        455 => "tuple_type_members_repeat1", // "tuple_type_members_repeat1"
-        456 => "object_type_content_repeat1", // "object_type_content_repeat1"
-        457 => "string_double_repeat1", // "string_double_repeat1"
-        458 => "string_single_repeat1", // "string_single_repeat1"
-        459 => "interface_body", // "_interface_body"
-        461 => "property_identifier", // "_property_identifier"
-        462 => "shorthand_property_identifier", // "_shorthand_property_identifier"
-        463 => "shorthand_property_identifier_pattern", // "_shorthand_property_identifier_pattern"
-        464 => "statement_identifier", // "_statement_identifier"
-        465 => "this_type", // "_this_type"
-        466 => "type_identifier", // "_type_identifier"
+        454 => "types_repeat1", // "types_repeat1"
+        455 => "type_parameters_elements_repeat1", // "type_parameters_elements_repeat1"
+        456 => "tuple_type_members_repeat1", // "tuple_type_members_repeat1"
+        457 => "object_type_content_repeat1", // "object_type_content_repeat1"
+        458 => "string_double_repeat1", // "string_double_repeat1"
+        459 => "string_single_repeat1", // "string_single_repeat1"
+        460 => "interface_body", // "_interface_body"
+        462 => "property_identifier", // "_property_identifier"
+        463 => "shorthand_property_identifier", // "_shorthand_property_identifier"
+        464 => "shorthand_property_identifier_pattern", // "_shorthand_property_identifier_pattern"
+        465 => "statement_identifier", // "_statement_identifier"
+        466 => "this_type", // "_this_type"
+        467 => "type_identifier", // "_type_identifier"
         65535 => "ERROR", // "ERROR"
         _ => "<unknown>",
     }
@@ -1249,8 +1251,8 @@ pub fn inner_gap_key(kind: KindId, preceding_tokens: u16) -> Option<&'static str
         (240, 1) => Some("elements"),
         (276, 1) => Some("elements"),
         (280, 1) => Some("members"),
-        (281, 1) => Some("formal_parameters_elements"),
-        (315, 1) => Some("enum_body_elements"),
+        (281, 1) => Some("elements"),
+        (315, 1) => Some("elements"),
         (371, 1) => Some("tuple_type_members"),
         _ => None,
     }
@@ -1414,8 +1416,8 @@ pub fn stores_scalar(parent: KindId, field: Option<&str>, child: KindId) -> bool
         (374, Some("right")) => matches!(child.0, 38 | 39 | 40 | 41 | 42 | 44 | 107 | 143 | 144 | 145 | 356),
         (375, Some("return_type")) => matches!(child.0, 38 | 39 | 40 | 41 | 42 | 44 | 107 | 143 | 144 | 145 | 356),
         (380, Some("name")) => matches!(child.0, 7 | 30 | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | 50),
-        (383, Some("type")) => matches!(child.0, 38 | 39 | 40 | 41 | 42 | 44 | 107 | 143 | 144 | 145 | 356),
-        (385, Some("tuple_type_member")) => matches!(child.0, 38 | 39 | 40 | 41 | 42 | 44 | 107 | 143 | 144 | 145 | 356),
+        (383, Some("item")) => matches!(child.0, 38 | 39 | 40 | 41 | 42 | 44 | 107 | 143 | 144 | 145 | 356),
+        (385, Some("item")) => matches!(child.0, 38 | 39 | 40 | 41 | 42 | 44 | 107 | 143 | 144 | 145 | 356),
         (389, Some("terminator")) => matches!(child.0, 20 | 173),
         (389, Some("type")) => matches!(child.0, 38 | 39 | 40 | 41 | 42 | 44 | 107 | 143 | 144 | 145 | 356),
         (392, Some("terminator")) => matches!(child.0, 20 | 173),
@@ -1460,10 +1462,10 @@ pub fn stores_scalar(parent: KindId, field: Option<&str>, child: KindId) -> bool
         (434, Some("kind")) => matches!(child.0, 50 | 128),
         (434, Some("operator")) => matches!(child.0, 142 | 150),
         (434, Some("right")) => matches!(child.0, 119 | 120 | 121 | 122 | 123 | 124),
-        (461, Some("content")) => matches!(child.0, 7 | 30 | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | 50),
         (462, Some("content")) => matches!(child.0, 7 | 30 | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | 50),
         (463, Some("content")) => matches!(child.0, 7 | 30 | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | 50),
         (464, Some("content")) => matches!(child.0, 7 | 30 | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | 50),
+        (465, Some("content")) => matches!(child.0, 7 | 30 | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | 50),
         _ => false,
     }
 }

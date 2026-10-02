@@ -42,8 +42,8 @@ describe('enrich fields a separated list head together with its tail', () => {
 		const statements = raw.rules['statements'] as unknown as Node;
 		const [head, repeat] = statements.members!;
 		const tailElement = repeat!.content!.members!.at(-1)!;
-		expect([head!.type, head!.name]).toEqual([FIELD, 'statement']);
-		expect([tailElement.type, tailElement.name]).toEqual([FIELD, 'statement']);
+		expect([head!.type, head!.name]).toEqual([FIELD, 'item']);
+		expect([tailElement.type, tailElement.name]).toEqual([FIELD, 'item']);
 		expect(headOnlyListFields(raw.rules)).toEqual([]);
 	}, 120_000);
 

@@ -520,16 +520,16 @@ export interface EnumBodyElementNameTransport {
 export interface EnumBodyElementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _element: Array<SlotValue<EnumBodyElementTransport>>
+  _item: Array<SlotValue<EnumBodyElementTransport>>
   _delimiter?: number
-  _element_separator_space_before?: number
-  _element_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface EnumBodyTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _enum_body_elements?: SlotValue<EnumBodyElementsTransport>
+  _elements?: SlotValue<EnumBodyElementsTransport>
 }
 
 export interface EnumDeclarationTransport {
@@ -555,10 +555,10 @@ export interface ExportClauseTransport {
 export interface ExportSpecifiersTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _export_specifier: Array<SlotValue<ExportSpecifierTransport>>
+  _item: Array<SlotValue<ExportSpecifierTransport>>
   _delimiter?: number
-  _export_specifier_separator_space_before?: number
-  _export_specifier_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface ExportSpecifierTransport {
@@ -719,16 +719,16 @@ export interface ForInStatementTransport {
 export interface FormalParametersElementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _formal_parameter: Array<SlotValue<FormalParametersElementsFormalParameterTransportSlot>>
+  _item: Array<SlotValue<FormalParametersElementsItemTransportSlot>>
   _delimiter?: number
-  _formal_parameter_separator_space_before?: number
-  _formal_parameter_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface FormalParametersTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _formal_parameters_elements?: SlotValue<FormalParametersElementsTransport>
+  _elements?: SlotValue<FormalParametersElementsTransport>
 }
 
 export interface ForStatementTransport {
@@ -893,10 +893,10 @@ export interface ImportSpecifierNameTransport {
 export interface ImportSpecifiersTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _import_specifier: Array<SlotValue<ImportSpecifierTransport>>
+  _item: Array<SlotValue<ImportSpecifierTransport>>
   _delimiter?: number
-  _import_specifier_separator_space_before?: number
-  _import_specifier_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface ImportStatementClauseFromTransport {
@@ -1234,11 +1234,11 @@ export interface ObjectTransport {
 export interface ObjectTypeContentTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _members: Array<SlotValue<ObjectTypeContentMembersTransportSlot>>
+  _item: Array<SlotValue<ObjectTypeContentItemTransportSlot>>
   _delimiter?: number
   _separator?: number
-  _members_separator_space_before?: number
-  _members_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface ObjectTypeTransport {
@@ -1568,10 +1568,10 @@ export interface TupleParameterTransport {
 export interface TupleTypeMembersTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _tuple_type_member: Array<SlotValue<TupleTypeMembersTupleTypeMemberTransportSlot>>
+  _item: Array<SlotValue<TupleTypeMembersItemTransportSlot>>
   _delimiter?: number
-  _tuple_type_member_separator_space_before?: number
-  _tuple_type_member_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface TupleTypeTransport {
@@ -1617,16 +1617,16 @@ export interface TypeIdentifierTransport {
 export interface TypeParametersElementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _type_parameter: Array<SlotValue<TypeParameterTransport>>
+  _item: Array<SlotValue<TypeParameterTransport>>
   _delimiter?: number
-  _type_parameter_separator_space_before?: number
-  _type_parameter_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface TypeParametersTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _type_parameters_elements: SlotValue<TypeParametersElementsTransport>
+  _elements: SlotValue<TypeParametersElementsTransport>
 }
 
 export interface TypeParameterTransport {
@@ -1704,10 +1704,10 @@ export interface TypeQueryTransport {
 export interface TypesTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _type: Array<SlotValue<TypeTransport>>
+  _item: Array<SlotValue<TypeTransport>>
   _delimiter?: number
-  _type_separator_space_before?: number
-  _type_separator_space_after?: number
+  _item_separator_space_before?: number
+  _item_separator_space_after?: number
 }
 
 export interface UnaryExpressionTransport {

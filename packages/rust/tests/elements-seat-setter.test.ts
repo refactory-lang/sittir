@@ -12,7 +12,7 @@ const parametersOf = (source: string) => {
 };
 
 const attributedConfig = () => {
-	const donor = parametersOf('fn f(#[x] a: i32, b: i32) {}\n').parametersElements()!;
+	const donor = parametersOf('fn f(#[x] a: i32, b: i32) {}\n').elements()!;
 	const attributed = donor[0]!;
 	if (typeof attributed === 'number' || attributed.$type !== kinds.AttributedParameter) throw new Error('not attributed');
 	return { attributeItem: attributed.attributeItem(), content: attributed.content() };
@@ -21,14 +21,14 @@ const attributedConfig = () => {
 describe('a list owner takes the element config objects its config surface takes', () => {
 	it('builds an element from a config object through $with', () => {
 		const target = parametersOf('fn g(c: i32) {}\n');
-		expect(target.$with.parametersElements(attributedConfig()).$render()).toBe('(#[x] a: i32)');
+		expect(target.$with.elements(attributedConfig()).$render()).toBe('(#[x] a: i32)');
 	});
 
 	it('mixes built nodes and config objects, and reads the items back as nodes', () => {
 		const target = parametersOf('fn g(c: i32) {}\n');
-		const [first] = target.parametersElements()!;
-		const rebuilt = target.$with.parametersElements(first!, attributedConfig());
+		const [first] = target.elements()!;
+		const rebuilt = target.$with.elements(first!, attributedConfig());
 		expect(rebuilt.$render()).toBe('(c: i32, #[x] a: i32)');
-		expect(rebuilt.parametersElements()).toHaveLength(2);
+		expect(rebuilt.elements()).toHaveLength(2);
 	});
 });

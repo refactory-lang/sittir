@@ -15,12 +15,12 @@ it('types every site by kind id at its address and rejects a wrong member at com
 	const ok: Options = {
 		array: { elements: { separator: { comma: { after: ts.kinds.Newline } }, start: ts.kinds.Tight, end: ts.kinds.Tight } },
 		formalParametersElements: {
-			formalParameter: { separator: { comma: { after: ts.kinds.Space } }, delimiter: Delimiter.Trailing }
+			item: { separator: { comma: { after: ts.kinds.Space } }, delimiter: Delimiter.Trailing }
 		},
 		objectTypeContent: {
-			members: { separator: { kind: ts.kinds.Semi, after: ts.kinds.Newline }, delimiter: Delimiter.Trailing }
+			item: { separator: { kind: ts.kinds.Semi, after: ts.kinds.Newline }, delimiter: Delimiter.Trailing }
 		},
-		enumBodyElements: { element: { separator: { comma: { after: ts.kinds.Newline } }, delimiter: Delimiter.Trailing } },
+		enumBodyElements: { item: { separator: { comma: { after: ts.kinds.Newline } }, delimiter: Delimiter.Trailing } },
 		statements: { terminator: ts.kinds.AutomaticSemicolon },
 		quotes: { style: ts.kinds.StringSingle },
 		classBody: { lbrace: { after: ts.kinds.Indent }, rbrace: { before: ts.kinds.Dedent } },

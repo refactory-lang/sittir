@@ -1,5 +1,5 @@
 {
-	"grammarHash": "c5c66700f182b11f66b2e264f6f994407e93c576bd3f37e3036ecf9cf9ad2967",
+	"grammarHash": "1fef0de9e9398ccdd8ab6f451b3c933655c96115f9db4adf4a0608a8ba7b0787",
 	"resolutions": [
 		{
 			"resolution": {
@@ -206,16 +206,16 @@
 				"kind": "AddConflict",
 				"symbols": [
 					"with_item",
-					"_collection_elements"
+					"_tuple_elements"
 				]
 			},
-			"step": "upstream-declared",
+			"step": "default",
 			"sourceChains": [
 				[
 					"with_item"
 				],
 				[
-					"_collection_elements"
+					"_tuple_elements"
 				]
 			],
 			"conflict": {
@@ -227,9 +227,16 @@
 				"lookahead": "','",
 				"interpretations": [
 					"with_item",
-					"_collection_elements",
-					"_collection_elements",
-					"_collection_elements"
+					"_tuple_elements",
+					"_tuple_elements",
+					"_tuple_elements",
+					"_tuple_elements",
+					"_tuple_elements",
+					"_tuple_elements",
+					"_tuple_elements",
+					"_tuple_elements",
+					"_tuple_elements",
+					"_tuple_elements"
 				]
 			}
 		},

@@ -11,7 +11,7 @@ describe('a node built over parsed children', () => {
 		const engine = await createEngine(rust);
 		const root = engine.parse(SOURCE);
 		const fn = root.statements()[1] as any;
-		const existing = fn.parameters().parametersElements() ?? [];
+		const existing = fn.parameters().elements() ?? [];
 		const params = engine.build.parameters(...existing);
 		expect(engine.render(params).toString()).toBe('(input: &str)');
 		expect(params.$render()).toBe('(input: &str)');

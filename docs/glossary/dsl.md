@@ -6321,7 +6321,17 @@ The clause-hoist view: the same ctx — the registries are shared, not copied, s
 
 ### `packages/codegen/src/dsl/enrich-ctx.ts::ClauseHoistState`
 
-State that exists only while the clause hoist runs. `separatedListNameCounts` is the grammar-global count of each proposed separated-list name, computed after the field-wrap and token-form passes and read by every list mint so a name is taken bare only when globally unique. `hiddenListPromotionNames` caches, per hidden rule whose whole body is a flank-carrying separated list, the visible kind every bare reference to it aliases to, so all references agree.
+State that exists only while the clause hoist runs. `separatedListNameCounts` is the grammar-global count of each proposed separated-list name, computed after the field-wrap and token-form passes and read by every list mint so a name is taken bare only when globally unique. `hiddenListPromotionNames` caches, per hidden rule whose whole body is a flank-carrying separated list, the visible kind every bare reference to it aliases to, so all references agree. `ownerPrefixedListSlots` maps each list kind that was named after its owner (`<owner>_<plural>`, or `<owner>_elements` when the element has no single name) to the slot name its owner gives it: the plural, or `elements`. `visibleGroupSynthName` writes it where it picks the name; `fieldOwnerPrefixedLists` reads it.
+
+### `packages/codegen/src/dsl/enrich.ts::BlankRule`
+
+The empty arm tree-sitter's `optional` writes into a choice. It is a runtime shape the typed rule union does not carry, so a walk over enrich's rules that enumerates every rule type names it beside the union.
+
+### `packages/codegen/src/dsl/enrich.ts::fieldOwnerPrefixedLists`
+
+A kind name must be unique in the grammar; a slot name only within its owner. When a hoisted list kind had to take its owner as a prefix to be unique, the owner's slot should not repeat the owner's name, so the reference is wrapped in a field carrying the short name recorded in `ownerPrefixedListSlots`; the kind keeps its unique name.
+
+Its walk enumerates every rule type: it descends through precedence wrappers, seqs, choices, repeats and optionals, stops at a field, an alias, a token or a terminal, and refuses a type it does not know. It runs once over every owner after the clause hoist, over the grammar's rules and the rules enrich minted alike, since a list can be hoisted out of a minted rule. Positions follow the patch-path convention, so a reference at or under a position an authored `field(...)` patch names is left to the patch. When the short name is already a slot of the owner, the reference stays unfielded, the slot keeps the name its kind gives it, and a `list-slot-name` skip is reported.
 
 ### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtxInit`
 
@@ -7109,7 +7119,11 @@ The `element-supertype` origin of a list element that is a reference to an eleme
 
 ### `packages/codegen/src/dsl/enrich.ts::elementSlotName`
 
-The one slot-name function for a list element: the stamped slot of an element supertype, else `deriveElementFieldName` for a separated-list element and `elements` for a repeat's content. `applyNodeChoiceFieldWrap` and `fieldSeparatedListElements` field through it, so the name on the supertype and the name of the field are the same fact.
+The one slot-name function for a list element, by where the element sits. In a list kind's body (`'list'`, per `listKindBodySeqs`) the field is always `item`, so every list kind has the same slot, `items`, whatever it holds; what the list holds is said by the owner's slot. Elsewhere the element is a slot of its owner: the stamped slot of an element supertype, else `deriveElementFieldName` for a separated run that shares the owner with other members (`'separated'`) and `elements` for a repeat's content (`'repeat'`). A field the grammar authored on an element is never renamed. `applyNodeChoiceFieldWrap` and `fieldSeparatedListElements` field through it, so the name on the supertype and the name of the field are the same fact.
+
+### `packages/codegen/src/dsl/enrich.ts::listKindBodySeqs`
+
+The seqs that hold a list kind's elements, given a seq: the seq itself and a seq directly inside it (the head run written as its own seq, beside the trailing separator) when the whole seq is a separated list whose separator varies per instance (`separatedListBodyInfo(...).flankCarrying`), and none otherwise. That is the condition under which the model classifies a kind as a list, and a seq of that shape always ends as its own kind: it is a rule's body, or enrich splits it out of its owner as a hoisted list or a choice arm. A separated run with a fixed separator and no optional flank is a slot of an owner that is not a list.
 
 ### `packages/codegen/src/dsl/enrich.ts::listKindElementPlural`
 

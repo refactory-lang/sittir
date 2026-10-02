@@ -41,7 +41,7 @@ export function listsReadAsReadonlyArrays(): string {
 	const params = item.parameters();
 	type Item = ItemOf<typeof params>;
 	const owner: ReadonlyArray<Item> = params;
-	const list: ReadonlyArray<Item> | undefined = params.formalParametersElements();
+	const list: ReadonlyArray<Item> | undefined = params.elements();
 	const rendered = params.map((param) => (typeof param === 'number' ? '' : param.$render()));
 	const first: Item | undefined = params[0];
 	return [owner.length, list?.length, rendered.join(','), String(first)].join('');
@@ -53,6 +53,6 @@ export function aListSlotTakesItsBuilderArguments(): string {
 	const params = item.parameters();
 	const fromItems = item.$with.parameters(...params);
 	const fromNode = item.$with.parameters(params);
-	const inner = params.$with.formalParametersElements(...params);
+	const inner = params.$with.elements(...params);
 	return fromItems.$render() + fromNode.$render() + inner.$render();
 }

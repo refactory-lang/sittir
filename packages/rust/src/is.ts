@@ -412,6 +412,9 @@ export interface IsGuards {
 	lifetimes<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Lifetimes };
+	types<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Types };
 	useBoundsElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UseBoundsElements };
@@ -421,6 +424,9 @@ export interface IsGuards {
 	argumentsElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ArgumentsElements };
+	expressions<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Expressions };
 	fieldInitializerListElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FieldInitializerListElements };
@@ -913,9 +919,11 @@ export const is = Object.freeze({
 	useClauses: _g(TSKindId.UseClauses),
 	parametersElements: _g(TSKindId.ParametersElements),
 	lifetimes: _g(TSKindId.Lifetimes),
+	types: _g(TSKindId.Types),
 	useBoundsElements: _g(TSKindId.UseBoundsElements),
 	typeArgumentsElements: _g(TSKindId.TypeArgumentsElements),
 	argumentsElements: _g(TSKindId.ArgumentsElements),
+	expressions: _g(TSKindId.Expressions),
 	fieldInitializerListElements: _g(TSKindId.FieldInitializerListElements),
 	tuplePatternElements: _g(TSKindId.TuplePatternElements),
 	patterns: _g(TSKindId.Patterns),

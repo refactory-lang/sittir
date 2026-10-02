@@ -235,7 +235,7 @@ describe('enrich()', () => {
 			});
 			const rules = runEnrich(input).grammar.rules;
 			const body = JSON.stringify(rules._elems);
-			expect(body).toContain('"name":"element"');
+			expect(body).toContain('"name":"item"');
 			expect(body).toContain('"name":"_elems_element"');
 			expect(body).not.toContain('"name":"name"');
 			expect(rules.elems_element_name).toMatchObject({ type: FIELD, name: 'name', content: { type: SYMBOL, name: '_name' } });
