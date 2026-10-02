@@ -4112,8 +4112,11 @@ The one recognizer of the `terminated` list form, in either spelling
 (`suffixTerminatedList`, `choiceTerminatedList`). Besides the element and the
 separator it returns `elementSites`: the path from the body to every position
 an element stands in, three in the suffix spelling and two in the choice
-spelling. Elements are compared by `sameListElement`, so a body whose elements
-are only partly fielded is still the form. Enrich reads it through
+spelling. Elements are compared by `sameElementRule`, so a body whose elements
+are only partly fielded is still the form. The suffix spelling's middle
+repetition must be a `repeat`, zero or more: with `repeat1` the parser demands
+a second element, and lifting that to one `repeat1` would offer a one-element
+list the parser refuses. Enrich reads it through
 `separatedListBodyInfo` and `mapTerminatedListElements`; link reads it through
 `separatedListBodyInfo`, so the stamp `terminated` on the lifted repeat and the
 decisions enrich takes about the same body come from one test.
@@ -4124,6 +4127,16 @@ Rebuilds a `terminated` list body with `fn` applied to each element position
 and everything else kept; `null` when the body is not that form. Enrich fields
 the elements with it, which is why element fielding needs no window matcher of
 its own for this form.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::sameElementRule`
+
+Whether two element positions of a `terminated` list admit the same rule: the
+rules are structurally equal once a `field` wrapper is taken off each. A field
+changes no language, so a fielded and an unfielded position still match; a
+shared field name over different rules does not, and neither do `item` and
+`_item`. The lift replaces every position with the repeat's element, so it is
+sound only when the positions really are the same rule. The `head`, `leading`
+and `tail` forms use the looser `sameListElement`.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::sameListElement`
 

@@ -214,6 +214,20 @@ describe('a separated list whose first element carries a required separator', ()
 		expect(mapTerminatedListElements(tailForm as never, symbols, field as never)).toBeNull();
 	});
 
+	it('is not the form when two positions share a field name but admit different rules', () => {
+		const other = { type: 'FIELD', name: 'item', content: sym('other') };
+		const mixed = seq(seq(other, str(',')), { type: 'REPEAT', content: seq(field(sym('item')), str(',')) }, optional(field(sym('item'))));
+		expect(separatedListBodyInfo(mixed as never, symbols)).toBeNull();
+		const hidden = seq(seq(sym('_item'), str(',')), { type: 'REPEAT', content: seq(sym('item'), str(',')) }, optional(sym('item')));
+		expect(separatedListBodyInfo(hidden as never, symbols)).toBeNull();
+	});
+
+	it('is not the form when the suffix spelling demands a second element', () => {
+		const twoOrMore = seq(seq(sym('item'), str(',')), { type: 'REPEAT1', content: seq(sym('item'), str(',')) }, optional(sym('item')));
+		expect(separatedListBodyInfo(twoOrMore as never, symbols)?.form).not.toBe('terminated');
+		expect(mapTerminatedListElements(twoOrMore as never, symbols, field as never)).toBeNull();
+	});
+
 	it('is not the form when the separators differ', () => {
 		const mixed = seq(seq(sym('item'), str(';')), { type: 'REPEAT', content: seq(sym('item'), str(',')) }, optional(sym('item')));
 		expect(separatedListBodyInfo(mixed as never, symbols)).toBeNull();

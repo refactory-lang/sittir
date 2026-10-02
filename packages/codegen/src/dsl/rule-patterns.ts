@@ -937,6 +937,12 @@ function sameListElement<P extends PhaseName>(a: Rule<P>, b: Rule<P>): boolean {
 	return (name !== null && name === separatedListElementName(b)) || ruleKey(a as RuntimeRule) === ruleKey(b as RuntimeRule);
 }
 
+function sameElementRule<P extends PhaseName>(a: Rule<P>, b: Rule<P>): boolean {
+	const unfielded = (rule: Rule<P>): RuntimeRule =>
+		(isFieldType((rule as { type?: string }).type ?? '') ? (rule as unknown as { content: RuntimeRule }).content : rule) as RuntimeRule;
+	return rulesEqual(unfielded(a), unfielded(b));
+}
+
 function membersOf<P extends PhaseName>(rule: Rule<P>): Rule<P>[] {
 	const members = (rule as unknown as { members?: Rule<P>[] }).members;
 	return Array.isArray(members) ? members : [];
@@ -964,7 +970,8 @@ function suffixTerminatedList<P extends PhaseName>(members: Rule<P>[], symbols: 
 	if (headPair?.trailing !== true || pair?.trailing !== true || last === undefined) return null;
 	const element = pair.content as Rule<P>;
 	if (!rulesEqual(headPair.separator, pair.separator)) return null;
-	if (!sameListElement(headPair.content as Rule<P>, element) || !sameListElement(last.content, element)) return null;
+	if (!typeEq((repeat as { type?: string }).type, 'REPEAT')) return null;
+	if (!sameElementRule(headPair.content as Rule<P>, element) || !sameElementRule(last.content, element)) return null;
 	return {
 		element,
 		separator: pair.separator as Rule<P>,
@@ -986,7 +993,7 @@ function choiceTerminatedList<P extends PhaseName>(members: Rule<P>[], symbols: 
 	if (pair === null || pair.trailing === true || flank === undefined) return null;
 	const element = pair.content as Rule<P>;
 	if (!rulesEqual(flank as RuntimeRule, pair.separator) || !rulesEqual(arms[1 - moreAt] as RuntimeRule, pair.separator)) return null;
-	if (!sameListElement(head, element)) return null;
+	if (!sameElementRule(head, element)) return null;
 	return { element, separator: pair.separator as Rule<P>, elementSites: [[0], [1, moreAt, 0, 'content', pair.elementStep]] };
 }
 
