@@ -13,6 +13,7 @@ import type { AdmitBound } from './node-surface.ts';
 
 export type {
 	AnyUntypedNode,
+	ByteSpan,
 	UntypedNodeOf,
 	NodeChildValue,
 	NodeMemberValue,
