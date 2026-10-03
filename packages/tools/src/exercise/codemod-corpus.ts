@@ -27,13 +27,38 @@ export interface CodemodCorpusResult {
 
 const MAX_BODY_LINES = 5;
 
+/** What `inlineAnchor` reads of a node, in the caller's own node vocabulary. */
+export interface InlineSelectionView<T> {
+	readonly isAttribute: (node: T) => boolean;
+	readonly text: (node: T) => string;
+	readonly body: (node: T) => string | undefined;
+}
+
+/**
+ * Where the inline codemod inserts `#[inline]` before the function at
+ * `siblings[index]`: the first of the attribute items (outer or inner)
+ * directly before it, or the function itself when there are none. A function
+ * is left alone when it has no body, when its body spans more than
+ * `MAX_BODY_LINES` lines, or when one of those attributes is already
+ * `#[inline]` or `#![inline]`.
+ */
+export function inlineAnchor<T>(siblings: readonly T[], index: number, view: InlineSelectionView<T>): number | undefined {
+	const body = view.body(siblings[index]!);
+	if (body === undefined || body.split('\n').length > MAX_BODY_LINES) return undefined;
+	let anchor = index;
+	while (anchor > 0 && view.isAttribute(siblings[anchor - 1]!)) {
+		if (/^#!?\[\s*inline\b/.test(view.text(siblings[anchor - 1]!))) return undefined;
+		anchor--;
+	}
+	return anchor;
+}
+
 function sliceBytes(source: Buffer, span: { readonly start: number; readonly end: number }): string {
 	return source.subarray(span.start, span.end).toString('utf8');
 }
 
 function spanOf(node: unknown): { readonly start: number; readonly end: number } | undefined {
-	const span = (node as { readonly $span?: { readonly start: number; readonly end: number } }).$span;
-	return span;
+	return (node as { readonly $span?: { readonly start: number; readonly end: number } }).$span;
 }
 
 export async function rewriteWithInline(source: string): Promise<{ readonly output: string; readonly insertions: number }> {
@@ -45,20 +70,20 @@ export async function rewriteWithInline(source: string): Promise<{ readonly outp
 		throw new Error('codemod-corpus: `#[inline]` did not parse as an attribute item');
 	}
 	const statements = [...root.statements()];
+	const textOf = (node: unknown): string => {
+		const span = spanOf(node);
+		return span === undefined ? '' : sliceBytes(bytes, span);
+	};
+	const isNode = (node: unknown): node is Exclude<(typeof statements)[number], number | undefined> => node !== undefined && typeof node !== 'number';
+	const view: InlineSelectionView<unknown> = {
+		isAttribute: (node) => isNode(node) && (rs.is.attributeItem(node) || rs.is.innerAttributeItem(node)),
+		text: textOf,
+		body: (node) => (isNode(node) && rs.is.functionItem(node) ? textOf(node.body()) : undefined)
+	};
 	const anchors = new Set<number>();
-	statements.forEach((statement, index) => {
-		if (statement === undefined || typeof statement === 'number' || !rs.is.functionItem(statement)) return;
-		const bodySpan = spanOf(statement.body());
-		if (bodySpan === undefined || sliceBytes(bytes, bodySpan).split('\n').length > MAX_BODY_LINES) return;
-		let anchor = index;
-		while (anchor > 0) {
-			const previous = statements[anchor - 1];
-			if (previous === undefined || typeof previous === 'number' || !rs.is.attributeItem(previous)) break;
-			const previousSpan = spanOf(previous);
-			if (previousSpan !== undefined && /^#\[\s*inline\b/.test(sliceBytes(bytes, previousSpan))) return;
-			anchor--;
-		}
-		anchors.add(anchor);
+	statements.forEach((_, index) => {
+		const anchor = inlineAnchor(statements, index, view);
+		if (anchor !== undefined) anchors.add(anchor);
 	});
 	if (anchors.size === 0) return { output: source, insertions: 0 };
 	const rewritten = statements.flatMap((statement, index) => (anchors.has(index) ? [inline, statement] : [statement]));

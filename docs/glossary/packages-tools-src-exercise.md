@@ -24,7 +24,15 @@ The per-file outcome `run` prints: each `.rs` file's insertion count and whether
 
 ### `packages/tools/src/exercise/codemod-corpus.ts::rewriteWithInline`
 
-One file's rewrite. It picks each top-level function whose body spans at most five lines and that no `#[inline]` attribute precedes, and inserts a parsed `#[inline]` attribute item before it, or before the first of the attribute items already above it. This is the acceptance codemod's own selection (`tests/acceptance/codemod-inline.ts`). The whole list goes back through `root.$with.statements(...)`, and the root is rendered.
+One file's rewrite. Each top-level item is put to `inlineAnchor`, through the engine's typed guards, and a parsed `#[inline]` attribute item is inserted at each anchor it returns. The whole list goes back through `root.$with.statements(...)`, and the root is rendered.
+
+### `packages/tools/src/exercise/codemod-corpus.ts::inlineAnchor`
+
+The inline codemod's selection rule, the one both the acceptance codemod (`tests/acceptance/codemod-inline.ts`, over tree-sitter nodes) and `rewriteWithInline` (over engine nodes) apply, so the tool replays the codemod its baseline came from. A function is selected when it has a body of at most five lines and none of the attribute items directly before it, outer or inner, is already `#[inline]` or `#![inline]`. The anchor is the first of those attribute items, or the function itself when there are none, so the new attribute lands above the existing ones. Each caller passes only its own way of reading a node (`InlineSelectionView`): whether it is an attribute item, its text, and its body's text.
+
+### `packages/tools/src/exercise/codemod-corpus.ts::InlineSelectionView`
+
+What `inlineAnchor` reads of a node, in the caller's own node vocabulary.
 
 ### `packages/tools/src/exercise/codemod-corpus.ts::CODEMOD_CORPUS`
 
