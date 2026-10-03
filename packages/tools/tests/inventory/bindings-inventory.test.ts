@@ -3,7 +3,7 @@ import { mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { type PatternNode, bindingIssues, parseQuery, topLevelPatterns, walk } from '../../src/inventory/query.ts';
+import { bindingIssues, bindingPatterns } from '../../src/inventory/bindings.ts';
 import {
 	VOCABULARY_DIR,
 	compileBindings,
@@ -12,7 +12,7 @@ import {
 	inventoryGrammars
 } from '../../src/inventory/index.ts';
 import { type Derivation, levelMembers } from '../../src/inventory/derive.ts';
-import { renderVocabularyFile, vocabularyFiles } from '../../src/inventory/emit.ts';
+import { indexFile, renderVocabularyFile, vocabularyFiles } from '../../src/inventory/emit.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 const CEILING = JSON.parse(
@@ -22,32 +22,16 @@ const CEILING = JSON.parse(
 	readonly compiling: readonly string[];
 };
 
-const nodes = (p: PatternNode | undefined): PatternNode[] => (p ? [...walk(p)] : []);
-
-describe('parseQuery', () => {
-	it('reads claims, member captures, field literals, quantifiers, containers and predicates', () => {
-		const [claim, refinement, container, predicate] = parseQuery(
-			[
-				'(function_definition (parameters (identifier)* @names)) @declaration.function',
-				'(binary_expression operator: "+") @expression.binary.arithmetic.add',
-				'(decorated_definition (decorator)* @decorators definition: (_) @element)',
-				'((function_definition name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))'
-			].join('\n')
-		);
-		expect(claim?.kind).toBe('function_definition');
-		expect(claim?.captures).toEqual(['declaration.function']);
-		expect(nodes(claim).find((n) => n.captures.includes('names'))?.quantifier).toBe('*');
-		expect(refinement?.fieldLiterals).toEqual({ operator: '+' });
-		expect(container?.children.some((c) => c.field === 'definition' && c.captures.includes('element'))).toBe(true);
-		expect(predicate?.kind).toBe('<group>');
-		expect(nodes(predicate).some((n) => n.predicates.some((p) => p[0] === '#eq?'))).toBe(true);
-	});
-});
-
 describe('bindingIssues', () => {
-	const text = ['; comment (nope)', '(module) @module', '(no_such_kind) @a', '(function_definition no_such_field: (identifier))', '(identifier) @identifier'].join('\n');
+	const text = [
+		'; comment (nope)',
+		'(module) @module',
+		'(no_such_kind) @a',
+		'(function_definition no_such_field: (identifier))',
+		'(identifier) @identifier'
+	].join('\n');
 	it('splits a bindings file into its top-level patterns with their lines', () => {
-		expect(topLevelPatterns(text).map((p) => p.line)).toEqual([2, 3, 4, 5]);
+		expect(bindingPatterns(text).map((p) => p.line)).toEqual([2, 3, 4, 5]);
 	});
 	it('lists every unknown node and field, not just the first', async () => {
 		expect(await bindingIssues('python', text)).toEqual([
@@ -74,7 +58,7 @@ describe('deriveVocabulary', () => {
 	}, 120_000);
 	it('reads a minted text kind as the token text it replaced', () => {
 		const format = d.members.get('expression.interpolation.format');
-		const kinds = [...format?.values() ?? []].flatMap((member) => [...member.kinds]);
+		const kinds = [...(format?.values() ?? [])].flatMap((member) => [...member.kinds]);
 		expect(kinds).toContain('text:[^{}\\n]+');
 		expect(d.unmapped.has('<python:format_specifier_text>')).toBe(false);
 	});
@@ -147,7 +131,9 @@ describe('the committed vocabulary', () => {
 
 	it('renders its doc comments as block comments and its notes as line comments', () => {
 		const context = readFileSync(join(VOCABULARY_DIR, 'context.ts'), 'utf8');
-		expect(context).toContain("\n/** The typemap: one key per top-level namespace, projecting to that namespace's kind-set for a grammar. */\n");
+		expect(context).toContain(
+			"\n/** The typemap: one key per top-level namespace, projecting to that namespace's kind-set for a grammar. */\n"
+		);
 		expect(context).toMatch(/^\/\/ Generated from the grammars' bindings\.scm\. Do not edit\.$/m);
 		for (const file of readdirSync(VOCABULARY_DIR)) {
 			expect(readFileSync(join(VOCABULARY_DIR, file), 'utf8'), file).not.toContain('///');
@@ -166,7 +152,7 @@ describe('vocabularyFiles', () => {
 		const comment = files.find((f) => f.name === 'comment');
 		expect(comment).toBeDefined();
 		if (!comment) return;
-		const source = await renderVocabularyFile(comment);
+		const source = renderVocabularyFile(comment);
 		expect(source).toContain('export interface Comment<G extends GrammarContext>');
 		expect(source).toContain("import type { GrammarContext } from './context.ts';");
 	});
@@ -175,10 +161,17 @@ describe('vocabularyFiles', () => {
 		const modifier = files.find((f) => f.name === 'modifier');
 		expect(modifier).toBeDefined();
 		if (!modifier) return;
-		const source = await renderVocabularyFile(modifier);
+		const source = renderVocabularyFile(modifier);
 		expect(source).toContain('extends Simplify<SubKindOf<V.Modifier<G>>>');
 		expect(source).toContain("import type { Simplify } from 'type-fest';");
 		expect(source).toContain("import type { SubKindOf } from './utils.ts';");
 		expect(source).not.toContain('extends V.');
+	});
+	it('builds the index of the namespace files through the typescript factories', async () => {
+		const files = vocabularyFiles(await deriveVocabulary());
+		const source = renderVocabularyFile(indexFile(files));
+		expect(source).toContain("export * from './comment.ts';\nexport * from './declaration.ts';");
+		expect(source).toContain("export type { GrammarContext, BaseContext, Unmapped } from './context.ts';");
+		expect(source).not.toMatch(/\.ts';\n\nexport \*/);
 	});
 });

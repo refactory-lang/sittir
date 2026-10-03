@@ -2,10 +2,10 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
-import { bindingIssues, compileQuery, parseQuery } from './query.ts';
+import { bindingIssues, compileQuery, readBindings } from './bindings.ts';
 import { loadSlotModel } from './model.ts';
 import { type Derivation, type GrammarInput, derive } from './derive.ts';
-import { renderIndexFile, renderVocabularyFile, vocabularyFiles } from './emit.ts';
+import { indexFile, renderVocabularyFile, vocabularyFiles } from './emit.ts';
 import { allGrammars, grammarPackageDir, type GrammarName } from '@sittir/codegen/grammars';
 import { evaluateGrammar } from '../codegen-surface.ts';
 
@@ -53,7 +53,7 @@ export async function loadInputs(grammars: readonly string[]): Promise<GrammarIn
 	return Promise.all(
 		grammars.map(async (grammar) => ({
 			grammar,
-			patterns: parseQuery(readFileSync(join(grammarPackageDir(grammar), 'bindings.scm'), 'utf8')),
+			bindings: readBindings(readFileSync(join(grammarPackageDir(grammar), 'bindings.scm'), 'utf8')),
 			model: loadSlotModel(grammar),
 			textTokens: new Set((await evaluateGrammar(grammar)).textTokens ?? [])
 		}))
@@ -68,14 +68,11 @@ export async function emitVocabulary(d: Derivation, outDir: string): Promise<str
 	mkdirSync(outDir, { recursive: true });
 	const files = vocabularyFiles(d);
 	const written: string[] = [];
-	for (const file of files) {
+	for (const file of [...files, indexFile(files)]) {
 		const path = join(outDir, `${file.name}.ts`);
-		writeFileSync(path, await renderVocabularyFile(file));
+		writeFileSync(path, renderVocabularyFile(file));
 		written.push(path);
 	}
-	const index = join(outDir, 'index.ts');
-	writeFileSync(index, renderIndexFile(files));
-	written.push(index);
 	execFileSync('pnpm', ['exec', 'oxfmt', ...written], { cwd: ROOT, stdio: 'pipe' });
 	return written;
 }
