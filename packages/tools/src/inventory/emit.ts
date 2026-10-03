@@ -13,16 +13,15 @@ import type {
 	StatementBlock,
 	TemplateChars,
 	TemplateType,
-	Type,
-	TypeIdentifier
+	Type
 } from '@sittir/typescript';
 import { type Derivation, type MemberFacts, camel, childrenOf, commonPrefix, levelMembers, tsname } from './derive.ts';
 
 const engine = await createEngine(typescript);
 const { build: ir, kinds: TSKindId } = engine;
 
-type TypeNode = Type.Bound | TypeIdentifier.Types;
-type Arm = PrimaryType.Bound | TypeIdentifier.Types;
+type TypeNode = Type.Bound | Identifier.Bound;
+type Arm = PrimaryType.Bound | Identifier.Bound;
 type Name = Identifier.Bound | NestedTypeIdentifier.Bound;
 type Heritage = Name | ReturnType<typeof ir.genericType>;
 type CommentNode = ReturnType<typeof ir.comment.line> | ReturnType<typeof ir.comment.block>;

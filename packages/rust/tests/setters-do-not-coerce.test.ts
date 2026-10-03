@@ -17,13 +17,13 @@ const rs = await createEngine(rust);
 describe('setters do not coerce', () => {
 	it('takes the slot type on a parsed node, not the loose config', () => {
 		const file = rs.parse('fn main() { }\n');
-		const setter: (v: NonNullable<T.SourceFile['_shebang']>) => unknown = file.$with.shebang;
+		const setter: (v: T.Shebang.Bound) => unknown = file.$with.shebang;
 		expect(typeof setter).toBe('function');
 	});
 
 	it('takes the same on a factory-built node', () => {
 		const built = rs.build.label(rs.build.identifier('outer'));
-		const setter: (v: T.Identifier) => unknown = built.$with.name;
+		const setter: (v: T.Identifier.Bound) => unknown = built.$with.name;
 		expect(typeof setter).toBe('function');
 	});
 

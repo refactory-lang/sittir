@@ -23,7 +23,7 @@ const factoryElement = (raw: string, factory: string): string | undefined => {
 	const dispatch = raw.indexOf(`function ${factory}(...args`, start);
 	const body = raw.slice(start, dispatch >= 0 ? dispatch : raw.indexOf('\n}\n', start));
 	const rest = body.slice(body.lastIndexOf('...elements:'));
-	const element = /AdmitBound<([\s\S]*?),\s*T\.AdmittedNodes\s*>/.exec(rest);
+	const element = /Admit<([\s\S]*?)>\s*(?:>|\[\])/.exec(rest);
 	return element === null ? undefined : compact(element[1]!).replace(/^\|/, '');
 };
 

@@ -58,9 +58,9 @@ describe('factory ergonomics', () => {
 			// The parameter's TYPE is the slot's own element type. Indexing
 			// `Config` instead re-projects the slot through the config surface
 			// and loses the union of kinds it admits.
-			expect(content).toMatch(/export function buildLabel\(value: AdmitBound<T\.Identifier, T\.AdmittedNodes>\)/);
-			expect(content).toMatch(/function buildLabel\(value: AdmitBound<T\.Identifier, T\.AdmittedNodes>\)/);
-			expect(content).toMatch(/function buildLabel\(value: AdmitBound<T\.Identifier, T\.AdmittedNodes>\): T\.Label\.Bound \{/);
+			expect(content).toMatch(/export function buildLabel\(value: Admit<T\.Identifier>\)/);
+			expect(content).toMatch(/function buildLabel\(value: Admit<T\.Identifier>\)/);
+			expect(content).toMatch(/function buildLabel\(value: Admit<T\.Identifier>\): T\.Label\.Bound \{/);
 			// Should NOT have a config parameter
 			expect(content).not.toMatch(/export function buildLabel\(config/);
 		});

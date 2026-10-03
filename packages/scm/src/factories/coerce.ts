@@ -4,7 +4,7 @@ import * as F from './raw.js';
 import { spelledInterior } from '@sittir/common/utils';
 import type * as T from '../types-internal.js';
 import { TSKindId, KIND_NAMES } from '../types.js';
-import type { AnyUntypedNode } from '@sittir/types';
+import type { AnyUntypedNode, Admit } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind } from '@sittir/common/utils';
 import { isNode } from '../utils.js';
 
@@ -198,8 +198,8 @@ function _resolveOne<T>(
 	leafKinds: readonly string[],
 	branchKinds: readonly string[],
 	defaultArm?: string
-): T {
-	if (v === undefined || v === null) return v as T;
+): Admit<T> {
+	if (v === undefined || v === null) return v as Admit<T>;
 	const kindId = isNode(v) ? v.$type : typeof v === 'number' && _KIND_ID_STORED.has(v) ? v : undefined;
 	if (typeof kindId === 'number') {
 		const kindName = KIND_NAMES.get(kindId);
@@ -209,11 +209,11 @@ function _resolveOne<T>(
 				branchKinds.includes(kindName) ||
 				(_ENUMS_OF_MEMBER[kindId] ?? []).some((e) => leafKinds.includes(e)))
 		)
-			return v as T;
+			return v as Admit<T>;
 		const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);
 		const arm = arms.length <= 1 ? arms[0] : undefined;
-		if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as T;
-		if (isNode(v)) return v as T;
+		if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as Admit<T>;
+		if (isNode(v)) return v as Admit<T>;
 		if (arms.length > 1) {
 			throw new Error(
 				`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(', ')}]; name the arm explicitly`
@@ -222,11 +222,11 @@ function _resolveOne<T>(
 	}
 	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
 		const scalar = _resolveScalar(v);
-		if (scalar !== undefined) return scalar as T;
+		if (scalar !== undefined) return scalar as Admit<T>;
 	}
 	if (typeof v === 'string') {
 		const leaf = _resolveBareText(v, [...leafKinds, ...branchKinds]);
-		if (leaf !== undefined) return leaf as T;
+		if (leaf !== undefined) return leaf as Admit<T>;
 		if (branchKinds.length === 0 && leafKinds.length === 1) return _resolveOneLeaf<T>(v, leafKinds[0]!);
 		if (branchKinds.length === 0 && leafKinds.length > 1 && leafKinds.every((k) => _AFFIXED_KINDS.has(k))) {
 			throw new Error(
@@ -238,8 +238,8 @@ function _resolveOne<T>(
 		const bk = _KEYWORD_BRANCH_BY_TEXT[v];
 		if (bk !== undefined && branchKinds.includes(bk)) {
 			const build = _KEYWORD_BRANCH_BUILD[bk];
-			if (build !== undefined) return build() as T;
-			if (_isFromKind(bk)) return _resolveByKind(bk, {}) as T;
+			if (build !== undefined) return build() as Admit<T>;
+			if (_isFromKind(bk)) return _resolveByKind(bk, {}) as Admit<T>;
 		}
 	}
 	const tagged = _splitTag(v);
@@ -248,11 +248,11 @@ function _resolveOne<T>(
 			_fromOfTag(tagged.tag, [...leafKinds, ...branchKinds]),
 			tagged.rest
 		) as _LooseFieldInput;
-		return (isNode(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as T;
+		return (isNode(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as Admit<T>;
 	}
 	if (branchKinds.length === 1 && typeof v === 'object' && !Array.isArray(v)) {
 		const bk = branchKinds[0]!;
-		if (_isFromKind(bk)) return _resolveByKind(bk, v) as T;
+		if (_isFromKind(bk)) return _resolveByKind(bk, v) as Admit<T>;
 	}
 	if (!(typeof v === 'object' && !Array.isArray(v))) {
 		const candidates = typeof v === 'string' ? branchKinds.filter((b) => _STRING_CAPABLE_BRANCHES.has(b)) : branchKinds;
@@ -263,9 +263,9 @@ function _resolveOne<T>(
 					? defaultArm
 					: undefined;
 		if (target !== undefined && Array.isArray(v) && target in _wrapKindIds) {
-			return _wrapArray(target, v) as T;
+			return _wrapArray(target, v) as Admit<T>;
 		}
-		if (target !== undefined && _isFromKind(target)) return _resolveByKind(target, v) as T;
+		if (target !== undefined && _isFromKind(target)) return _resolveByKind(target, v) as Admit<T>;
 		if (typeof v === 'string' && candidates.length > 0) {
 			throw new Error(
 				`_resolveOne: a bare string picks no arm among [${branchKinds.join(', ')}]; declare the arm (defaultArm()) or name it explicitly`
@@ -281,7 +281,7 @@ function _resolveOne<T>(
 		const texts = _TEXT_KINDS_BY_RANK.filter((kind) => leafKinds.includes(kind) || branchKinds.includes(kind));
 		if (texts.length > 0) throw new Error(`_resolveOne: ${JSON.stringify(v)} matches none of [${texts.join(', ')}]`);
 	}
-	return v as T;
+	return v as Admit<T>;
 }
 
 function _resolveMany<T>(
@@ -289,7 +289,7 @@ function _resolveMany<T>(
 	leafKinds: readonly string[],
 	branchKinds: readonly string[],
 	defaultArm?: string
-): readonly T[] {
+): readonly Admit<T>[] {
 	if (v === undefined || v === null) return [];
 	const arr: readonly _LooseFieldInput[] = Array.isArray(v) ? v : [v];
 	return arr.map((e) => _resolveOne<T>(e, leafKinds, branchKinds, defaultArm));
@@ -330,20 +330,20 @@ function _listElements(
 	return optionsFirst ? [head, ...resolved] : resolved;
 }
 
-function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
-	if (v === undefined || v === null) return v as T;
-	if (isNode(v)) return v as T;
+function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): Admit<T> {
+	if (v === undefined || v === null) return v as Admit<T>;
+	if (isNode(v)) return v as Admit<T>;
 	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
 		const scalar = _resolveScalar(v);
-		if (scalar !== undefined) return scalar as T;
+		if (scalar !== undefined) return scalar as Admit<T>;
 	}
-	if (typeof v === 'string' && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as T;
+	if (typeof v === 'string' && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as Admit<T>;
 	const tagged = _splitTag(v);
-	if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as T;
+	if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as Admit<T>;
 	if (typeof v === 'object') {
 		throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${JSON.stringify(v)}`);
 	}
-	return v as T;
+	return v as Admit<T>;
 }
 
 const _wrapKindIds: { readonly [kind: string]: number } = {
@@ -389,13 +389,13 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 	}
 }
 
-function _wrapArray<T>(kind: string, arr: readonly unknown[]): T {
+function _wrapArray<T>(kind: string, arr: readonly unknown[]): Admit<T> {
 	const elementKind = _wrapElementKinds[kind];
 	if (_wrapDirectKinds.has(kind) && elementKind !== undefined && elementKind in _wrapKindIds) {
-		if (arr.length === 0 && _wrapOptionalSoleKinds.has(kind)) return _wrapWithChildren(kind, []) as T;
-		return _wrapWithChildren(kind, [_wrapArray(elementKind, arr)]) as T;
+		if (arr.length === 0 && _wrapOptionalSoleKinds.has(kind)) return _wrapWithChildren(kind, []) as Admit<T>;
+		return _wrapWithChildren(kind, [_wrapArray(elementKind, arr)]) as Admit<T>;
 	}
-	return _wrapWithChildren(kind, arr) as T;
+	return _wrapWithChildren(kind, arr) as Admit<T>;
 }
 
 function _resolveOneBranch<T>(
@@ -403,9 +403,9 @@ function _resolveOneBranch<T>(
 	kind: string,
 	altKinds?: readonly (string | number)[],
 	optionalSlot?: boolean
-): T {
-	if (v === undefined || v === null) return v as T;
-	if (optionalSlot === true && Array.isArray(v) && v.length === 0) return undefined as T;
+): Admit<T> {
+	if (v === undefined || v === null) return v as Admit<T>;
+	if (optionalSlot === true && Array.isArray(v) && v.length === 0) return undefined as Admit<T>;
 	const tagged = _splitTag(v);
 	if (tagged !== undefined) {
 		const kn = _fromOfTag(tagged.tag, [kind]);
@@ -415,29 +415,29 @@ function _resolveOneBranch<T>(
 	if (isNode(v)) {
 		const wrapId = _wrapKindIds[kind];
 		if (wrapId !== undefined && v.$type !== wrapId) {
-			if (altKinds !== undefined && altKinds.some((k) => k === v.$type)) return v as T;
-			return _wrapWithChildren(kind, [v]) as T;
+			if (altKinds !== undefined && altKinds.some((k) => k === v.$type)) return v as Admit<T>;
+			return _wrapWithChildren(kind, [v]) as Admit<T>;
 		}
-		return v as T;
+		return v as Admit<T>;
 	}
 	if (Array.isArray(v) && kind in _wrapKindIds) {
-		return _wrapArray(kind, v) as T;
+		return _wrapArray(kind, v) as Admit<T>;
 	}
 	if ((typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') && _isFromKind(kind)) {
-		return _resolveByKind(kind, v) as T;
+		return _resolveByKind(kind, v) as Admit<T>;
 	}
 	if (typeof v === 'object' && !Array.isArray(v)) {
 		const tagged = _splitTag(v);
-		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as T;
-		if (_isFromKind(kind)) return _resolveByKind(kind, v) as T;
+		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as Admit<T>;
+		if (_isFromKind(kind)) return _resolveByKind(kind, v) as Admit<T>;
 	}
 	if (typeof v === 'object') {
 		throw new Error(`_resolveOneBranch: cannot resolve value to branch kind '${kind}': ${JSON.stringify(v)}`);
 	}
-	return v as T;
+	return v as Admit<T>;
 }
 
-function _resolveManyLeaf<T>(v: _LooseFieldInput, kind: string): readonly T[] {
+function _resolveManyLeaf<T>(v: _LooseFieldInput, kind: string): readonly Admit<T>[] {
 	if (v === undefined || v === null) return [];
 	const arr: readonly _LooseFieldInput[] = Array.isArray(v) ? v : [v];
 	return arr.map((e) => _resolveOneLeaf<T>(e, kind));
@@ -447,7 +447,7 @@ function _resolveManyBranch<T>(
 	v: _LooseFieldInput,
 	kind: string,
 	altKinds?: readonly (string | number)[]
-): readonly T[] {
+): readonly Admit<T>[] {
 	if (v === undefined || v === null) return [];
 	const arr: readonly _LooseFieldInput[] = Array.isArray(v) ? v : [v];
 	return arr.map((e) => _resolveOneBranch<T>(e, kind, altKinds));
@@ -560,7 +560,7 @@ export function coerceToProgram(...input: T.Program.LooseArgs): ReturnType<typeo
 
 export function resolveEscapeSequence_content(
 	value: T.EscapeSequence.LooseConfig['content']
-): T.EscapeSequence['_content'] {
+): Admit<T.EscapeSequence['_content']> {
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
@@ -593,7 +593,7 @@ export function coerceToImmediateIdentifier(
 	return F.buildImmediateIdentifier(input as Parameters<typeof F.buildImmediateIdentifier>[0]);
 }
 
-export function resolveCapture_name(value: T.Capture.LooseConfig['name']): T.Capture['_name'] {
+export function resolveCapture_name(value: T.Capture.LooseConfig['name']): Admit<T.Capture['_name']> {
 	return _resolveOneLeaf<T.ImmediateIdentifier>(value, '_immediate_identifier');
 }
 
@@ -611,7 +611,9 @@ export function coerceToCapture(input: T.Capture.Loose): ReturnType<typeof F.bui
 	);
 }
 
-export function resolveString_stringContent(value: T.String.LooseConfig['stringContent']): T.String['_string_content'] {
+export function resolveString_stringContent(
+	value: T.String.LooseConfig['stringContent']
+): Admit<T.String['_string_content']> {
 	return _resolveOneBranch<T.StringContent>(value, 'string_content', undefined, true);
 }
 
@@ -635,7 +637,7 @@ export function coerceToString(...args: unknown[]): ReturnType<typeof F.buildStr
 
 export function resolveImmediateString_stringContent(
 	value: T.ImmediateString.LooseConfig['stringContent']
-): T.ImmediateString['_string_content'] {
+): Admit<T.ImmediateString['_string_content']> {
 	return _resolveOneBranch<T.StringContent>(value, 'string_content', undefined, true);
 }
 
@@ -709,7 +711,7 @@ export function coerceToParameters(...input: T.Parameters.LooseArgs): ReturnType
 	);
 }
 
-export function resolveComment_content(value: T.Comment.LooseConfig['content']): T.Comment['_content'] {
+export function resolveComment_content(value: T.Comment.LooseConfig['content']): Admit<T.Comment['_content']> {
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
@@ -730,13 +732,13 @@ export function coerceToComment(input: T.Comment.Loose): ReturnType<typeof F.bui
 	);
 }
 
-export function resolveList_definitions(value: T.List.LooseConfig['definitions']): T.List['_definitions'] {
-	const resolved: readonly T.List['_definitions'][number][] = _resolveMany<T.Definition>(value, _K0, _K1);
+export function resolveList_definitions(value: T.List.LooseConfig['definitions']): Admit<T.List['_definitions']> {
+	const resolved: readonly Admit<T.List['_definitions'][number]>[] = _resolveMany<T.Definition>(value, _K0, _K1);
 	_assertNonEmpty(resolved, 'list.definitions');
 	return resolved;
 }
 
-export function resolveList_elements(value: T.List.LooseConfig['elements']): T.List['_elements'] {
+export function resolveList_elements(value: T.List.LooseConfig['elements']): Admit<T.List['_elements']> {
 	return _resolveMany<T.ListElement>(value, _K0, _super_list_element);
 }
 
@@ -750,8 +752,8 @@ export function coerceToList(input: T.List.Loose): ReturnType<typeof F.buildList
 
 export function resolveGrouping_groupingGroups(
 	value: T.Grouping.LooseConfig['groupingGroup']
-): T.Grouping['_grouping_group'] {
-	const resolved: readonly T.Grouping['_grouping_group'][number][] = _resolveManyBranch<T.GroupingGroup>(
+): Admit<T.Grouping['_grouping_group']> {
+	const resolved: readonly Admit<T.Grouping['_grouping_group'][number]>[] = _resolveManyBranch<T.GroupingGroup>(
 		value,
 		'grouping_group'
 	);
@@ -759,7 +761,7 @@ export function resolveGrouping_groupingGroups(
 	return resolved;
 }
 
-export function resolveGrouping_elements(value: T.Grouping.LooseConfig['elements']): T.Grouping['_elements'] {
+export function resolveGrouping_elements(value: T.Grouping.LooseConfig['elements']): Admit<T.Grouping['_elements']> {
 	return _resolveMany<T.ListElement>(value, _K0, _super_list_element);
 }
 
@@ -771,11 +773,13 @@ export function coerceToGrouping(input: T.Grouping.Loose): ReturnType<typeof F.b
 	});
 }
 
-export function resolveMissingNode_name(value: T.MissingNode.LooseConfig['name']): T.MissingNode['_name'] {
+export function resolveMissingNode_name(value: T.MissingNode.LooseConfig['name']): Admit<T.MissingNode['_name']> {
 	return _resolveOne<T.Identifier | T.String>(value, _super_node_identifier, _K5);
 }
 
-export function resolveMissingNode_elements(value: T.MissingNode.LooseConfig['elements']): T.MissingNode['_elements'] {
+export function resolveMissingNode_elements(
+	value: T.MissingNode.LooseConfig['elements']
+): Admit<T.MissingNode['_elements']> {
 	return _resolveMany<T.ListElement>(value, _K0, _super_list_element);
 }
 
@@ -790,7 +794,7 @@ export function coerceToMissingNode(input?: T.MissingNode.Loose): ReturnType<typ
 	});
 }
 
-export function resolveAnonymousNode_name(value: T.AnonymousNode.LooseConfig['name']): T.AnonymousNode['_name'] {
+export function resolveAnonymousNode_name(value: T.AnonymousNode.LooseConfig['name']): Admit<T.AnonymousNode['_name']> {
 	return _keywordOr(value, [['_', TSKindId.Underscore] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, () => _resolveOneBranch<T.String | '_'>(value, 'string', [TSKindId.Underscore])),
@@ -801,7 +805,7 @@ export function resolveAnonymousNode_name(value: T.AnonymousNode.LooseConfig['na
 
 export function resolveAnonymousNode_elements(
 	value: T.AnonymousNode.LooseConfig['elements']
-): T.AnonymousNode['_elements'] {
+): Admit<T.AnonymousNode['_elements']> {
 	return _resolveMany<T.ListElement>(value, _K0, _super_list_element);
 }
 
@@ -814,13 +818,15 @@ export function coerceToAnonymousNode(input: T.AnonymousNode.Loose): ReturnType<
 	});
 }
 
-export function resolveFieldDefinition_name(value: T.FieldDefinition.LooseConfig['name']): T.FieldDefinition['_name'] {
+export function resolveFieldDefinition_name(
+	value: T.FieldDefinition.LooseConfig['name']
+): Admit<T.FieldDefinition['_name']> {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
 export function resolveFieldDefinition_definition(
 	value: T.FieldDefinition.LooseConfig['definition']
-): T.FieldDefinition['_definition'] {
+): Admit<T.FieldDefinition['_definition']> {
 	return _resolveOne<T.Definition>(value, _K0, _K1);
 }
 
@@ -835,7 +841,7 @@ export function coerceToFieldDefinition(input: T.FieldDefinition.Loose): ReturnT
 
 export function resolveNegatedField_identifier(
 	value: T.NegatedField.LooseConfig['identifier']
-): T.NegatedField['_identifier'] {
+): Admit<T.NegatedField['_identifier']> {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
@@ -853,25 +859,27 @@ export function coerceToNegatedField(input: T.NegatedField.Loose): ReturnType<ty
 	);
 }
 
-export function resolvePredicate_prefix(value: T.Predicate.LooseConfig['prefix']): T.Predicate['_prefix'] {
+export function resolvePredicate_prefix(value: T.Predicate.LooseConfig['prefix']): Admit<T.Predicate['_prefix']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'#' | '.'>(value, _K0, _K0)),
 		[['#', TSKindId.Pound] as const, ['.', TSKindId.Dot] as const]
 	);
 }
 
-export function resolvePredicate_name(value: T.Predicate.LooseConfig['name']): T.Predicate['_name'] {
+export function resolvePredicate_name(value: T.Predicate.LooseConfig['name']): Admit<T.Predicate['_name']> {
 	return _resolveOneLeaf<T.ImmediateIdentifier>(value, '_immediate_identifier');
 }
 
-export function resolvePredicate_type(value: T.Predicate.LooseConfig['type']): T.Predicate['_type'] {
+export function resolvePredicate_type(value: T.Predicate.LooseConfig['type']): Admit<T.Predicate['_type']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'?' | '!'>(value, 'predicate_type')),
 		[['?', TSKindId.Qmark] as const, ['!', TSKindId.Bang] as const]
 	);
 }
 
-export function resolvePredicate_parameters(value: T.Predicate.LooseConfig['parameters']): T.Predicate['_parameters'] {
+export function resolvePredicate_parameters(
+	value: T.Predicate.LooseConfig['parameters']
+): Admit<T.Predicate['_parameters']> {
 	return _resolveOneBranch<T.Parameters>(value, 'parameters', undefined, true);
 }
 
@@ -887,7 +895,7 @@ export function coerceToPredicate(input: T.Predicate.Loose): ReturnType<typeof F
 
 export function resolveListElementQuantifier_quantifier(
 	value: T.ListElementQuantifier.LooseConfig['quantifier']
-): T.ListElementQuantifier['_quantifier'] {
+): Admit<T.ListElementQuantifier['_quantifier']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'*' | '+' | '?'>(value, 'quantifier')),
 		[['*', TSKindId.Star] as const, ['+', TSKindId.Plus] as const, ['?', TSKindId.Qmark] as const]
@@ -920,13 +928,13 @@ export function coerceToListElementQuantifier(
 
 export function resolveGroupExpressionArm_left(
 	value: T.GroupExpressionArm.LooseConfig['left']
-): T.GroupExpressionArm['_left'] {
+): Admit<T.GroupExpressionArm['_left']> {
 	return _resolveOne<T.Definition | T.GroupExpressionArm>(value, _K0, _K6);
 }
 
 export function resolveGroupExpressionArm_right(
 	value: T.GroupExpressionArm.LooseConfig['right']
-): T.GroupExpressionArm['_right'] {
+): Admit<T.GroupExpressionArm['_right']> {
 	return _resolveOne<T.Definition | T.GroupExpressionArm>(value, _K0, _K6);
 }
 
@@ -943,13 +951,13 @@ export function coerceToGroupExpressionArm(
 
 export function resolveNamedNodeExpressionArm_left(
 	value: T.NamedNodeExpressionArm.LooseConfig['left']
-): T.NamedNodeExpressionArm['_left'] {
+): Admit<T.NamedNodeExpressionArm['_left']> {
 	return _resolveOne<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K7);
 }
 
 export function resolveNamedNodeExpressionArm_right(
 	value: T.NamedNodeExpressionArm.LooseConfig['right']
-): T.NamedNodeExpressionArm['_right'] {
+): Admit<T.NamedNodeExpressionArm['_right']> {
 	return _resolveOne<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K7);
 }
 
@@ -966,11 +974,13 @@ export function coerceToNamedNodeExpressionArm(
 
 export function resolveGroupingGroup_groupExpression(
 	value: T.GroupingGroup.LooseConfig['groupExpression']
-): T.GroupingGroup['_group_expression'] {
+): Admit<T.GroupingGroup['_group_expression']> {
 	return _resolveOne<T.Definition | T.GroupExpressionArm>(value, _K0, _K6);
 }
 
-export function resolveGroupingGroup_anchor(value: T.GroupingGroup.LooseConfig['anchor']): T.GroupingGroup['_anchor'] {
+export function resolveGroupingGroup_anchor(
+	value: T.GroupingGroup.LooseConfig['anchor']
+): Admit<T.GroupingGroup['_anchor']> {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -998,7 +1008,9 @@ export function coerceToAnchor(_input?: T.Anchor.Loose): typeof F.buildAnchor {
 	return F.buildAnchor;
 }
 
-export function resolveNamedNodePlain_name(value: T.NamedNodePlain.LooseConfig['name']): T.NamedNodePlain['_name'] {
+export function resolveNamedNodePlain_name(
+	value: T.NamedNodePlain.LooseConfig['name']
+): Admit<T.NamedNodePlain['_name']> {
 	return _keywordOr(value, [['_', TSKindId.Underscore] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, () => _resolveOneLeaf<T.Identifier | '_'>(value, 'identifier')),
@@ -1009,13 +1021,13 @@ export function resolveNamedNodePlain_name(value: T.NamedNodePlain.LooseConfig['
 
 export function resolveNamedNodePlain_namedNodeGroup(
 	value: T.NamedNodePlain.LooseConfig['namedNodeGroup']
-): T.NamedNodePlain['_named_node_group'] {
+): Admit<T.NamedNodePlain['_named_node_group']> {
 	return _resolveOne<T.NamedNodeGroup>(value, _K0, _super_named_node_group);
 }
 
 export function resolveNamedNodePlain_elements(
 	value: T.NamedNodePlain.LooseConfig['elements']
-): T.NamedNodePlain['_elements'] {
+): Admit<T.NamedNodePlain['_elements']> {
 	return _resolveMany<T.ListElement>(value, _K0, _super_list_element);
 }
 
@@ -1031,25 +1043,25 @@ export function coerceToNamedNodePlain(input: T.NamedNodePlain.Loose): ReturnTyp
 
 export function resolveNamedNodeSupertyped_supertype(
 	value: T.NamedNodeSupertyped.LooseConfig['supertype']
-): T.NamedNodeSupertyped['_supertype'] {
+): Admit<T.NamedNodeSupertyped['_supertype']> {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
 export function resolveNamedNodeSupertyped_name(
 	value: T.NamedNodeSupertyped.LooseConfig['name']
-): T.NamedNodeSupertyped['_name'] {
+): Admit<T.NamedNodeSupertyped['_name']> {
 	return _resolveOne<T.ImmediateIdentifier | T.ImmediateString>(value, _K8, _K9);
 }
 
 export function resolveNamedNodeSupertyped_namedNodeGroup(
 	value: T.NamedNodeSupertyped.LooseConfig['namedNodeGroup']
-): T.NamedNodeSupertyped['_named_node_group'] {
+): Admit<T.NamedNodeSupertyped['_named_node_group']> {
 	return _resolveOne<T.NamedNodeGroup>(value, _K0, _super_named_node_group);
 }
 
 export function resolveNamedNodeSupertyped_elements(
 	value: T.NamedNodeSupertyped.LooseConfig['elements']
-): T.NamedNodeSupertyped['_elements'] {
+): Admit<T.NamedNodeSupertyped['_elements']> {
 	return _resolveMany<T.ListElement>(value, _K0, _super_list_element);
 }
 
@@ -1072,14 +1084,14 @@ export function coerceToNamedNodeSupertyped(
 
 export function resolveNamedNodeGroupChildren_anchor(
 	value: T.NamedNodeGroupChildren.LooseConfig['anchor']
-): T.NamedNodeGroupChildren['_anchor'] {
+): Admit<T.NamedNodeGroupChildren['_anchor']> {
 	return _resolveBooleanKeyword(value);
 }
 
 export function resolveNamedNodeGroupChildren_namedNodeExpressions(
 	value: T.NamedNodeGroupChildren.LooseConfig['namedNodeExpressions']
-): T.NamedNodeGroupChildren['_named_node_expressions'] {
-	const resolved: readonly T.NamedNodeGroupChildren['_named_node_expressions'][number][] = _resolveMany<
+): Admit<T.NamedNodeGroupChildren['_named_node_expressions']> {
+	const resolved: readonly Admit<T.NamedNodeGroupChildren['_named_node_expressions'][number]>[] = _resolveMany<
 		T.Definition | T.NegatedField | T.NamedNodeExpressionArm
 	>(value, _K0, _K7);
 	_assertNonEmpty(resolved, 'named_node_group_children.namedNodeExpressions');
@@ -1103,19 +1115,19 @@ export function coerceToNamedNodeGroupChildren(
 
 export function resolveNamedNodeGroupAnchoredLast_anchor(
 	value: T.NamedNodeGroupAnchoredLast.LooseConfig['anchor']
-): T.NamedNodeGroupAnchoredLast['_anchor'] {
+): Admit<T.NamedNodeGroupAnchoredLast['_anchor']> {
 	return _resolveBooleanKeyword(value);
 }
 
 export function resolveNamedNodeGroupAnchoredLast_namedNodeExpressions(
 	value: T.NamedNodeGroupAnchoredLast.LooseConfig['namedNodeExpressions']
-): T.NamedNodeGroupAnchoredLast['_named_node_expressions'] {
+): Admit<T.NamedNodeGroupAnchoredLast['_named_node_expressions']> {
 	return _resolveMany<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K7);
 }
 
 export function resolveNamedNodeGroupAnchoredLast_last(
 	value: T.NamedNodeGroupAnchoredLast.LooseConfig['last']
-): T.NamedNodeGroupAnchoredLast['_last'] {
+): Admit<T.NamedNodeGroupAnchoredLast['_last']> {
 	return _resolveOne<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K7);
 }
 

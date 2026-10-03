@@ -90,12 +90,12 @@ describe('from emitter — separatedList', () => {
 		// genuinely multi-element list).
 		expect(emitted).not.toContain('children[0] as Parameters<typeof F.buildMemberList>[0]');
 		expect(emitted).toMatch(
-			/F\.buildMemberList\(\{ delimiter: .*\}, \.\.\.\(children as unknown as NonEmptyArray<T\.Member>\)\)/
+			/F\.buildMemberList\(\{ delimiter: .*\}, \.\.\.\(children as unknown as NonEmptyArray<Admit<T\.Member>>\)\)/
 		);
 		// The fresh path resolves each element through the content slot before
 		// spreading, with a leading options object passed through untouched.
 		expect(emitted).toMatch(
-			/F\.buildMemberList\(\.\.\.\(_listElements\(input, \["delimiter"\], undefined, \(els\) => .*\) as unknown as NonEmptyArray<T\.Member>\)\)/
+			/F\.buildMemberList\(\.\.\.\(_listElements\(input, \["delimiter"\], undefined, \(els\) => .*\) as unknown as NonEmptyArray<Admit<T\.Member>>\)\)/
 		);
 	});
 

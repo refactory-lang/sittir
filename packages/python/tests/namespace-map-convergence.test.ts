@@ -19,6 +19,7 @@ import type {
 	SimpleStatements
 } from '../src/index.ts';
 import type { buildSimpleStatementsElements } from '../src/factories/raw.ts';
+import type { Admit } from '@sittir/types';
 
 type Equals<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 
@@ -94,12 +95,11 @@ describe('python NamespaceMap access-path convergence', () => {
 		expectTrue<Equals<FunctionDefinition.BuildArgs, [FunctionDefinition.Config]>>();
 	});
 
-	it('Loose decomposes into LooseConfig plus the UntypedNode passthrough', () => {
+	it('Loose decomposes into LooseConfig plus the node passthrough, admitted by kind', () => {
 		// `LooseConfig` is the config arm named at the source rather than
-		// recovered downstream as `Exclude<Loose, T>`. This pin is what makes
-		// the split provably semantics-free: `Loose` still admits exactly what
-		// it admitted before, so the passthrough arm is untouched.
-		expectTrue<Equals<FunctionDefinition.Loose, FunctionDefinition.LooseConfig | FunctionDefinition | FunctionDefinition.Bound | FunctionDefinition.Parsed>>();
+		// recovered downstream as `Exclude<Loose, T>`. The passthrough arm is a
+		// built node of the kind, never the storage shape.
+		expectTrue<Equals<FunctionDefinition.Loose, FunctionDefinition.LooseConfig | Admit<FunctionDefinition>>>();
 		expectTrue<Equals<FunctionDefinition.LooseConfig, LooseConfigFor<TSKindId.FunctionDefinition>>>();
 	});
 });
