@@ -191,7 +191,7 @@ mod trivia_macro_tests {
             }
         }
         const TABLE: crate::render::WhitespaceTable = crate::render::WhitespaceTable { text_of, indent: 0, dedent: 0 };
-        let tight = Some(EdgeArm { arm: TIGHT, strength: Some(SEAM_TRIVIA) });
+        let tight = Some(EdgeArm { arm: TIGHT, strength: Some(SEAM_TRIVIA), dedent: None });
         let first = MockTransport { text: "a", transport_trivia_data: None, edges: Some(Edges { before: None, after: tight }) };
         let second = MockTransport { text: "b", transport_trivia_data: None, edges: Some(Edges { before: tight, after: None }) };
         let mut out = String::new();

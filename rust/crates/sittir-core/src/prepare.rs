@@ -67,21 +67,26 @@ pub fn fill_source_flanks<T: Edged + ?Sized>(
     let opened = before == Some(table.indent);
     let after = after_site.and_then(|site| {
         let arms = allowed(site);
-        if opened && arms.contains(&table.dedent) && (closes || !flank.after) {
-            Some(table.dedent)
+        let classified = || crate::classify::classify_whitespace(after_ws, arms, table);
+        if opened && arms.contains(&table.dedent) {
+            if closes || !flank.after {
+                Some((table.dedent, false))
+            } else {
+                Some((classified().unwrap_or(0), true))
+            }
         } else if flank.after {
-            crate::classify::classify_whitespace(after_ws, arms, table)
+            classified().map(|arm| (arm, false))
         } else {
             None
         }
     });
-    let seam = |arm: u16| EdgeArm::from(SeamArm { arm, strength: crate::spacing::SEAM_TRIVIA });
+    let seam = |arm: u16, dedent: bool| EdgeArm::from(SeamArm { arm, strength: crate::spacing::SEAM_TRIVIA, dedent });
     let edges = t.edges_mut();
     if let Some(arm) = before {
-        edges.before.get_or_insert(seam(arm));
+        edges.before.get_or_insert(seam(arm, false));
     }
-    if let Some(arm) = after {
-        edges.after.get_or_insert(seam(arm));
+    if let Some((arm, dedent)) = after {
+        edges.after.get_or_insert(seam(arm, dedent));
     }
 }
 
@@ -90,7 +95,8 @@ pub fn fill_source_flanks<T: Edged + ?Sized>(
 /// source's last, so the trailing flag (2) is set iff the source list's last
 /// child that is not an extra is one of its `separators`
 /// (`SourceTable::last_list_child_kind`, the list's own kind being `kind`).
-/// Without that flank, or when the table cannot answer, the flags are
+/// Without that flank, for a flank that carries a source window instead of
+/// naming its tree, or when the table cannot answer, the flags are
 /// `default`, the options table's. The leading flag is always `default`'s.
 pub fn source_trailing_delimiter(
     flank: Option<&SourceFlank>,
@@ -100,7 +106,8 @@ pub fn source_trailing_delimiter(
     ctx: &RenderContext<'_>,
 ) -> u8 {
     let Some(flank) = flank.filter(|flank| flank.after) else { return default };
-    let Some(last) = ctx.sources.last_list_child_kind(flank.handle, flank.span, kind) else { return default };
+    let crate::slot::FlankSource::Tree(handle) = flank.source else { return default };
+    let Some(last) = ctx.sources.last_list_child_kind(handle, flank.span, kind) else { return default };
     (default & !2) | if separators.contains(&last.0) { 2 } else { 0 }
 }
 
@@ -178,7 +185,7 @@ pub fn root_flanks(
             Side::Before => source.get(..coord.span.start as usize)?,
             Side::After => source.get(coord.span.end as usize..)?,
         };
-        crate::classify::classify_whitespace(bytes, allowed, table).map(|arm| EdgeArm { arm, strength: None })
+        crate::classify::classify_whitespace(bytes, allowed, table).map(|arm| EdgeArm { arm, strength: None, dedent: None })
     };
     Edges {
         before: flank(first.flatten(), Side::Before, allowed_before),
@@ -271,7 +278,7 @@ fn single_separator<'g>(gap: &'g str, token: &str) -> Option<(&'g str, &'g str)>
 }
 
 fn set_gap_edge<T: Prepare, const ADJACENT: bool>(item: &mut SlotValue<T, ADJACENT>, side: Side, arm: u16) {
-    let seam = SeamArm { arm, strength: crate::spacing::SEAM_TRIVIA };
+    let seam = SeamArm { arm, strength: crate::spacing::SEAM_TRIVIA, dedent: false };
     match item {
         SlotValue::Coord(coord) => {
             let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });
@@ -482,7 +489,7 @@ mod tests {
     }
 
     fn after_and_before(source: &str, second_gap: Option<(u32, u32)>) -> (Option<u16>, Option<u16>) {
-        let gap = second_gap.map(|(start, end)| SourceGap { handle: encode_handle(3, 0), span: Span { start, end } });
+        let gap = second_gap.map(|(start, end)| SourceGap::Range { handle: encode_handle(3, 0), span: Span { start, end } });
         filled(source, gap)
     }
 
@@ -545,6 +552,17 @@ mod tests {
 
     /// The flank arms a list spanning `list` in `source` takes, with the flanks the transport kept.
     fn flanks(source: &str, list: &str, before: bool, after: bool) -> (Option<u16>, Option<u16>) {
+        let start = source.find(list).unwrap() as u32;
+        let span = Span { start, end: start + list.len() as u32 };
+        flanks_from(source, crate::slot::FlankSource::Tree(encode_handle(3, 0)), span, before, after)
+    }
+
+    fn flanks_from(source: &str, from: crate::slot::FlankSource, span: Span, before: bool, after: bool) -> (Option<u16>, Option<u16>) {
+        let edges = flank_edges(source, from, span, before, after);
+        (edges.before.map(|edge| edge.arm), edges.after.map(|edge| edge.arm))
+    }
+
+    fn flank_edges(source: &str, from: crate::slot::FlankSource, span: Span, before: bool, after: bool) -> crate::options::Edges {
         use crate::options::{EdgeSite, SiteSpec};
         use crate::slot::SourceFlank;
         static EDGES: [EdgeSite; 1] = [EdgeSite { before: 0, after: 1 }];
@@ -559,17 +577,15 @@ mod tests {
             ..ResolvedOptions::default()
         };
         let ctx = RenderContext { options: &options, sources: &sources };
-        let start = source.find(list).unwrap() as u32;
-        let span = Span { start, end: start + list.len() as u32 };
         let flank = SourceFlank {
-            handle: encode_handle(3, 0),
+            source: from,
             span,
             before,
             after,
         };
         let mut node = List(crate::options::Edges::NONE);
         super::fill_source_flanks(&mut node, Some(&flank), every_arm, &TABLE, &ctx);
-        (node.0.before.map(|edge| edge.arm), node.0.after.map(|edge| edge.arm))
+        node.0
     }
 
     const BROKEN: &str = "f(\n    a,\n    b,\n)";
@@ -592,6 +608,32 @@ mod tests {
     #[test]
     fn a_same_line_list_keeps_its_tight_flanks() {
         assert_eq!(flanks("f(a, b)", "a, b", true, true), (Some(TIGHT), Some(TIGHT)));
+    }
+
+    #[test]
+    fn a_detached_window_from_the_openers_line_to_the_closer_classifies_as_its_tree_does() {
+        let source = "fn g() {\n    f(\n        a,\n        b\n    );\n}\n";
+        let list = "a,\n        b";
+        let start = source.find(list).unwrap();
+        let window_start = source[..start].trim_end().rfind('\n').map_or(0, |i| i + 1);
+        let closer = start + list.len() + source[start + list.len()..].find(')').unwrap();
+        let window = &source[window_start..=closer];
+        let relative = Span { start: (start - window_start) as u32, end: (start - window_start + list.len()) as u32 };
+        assert_eq!(
+            flanks_from("", crate::slot::FlankSource::Text(window.to_string()), relative, true, true),
+            flanks(source, list, true, true)
+        );
+        assert_eq!(flanks(source, list, true, true), (Some(INDENT), Some(DEDENT)));
+    }
+
+    #[test]
+    fn a_depth_the_flank_before_opened_closes_beside_a_closer_on_the_last_items_line() {
+        let source = "g(\n    a,\n    b)";
+        let start = source.find('a').unwrap() as u32;
+        let span = Span { start, end: source.find(')').unwrap() as u32 };
+        let edges = flank_edges(source, crate::slot::FlankSource::Tree(encode_handle(3, 0)), span, true, true);
+        assert_eq!(edges.before.map(|edge| edge.arm), Some(INDENT));
+        assert_eq!(edges.after.map(|edge| (edge.arm, edge.dedent)), Some((TIGHT, Some(true))));
     }
 
     #[test]
@@ -619,7 +661,7 @@ mod tests {
         let options = ResolvedOptions::default();
         let ctx = RenderContext { options: &options, sources: &sources };
         let flank = SourceFlank {
-            handle: encode_handle(3, 0),
+            source: crate::slot::FlankSource::Tree(encode_handle(3, 0)),
             span: Span { start: 2, end: 7 },
             before: false,
             after,

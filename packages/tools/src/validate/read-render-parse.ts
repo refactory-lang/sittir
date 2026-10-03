@@ -12,7 +12,18 @@ import { writeSync } from 'node:fs';
 
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
 import { sourceSpans, spanSlicer, type TriviaSides } from '@sittir/common';
-import { spanOf, crossingTrivia, hydrateStub, isStub, mapTriviaEntries, readTrivia, type TriviaView } from '@sittir/common/utils';
+import {
+	hydrateStub,
+	isStorageKey,
+	isStub,
+	mapTriviaEntries,
+	readTrivia,
+	spanOf,
+	toDetachedTransportData,
+	type SourceFlankEvidence,
+	type SourceGapEvidence,
+	type TriviaView
+} from '@sittir/common/utils';
 import { deriveRuleKinds } from './render-bodies.ts';
 import { load } from '../codegen-surface.ts';
 
@@ -355,17 +366,46 @@ export function leadingTriviaRenderedWidth(
 }
 
 /**
- * A render fixture's input, detached from the engine that read it. A
- * coordinate names the tree its engine still holds, so it means nothing
- * in another process: every handle and `$childIndex` is dropped. A
- * storage-less leaf kind (`isLeafKind`) keeps its identity with its own
- * bytes as `$text` (sliced from `source` when the reader captured none);
- * a storage-less compound keeps only its identity and rebuilds from its
- * empty slots, and a storage-less trivia entry becomes its text with the
+ * A list's kept flanks as text: the source from the start of the line its
+ * opener sits on through its closer, with the list's span counted from the
+ * window's start. That is every byte the native flank classifier reads: the
+ * whitespace on both sides of the list, the opener's line for the depth the
+ * list opens at, and the list's own last line for the depth it closes at.
+ */
+export function flankWindow(
+	source: Buffer,
+	flank: SourceFlankEvidence
+): { readonly $text: string; readonly $span: { readonly start: number; readonly end: number }; readonly $before: boolean; readonly $after: boolean } {
+	const head = source.subarray(0, flank.$span.start).toString('utf8');
+	const opened = head.trimEnd();
+	const from = Buffer.byteLength(opened.slice(0, opened.lastIndexOf('\n') + 1), 'utf8');
+	const tail = source.subarray(flank.$span.end).toString('utf8');
+	const closer = tail.trimStart();
+	const through = closer.length === 0 ? tail : tail.slice(0, tail.length - closer.length + String.fromCodePoint(closer.codePointAt(0)!).length);
+	const to = flank.$span.end + Buffer.byteLength(through, 'utf8');
+	return {
+		$text: source.subarray(from, to).toString('utf8'),
+		$span: { start: flank.$span.start - from, end: flank.$span.end - from },
+		$before: flank.$before,
+		$after: flank.$after
+	};
+}
+
+/**
+ * A render fixture's input, detached from the engine that read it: the
+ * transport the render itself sends, unfolded (`toDetachedTransportData`,
+ * through `view`, the view the render read), with everything that names a tree turned into the
+ * text it names. A coordinate names the tree its engine still holds, so it
+ * means nothing in another process: every handle and `$childIndex` is
+ * dropped. A storage-less leaf kind (`isLeafKind`) keeps its identity with
+ * its own bytes as `$text` (sliced from `source` when the reader captured
+ * none); a storage-less compound keeps only its identity and rebuilds from
+ * its empty slots, and a storage-less trivia entry becomes its text with the
  * kind the reader stamped on it, `{ $type, $text }`, plus `$sameLine` and
- * `$tokensBetween` when it shares its owner's row. Each node's trivia is
- * taken through `view`, the view the render read, so the input carries the
- * line-gap whitespace the validated render printed.
+ * `$tokensBetween` when it shares its owner's row. The layout evidence a list
+ * keeps from its source travels as text: each kept list gap as its bytes
+ * (`$_gap: { $text }`), and kept flanks as a window of the source
+ * (`$_flank: { $text, $span }`, `flankWindow`).
  */
 export function selfContainedRenderInput(
 	data: unknown,
@@ -374,17 +414,16 @@ export function selfContainedRenderInput(
 	view: TriviaView
 ): unknown {
 	const slice = spanSlicer(source);
+	const bytes = Buffer.from(source, 'utf8');
 	const textOf = (record: Record<string, unknown>): string | undefined => {
 		if (typeof record.$text === 'string') return record.$text;
 		const span = spanOf(record);
 		return span === undefined ? undefined : slice(span);
 	};
-	const hasStorage = (record: Record<string, unknown>): boolean =>
-		Object.keys(record).some((key) => key.startsWith('_') || key === '$other');
+	const hasStorage = (record: Record<string, unknown>): boolean => Object.keys(record).some(isStorageKey);
 	const walkTrivia = (entries: readonly unknown[]): unknown[] =>
 		entries.map((entry) => {
-			if (entry === null || typeof entry !== 'object' || hasStorage(entry as Record<string, unknown>))
-				return walk(entry);
+			if (entry === null || typeof entry !== 'object' || hasStorage(entry as Record<string, unknown>)) return walk(entry);
 			const record = entry as Record<string, unknown>;
 			const text = textOf(record);
 			if (text === undefined) return walk(entry);
@@ -399,11 +438,11 @@ export function selfContainedRenderInput(
 		const out: Record<string, unknown> = {};
 		for (const [key, raw] of Object.entries(record)) {
 			if (key === '$handle' || key === '$parentHandle' || key === '$treeHandle' || key === '$childIndex' || key === '$textOnly') continue;
-			if (key === '$_trivia') continue;
-			out[key] = key.startsWith('_') || key === '$other' ? walk(raw) : raw;
+			if (key === '$_trivia') out.$_trivia = mapTriviaEntries(raw as TriviaSides<unknown>, walkTrivia);
+			else if (key === '$_gap') out.$_gap = { $text: slice((raw as SourceGapEvidence).$span) };
+			else if (key === '$_flank') out.$_flank = flankWindow(bytes, raw as SourceFlankEvidence);
+			else out[key] = isStorageKey(key) ? walk(raw) : raw;
 		}
-		const trivia = crossingTrivia(record, view);
-		if (trivia != null) out.$_trivia = mapTriviaEntries(trivia as TriviaSides<unknown>, walkTrivia);
 		const shown = typeof out.$type === 'number' ? nativeShownKindId(out as { $type: number }) : undefined;
 		if (!hasStorage(out) && shown !== undefined && isLeafKind(shown) && out.$text === undefined) {
 			const text = textOf(out);
@@ -411,7 +450,7 @@ export function selfContainedRenderInput(
 		}
 		return out;
 	};
-	return walk(data);
+	return walk(toDetachedTransportData(data as AnyUntypedNode, view));
 }
 
 /**

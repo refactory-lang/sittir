@@ -35,7 +35,7 @@ impl Prepare for List {
 }
 
 fn arms(ids: &[u16]) -> Vec<SeamArm> {
-    ids.iter().map(|&arm| SeamArm { arm, strength: SEAM_DECLARED }).collect()
+    ids.iter().map(|&arm| SeamArm { arm, strength: SEAM_DECLARED, dedent: false }).collect()
 }
 
 fn ctx<'a>(options: &'a ResolvedOptions, sources: &'a Sources) -> RenderContext<'a> {
@@ -124,11 +124,11 @@ fn a_nested_container_is_walked_to_the_bottom() {
 use sittir_core::options::{EdgeArm, Edged, Edges, EdgeSite, Side, SiteSpec, NO_SITE};
 
 fn wire(arm: u16) -> EdgeArm {
-    EdgeArm { arm, strength: None }
+    EdgeArm { arm, strength: None, dedent: None }
 }
 
 fn stamped(arm: u16, strength: u8) -> EdgeArm {
-    EdgeArm { arm, strength: Some(strength) }
+    EdgeArm { arm, strength: Some(strength), dedent: None }
 }
 use sittir_core::prepare::prepare_edges;
 use sittir_core::render::{RenderSink, WhitespaceTable};
@@ -151,8 +151,8 @@ fn at_defaults(sites: &'static [SiteSpec]) -> ResolvedOptions {
 fn a_resolved_arm_carries_the_spec_strength_for_the_default_and_declared_otherwise() {
     let mut opts = at_defaults(two_sites());
     opts.set_arm(1, 9);
-    assert_eq!(opts.site_arm(0), SeamArm { arm: 7, strength: 1 });
-    assert_eq!(opts.site_arm(1), SeamArm { arm: 9, strength: SEAM_DECLARED });
+    assert_eq!(opts.site_arm(0), SeamArm { arm: 7, strength: 1, dedent: false });
+    assert_eq!(opts.site_arm(1), SeamArm { arm: 9, strength: SEAM_DECLARED, dedent: false });
 }
 
 fn ws_text(kind: u16) -> &'static str {
@@ -213,10 +213,10 @@ fn an_edged_transport_prepares_its_edges_from_the_edge_row() {
 #[test]
 fn a_wire_stamp_takes_its_site_spec_strength_and_a_render_stamp_keeps_its_own() {
     let opts = edged_options();
-    assert_eq!(opts.edge_arm(KindId(3), Side::After, Some(wire(9))), Some(SeamArm { arm: 9, strength: SEAM_DECLARED }));
-    assert_eq!(opts.edge_arm(KindId(3), Side::After, Some(wire(6))), Some(SeamArm { arm: 6, strength: 1 }));
-    assert_eq!(opts.edge_arm(KindId(3), Side::After, Some(stamped(6, 0))), Some(SeamArm { arm: 6, strength: 0 }));
-    assert_eq!(opts.edge_arm(KindId(3), Side::Before, None), Some(SeamArm { arm: 5, strength: 1 }));
+    assert_eq!(opts.edge_arm(KindId(3), Side::After, Some(wire(9))), Some(SeamArm { arm: 9, strength: SEAM_DECLARED, dedent: false }));
+    assert_eq!(opts.edge_arm(KindId(3), Side::After, Some(wire(6))), Some(SeamArm { arm: 6, strength: 1, dedent: false }));
+    assert_eq!(opts.edge_arm(KindId(3), Side::After, Some(stamped(6, 0))), Some(SeamArm { arm: 6, strength: 0, dedent: false }));
+    assert_eq!(opts.edge_arm(KindId(3), Side::Before, None), Some(SeamArm { arm: 5, strength: 1, dedent: false }));
     assert_eq!(opts.edge_arm(KindId(4), Side::Before, None), None);
     let sources = Sources(HashMap::new());
     let mut leaf = Edged3 { edges: Edges { before: None, after: Some(wire(8)) } };
@@ -283,7 +283,7 @@ fn seated_gaps_fill_the_preceding_elements_after_edge_and_never_the_last() {
 #[test]
 fn a_seated_gap_carries_its_own_sites_strength() {
     let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0];
-    let opts = ResolvedOptions { spacing: vec![SeamArm { arm: 70, strength: 0 }], ..ResolvedOptions::default() };
+    let opts = ResolvedOptions { spacing: vec![SeamArm { arm: 70, strength: 0, dedent: false }], ..ResolvedOptions::default() };
     let sources = Sources(HashMap::new());
     let mut items = vec![seatable(3), seatable(3)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
@@ -379,7 +379,7 @@ fn a_coordinate_whose_gap_the_source_already_filled_keeps_it() {
     let sources = source_tree();
     let mut first = NodeCoordinate::new(encode_handle(7, 0), Span { start: 0, end: 6 });
     first.kind = Some(KindId(3));
-    first.edges = Some(sittir_core::slot::CoordinateEdges { before: None, after: Some(SeamArm { arm: 9, strength: 3 }) });
+    first.edges = Some(sittir_core::slot::CoordinateEdges { before: None, after: Some(SeamArm { arm: 9, strength: 3, dedent: false }) });
     let mut items = vec![Some(SlotValue::Coord(first)), parsed(3, 8, 17)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
     assert_eq!(coord_after_of(&items[0]), Some(9));
@@ -408,7 +408,7 @@ fn a_coordinate_followed_by_a_rebuilt_element_takes_its_seat_before_a_later_coor
 #[test]
 fn a_seated_coordinate_keeps_its_seat_when_it_prepares_its_kind_edges() {
     let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 1];
-    let opts = ResolvedOptions { spacing: vec![SeamArm { arm: 5, strength: 1 }, SeamArm { arm: 70, strength: SEAM_DECLARED }, SeamArm { arm: 6, strength: 1 }], sites: EDGE_SPECS_3, edges: EDGE_ROWS_3, edge_rows: EDGE_ROW_OF, ..ResolvedOptions::default() };
+    let opts = ResolvedOptions { spacing: vec![SeamArm { arm: 5, strength: 1, dedent: false }, SeamArm { arm: 70, strength: SEAM_DECLARED, dedent: false }, SeamArm { arm: 6, strength: 1, dedent: false }], sites: EDGE_SPECS_3, edges: EDGE_ROWS_3, edge_rows: EDGE_ROW_OF, ..ResolvedOptions::default() };
     let sources = source_tree();
     let mut items = vec![parsed(3, 8, 17), parsed(3, 0, 6)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));

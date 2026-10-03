@@ -107,6 +107,7 @@ export function createRenderEngine<const I extends string = string>(
 			templatesPath: join(__dirname, '..', 'templates'),
 			kindNames: KIND_NAMES,
 			rebuildWrappers: triviaFacts.rebuildWrappers,
+			listKinds: triviaFacts.listKinds,
 			getActiveBackend,
 		},
 		options

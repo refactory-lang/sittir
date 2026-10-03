@@ -12,6 +12,11 @@
 export interface EdgeArm {
   arm: number
   strength?: number
+  /**
+   * Close a depth before the arm (`SeamArm::dedent`). Only the native
+   * flank fill sets it; the wire never sends it.
+   */
+  dedent?: boolean
 }
 
 /**

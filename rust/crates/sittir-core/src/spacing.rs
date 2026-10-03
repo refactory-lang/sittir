@@ -146,6 +146,10 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     table: Option<&'a crate::render::WhitespaceTable>,
     indent: &'a str,
     depth: usize,
+    /// For each open depth level, how many further opens asked for it at the
+    /// position it opened (`indent` while armed): depth is one fact per
+    /// position, so those merge into it, and their dedents unwind first.
+    merged: Vec<usize>,
     indent_pending: bool,
     indent_armed: bool,
     seam: Option<SeamRank>,
@@ -196,6 +200,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             table: None,
             indent: "",
             depth: 0,
+            merged: Vec::new(),
             indent_pending: false,
             indent_armed: false,
             seam: None,
@@ -426,7 +431,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         let Some(options) = self.options else {
             return;
         };
-        let crate::slot::SeamArm { arm, strength } = options.site_arm(site);
+        let crate::slot::SeamArm { arm, strength, .. } = options.site_arm(site);
         self.site_mark(arm, strength, flank);
     }
 
@@ -573,13 +578,13 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         let Some(options) = self.options else {
             return;
         };
-        let Some(crate::slot::SeamArm { arm, strength }) = options.edge_arm(kind, side, stamped) else {
+        let Some(seam) = options.edge_arm(kind, side, stamped) else {
             return;
         };
         if options.kind_has(kind, crate::options::KIND_ROOT) {
-            self.root_edge(arm, strength);
+            self.root_edge(seam.arm, seam.strength);
         } else {
-            self.site_with(arm, strength);
+            self.seam_arm(seam);
         }
     }
 
@@ -588,13 +593,13 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     }
 
     fn unsited_edge(&mut self, kind: crate::types::KindId, side: crate::options::Side, stamped: Option<crate::options::EdgeArm>) {
-        let Some(crate::options::EdgeArm { arm, strength: Some(strength) }) = stamped else {
+        let Some(crate::options::EdgeArm { arm, strength: Some(strength), dedent }) = stamped else {
             return;
         };
         if self.options.is_some_and(|options| options.edge_arm(kind, side, None).is_some()) {
             return;
         }
-        self.site_with(arm, strength);
+        self.seam_arm(crate::slot::SeamArm { arm, strength, dedent: dedent == Some(true) });
     }
 
     fn flank_at(&mut self, site: usize) {
@@ -657,11 +662,26 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     }
 
     fn indent(&mut self) {
+        if self.indent_armed {
+            if let Some(merged) = self.merged.last_mut() {
+                *merged += 1;
+                return;
+            }
+        }
         self.depth += 1;
+        self.merged.push(0);
         self.indent_armed = true;
     }
 
     fn dedent(&mut self, seam: &str) {
+        if let Some(merged) = self.merged.last_mut().filter(|merged| **merged > 0) {
+            *merged -= 1;
+            if !self.indent_armed && !seam.is_empty() {
+                self.merge_seam(seam);
+            }
+            return;
+        }
+        self.merged.pop();
         self.depth = self.depth.saturating_sub(1);
         let holds_trivia = self.seam.is_some() && self.seam_strength == SEAM_TRIVIA;
         if std::mem::replace(&mut self.indent_armed, false) && !holds_trivia {
@@ -1046,6 +1066,42 @@ mod sink_tests {
                 w.text("b").unwrap();
             }),
             "a b"
+        );
+    }
+
+    #[test]
+    fn two_opens_at_one_position_open_one_depth_and_their_closes_return_to_it() {
+        assert_eq!(
+            run(|w| {
+                w.text("{").unwrap();
+                w.indent();
+                w.indent();
+                w.seam("\n");
+                w.text("a").unwrap();
+                w.dedent("\n");
+                w.dedent("\n");
+                w.text("}").unwrap();
+            }),
+            "{\n  a\n}"
+        );
+    }
+
+    #[test]
+    fn opens_at_two_positions_open_two_depths_and_close_both() {
+        assert_eq!(
+            run(|w| {
+                w.text("a:").unwrap();
+                w.indent();
+                w.seam("\n");
+                w.text("b:").unwrap();
+                w.indent();
+                w.seam("\n");
+                w.text("c").unwrap();
+                w.dedent("\n");
+                w.dedent("\n");
+                w.text("d").unwrap();
+            }),
+            "a:\n  b:\n    c\nd"
         );
     }
 
