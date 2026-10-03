@@ -1,4 +1,5 @@
 import type { AnyUntypedNode, TriviaSetter } from './core-types.ts';
+import type { Renderable } from './engine-api.ts';
 
 export interface SlotHint<Input, Optional extends boolean = false, Rest extends boolean = false, Config = never> {
 	readonly input: Input;
@@ -102,7 +103,18 @@ type SetResult<Self, K extends PropertyKey, V, ByBound, Lookup, Reflect extends 
 	? Self
 	: WithSlot<Self, K, V, ByBound, Lookup>;
 
-type SlotSetter<Self, Of, K extends keyof SlotHintsOf<Of>, ByBound, Lookup, Reflect extends boolean> =
+type KindsOf<T> = T extends { readonly $type: infer Id extends number } ? Id : never;
+type NodeInput<T> = Renderable<KindsOf<T>> | Extract<T, number>;
+type NodeInputs<R extends readonly unknown[]> = { readonly [I in keyof R]: NodeInput<R[I]> };
+
+type NodeSetter<Self, Of, K extends keyof SlotHintsOf<Of>, ByBound, Lookup, Reflect extends boolean> =
+	SlotRest<Of, K> extends true
+		? SlotInput<Of, K> extends infer Rest extends readonly unknown[]
+			? <const Vs extends NodeInputs<Rest>>(...values: Vs) => SetResult<Self, K, Rest, ByBound, Lookup, Reflect>
+			: never
+		: <V extends NodeInput<SlotInput<Of, K>>>(value: V) => SetResult<Self, K, SlotInput<Of, K>, ByBound, Lookup, Reflect>;
+
+type StoredSetter<Self, Of, K extends keyof SlotHintsOf<Of>, ByBound, Lookup, Reflect extends boolean> =
 	SlotRest<Of, K> extends true
 		? SlotInput<Of, K> extends infer Rest extends readonly unknown[]
 			? AdmitBound<WidenElements<Rest, SlotConfig<Of, K>>, Lookup> extends infer Admitted extends readonly unknown[]
@@ -114,7 +126,12 @@ type SlotSetter<Self, Of, K extends keyof SlotHintsOf<Of>, ByBound, Lookup, Refl
 					(() => SetResult<Self, K, undefined, ByBound, Lookup, Reflect>)
 			: (value: AdmitBound<SlotInput<Of, K>, Lookup>) => SetResult<Self, K, SlotInput<Of, K>, ByBound, Lookup, Reflect>;
 
-type ListItems<Self, Of, K extends keyof SlotHintsOf<Of>, E, O, ByBound, Lookup, Reflect extends boolean> = {
+type ListNodeItems<Self, Of, K extends keyof SlotHintsOf<Of>, E, O, ByBound, Lookup, Reflect extends boolean> = {
+	<const Vs extends readonly NodeInput<E>[]>(options: O, ...items: Vs): SetResult<Self, K, SlotInput<Of, K>, ByBound, Lookup, Reflect>;
+	<const Vs extends readonly NodeInput<E>[]>(...items: Vs): SetResult<Self, K, SlotInput<Of, K>, ByBound, Lookup, Reflect>;
+};
+
+type ListStoredItems<Self, Of, K extends keyof SlotHintsOf<Of>, E, O, ByBound, Lookup, Reflect extends boolean> = {
 	(options: O, ...items: readonly AdmitBound<E, Lookup>[]): SetResult<Self, K, SlotInput<Of, K>, ByBound, Lookup, Reflect>;
 	(...items: readonly AdmitBound<E, Lookup>[]): SetResult<Self, K, SlotInput<Of, K>, ByBound, Lookup, Reflect>;
 };
@@ -122,9 +139,12 @@ type ListItems<Self, Of, K extends keyof SlotHintsOf<Of>, E, O, ByBound, Lookup,
 type SlotSetterOf<Self, Of, K extends keyof SlotHintsOf<Of>, ByBound, Lookup, Reflect extends boolean> =
 	K extends keyof ListSlotsOf<Of>
 		? ListSlotsOf<Of>[K] extends ListSlotHint<infer E, infer O, infer C>
-			? SlotSetter<Self, Of, K, ByBound, Lookup, Reflect> & ListItems<Self, Of, K, E | C, O, ByBound, Lookup, Reflect>
-			: SlotSetter<Self, Of, K, ByBound, Lookup, Reflect>
-		: SlotSetter<Self, Of, K, ByBound, Lookup, Reflect>;
+			? NodeSetter<Self, Of, K, ByBound, Lookup, Reflect> &
+					ListNodeItems<Self, Of, K, E | C, O, ByBound, Lookup, Reflect> &
+					StoredSetter<Self, Of, K, ByBound, Lookup, Reflect> &
+					ListStoredItems<Self, Of, K, E | C, O, ByBound, Lookup, Reflect>
+			: NodeSetter<Self, Of, K, ByBound, Lookup, Reflect> & StoredSetter<Self, Of, K, ByBound, Lookup, Reflect>
+		: NodeSetter<Self, Of, K, ByBound, Lookup, Reflect> & StoredSetter<Self, Of, K, ByBound, Lookup, Reflect>;
 
 type FlatOwned<Of> = FlatKeyNames<Of> | FlatSeatSlots<FlatOf<Of>>;
 

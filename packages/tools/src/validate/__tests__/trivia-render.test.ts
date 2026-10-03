@@ -144,7 +144,7 @@ describe('depth is one fact per position', () => {
 		if (typeof item === 'number' || !rust.is.structItem(item) || item.$type !== rust.kinds.StructItemBrace) throw new Error('expected a struct item with a body');
 		expect(await copy('rust', item)).toBe(struct);
 		const body = item.body();
-		const edited = body.$with.elements(...body) as Parameters<typeof item.$with.body>[0];
+		const edited = body.$with.elements(...body);
 		expect(item.$with.body(edited).$render()).toBe(struct);
 	});
 
@@ -153,7 +153,7 @@ describe('depth is one fact per position', () => {
 		if (typeof item === 'number' || !rust.is.enumItem(item)) throw new Error('expected an enum item');
 		expect(await copy('rust', item)).toBe(enumeration);
 		const body = item.body();
-		const edited = body.$with.elements(...body) as Parameters<typeof item.$with.body>[0];
+		const edited = body.$with.elements(...body);
 		expect(item.$with.body(edited).$render()).toBe(enumeration);
 	});
 
@@ -162,7 +162,7 @@ describe('depth is one fact per position', () => {
 		if (typeof item === 'number' || !rust.is.unionItem(item)) throw new Error('expected a union item');
 		expect(await copy('rust', item)).toBe(union);
 		const body = item.body();
-		const edited = body.$with.elements(...body) as Parameters<typeof item.$with.body>[0];
+		const edited = body.$with.elements(...body);
 		expect(item.$with.body(edited).$render()).toBe(union);
 	});
 
@@ -184,11 +184,11 @@ describe('depth is one fact per position', () => {
 		const call = wrapper.expression();
 		if (typeof call === 'number' || !rust.is.callExpression(call)) throw new Error('expected a call');
 		const args = call.arguments();
-		const call2 = call.$with.arguments(args.$with.elements(...args) as Parameters<typeof call.$with.arguments>[0]);
-		const wrapper2 = wrapper.$with.expression(call2 as Parameters<typeof wrapper.$with.expression>[0]);
-		const statement2 = statement.$with.content(wrapper2 as Parameters<typeof statement.$with.content>[0]);
+		const call2 = call.$with.arguments(args.$with.elements(...args));
+		const wrapper2 = wrapper.$with.expression(call2);
+		const statement2 = statement.$with.content(wrapper2);
 		const body = fn.body().$with.statements(statement2, next);
-		expect(fn.$with.body(body as Parameters<typeof fn.$with.body>[0]).$render()).toBe(flankBreak);
+		expect(fn.$with.body(body).$render()).toBe(flankBreak);
 	});
 
 	it('gives a string no list flanks, so a body of string statements keeps its depth', async () => {
@@ -200,8 +200,8 @@ describe('depth is one fact per position', () => {
 		if (second === undefined) throw new Error('expected a second statement');
 		const string = first.expression();
 		if (typeof string === 'number' || !typescript.is.string(string) || string.$type !== typescript.kinds.StringSingle) throw new Error('expected a single-quoted string');
-		const rebuilt = first.$with.expression(string.$with.elements(...(string.elements() as Parameters<typeof string.$with.elements>)) as Parameters<typeof first.$with.expression>[0]);
+		const rebuilt = first.$with.expression(string.$with.elements(...string.elements()));
 		const body = fn.body().$with.statements(rebuilt, second);
-		expect(fn.$with.body(body as Parameters<typeof fn.$with.body>[0]).$render()).toBe(`${stringBody}\n`);
+		expect(fn.$with.body(body).$render()).toBe(`${stringBody}\n`);
 	});
 });
