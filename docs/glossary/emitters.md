@@ -13435,11 +13435,10 @@ normalization; a node that already carries slot storage (built or edited) is lef
 ```text
 /** The exported alias naming the wrapped root surface, once `finalize()`
 	 *  has run. `undefined` when no root kind was configured. The alias is the
-	 *  root kind's wrap-table row intersected with `@sittir/common`'s
-	 *  `ParsedRoot`: the reader stamps `$span` and the captured `$text` on a
-	 *  whole-source parse's root (required there, optional on every other read
-	 *  node), and `wrapNode`'s typed overload keeps whichever of those members
-	 *  its input declares — the wrap spreads the data it is given — so
+	 *  root kind's wrap-table row intersected with `ParsedRoot`: a
+	 *  whole-source parse's root carries the parse's error regions
+	 *  (`$errors`), and `wrapNode`'s typed overload keeps whichever of those
+	 *  members its input declares — the wrap spreads the data it is given — so
 	 *  `engine.parse()` reaches this alias without a cast. */
 ```
 
@@ -13492,6 +13491,10 @@ Kinds with a `reclaimsAnonymousChild` slot keep `$other`, because their wrap rea
 ### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.finalize`
 
 Assembles the wrap module. `wrapNode`, the one function every wrapped node passes through (the parsed root, each child hydrated on demand, trivia entries), runs its per-kind wrap function inside `inTreeEngine`, so a node is built under the engine that read its tree however long after the parse it is first reached. It carries read provenance (`carryRead`) from the read data to the wrapped node, so the wrapped node derives its line-gap trivia the way the read data would.
+A node of a kind with no wrap function, an ERROR node above all, read in a slot
+or as a trivia item, is hydrated by `_hydrateUnknownKindChildren`, which
+stamps the engine on it as every per-kind wrap function does, so the engine's
+guards (`isErrorNode`) recognise it wherever it surfaces.
 
 `readUntypedNode` and `readNode` take an optional level count, which reaches the native read. `hydrateSelf` reads a stub of a list owner's kind (`listViewOwners`, emitted as `_LIST_OWNER_KINDS`) two levels at once, and every other stub one level.
 
@@ -16599,7 +16602,7 @@ The per-grammar runtime glue shared by every grammar package, emitted into `pack
 
 ### `packages/codegen/src/emitters/native-crate.ts::NATIVE_RENDER_TRANSPORT_ABI`
 
-The version of the wire between the JS packages and a native build: the render transport shape JS sends, the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present, which of `$handle` / `$parentHandle` / `$treeHandle` a node carries), and the read calls' names and arguments (a read takes a level count). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever any of these changes, and regenerate every grammar.
+The version of the wire between the JS packages and a native build: the render transport shape JS sends, the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present, which of `$handle` / `$parentHandle` / `$treeHandle` a node carries, and the error regions a parse returns beside its root), and the read calls' names and arguments (a read takes a level count). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever any of these changes, and regenerate every grammar.
 
 ### `packages/codegen/src/emitters/types.ts::emitNodeSurfaceInterfaces`
 
