@@ -10,6 +10,7 @@ import { benchCodemod } from './bench-codemod.ts';
 import { checkBaseline } from './check-baseline.ts';
 import { checkPerf } from './check-perf.ts';
 import { classify } from './classify.ts';
+import { codemodCorpus } from './codemod-corpus.ts';
 import { corpusCoverageCensus } from './corpus-coverage-census.ts';
 import { defectHistogram } from './defect-histogram.ts';
 import { diffFailures } from './diff-failures.ts';
@@ -38,6 +39,7 @@ import { testHistory } from './test-history.ts';
 import { textKindOverlap } from './text-kind-overlap.ts';
 import { spelledTrivia } from './spelled-trivia.ts';
 import { triviaPlacement } from './trivia-placement.ts';
+import { triviaTiming } from './trivia-timing.ts';
 import { uncoveredContent } from './uncovered-content.ts';
 import { variantDerivationProbe } from './variant-derivation-probe.ts';
 import { walk } from './walk.ts';
@@ -52,6 +54,7 @@ export const toolModules: readonly CommandModule[] = [
 	checkBaseline,
 	checkPerf,
 	classify,
+	codemodCorpus,
 	corpusCoverageCensus,
 	defectHistogram,
 	diffFailures,
@@ -80,6 +83,7 @@ export const toolModules: readonly CommandModule[] = [
 	textKindOverlap,
 	spelledTrivia,
 	triviaPlacement,
+	triviaTiming,
 	uncoveredContent,
 	variantDerivationProbe,
 	walk,

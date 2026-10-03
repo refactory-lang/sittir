@@ -11,16 +11,34 @@ export interface Type<G extends GrammarContext> {
 	// claimed by p
 	readonly kind: 'type';
 	readonly content?:
-		| V.Unmapped<'rust:function_type_fn_form'>
 		| V.Unmapped<'rust:function_type_trait_form'>
 		| V.Unmapped<'typescript:literal_type_negative_number'>
 		| G['expression']
 		| G['identifier']
 		| G['literal']
+		| V.Modifier.Extern<G>
 		| G['pattern']
-		| G['type'];
+		| 'async'
+		| 'const'
+		| 'default'
+		| 'unsafe'
+		| G['type']
+		| (
+				| V.Unmapped<'rust:function_type_trait_form'>
+				| V.Unmapped<'typescript:literal_type_negative_number'>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| V.Modifier.Extern<G>
+				| G['pattern']
+				| 'async'
+				| 'const'
+				| 'default'
+				| 'unsafe'
+				| G['type']
+		  )[];
 	// prt only
-	// unmapped: <rust:function_type_fn_form> <rust:function_type_trait_form> <typescript:literal_type_negative_number>
+	// unmapped: <rust:function_type_trait_form> <typescript:literal_type_negative_number>
 }
 
 export namespace Type {
@@ -28,7 +46,7 @@ export namespace Type {
 		// claimed by r
 		readonly kind: 'type.abstract';
 		readonly trait: V.Clause.Bounds.Removed<G> | V.Identifier.Type<G> | G['type'];
-		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
+		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
 	}
 	export interface Array<G extends GrammarContext> extends Simplify<SubKindOf<V.Type<G>>> {
 		// claimed by rt
@@ -77,12 +95,33 @@ export namespace Type {
 	export interface Function<G extends GrammarContext> extends Simplify<SubKindOf<V.Type<G>>> {
 		// claimed by rt
 		readonly kind: 'type.function';
-		readonly content?: V.Unmapped<'rust:function_type_fn_form'> | V.Unmapped<'rust:function_type_trait_form'>;
+		readonly content?:
+			| V.Unmapped<'rust:function_type_trait_form'>
+			| V.Modifier.Extern<G>
+			| 'async'
+			| 'const'
+			| 'default'
+			| 'unsafe'
+			| (
+					| V.Unmapped<'rust:function_type_trait_form'>
+					| V.Modifier.Extern<G>
+					| 'async'
+					| 'const'
+					| 'default'
+					| 'unsafe'
+			  )[];
 		// r only
-		// unmapped: <rust:function_type_fn_form> <rust:function_type_trait_form>
+		// unmapped: <rust:function_type_trait_form>
 		readonly forLifetimes?: V.Clause.Lifetimes<G>;
 		// r only
-		readonly parameters: V.Declaration.Parameter<G>[];
+		readonly parameters: (
+			| V.Clause.Bounds.Removed<G>
+			| V.Expression.Call.Macro<G>
+			| G['identifier']
+			| V.Declaration.Parameter.Any<G>
+			| '_'
+			| G['type']
+		)[];
 		readonly returnType?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
 		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 		// t only
@@ -92,7 +131,7 @@ export namespace Type {
 			// claimed by t
 			readonly kind: 'type.function.constructor';
 			readonly abstract?: boolean;
-			readonly parameters: V.Declaration.Parameter<G>[];
+			readonly parameters: V.Declaration.Parameter.Any<G>[];
 			readonly type: G['identifier'] | G['type'];
 			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 		}
@@ -105,7 +144,15 @@ export namespace Type {
 		// pt only
 		readonly type?: G['identifier'] | 'default' | 'gen' | 'union' | V.Type.Path<G>;
 		// r only
-		readonly typeArguments?: G['type'][];
+		readonly typeArguments?: (
+			| V.Clause.Bounds.Removed<G>
+			| V.Element.TypeBinding<G>
+			| V.Expression.Call.Macro<G>
+			| G['identifier']
+			| G['literal']
+			| V.Statement.Block<G>
+			| G['type']
+		)[];
 		// rt only
 		readonly typeParameter?: V.Declaration.TypeParameter<G>;
 		// p only
@@ -115,7 +162,15 @@ export namespace Type {
 			// claimed by r
 			readonly kind: 'type.generic.turbofish';
 			readonly type: G['identifier'];
-			readonly typeArguments: G['type'][];
+			readonly typeArguments: (
+				| V.Clause.Bounds.Removed<G>
+				| V.Element.TypeBinding<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['literal']
+				| V.Statement.Block<G>
+				| G['type']
+			)[];
 		}
 		export type Any<G extends GrammarContext> = V.Type.Generic<G> | V.Type.Generic.Turbofish<G>;
 	}
@@ -167,8 +222,7 @@ export namespace Type {
 		// claimed by t
 		readonly kind: 'type.object';
 		readonly closing: '|}' | '}';
-		readonly members?: V.Unmapped<'typescript:object_type_content'>;
-		// unmapped: <typescript:object_type_content>
+		readonly members?: (G['declaration'] | V.Statement.Export<G>)[];
 		readonly opening: '{' | '{|';
 	}
 	export interface Optional<G extends GrammarContext> extends Simplify<SubKindOf<V.Type<G>>> {
@@ -323,12 +377,10 @@ export namespace Type {
 	export interface Tuple<G extends GrammarContext> extends Simplify<SubKindOf<V.Type<G>>> {
 		// claimed by rt
 		readonly kind: 'type.tuple';
-		readonly tupleTypeMembers?: V.Unmapped<'typescript:tuple_type_members'>;
+		readonly tupleTypeMembers?: (G['identifier'] | V.Element.Tuple.Member.Any<G> | G['type'])[];
 		// t only
-		// unmapped: <typescript:tuple_type_members>
-		readonly types?: V.Unmapped<'rust:types'>;
+		readonly types?: (V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'])[];
 		// r only
-		// unmapped: <rust:types>
 	}
 	export interface Union<G extends GrammarContext> extends Simplify<SubKindOf<V.Type<G>>> {
 		// claimed by pt

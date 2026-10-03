@@ -1,11 +1,23 @@
-import { type PatternNode, walk } from './query.ts';
+import { type BindingFacts, type SlotSelector, WILDCARD } from './bindings.ts';
 import type { ModelNode, ModelSlot, SlotModel } from './model.ts';
+
+export interface LayoutSlot {
+	readonly kind: string | null;
+	readonly slot: string;
+}
 
 export interface GrammarInput {
 	readonly grammar: string;
-	readonly patterns: readonly PatternNode[];
+	readonly bindings: BindingFacts;
 	readonly model: SlotModel;
 	readonly textTokens: ReadonlySet<string>;
+	readonly layoutSlots: readonly LayoutSlot[];
+}
+
+interface Resolution {
+	readonly tokens: readonly string[];
+	readonly list: boolean;
+	readonly scalar: boolean;
 }
 
 export interface MemberFacts {
@@ -75,7 +87,6 @@ interface Collected {
 	readonly claims: Map<string, Claim[]>;
 	readonly renames: Map<string, Map<string, string>>;
 	readonly deep: Map<string, DeepMember[]>;
-	readonly containers: PatternNode[];
 }
 
 const facts = (): MemberFacts => ({
@@ -94,24 +105,24 @@ function slotByKind(slots: readonly ModelSlot[], kind: string): ModelSlot | unde
 	return slots.find((s) => s.kinds.includes(kind));
 }
 
-function firstNodeSlot(slots: readonly ModelSlot[]): ModelSlot | undefined {
-	return slots.find((s) => s.storage !== 'boolean' && s.kinds.length > 0);
-}
+const holdsNodes = (slot: ModelSlot): boolean => slot.storage !== 'boolean' && slot.kinds.length > 0;
 
-function slotFor(slots: readonly ModelSlot[], n: PatternNode): ModelSlot | undefined {
+const isVocabularyKind = (token: string): boolean =>
+	!token.startsWith('<') && !token.startsWith('text:') && !token.startsWith('literal:') && token !== 'boolean';
+
+const TRANSPARENT_MODEL_TYPES: ReadonlySet<string> = new Set(['envelope', 'alias', 'polymorph']);
+
+const scalarOf = (tokens: readonly string[]): Resolution => ({ tokens, list: false, scalar: tokens.length > 0 });
+
+function slotFor(slots: readonly ModelSlot[], n: SlotSelector): ModelSlot | undefined {
 	if (n.field !== null) return slotByField(slots, n.field);
-	if (n.kind !== null && n.kind !== '<token>' && n.kind !== '_' && n.kind !== '<group>')
-		return slotByKind(slots, n.kind);
-	return firstNodeSlot(slots);
+	if (n.kind !== null) return slotByKind(slots, n.kind);
+	const previous = n.after === null ? undefined : slotFor(slots, n.after);
+	return slots.slice(previous === undefined ? 0 : slots.indexOf(previous) + 1).find(holdsNodes);
 }
 
 function modelNode(model: SlotModel, kind: string): ModelNode | undefined {
 	return model.get(kind) ?? model.get(`_${kind}`);
-}
-
-function parentOf(top: PatternNode, n: PatternNode): PatternNode | undefined {
-	for (const par of walk(top)) if (par.children.includes(n)) return par;
-	return undefined;
 }
 
 function collect(
@@ -123,106 +134,78 @@ function collect(
 	const claims = new Map<string, Claim[]>();
 	const renames = new Map<string, Map<string, string>>();
 	const deep = new Map<string, DeepMember[]>();
-	const containers: PatternNode[] = [];
 	const push = <T>(m: Map<string, T[]>, k: string, v: T): void => {
 		const list = m.get(k);
 		if (list) list.push(v);
 		else m.set(k, [v]);
 	};
-	for (const top of input.patterns) {
-		const nodes = [...walk(top)];
-		if (
-			top.kind !== null &&
-			top.kind !== '<group>' &&
-			!top.captures.some((c) => c.includes('.')) &&
-			nodes.some((n) => n.captures.includes('element'))
-		) {
-			containers.push(top);
-			continue;
+	for (const template of input.bindings.templates) {
+		for (const v of template.vocabs) {
+			const h = holes.get(v) ?? new Map<string, string>();
+			h.set(camel(template.target), `\`${template.template}\``);
+			for (const hole of template.holes) h.set(camel(hole), 'string');
+			holes.set(v, h);
 		}
-		const hasPredicate = nodes.some((n) => n.predicates.length > 0);
-		for (const n of nodes) {
-			for (const pred of n.predicates) {
-				if (pred[0] !== '#match?' || pred.length < 3) continue;
-				const target = (pred[1] ?? '').slice(1);
-				const rx = (pred[2] ?? '').slice(1, -1);
-				const groups = [...rx.matchAll(/\(\?<(\w+)>/g)].map((m) => m[1] ?? '');
-				if (groups.length === 0 || !(rx.startsWith('^') && rx.endsWith('$'))) continue;
-				const template = rx.slice(1, -1).replace(/\(\?<\w+>[^)]*\)/g, '${string}');
-				for (const v of nodes.flatMap((m) => m.captures.filter((c) => c.includes('.')))) {
-					const h = holes.get(v) ?? new Map<string, string>();
-					h.set(camel(target), `\`${template}\``);
-					for (const grp of groups) h.set(camel(grp), 'string');
-					holes.set(v, h);
-				}
+	}
+	for (const claim of input.bindings.claims) {
+		allvocab.add(claim.vocab);
+		if (claim.predicate)
+			(contentDerived.get(claim.vocab) ?? contentDerived.set(claim.vocab, new Set<string>()).get(claim.vocab))?.add(
+				input.grammar
+			);
+		if (claim.kind === null) continue;
+		const fieldLiterals = { ...claim.fieldLiterals };
+		const slots = modelNode(input.model, claim.kind)?.slots ?? [];
+		for (const text of claim.tokens) {
+			const pinned = slots.find((sl) => sl.terminals.includes(text));
+			if (pinned && !(pinned.name in fieldLiterals)) fieldLiterals[pinned.name] = text;
+		}
+		push(claims, claim.kind, {
+			vocab: claim.vocab,
+			predicate: claim.predicate,
+			fieldLiterals,
+			toplevel: claim.toplevel
+		});
+	}
+	for (const member of input.bindings.members) {
+		switch (member.route) {
+			case 'rename': {
+				const slot = slotFor(modelNode(input.model, member.owner)?.slots ?? [], member);
+				if (slot !== undefined)
+					(renames.get(member.owner) ?? renames.set(member.owner, new Map<string, string>()).get(member.owner))?.set(
+						slot.name,
+						member.name
+					);
+				break;
 			}
-		}
-		const topKind = top.kind !== null && top.kind !== '<group>' ? top.kind : null;
-		for (const n of nodes) {
-			for (const cap of n.captures) {
-				if (cap.includes('.') || (n === top && !cap.startsWith('_'))) {
-					allvocab.add(cap);
-					const k = n.kind !== null && n.kind !== '<group>' ? n.kind : (n.children[0]?.kind ?? null);
-					if (hasPredicate)
-						(contentDerived.get(cap) ?? contentDerived.set(cap, new Set<string>()).get(cap))?.add(input.grammar);
-					const toplevel = n === top || (top.kind === '<group>' && top.children.includes(n));
-					if (k !== null && k !== '<token>') {
-						const fieldLiterals = n.kind !== null && n.kind !== '<group>' ? { ...n.fieldLiterals } : {};
-						const slots = modelNode(input.model, k)?.slots ?? [];
-						for (const child of n.children) {
-							if (child.kind !== '<token>' || child.field !== null || child.text === null || child.captures.length > 0)
-								continue;
-							const text = child.text;
-							const pinned = slots.find((sl) => sl.terminals.includes(text));
-							if (pinned && !(pinned.name in fieldLiterals)) fieldLiterals[pinned.name] = text;
-						}
-						push(claims, k, { vocab: cap, predicate: hasPredicate, fieldLiterals, toplevel });
-					}
-					continue;
-				}
-				if (cap.startsWith('_') || cap === 'element') continue;
-				const par = parentOf(top, n);
-				if (par === undefined || par.kind === null || par.kind === '<group>') continue;
-				if (par === top || topKind === null) {
-					if (n.kind === '<token>' && n.field === null) {
-						push(deep, par.kind, { name: cap, kinds: [], boolean: true, multiple: false, via: new Set<string>() });
-						continue;
-					}
-					const key = n.field ?? n.kind;
-					if (key !== null)
-						(renames.get(par.kind) ?? renames.set(par.kind, new Map<string, string>()).get(par.kind))?.set(key, cap);
-					continue;
-				}
-				const via = new Set<string>();
-				let cursor: PatternNode | undefined = par;
-				while (cursor !== undefined && cursor !== top) {
-					if (cursor.kind !== null && cursor.kind !== '<group>') via.add(cursor.kind);
-					cursor = parentOf(top, cursor);
-				}
-				if (n.kind === '<token>') {
-					push(deep, topKind, { name: cap, kinds: [], boolean: true, multiple: false, via });
-					continue;
-				}
-				const parNode = modelNode(input.model, par.kind);
-				const named = n.kind !== null && n.kind !== '_' && n.kind !== '<group>';
-				const slot = parNode && !named ? slotFor(parNode.slots, n) : undefined;
-				push(deep, topKind, {
-					name: cap,
-					kinds: named && n.kind !== null ? [n.kind] : [...(slot?.kinds ?? [])],
-					boolean: slot?.storage === 'boolean',
-					multiple: (!named && (slot?.multiple ?? false)) || n.quantifier === '*' || n.quantifier === '+',
-					via
+			case 'presence':
+				push(deep, member.owner, {
+					name: member.name,
+					kinds: [],
+					boolean: true,
+					multiple: false,
+					via: new Set(member.via)
 				});
+				break;
+			case 'nested': {
+				const parent = modelNode(input.model, member.parent);
+				const slot = parent && member.kind === null ? slotFor(parent.slots, member) : undefined;
+				push(deep, member.owner, {
+					name: member.name,
+					kinds: member.kind !== null ? [member.kind] : [...(slot?.kinds ?? [])],
+					boolean: slot?.storage === 'boolean',
+					multiple: (member.kind === null && (slot?.multiple ?? false)) || member.multiple,
+					via: new Set(member.via)
+				});
+				break;
 			}
 		}
 	}
-	return { claims, renames, deep, containers };
+	return { claims, renames, deep };
 }
 
-function memberNameOf(renames: ReadonlyMap<string, string>, raw: string): string {
-	const bare = raw.replace(/_$/, '');
-	const renamed = renames.get(bare) ?? renames.get(snake(bare)) ?? [...renames].find(([k]) => snake(k) === bare)?.[1];
-	return camel(renamed ?? bare.replace(/Modifier$/, ''));
+function memberNameOf(renames: ReadonlyMap<string, string>, slotName: string, propertyName: string): string {
+	return camel(renames.get(slotName) ?? propertyName.replace(/_$/, '').replace(/Modifier$/, ''));
 }
 
 const KEY_SEPARATOR = '\u0000';
@@ -288,18 +271,59 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 	}
 	const vocabOf = (g: string): Map<string, string> => gk2v.get(g) ?? new Map();
 
+	const unclaimedOf = new Map(
+		inputs.map((input) => [input.grammar, new Set(input.bindings.unclaimed.map((u) => u.kind))])
+	);
+	const placedClaims = new Map(
+		inputs.map((input) => [
+			input.grammar,
+			input.bindings.claims.flatMap((c) =>
+				c.kind !== null && !c.predicate && c.within.length > 0
+					? [{ kind: c.kind, vocab: c.vocab, chain: [...c.within].reverse() }]
+					: []
+			)
+		])
+	);
+	const placed = (input: GrammarInput, k: string, context: readonly string[]): string | undefined => {
+		if (context.length < 2) return undefined;
+		for (const claim of placedClaims.get(input.grammar) ?? []) {
+			if (claim.kind !== k && claim.kind !== WILDCARD) continue;
+			const offset = context.length - claim.chain.length;
+			if (offset >= 0 && claim.chain.every((kind, i) => kind === WILDCARD || kind === context[offset + i]))
+				return claim.vocab;
+		}
+		return undefined;
+	};
+
+	const isLayout = (input: GrammarInput, owner: string, slot: ModelSlot): boolean =>
+		input.layoutSlots.some((l) => (l.kind === null || l.kind === owner) && l.slot === slot.name) ||
+		(slot.kinds.length > 0 &&
+			slot.terminals.length === 0 &&
+			slot.kinds.every((k) => unclaimedOf.get(input.grammar)?.has(k) ?? false));
+
 	const derivedSuper = new Map<string, readonly string[] | null>();
 	const inclusion = new Map<string, Set<string>>();
-	const supertypeKind = (input: GrammarInput, sk: string, seen: readonly string[]): readonly string[] | null => {
-		const memoKey = inclusionKey(input.grammar, sk);
+	const supertypeKind = (
+		input: GrammarInput,
+		sk: string,
+		seen: readonly string[],
+		context: readonly string[]
+	): readonly string[] | null => {
+		const inclusionAt = inclusionKey(input.grammar, sk);
+		const memoKey = context.length < 2 ? inclusionAt : `${inclusionAt}${KEY_SEPARATOR}${context.join('/')}`;
 		const memo = derivedSuper.get(memoKey);
 		if (memo !== undefined) return memo;
 		const subtypes = modelNode(input.model, sk)?.subtypes ?? [];
 		if (subtypes.length === 0 || seen.includes(sk)) return null;
 		const vs: (readonly string[])[] = [];
 		for (const m of subtypes) {
-			const direct = vocabOf(input.grammar).get(m);
-			const v = direct !== undefined ? [direct] : supertypeKind(input, m, [...seen, sk]);
+			const direct = placed(input, m, context) ?? vocabOf(input.grammar).get(m);
+			const v =
+				direct !== undefined
+					? [direct]
+					: (modelNode(input.model, m)?.subtypes.length ?? 0) > 0
+						? supertypeKind(input, m, [...seen, sk], context)
+						: resolveKind(input, m, context).tokens.filter(isVocabularyKind);
 			if (v && v.length > 0) vs.push(v);
 		}
 		const flat = vs.flat();
@@ -321,30 +345,70 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 			if (cover >= 1) parts.push(ns);
 			else parts.push(...[...ps].sort());
 		}
-		const inc = inclusion.get(memoKey) ?? inclusion.set(memoKey, new Set<string>()).get(memoKey);
+		const inc = inclusion.get(inclusionAt) ?? inclusion.set(inclusionAt, new Set<string>()).get(inclusionAt);
 		for (const p of parts) if (!p.includes('.') && p !== sk) inc?.add(p);
 		derivedSuper.set(memoKey, parts);
 		return parts;
 	};
 
-	const kindToVocab = (input: GrammarInput, k: string): readonly string[] => {
-		const direct = vocabOf(input.grammar).get(k) ?? vocabOf(input.grammar).get(k.replace(/^_+/, ''));
-		if (direct !== undefined) return [direct];
-		const node = modelNode(input.model, k);
-		if (input.textTokens.has(k) && node?.pattern != null) return [`text:${node.pattern}`];
-		if (node?.modelType === 'enum') return node.enumValues.map((v) => `text:${v}`);
-		if (node?.modelType === 'keyword' || node?.modelType === 'punctuation') return [`literal:${k}`];
-		if (node && node.subtypes.length > 0) {
-			const parts = supertypeKind(input, k, []);
-			if (parts) return parts;
-		}
-		return [`<${input.grammar}:${k.replace(/^_+/, '')}>`];
+	const containerOf = (
+		input: GrammarInput,
+		node: ModelNode
+	): { readonly kinds: readonly string[]; readonly terminals: readonly string[]; readonly list: boolean } | null => {
+		const declared = input.bindings.containers.find((c) => c.kind === node.kind);
+		if (declared === undefined && node.modelType === 'list')
+			return { kinds: node.elementKinds, terminals: [], list: true };
+		const content = node.slots.filter((slot) => !isLayout(input, node.kind, slot));
+		const element = declared
+			? slotFor(node.slots, declared.element)
+			: TRANSPARENT_MODEL_TYPES.has(node.modelType) && content.length === 1
+				? content[0]
+				: undefined;
+		return element !== undefined && holdsNodes(element)
+			? { kinds: element.kinds, terminals: element.terminals, list: element.multiple }
+			: null;
 	};
-	const slotTokens = (input: GrammarInput, slot: ModelSlot): string[] => {
-		if (slot.storage === 'boolean') return ['boolean'];
-		const out = slot.terminals.map((t) => `text:${t}`);
-		for (const k of slot.kinds) out.push(...kindToVocab(input, k));
-		return out;
+
+	const resolveKind = (input: GrammarInput, k: string, context: readonly string[]): Resolution => {
+		const g = input.grammar;
+		const positional = placed(input, k, context);
+		if (positional !== undefined) return scalarOf([positional]);
+		const direct = vocabOf(g).get(k) ?? vocabOf(g).get(k.replace(/^_+/, ''));
+		if (direct !== undefined) return scalarOf([direct]);
+		if (unclaimedOf.get(g)?.has(k)) return scalarOf([]);
+		const node = modelNode(input.model, k);
+		if (input.textTokens.has(k) && node?.pattern != null) return scalarOf([`text:${node.pattern}`]);
+		if (node?.modelType === 'enum') return scalarOf(node.enumValues.map((v) => `text:${v}`));
+		if (node?.modelType === 'keyword' || node?.modelType === 'punctuation') return scalarOf([`literal:${k}`]);
+		const container = node !== undefined && !context.includes(node.kind) ? containerOf(input, node) : null;
+		if (node !== undefined && container !== null) {
+			const inner = [...context, node.kind];
+			const texts = container.terminals.map((t) => `text:${t}`);
+			const parts = container.kinds.map((element) => resolveKind(input, element, inner));
+			return {
+				tokens: [...texts, ...parts.flatMap((p) => p.tokens)],
+				list: container.list || parts.some((p) => p.list),
+				scalar: !container.list && (texts.length > 0 || parts.some((p) => p.scalar))
+			};
+		}
+		if (node && node.subtypes.length > 0) {
+			const parts = supertypeKind(input, k, [], context);
+			if (parts) return scalarOf(parts);
+		}
+		return scalarOf([`<${g}:${k.replace(/^_+/, '')}>`]);
+	};
+	const slotResolution = (input: GrammarInput, owner: string, slot: ModelSlot): Resolution => {
+		if (slot.storage === 'boolean') return scalarOf(['boolean']);
+		const tokens = slot.terminals.map((t) => `text:${t}`);
+		let list = false;
+		let scalar = slot.terminals.length > 0;
+		for (const k of slot.kinds) {
+			const resolved = resolveKind(input, k, [owner]);
+			tokens.push(...resolved.tokens);
+			list ||= resolved.list;
+			scalar ||= resolved.scalar;
+		}
+		return { tokens, list, scalar };
 	};
 
 	const refinements = new Map<string, Refinement>();
@@ -366,7 +430,11 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 				);
 				if (claim.predicate) continue;
 				const rn = c.renames.get(gk) ?? new Map<string, string>();
-					const literals = Object.entries(claim.fieldLiterals).map(([f, t]): [string, string] => [memberNameOf(rn, f), t]);
+				const node = modelNode(input.model, gk);
+				const literals = Object.entries(claim.fieldLiterals).map(([f, t]): [string, string] => {
+					const slot = slotByField(node?.slots ?? [], f);
+					return [memberNameOf(rn, slot?.name ?? f, slot?.propertyName ?? f), t];
+				});
 				if (literals.length > 0) {
 					const parent = vocabOf(input.grammar).get(gk);
 					if (parent !== undefined && parent !== claim.vocab) {
@@ -378,26 +446,33 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 						continue;
 					}
 				}
-				const node = modelNode(input.model, gk);
 				if (!node) continue;
 				const deep = c.deep.get(gk) ?? [];
 				const via = new Set(deep.flatMap((d) => [...d.via]));
 				for (const slot of node.slots) {
-					if (slot.kinds.some((k) => via.has(k))) continue;
-					const f = memberOf(claim.vocab, memberNameOf(rn, slot.propertyName));
-					for (const t of slotTokens(input, slot)) f.kinds.add(t);
+					if (isLayout(input, gk, slot) || slot.kinds.some((k) => via.has(k))) continue;
+					const resolved = slotResolution(input, gk, slot);
+					const f = memberOf(claim.vocab, memberNameOf(rn, slot.name, slot.propertyName));
+					for (const t of resolved.tokens) f.kinds.add(t);
 					f.optional ||= !slot.required;
-					f.multiple ||= slot.multiple;
-					f.scalar ||= !slot.multiple;
+					f.multiple ||= slot.multiple || resolved.list;
+					f.scalar ||= !slot.multiple && resolved.scalar;
 					f.grammars.add(input.grammar);
 				}
 				for (const d of deep) {
 					const f = memberOf(claim.vocab, camel(d.name));
 					if (d.boolean) f.kinds.add('boolean');
-					for (const k of d.kinds) for (const t of kindToVocab(input, k)) f.kinds.add(t);
+					let list = d.multiple;
+					let scalar = false;
+					for (const k of d.kinds) {
+						const resolved = resolveKind(input, k, [gk]);
+						for (const t of resolved.tokens) f.kinds.add(t);
+						list ||= resolved.list;
+						scalar ||= resolved.scalar;
+					}
 					f.optional = true;
-					f.multiple ||= d.multiple;
-					f.scalar ||= !d.multiple;
+					f.multiple ||= list;
+					f.scalar ||= !d.multiple && (scalar || !list);
 					f.grammars.add(input.grammar);
 				}
 			}
@@ -405,44 +480,40 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 	}
 
 	for (const input of inputs) {
-		for (const top of collected.get(input.grammar)?.containers ?? []) {
-			const slots = top.kind !== null ? (modelNode(input.model, top.kind)?.slots ?? []) : [];
-			const element = [...walk(top)].find((n) => n.captures.includes('element'));
-			if (!element) continue;
+		for (const container of input.bindings.containers) {
+			const slots = modelNode(input.model, container.kind)?.slots ?? [];
 			const targets = new Set<string>();
-			for (const k of slotFor(slots, element)?.kinds ?? []) {
-				for (const v of kindToVocab(input, k)) {
-					if (v.startsWith('<') || v === 'boolean' || v.startsWith('text:')) continue;
+			for (const k of slotFor(slots, container.element)?.kinds ?? []) {
+				for (const v of resolveKind(input, k, [container.kind]).tokens) {
+					if (!isVocabularyKind(v)) continue;
 					if (v.includes('.')) targets.add(v);
 					else
 						for (const [p, gs] of claimers)
 							if (gs.has(input.grammar) && (p === v || p.startsWith(`${v}.`))) targets.add(p);
 				}
 			}
-			for (const n of walk(top)) {
-				for (const cap of n.captures) {
-					if (cap === 'element' || cap.startsWith('_')) continue;
-					let kinds: string[];
-					let multiple = false;
-					if (n.kind === '<token>') kinds = ['boolean'];
-					else {
-						const slot = slotFor(slots, n);
-						if (slot) {
-							kinds = slotTokens(input, slot);
-							multiple = slot.multiple;
-						} else if (n.kind !== null && vocabOf(input.grammar).has(n.kind))
-							kinds = [vocabOf(input.grammar).get(n.kind) ?? ''];
-						else continue;
-					}
-					multiple ||= n.quantifier === '*' || n.quantifier === '+';
-					for (const t of targets) {
-						const f = memberOf(t, camel(cap));
-						for (const k of kinds) f.kinds.add(k);
-						f.optional = true;
-						f.multiple ||= multiple;
-						f.scalar ||= !multiple;
-						f.grammars.add(input.grammar);
-					}
+			for (const capture of container.captures) {
+				let kinds: string[];
+				let multiple = false;
+				if (capture.token) kinds = ['boolean'];
+				else {
+					const slot = slotFor(slots, capture);
+					if (slot) {
+						const resolved = slotResolution(input, container.kind, slot);
+						kinds = [...resolved.tokens];
+						multiple = slot.multiple || resolved.list;
+					} else if (capture.kind !== null && vocabOf(input.grammar).has(capture.kind))
+						kinds = [vocabOf(input.grammar).get(capture.kind) ?? ''];
+					else continue;
+				}
+				multiple ||= capture.multiple;
+				for (const t of targets) {
+					const f = memberOf(t, camel(capture.name));
+					for (const k of kinds) f.kinds.add(k);
+					f.optional = true;
+					f.multiple ||= multiple;
+					f.scalar ||= !multiple;
+					f.grammars.add(input.grammar);
 				}
 			}
 		}

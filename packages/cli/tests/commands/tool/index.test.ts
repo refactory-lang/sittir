@@ -11,6 +11,7 @@ const EXPECTED = [
 	'check-baseline',
 	'check-perf',
 	'classify',
+	'codemod-corpus',
 	'corpus-coverage-census',
 	'defect-histogram',
 	'diff-failures',
@@ -39,6 +40,7 @@ const EXPECTED = [
 	'text-kind-overlap',
 	'spelled-trivia',
 	'trivia-placement',
+	'trivia-timing',
 	'uncovered-content',
 	'variant-derivation-probe',
 	'walk'

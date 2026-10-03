@@ -241,6 +241,21 @@ Inspect kind classification through the compiler phases
 pnpm exec tsx packages/cli/src/cli.ts tool classify [options]
 ```
 
+### `tool codemod-corpus`
+
+Run the inline-attribute codemod through $with over the acceptance corpus and count files byte-identical to its baseline
+
+**Options**
+
+- `--corpus <dir>` — Corpus directory holding the .rs files and a baseline/ directory (default: the acceptance codemod sample)
+- `--json` — Print the result as JSON
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool codemod-corpus [options]
+```
+
 ### `tool corpus-coverage-census`
 
 Declared rule kinds with zero corpus exposure
@@ -713,6 +728,23 @@ Report the owner and position the reader gives every corpus extra; exits 1 if an
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool trivia-placement [options]
+```
+
+### `tool trivia-timing`
+
+Time reading every node's leading trivia after a deep parse of a file (one line-gap query per node)
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+- `-f, --file <path>` — Source file to parse
+- `-r, --rounds <n>` — Rounds to run; the best is reported (default: `3`)
+- `--json` — Print the timing as JSON
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool trivia-timing [options]
 ```
 
 ### `tool uncovered-content`

@@ -1,14 +1,6 @@
-; bindings.scm — python.
-; Delta form: a kind claim on every visible kind; a member capture only where the upstream
-; field is missing, or its name differs from the converged member name. A single-segment
-; capture on a nested node names a member; on the pattern's top node it names the namespace
-; root kind. Namespaces are the supertypes: no grammar supertype is ever claimed.
-; A kind claim is unconditional: an optional member named in the same pattern carries a quantifier
-; (`?`, `*`, `+`) so the claim matches whether or not the member is present.
-; A keyword-presence slot is named by its keyword (`async`), and the name rule for modifiers
-; (`visibility_modifier` is `visibility`) is applied by the derivation to every slot, so no claim spells it.
-; A container that wraps one declaration or statement is never claimed: a pattern that captures the wrapped
-; node as `@element` assigns its other captures (`@declare`, `@decorator`, `@label`) to that element.
+; bindings.scm — python: which python node is which vocabulary kind, and which slot is which member.
+; How `sittir tool bindings-inventory` reads a pattern: docs/glossary/packages-tools-src-inventory.md
+; (`readBindings` for the captures, `derive` for the members a claim takes from its slots).
 
 ; ── module ─────────────────────────────────────────────────────────────────────
 (module) @module
@@ -236,3 +228,5 @@
 ((line_continuation_newline) @unclaimed (#set! reason "layout token"))
 ((positional_separator) @unclaimed (#set! reason "parameter-list marker, not a parameter"))
 ((keyword_separator) @unclaimed (#set! reason "parameter-list marker, not a parameter"))
+((string_start) @unclaimed (#set! reason "string delimiter, not content"))
+((string_end) @unclaimed (#set! reason "string delimiter, not content"))
