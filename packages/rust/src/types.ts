@@ -21929,12 +21929,12 @@ export namespace MacroRules {
 	export interface Bound extends BoundOf<T.MacroRules, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.MacroRules['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.MacroRules, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.MacroRules['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.MacroRules>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MacroRules>;
@@ -21962,12 +21962,12 @@ export namespace EnumVariantListElements {
 	export interface Bound extends BoundOf<T.EnumVariantListElements, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.EnumVariantListElements['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.EnumVariantListElements, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.EnumVariantListElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.EnumVariantListElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EnumVariantListElements>;
@@ -22022,12 +22022,12 @@ export namespace FieldDeclarationListElements {
 	export interface Bound extends BoundOf<T.FieldDeclarationListElements, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.FieldDeclarationListElements['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.FieldDeclarationListElements, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.FieldDeclarationListElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.FieldDeclarationListElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FieldDeclarationListElements>;
@@ -22102,12 +22102,12 @@ export namespace OrderedFieldDeclarationListElements {
 	export interface Bound extends BoundOf<T.OrderedFieldDeclarationListElements, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.OrderedFieldDeclarationListElements['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.OrderedFieldDeclarationListElements, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.OrderedFieldDeclarationListElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.OrderedFieldDeclarationListElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.OrderedFieldDeclarationListElements>;
@@ -22182,12 +22182,12 @@ export namespace WherePredicates {
 	export interface Bound extends BoundOf<T.WherePredicates, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.WherePredicates['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.WherePredicates, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.WherePredicates['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.WherePredicates>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WherePredicates>;
@@ -22228,12 +22228,12 @@ export namespace TypeParametersElements {
 	export interface Bound extends BoundOf<T.TypeParametersElements, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.TypeParametersElements['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.TypeParametersElements, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.TypeParametersElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.TypeParametersElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeParametersElements>;
@@ -22320,12 +22320,12 @@ export namespace UseClauses {
 	export interface Bound extends BoundOf<T.UseClauses, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.UseClauses['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.UseClauses, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.UseClauses['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.UseClauses>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UseClauses>;
@@ -22630,12 +22630,12 @@ export namespace ParametersElements {
 	export interface Bound extends BoundOf<T.ParametersElements, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.ParametersElements['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.ParametersElements, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.ParametersElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.ParametersElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ParametersElements>;
@@ -22770,12 +22770,12 @@ export namespace Lifetimes {
 	export interface Bound extends BoundOf<T.Lifetimes, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.Lifetimes['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.Lifetimes, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.Lifetimes['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.Lifetimes>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Lifetimes>;
@@ -22803,12 +22803,12 @@ export namespace Types {
 	export interface Bound extends BoundOf<T.Types, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.Types['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.Types, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.Types['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.Types>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Types>;
@@ -22849,12 +22849,12 @@ export namespace UseBoundsElements {
 	export interface Bound extends BoundOf<T.UseBoundsElements, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.UseBoundsElements['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.UseBoundsElements, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.UseBoundsElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.UseBoundsElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UseBoundsElements>;
@@ -22915,12 +22915,12 @@ export namespace TypeArgumentsElements {
 	export interface Bound extends BoundOf<T.TypeArgumentsElements, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.TypeArgumentsElements['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.TypeArgumentsElements, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.TypeArgumentsElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.TypeArgumentsElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeArgumentsElements>;
@@ -23007,12 +23007,12 @@ export namespace ArgumentsElements {
 	export interface Bound extends BoundOf<T.ArgumentsElements, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.ArgumentsElements['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.ArgumentsElements, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.ArgumentsElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.ArgumentsElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ArgumentsElements>;
@@ -23063,12 +23063,12 @@ export namespace Expressions {
 	export interface Bound extends BoundOf<T.Expressions, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.Expressions['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.Expressions, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.Expressions['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.Expressions>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Expressions>;
@@ -23102,12 +23102,12 @@ export namespace FieldInitializerListElements {
 	export interface Bound extends BoundOf<T.FieldInitializerListElements, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.FieldInitializerListElements['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.FieldInitializerListElements, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.FieldInitializerListElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.FieldInitializerListElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FieldInitializerListElements>;
@@ -23174,12 +23174,12 @@ export namespace TuplePatternElements {
 	export interface Bound extends BoundOf<T.TuplePatternElements, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.TuplePatternElements['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.TuplePatternElements, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.TuplePatternElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.TuplePatternElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TuplePatternElements>;
@@ -23220,12 +23220,12 @@ export namespace Patterns {
 	export interface Bound extends BoundOf<T.Patterns, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.Patterns['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.Patterns, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.Patterns['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.Patterns>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Patterns>;
@@ -23253,12 +23253,12 @@ export namespace StructPatternElements {
 	export interface Bound extends BoundOf<T.StructPatternElements, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.StructPatternElements['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.StructPatternElements, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.StructPatternElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
-		readonly _delimiter: Delimiter;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.StructPatternElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.StructPatternElements>;

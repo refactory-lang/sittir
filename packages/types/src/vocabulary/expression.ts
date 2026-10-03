@@ -991,15 +991,7 @@ export namespace Expression {
 		// t only
 		readonly function?: V.Expression.Member<G> | G['identifier'];
 		// r only
-		readonly typeArguments: (
-			| V.Clause.Bounds.Removed<G>
-			| V.Element.TypeBinding<G>
-			| V.Expression.Call.Macro<G>
-			| G['identifier']
-			| G['literal']
-			| V.Statement.Block<G>
-			| G['type']
-		)[];
+		readonly typeArguments: (V.Element.TypeArgument<G> | G['identifier'] | G['type'])[];
 	}
 	export interface Interpolation<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression<G>>> {
 		// claimed by pt

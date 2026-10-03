@@ -1012,7 +1012,7 @@ function _buildEnumVariantList(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', Delimiter.Trailing),
+		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1140,7 +1140,7 @@ function _buildFieldDeclarationList(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', Delimiter.Trailing),
+		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1272,7 +1272,7 @@ function _buildOrderedFieldDeclarationList(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1823,7 +1823,7 @@ function _buildWhereClause(value?: AdmitBound<T.WherePredicates, T.AdmittedNodes
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2195,7 +2195,7 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2632,7 +2632,7 @@ function _buildUseList(value?: AdmitBound<T.UseClauses, T.AdmittedNodes>): T.Use
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2858,7 +2858,7 @@ function _buildParameters(value?: AdmitBound<T.ParametersElements, T.AdmittedNod
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3234,7 +3234,7 @@ function _buildForLifetimes(value: AdmitBound<T.Lifetimes, T.AdmittedNodes>): T.
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3364,7 +3364,7 @@ function _buildTupleType(value: AdmitBound<T.Types, T.AdmittedNodes>): T.TupleTy
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3610,7 +3610,7 @@ function _buildUseBounds(value?: AdmitBound<T.UseBoundsElements, T.AdmittedNodes
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3696,7 +3696,7 @@ function _buildTypeArguments(value: AdmitBound<T.TypeArgumentsElements, T.Admitt
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -4565,7 +4565,7 @@ function _buildArguments(value?: AdmitBound<T.ArgumentsElements, T.AdmittedNodes
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -4761,7 +4761,7 @@ function _buildFieldInitializerList(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -5882,7 +5882,7 @@ function _buildTuplePattern(value?: AdmitBound<T.TuplePatternElements, T.Admitte
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -5948,7 +5948,7 @@ function _buildSlicePattern(value?: AdmitBound<T.Patterns, T.AdmittedNodes>): T.
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6417,7 +6417,7 @@ function _buildMacroRules(
 ): T.MacroRules.Bound {
 	_assertNonEmpty(elements, 'macro_rules.elements');
 	const _item = elements;
-	const _delimiter = options.delimiter ?? Delimiter.None;
+	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -6440,7 +6440,7 @@ function _buildMacroRules(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6492,7 +6492,7 @@ function _buildEnumVariantListElements(
 	);
 	_assertNonEmpty(_mapped, 'enum_variant_list_elements.elements');
 	const _item = _mapped;
-	const _delimiter = options.delimiter ?? Delimiter.Trailing;
+	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -6527,7 +6527,7 @@ function _buildEnumVariantListElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.Trailing,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6579,7 +6579,7 @@ function _buildFieldDeclarationListElements(
 	);
 	_assertNonEmpty(_mapped, 'field_declaration_list_elements.elements');
 	const _item = _mapped;
-	const _delimiter = options.delimiter ?? Delimiter.Trailing;
+	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -6614,7 +6614,7 @@ function _buildFieldDeclarationListElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.Trailing,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6666,7 +6666,7 @@ function _buildOrderedFieldDeclarationListElements(
 	);
 	_assertNonEmpty(_mapped, 'ordered_field_declaration_list_elements.elements');
 	const _item = _mapped;
-	const _delimiter = options.delimiter ?? Delimiter.None;
+	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -6704,7 +6704,7 @@ function _buildOrderedFieldDeclarationListElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6744,7 +6744,7 @@ function _buildWherePredicates(
 ): T.WherePredicates.Bound {
 	_assertNonEmpty(elements, 'where_predicates.elements');
 	const _item = elements;
-	const _delimiter = options.delimiter ?? Delimiter.None;
+	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -6767,7 +6767,7 @@ function _buildWherePredicates(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6840,7 +6840,7 @@ function _buildTypeParametersElements(
 	);
 	_assertNonEmpty(_mapped, 'type_parameters_elements.elements');
 	const _item = _mapped;
-	const _delimiter = options.delimiter ?? Delimiter.None;
+	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -6881,7 +6881,7 @@ function _buildTypeParametersElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -7090,7 +7090,7 @@ function _buildUseClauses(
 ): T.UseClauses.Bound {
 	_assertNonEmpty(elements, 'use_clauses.elements');
 	const _item = elements;
-	const _delimiter = options.delimiter ?? Delimiter.None;
+	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -7148,7 +7148,7 @@ function _buildUseClauses(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -7251,7 +7251,7 @@ function _buildParametersElements(
 	);
 	_assertNonEmpty(_mapped, 'parameters_elements.elements');
 	const _item = _mapped;
-	const _delimiter = options.delimiter ?? Delimiter.None;
+	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -7298,7 +7298,7 @@ function _buildParametersElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -7338,7 +7338,7 @@ function _buildLifetimes(
 ): T.Lifetimes.Bound {
 	_assertNonEmpty(elements, 'lifetimes.elements');
 	const _item = elements;
-	const _delimiter = options.delimiter ?? Delimiter.None;
+	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -7361,7 +7361,7 @@ function _buildLifetimes(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -7406,7 +7406,7 @@ function _buildTypes(
 	const _item = admitAliasContent<NonEmptyArray<T.Type>>(elements, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
-	const _delimiter = options.delimiter ?? Delimiter.None;
+	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -7429,7 +7429,7 @@ function _buildTypes(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -7474,7 +7474,7 @@ function _buildUseBoundsElements(
 	const _item = admitAliasContent<NonEmptyArray<T.Lifetime | T.TypeIdentifier>>(elements, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
-	const _delimiter = options.delimiter ?? Delimiter.None;
+	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -7498,7 +7498,7 @@ function _buildUseBoundsElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -7569,7 +7569,7 @@ function _buildTypeArgumentsElements(
 	);
 	_assertNonEmpty(_mapped, 'type_arguments_elements.elements');
 	const _item = _mapped;
-	const _delimiter = options.delimiter ?? Delimiter.None;
+	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -7606,7 +7606,7 @@ function _buildTypeArgumentsElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -7658,7 +7658,7 @@ function _buildArgumentsElements(
 	);
 	_assertNonEmpty(_mapped, 'arguments_elements.elements');
 	const _item = _mapped;
-	const _delimiter = options.delimiter ?? Delimiter.None;
+	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -7693,7 +7693,7 @@ function _buildArgumentsElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -7733,7 +7733,7 @@ function _buildExpressions(
 ): T.Expressions.Bound {
 	_assertNonEmpty(elements, 'expressions.elements');
 	const _item = elements;
-	const _delimiter = options.delimiter ?? Delimiter.None;
+	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -7756,7 +7756,7 @@ function _buildExpressions(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -7805,7 +7805,7 @@ function _buildFieldInitializerListElements(
 ): T.FieldInitializerListElements.Bound {
 	_assertNonEmpty(elements, 'field_initializer_list_elements.elements');
 	const _item = elements;
-	const _delimiter = options.delimiter ?? Delimiter.None;
+	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -7831,7 +7831,7 @@ function _buildFieldInitializerListElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -7874,7 +7874,7 @@ function _buildTuplePatternElements(
 ): T.TuplePatternElements.Bound {
 	_assertNonEmpty(elements, 'tuple_pattern_elements.elements');
 	const _item = elements;
-	const _delimiter = options.delimiter ?? Delimiter.None;
+	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -7897,7 +7897,7 @@ function _buildTuplePatternElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -7937,7 +7937,7 @@ function _buildPatterns(
 ): T.Patterns.Bound {
 	_assertNonEmpty(elements, 'patterns.elements');
 	const _item = elements;
-	const _delimiter = options.delimiter ?? Delimiter.None;
+	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -7960,7 +7960,7 @@ function _buildPatterns(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -8003,7 +8003,7 @@ function _buildStructPatternElements(
 ): T.StructPatternElements.Bound {
 	_assertNonEmpty(elements, 'struct_pattern_elements.elements');
 	const _item = elements;
-	const _delimiter = options.delimiter ?? Delimiter.None;
+	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
@@ -8026,7 +8026,7 @@ function _buildStructPatternElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),

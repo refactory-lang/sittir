@@ -24,7 +24,7 @@ describe('a list owner', () => {
 		expect([...ps]).toEqual([]);
 		expect(ps.length).toBe(0);
 		expect(ps.at(0)).toBeUndefined();
-		expect(ps.delimiter).toBe(Delimiter.None);
+		expect(ps.delimiter).toBeUndefined();
 	});
 	it('a built owner iterates what it was built from', () => {
 		const p = rs.build.parameter({ name: 'a', type: 'u8' });

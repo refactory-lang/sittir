@@ -57,6 +57,19 @@ it('engine options set the spacing of a built separated list and per-call option
 	).toBe('(a,\nb)');
 });
 
+it('a built list with no delimiter takes the engine option, a per-call option overrides it, and a delimiter set on the list wins over both', async () => {
+	const unset = rs.build.arguments(rs.build.argumentsElements(rs.build.identifier('a'), rs.build.identifier('b')));
+	const none = rs.build.arguments(
+		rs.build.argumentsElements({ delimiter: Delimiter.None }, rs.build.identifier('a'), rs.build.identifier('b'))
+	);
+	const trailing = await createEngine(rust, { render: { argumentsElements: { item: { delimiter: Delimiter.Trailing } } } });
+	expect(rs.render(unset).toString()).toBe('(a, b)');
+	expect(trailing.render(unset).toString()).toBe('(a, b,)');
+	expect(trailing.render(unset, { argumentsElements: { item: { delimiter: Delimiter.None } } }).toString()).toBe('(a, b)');
+	expect(rs.render(unset, { argumentsElements: { item: { delimiter: Delimiter.Trailing } } }).toString()).toBe('(a, b,)');
+	expect(trailing.render(none).toString()).toBe('(a, b)');
+});
+
 it('a kind-scoped separator override applies only to its own kind, leaving an unconfigured kind at the engine default', async () => {
 	const args = rs.build.arguments(rs.build.argumentsElements(rs.build.identifier('a'), rs.build.identifier('b')));
 	const lifetimes = rs.build.lifetimes(rs.build.lifetime('a'), rs.build.lifetime('b'));
