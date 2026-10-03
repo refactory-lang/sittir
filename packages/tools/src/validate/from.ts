@@ -370,7 +370,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 			let readTree: TreeHandle | undefined;
 			try {
 				const handle = await buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
-				readTree = handle as unknown as TreeHandle;
+				readTree = handle;
 				// Native engine Rust-heap IDs differ from WASM linear-memory IDs.
 				// Resolve via the native data tree; if the kind is an alias target
 				// the native engine emits under a different rule name, skip rather
