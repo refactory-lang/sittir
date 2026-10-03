@@ -1,5 +1,5 @@
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createEngine } from '@sittir/common';
 import { emitFactorySourceText } from '../emit/factory-source.ts';
@@ -13,8 +13,8 @@ export type GapClass = 'tight' | 'space' | 'newline' | 'blankline' | 'double_bla
 
 export interface Token {
 	readonly text: string;
-	readonly start: number;
-	readonly end: number;
+	readonly from: number;
+	readonly to: number;
 }
 
 interface TreeNode {
@@ -72,7 +72,7 @@ export function tokensOf(root: TreeNode): Token[] {
 	const tokens: Token[] = [];
 	const walk = (node: TreeNode): void => {
 		if (node.childCount === 0) {
-			if (node.endIndex > node.startIndex) tokens.push({ text: node.text, start: node.startIndex, end: node.endIndex });
+			if (node.endIndex > node.startIndex) tokens.push({ text: node.text, from: node.startIndex, to: node.endIndex });
 			return;
 		}
 		for (const child of node.children) walk(child);
@@ -133,14 +133,14 @@ export function differences(
 		const [sb, rb] = pairs[k + 1]!;
 		if (sb !== sa + 1 || rb !== ra + 1) continue;
 		gaps += 1;
-		const sourceGap = source.slice(sourceTokens[sa]!.end, sourceTokens[sb]!.start);
-		const renderedGap = rendered.slice(renderedTokens[ra]!.end, renderedTokens[rb]!.start);
+		const sourceGap = source.slice(sourceTokens[sa]!.to, sourceTokens[sb]!.from);
+		const renderedGap = rendered.slice(renderedTokens[ra]!.to, renderedTokens[rb]!.from);
 		if (sourceGap === renderedGap) continue;
 		const sourceClass = gapClassOf(sourceGap);
 		const renderedClass = gapClassOf(renderedGap);
 		list.push({
 			index: sa,
-			line: lineOf(source, sourceTokens[sa]!.end),
+			line: lineOf(source, sourceTokens[sa]!.to),
 			before: sourceTokens[sa]!.text,
 			after: sourceTokens[sb]!.text,
 			source: sourceGap,
@@ -291,6 +291,8 @@ export interface DefaultDiffRun {
 	readonly files: readonly string[];
 	readonly json: boolean;
 	readonly noAttribute: boolean;
+	/** A directory to write each file's rendered text into, as `<name>.rendered`. */
+	readonly renderedDir?: string;
 }
 
 export interface AggregatedSite {
@@ -325,7 +327,11 @@ export async function run(opts: DefaultDiffRun): Promise<number> {
 	const failed: { file: string; message: string }[] = [];
 	for (const file of opts.files) {
 		try {
-			const { rendered: _rendered, ...report } = await defaultDiff(opts.grammar, readFileSync(file, 'utf8'), { attribute: !opts.noAttribute });
+			const { rendered, ...report } = await defaultDiff(opts.grammar, readFileSync(file, 'utf8'), { attribute: !opts.noAttribute });
+			if (opts.renderedDir !== undefined) {
+				mkdirSync(opts.renderedDir, { recursive: true });
+				writeFileSync(join(opts.renderedDir, `${basename(file)}.rendered`), rendered);
+			}
 			reports.push({ file, rendered: '', ...report });
 		} catch (error) {
 			failed.push({ file, message: error instanceof Error ? error.message.split('\n')[0]! : String(error) });

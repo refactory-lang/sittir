@@ -25,7 +25,7 @@ const cases: readonly Case[] = [
 			else items = [built, use!];
 			return root.$with.statements(...items).$render();
 		},
-		expected: { reversed: 'fn f() {}\n\nuse x;\n', 'parsed-built': 'use x;\n\nfn g() {}\n', 'built-parsed': 'fn g() {}\n\nuse x;\n' }
+		expected: { reversed: 'fn f() {}\n\nuse x;\n', 'parsed-built': 'use x;\nfn g() {}\n', 'built-parsed': 'fn g() {}\n\nuse x;\n' }
 	},
 	{
 		grammar: 'typescript',
@@ -45,7 +45,7 @@ const cases: readonly Case[] = [
 		},
 		expected: {
 			reversed: 'function f() {}\n\nimport x from "x";\n',
-			'parsed-built': 'import x from "x";\n\nfunction g() {}\n',
+			'parsed-built': 'import x from "x";\nfunction g() {}\n',
 			'built-parsed': 'function g() {}\n\nimport x from "x";\n'
 		}
 	},
@@ -105,34 +105,34 @@ describe('a rebuilt list gives each parsed item the gap its seat declares', () =
 	it('takes the seat when a removed item sat between two kept ones', () => {
 		const root = rust.parse('use x;\nfn f() {}\nuse y;\n');
 		const [x, , y] = root.statements();
-		expect(root.$with.statements(x!, y!).$render()).toBe('use x;\n\nuse y;\n');
+		expect(root.$with.statements(x!, y!).$render()).toBe('use x;\nuse y;\n');
 	});
 
 	it('takes the seat before an item whose trailing trivia was written when the item before it was removed', () => {
 		const root = rust.parse('use x;\nfn f() {}\nuse y;\n');
 		const [x, , y] = root.statements();
 		if (y === undefined || typeof y === 'number') throw new Error('expected a parsed statement');
-		expect(root.$with.statements(x!, y.$trivia.trailing('// t')).$render()).toBe('use x;\n\nuse y;\n// t\n');
+		expect(root.$with.statements(x!, y.$trivia.trailing('// t')).$render()).toBe('use x;\nuse y;\n// t\n');
 	});
 
 	it('takes the seat after an item whose leading trivia was written when it is no longer last', () => {
 		const root = rust.parse('use x;\nuse y;\n\n\n\n');
 		const [x, y] = root.statements();
 		if (y === undefined || typeof y === 'number') throw new Error('expected a parsed statement');
-		expect(root.$with.statements(y.$trivia.leading('// c'), x!).$render()).toBe('// c\nuse y;\n\nuse x;\n');
+		expect(root.$with.statements(y.$trivia.leading('// c'), x!).$render()).toBe('// c\nuse y;\nuse x;\n');
 	});
 
 	it('takes the seat before a kept comment when the item before it was removed', () => {
 		const root = rust.parse('use x;\nfn f() {}\n\n// c\nuse y;\n');
 		const [x, , y] = root.statements();
-		expect(root.$with.statements(x!, y!).$render()).toBe('use x;\n\n// c\nuse y;\n');
+		expect(root.$with.statements(x!, y!).$render()).toBe('use x;\n// c\nuse y;\n');
 	});
 
 	it('gives an inserted attribute its own seat before the item it now leads', () => {
 		const root = rust.parse('use x;\n\nfn f() {}\n\nfn g() {}\n');
 		const [x, f, g] = root.statements();
 		const inline = rust.parse('#[inline]\nfn h() {}\n').statements()[0];
-		expect(root.$with.statements(x!, inline!, f!, g!).$render()).toBe('use x;\n\n#[inline]\nfn f() {}\n\nfn g() {}\n');
+		expect(root.$with.statements(x!, inline!, f!, g!).$render()).toBe('use x;\n#[inline]\nfn f() {}\n\nfn g() {}\n');
 	});
 
 	it('keeps the source gap before an edited item whose neighbour is unchanged', () => {
