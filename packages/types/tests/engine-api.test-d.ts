@@ -101,7 +101,7 @@ declare const unknownValue: unknown;
 if (guardEngine.isNode(unknownValue)) unknownValue satisfies FakeNode;
 if (guardEngine.isParsedNode(unknownValue)) unknownValue satisfies FakeNode;
 if (guardEngine.isFactoryNode(unknownValue)) unknownValue satisfies FakeNode;
-if (guardEngine.isErrorNode(unknownValue)) unknownValue satisfies FakeNode;
+if (guardEngine.isErrorNode(unknownValue)) unknownValue satisfies ErrorNode;
 
 declare const fakeNode: FakeNode;
 if (guardEngine.isEmptyNode(fakeNode)) fakeNode satisfies EmptyFake;
@@ -122,3 +122,10 @@ declare const trivia: TriviaSetter<FakeNode, NoEmptyForm>;
 declare const errorNode: ErrorNode;
 export const triviaItems: readonly (NoEmptyForm | ErrorNode)[] = trivia.leading();
 export const reattached: FakeNode = trivia.trailing(errorNode);
+
+// The error guard narrows a trivia item to the ERROR node, exposing its text and span.
+const firstItem = trivia.leading()[0];
+if (parsing.isErrorNode(firstItem)) {
+	firstItem.$text satisfies string;
+	firstItem.$span.start satisfies number;
+}

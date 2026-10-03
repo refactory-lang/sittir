@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, ErrorRegion, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaItem, TriviaSetter } from './core-types.ts';
+import type { AnyUntypedNode, ErrorNode, ErrorRegion, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaItem, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
 
 /** One line-break run a read node owns as trivia: the whitespace member it reads as and the byte its run starts at. */
@@ -239,7 +239,7 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	readonly isParsedNode: (value: unknown) => value is API['node'];
 	readonly isFactoryNode: (value: unknown) => value is API['node'];
 	/** Whether `value` is a parsed ERROR node of this engine's language, read in a slot or as a trivia item. */
-	readonly isErrorNode: (value: unknown) => value is API['node'];
+	readonly isErrorNode: (value: unknown) => value is ErrorNode;
 	readonly isEmptyNode: <N extends API['empty']['node']>(
 		node: N
 	) => node is N & Extract<API['empty'], { readonly node: N }>['empty'];

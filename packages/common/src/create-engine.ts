@@ -4,6 +4,7 @@ import type {
 	Engine,
 	EngineIdentity,
 	EngineOptions,
+	ErrorNode,
 	Language,
 	LanguageAPI,
 	LanguageIdentity,
@@ -149,7 +150,7 @@ function assembleEngine<API extends LanguageAPI>(
 		isNode: (value): value is API['node'] => isNode(value) && inLanguage(value),
 		isParsedNode: (value): value is API['node'] => isParsedNode(value) && inLanguage(value),
 		isFactoryNode: (value): value is API['node'] => isFactoryNode(value) && inLanguage(value),
-		isErrorNode: (value): value is API['node'] => isErrorNode(value) && inLanguage(value),
+		isErrorNode: (value): value is ErrorNode => isErrorNode(value) && inLanguage(value),
 		isEmptyNode: ((node: AnyUntypedNode): boolean => {
 			const kind = hooks.trivia.kindName(node.$type);
 			return (
