@@ -1,5 +1,5 @@
 import { type ByteSpan, type SourceSpans, createEngine, sourceSpans } from '@sittir/common';
-import { ERROR_KIND_ID } from '@sittir/common/utils';
+import { ERROR_KIND_ID, spanOf } from '@sittir/common/utils';
 import scm, {
 	type AnonymousNode,
 	type Definition,
@@ -142,16 +142,14 @@ function lineOf(text: string, spans: SourceSpans, offset: number): number {
 	return line;
 }
 
-interface ErrorItem {
-	readonly $span: ByteSpan;
-}
-
-const isErrorItem = (item: unknown): item is ErrorItem =>
-	typeof item === 'object' && item !== null && '$type' in item && item.$type === ERROR_KIND_ID && '$span' in item;
+const isErrorItem = (item: unknown): item is object => typeof item === 'object' && item !== null && '$type' in item && item.$type === ERROR_KIND_ID;
 
 function unparsed(node: NodeMethodsOf): number[] {
 	const trivia: readonly unknown[] = [...node.$trivia.leading(), ...node.$trivia.trailing()];
-	return trivia.flatMap((item) => (isErrorItem(item) ? [item.$span.start] : []));
+	return trivia.flatMap((item) => {
+		const span = isErrorItem(item) ? spanOf(item) : undefined;
+		return span === undefined ? [] : [span.start];
+	});
 }
 
 function definitionsOf(text: string): readonly Definition.Parsed[] {
@@ -161,8 +159,9 @@ function definitionsOf(text: string): readonly Definition.Parsed[] {
 export function bindingPatterns(text: string): BindingPattern[] {
 	const spans = sourceSpans(text);
 	return definitionsOf(text).map((definition) => {
-		const span = definition.$span;
-		return { line: lineOf(text, spans, span.start), source: spans.slice(span), definition };
+		const span = spanOf(definition);
+		if (span === undefined) throw new Error('bindings.scm: a parsed definition carries no span');
+		return { line: lineOf(text, spans, span.start), source: definition.$render(), definition };
 	});
 }
 
