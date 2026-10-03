@@ -15,27 +15,14 @@ export namespace Clause {
 	export interface Bounds<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause<G>>> {
 		// claimed by r
 		readonly kind: 'clause.bounds';
-		readonly bounds?:
-			| V.Unmapped<'rust:use_bounds_elements'>
-			| V.Expression.Call.Macro<G>
-			| G['identifier']
-			| V.Clause.Bounds.Any<G>
-			| G['type']
-			| (
-					| V.Unmapped<'rust:use_bounds_elements'>
-					| V.Expression.Call.Macro<G>
-					| G['identifier']
-					| V.Clause.Bounds.Any<G>
-					| G['type']
-			  )[];
-		// unmapped: <rust:use_bounds_elements>
+		readonly bounds?: (V.Expression.Call.Macro<G> | G['identifier'] | V.Clause.Bounds.Any<G> | G['type'])[];
 	}
 	export namespace Bounds {
 		export interface HigherRanked<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause.Bounds<G>>> {
 			// claimed by r
 			readonly kind: 'clause.bounds.higher_ranked';
 			readonly type: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
-			readonly typeParameters: V.Declaration.TypeParameter<G>[];
+			readonly typeParameters: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
 		}
 		export interface Removed<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause.Bounds<G>>> {
 			// claimed by r
@@ -45,8 +32,7 @@ export namespace Clause {
 		export interface Use<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause.Bounds<G>>> {
 			// claimed by r
 			readonly kind: 'clause.bounds.use';
-			readonly bounds?: V.Unmapped<'rust:use_bounds_elements'>;
-			// unmapped: <rust:use_bounds_elements>
+			readonly bounds?: G['identifier'][];
 		}
 		export type Any<G extends GrammarContext> =
 			| V.Clause.Bounds<G>
@@ -59,12 +45,10 @@ export namespace Clause {
 		readonly kind: 'clause.case';
 		readonly bodies?: (V.Clause.Import.Alias<G> | G['declaration'] | G['statement'])[];
 		// t only
-		readonly casePatterns?: V.Unmapped<'python:case_patterns'>;
+		readonly casePatterns?: V.Pattern.Case<G>[];
 		// p only
-		// unmapped: <python:case_patterns>
-		readonly consequence?: V.Unmapped<'python:suite'>;
+		readonly consequence?: V.Declaration.TypeAlias<G> | G['statement'];
 		// p only
-		// unmapped: <python:suite>
 		readonly guard?: V.Clause.Comprehension.If<G>;
 		// p only
 		readonly value?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
@@ -124,29 +108,37 @@ export namespace Clause {
 		// claimed by p
 		readonly kind: 'clause.elif';
 		readonly condition: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
-		readonly consequence: V.Unmapped<'python:suite'>;
-		// unmapped: <python:suite>
+		readonly consequence: V.Declaration.TypeAlias<G> | G['statement'];
 	}
 	export interface Else<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause<G>>> {
 		// claimed by prt
 		readonly kind: 'clause.else';
-		readonly body: V.Unmapped<'python:suite'> | V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
-		// unmapped: <python:suite>
+		readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 	}
 	export interface Except<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause<G>>> {
 		// claimed by p
 		readonly kind: 'clause.except';
-		readonly exception?: V.Unmapped<'python:except_clause_exception'>;
-		// unmapped: <python:except_clause_exception>
+		readonly exception?:
+			| V.Unmapped<'python:except_clause_exception_as'>
+			| G['expression']
+			| G['identifier']
+			| G['literal']
+			| G['pattern']
+			| (
+					| V.Unmapped<'python:except_clause_exception_as'>
+					| G['expression']
+					| G['identifier']
+					| G['literal']
+					| G['pattern']
+			  )[];
+		// unmapped: <python:except_clause_exception_as>
 		readonly group?: boolean;
-		readonly suite: V.Unmapped<'python:suite'>;
-		// unmapped: <python:suite>
+		readonly suite: V.Declaration.TypeAlias<G> | G['statement'];
 	}
 	export interface Export<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause<G>>> {
 		// claimed by t
 		readonly kind: 'clause.export';
-		readonly exportSpecifiers?: V.Unmapped<'typescript:export_specifiers'>;
-		// unmapped: <typescript:export_specifiers>
+		readonly exportSpecifiers?: V.Clause.Export.Specifier<G>[];
 	}
 	export namespace Export {
 		export interface Namespace<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause.Export<G>>> {
@@ -183,9 +175,8 @@ export namespace Clause {
 	export interface Finally<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause<G>>> {
 		// claimed by pt
 		readonly kind: 'clause.finally';
-		readonly block?: V.Unmapped<'python:suite'>;
+		readonly block?: V.Declaration.TypeAlias<G> | G['statement'];
 		// p only
-		// unmapped: <python:suite>
 		readonly body?: V.Statement.Block<G>;
 		// t only
 	}
@@ -270,8 +261,7 @@ export namespace Clause {
 		export interface List<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause.Import<G>>> {
 			// claimed by r
 			readonly kind: 'clause.import.list';
-			readonly useClauses?: V.Unmapped<'rust:use_clauses'>;
-			// unmapped: <rust:use_clauses>
+			readonly useClauses?: (G['identifier'] | V.Clause.Import.Any<G>)[];
 		}
 		export namespace List {
 			export interface Scoped<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause.Import.List<G>>> {
@@ -308,9 +298,9 @@ export namespace Clause {
 			readonly kind: 'clause.import.names';
 			readonly content:
 				| V.Unmapped<'typescript:import_clause_default_import'>
-				| V.Unmapped<'typescript:named_imports'>
-				| V.Clause.Import.Namespace<G>;
-			// unmapped: <typescript:import_clause_default_import> <typescript:named_imports>
+				| V.Clause.Import.Any<G>
+				| (V.Unmapped<'typescript:import_clause_default_import'> | V.Clause.Import.Any<G>)[];
+			// unmapped: <typescript:import_clause_default_import>
 		}
 		export interface Namespace<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause.Import<G>>> {
 			// claimed by t
@@ -380,8 +370,7 @@ export namespace Clause {
 	export interface Lifetimes<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause<G>>> {
 		// claimed by r
 		readonly kind: 'clause.lifetimes';
-		readonly lifetimes: V.Unmapped<'rust:lifetimes'>;
-		// unmapped: <rust:lifetimes>
+		readonly lifetimes: V.Identifier.Lifetime<G>[];
 	}
 	export interface Macro<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause<G>>> {
 		readonly kind: 'clause.macro';
@@ -443,8 +432,7 @@ export namespace Clause {
 	export interface Where<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause<G>>> {
 		// claimed by r
 		readonly kind: 'clause.where';
-		readonly wherePredicates?: V.Unmapped<'rust:where_predicates'>;
-		// unmapped: <rust:where_predicates>
+		readonly wherePredicates?: V.Clause.Where.Predicate<G>[];
 	}
 	export namespace Where {
 		export interface Predicate<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause.Where<G>>> {

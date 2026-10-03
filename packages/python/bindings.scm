@@ -228,3 +228,5 @@
 ((line_continuation_newline) @unclaimed (#set! reason "layout token"))
 ((positional_separator) @unclaimed (#set! reason "parameter-list marker, not a parameter"))
 ((keyword_separator) @unclaimed (#set! reason "parameter-list marker, not a parameter"))
+((string_start) @unclaimed (#set! reason "string delimiter, not content"))
+((string_end) @unclaimed (#set! reason "string delimiter, not content"))

@@ -41,6 +41,9 @@
 (public_field_definition (accessibility_modifier) @visibility)
 (public_field_definition "?" @optional)
 (public_field_definition "!" @definite)
+(class_body_member_declaration (_) @element)
+(class_body_member_method (decorator)* (_) @element)
+(class_body_member_method_sig (_) @element)
 (lexical_declaration kind: _ @keyword) @declaration.variable.lexical
 (variable_declaration) @declaration.variable.var
 (variable_declarator_plain) @declaration.variable

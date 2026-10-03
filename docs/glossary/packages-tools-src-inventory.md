@@ -15,11 +15,14 @@ dotted capture, or a capture on the top node that does not start with `_`, is
 in claim position. There, a capture in the `keyword` or `punctuation`
 namespace is a token class, which names no vocabulary kind; any other is a
 claim: its kind is the node's (`_` for a wildcard), a grouping's first
-child's, and none on a token. Another capture names a
+child's, and none on a token, and it records the kinds enclosing it, nearest
+first, which place a claim made below the top. Another capture names a
 member. On a child of the top node, or on any node of a grouping, it renames
-the member its field or kind names, or, on an unfielded token, marks that
+the member its slot selector finds, or, on an unfielded token, marks that
 token's presence; deeper inside a named top it is a nested member of the top
-kind, routed through the kinds in between. A pattern whose top carries no
+kind, routed through the kinds in between. A pattern that captures
+`@unclaimed` declares each captured kind unclaimed, with the reason its
+`#set! reason` gives, and says nothing else. A pattern whose top carries no
 claim and that captures `@element` is a container. A `#match?` whose regex is
 anchored and has named holes is a template. Inside a node, a field's literal
 pins that field, an unfielded and uncaptured literal is a pin candidate the
@@ -31,11 +34,11 @@ The parse reports no errors of its own. A file is refused with `BindingsSyntaxEr
 
 ### `packages/tools/src/inventory/bindings.ts::BindingFacts`
 
-What a bindings file says, before the slot model is consulted: the claims (`ClaimFact`), the member captures (`MemberFact`: a `rename` of the slot a field or kind names, the `presence` of a token, or a `nested` member with the kinds it routes through and the selector of its slot), the containers (`ContainerFact`: the element's selector and every other capture) and the templates (`TemplateFact`). Facts come in file order and, within a pattern, in pre-order, which the derivation's first-claim and rename rules rely on.
+What a bindings file says, before the slot model is consulted: the claims (`ClaimFact`, with the kinds enclosing a claim made below the top), the member captures (`MemberFact`: a `rename` of the slot its selector finds, the `presence` of a token, or a `nested` member with the kinds it routes through and the selector of its slot), the containers (`ContainerFact`: the element's selector and every other capture), the templates (`TemplateFact`) and the unclaimed kinds (`UnclaimedFact`, each with its reason). Facts come in file order and, within a pattern, in pre-order, which the derivation's first-claim and rename rules rely on.
 
 ### `packages/tools/src/inventory/bindings.ts::SlotSelector`
 
-How a captured node finds its slot in a model node: by its field when it has one, otherwise by its named kind, otherwise (a wildcard or a grouping) the first slot that holds nodes.
+How a captured node finds its slot in a model node: by its field when it has one, otherwise by its named kind, otherwise (a wildcard or a grouping) by position: the first slot that holds nodes after the slot of the nearest node pattern before it in the same parent (`after`), or the first such slot when nothing precedes it. A token before it holds no slot and does not count, so `(unary_expression "-" (_) @argument)` names the operand and `(index_expression (_) @object (_) @index)` names both slots in order.
 
 ### `packages/tools/src/inventory/bindings.ts::bindingPatterns`
 
@@ -74,13 +77,14 @@ that can be worked through.
 ```text
 The grammar's slot model from `packages/<grammar>/src/node-model.json5`, the
 one source for slots (name, property name, required, multiple, storage,
-admitted kinds, terminal texts), supertypes (`subtypes`), enum texts and token
-texts. The derivation reads nothing from the generated `types.ts`.
+admitted kinds, terminal texts), supertypes (`subtypes`), a list's element
+kinds (`elementKinds`), enum texts and token texts. The derivation reads
+nothing from the generated `types.ts`.
 ```
 
 ### `packages/tools/src/inventory/index.ts::loadInputs`
 
-Each grammar's binding facts (`readBindings`), slot model, and the text tokens its evaluation minted (`RawGrammar.textTokens`). A minted text kind is the same fact as the inline token it replaced, so `derive` reads it as that token's text (`text:<pattern>`), not as an unmapped kind.
+Each grammar's binding facts (`readBindings`), slot model, the text tokens its evaluation minted (`RawGrammar.textTokens`), and its layout slots. A minted text kind is the same fact as the inline token it replaced, so `derive` reads it as that token's text (`text:<pattern>`), not as an unmapped kind. The layout slots are every address in the grammar options' bindings block that names an owner and a field (`readOptionsBlock`, parsed by `parsePreferencePath`; the owner `_` stands for any kind), plus the separator slot of every separated list (`SEPARATOR_LABEL`), the name the compiler gives it.
 
 ### `packages/tools/src/inventory/derive.ts::derive`
 
@@ -88,19 +92,34 @@ Each grammar's binding facts (`readBindings`), slot model, and the text tokens i
 The derivation over every grammar's binding facts and model. In order: resolve
 the facts against the model (a claim's pin candidates become field literals
 through the slot whose terminals hold them; a nested member takes its named
-kind, or the kinds of the slot its selector finds in its parent; renames are
-kept per owner kind; templates become hole members of every claim in their
-pattern); resolve each grammar kind to its claim, or through its supertype's
-subtypes when at least half of them resolve (a whole namespace is admitted only
-when every claimed kind in it is covered), or to an `<grammar:kind>`
-placeholder; build the members of every claimed kind from its slots, renamed
-by the captures and otherwise by the marker and modifier names rules, a nested
-member replacing the slot it routes through; fold field-literal claims into
-refinements, each literal named by the kind's converged member (a capture on
-the field renames it) rather than by the grammar's field; assign container
-captures to every kind the element admits; collapse a namespace's leaves when
-the namespace itself is admitted; and report inclusion cycles and the unmapped
+kind, or the kinds of the slot its selector finds in its parent; a rename is
+kept per owner kind against the slot its selector finds; templates become hole
+members of every claim in their pattern); build the members of every claimed
+kind from its slots, renamed by the captures and otherwise by the marker and
+modifier names rules, a nested member replacing the slot it routes through,
+and no layout slot ever a member; fold field-literal claims into refinements,
+each literal named by the kind's converged member (a capture on the field
+renames it) rather than by the grammar's field; assign container captures to
+every kind the element admits; collapse a namespace's leaves when the
+namespace itself is admitted; and report inclusion cycles and the unmapped
 placeholders.
+
+A grammar kind in a slot resolves to the first of: a claim placed by the
+enclosing kinds it sits in; its own claim; nothing, when it is unclaimed; a
+minted text, the enum's texts, or a keyword or punctuation literal; its
+element, when it is a container; its supertype's subtypes, each resolved the
+same way, when at least half of them resolve (a whole namespace is admitted
+only when every claimed kind in it is covered); otherwise an `<grammar:kind>`
+placeholder. A container is a kind the bindings declare with `@element`, a
+list (its element kinds), or an envelope, alias or polymorph whose one
+non-layout slot holds nodes; a branch is never one implicitly, since a kind
+with its own structure (`impl !Trait`) loses a fact when read as its content.
+The element slot's terminals and kinds resolve with the container added to
+the chain of enclosing kinds, and a container never resolves through itself.
+A layout slot is one an options-block address or the separator names, or one
+whose kinds are all unclaimed and that has no terminals. A resolution is a
+list when the container is a list or a part is, and scalar when a part is
+scalar, so a member admitting both reads `T | T[]`.
 ```
 
 ### `packages/tools/src/inventory/derive.ts::inclusionCycles`
@@ -137,10 +156,10 @@ extending its path parent with its literal pinned, every namespace exporting
 namespace lookup when the admitted leaves' common prefix is the namespace
 root, a sub-namespace's `Any` when it is a claimed prefix, the leaf
 interfaces otherwise. A union keeps one arm per type it builds, keyed by the
-vocabulary kind the arm stands for. Container kinds unwrap through
-`CONTAINER_ELEMENTS`, written in vocabulary kinds: a string is the single
-element the container wraps, an array the kinds of a list's elements.
-Layout slots are never members.
+vocabulary kind the arm stands for. Member kinds arrive resolved: the
+derivation has read through containers and left out layout slots, so a
+`<grammar:kind>` that remains is unmapped and is spelled `Unmapped<...>`
+with a note naming it.
 ```
 
 A sub-kind's interface — a refinement, a content-derived leaf, or a level

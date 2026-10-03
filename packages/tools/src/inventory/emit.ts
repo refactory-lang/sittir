@@ -39,49 +39,6 @@ interface Scope {
 	subKind: boolean;
 }
 
-const CONTAINER_ELEMENTS: Readonly<Record<string, string | readonly string[]>> = {
-	parameters: ['declaration.parameter'],
-	formal_parameters: ['declaration.parameter'],
-	lambda_parameters: ['declaration.parameter'],
-	closure_parameters: ['declaration.parameter'],
-	type_parameters: ['declaration.type_parameter'],
-	type_arguments: ['type'],
-	arguments: ['expression', 'element'],
-	argument_list: ['expression', 'element', 'argument'],
-	class_body: ['declaration'],
-	declaration_list: ['declaration'],
-	enum_body: ['declaration.enum_member'],
-	enum_variant_list: ['declaration.enum_member'],
-	field_declaration_list: ['declaration.field'],
-	suite_block: 'statement.block',
-	simple_statements: 'statement.block',
-	block: 'statement.block',
-	type_annotation: 'type',
-	type_predicate_annotation: 'type.predicate',
-	asserts_annotation: 'type.predicate.asserts',
-	omitting_type_annotation: 'type',
-	adding_type_annotation: 'type',
-	opting_type_annotation: 'type',
-	decorated_definition: 'declaration',
-	ambient_declaration: 'declaration',
-	labeled_statement: 'statement',
-	class_heritage: ['type', 'expression'],
-	switch_body: ['clause.case']
-};
-
-const LAYOUT = new Set([
-	'terminator',
-	'automaticSemicolon',
-	'separator',
-	'stringStart',
-	'stringEnd',
-	'stringOpen',
-	'stringClose',
-	'newline',
-	'hashBangLine',
-	'shebang'
-]);
-
 const KEYWORDS = {
 	string: TSKindId.StringKeyword,
 	boolean: TSKindId.BooleanKeyword,
@@ -161,12 +118,6 @@ function elementArm(element: string, scope: Scope): { readonly key: string; read
 		: { key: `lookup:${element}`, arm: lookup(element) };
 }
 
-function containerArm(elements: string | readonly string[], scope: Scope): { readonly key: string; readonly arm: Arm } {
-	if (typeof elements === 'string') return elementArm(elements, scope);
-	const parts = elements.map((e) => elementArm(e, scope));
-	return { key: `list:${parts.map((p) => p.key).join('|')}`, arm: listOf(parts.map((p) => p.arm)) };
-}
-
 function kindsBeneath(d: Derivation, v: string): string[] {
 	const byPath = [...d.allvocab].filter((o) => o === v || o.startsWith(`${v}.`));
 	const byClaim = [...d.refinements].filter(([, r]) => r.parent === v || r.parent.startsWith(`${v}.`)).map(([o]) => o);
@@ -216,14 +167,8 @@ function memberArms(d: Derivation, kinds: ReadonlySet<string>, scope: Scope): { 
 		else if (k.startsWith('literal:')) dropped.push(k);
 		else if (k.startsWith('<')) {
 			const name = k.slice(1, -1);
-			const elements = CONTAINER_ELEMENTS[name.split(':', 2)[1] ?? ''];
-			if (elements !== undefined) {
-				const { key, arm } = containerArm(elements, scope);
-				add(key, arm);
-			} else {
-				add(`unmapped:${name}`, generic(typeName(['V', 'Unmapped']), literal(name)));
-				dropped.push(k);
-			}
+			add(`unmapped:${name}`, generic(typeName(['V', 'Unmapped']), literal(name)));
+			dropped.push(k);
 		} else if (k.startsWith('set:')) {
 			const path = [...pathOf(k.slice(4)), 'Any'];
 			add(`ref:${path.join('.')}`, vocabRef(path, scope));
@@ -379,7 +324,6 @@ function emitLevel(d: Derivation, v: string, scope: Scope): ExportNode[] {
 		const heritage = sameTop ? subKindOf(parentPath, scope) : null;
 		const members = kindsBeneath(d, v).length > 0 ? [kindSignature(v)] : [];
 		for (const [member, f] of [...levelMembers(d, v)].sort(([a], [b]) => a.localeCompare(b))) {
-			if (LAYOUT.has(member)) continue;
 			const built = memberSignature(d, v, member, f, scope);
 			if (built !== null) members.push(built);
 		}

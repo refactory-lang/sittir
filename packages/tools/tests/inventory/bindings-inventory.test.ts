@@ -112,6 +112,37 @@ describe('deriveVocabulary', () => {
 		expect(cls.has('implements')).toBe(true);
 		expect(cls.has('heritage')).toBe(false);
 	});
+	it('renames the slot a positional wildcard capture stands at', () => {
+		expect([...(d.members.get('expression.unary')?.keys() ?? [])].sort()).toEqual(['argument', 'operator']);
+		expect(d.members.get('expression.try')?.has('argument')).toBe(true);
+		expect(d.members.get('expression.try')?.has('value')).toBe(false);
+	});
+	it('resolves a declared container, a list and an envelope to the kinds their element admits', () => {
+		const parameters = d.members.get('declaration.function')?.get('parameters')?.kinds ?? new Set();
+		expect(parameters.has('declaration.parameter')).toBe(true);
+		expect([...parameters].filter((k) => k.startsWith('<'))).toEqual([]);
+		const body = d.members.get('declaration.class.abstract')?.get('body');
+		expect([...(body?.kinds ?? [])].sort()).toEqual([
+			'declaration.field',
+			'declaration.method',
+			'declaration.method.signature',
+			'declaration.method.signature.abstract',
+			'declaration.signature.index',
+			'statement.block.static'
+		]);
+		expect(body?.multiple).toBe(true);
+	});
+	it('reads a polymorph through its forms, keeping a list form apart from a scalar form', () => {
+		const exception = d.members.get('clause.except')?.get('exception');
+		expect(exception?.multiple).toBe(true);
+		expect(exception?.scalar).toBe(true);
+	});
+	it('never makes a layout slot a member: an options-block address, a separator, or a slot of unclaimed kinds', () => {
+		for (const [v, members] of d.members) {
+			for (const name of ['terminator', 'automaticSemicolon', 'separator', 'stringStart', 'stringEnd', 'stringOpen'])
+				expect(members.has(name), `${v}.${name}`).toBe(false);
+		}
+	});
 });
 
 describe('the committed vocabulary', () => {

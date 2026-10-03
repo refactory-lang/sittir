@@ -4,10 +4,10 @@ import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 import { bindingIssues, compileQuery, readBindings } from './bindings.ts';
 import { loadSlotModel } from './model.ts';
-import { type Derivation, type GrammarInput, derive } from './derive.ts';
+import { type Derivation, type GrammarInput, type LayoutSlot, derive } from './derive.ts';
 import { indexFile, renderVocabularyFile, vocabularyFiles } from './emit.ts';
 import { allGrammars, grammarPackageDir, type GrammarName } from '@sittir/codegen/grammars';
-import { evaluateGrammar } from '../codegen-surface.ts';
+import { evaluateGrammar, load, type RawGrammar } from '../codegen-surface.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 export const VOCABULARY_DIR = join(ROOT, 'packages', 'types', 'src', 'vocabulary');
@@ -49,14 +49,34 @@ export async function compileBindings(grammars: readonly string[]): Promise<Comp
 	return out;
 }
 
+async function layoutSlots(raw: RawGrammar, kinds: ReadonlySet<string>): Promise<LayoutSlot[]> {
+	const [{ readOptionsBlock }, { parsePreferencePath }, { SEPARATOR_LABEL }] = await Promise.all([
+		load('optionsBlock'),
+		load('preferencePath'),
+		load('spacing')
+	]);
+	const optionSites = readOptionsBlock(raw.options ?? {}, kinds).bindings.flatMap(({ address }): LayoutSlot[] => {
+		const [owner, slot, ...rest] = parsePreferencePath(address);
+		if (rest.length > 0 || slot?.kind !== 'fieldName') return [];
+		if (owner?.kind === 'wildcard') return [{ kind: null, slot: slot.name }];
+		return owner?.kind === 'name' ? [{ kind: owner.name, slot: slot.name }] : [];
+	});
+	return [...optionSites, { kind: null, slot: SEPARATOR_LABEL }];
+}
+
 export async function loadInputs(grammars: readonly string[]): Promise<GrammarInput[]> {
 	return Promise.all(
-		grammars.map(async (grammar) => ({
-			grammar,
-			bindings: readBindings(readFileSync(join(grammarPackageDir(grammar), 'bindings.scm'), 'utf8')),
-			model: loadSlotModel(grammar),
-			textTokens: new Set((await evaluateGrammar(grammar)).textTokens ?? [])
-		}))
+		grammars.map(async (grammar) => {
+			const raw = await evaluateGrammar(grammar);
+			const model = loadSlotModel(grammar);
+			return {
+				grammar,
+				bindings: readBindings(readFileSync(join(grammarPackageDir(grammar), 'bindings.scm'), 'utf8')),
+				model,
+				textTokens: new Set(raw.textTokens ?? []),
+				layoutSlots: await layoutSlots(raw, new Set(model.keys()))
+			};
+		})
 	);
 }
 

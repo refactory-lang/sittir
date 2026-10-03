@@ -15,10 +15,16 @@ export namespace Declaration {
 	export interface Class<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration<G>>> {
 		// claimed by pt
 		readonly kind: 'declaration.class';
-		readonly bases?: (G['expression'] | G['element'] | G['argument'])[];
+		readonly bases?: (
+			| V.Argument.Keyword<G>
+			| G['expression']
+			| G['identifier']
+			| G['literal']
+			| G['pattern']
+			| V.Element.Splat.Any<G>
+		)[];
 		// p only
-		readonly body: V.Unmapped<'python:suite'> | G['declaration'][];
-		// unmapped: <python:suite>
+		readonly body: G['declaration'] | G['statement'] | (G['declaration'] | G['statement'])[];
 		readonly declare?: boolean;
 		// t only
 		readonly decorators?: V.Attribute.Decorator<G>[];
@@ -54,14 +60,14 @@ export namespace Declaration {
 			| 'type';
 		// t only
 		readonly name: G['identifier'];
-		readonly typeParameters?: V.Declaration.TypeParameter<G>[] | V.Declaration.TypeParameter<G>;
+		readonly typeParameters?: V.Declaration.TypeParameter<G> | V.Declaration.TypeParameter<G>[];
 	}
 	export namespace Class {
 		export interface Abstract<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Class<G>>> {
 			// claimed by t
 			readonly kind: 'declaration.class.abstract';
 			readonly abstract?: boolean;
-			readonly body: G['declaration'][];
+			readonly body: (G['declaration'] | V.Statement.Block.Static<G>)[];
 			readonly declare?: boolean;
 			readonly decorators?: V.Attribute.Decorator<G>[];
 			readonly extends?: V.Clause.Extends<G>;
@@ -114,7 +120,7 @@ export namespace Declaration {
 	export interface Enum<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration<G>>> {
 		// claimed by rt
 		readonly kind: 'declaration.enum';
-		readonly body: V.Declaration.EnumMember<G>[];
+		readonly body: V.Declaration.EnumMember<G> | V.Declaration.EnumMember<G>[];
 		readonly const?: boolean;
 		// t only
 		readonly declare?: boolean;
@@ -145,7 +151,7 @@ export namespace Declaration {
 			| 'type';
 		// t only
 		readonly name: G['identifier'];
-		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
+		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
 		// r only
 		readonly visibility?: V.Modifier.Visibility<G>;
 		// r only
@@ -155,9 +161,9 @@ export namespace Declaration {
 	export interface EnumMember<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration<G>>> {
 		// claimed by rt
 		readonly kind: 'declaration.enum_member';
-		readonly body?: V.Declaration.Field<G>[] | V.Unmapped<'rust:ordered_field_declaration_list'>;
+		readonly body?: (V.Unmapped<'rust:attributed_ordered_field'> | V.Declaration.Field<G>)[];
 		// r only
-		// unmapped: <rust:ordered_field_declaration_list>
+		// unmapped: <rust:attributed_ordered_field>
 		readonly name:
 			| G['identifier']
 			| G['literal']
@@ -191,8 +197,8 @@ export namespace Declaration {
 		export interface Struct<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.EnumMember<G>>> {
 			// claimed by r
 			readonly kind: 'declaration.enum_member.struct';
-			readonly body?: V.Declaration.Field<G>[] | V.Unmapped<'rust:ordered_field_declaration_list'>;
-			// unmapped: <rust:ordered_field_declaration_list>
+			readonly body?: (V.Unmapped<'rust:attributed_ordered_field'> | V.Declaration.Field<G>)[];
+			// unmapped: <rust:attributed_ordered_field>
 			readonly name: G['identifier'];
 			readonly value?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
 			readonly visibility?: V.Modifier.Visibility<G>;
@@ -200,8 +206,8 @@ export namespace Declaration {
 		export interface Tuple<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.EnumMember<G>>> {
 			// claimed by r
 			readonly kind: 'declaration.enum_member.tuple';
-			readonly body?: V.Declaration.Field<G>[] | V.Unmapped<'rust:ordered_field_declaration_list'>;
-			// unmapped: <rust:ordered_field_declaration_list>
+			readonly body?: (V.Unmapped<'rust:attributed_ordered_field'> | V.Declaration.Field<G>)[];
+			// unmapped: <rust:attributed_ordered_field>
 			readonly name: G['identifier'];
 			readonly value?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
 			readonly visibility?: V.Modifier.Visibility<G>;
@@ -218,7 +224,7 @@ export namespace Declaration {
 		readonly traitClause?: V.Unmapped<'rust:impl_item_negative_clause'> | V.Unmapped<'rust:impl_item_positive_clause'>;
 		// unmapped: <rust:impl_item_negative_clause> <rust:impl_item_positive_clause>
 		readonly type: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
-		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
+		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
 		readonly unsafe?: boolean;
 		readonly whereClause?: V.Clause.Where<G>;
 	}
@@ -232,7 +238,7 @@ export namespace Declaration {
 				| V.Unmapped<'rust:impl_item_positive_clause'>;
 			// unmapped: <rust:impl_item_negative_clause> <rust:impl_item_positive_clause>
 			readonly type: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
-			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
+			readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
 			readonly unsafe?: boolean;
 			readonly whereClause?: V.Clause.Where<G>;
 		}
@@ -286,7 +292,7 @@ export namespace Declaration {
 		// t only
 		readonly static?: boolean;
 		// t only
-		readonly type?: G['type'] | V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'];
+		readonly type?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
 		readonly value?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
 		// t only
 		readonly visibility?: V.Modifier.Visibility<G> | 'private' | 'protected' | 'public';
@@ -324,7 +330,7 @@ export namespace Declaration {
 			readonly override?: boolean;
 			readonly readonly?: boolean;
 			readonly static?: boolean;
-			readonly type?: G['type'];
+			readonly type?: G['identifier'] | G['type'];
 			readonly visibility?: 'private' | 'protected' | 'public';
 		}
 		export type Any<G extends GrammarContext> = V.Declaration.Field<G> | V.Declaration.Field.Signature<G>;
@@ -333,8 +339,7 @@ export namespace Declaration {
 		// claimed by prt
 		readonly kind: 'declaration.function';
 		readonly async?: boolean;
-		readonly body?: V.Unmapped<'python:suite'> | V.Statement.Block<G>;
-		// unmapped: <python:suite>
+		readonly body?: V.Declaration.TypeAlias<G> | G['statement'];
 		readonly const?: boolean;
 		// r only
 		readonly declare?: boolean;
@@ -373,15 +378,20 @@ export namespace Declaration {
 			| 'type';
 		// t only
 		readonly name: G['identifier'];
-		readonly parameters: V.Declaration.Parameter<G>[];
-		readonly returnType?:
-			| V.Type.Predicate.Asserts<G>
-			| G['type']
-			| V.Type.Predicate<G>
+		readonly parameters: (
 			| V.Clause.Bounds.Removed<G>
 			| V.Expression.Call.Macro<G>
-			| G['identifier'];
-		readonly typeParameters?: V.Declaration.TypeParameter<G>[] | V.Declaration.TypeParameter<G>;
+			| G['identifier']
+			| G['pattern']
+			| V.Declaration.Parameter.Any<G>
+			| '_'
+			| G['type']
+		)[];
+		readonly returnType?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
+		readonly typeParameters?:
+			| V.Identifier.Metavariable<G>
+			| V.Declaration.TypeParameter.Any<G>
+			| (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
 		readonly unsafe?: boolean;
 		// r only
 		readonly visibility?: V.Modifier.Visibility<G>;
@@ -422,8 +432,8 @@ export namespace Declaration {
 				| 'symbol'
 				| 'type';
 			readonly name: G['identifier'];
-			readonly parameters: V.Declaration.Parameter<G>[];
-			readonly returnType?: V.Type.Predicate.Asserts<G> | G['type'] | V.Type.Predicate<G>;
+			readonly parameters: V.Declaration.Parameter.Any<G>[];
+			readonly returnType?: G['identifier'] | G['type'];
 			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 		}
 		export interface Signature<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Function<G>>> {
@@ -433,9 +443,8 @@ export namespace Declaration {
 			// t only
 			readonly declare?: boolean;
 			// t only
-			readonly functionModifiers?: V.Unmapped<'rust:function_modifiers'>;
+			readonly functionModifiers?: (V.Modifier.Extern<G> | 'async' | 'const' | 'default' | 'unsafe')[];
 			// r only
-			// unmapped: <rust:function_modifiers>
 			readonly label?:
 				| V.Identifier.Label<G>
 				| 'any'
@@ -462,15 +471,16 @@ export namespace Declaration {
 				| 'type';
 			// t only
 			readonly name: G['identifier'];
-			readonly parameters: V.Declaration.Parameter<G>[];
-			readonly returnType?:
-				| V.Type.Predicate.Asserts<G>
-				| G['type']
-				| V.Type.Predicate<G>
+			readonly parameters: (
 				| V.Clause.Bounds.Removed<G>
 				| V.Expression.Call.Macro<G>
-				| G['identifier'];
-			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
+				| G['identifier']
+				| V.Declaration.Parameter.Any<G>
+				| '_'
+				| G['type']
+			)[];
+			readonly returnType?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
+			readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
 			readonly visibility?: V.Modifier.Visibility<G>;
 			// r only
 			readonly whereClause?: V.Clause.Where<G>;
@@ -484,9 +494,14 @@ export namespace Declaration {
 	export interface Interface<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration<G>>> {
 		// claimed by t
 		readonly kind: 'declaration.interface';
-		readonly body: G['declaration'][] | V.Unmapped<'typescript:interface_body'>;
+		readonly body:
+			| G['attribute']
+			| G['declaration']
+			| V.Expression.Call.Macro<G>
+			| G['statement']
+			| V.Type.Object<G>
+			| (G['attribute'] | G['declaration'] | V.Expression.Call.Macro<G> | G['statement'] | V.Type.Object<G>)[];
 		// rt only
-		// unmapped: <typescript:interface_body>
 		readonly declare?: boolean;
 		readonly extends?: G['clause'];
 		// rt only
@@ -516,17 +531,17 @@ export namespace Declaration {
 			| 'type';
 		readonly name: V.Identifier.Type<G>;
 		// rt only
-		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
+		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
 		// rt only
 	}
 	export namespace Interface {
 		export interface Trait<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Interface<G>>> {
 			// claimed by r
 			readonly kind: 'declaration.interface.trait';
-			readonly body: G['declaration'][];
+			readonly body: (G['attribute'] | G['declaration'] | V.Expression.Call.Macro<G> | G['statement'])[];
 			readonly extends?: V.Clause.Bounds<G>;
 			readonly name: V.Identifier.Type<G>;
-			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
+			readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
 			readonly unsafe?: boolean;
 			readonly visibility?: V.Modifier.Visibility<G>;
 			readonly whereClause?: V.Clause.Where<G>;
@@ -543,8 +558,7 @@ export namespace Declaration {
 		readonly accessor?: '*' | 'get' | 'set';
 		// t only
 		readonly async?: boolean;
-		readonly body?: V.Unmapped<'python:suite'> | V.Statement.Block<G>;
-		// unmapped: <python:suite>
+		readonly body?: V.Declaration.TypeAlias<G> | G['statement'];
 		readonly const?: boolean;
 		// rt only
 		readonly default?: boolean;
@@ -584,19 +598,24 @@ export namespace Declaration {
 		// t only
 		readonly override?: boolean;
 		// t only
-		readonly parameters: V.Declaration.Parameter<G>[];
-		readonly readonly?: boolean;
-		// t only
-		readonly returnType?:
-			| V.Type.Predicate.Asserts<G>
-			| G['type']
-			| V.Type.Predicate<G>
+		readonly parameters: (
 			| V.Clause.Bounds.Removed<G>
 			| V.Expression.Call.Macro<G>
-			| G['identifier'];
+			| G['identifier']
+			| G['pattern']
+			| V.Declaration.Parameter.Any<G>
+			| '_'
+			| G['type']
+		)[];
+		readonly readonly?: boolean;
+		// t only
+		readonly returnType?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
 		readonly static?: boolean;
 		// t only
-		readonly typeParameters?: V.Declaration.TypeParameter<G>[] | V.Declaration.TypeParameter<G>;
+		readonly typeParameters?:
+			| V.Identifier.Metavariable<G>
+			| V.Declaration.TypeParameter.Any<G>
+			| (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
 		readonly unsafe?: boolean;
 		// rt only
 		readonly visibility?: V.Modifier.Visibility<G> | 'private' | 'protected' | 'public';
@@ -629,9 +648,8 @@ export namespace Declaration {
 			// t only
 			readonly async?: boolean;
 			// t only
-			readonly functionModifiers?: V.Unmapped<'rust:function_modifiers'>;
+			readonly functionModifiers?: (V.Modifier.Extern<G> | 'async' | 'const' | 'default' | 'unsafe')[];
 			// r only
-			// unmapped: <rust:function_modifiers>
 			readonly name:
 				| G['identifier']
 				| G['literal']
@@ -661,19 +679,20 @@ export namespace Declaration {
 			// t only
 			readonly override?: boolean;
 			// t only
-			readonly parameters: V.Declaration.Parameter<G>[];
-			readonly readonly?: boolean;
-			// t only
-			readonly returnType?:
-				| V.Type.Predicate.Asserts<G>
-				| G['type']
-				| V.Type.Predicate<G>
+			readonly parameters: (
 				| V.Clause.Bounds.Removed<G>
 				| V.Expression.Call.Macro<G>
-				| G['identifier'];
+				| G['identifier']
+				| V.Declaration.Parameter.Any<G>
+				| '_'
+				| G['type']
+			)[];
+			readonly readonly?: boolean;
+			// t only
+			readonly returnType?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
 			readonly static?: boolean;
 			// t only
-			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
+			readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
 			readonly visibility?: V.Modifier.Visibility<G> | 'private' | 'protected' | 'public';
 			readonly whereClause?: V.Clause.Where<G>;
 			// r only
@@ -713,8 +732,8 @@ export namespace Declaration {
 					| 'type';
 				readonly optional?: boolean;
 				readonly override?: boolean;
-				readonly parameters: V.Declaration.Parameter<G>[];
-				readonly returnType?: V.Type.Predicate.Asserts<G> | G['type'] | V.Type.Predicate<G>;
+				readonly parameters: V.Declaration.Parameter.Any<G>[];
+				readonly returnType?: G['identifier'] | G['type'];
 				readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 				readonly visibility?: 'private' | 'protected' | 'public';
 			}
@@ -737,11 +756,18 @@ export namespace Declaration {
 			// r only
 			readonly name: G['identifier'];
 			// r only
-			readonly parameters: V.Declaration.Parameter<G>[];
+			readonly parameters: (
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| V.Declaration.Parameter.Any<G>
+				| '_'
+				| G['type']
+			)[];
 			// r only
 			readonly returnType?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
 			// r only
-			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
+			readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
 			// r only
 			readonly unsafe?: boolean;
 			// r only
@@ -845,13 +871,18 @@ export namespace Declaration {
 		// pt only
 		readonly mutable?: boolean;
 		// r only
-		readonly name?: V.Unmapped<'rust:pattern'> | V.Unmapped<'typescript:pattern'> | G['identifier'] | G['pattern'];
-		// unmapped: <rust:pattern> <typescript:pattern>
+		readonly name?:
+			| V.Unmapped<'rust:pattern'>
+			| G['expression']
+			| G['identifier']
+			| V.Literal.Null.Undefined<G>
+			| G['pattern'];
+		// unmapped: <rust:pattern>
 		readonly override?: boolean;
 		// t only
 		readonly readonly?: boolean;
 		// t only
-		readonly type?: G['type'] | V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'];
+		readonly type?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
 		readonly visibility?: 'private' | 'protected' | 'public';
 		// t only
 	}
@@ -867,12 +898,11 @@ export namespace Declaration {
 			readonly kind: 'declaration.parameter.optional';
 			readonly decorators?: V.Attribute.Decorator<G>[];
 			readonly default?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
-			readonly name: V.Unmapped<'typescript:pattern'> | V.Identifier.Self<G>;
-			// unmapped: <typescript:pattern>
+			readonly name: G['expression'] | G['identifier'] | V.Literal.Null.Undefined<G> | G['pattern'];
 			readonly optional?: boolean;
 			readonly override?: boolean;
 			readonly readonly?: boolean;
-			readonly type?: G['type'];
+			readonly type?: G['identifier'] | G['type'];
 			readonly visibility?: 'private' | 'protected' | 'public';
 		}
 		export interface Self<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Parameter<G>>> {
@@ -921,16 +951,16 @@ export namespace Declaration {
 		export interface Call<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Signature<G>>> {
 			// claimed by t
 			readonly kind: 'declaration.signature.call';
-			readonly parameters: V.Declaration.Parameter<G>[];
-			readonly returnType?: V.Type.Predicate.Asserts<G> | G['type'] | V.Type.Predicate<G>;
+			readonly parameters: V.Declaration.Parameter.Any<G>[];
+			readonly returnType?: G['identifier'] | G['type'];
 			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 		}
 		export interface Construct<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Signature<G>>> {
 			// claimed by t
 			readonly kind: 'declaration.signature.construct';
 			readonly abstract?: boolean;
-			readonly parameters: V.Declaration.Parameter<G>[];
-			readonly type?: G['type'];
+			readonly parameters: V.Declaration.Parameter.Any<G>[];
+			readonly type?: G['identifier'] | G['type'];
 			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 		}
 		export interface Index<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Signature<G>>> {
@@ -984,7 +1014,7 @@ export namespace Declaration {
 		// p only
 		readonly trailingWhereClause?: V.Clause.Where<G>;
 		// r only
-		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
+		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
 		// rt only
 		readonly value?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
 		// rt only
@@ -999,7 +1029,7 @@ export namespace Declaration {
 			readonly kind: 'declaration.type_alias.associated';
 			readonly bounds?: V.Clause.Bounds<G>;
 			readonly name: V.Identifier.Type<G>;
-			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
+			readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
 			readonly whereClause?: V.Clause.Where<G>;
 		}
 		export type Any<G extends GrammarContext> = V.Declaration.TypeAlias<G> | V.Declaration.TypeAlias.Associated<G>;
@@ -1015,9 +1045,8 @@ export namespace Declaration {
 		// rt only
 		readonly name?: G['identifier'];
 		// rt only
-		readonly types?: V.Unmapped<'python:types'>;
+		readonly types?: G['type'][];
 		// p only
-		// unmapped: <python:types>
 	}
 	export namespace TypeParameter {
 		export interface Const<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.TypeParameter<G>>> {
@@ -1043,7 +1072,7 @@ export namespace Declaration {
 		readonly kind: 'declaration.union';
 		readonly body: V.Declaration.Field<G>[];
 		readonly name: V.Identifier.Type<G>;
-		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
+		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
 		readonly visibility?: V.Modifier.Visibility<G>;
 		readonly whereClause?: V.Clause.Where<G>;
 	}
@@ -1056,7 +1085,7 @@ export namespace Declaration {
 		// r only
 		readonly name?: V.Unmapped<'rust:pattern'> | G['expression'] | G['identifier'] | G['pattern'];
 		// unmapped: <rust:pattern>
-		readonly type?: G['type'] | V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'];
+		readonly type?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
 		readonly value?:
 			| G['declaration']
 			| G['expression']
@@ -1101,7 +1130,7 @@ export namespace Declaration {
 			// claimed by t
 			readonly kind: 'declaration.variable.pattern';
 			readonly name: G['identifier'] | G['pattern'];
-			readonly type?: G['type'];
+			readonly type?: G['identifier'] | G['type'];
 			readonly value?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
 		}
 		export interface Static<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Variable<G>>> {

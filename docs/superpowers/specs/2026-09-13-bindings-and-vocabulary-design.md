@@ -32,6 +32,7 @@ One file per grammar package, `packages/<grammar>/bindings.scm`, written in tree
   - The capture's name is the converged member name (§6), whether or not the upstream field already spells it: `(class_definition superclasses: (_)? @bases)`.
   - A deep capture reaches through a wrapper to the node that matters, so nesting artefacts (`content`, body wrappers, hidden arms) exist only where a capture names them: `(class_declaration (class_heritage (extends_clause (_) @extends)))`.
   - A capture on a token is the token's presence: `"async" @async`.
+  - A captured node finds its slot by its field, else by its kind, else by position: an unfielded wildcard names the first node slot after the slot of the node pattern before it, so `(index_expression (_) @object (_) @index)` names both slots in order and a token before a wildcard does not count.
   - The slot model types a captured member (kinds, multiplicity, requiredness) and confirms that the capture resolves to a slot; it never adds a member.
   A claim is unconditional, so an optional member named in a claim carries a quantifier (`?`, `*`, `+`) and the claim matches whether or not the member is present.
 - **Refinements** are the parent's pattern with a literal fixed: `(binary_expression operator: "+") @expression.binary.arithmetic.add`.
@@ -57,7 +58,7 @@ One file per grammar package, `packages/<grammar>/bindings.scm`, written in tree
 - **Grammar supertypes.** Namespaces are the vocabulary's supertypes (§3.2); a grammar union maps to its members' claims.
 - **Containers.** A list holder with no members of its own (`argument_list`, `parameters`, a class body, a use list) is bound through its elements: by the elements' own claims where they have them, and by a positional claim only where the role's kind has members the node supplies by being the node. A bare identifier in a python parameter list is a `declaration.parameter` whose `name` is that identifier; a bare name in a typescript enum body is an `enum_member`. A value in argument position supplies nothing but itself, so there is no `argument` role kind for it: a positional argument is the expression.
 - **Text leaves.** A node that carries only text (string content and fragments, comment content, regex pattern and flags) is a `string`-typed member of its parent, not a kind.
-- **Layout.** Terminators, automatic semicolons, quote tokens, separators, indentation. These are render options and never members.
+- **Layout.** Terminators, automatic semicolons, quote tokens, separators, indentation. These are render options and never members. The grammar's options block names the terminator and semicolon slots, every separated list's separator slot carries the compiler's separator name, and a delimiter token the options do not reach is unclaimed with its reason, so a slot holding only unclaimed kinds is layout too.
 
 **Totality** is measured on the meaningful kinds: every visible kind that is not a container, a grammar supertype or a text leaf is claimed or explicitly unclaimed.
 
@@ -238,7 +239,7 @@ Names converge before kinds. The rules govern the names the vocabulary uses and 
 **Kinds.**
 
 1. Containers unwrap to their element kind-set as a list.
-2. A wrapper clause that carries one member around punctuation is transparent: typescript's type annotation makes `returnType: type`; python's suite forms make a function body `statement.block`, the encoding chosen at build time.
+2. A wrapper clause that carries one member around punctuation is transparent: typescript's type annotation makes `returnType: type`; python's suite forms make a function body `statement.block`, the encoding chosen at build time. The slot model decides it: an envelope, an alias or a polymorph whose one non-layout slot holds nodes is transparent. A wrapper with structure of its own (rust's `attributed_parameter`, typescript's class body members) is transparent only through a container pattern, because reading a kind as its content drops whatever its own text says (`impl !Trait`).
 3. A member's kind is the smallest kind-set covering every grammar's admitted set.
 4. Text leaves are strings.
 5. Exclusive markers decompose.

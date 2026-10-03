@@ -27,6 +27,7 @@ export const WILDCARD = '_';
 export interface SlotSelector {
 	readonly field: string | null;
 	readonly kind: string | null;
+	readonly after: SlotSelector | null;
 }
 
 export interface ClaimFact {
@@ -34,12 +35,18 @@ export interface ClaimFact {
 	readonly kind: string | null;
 	readonly predicate: boolean;
 	readonly toplevel: boolean;
+	readonly within: readonly string[];
 	readonly fieldLiterals: Readonly<Record<string, string>>;
 	readonly tokens: readonly string[];
 }
 
+export interface UnclaimedFact {
+	readonly kind: string;
+	readonly reason: string | null;
+}
+
 export type MemberFact =
-	| { readonly route: 'rename'; readonly owner: string; readonly key: string; readonly name: string }
+	| ({ readonly route: 'rename'; readonly owner: string; readonly name: string } & SlotSelector)
 	| { readonly route: 'presence'; readonly owner: string; readonly name: string; readonly via: readonly string[] }
 	| ({
 			readonly route: 'nested';
@@ -74,6 +81,7 @@ export interface BindingFacts {
 	readonly members: readonly MemberFact[];
 	readonly containers: readonly ContainerFact[];
 	readonly templates: readonly TemplateFact[];
+	readonly unclaimed: readonly UnclaimedFact[];
 }
 
 export interface BindingPattern {
@@ -118,6 +126,7 @@ interface Facts {
 	readonly members: MemberFact[];
 	readonly containers: ContainerFact[];
 	readonly templates: TemplateFact[];
+	readonly unclaimed: UnclaimedFact[];
 }
 
 function stringValue(node: QueryString.Parsed | ImmediateString.Parsed): string {
@@ -207,13 +216,24 @@ function tokenText(v: Visit): string | null {
 }
 
 const isGroup = (v: Visit): boolean => v.node.$type === K.Grouping;
+const UNCLAIMED = 'unclaimed';
 const isPath = (capture: string): boolean => capture.includes('.');
 const TOKEN_CLASSES: ReadonlySet<string> = new Set(['keyword', 'punctuation']);
 const inClaimPosition = (capture: string, atTop: boolean): boolean =>
 	isPath(capture) || (atTop && !capture.startsWith('_'));
 const isTokenClass = (capture: string): boolean => TOKEN_CLASSES.has(capture.split('.')[0] ?? capture);
 const isClaim = (capture: string, atTop: boolean): boolean => inClaimPosition(capture, atTop) && !isTokenClass(capture);
-const selector = (v: Visit): SlotSelector => ({ field: v.field, kind: namedKind(v) });
+
+function selector(v: Visit): SlotSelector {
+	const kind = namedKind(v);
+	if (v.field !== null || kind !== null) return { field: v.field, kind, after: null };
+	const siblings = v.parent?.children ?? [];
+	const previous = siblings
+		.slice(0, siblings.indexOf(v))
+		.filter((sibling) => tokenText(sibling) === null)
+		.at(-1);
+	return { field: null, kind: null, after: previous === undefined ? null : selector(previous) };
+}
 
 function expressionsOf(node: PatternNode, errors: number[]): readonly Expression[] {
 	switch (node.$type) {
@@ -309,7 +329,12 @@ function claimFact(v: Visit, vocab: string, top: Visit, predicate: boolean): Cla
 		} else if (captures(child).length === 0) tokens.push(text);
 	}
 	const toplevel = v === top || (isGroup(top) && v.parent === top);
-	return { vocab, kind, predicate, toplevel, fieldLiterals, tokens };
+	const within: string[] = [];
+	for (let cursor = v.parent; cursor !== null; cursor = cursor.parent) {
+		const enclosing = kindOf(cursor);
+		if (enclosing !== null) within.push(enclosing);
+	}
+	return { vocab, kind, predicate, toplevel, within, fieldLiterals, tokens };
 }
 
 function memberFact(v: Visit, name: string, top: Visit, topKind: string | null): MemberFact | null {
@@ -320,8 +345,7 @@ function memberFact(v: Visit, name: string, top: Visit, topKind: string | null):
 	const token = tokenText(v) !== null;
 	if (parent === top || topKind === null) {
 		if (token && v.field === null) return { route: 'presence', owner, name, via: [] };
-		const key = v.field ?? kindOf(v);
-		return key === null ? null : { route: 'rename', owner, key, name };
+		return isGroup(v) && v.field === null ? null : { route: 'rename', owner, name, ...selector(v) };
 	}
 	const via: string[] = [];
 	for (let cursor: Visit | null = parent; cursor !== null && cursor !== top; cursor = cursor.parent) {
@@ -344,7 +368,25 @@ function containerFact(kind: string, element: Visit, nodes: readonly Visit[]): C
 	};
 }
 
+function reasonOf(predicates: readonly Predicate.Parsed[]): string | null {
+	for (const predicate of predicates) {
+		if (predicate.name().$text !== 'set' || predicate.type() !== K.Bang) continue;
+		const [key, value] = predicate.parameters()?.elements() ?? [];
+		if (key?.$type === K.Identifier && key.$text === 'reason' && value?.$type === K.String) return stringValue(value);
+	}
+	return null;
+}
+
 function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts): void {
+	const unclaimed = nodes.filter((v) => captures(v).includes(UNCLAIMED));
+	if (unclaimed.length > 0) {
+		const reason = reasonOf(predicates);
+		for (const v of unclaimed) {
+			const kind = kindOf(v);
+			if (kind !== null) facts.unclaimed.push({ kind, reason });
+		}
+		return;
+	}
 	const topKind = kindOf(top);
 	const element = nodes.find((v) => captures(v).includes('element'));
 	if (topKind !== null && element !== undefined && !captures(top).some((name) => isPath(name) && !isTokenClass(name))) {
@@ -387,7 +429,7 @@ function patternsOf(
 }
 
 export function readBindings(text: string): BindingFacts {
-	const facts: Facts = { claims: [], members: [], containers: [], templates: [] };
+	const facts: Facts = { claims: [], members: [], containers: [], templates: [], unclaimed: [] };
 	const errors: number[] = [];
 	const definitions = definitionsOf(text);
 	if (definitions.length === 0 && text.trim() !== '') errors.push(0);

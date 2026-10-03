@@ -26,16 +26,55 @@ describe('readBindings', () => {
 				multiple: true,
 				via: ['parameters'],
 				field: null,
-				kind: 'identifier'
+				kind: 'identifier',
+				after: null
 			},
-			{ route: 'rename', owner: 'function_definition', key: 'name', name: 'name' }
+			{ route: 'rename', owner: 'function_definition', name: 'name', field: 'name', kind: 'identifier', after: null }
 		]);
 		expect(facts.containers).toEqual([
 			{
 				kind: 'decorated_definition',
-				element: { field: 'definition', kind: null },
-				captures: [{ name: 'decorators', token: false, multiple: true, field: null, kind: 'decorator' }]
+				element: { field: 'definition', kind: null, after: null },
+				captures: [{ name: 'decorators', token: false, multiple: true, field: null, kind: 'decorator', after: null }]
 			}
+		]);
+	});
+
+	it('selects an unfielded wildcard by its position after the node pattern before it, never after a token', () => {
+		const { members, containers } = readBindings(
+			[
+				'(index_expression (_) @object (_) @index) @expression.subscript',
+				'(unary_expression "-" (_) @argument) @expression.unary.negation',
+				'(attributed_parameter (attribute_item)? (_) @element)'
+			].join('\n')
+		);
+		const first = { field: null, kind: null, after: null };
+		expect(members).toEqual([
+			{ route: 'rename', owner: 'index_expression', name: 'object', ...first },
+			{ route: 'rename', owner: 'index_expression', name: 'index', field: null, kind: null, after: first },
+			{ route: 'rename', owner: 'unary_expression', name: 'argument', ...first }
+		]);
+		expect(containers.map((c) => c.element)).toEqual([
+			{ field: null, kind: null, after: { field: null, kind: 'attribute_item', after: null } }
+		]);
+	});
+
+	it('reads an unclaimed pattern as its kind and its reason, never a claim', () => {
+		const facts = readBindings('((string_start) @unclaimed (#set! reason "string delimiter, not content"))');
+		expect(facts.unclaimed).toEqual([{ kind: 'string_start', reason: 'string delimiter, not content' }]);
+		expect(facts.claims).toEqual([]);
+	});
+
+	it('records the kinds enclosing a claim below the top, nearest first', () => {
+		const { claims } = readBindings(
+			[
+				'(closure_parameters (_) @declaration.parameter)',
+				'(impl_item_body (declaration_list (function_item) @declaration.method))'
+			].join('\n')
+		);
+		expect(claims.map((c) => [c.vocab, c.kind, c.toplevel, c.within])).toEqual([
+			['declaration.parameter', '_', false, ['closure_parameters']],
+			['declaration.method', 'function_item', false, ['declaration_list', 'impl_item_body']]
 		]);
 	});
 
@@ -56,8 +95,8 @@ describe('readBindings', () => {
 	it('gives each option of an alternation the field and the captures of the alternation', () => {
 		const { members } = readBindings('(foo name: [(a) (b)] @x) @y.z');
 		expect(members).toEqual([
-			{ route: 'rename', owner: 'foo', key: 'name', name: 'x' },
-			{ route: 'rename', owner: 'foo', key: 'name', name: 'x' }
+			{ route: 'rename', owner: 'foo', name: 'x', field: 'name', kind: 'a', after: null },
+			{ route: 'rename', owner: 'foo', name: 'x', field: 'name', kind: 'b', after: null }
 		]);
 	});
 
@@ -71,7 +110,9 @@ describe('readBindings', () => {
 			].join('\n')
 		);
 		expect(claims.map((c) => c.vocab)).toEqual(['identifier.crate', 'declaration.variable']);
-		expect(members).toEqual([{ route: 'rename', owner: 'lexical_declaration', key: 'kind', name: 'keyword' }]);
+		expect(members).toEqual([
+			{ route: 'rename', owner: 'lexical_declaration', name: 'keyword', field: 'kind', kind: null, after: null }
+		]);
 	});
 
 	it('reads a top-level alternation as one pattern per option', () => {

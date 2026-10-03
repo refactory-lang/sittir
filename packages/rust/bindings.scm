@@ -25,6 +25,7 @@
 (enum_variant) @declaration.enum_member
 (enum_variant body: (ordered_field_declaration_list)) @declaration.enum_member.tuple
 (enum_variant body: (field_declaration_list)) @declaration.enum_member.struct
+(attributed_enum_variant (attribute_item)* (_) @element)
 (union_item) @declaration.union
 (type_item type: (_) @value) @declaration.type_alias
 (associated_type) @declaration.type_alias.associated
@@ -35,6 +36,7 @@
 (static_item) @declaration.variable.static
 (let_declaration pattern: (_) @name) @declaration.variable
 (field_declaration) @declaration.field
+(attributed_field_declaration (attribute_item)* (_) @element)
 (macro_definition) @declaration.macro
 (parameter name: (_) @name) @declaration.parameter
 (parameter (mutable_specifier) @mutable)
@@ -42,9 +44,11 @@
 (self_parameter (mutable_specifier) @mutable)
 (variadic_parameter) @declaration.parameter.variadic
 (closure_parameters (_) @declaration.parameter)
+(attributed_parameter (attribute_item)? (_) @element)
 (type_parameter bounds: (_)? @constraint default_type: (_)? @default) @declaration.type_parameter
 (const_parameter) @declaration.type_parameter.const
 (lifetime_parameter) @declaration.type_parameter.lifetime
+(attributed_type_parameter (attribute_item)* (_) @element)
 
 ; ── statement ──────────────────────────────────────────────────────────────────
 (block) @statement.block
@@ -81,6 +85,7 @@
 
 ; ── argument (pieces of a call that are not expressions) ───────────────────────
 ; none: every Rust argument is an expression
+(attributed_argument (attribute_item)* (_) @element)
 
 ; ── element (pieces of a composite expression that are not expressions) ────────
 (field_initializer) @element.struct.field
@@ -177,6 +182,7 @@
 (primitive_type) @type.primitive
 (generic_type) @type.generic
 (generic_type_with_turbofish) @type.generic.turbofish
+(type_argument (_) @element)
 (reference_type) @type.reference
 (pointer_type) @type.pointer
 (array_type) @type.array
@@ -253,3 +259,6 @@
 
 ; ── unclaimed (parser artefacts) ───────────────────────────────────────────────
 ((shebang) @unclaimed (#set! reason "interpreter line, not an item"))
+((string_open) @unclaimed (#set! reason "string delimiter, not content"))
+((raw_string_literal_start) @unclaimed (#set! reason "string delimiter, not content"))
+((raw_string_literal_end) @unclaimed (#set! reason "string delimiter, not content"))
