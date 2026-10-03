@@ -57,3 +57,39 @@ The source text a `$span` names. A span counts UTF-8 bytes, so it is sliced from
 ### `packages/tools/src/exercise/codemod-corpus.ts::spanOf`
 
 A node's `$span`, when it carries one.
+
+### `packages/tools/src/exercise/default-diff.ts::run`
+
+`sittir tool default-diff`: for each source file of one grammar, rebuilds the file through the builders (the strict factory source `emitFactorySourceText` prints) and renders it with default options only, then lists every gap between two tokens that the render spells differently from the source. The files are the evidence: an idiomatic source, formatted with the language's own formatter first (rustfmt, a prettier-compatible formatter, black), so the target is the idiom and not whatever the file happened to be. `packages/tools/tests/idiomatic/<grammar>/*.sample` holds the corpus the defaults were measured on; the `.sample` suffix keeps repo formatters, linters and the type-check off it. The per-file reports are aggregated by site, with the sites ranked by fixed gaps minus broken ones. A file the rebuild cannot print or build is reported as failed and the rest still run: such a failure is a builder or emitter defect, not a default.
+
+### `packages/tools/src/exercise/default-diff.ts::defaultDiff`
+
+One file's report: the token gaps, the differing ones, and the attribution. A gap is the source text between two adjacent tokens, taken from the tree-sitter parse of the source and of the render; a token is a leaf with width, so comments and string content are tokens. The two token sequences are aligned by text, with a bounded resync after a mismatch (a token that differs, such as a rebuilt literal, is counted as a token mismatch and its gaps are not compared). Attribution is by experiment, not by guess: every site of the grammar's address table (`sitesOf`) is set, one at a time, to each class of gap the source shows, the file is rendered again, and the gaps that stop differing are that site's `fixed`, the gaps that start differing its `broken`. A gap no site fixes is `unattributed`: a template or layout matter (line width, wrapping) and not a default.
+
+### `packages/tools/src/exercise/default-diff.ts::sitesOf`
+
+The render option sites of a grammar, read from the address table the grammar's generated `render/options.rs` carries: each site is the chain of option keys from a kind to an edge (`tryExpression.qmark.before`) and its address in the grammar's own `options:` spelling (`(try_expression)/"?"/before`). The table is read as text, so the tool needs no second derivation of which sites exist.
+
+### `packages/tools/src/exercise/default-diff.ts::optionsOf`
+
+The render options object that sets one site to one arm: the site's key chain, nested, with the arm's kind id at the end. An arm is a kind id (`kinds.Newline`), as the engine's option type declares.
+
+### `packages/tools/src/exercise/default-diff.ts::gapClassOf`
+
+The class of a gap's text: no text is `tight`, spaces or tabs only `space`, and one, two or three or more line breaks `newline`, `blankline` and `double_blankline`. Indentation after a break is not part of the class; two gaps of one class that differ in indentation are `indentOnly`.
+
+### `packages/tools/src/exercise/default-diff.ts::tokensOf`
+
+The leaves with width of a parse tree, in source order, with their text and offsets in string indices.
+
+### `packages/tools/src/exercise/default-diff.ts::alignTokens`
+
+Pairs the tokens two texts share, in order. On a mismatch it looks for the nearest pair of positions, within a window, whose tokens agree, and counts the mismatch; with none it stops, so a render that diverges for good compares only the part before.
+
+### `packages/tools/src/exercise/default-diff.ts::differences`
+
+The gaps the source and the render spell differently, over the aligned tokens. Only two tokens adjacent in both texts have a gap to compare.
+
+### `packages/tools/src/exercise/default-diff.ts::aggregate`
+
+The attributions of many files summed by site and arm.
