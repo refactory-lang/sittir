@@ -139,7 +139,8 @@ describe('a rebuilt list gives each parsed item the gap its seat declares', () =
 		const root = python.parse('import x\ndef f():\n    pass\n');
 		const [x, f] = root.statements();
 		if (f === undefined || typeof f === 'number' || !python.is.functionDefinition(f)) throw new Error('expected a function definition');
-		expect(root.$with.statements(x!, f.$with.name(python.build.identifier('g'))).$render()).toBe('import x\ndef g():\n    pass\n');
+		const edited: typeof f = f.$with.name(python.build.identifier('g'));
+		expect(root.$with.statements(x!, edited).$render()).toBe('import x\ndef g():\n    pass\n');
 	});
 
 	it('keeps a tight same-line gap beside an edited item', () => {
