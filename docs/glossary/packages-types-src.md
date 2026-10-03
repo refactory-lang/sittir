@@ -250,6 +250,16 @@ The type of `$with` on a node: its slot setters. A node passes itself in (`WithO
 
 The node after `$with.<slot>(v)` (the accessor reads the slot's input resolved through the `.Bound` map, so a storage-typed input reads as its `.Bound` surface): the node with the slot's accessor and `$with` removed by key-remapping and re-added, the accessor reading the slot's input type and `$with` pointing back at this type, so a chain accumulates. A plain intersection would leave each an overload pair in which the original signature wins. A resolved node that is itself a `ReadonlyArray` (a list view) is kept as it is, not read as a plain array.
 
+An edited node keeps its parsed shape, so a child the edit left alone still reads as the parsed node it is. Its `$trivia` is retyped too (`DraftTrivia`): the setters return the kind's `.Bound` rather than the parsed node. An edited node is no longer the parsed node it was built from, and typing it this way is what lets the checker compare an edited node with the kind's `.Bound` and finish. With a parsed `$trivia`, that comparison asked again whether the parsed node is a `.Bound`, through `$with`, and each turn built a new edited type (`WithSlot<WithSlot<…>>`). The cycle never met a pair it had already seen, so the check ran out of stack depth (TS2321), or failed, depending on which files the program had checked first. An edited node is therefore not assignable to the parsed type; a slot takes it as an admitted input.
+
+### `packages/types/src/node-surface.ts::DraftTrivia`
+
+The `$trivia` of an edited node: the trivia setter of `Self` with its result retyped to the kind's `.Bound` (`BoundFormOf`), keeping the trivia entry type.
+
+### `packages/types/src/node-surface.ts::BoundFormOf`
+
+The `.Bound` surface of a node's kind: the entry of the `.Bound` map at the node's `$type`, or the node itself when its `$type` names no entry.
+
 ### `packages/types/src/node-surface.ts::BoundOf`
 
 The surface of every engine-bound node, computed from a kind's main interface and the id-keyed map of `.Bound` interfaces. Accessors are the main interface's own, each returning the child's `.Bound` (a stored kind id passes through unchanged; a supertype distributes member by member); the storage members stay; kinds that read as a list gain `ListView`; `$source` is carried. A seated group's slot accessor and its flattened keys are left to `FlatShapesOf`, which the emitted `X.Bound` adds on top. It does not add `$with` or the node methods: the emitted `X.Bound` interface composes those on top (`$with` through `BoundWithNode`, which returns the node, and the methods through `NodeMethodsOf`). Children resolve through named interfaces in the map, so type-checking resolves lazily and never infers through the tree's recursion.
