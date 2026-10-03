@@ -87,3 +87,20 @@ export function aListSlotTakesItsBuilderArguments(): string {
 	const inner = params.$with.elements(...params);
 	return fromItems.$render() + fromNode.$render() + inner.$render();
 }
+
+export function anEditedChildGoesIntoItsParentsSlot(): string {
+	const item = rs.parse('fn f(a: u8) {\n    a;\n}\n').statements()[0]!;
+	if (!rs.is.functionItem(item)) return '';
+	const parameters = item.parameters();
+	const body = item.body();
+	const withParameters = item.$with.parameters(parameters.$with.elements(...parameters));
+	const withBody = item.$with.body(body.$with.statements(...body.statements()));
+	return withParameters.$render() + withBody.$render();
+}
+
+export function aNodeOfAnotherKindIsRefused(): void {
+	const item = rs.parse('fn f() {}\n').statements()[0]!;
+	if (!rs.is.functionItem(item)) return;
+	// @ts-expect-error a slot admits a node by its kind, and a parameter list is not a block
+	item.$with.body(item.parameters());
+}

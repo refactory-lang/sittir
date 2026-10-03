@@ -274,7 +274,39 @@ The map from a kind id to every node type a slot input may hold for that kind: i
 
 ### `packages/types/src/node-surface.ts::AdmitBound`
 
-Widens an input type so it also takes the nodes an engine produces: each member with a `$type` becomes itself plus the lookup's entry for that id, arrays and tuples widen element by element, and everything else is unchanged. It distributes over unions. The checker relates nested interface pairs to a bounded depth. Relating a kind's `.Bound` or `.Parsed` to its storage interface walks every accessor of both, and the walk exceeds that depth on deeply nested grammars. A node is therefore admitted where a kind is asked for by naming `.Bound` and `.Parsed` as explicit union members, which the checker matches by identity instead of by structure. The widening is the only place that fact is handled; every config input, positional parameter, list element and `$with` setter goes through it.
+Widens an input type so it also takes the nodes an engine produces: each member with a `$type` becomes itself plus the lookup's entry for that id, arrays and tuples widen element by element, and everything else is unchanged. It distributes over unions. The checker relates nested interface pairs to a bounded depth. Relating a kind's `.Bound` or `.Parsed` to its storage interface walks every accessor of both, and the walk exceeds that depth on deeply nested grammars. A node is therefore admitted where a kind is asked for by naming `.Bound` and `.Parsed` as explicit union members, which the checker matches by identity instead of by structure. The widening is the only place that fact is handled; every config input, positional parameter and list element goes through it. A `$with` setter admits a node by its kind first (`NodeSetter`), and uses the widening only for what is not a node: storage-shaped objects, leaf text and kind ids.
+
+### `packages/types/src/node-surface.ts::KindsOf`
+
+The kind ids a slot input names: the `$type` of each member that has a numeric one.
+
+### `packages/types/src/node-surface.ts::NodeInput`
+
+What a setter admits by kind: anything renderable (`Renderable`, the set `engine.render` admits: a `$type` and a `$render`) whose `$type` is one of the slot's kinds, or one of the slot's kind ids as such. A parsed node, a built node and an edited node are all admitted the same way, so nesting an edited node into its parent's slot needs no structural comparison.
+
+### `packages/types/src/node-surface.ts::NodeInputs`
+
+`NodeInput` element by element over a rest slot's input, read-only, so a `const` type parameter's read-only tuple fits it. Positional constraints of the rest input, such as at least one item, carry over.
+
+### `packages/types/src/node-surface.ts::NodeSetter`
+
+A slot setter's node overload: generic over the node passed (`<V extends NodeInput<…>>`, or `<const Vs extends NodeInputs<…>>` for a rest slot), admitting by kind. Its result is the same as the stored overload's, so a setter's result type does not depend on which overload took the call.
+
+### `packages/types/src/node-surface.ts::StoredSetter`
+
+A slot setter's overload for what is not a node: a storage-shaped object, leaf text, a kind id, a config object, or no argument to clear an optional slot. It admits through `AdmitBound` as a builder does, so a storage-shaped object keeps its required-field check.
+
+### `packages/types/src/node-surface.ts::ListNodeItems`
+
+The node overloads of a list slot's items form, with and without its options, generic over the items and admitting by kind.
+
+### `packages/types/src/node-surface.ts::ListStoredItems`
+
+The stored overloads of a list slot's items form, admitting through `AdmitBound`.
+
+### `packages/types/src/node-surface.ts::SlotSetterOf`
+
+A slot's setter: every node overload first, then every stored overload. Overloads are tried in order, and a stored overload compares its argument by structure. With the node overloads first, a node is taken by kind and never reaches a structural comparison, which over the grammar's mutually recursive node types could exceed the checker's depth.
 
 ### `packages/types/src/node-surface.ts::WithNode`
 
