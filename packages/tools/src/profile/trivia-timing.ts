@@ -53,6 +53,9 @@ function typedNodesOf(root: unknown): ReadNode[] {
 }
 
 export async function measureTriviaTiming(options: Omit<TriviaTimingOptions, 'json'>): Promise<TriviaTiming> {
+	if (!Number.isSafeInteger(options.rounds) || options.rounds < 1) {
+		throw new Error(`trivia-timing: rounds must be a positive integer, not ${String(options.rounds)}`);
+	}
 	const engine = await createEngine(await languageByName(options.grammar));
 	const source = readFileSync(resolve(options.file), 'utf8');
 	let bestMs = Infinity;
