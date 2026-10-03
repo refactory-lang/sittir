@@ -52,7 +52,17 @@ export default sittirGrammar(base, {
 			'item:/separator/","/after': preference('newline'),
 			'item:/delimiter': preference('Delimiter.Trailing')
 		},
-		program: { 'statements:/separator': preference('tight'), 'statements:/(_)/after': preference('blankline') },
+		program: {
+			'statements:/separator': preference('tight'),
+			'statements:/(_)/after': preference('newline'),
+			'statements:/(function_declaration)/after': preference('blankline'),
+			'statements:/(class_declaration)/after': preference('blankline'),
+			'statements:/(abstract_class_declaration)/after': preference('blankline'),
+			'statements:/(interface_declaration)/after': preference('blankline'),
+			'statements:/(enum_declaration)/after': preference('blankline'),
+			'statements:/(export_statement_default_declaration)/after': preference('blankline')
+		},
+		property_signature: { 'optional:/before': preference('tight') },
 
 		_: {
 			'decorator:/separator': preference('tight'),
@@ -127,7 +137,11 @@ export default sittirGrammar(base, {
 		lexical_declaration: { after: preference('space') },
 		variable_declaration: { after: preference('space') },
 		required_parameter: { 'decorator:/(_)/after': preference('space'), 'decorator:/end': preference('space') },
-		optional_parameter: { 'decorator:/(_)/after': preference('space'), 'decorator:/end': preference('space') },
+		optional_parameter: {
+			'decorator:/(_)/after': preference('space'),
+			'decorator:/end': preference('space'),
+			'"?"/before': preference('tight')
+		},
 
 		_bindings: {
 			'_/terminator:': 'statements/terminator',

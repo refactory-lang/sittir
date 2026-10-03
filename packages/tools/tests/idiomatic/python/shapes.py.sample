@@ -1,0 +1,59 @@
+import math
+from abc import ABC, abstractmethod
+
+
+class Shape(ABC):
+    @abstractmethod
+    def area(self) -> float:
+        raise NotImplementedError
+
+    def describe(self) -> str:
+        return "shape with area %.2f" % self.area()
+
+
+class Circle(Shape):
+    def __init__(self, radius: float) -> None:
+        self.radius = radius
+
+    def area(self) -> float:
+        return math.pi * self.radius**2
+
+
+class Rectangle(Shape):
+    def __init__(self, width: float, height: float) -> None:
+        self.width = width
+        self.height = height
+
+    def area(self) -> float:
+        return self.width * self.height
+
+
+def largest(shapes):
+    best = None
+    for shape in shapes:
+        if best is None or shape.area() > best.area():
+            best = shape
+    return best
+
+
+def histogram(values, buckets=5):
+    low, high = min(values), max(values)
+    step = (high - low) / buckets or 1
+    counts = [0] * buckets
+    for value in values:
+        index = min(int((value - low) / step), buckets - 1)
+        counts[index] += 1
+    return counts
+
+
+async def gather(tasks):
+    results = []
+    async for task in tasks:
+        results.append(await task)
+    return results
+
+
+numbers = [x * 2 for x in range(10) if x % 2 == 0]
+pairs = {(a, b) for a in range(3) for b in range(3)}
+total = sum(numbers) if numbers else 0
+assert total >= 0, "negative total"

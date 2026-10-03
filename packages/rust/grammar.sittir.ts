@@ -129,13 +129,26 @@ export default sittirGrammar(base, {
 
 		source_file: {
 			'statements:/separator': preference('tight'),
-			'statements:/(_)/after': preference('blankline'),
+			'statements:/(_)/after': preference('newline'),
+			'statements:/(function_item)/after': preference('blankline'),
+			'statements:/(struct_item_brace)/after': preference('blankline'),
+			'statements:/(enum_item)/after': preference('blankline'),
+			'statements:/(impl_item_body)/after': preference('blankline'),
+			'statements:/(trait_item)/after': preference('blankline'),
+			'statements:/(mod_item_inline)/after': preference('blankline'),
 			'statements:/(attribute_item)/after': preference('newline')
 		},
+		declaration_list: { before: preference('space'), 'declarations:/end': preference('newline') },
+		try_expression: { '"?"/before': preference('tight') },
+		removed_trait_bound: { '"?"/after': preference('tight') },
+		type_parameters: { before: preference('tight') },
+		lifetime: { after: preference('space') },
+		delim_token_tree_paren: { before: preference('tight') },
+		token_tree_paren: { before: preference('tight') },
+		token_binding_pattern: { '":"/after': preference('tight'), 'type:/before': preference('tight') },
 
 		block: { before: preference('space'), 'statements:/end': preference('newline') },
 		match_block: { before: preference('space') },
-		declaration_list: { before: preference('space') },
 		field_declaration_list: { before: preference('space') },
 		enum_variant_list: { before: preference('space') },
 		field_initializer_list: {
@@ -150,6 +163,7 @@ export default sittirGrammar(base, {
 		range_expression_postfix: { 'operator:/before': preference('tight') },
 		unary_expression: { 'operator:/after': preference('tight') },
 		token_tree_punctuation: {
+			'"?"/before': preference('tight'),
 			'","/after': preference('space'),
 			'"..."/before': preference('space'),
 			'"..."/after': preference('space')

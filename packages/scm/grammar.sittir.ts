@@ -27,7 +27,12 @@ export default sittirGrammar(base, {
 	},
 	options: {
 		indent: preference('    '),
-		named_node: { '"("/after': preference('tight'), '")"/before': preference('tight') }
+		named_node: { '"("/after': preference('tight'), '")"/before': preference('tight') },
+		program: { 'definitions:/separator': preference('newline') },
+		field_definition: { '":"/before': preference('tight') },
+		list: { '"["/after': preference('tight'), '"]"/before': preference('tight') },
+		grouping: { '"("/after': preference('tight'), '")"/before': preference('tight') },
+		predicate: { '"("/after': preference('tight'), '")"/before': preference('tight') }
 	},
 	expectDiagnostics: {
 		'unclassifiable-shape': ['predicate']

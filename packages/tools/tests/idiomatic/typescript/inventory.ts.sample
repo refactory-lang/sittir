@@ -1,0 +1,87 @@
+import { readFileSync } from "node:fs";
+import type { Options } from "./options";
+
+export interface Item {
+  name: string;
+  price?: number;
+  tags: string[];
+}
+
+export enum Level {
+  Low,
+  Medium = 5,
+  High,
+}
+
+export type Predicate<T> = (value: T) => boolean;
+
+const DEFAULT_LIMIT = 10;
+
+export class Inventory {
+  private items: Item[] = [];
+
+  constructor(private readonly limit: number = DEFAULT_LIMIT) {}
+
+  add(item: Item): this {
+    if (this.items.length >= this.limit) {
+      throw new Error("inventory is full");
+    }
+    this.items.push(item);
+    return this;
+  }
+
+  total(): number {
+    return this.items.reduce((sum, item) => sum + (item.price ?? 0), 0);
+  }
+
+  filter(predicate: Predicate<Item>): Item[] {
+    return this.items.filter(predicate);
+  }
+
+  get size(): number {
+    return this.items.length;
+  }
+}
+
+export function load(path: string, options?: Options): Inventory {
+  const inventory = new Inventory();
+  const data = JSON.parse(readFileSync(path, "utf8")) as Item[];
+  for (const entry of data) {
+    inventory.add(entry);
+  }
+  return inventory;
+}
+
+export async function fetchAll(urls: string[]): Promise<string[]> {
+  const results: string[] = [];
+  for (const url of urls) {
+    const response = await fetch(url);
+    results.push(await response.text());
+  }
+  return results;
+}
+
+export const names = (inventory: Inventory): string[] =>
+  inventory.filter(() => true).map((item) => item.name);
+
+switch (DEFAULT_LIMIT) {
+  case 1:
+    console.log("one");
+    break;
+  default:
+    console.log("many");
+}
+
+const level: Level = Level.High;
+const label = level === Level.High ? "high" : "other";
+let counter = 0;
+while (counter < 3) {
+  counter++;
+}
+try {
+  load("items.json");
+} catch (error) {
+  console.error(error);
+} finally {
+  console.log(label);
+}

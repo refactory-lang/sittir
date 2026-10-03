@@ -1,0 +1,63 @@
+import json
+import os
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Iterable, Optional
+
+DEFAULT_LIMIT = 10
+
+
+@dataclass
+class Item:
+    name: str
+    price: float = 0.0
+    tags: list = field(default_factory=list)
+
+    def label(self) -> str:
+        return self.name.upper()
+
+    @property
+    def is_free(self) -> bool:
+        return self.price == 0
+
+
+class Inventory:
+    def __init__(self, items: Optional[Iterable[Item]] = None):
+        self.items = list(items or [])
+
+    def add(self, item: Item) -> None:
+        self.items.append(item)
+
+    def total(self) -> float:
+        return sum(item.price for item in self.items)
+
+    def cheapest(self, limit: int = DEFAULT_LIMIT) -> list:
+        ordered = sorted(self.items, key=lambda item: item.price)
+        return ordered[:limit]
+
+    def by_tag(self, tag: str) -> dict:
+        return {item.name: item for item in self.items if tag in item.tags}
+
+
+def load(path: Path) -> Inventory:
+    with open(path) as handle:
+        data = json.load(handle)
+    items = [Item(entry["name"], entry.get("price", 0)) for entry in data]
+    return Inventory(items)
+
+
+def main() -> None:
+    root = Path(os.getcwd())
+    inventory = load(root / "items.json")
+    for item in inventory.cheapest(3):
+        print(item.label(), item.price)
+    try:
+        inventory.add(Item("extra"))
+    except ValueError as error:
+        print("failed", error)
+    finally:
+        print("done")
+
+
+if __name__ == "__main__":
+    main()
