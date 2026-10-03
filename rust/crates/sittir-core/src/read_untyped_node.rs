@@ -505,20 +505,49 @@ pub fn line_gaps(
 }
 
 /// The node a coordinate names: of the nodes spanning exactly `start..end`,
-/// the outermost the read stamped `kind`. The search descends from the root
-/// through every node whose range contains the span, so a zero-width node is
-/// found beside a sibling that ends or starts at the same byte.
+/// the outermost the read stamped `kind`, either the grammar symbol that
+/// parsed it or the kind the parser shows it as (`identity`), since a node
+/// read as an alias envelope is addressed by the kind it shows.
+///
+/// The search descends from the root by byte: at each level the cursor steps
+/// to the child at `start` (`goto_first_child_for_byte`) without visiting the
+/// children before it. A span of at least one byte can only sit in that
+/// child, since siblings never overlap; a zero-width span can also sit at the
+/// end of a sibling ending at `start` or in a zero-width sibling there, so the
+/// walk first steps back over the siblings ending at `start`, then tries each
+/// child forward, in source order, while it starts at or before `start`.
 pub fn node_at_span<'t>(tree: &'t tree_sitter::Tree, start: usize, end: usize, kind: u16) -> Option<tree_sitter::Node<'t>> {
     fn search<'t>(node: tree_sitter::Node<'t>, start: usize, end: usize, kind: u16) -> Option<tree_sitter::Node<'t>> {
-        if node.start_byte() == start && node.end_byte() == end && stamped_kind(&node).0 == kind {
+        if node.start_byte() == start && node.end_byte() == end && (stamped_kind(&node).0 == kind || node.kind_id() == kind) {
             return Some(node);
         }
-        let mut cursor = node.walk();
-        let found = node
-            .children(&mut cursor)
-            .filter(|child| child.start_byte() <= start && end <= child.end_byte())
-            .find_map(|child| search(child, start, end, kind));
-        found
+        let mut walker = node.walk();
+        if walker.goto_first_child_for_byte(start).is_none() && !walker.goto_last_child() {
+            return None;
+        }
+        if start == end {
+            loop {
+                let mut back = walker.clone();
+                if !back.goto_previous_sibling() || back.node().end_byte() < start {
+                    break;
+                }
+                walker = back;
+            }
+        }
+        loop {
+            let child = walker.node();
+            if child.start_byte() > start {
+                return None;
+            }
+            if end <= child.end_byte() {
+                if let Some(found) = search(child, start, end, kind) {
+                    return Some(found);
+                }
+            }
+            if !walker.goto_next_sibling() {
+                return None;
+            }
+        }
     }
     search(tree.root_node(), start, end, kind)
 }
