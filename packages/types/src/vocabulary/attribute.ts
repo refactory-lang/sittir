@@ -10,7 +10,8 @@ import type * as V from './index.ts';
 export interface Attribute<G extends GrammarContext> {
 	// claimed by r
 	readonly kind: 'attribute';
-	readonly content?: V.Attribute.Content<G>;
+	readonly content?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | V.Attribute.Content.Any<G>;
+	// prt only
 }
 
 export namespace Attribute {
@@ -46,9 +47,15 @@ export namespace Attribute {
 		export interface Call<G extends GrammarContext> extends Simplify<SubKindOf<V.Attribute.Content<G>>> {
 			// claimed by t
 			readonly kind: 'attribute.content.call';
-			readonly arguments: (G['expression'] | G['element'])[];
+			readonly arguments: (
+				| V.Declaration.Module<G>
+				| V.Element.Splat<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+			)[];
 			readonly function: V.Attribute.Content.Member<G> | G['identifier'];
-			readonly typeArguments?: G['type'][];
+			readonly typeArguments?: (G['identifier'] | G['type'])[];
 		}
 		export interface Member<G extends GrammarContext> extends Simplify<SubKindOf<V.Attribute.Content<G>>> {
 			// claimed by t
@@ -70,7 +77,7 @@ export namespace Attribute {
 	export interface Decorator<G extends GrammarContext> extends Simplify<SubKindOf<V.Attribute<G>>> {
 		// claimed by pt
 		readonly kind: 'attribute.decorator';
-		readonly expression: G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | V.Attribute.Content.Any<G>;
+		readonly content: G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | V.Attribute.Content.Any<G>;
 	}
 	export interface Inner<G extends GrammarContext> extends Simplify<SubKindOf<V.Attribute<G>>> {
 		// claimed by r

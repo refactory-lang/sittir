@@ -128,12 +128,25 @@ export namespace Literal {
 	export interface String<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal<G>>> {
 		// claimed by prt
 		readonly kind: 'literal.string';
-		readonly contents?: (V.Unmapped<'python:string_content'> | V.Expression.Interpolation<G>)[];
+		readonly content?:
+			| V.Unmapped<'rust:raw_string_literal_content'>
+			| V.Unmapped<'rust:string_content'>
+			| V.Literal.String.Escape<G>
+			| (
+					| V.Unmapped<'rust:raw_string_literal_content'>
+					| V.Unmapped<'rust:string_content'>
+					| V.Literal.String.Escape<G>
+			  )[];
+		// rt only
+		// unmapped: <rust:raw_string_literal_content> <rust:string_content>
+		readonly contents?: (
+			| V.Unmapped<'python:escape_interpolation'>
+			| V.Unmapped<'python:string_fragment'>
+			| V.Expression.Interpolation<G>
+			| V.Literal.String.Escape<G>
+		)[];
 		// p only
-		// unmapped: <python:string_content>
-		readonly elements?: (V.Unmapped<'rust:string_content'> | V.Literal.String.Escape<G>)[];
-		// r only
-		// unmapped: <rust:string_content>
+		// unmapped: <python:escape_interpolation> <python:string_fragment> literal:not_escape_sequence
 	}
 	export namespace String {
 		export interface Bytes<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.String<G>>> {
@@ -148,8 +161,13 @@ export namespace Literal {
 		export interface Docstring<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.String<G>>> {
 			// claimed by p
 			readonly kind: 'literal.string.docstring';
-			readonly contents?: (V.Unmapped<'python:string_content'> | V.Expression.Interpolation<G>)[];
-			// unmapped: <python:string_content>
+			readonly contents?: (
+				| V.Unmapped<'python:escape_interpolation'>
+				| V.Unmapped<'python:string_fragment'>
+				| V.Expression.Interpolation<G>
+				| V.Literal.String.Escape<G>
+			)[];
+			// unmapped: <python:escape_interpolation> <python:string_fragment> literal:not_escape_sequence
 		}
 		export interface Escape<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.String<G>>> {
 			// claimed by prt
@@ -165,12 +183,6 @@ export namespace Literal {
 			readonly content: V.Unmapped<'rust:raw_string_literal_content'>;
 			// r only
 			// unmapped: <rust:raw_string_literal_content>
-			readonly rawStringLiteralEnd: V.Unmapped<'rust:raw_string_literal_end'>;
-			// r only
-			// unmapped: <rust:raw_string_literal_end>
-			readonly rawStringLiteralStart: V.Unmapped<'rust:raw_string_literal_start'>;
-			// r only
-			// unmapped: <rust:raw_string_literal_start>
 		}
 		export interface Triple<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.String<G>>> {
 			// claimed by p

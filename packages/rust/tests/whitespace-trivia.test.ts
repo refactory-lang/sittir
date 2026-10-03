@@ -62,6 +62,16 @@ describe('a read node carries the line breaks before it as whitespace trivia', (
 		expect(b!.$trivia.trailing()).toEqual([newline]);
 	});
 
+	it('reads the trivia of an aliased node of a deep read', () => {
+		const item = rs.parse('fn f(\n    x: Foo,\n) {}\n', { deep: true }).statements()[0];
+		if (item === undefined || !rs.is.functionItem(item)) throw new Error('expected a function item');
+		const parameter = item.parameters().elements()?.items()[0]?.content();
+		if (parameter === undefined || !rs.is.parameter(parameter)) throw new Error('expected a parameter');
+		const type = parameter.type();
+		if (typeof type === 'number' || type.$type !== rs.kinds.TypeIdentifier) throw new Error('expected a type identifier');
+		expect(type.$trivia.leading()).toEqual([]);
+	});
+
 	it('finds every node of a deep read by its coordinate, a zero-width comment content included', () => {
 		const source = '\n//!\n\n/*!*/\n\n//\n\n///\nlet x;\n';
 		const addresses: { treeHandle: number; span: { start: number; end: number }; kind: number }[] = [];

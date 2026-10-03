@@ -15,6 +15,7 @@ export interface ModelNode {
 	readonly modelType: string;
 	readonly slots: readonly ModelSlot[];
 	readonly subtypes: readonly string[];
+	readonly elementKinds: readonly string[];
 	readonly enumValues: readonly string[];
 	readonly text: string | null;
 	readonly pattern: string | null;
@@ -42,6 +43,7 @@ interface RawNode {
 	readonly modelType?: string;
 	readonly slots?: readonly RawSlot[];
 	readonly subtypes?: readonly string[];
+	readonly elementKinds?: readonly string[];
 	readonly values?: readonly string[];
 	readonly text?: string;
 	readonly pattern?: string;
@@ -71,6 +73,7 @@ export function loadSlotModel(grammar: string): SlotModel {
 				terminals: (s.values ?? []).flatMap((v) => (v.kind === 'terminal' && v.value !== undefined ? [v.value] : []))
 			})),
 			subtypes: n.subtypes ?? [],
+			elementKinds: n.elementKinds ?? [],
 			enumValues: n.values ?? [],
 			text: n.text ?? null,
 			pattern: n.pattern ?? null
