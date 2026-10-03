@@ -170,14 +170,8 @@ export interface ParsedRead<TRoot = unknown, TTree extends object = object> {
 	tree: TTree;
 }
 
-/**
- * What a whole-source parse always stamps on its root: the span covering the
- * whole file, and the regions of the source that did not parse. The text is
- * the tree's, reachable as `tree.source`; every other read node carries its
- * span only.
- */
+/** What a whole-source parse always stamps on its root: the regions of the source that did not parse. */
 export interface ParsedRoot {
-	readonly $span: { start: number; end: number };
 	/** Every ERROR and MISSING region of the source, in source order; empty when the source parsed cleanly. */
 	readonly $errors: readonly ErrorRegion[];
 }

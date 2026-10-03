@@ -157,15 +157,15 @@ export interface AnyUntypedNode {
 export type ErrorKindId = 65535;
 
 /**
- * A parsed ERROR node: the source error recovery wrapped, as text over its
- * span. Only a read produces one; there is no factory for it. It surfaces in
- * a slot or as a trivia item.
+ * A parsed ERROR node: the source error recovery wrapped, as text. Only a
+ * read produces one; there is no factory for it. It surfaces in a slot or as
+ * a trivia item. Where it sits in the source is reported by the parsed root's
+ * `$errors`.
  */
 export interface ErrorNode extends AnyUntypedNode {
 	readonly $type: ErrorKindId;
 	readonly $source: 0 | 1;
 	readonly $text: string;
-	readonly $span: { start: number; end: number };
 }
 
 /** An item a trivia position holds: one of the grammar's trivia nodes, or an ERROR node read there. */

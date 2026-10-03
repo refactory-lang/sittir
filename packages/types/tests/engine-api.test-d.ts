@@ -123,9 +123,6 @@ declare const errorNode: ErrorNode;
 export const triviaItems: readonly (NoEmptyForm | ErrorNode)[] = trivia.leading();
 export const reattached: FakeNode = trivia.trailing(errorNode);
 
-// The error guard narrows a trivia item to the ERROR node, exposing its text and span.
+// The error guard narrows a trivia item to the ERROR node, exposing its text.
 const firstItem = trivia.leading()[0];
-if (parsing.isErrorNode(firstItem)) {
-	firstItem.$text satisfies string;
-	firstItem.$span.start satisfies number;
-}
+if (parsing.isErrorNode(firstItem)) firstItem.$text satisfies string;

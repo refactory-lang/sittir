@@ -13435,11 +13435,10 @@ normalization; a node that already carries slot storage (built or edited) is lef
 ```text
 /** The exported alias naming the wrapped root surface, once `finalize()`
 	 *  has run. `undefined` when no root kind was configured. The alias is the
-	 *  root kind's wrap-table row intersected with `@sittir/common`'s
-	 *  `ParsedRoot`: the reader stamps `$span` and the captured `$text` on a
-	 *  whole-source parse's root (required there, optional on every other read
-	 *  node), and `wrapNode`'s typed overload keeps whichever of those members
-	 *  its input declares — the wrap spreads the data it is given — so
+	 *  root kind's wrap-table row intersected with `ParsedRoot`: a
+	 *  whole-source parse's root carries the parse's error regions
+	 *  (`$errors`), and `wrapNode`'s typed overload keeps whichever of those
+	 *  members its input declares — the wrap spreads the data it is given — so
 	 *  `engine.parse()` reaches this alias without a cast. */
 ```
 
