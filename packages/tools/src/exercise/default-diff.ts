@@ -2,6 +2,7 @@ import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createEngine } from '@sittir/common';
+import { isFactoryNode } from '@sittir/common/utils';
 import { emitFactorySourceText } from '../emit/factory-source.ts';
 import { languageByName } from '../languages.ts';
 import { loadLanguageForGrammar } from '../validate/common.ts';
@@ -39,7 +40,7 @@ export interface GapDifference {
 
 export interface Site {
 	readonly keys: readonly string[];
-	readonly path: string;
+	readonly paths: readonly string[];
 }
 
 export interface Attribution {
@@ -154,7 +155,7 @@ export function differences(
 
 const BRANCH = /AddressNode::Branch \{ key: "(\w+)", path: "(?:[^"\\]|\\.)*", children: &\[$/;
 const LEAF = /AddressNode::(?:Spacing|Delimiter) \{ key: "(\w+)", sites: &\[(.*)\] \},?$/;
-const SITE_PATH = /path: "((?:[^"\\]|\\.)*)"/;
+const SITE_PATH = /path: "((?:[^"\\]|\\.)*)"/g;
 
 export function sitesOf(grammar: string): Site[] {
 	const file = join(REPO_ROOT, 'rust', 'crates', `sittir-${grammar}`, 'src', 'render', 'options.rs');
@@ -173,8 +174,8 @@ export function sitesOf(grammar: string): Site[] {
 		}
 		const leaf = LEAF.exec(line);
 		if (leaf === null || stack.length === 0) continue;
-		const path = SITE_PATH.exec(leaf[2]!)?.[1];
-		if (path !== undefined) sites.push({ keys: [...stack, leaf[1]!], path: JSON.parse(`"${path}"`) as string });
+		const paths = [...leaf[2]!.matchAll(SITE_PATH)].map((match) => JSON.parse(`"${match[1]!}"`) as string);
+		if (paths.length > 0) sites.push({ keys: [...stack, leaf[1]!], paths });
 	}
 	return sites;
 }
@@ -210,22 +211,40 @@ export async function defaultDiff(grammar: string, source: string, options: Defa
 	const tokensOfText = (text: string): Token[] => {
 		const tree = parser.parse(text);
 		if (!tree) throw new Error(`default-diff: the ${grammar} parse failed`);
-		return tokensOf(tree.rootNode);
+		try {
+			return tokensOf(tree.rootNode);
+		} finally {
+			tree.delete();
+		}
 	};
 	const sourceTokens = tokensOfText(source);
 	const moduleDir = join(TOOLS_ROOT, '.default-diff');
 	mkdirSync(moduleDir, { recursive: true });
 	moduleCount += 1;
+	const language = await languageByName(grammar);
+	const defaultEngine = await createEngine(language);
 	const file = join(moduleDir, `${grammar}-${process.pid}-${moduleCount}.ts`);
 	try {
 		writeFileSync(file, await emitFactorySourceText(grammar, source, 'Generated', { surface: 'strict' }));
-		const built = ((await import(pathToFileURL(file).href)) as Record<string, () => unknown>)['Generated']!();
-		const language = await languageByName(grammar as never);
-		const renderWith = async (render: Record<string, unknown> | undefined): Promise<string> => {
-			const engine = await createEngine(language, render === undefined ? undefined : ({ render } as never));
-			return (engine as unknown as { render(node: unknown): { toString(): string } }).render(built).toString();
+		const generated: Record<string, unknown> = await import(pathToFileURL(file).href);
+		const factory = generated['Generated'];
+		if (typeof factory !== 'function') throw new Error('default-diff: the emitted module exports no `Generated` factory');
+		const built: unknown = factory();
+		if (!isFactoryNode(built)) throw new Error('default-diff: `Generated` did not build a node');
+		const renderWith = async (render: object | undefined): Promise<string> => {
+			if (render === undefined) return defaultEngine.render(built).toString();
+			const engine = await createEngine(language, { render });
+			try {
+				return engine.render(built).toString();
+			} finally {
+				engine.dispose();
+			}
 		};
-		const kinds = ((await createEngine(language)) as unknown as { kinds: Readonly<Record<string, number>> }).kinds;
+		const kindId = (name: string): number => {
+			const id: unknown = Reflect.get(defaultEngine.kinds, name);
+			if (typeof id !== 'number') throw new Error(`default-diff: the ${grammar} engine has no kind \`${name}\``);
+			return id;
+		};
 		const rendered = await renderWith(undefined);
 		const base = differences(sourceTokens, source, tokensOfText(rendered), rendered);
 		const baseIndices = new Set(base.list.filter((d) => !d.indentOnly).map((d) => d.index));
@@ -242,7 +261,7 @@ export async function defaultDiff(grammar: string, source: string, options: Defa
 					seen.add(key);
 					let text: string;
 					try {
-						text = await renderWith(optionsOf(site, kinds[ARM_KIND[arm]]!));
+						text = await renderWith(optionsOf(site, kindId(ARM_KIND[arm])));
 					} catch {
 						continue;
 					}
@@ -255,7 +274,7 @@ export async function defaultDiff(grammar: string, source: string, options: Defa
 					if (fixedIndices.length === 0) continue;
 					for (const i of fixedIndices) attributed.add(i);
 					attributions.push({
-						path: site.path,
+						path: site.paths.join(' | '),
 						arm,
 						fixed: fixedIndices.length,
 						broken,
@@ -278,6 +297,7 @@ export async function defaultDiff(grammar: string, source: string, options: Defa
 			rendered
 		};
 	} finally {
+		defaultEngine.dispose();
 		rmSync(file, { force: true });
 	}
 }
@@ -335,7 +355,7 @@ export async function run(opts: DefaultDiffRun): Promise<number> {
 	const table = aggregate(reports);
 	if (opts.json) {
 		process.stdout.write(`${JSON.stringify({ grammar: opts.grammar, files: reports.map(({ rendered: _r, ...r }) => r), failed, sites: table }, null, 2)}\n`);
-		return 0;
+		return failed.length > 0 ? 1 : 0;
 	}
 	for (const report of reports) {
 		process.stdout.write(`${report.file}: ${report.differing}/${report.gaps} gaps differ (${report.indentOnly} indent-only, ${report.tokenMismatches} token mismatches, ${report.unattributed.length} unattributed)\n`);
@@ -343,5 +363,5 @@ export async function run(opts: DefaultDiffRun): Promise<number> {
 	for (const { file, message } of failed) process.stdout.write(`${file}: rebuild failed: ${message}\n`);
 	process.stdout.write('site\tarm\tfixed\tbroken\tfiles\texamples\n');
 	for (const row of table) process.stdout.write(`${row.path}\t${row.arm}\t${row.fixed}\t${row.broken}\t${row.files}\t${row.examples.join('; ')}\n`);
-	return 0;
+	return failed.length > 0 ? 1 : 0;
 }

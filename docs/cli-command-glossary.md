@@ -284,6 +284,7 @@ Rebuild idiomatic source through the builders with default render options, list 
 
 - `--grammar <name>` — Grammar the files are written in
 - `--no-attribute` — List the differing gaps only; skip the per-site experiments
+- `--rendered-dir <dir>` — Write each file's rendered text into this directory
 - `--json` — Print the result as JSON
 
 **Example**
