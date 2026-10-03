@@ -17,6 +17,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { loadLanguageForGrammar } from '../../packages/tools/src/validate/common.ts';
+import { inlineAnchor } from '../../packages/tools/src/exercise/codemod-corpus.ts';
 
 /** A function_item match marked for inlining. */
 interface InlineMatch {
@@ -93,24 +94,13 @@ function visit(cursor: any, source: string, out: InlineMatch[]): void {
 
 /**
  * Decide whether a function_item is a codemod candidate. Returns the
- * splice-anchor + indent on success, null on skip.
- *
- * Skip conditions: missing block body; body line count > 5; existing
- * `#[inline]` attribute on the function or its containing
- * declaration_list (any `attribute_item` immediately before whose text
- * starts with `#[inline]` or `#[inline(`).
+ * splice-anchor + indent on success, null on skip. The selection itself is
+ * the tool's (`inlineAnchor`), read through tree-sitter nodes. Attribute
+ * items attach as siblings in the declaration_list / source_file parent, not
+ * as children of function_item, so the siblings are the parent's named
+ * children.
  */
 function considerFunction(node: any, source: string): InlineMatch | null {
-	const body = node.childForFieldName('body');
-	if (body === null || body.type !== 'block') return null;
-	const bodyText = source.slice(body.startIndex, body.endIndex);
-	const lineCount = bodyText.split('\n').length;
-	if (lineCount > 5) return null;
-
-	// Walk preceding attribute_item siblings looking for #[inline].
-	// Attribute items in tree-sitter-rust attach as siblings via the
-	// declaration_list / source_file parent (they're not children of
-	// function_item), so we scan parent.namedChildren BEFORE this fn.
 	const parent = node.parent;
 	if (parent === null) return null;
 	const siblings: any[] = [];
@@ -119,22 +109,19 @@ function considerFunction(node: any, source: string): InlineMatch | null {
 	}
 	const myIdx = siblings.findIndex((s) => s.id === node.id);
 	if (myIdx < 0) return null;
-	let firstAttrIdx = myIdx;
-	for (let i = myIdx - 1; i >= 0; i--) {
-		const sib = siblings[i];
-		if (sib.type === 'attribute_item' || sib.type === 'inner_attribute_item') {
-			const text = source.slice(sib.startIndex, sib.endIndex);
-			if (/^#!?\[\s*inline\b/.test(text)) return null;
-			firstAttrIdx = i;
-			continue;
+	const anchor = inlineAnchor(siblings, myIdx, {
+		isAttribute: (sib) => sib.type === 'attribute_item' || sib.type === 'inner_attribute_item',
+		text: (sib) => source.slice(sib.startIndex, sib.endIndex),
+		body: (fn) => {
+			const body = fn.childForFieldName('body');
+			return body === null || body.type !== 'block' ? undefined : source.slice(body.startIndex, body.endIndex);
 		}
-		break;
-	}
+	});
+	if (anchor === undefined) return null;
 
-	const anchorNode = siblings[firstAttrIdx];
-	const startIndex = anchorNode.startIndex;
+	const startIndex = siblings[anchor].startIndex;
 	// Indent = whitespace from the start of the line containing
-	// anchorNode up to its first column. Lets the inserted attribute
+	// the anchor up to its first column. Lets the inserted attribute
 	// align with the function (top-level functions get '', nested
 	// ones inside an impl block get the impl's indentation).
 	const lineStart = source.lastIndexOf('\n', startIndex - 1) + 1;

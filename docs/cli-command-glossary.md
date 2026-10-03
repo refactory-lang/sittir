@@ -241,6 +241,21 @@ Inspect kind classification through the compiler phases
 pnpm exec tsx packages/cli/src/cli.ts tool classify [options]
 ```
 
+### `tool codemod-corpus`
+
+Run the inline-attribute codemod through $with over the acceptance corpus and count files byte-identical to its baseline
+
+**Options**
+
+- `--corpus <dir>` — Corpus directory holding the .rs files and a baseline/ directory (default: the acceptance codemod sample)
+- `--json` — Print the result as JSON
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool codemod-corpus [options]
+```
+
 ### `tool corpus-coverage-census`
 
 Declared rule kinds with zero corpus exposure
