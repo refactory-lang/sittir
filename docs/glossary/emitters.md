@@ -11387,12 +11387,13 @@ A slot's value expression with its omission filled: `(<value> ?? [])` for a mult
 
 ### `packages/codegen/src/emitters/factories.ts::declaredDelimiterDefault`
 
-The `Delimiter` member a separated-list factory stamps when the caller
-gives none: the grammar's declared default for that list's `<slot>_delimiter`
-site, else `Delimiter.None`. The factory overlays declared preferences at
-construction, so this is the same fact the render table's default is made
-from; a transport always arrives with the field set, and the two sides
-agree.
+The grammar's declared default for a separated list's `<slot>_delimiter`
+site, else `Delimiter.None`, as a `Delimiter` member. It is the same fact the
+render table's default is made from. A list factory does not stamp it: a list
+built without a delimiter leaves `_delimiter` unset, and the render takes the
+default from the options table, the one channel for preference defaults. The
+node model records it for tools that compare a list's delimiter with its
+default.
 
 ### `packages/codegen/src/emitters/factories.ts::declaredSeparatorDefault`
 
@@ -16031,9 +16032,28 @@ error, not the render's.
 
 A list's delimiter is filled from the table like any site, zero included:
 the table's value is the grammar's declared default or a render option, and
-the transport's own value still wins.
+the transport's own value still wins. One exception: a list whose trailing
+separator is optional takes its trailing flag from the source while its
+source flank after is kept (`sourceTrailingSeparatorTexts`).
 
 Every struct transport prepares its `transport_trivia_data` first, leaves included. A trivia entry that is a source coordinate takes its kind's edges there, as a coordinate in a slot does.
+
+### `packages/codegen/src/emitters/render-module.ts::sourceTrailingSeparatorTexts`
+
+The separator spellings a list's generated `prepare` checks at the end of its
+source flank, or none when the list's trailing separator is not optional. They
+are the multiple slot's literal separator texts and the string arms of the
+list's separator rule.
+
+When a list has them, an unset `delimiter` is filled by
+`source_trailing_delimiter` instead of the plain table value. A rebuilt list
+whose last item is still the source's last keeps its source flank after
+(`sourceFlankOf`, the same evidence the trailing flank uses). For such a list
+the trailing flag follows the source: set if the flank text, trailing
+whitespace trimmed, ends in one of these spellings, clear otherwise. The
+leading flag and every list without that flank take the table value. The
+source wins both ways, so a source with no trailing separator renders none
+even where the table's default is trailing.
 
 ### `packages/codegen/src/emitters/render-module.ts::optionDefaultFills`
 
@@ -16594,7 +16614,7 @@ The emitted `_keywordOr(input, keywords, () => resolved)` that replaces `_keywor
 
 ### `packages/codegen/src/emitters/factories.ts::listOptionDefaults`
 
-The options a separated list's factory takes, each with the expression the factory falls back to when the option is not passed: the delimiter's resolved arm (`Delimiter.None` when the list declares none) and the separator's declared arm (`undefined` when there is none). It reads the same option flags as the options type and the same default derivations as the list factory, so a list owner's getters report exactly what the factory would build.
+The options a separated list's factory takes, each with the expression a list owner's getter falls back to when the list does not hold it: `undefined` for the delimiter, which a list built without one leaves unset (its default is the options table's, applied at render), and the separator's declared arm (`undefined` when there is none). It reads the same option flags as the options type, so a list owner's getters report what the list holds.
 
 ### `packages/codegen/src/emitters/factories.ts::listSlotTargets`
 

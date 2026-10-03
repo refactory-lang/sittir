@@ -1,6 +1,7 @@
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
-import { isFixedTextLeaf, isTerminalNode, kindIdText } from '../compiler/model/node-map.ts';
+import { isFixedTextLeaf, isTerminalNode, kindIdText, separatorArmsOf } from '../compiler/model/node-map.ts';
+import { STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import { wordCharAsciiTable } from '../util/word-matcher.ts';
 import { isBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -2790,6 +2791,15 @@ function edgeIdOf(plan: RenderPlan, node: AssembledNode, kindEntries: readonly K
 	throw new Error(`kind '${kind}' has kind-edge sites but no edge row to prepare and write them from`);
 }
 
+function sourceTrailingSeparatorTexts(node: AssembledList): readonly string[] {
+	if (node.trailingDelimiter !== 'optional') return [];
+	const model = renderSlotModelOf(node);
+	const field = [...model.named, ...model.unnamed].find(isMultiple);
+	const literal = field === undefined ? [] : slotSeparatorTexts(field, false);
+	const armed = node.separatorRule === undefined ? [] : separatorArmsOf(node.separatorRule).tokens.flatMap((arm) => (arm.type === STRING ? [arm.value] : []));
+	return [...new Set([...literal, ...armed])];
+}
+
 function delimiterSiteOf(plan: RenderPlan, node: AssembledNode): DelimiterSite | undefined {
 	const kind = node.display.name;
 	return plan.delimiterSites.find((site) => site.kind === kind);
@@ -3094,9 +3104,12 @@ function prepareStructImpl(
 	const body: string[] = ['        self.transport_trivia_data.prepare(ctx)?;'];
 	if (isCompound) {
 		body.push(...rootEdgeStamp(plan, node, fillFields));
-		if (kindEdgeSidesOf(plan, node).size > 0) {
+		const delim = node instanceof AssembledList ? delimiterSiteOf(plan, node) : undefined;
+		const trailingSeparators = delim !== undefined && node instanceof AssembledList ? sourceTrailingSeparatorTexts(node) : [];
+		const edged = kindEdgeSidesOf(plan, node).size > 0;
+		if (edged || trailingSeparators.length > 0) body.push('        let flank = self.source_flank.take();');
+		if (edged) {
 			body.push(
-				'        let flank = self.source_flank.take();',
 				'        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);',
 				'        ::sittir_core::prepare::prepare_edges(self, ctx);'
 			);
@@ -3109,9 +3122,13 @@ function prepareStructImpl(
 			);
 		}
 		body.push(...seatLoops(plan, node, nodeMap));
-		const delim = node instanceof AssembledList ? delimiterSiteOf(plan, node) : undefined;
 		if (delim !== undefined) {
-			body.push(`        self.delimiter.get_or_insert(ctx.options.delimiter[options::${delim.constName}]);`);
+			const fallback = `ctx.options.delimiter[options::${delim.constName}]`;
+			const value =
+				trailingSeparators.length === 0
+					? fallback
+					: `::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), &[${trailingSeparators.map((t) => JSON.stringify(t)).join(', ')}], ${fallback}, ctx)`;
+			body.push(`        self.delimiter.get_or_insert(${value});`);
 		}
 		const sep = node instanceof AssembledList ? separatorSiteOf(plan, node) : undefined;
 		if (sep !== undefined)

@@ -85,6 +85,30 @@ pub fn fill_source_flanks<T: Edged + ?Sized>(
     }
 }
 
+/// A rebuilt list's delimiter flags with its trailing flag as its source
+/// spells it. While the flank after is kept, the list's last item is still the
+/// source's last, so the trailing flag (2) is set iff the list's source text
+/// ends with one of its `separators`. Without that flank, or with no source,
+/// the flags are `default`, the options table's. The leading flag is always
+/// `default`'s.
+pub fn source_trailing_delimiter(
+    flank: Option<&SourceFlank>,
+    separators: &[&str],
+    default: u8,
+    ctx: &RenderContext<'_>,
+) -> u8 {
+    let Some(flank) = flank.filter(|flank| flank.after) else { return default };
+    let Some(text) = flank
+        .source(ctx.sources)
+        .and_then(|source| source.get(flank.span.start as usize..flank.span.end as usize))
+    else {
+        return default;
+    };
+    let tail = text.trim_end();
+    let spelled = separators.iter().any(|separator| !separator.is_empty() && tail.ends_with(separator));
+    (default & !2) | if spelled { 2 } else { 0 }
+}
+
 /// The line of `text` that byte `at` sits on.
 fn line_of(text: &str, at: usize) -> &str {
     let at = at.min(text.len());
@@ -578,5 +602,42 @@ mod tests {
     #[test]
     fn a_list_whose_flanks_were_not_kept_takes_none() {
         assert_eq!(flanks(BROKEN, "a,\n    b,", false, false), (None, None));
+    }
+    /// The delimiter a list spanning `list` in `source` takes over the options default `default`.
+    fn trailing(source: &str, list: &str, after: bool, default: u8) -> u8 {
+        use crate::slot::SourceFlank;
+        let sources = Sources(HashMap::from([(3, Arc::from(source))]));
+        let options = ResolvedOptions::default();
+        let ctx = RenderContext { options: &options, sources: &sources };
+        let start = source.find(list).unwrap() as u32;
+        let flank = SourceFlank {
+            handle: encode_handle(3, 0),
+            span: Span { start, end: start + list.len() as u32 },
+            before: false,
+            after,
+        };
+        super::source_trailing_delimiter(Some(&flank), &[","], default, &ctx)
+    }
+
+    #[test]
+    fn a_kept_flank_after_keeps_the_source_trailing_separator() {
+        assert_eq!(trailing("f(\n    a,\n    b,\n)", "a,\n    b,", true, 0), 2);
+    }
+
+    #[test]
+    fn a_kept_flank_after_with_no_source_separator_clears_a_trailing_default() {
+        assert_eq!(trailing("f(\n    a,\n    b\n)", "a,\n    b", true, 2), 0);
+    }
+
+    #[test]
+    fn a_flank_after_not_kept_takes_the_options_default() {
+        assert_eq!(trailing("f(\n    a,\n    b,\n)", "a,\n    b,", false, 0), 0);
+        assert_eq!(trailing("f(\n    a,\n    b\n)", "a,\n    b", false, 2), 2);
+    }
+
+    #[test]
+    fn the_leading_flag_always_comes_from_the_options_default() {
+        assert_eq!(trailing("f(\n    a,\n    b,\n)", "a,\n    b,", true, 1), 3);
+        assert_eq!(trailing("f(\n    a,\n    b\n)", "a,\n    b", true, 3), 1);
     }
 }
