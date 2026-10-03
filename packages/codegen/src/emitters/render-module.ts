@@ -1,6 +1,7 @@
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 import { isFixedTextLeaf, isTerminalNode, kindIdText } from '../compiler/model/node-map.ts';
+import { STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import { wordCharAsciiTable } from '../util/word-matcher.ts';
 import { isBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -2790,6 +2791,29 @@ function edgeIdOf(plan: RenderPlan, node: AssembledNode, kindEntries: readonly K
 	throw new Error(`kind '${kind}' has kind-edge sites but no edge row to prepare and write them from`);
 }
 
+function sourceTrailingSeparator(
+	node: AssembledList,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): { readonly kind: number; readonly separators: readonly number[] } | undefined {
+	if (node.trailingDelimiter !== 'optional' || kindEntries === undefined) return undefined;
+	const idOf = (entry: KindEnumEntry | undefined, spelled: string): number => {
+		if (entry === undefined) {
+			throw new Error(`list '${node.kind}' has an optional trailing separator ${JSON.stringify(spelled)} with no kind id to find in its source`);
+		}
+		return entry.id;
+	};
+	const model = renderSlotModelOf(node);
+	const field = [...model.named, ...model.unnamed].find(isMultiple);
+	const literals = field === undefined ? [] : slotSeparatorTexts(field, false);
+	const separators = [
+		...literals.map((text) => idOf(findKindEntryForLiteral(kindEntries, text), text)),
+		...node.separatorTokenArms.map((arm) =>
+			arm.type === STRING ? idOf(findKindEntryForLiteral(kindEntries, arm.value), arm.value) : idOf(findKindEntry(kindEntries, arm.name), arm.name)
+		)
+	];
+	return { kind: idOf(findKindEntry(kindEntries, node.kind), node.kind), separators: [...new Set(separators)] };
+}
+
 function delimiterSiteOf(plan: RenderPlan, node: AssembledNode): DelimiterSite | undefined {
 	const kind = node.display.name;
 	return plan.delimiterSites.find((site) => site.kind === kind);
@@ -3089,14 +3113,18 @@ function prepareStructImpl(
 	fillFields: readonly string[],
 	plan: RenderPlan,
 	isCompound: boolean,
-	nodeMap: NodeMap
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
 ): string[] {
 	const body: string[] = ['        self.transport_trivia_data.prepare(ctx)?;'];
 	if (isCompound) {
 		body.push(...rootEdgeStamp(plan, node, fillFields));
-		if (kindEdgeSidesOf(plan, node).size > 0) {
+		const delim = node instanceof AssembledList ? delimiterSiteOf(plan, node) : undefined;
+		const trailing = delim !== undefined && node instanceof AssembledList ? sourceTrailingSeparator(node, kindEntries) : undefined;
+		const edged = kindEdgeSidesOf(plan, node).size > 0;
+		if (edged || trailing !== undefined) body.push('        let flank = self.source_flank.take();');
+		if (edged) {
 			body.push(
-				'        let flank = self.source_flank.take();',
 				'        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);',
 				'        ::sittir_core::prepare::prepare_edges(self, ctx);'
 			);
@@ -3109,9 +3137,13 @@ function prepareStructImpl(
 			);
 		}
 		body.push(...seatLoops(plan, node, nodeMap));
-		const delim = node instanceof AssembledList ? delimiterSiteOf(plan, node) : undefined;
 		if (delim !== undefined) {
-			body.push(`        self.delimiter.get_or_insert(ctx.options.delimiter[options::${delim.constName}]);`);
+			const fallback = `ctx.options.delimiter[options::${delim.constName}]`;
+			const value =
+				trailing === undefined
+					? fallback
+					: `::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(${trailing.kind}), &[${trailing.separators.join(', ')}], ${fallback}, ctx)`;
+			body.push(`        self.delimiter.get_or_insert(${value});`);
 		}
 		const sep = node instanceof AssembledList ? separatorSiteOf(plan, node) : undefined;
 		if (sep !== undefined)
@@ -3297,7 +3329,7 @@ function renderTransportDataStruct(
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
-	lines.push(...prepareStructImpl(structName, node, fillFields, plan, isCompoundNode, nodeMap));
+	lines.push(...prepareStructImpl(structName, node, fillFields, plan, isCompoundNode, nodeMap, kindEntries));
 	if (isLeafNode) {
 		lines.push(
 			...renderLeafTransportNapiImpls(

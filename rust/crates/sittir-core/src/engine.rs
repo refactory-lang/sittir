@@ -14,7 +14,7 @@
 
 use crate::format::{apply_format, extract_format};
 use crate::options::ResolvedOptions;
-use crate::read_untyped_node::{read_untyped_node, HandleMint, ReadDepth, ReadModel};
+use crate::read_untyped_node::{error_regions, read_untyped_node, ErrorRegion, HandleMint, ReadDepth, ReadModel};
 use crate::render::SourceTable;
 use crate::slot::NodeCoordinate;
 use crate::types::{FormatRecord, KindId, UntypedNode, Source};
@@ -328,6 +328,11 @@ impl<G: EngineGrammar> ParsedTree<G> {
         ))
     }
 
+    /// Every ERROR and MISSING region of the parse (`error_regions`).
+    pub fn error_regions(&self) -> Vec<ErrorRegion> {
+        error_regions(&self.tree)
+    }
+
     /// Access the detected format record (if any).
     pub fn format(&self) -> Option<&FormatRecord> {
         self.format.as_ref()
@@ -396,6 +401,8 @@ pub struct ParseResult<'a> {
     /// drops the last node reading from it.
     #[serde(rename = "treeId")]
     pub tree_id: u32,
+    /// The parse's ERROR and MISSING regions; empty for a clean parse.
+    pub errors: Vec<ErrorRegion>,
 }
 
 impl<G: EngineGrammar> Engine<G> {
@@ -640,6 +647,12 @@ impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
         let tree = self.get(&coord.tree_id())?;
         let index = tree.local_index(coord.handle).ok()?;
         ParsedTree::<G>::resolve_handle(&tree.nodes, &tree.tree, index).map(|node| KindId(node.kind_id()))
+    }
+
+    fn last_list_child_kind(&self, handle: u64, span: crate::types::Span, kind: KindId) -> Option<KindId> {
+        let tree = self.get(&decode_handle(handle).0)?;
+        crate::read_untyped_node::last_list_child(&tree.tree, span.start as usize, span.end as usize, kind.0)
+            .map(|child| KindId(child.grammar_id()))
     }
 
     fn for_each_kind_ending_with(&self, coord: &NodeCoordinate, f: &mut dyn FnMut(KindId)) {

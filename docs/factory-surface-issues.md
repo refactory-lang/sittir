@@ -261,7 +261,7 @@ What the three loose rebuilds measure today (rust `dogfood-rust.rs`, typescript
 target's tree and render the target's bytes, and the type ceiling is zero for
 every generated rebuild, strict and loose alike. The loose list call types its
 options bag the way the strict one does (options first and optional, L2), so a
-list whose read delimiter is not the stamped default is a plain call.
+list whose read delimiter is not the declared default is a plain call.
 
 Elements inside a bare array loosen the way a slot's value does: each is
 hoisted out of its seat config and resolved at the list's element kinds, so

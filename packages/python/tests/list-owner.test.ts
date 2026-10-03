@@ -17,7 +17,7 @@ describe('a list owner', () => {
 		const ps = fnOf('def f():\n    pass\n').parameters();
 		expect([...ps]).toEqual([]);
 		expect(ps.length).toBe(0);
-		expect(ps.delimiter).toBe(Delimiter.None);
+		expect(ps.delimiter).toBeUndefined();
 	});
 	it('the list slot setter takes the list factory arguments and keeps the elements it is given', () => {
 		const ps = fnOf('def f(a, b):\n    pass\n').parameters();

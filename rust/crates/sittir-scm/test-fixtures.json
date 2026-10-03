@@ -44,7 +44,8 @@
           ],
           "_elements": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "(program)\n"
   },
@@ -202,7 +203,8 @@
           },
           "_elements": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "(program) \"it\" \";\"\n"
   },
@@ -362,7 +364,8 @@
           ],
           "_elements": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "( \"it\" \"blorg\" )\n"
   },
@@ -733,7 +736,8 @@
           ],
           "_elements": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "_ @wildcard (_) @wildcard (node _ @wildcard) (program name : (_)) (program name : _)\n"
   },
@@ -1033,7 +1037,8 @@
             "definition"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "(program name : (identifier)) name : (identifier) name : [ (identifier) (expression) ]\n"
   },
@@ -1356,7 +1361,8 @@
           ],
           "_elements": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "(program field : (identifier) @capture ! negated-field) (program (identifier) @capture ! negated-field)\n"
   },
@@ -1474,7 +1480,8 @@
           ],
           "_elements": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "(program (identifier) +)\n"
   },
@@ -1592,7 +1599,8 @@
           ],
           "_elements": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "(program (identifier) ?)\n"
   },
@@ -1710,7 +1718,8 @@
           ],
           "_elements": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "(program (identifier) *)\n"
   },
@@ -1889,7 +1898,8 @@
           ],
           "_elements": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "(program (identifier) ? @variable * @spell)\n"
   },
@@ -2210,7 +2220,8 @@
           ],
           "_elements": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "( (comment) (function_declaration) ) ( (node) [ (node) \"test\" ] )\n"
   },
@@ -2422,7 +2433,8 @@
             "elements"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "(class_declaration body : (class_body) @class.body @test) @blorg\n"
   },
@@ -2939,7 +2951,8 @@
             "elements"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "[ \"?\" \"+\" \"-\" ] @ops (if_statement [ condition : (_) consequence : (_) alternative : (_) ? ] @conditional.inner) @conditional.outer\n"
   },
@@ -3578,7 +3591,8 @@
           ],
           "_elements": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "( (identifier) @v ( #eq? @v \"test\" local _ ) ) ( (identifier) @v ( .match? @v \"test\" ) ) ( (identifier) @v ( #something! ) )\n"
   },
@@ -8857,7 +8871,8 @@
           ],
           "_elements": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "( (comment) . (function_declaration) ) ( (identifier) . \"and\" . (identifier) ) ( \"test\" . \"test\" ) ( (identifier) . \"test\" ) ( \"test\" . (identifier) ) ( (node) . [ (node) \"test\" ] . (node) ) ( (node) [ (node) \"test\" ] . (node) ) ( (node) . [ (node) \"test\" ] (node) ) ( (node) . [ (node) \"test\" ] [ (node) ] ) ( (node) . [ (node) \"test\" ] . [ (node) ] ) (array . (identifier)) (array (identifier) .) (array . (identifier) .) (string . \"'\") (string \"'\" .) (string . \"'\" . \"'\" .) (node (a) . \"b\" . (c)) (node . (a) . \"b\" . (c)) (node (a) . \"b\" . (c) .) (node . (a) . \"b\" . (c) .) (node . name : (identifier)) (node name : (identifier) .) (node . name : (identifier) .) (node . name : (identifier) (identifier)) (node name : (identifier) . (identifier)) (node . name : (identifier) . (identifier) .) (node . name : (identifier) . another : (identifier) .) (node . name : (identifier) . another : (identifier)) (node name : (identifier) . another : (identifier) .) (node name : (identifier) . another : (identifier)) (trailing_anchor ( (grouping_anchor) . ) .)\n"
   },
@@ -9531,7 +9546,8 @@
           ],
           "_elements": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "( (identifier) @v ( #eq? @v \"I'm a string; not a comment\" ) ( #eq? @v \"test\\\"\" ) ( #eq? @v \"tes\\\"\\\"ting\" ) ( #eq? @v \"\\\"test\" ) )\n"
   },
@@ -9859,7 +9875,8 @@
           ],
           "_elements": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "( #match? @foo ; bar\n\"foo\" ) (node; Capture the name\nname : (string)) (string\n; wild comment!\n)\n"
   },
@@ -10333,7 +10350,8 @@
           ],
           "_elements": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "(program (named_node name : (identifier) (supertype/subtype))) (program (named_node name : (identifier) (supertype/\"anonymous subtype\")))\n"
   },
@@ -10665,7 +10683,8 @@
           ],
           "_elements": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "( MISSING program ) @prog ( MISSING ) @missing (program (named_node ( MISSING identifier ) @cap))\n"
   },

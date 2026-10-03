@@ -1,5 +1,5 @@
 import { type SourceSpans, createEngine, sourceSpans } from '@sittir/common';
-import { ERROR_KIND_ID, spanOf } from '@sittir/common/utils';
+import { isErrorNode, spanOf } from '@sittir/common/utils';
 import scm, {
 	type AnonymousNode,
 	type Definition,
@@ -148,12 +148,11 @@ function lineOf(text: string, spans: SourceSpans, offset: number): number {
 	return line;
 }
 
-const isErrorItem = (item: unknown): item is object => typeof item === 'object' && item !== null && '$type' in item && item.$type === ERROR_KIND_ID;
 
 function unparsed(node: NodeMethodsOf): number[] {
 	const trivia: readonly unknown[] = [...node.$trivia.leading(), ...node.$trivia.trailing()];
 	return trivia.flatMap((item) => {
-		const span = isErrorItem(item) ? spanOf(item) : undefined;
+		const span = isErrorNode(item) ? spanOf(item) : undefined;
 		return span === undefined ? [] : [span.start];
 	});
 }

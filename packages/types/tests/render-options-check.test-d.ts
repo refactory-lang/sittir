@@ -7,21 +7,21 @@
  * Compile-time only: `pnpm --filter @sittir/types type-check`.
  */
 
-import type { Engine, LanguageAPI, RenderOptionsCheck } from '../src/index.ts';
+import type { Engine, LanguageAPI, ParsedRoot, RenderOptionsCheck } from '../src/index.ts';
 
 interface FakeNode {
 	readonly $type: 1;
 }
 interface SpacedAPI extends LanguageAPI {
 	readonly name: 'spaced';
-	readonly root: FakeNode;
+	readonly root: FakeNode & ParsedRoot;
 	readonly node: FakeNode;
 	readonly options: { readonly indent?: string; readonly block?: { readonly after?: 'newline' | 'space' } };
 	readonly indentChar: ' ' | '\t';
 }
 interface PlainAPI extends LanguageAPI {
 	readonly name: 'plain';
-	readonly root: FakeNode;
+	readonly root: FakeNode & ParsedRoot;
 	readonly node: FakeNode;
 	readonly options: { readonly list?: { readonly separator?: ',' | ';' } };
 	readonly indentChar: never;

@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, ByteSpan, LineGap, LineGapAddress, LineGaps, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, ByteSpan, ErrorNode, LineGap, LineGapAddress, LineGaps, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
 import { carryRead, carrySource, detachCoordinate, holdsSlots, isRead, isStorageKey, sourceOf, type DerivedSides } from './transport-data.ts';
 import { Source } from './source.ts';
@@ -11,6 +11,7 @@ import { spelledForm } from './interior.ts';
 export { Delimiter } from './delimiter.ts';
 export { Source };
 export { ERROR_KIND_ID, ERROR_KIND_NAME } from './error-kind.ts';
+export type { ErrorNode };
 
 type Scoped = <R>(fn: () => R) => R;
 
@@ -276,12 +277,13 @@ export function triviaInnerAt(
 	return triviaWriter(node, handle).innerAt(gap, items);
 }
 
-/** One trivia item as its entry: a trivia node or whitespace kind id as it is, a string by `textEntryOf`. */
+/** One trivia item as its entry: a trivia node, a parsed ERROR node or a whitespace kind id as it is, a string by `textEntryOf`. */
 function triviaEntryOf(item: unknown, facts: TriviaFacts): TriviaEntry {
 	if (typeof item === 'string') return textEntryOf(item, facts);
 	if (typeof item !== 'number' && !isNode(item)) {
 		throw new Error(`trivia: an entry is a node, a whitespace kind or a comment's text, not ${JSON.stringify(item)}`);
 	}
+	if (isErrorNode(item)) return item;
 	const type = typeof item === 'number' ? item : item.$type;
 	const kind = facts.kindName(type);
 	if (kind === undefined || !facts.kinds.has(kind)) throw new Error(`trivia: ${kind ?? String(type)} is not an extra`);
@@ -614,17 +616,6 @@ export function isParsedNode(v: unknown): v is AnyUntypedNode {
 
 export function isFactoryNode(v: unknown): v is AnyUntypedNode {
 	return isNode(v) && !isParsedNode(v);
-}
-
-/**
- * A parsed ERROR node: the source it wraps, as text over its span. Only a
- * reader produces one; there is no factory for it.
- */
-export interface ErrorNode extends AnyUntypedNode {
-	readonly $type: typeof ERROR_KIND_ID;
-	readonly $source: typeof Source.Ts | typeof Source.Sg;
-	readonly $text: string;
-	readonly $span: { start: number; end: number };
 }
 
 /**
