@@ -294,7 +294,7 @@ const BOTH_EDGES: ChangedEdges = { leading: true, trailing: true };
 function changedEdges(list: readonly unknown[], index: number, view: TriviaView): ChangedEdges {
 	const entry = list[index];
 	if (!isRecord(entry)) return NO_EDGES;
-	const derived = view.derived(entry);
+	const derived = view.derived(evidenceOf(entry, view));
 	if (derived === undefined) return NO_EDGES;
 	const kept = index === 0 ? derived.previous === null : sourceAdjacent(list, index, derived, view);
 	return { leading: derived.leading && !kept, trailing: derived.trailing && index < list.length - 1 };
@@ -435,18 +435,27 @@ function assertTriviaHoldsTree(entries: readonly unknown[]): void {
 	for (const entry of entries) if (isRecord(entry) && treeHandleOf(entry) !== undefined) assertHoldsTree(entry);
 }
 
-function toTransportValue(value: unknown, view: TriviaView, changed: ChangedEdges, owner?: Record<string, unknown>): unknown {
+function toTransportValue(
+	value: unknown,
+	view: TriviaView,
+	changed: ChangedEdges,
+	owner?: Record<string, unknown>,
+	bearer?: Record<string, unknown>
+): unknown {
 	if (Array.isArray(value)) {
 		return value.map((entry, index) => {
+			if (!isRecord(entry)) return toTransportValue(entry, view, NO_EDGES);
+			const evidence = evidenceOf(entry, view);
 			const changed = changedEdges(value, index, view);
-			const out = toTransportValue(entry, view, changed);
-			const gap = isRecord(entry) && owner !== undefined ? sourceGapOf(owner, value, index, view, withoutChangedEdges(view.trivia(entry), changed)) : undefined;
+			const out = toTransportValue(entry, view, changed, undefined, evidence);
+			const gap = owner !== undefined ? sourceGapOf(owner, value, index, view, withoutChangedEdges(view.trivia(evidence), changed)) : undefined;
 			if (gap !== undefined && isRecord(out)) out.$_gap = gap;
 			return out;
 		});
 	}
 	if (!isRecord(value)) return value;
-	const trivia = crossingTrivia(value, view, changed);
+	const bears = bearer === undefined || bearer === value;
+	const trivia = crossingTrivia(value, view, bears ? changed : NO_EDGES);
 	if (canFold(value, trivia)) {
 		assertHoldsTree(value);
 		return foldToCoordinate(value);
@@ -458,7 +467,7 @@ function toTransportValue(value: unknown, view: TriviaView, changed: ChangedEdge
 		if (!isDataKey(key) || key === '$_trivia') continue;
 		const raw = value[key];
 		if (typeof raw === 'function') continue;
-		out[key] = isStorageKey(key) ? toTransportValue(raw, view, NO_EDGES, value) : raw;
+		out[key] = isStorageKey(key) ? toTransportValue(raw, view, bears ? NO_EDGES : changed, value, bears ? undefined : bearer) : raw;
 	}
 	if (trivia != null) out.$_trivia = trivia;
 	const flank = sourceFlankOf(value, view);

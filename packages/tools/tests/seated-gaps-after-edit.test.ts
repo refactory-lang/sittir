@@ -212,6 +212,22 @@ describe('a rebuilt list keeps the flanks its source edge items still stand besi
 		expect(args.$with.elements(...items, appended).$render()).toBe('(\n    1i32,\n    2i32, 3i32\n)');
 	});
 
+	it('drops the source blank line before a wrapped item once another item is inserted before it', () => {
+		const item = rust.parse('fn f(\n    a: u8,\n\n    b: i8,\n) {}\n').statements()[0];
+		if (item === undefined || typeof item === 'number' || !rust.is.functionItem(item)) throw new Error('expected a function item');
+		const parameters = item.parameters();
+		const [first, second] = parameters.elements()?.items() ?? [];
+		const a = first?.content();
+		const b = second?.content();
+		if (a === undefined || typeof a === 'number' || !rust.is.parameter(a)) throw new Error('expected a parameter');
+		if (b === undefined || typeof b === 'number' || !rust.is.parameter(b)) throw new Error('expected a parameter');
+		const other = rust.parse('fn g(c: u16) {}\n').statements()[0];
+		if (other === undefined || typeof other === 'number' || !rust.is.functionItem(other)) throw new Error('expected a function item');
+		const c = other.parameters().elements()?.items()[0]?.content();
+		if (c === undefined || typeof c === 'number' || !rust.is.parameter(c)) throw new Error('expected a parameter');
+		expect(parameters.$with.elements(a, c, b).$render()).toBe('(\n    a: u8, c: u16, b: i8\n)');
+	});
+
 	it('keeps both flanks beside an edited last parameter', () => {
 		const item = rust.parse('fn f(\n    a: u8,\n    b: i8,\n) {}\n').statements()[0];
 		if (item === undefined || typeof item === 'number' || !rust.is.functionItem(item)) throw new Error('expected a function item');

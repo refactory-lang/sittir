@@ -34,27 +34,20 @@ pub struct NodeCoordinate {
 }
 
 /// The bytes between a list item and the item before it, in the source both
-/// were read from, when the two are still adjacent there. A live render names
-/// them by their tree's tagged handle and byte range; data detached from its
-/// tree carries the bytes themselves. Evidence of layout only; nothing slices
-/// it into the output.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum SourceGap {
-    Range { handle: u64, span: Span },
-    Text(String),
+/// were read from, when the two are still adjacent there: the tagged handle of
+/// their tree and the gap's byte range. Evidence of layout only; nothing
+/// slices it into the output.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SourceGap {
+    pub handle: u64,
+    pub span: Span,
 }
 
 impl SourceGap {
-    /// The gap's bytes: the range read from its tree, when the tree is still in
-    /// `sources`, or the text the gap carries.
-    pub fn text<'g>(&'g self, sources: &'g dyn SourceTable) -> Option<&'g str> {
-        match self {
-            SourceGap::Range { handle, span } => {
-                let (tree_id, _) = decode_handle(*handle);
-                sources.source_of(tree_id)?.get(span.start as usize..span.end as usize)
-            }
-            SourceGap::Text(text) => Some(text),
-        }
+    /// The gap's bytes, when its tree is still in `sources`.
+    pub fn text<'s>(&self, sources: &'s dyn SourceTable) -> Option<&'s str> {
+        let (tree_id, _) = decode_handle(self.handle);
+        sources.source_of(tree_id)?.get(self.span.start as usize..self.span.end as usize)
     }
 }
 
@@ -62,17 +55,14 @@ impl SourceGap {
 impl ::napi::bindgen_prelude::FromNapiValue for SourceGap {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        if let Some(text) = obj.get::<String>("$text")? {
-            return Ok(Self::Text(text));
-        }
         let handle = obj
             .get::<f64>("$treeHandle")?
-            .ok_or_else(|| ::napi::Error::from_reason("a source gap names its tree in $treeHandle or carries its $text"))?;
+            .ok_or_else(|| ::napi::Error::from_reason("a source gap names its tree in $treeHandle"))?;
         let handle = crate::napi_engine::checked_index(handle, "$treeHandle")?;
         let span: Span = obj
             .get("$span")?
             .ok_or_else(|| ::napi::Error::from_reason(format!("source gap in tree {handle} carries no $span")))?;
-        Ok(Self::Range { handle, span })
+        Ok(Self { handle, span })
     }
 }
 

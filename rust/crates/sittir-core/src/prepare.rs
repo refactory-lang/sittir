@@ -463,7 +463,7 @@ mod tests {
     }
 
     fn after_and_before(source: &str, second_gap: Option<(u32, u32)>) -> (Option<u16>, Option<u16>) {
-        let gap = second_gap.map(|(start, end)| SourceGap::Range { handle: encode_handle(3, 0), span: Span { start, end } });
+        let gap = second_gap.map(|(start, end)| SourceGap { handle: encode_handle(3, 0), span: Span { start, end } });
         filled(source, gap)
     }
 
@@ -492,11 +492,6 @@ mod tests {
     #[test]
     fn a_source_adjacent_gap_splits_at_its_separator_onto_both_neighbours() {
         assert_eq!(after_and_before("a,\nb", Some((1, 3))), (Some(TIGHT), Some(NEWLINE)));
-    }
-
-    #[test]
-    fn a_detached_gap_carrying_its_text_fills_the_same_edges_as_its_range() {
-        assert_eq!(filled("a,\nb", Some(SourceGap::Text(",\n".to_owned()))), (Some(TIGHT), Some(NEWLINE)));
     }
 
     #[test]

@@ -12,7 +12,7 @@ import { writeSync } from 'node:fs';
 
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
 import { sourceSpans, spanSlicer, type TriviaSides } from '@sittir/common';
-import { crossingTrivia, hydrateStub, isStub, mapTriviaEntries, readTrivia, sourceGapOf, type TriviaView } from '@sittir/common/utils';
+import { crossingTrivia, hydrateStub, isStub, mapTriviaEntries, readTrivia, type TriviaView } from '@sittir/common/utils';
 import { deriveRuleKinds } from './render-bodies.ts';
 import { load } from '../codegen-surface.ts';
 
@@ -365,9 +365,7 @@ export function leadingTriviaRenderedWidth(
  * kind the reader stamped on it, `{ $type, $text }`, plus `$sameLine` and
  * `$tokensBetween` when it shares its owner's row. Each node's trivia is
  * taken through `view`, the view the render read, so the input carries the
- * line-gap whitespace the validated render printed, and each list gap the
- * render kept from the source travels as its bytes (`$_gap: { $text }`), since
- * a range into a tree means nothing once the input leaves it.
+ * line-gap whitespace the validated render printed.
  */
 export function selfContainedRenderInput(
 	data: unknown,
@@ -394,25 +392,15 @@ export function selfContainedRenderInput(
 			if (record.$sameLine !== true) return { ...kind, $text: text };
 			return { ...kind, $text: text, $sameLine: true, $tokensBetween: record.$tokensBetween };
 		});
-	const walk = (value: unknown, owner?: Record<string, unknown>): unknown => {
-		if (Array.isArray(value)) {
-			return value.map((entry, index) => {
-				const out = walk(entry);
-				const gap =
-					entry !== null && typeof entry === 'object' && owner !== undefined
-						? sourceGapOf(owner, value, index, view, view.trivia(entry as Record<string, unknown>))
-						: undefined;
-				if (gap !== undefined && out !== null && typeof out === 'object') (out as Record<string, unknown>).$_gap = { $text: slice(gap.$span) };
-				return out;
-			});
-		}
+	const walk = (value: unknown): unknown => {
+		if (Array.isArray(value)) return value.map(walk);
 		if (value === null || typeof value !== 'object') return value;
 		const record = value as Record<string, unknown>;
 		const out: Record<string, unknown> = {};
 		for (const [key, raw] of Object.entries(record)) {
 			if (key === '$handle' || key === '$parentHandle' || key === '$treeHandle' || key === '$childIndex' || key === '$textOnly') continue;
 			if (key === '$_trivia') continue;
-			out[key] = key.startsWith('_') || key === '$other' ? walk(raw, record) : raw;
+			out[key] = key.startsWith('_') || key === '$other' ? walk(raw) : raw;
 		}
 		const trivia = crossingTrivia(record, view);
 		if (trivia != null) out.$_trivia = mapTriviaEntries(trivia as TriviaSides<unknown>, walkTrivia);

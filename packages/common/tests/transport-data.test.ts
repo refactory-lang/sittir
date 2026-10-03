@@ -409,6 +409,24 @@ describe('sourceGapOf', () => {
 		expect(sourceGapOf(owner, [a, b], 1, view, undefined)).toEqual(gap);
 	});
 
+	it('strips the changed side from the content a rebuilt wrapper holds, not from the wrapper', () => {
+		const other = deep(7, 8, {});
+		holdTree(other, token);
+		const blank = 172;
+		const run: TriviaView = {
+			...view,
+			trivia: (node) => (node === b ? { leading: [blank] } : undefined),
+			derived: (node) => (node === b ? { previous: { start: 1, end: 2 }, next: null, leading: true, trailing: false } : undefined)
+		};
+		const list = (first: Record<string, unknown>) => ({ ...owner, _item: [first, { $type: ATTRIBUTED, $source: 2, _content: b }] });
+		const contentTrivia = (first: Record<string, unknown>) => {
+			const crossed = toTransportData(list(first) as never, run) as unknown as { _item: { _content: { $_trivia?: unknown } }[] };
+			return crossed._item[1]!._content.$_trivia;
+		};
+		expect(contentTrivia(a)).toEqual({ leading: [blank] });
+		expect(contentTrivia(other)).toBeUndefined();
+	});
+
 	it('does not look through a wrapper holding more than one node', () => {
 		const wrapper = { $type: ATTRIBUTED, $source: 2, _attribute_item: [a], _content: b };
 		expect(sourceGapOf(owner, [a, wrapper], 1, view, undefined)).toBeUndefined();
