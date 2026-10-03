@@ -35,9 +35,32 @@ describe('readBindings', () => {
 			{
 				kind: 'decorated_definition',
 				element: { field: 'definition', kind: null, after: null },
-				captures: [{ name: 'decorators', token: false, multiple: true, field: null, kind: 'decorator', after: null }]
+				captures: [{ name: 'decorators', token: null, multiple: true, field: null, kind: 'decorator', after: null }],
+				dropped: [],
+				reason: null,
+				pattern: { line: 3, source: '(decorated_definition (decorator)* @decorators definition: (_) @element)' }
 			}
 		]);
+	});
+
+	it('reads a slot a container drops on purpose, from a pattern grouped with its reason', () => {
+		const source =
+			'((attributed_argument (attribute_item)* @dropped (_) @element) (#set! reason "the element is a supertype"))';
+		expect(readBindings(source).containers).toEqual([
+			{
+				kind: 'attributed_argument',
+				element: { field: null, kind: null, after: { field: null, kind: 'attribute_item', after: null } },
+				captures: [],
+				dropped: [{ field: null, kind: 'attribute_item', after: null }],
+				reason: 'the element is a supertype',
+				pattern: { line: 1, source }
+			}
+		]);
+	});
+
+	it('keeps the text of a token a container captures', () => {
+		const { containers } = readBindings('(ambient_declaration "declare" @declare (_) @element)');
+		expect(containers[0]?.captures.map((c) => [c.name, c.token])).toEqual([['declare', 'declare']]);
 	});
 
 	it('selects an unfielded wildcard by its position after the node pattern before it, never after a token', () => {

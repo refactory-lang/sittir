@@ -20,33 +20,8 @@ export namespace Statement {
 	export interface Block<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
 		// claimed by prt
 		readonly kind: 'statement.block';
-		readonly declare?: boolean;
-		// t only
-		readonly label?:
-			| V.Identifier.Label<G>
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
-		// rt only
+		readonly label?: V.Identifier.Label<G>;
+		// r only
 		readonly statements?: (
 			| G['attribute']
 			| V.Clause.Import.Alias<G>
@@ -70,88 +45,18 @@ export namespace Statement {
 		readonly kind: 'statement.break';
 		readonly expression?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
 		// r only
-		readonly label?:
-			| V.Identifier.Label<G>
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
+		readonly label?: V.Identifier.Label<G>;
 		// rt only
 	}
 	export interface Continue<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
 		// claimed by prt
 		readonly kind: 'statement.continue';
-		readonly label?:
-			| V.Identifier.Label<G>
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
+		readonly label?: V.Identifier.Label<G>;
 		// rt only
 	}
 	export interface Debugger<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
 		// claimed by t
 		readonly kind: 'statement.debugger';
-		readonly label?:
-			| V.Identifier.Label<G>
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
 	}
 	export interface Delete<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
 		// claimed by p
@@ -161,31 +66,6 @@ export namespace Statement {
 	export interface Empty<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
 		// claimed by rt
 		readonly kind: 'statement.empty';
-		readonly label?:
-			| V.Identifier.Label<G>
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
-		// t only
 	}
 	export interface Exec<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
 		// claimed by p
@@ -196,30 +76,6 @@ export namespace Statement {
 	export interface Export<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
 		// claimed by t
 		readonly kind: 'statement.export';
-		readonly label?:
-			| V.Identifier.Label<G>
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
 	}
 	export interface Expression<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
 		// claimed by prt
@@ -242,31 +98,6 @@ export namespace Statement {
 		// pr only
 		readonly expression?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
 		// t only
-		readonly label?:
-			| V.Identifier.Label<G>
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
-		// t only
 	}
 	export interface Global<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
 		// claimed by p
@@ -288,31 +119,6 @@ export namespace Statement {
 			| V.Clause.Let.Any<G>
 			| G['statement'];
 		readonly consequence: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
-		readonly label?:
-			| V.Identifier.Label<G>
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
-		// t only
 	}
 	export interface Import<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
 		// claimed by prt
@@ -351,31 +157,6 @@ export namespace Statement {
 		// t only
 		readonly importClause?: 'type' | 'typeof';
 		// t only
-		readonly label?:
-			| V.Identifier.Label<G>
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
-		// t only
 		readonly names?: (V.Clause.Import.Alias<G> | V.Identifier.Dotted<G>)[];
 		// p only
 		readonly visibility?: V.Modifier.Visibility<G>;
@@ -409,12 +190,11 @@ export namespace Statement {
 			| V.Statement.Import.From<G>
 			| V.Statement.Import.Future<G>;
 	}
-	export interface Loop<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
-		// claimed by r
-		readonly kind: 'statement.loop';
+	export interface Labeled<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+		// claimed by t
+		readonly kind: 'statement.labeled';
 		readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
-		// prt only
-		readonly label?:
+		readonly label:
 			| V.Identifier.Label<G>
 			| 'any'
 			| 'async'
@@ -438,7 +218,13 @@ export namespace Statement {
 			| 'string'
 			| 'symbol'
 			| 'type';
-		// rt only
+	}
+	export interface Loop<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
+		// claimed by r
+		readonly kind: 'statement.loop';
+		readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+		// prt only
+		readonly label?: V.Identifier.Label<G>;
 	}
 	export namespace Loop {
 		export interface Counted<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement.Loop<G>>> {
@@ -453,60 +239,12 @@ export namespace Statement {
 				| V.Statement.Empty<G>;
 			readonly increment?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
 			readonly initializer: G['declaration'] | G['expression'] | G['identifier'] | G['literal'] | V.Statement.Empty<G>;
-			readonly label?:
-				| V.Identifier.Label<G>
-				| 'any'
-				| 'async'
-				| 'boolean'
-				| 'declare'
-				| 'export'
-				| 'get'
-				| 'let'
-				| 'module'
-				| 'namespace'
-				| 'new'
-				| 'number'
-				| 'object'
-				| 'override'
-				| 'private'
-				| 'protected'
-				| 'public'
-				| 'readonly'
-				| 'set'
-				| 'static'
-				| 'string'
-				| 'symbol'
-				| 'type';
 		}
 		export interface DoWhile<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement.Loop<G>>> {
 			// claimed by t
 			readonly kind: 'statement.loop.do_while';
 			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 			readonly condition: V.Expression.Parenthesized<G>;
-			readonly label?:
-				| V.Identifier.Label<G>
-				| 'any'
-				| 'async'
-				| 'boolean'
-				| 'declare'
-				| 'export'
-				| 'get'
-				| 'let'
-				| 'module'
-				| 'namespace'
-				| 'new'
-				| 'number'
-				| 'object'
-				| 'override'
-				| 'private'
-				| 'protected'
-				| 'public'
-				| 'readonly'
-				| 'set'
-				| 'static'
-				| 'string'
-				| 'symbol'
-				| 'type';
 		}
 		export interface For<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement.Loop<G>>> {
 			// claimed by prt
@@ -521,31 +259,8 @@ export namespace Statement {
 			readonly forHeader?: V.Unmapped<'typescript:for_header'>;
 			// t only
 			// unmapped: <typescript:for_header>
-			readonly label?:
-				| V.Identifier.Label<G>
-				| 'any'
-				| 'async'
-				| 'boolean'
-				| 'declare'
-				| 'export'
-				| 'get'
-				| 'let'
-				| 'module'
-				| 'namespace'
-				| 'new'
-				| 'number'
-				| 'object'
-				| 'override'
-				| 'private'
-				| 'protected'
-				| 'public'
-				| 'readonly'
-				| 'set'
-				| 'static'
-				| 'string'
-				| 'symbol'
-				| 'type';
-			// rt only
+			readonly label?: V.Identifier.Label<G>;
+			// r only
 			readonly left?: V.Unmapped<'rust:pattern'> | G['expression'] | G['identifier'] | G['pattern'];
 			// pr only
 			// unmapped: <rust:pattern>
@@ -565,31 +280,8 @@ export namespace Statement {
 				| G['pattern']
 				| V.Clause.Let.Any<G>
 				| G['statement'];
-			readonly label?:
-				| V.Identifier.Label<G>
-				| 'any'
-				| 'async'
-				| 'boolean'
-				| 'declare'
-				| 'export'
-				| 'get'
-				| 'let'
-				| 'module'
-				| 'namespace'
-				| 'new'
-				| 'number'
-				| 'object'
-				| 'override'
-				| 'private'
-				| 'protected'
-				| 'public'
-				| 'readonly'
-				| 'set'
-				| 'static'
-				| 'string'
-				| 'symbol'
-				| 'type';
-			// rt only
+			readonly label?: V.Identifier.Label<G>;
+			// r only
 		}
 		export type Any<G extends GrammarContext> =
 			| V.Statement.Loop<G>
@@ -653,90 +345,17 @@ export namespace Statement {
 			| G['literal']
 			| G['pattern']
 			| G['statement'];
-		readonly label?:
-			| V.Identifier.Label<G>
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
-		// t only
 	}
 	export interface Scope<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
 		// claimed by t
 		readonly kind: 'statement.scope';
 		readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
-		readonly label?:
-			| V.Identifier.Label<G>
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
 		readonly object: V.Expression.Parenthesized<G>;
 	}
 	export interface Switch<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
 		// claimed by t
 		readonly kind: 'statement.switch';
 		readonly body: V.Clause.Case.Any<G>[];
-		readonly label?:
-			| V.Identifier.Label<G>
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
 		readonly value: V.Expression.Parenthesized<G>;
 	}
 	export interface Throw<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
@@ -745,31 +364,6 @@ export namespace Statement {
 		readonly cause?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 		// p only
 		readonly expression?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
-		readonly label?:
-			| V.Identifier.Label<G>
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
-		// t only
 	}
 	export interface Try<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
 		// claimed by pt
@@ -779,31 +373,6 @@ export namespace Statement {
 		readonly body: V.Declaration.TypeAlias<G> | G['statement'];
 		readonly finalizer?: V.Clause.Finally<G>;
 		readonly handlers?: G['clause'] | G['clause'][];
-		readonly label?:
-			| V.Identifier.Label<G>
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
-		// t only
 	}
 	export interface With<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
 		// claimed by p
@@ -830,6 +399,7 @@ export namespace Statement {
 		| V.Statement.Import.Crate<G>
 		| V.Statement.Import.From<G>
 		| V.Statement.Import.Future<G>
+		| V.Statement.Labeled<G>
 		| V.Statement.Loop<G>
 		| V.Statement.Loop.Counted<G>
 		| V.Statement.Loop.DoWhile<G>
