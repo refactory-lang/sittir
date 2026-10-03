@@ -1,112 +1,144 @@
 # Bindings, the vocabulary and the portability API
 
-**Status:** Design spec. Supersedes the earlier "Role Interfaces & `roles.scm`" design; §12 states what changed and why.
-**Realized so far:** `packages/<grammar>/bindings.scm` for python, typescript and rust; the base interface tree under `packages/types/src/vocabulary/`, emitted from the bindings; the inventory `sittir tool bindings-inventory` (`packages/tools/src/inventory/`), which compiles the bindings, derives the vocabulary and emits the tree through the typescript package's own factories; the convergence record `2026-09-13-base-vocabulary-draft.md`.
-**Not yet realized:** the feature table and per-language compositions (§4), per-language contexts, term aliases, the structure builders, the retirement of the coercer.
+**Status:** Design spec. Supersedes the earlier "Role Interfaces & `roles.scm`" design.
 
----
+## 1. Two APIs, and the map between them
 
-## 1. Three APIs, one mapping
+sittir has two construction surfaces. The low-level surface is shaped by each grammar. The portable surface is shaped by the vocabulary, which is the same for every language. The bindings say how one grammar realizes the vocabulary, and the generator turns them into **the map**: the only artifact the bindings produce.
 
-sittir has two construction surfaces, a composition and naming layer over the second, and one file that maps the two surfaces onto each other. The low-level surface is shaped by the grammar, the high-level surface by the vocabulary; the bindings map between those two shapes, and the portability layer never touches a grammar shape, so it has no mapping file of its own.
-
-| layer | what it is | source of truth | typing |
+| layer | what it is | source of truth | made by |
 | --- | --- | --- | --- |
-| **low-level API** | the rule-IR-generated factories: one builder per grammar kind, exact kinds, kind ids, total | `grammar.sittir.ts` and the tree-sitter grammar | strict only |
-| **high-level API** | the vocabulary builders and the structure API: semantic kinds shared across grammars, members by role. Aligns the **mechanics**: one structure shape, one builder per kind, one coercion table | `bindings.scm` | loose only; canonical output |
-| **portability API** | not a construction surface: a layer over the high-level API that decides which vocabulary kinds and members a language has, and what it calls them. A language is a composition of features, and each feature's names are bound to the language's terms. Aligns the **terminology**, and is what makes a structure written against the high-level API portable | the feature table and each language's composition (§4) | the high-level interfaces, admitted per composition, under a language's names |
-| **bindings** | the mapping: which grammar node is which vocabulary kind, which slot is which member, and in the write direction which factory a vocabulary kind builds through and where each member lands | `packages/<grammar>/bindings.scm` | — |
+| **low-level API** | one builder per grammar kind, with exact kinds and kind ids; a strict form that coerces nothing and a loose form that coerces each slot's input by the slot | `grammar.sittir.ts` and the tree-sitter grammar | generated |
+| **vocabulary** | the portable API: semantic kinds shared across languages, members by role, and the structures that satisfy them (§8) | `packages/types/src/vocabulary/` | authored |
+| **features and terms** | which vocabulary kinds and members a language has, and what it calls them (§4) | `packages/types/src/vocabulary/features.ts` and one composition per language | authored |
+| **bindings** | which grammar node is which vocabulary kind, which slot is which member | `packages/<grammar>/bindings.scm` | authored |
+| **the map** | the bindings resolved against the grammar's slot model: for each vocabulary kind the factories that build it, and for each member the slot it lands in; for each grammar kind the vocabulary kind it is | generated with the grammar package (§5) | generated |
 
-The low-level surface has a strict form, which takes exactly the node types it declares and coerces nothing, and a loose form, which keeps the grammar's nesting and coerces each slot's input by the slot (`coerce.ts`, the contract in `docs/factory-surface-issues.md`). The high-level surface is loose only: it takes the widest input a slot can disambiguate and produces canonical structures, and it coerces through the same per-slot coercer the low-level loose form uses, after the binding maps a member to its slot, so coercion has one table. Coverage of the high-level surface is measured by a validator lane that reads a corpus file, projects every node to a structure, builds it back through the high-level API, renders and re-parses.
-
-A binding is bidirectional. A constructive pattern, one that fixes every node it would emit, serves the reader, the derived types, `from()` and `$structure()`. Only a regex outside the invertible subset (§7) is read-only, and the inventory names it.
+- **The vocabulary is a designed API, not a derived one.** Its interfaces are written by hand, under the rules of §3. The bindings never generate them. The inventory checks the map against them (§10), so a binding that names a member the vocabulary lacks, or a vocabulary member no binding of a composed language reaches, is a diagnostic.
+- **The portable surface builds through the low-level loose surface.** A structure's member is routed by the map to a slot, and the value is handed to that slot's loose coercer. Coercion therefore has one table: the loose contract (`docs/factory-surface-issues.md`, "The contract: loose = strict + six coercions"). The portable layer adds no coercion of its own beyond what §8 lists.
+- **A binding is bidirectional.** A constructive pattern, one that fixes every node it would emit, serves reading (`$structure()`) and building (`from()`). Only a predicate outside the invertible subset (§7) is read-only, and the inventory names it.
+- **Coverage of the portable surface** is measured by a validator lane that reads a corpus file, projects every node to a structure, builds it back through the portable API, renders and re-parses (§10).
 
 ## 2. `bindings.scm`
 
-One file per grammar package, `packages/<grammar>/bindings.scm`, executed by the reader as a tree-sitter query and read by the derivation. It states every role fact; nothing else does.
+One file per grammar package, `packages/<grammar>/bindings.scm`, written in tree-sitter's query language. It states every role fact for its grammar; nothing else does.
 
 ### 2.1 Form
 
-- **Sixteen sections in a fixed order**, identical in every file, an empty section left visible where a grammar has nothing: `module`, `declaration`, `statement`, `clause`, `argument`, `element`, `expression`, `pattern`, `type`, `literal`, `identifier`, `modifier`, `attribute`, `comment`, `keyword / punctuation`, `unclaimed`.
-- **One claim per line**, the parent before its refinements, refinements in the order of the base tree.
-- **Kind claims** are dotted captures on nodes: `(binary_expression) @expression.binary`. A single-segment capture on a pattern's top node claims the namespace's root kind (`(identifier) @identifier`).
-- **Member captures are constructive and exhaustive.** A claim's members are exactly its single-segment captures on nested nodes or tokens; a grammar slot no capture names is not a member. The slot model types a captured member (kinds, multiplicity, requiredness) and confirms the capture resolves; it never adds one. Nesting artefacts (`content`, body wrappers, hidden arms) exist only where a capture names them, and a deep capture reaches through a wrapper to the node that matters: `(class_declaration (class_heritage (extends_clause (_) @extends)))`. The capture name is the converged member name (§6), whether or not the upstream field already spells it.
+- **Sixteen sections in a fixed order,** identical in every file, an empty section left visible where a grammar has nothing: `module`, `declaration`, `statement`, `clause`, `argument`, `element`, `expression`, `pattern`, `type`, `literal`, `identifier`, `modifier`, `attribute`, `comment`, `keyword / punctuation`, `unclaimed`.
+- **One claim per line,** the parent before its refinements, refinements in the order of the vocabulary.
+- **Kind claims** are dotted captures on nodes: `(binary_expression) @expression.binary`. A single-segment capture on a pattern's top node claims the namespace's root kind: `(identifier) @identifier`.
+- **Member captures are constructive and exhaustive.** A claim's members are exactly its single-segment captures on nested nodes or tokens; a grammar slot no capture names is not a member and has no route in the map.
+  - The capture's name is the converged member name (§6), whether or not the upstream field already spells it: `(class_definition superclasses: (_)? @bases)`.
+  - A deep capture reaches through a wrapper to the node that matters, so nesting artefacts (`content`, body wrappers, hidden arms) exist only where a capture names them: `(class_declaration (class_heritage (extends_clause (_) @extends)))`.
+  - A capture on a token is the token's presence: `"async" @async`.
+  - A captured node finds its slot by its field, else by its kind, else by position: an unfielded wildcard names the first node slot after the slot of the node pattern before it, so `(index_expression (_) @object (_) @index)` names both slots in order and a token before a wildcard does not count.
+  - The slot model types a captured member (kinds, multiplicity, requiredness) and confirms that the capture resolves to a slot; it never adds a member.
+  A claim is unconditional, so an optional member named in a claim carries a quantifier (`?`, `*`, `+`) and the claim matches whether or not the member is present.
 - **Refinements** are the parent's pattern with a literal fixed: `(binary_expression operator: "+") @expression.binary.arithmetic.add`.
 - **Content-derived kinds** are predicate claims: `((function_definition name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))`. A kind is claimed wherever content, position or finite text determines it, whether or not the grammar has a node for it; the grammar's kind list is the floor of coverage, never its ceiling.
-- **Template regexes** name every hole: `(#match? @name "^__(?<stem>.*)__$")`. A bare hole is a lift error (§7).
-- **A container that wraps one node** is never claimed; a pattern that captures the wrapped node as `@element` assigns its other captures to that element: `(decorated_definition (decorator)* @decorator definition: (_) @element)`, `(ambient_declaration "declare" @declare (_) @element)`, `(labeled_statement label: (_) @label body: (_) @element)`.
-- **Unclaimed** kinds are stated in the file with a reason, never in a comment: `((line_continuation) @unclaimed (#set! reason "layout token"))`. The directive is for parser artefacts only, and the unclaimed count is a ratchet toward zero.
+- **Template regexes** name every hole: `(#match? @name "^__(?<stem>.*)__$")`. A bare hole is an error (§7).
+- **A container that wraps one node** is never claimed. A pattern that captures the wrapped node as `@element` assigns its other captures to that element: `(decorated_definition (decorator)* @decorators definition: (_) @element)`, `(ambient_declaration "declare" @declare (_) @element)`, `(labeled_statement label: (_) @label body: (_) @element)`.
+- **Token classes** are captures in the `keyword / punctuation` section: `["if" "else"] @keyword.conditional`, `["(" ")"] @punctuation.bracket`. They are classes for highlighting, not vocabulary kinds, and the map carries them in a table of their own (§5).
+- **Unclaimed** kinds are stated in the file with a reason, never in a comment: `((line_continuation) @unclaimed (#set! reason "layout token"))`. The directive is for parser artefacts. Any other unclaimed kind is debt, and its count is a ratchet that only falls.
 
 ### 2.2 Seed and override
 
-- **Two files per grammar.** `bindings.seed.scm` is generated (`sittir tool bindings-inventory --seed <grammar>`), committed, never hand-edited, and regenerated when the grammar package bumps. `bindings.scm` is authored and overrides it. The inventory composes the two with one rule: a kind claimed in the override drops every seed claim on that kind, so an override is either the whole story for a kind or silent about it.
-- **The seed comes from the upstream queries and the slot model.** Each grammar package vendors tree-sitter's `queries/tags.scm` and `queries/highlights.scm`. Tags decide claims and the `@name` capture through one table shared by every grammar: `definition.class` → `declaration.class`, `definition.function` → `declaration.function`, `definition.method` → `declaration.method`, `definition.interface` → `declaration.interface`, `definition.module` → `declaration.module`, `definition.macro` → `declaration.macro`, `definition.constant` → `declaration.constant`, `reference.call` → `expression.call`. Highlights decide token captures: `@keyword`, `@operator`, `@property`, `@type`, `@constructor`, `@comment`, `@string`, `@number` name the token or leaf under the claim. The slot model expands every remaining slot of a claimed kind into a candidate capture under the names rules (§6), and lists every kind the tags never mention in the `unclaimed` section with the reason `unseeded`.
-- **The seed is coarse by construction.** Tags file rust's struct, enum, union and type alias all as `definition.class`; the override splits them. Tags cover a tenth of a grammar's claims; the model expansion is the bulk, and the override is where the vocabulary's judgement lives. Locals and injections carry nothing the bindings need.
-- **A seed is never the vocabulary's source.** The tree stays emitted from the authored `bindings.scm` (§5); the seed lowers the cost of a new grammar and of a grammar bump, nothing else.
+- **Two files per grammar.** `bindings.seed.scm` is generated (`sittir tool bindings-inventory --seed <grammar>`), committed, never hand-edited, and regenerated when the grammar package bumps. `bindings.scm` is authored and overrides it. The two compose by one rule: a kind claimed in the override drops every seed claim on that kind, so the override is either the whole story for a kind or silent about it.
+- **The seed comes from the upstream queries and the slot model.** Each grammar package vendors tree-sitter's `queries/tags.scm` and `queries/highlights.scm`.
+  - Tags decide claims and the `@name` capture, through one table shared by every grammar: `definition.class` → `declaration.class`, `definition.function` → `declaration.function`, `definition.method` → `declaration.method`, `definition.interface` → `declaration.interface`, `definition.module` → `declaration.module`, `definition.macro` → `declaration.macro`, `definition.constant` → `declaration.constant`, `reference.call` → `expression.call`.
+  - Highlights decide the token classes (`@keyword`, `@operator`, `@punctuation`), and `@property`, `@type`, `@constructor`, `@comment`, `@string` and `@number` name the token or leaf under a claim.
+  - The slot model expands every remaining slot of a claimed kind into a candidate capture, named under the name rules (§6). This is what makes exhaustive member captures cheap to write: the seed spells them, and an override restates only the kinds whose members it changes.
+  - Every kind the tags never mention is listed in the seed's `unclaimed` section with the reason `unseeded`. That reason exists only in a seed: an authored file states a parser artefact or claims the kind.
+- **The seed is coarse by construction.** Tags file rust's struct, enum, union and type alias all as `definition.class`; the override splits them. Tags cover a tenth of a grammar's claims and the model expansion is the bulk; the override is where the vocabulary's judgement lives. Locals and injections carry nothing the bindings need.
+- **A seed is never the vocabulary's source.** It lowers the cost of a new grammar and of a grammar bump, nothing else.
 
 ### 2.3 What is never claimed
 
 - **Grammar supertypes.** Namespaces are the vocabulary's supertypes (§3.2); a grammar union maps to its members' claims.
-- **Containers.** A list holder with no members of its own (`argument_list`, `parameters`, a class body, a use list) is bound through its elements: by the elements' own claims where they have them, and by a positional claim only where the role's kind has members the node supplies by being the node — a bare identifier in a python parameter list is a `declaration.parameter` whose `name` is that identifier; a bare name in a typescript enum body is an `enum_member`. A value in argument position supplies nothing but itself, so there is no `argument` role kind: a positional argument is the expression.
+- **Containers.** A list holder with no members of its own (`argument_list`, `parameters`, a class body, a use list) is bound through its elements: by the elements' own claims where they have them, and by a positional claim only where the role's kind has members the node supplies by being the node. A bare identifier in a python parameter list is a `declaration.parameter` whose `name` is that identifier; a bare name in a typescript enum body is an `enum_member`. A value in argument position supplies nothing but itself, so there is no `argument` role kind for it: a positional argument is the expression.
 - **Text leaves.** A node that carries only text (string content and fragments, comment content, regex pattern and flags) is a `string`-typed member of its parent, not a kind.
-- **Layout.** Terminators, automatic semicolons, quote tokens, separators, indentation. These are render options and never members.
+- **Layout.** Terminators, automatic semicolons, quote tokens, separators, indentation. These are render options and never members. The grammar's options block names the terminator and semicolon slots, every separated list's separator slot carries the compiler's separator name, and a delimiter token the options do not reach is unclaimed with its reason, so a slot holding only unclaimed kinds is layout too.
 
-Totality is measured on the meaningful kinds: every visible kind that is not a container, a grammar supertype or a text leaf is claimed or explicitly unclaimed. Today: python 119 of 119, typescript 176 of 176, rust 144 of 144.
+**Totality** is measured on the meaningful kinds: every visible kind that is not a container, a grammar supertype or a text leaf is claimed or explicitly unclaimed.
 
 ## 3. The vocabulary
 
 ### 3.1 Namespaces
 
-Fourteen top-level namespaces. Eleven are semantic: `module`, `declaration`, `statement`, `expression`, `pattern`, `type`, `literal`, `identifier`, `modifier`, `attribute`, `comment`. Three are role namespaces for pieces that belong to a construct without being one: `clause` (pieces of a statement or declaration: `else`, `catch`, `where`, a type annotation, a trait bound, a match arm, import and export specifiers), `argument` (pieces of a call that are not expressions: python's keyword argument), `element` (pieces of a composite expression that are not expressions: a pair, a splat, a struct field initializer, a JSX attribute, a token tree). `keyword` and `punctuation` are token classes for highlighting projections, not kinds of the tree. The root of a file is `module`, the namespace's root kind, claimed by python's `module`, typescript's `program` and rust's `source_file`; a module declared inside a file (`mod`, `namespace`) is `declaration.module`.
+Fourteen top-level namespaces. Eleven are semantic: `module`, `declaration`, `statement`, `expression`, `pattern`, `type`, `literal`, `identifier`, `modifier`, `attribute`, `comment`. Three are role namespaces, for pieces that belong to a construct without being one:
 
-Placement is **semantic namespace first, language qualifier as the refinement**: a macro invocation is `expression.call.macro`, a JSX element `expression.jsx.element`, a `where` clause `clause.where`. A language-specific leaf is assignable to its shared parent, so cross-language reading sees rust's macro invocations as calls; only cross-language building fails, at the leaf the target's context lacks. A top-level extension namespace exists only for a thing with no semantic parent, and there are none.
+- `clause`: pieces of a statement or declaration: `else`, `catch`, `where`, a type annotation, a trait bound, a match arm, import and export specifiers;
+- `argument`: pieces of a call that are not expressions, such as python's keyword argument;
+- `element`: pieces of a composite expression that are not expressions: a pair, a splat, a struct field initializer, a JSX attribute, a token tree.
+
+Keyword and punctuation classes are not namespaces (§2.1). The root of a file is `module`, the namespace's root kind, claimed by python's `module`, typescript's `program` and rust's `source_file`; a module declared inside a file (`mod`, `namespace`) is `declaration.module`.
+
+Placement is **semantic namespace first, language qualifier as the refinement**: a macro invocation is `expression.call.macro`, a JSX element `expression.jsx.element`, a `where` clause `clause.where`. A language-specific leaf is assignable to its shared parent, so cross-language reading sees rust's macro invocations as calls; only cross-language building fails, at the leaf the target lacks.
 
 ### 3.2 Path and kind-set
 
 Two relations, kept apart:
 
 - **The path** is how a kind is addressed: `expression.binary.arithmetic.add`. A prefix is a kind-set, the union of every leaf beneath it, **strictly**: everything under `expression` is an expression. That rule is what put pairs, splats and keyword arguments in the role namespaces, and enum members beside enums (`declaration.enum_member`) rather than beneath them.
-- **Kind-set membership** is what a member admits. A set can be addressed at the top level and also be a member of another set: `identifier` and `literal` are in `expression`'s set, `declaration` is in `statement`'s. Membership is **derived per language context** from the grammar's unions: a grammar union maps to the claims of its members, and a set is admitted as a whole only when every claimed kind of that set is admitted; otherwise the union lists the leaves. Rust's expression set therefore names `statement.block`, `statement.if`, `statement.match`, `statement.loop` and `statement.while` individually, never `statement`. Inclusion is a DAG; the derivation checks for cycles; and every emitted set type is a flattened union of leaf interfaces, so no type alias is self-referential. The base set is the union of the contexts' leaves.
+- **Kind-set membership** is what a member admits. A set can be addressed at the top level and also be a member of another set: `identifier` and `literal` are in `expression`'s set, `declaration` is in `statement`'s.
+  - Membership is derived per language from the grammar's unions: a grammar union maps to the claims of its members.
+  - A set is admitted as a whole only when every claimed kind of that set is admitted; otherwise the union lists the leaves. Rust's expression set therefore names `statement.block`, `statement.if`, `statement.match`, `statement.loop` and `statement.while` individually, never `statement`.
+  - A grammar union whose members are not all claimed admits its claimed members and records the rest as unmapped (§5).
+  - Inclusion is a DAG, and the generator checks it for cycles.
 
 A node carries one claim. Rust's `if` is claimed as `statement.if`; that it sits in rust's expression set is membership, not a second claim.
 
-### 3.3 Refinements and decomposition
+### 3.3 Refinements, decomposition and placement
 
-- **A refinement narrows, never widens.** A leaf's members are its parent's with a literal fixed; a leaf that admits a kind its parent does not is a bindings error, and because an ancestor carries only what is shared, the compiler reports a child that redeclares a shared member incompatibly.
-- **Enumerations are const strings**: the token's text as the language spells it, `'const'`, `'&&'`, `'of'`, never a sittir kind name or a kind id, typed per language as a string-literal union through the context. A choice that is a refined leaf is carried by the kind and its string is derived from it per language, so `logical.and` builds as `&&` in typescript and `and` in python.
-- **Keyword modifiers decompose into members**: `async`, `static`, `readonly`, `abstract`, `declare`, `override`, `const`, `unsafe`, `move`, `mutable`, `accessor`, `optional`, `definite`, `generator` are booleans; `visibility` and `accessorKind` (`get`/`set`) are text where the language spells them as keywords; typescript's accessibility keywords are its `visibility`, one member with one concept behind it, whose shape is the language's (§4.2). Rust's modifier set projects to the same booleans. A modifier with structure (`pub(in path)`, `extern "C"`) is a kind.
-- **A grammar's shape kinds are refinements that pin what they add.** Injectivity (no two kinds of one grammar share a leaf) makes python's typed, default and typed-default parameters, typescript's optional parameter, abstract class, abstract method signature and generator function refinements of their parent, each pinning the member it is named for (`optional: true`, `abstract: true`, `generator: true`); hoisting (§8) keeps them as cheap to reach as the parent.
-- **Placement is decided by one test**: does the construct build through the other language's builder for that kind? Yes with a different keyword is a term (`type_alias`, `module`, `constructor`, `throw`, `extension`); yes in one direction only is a refinement under the wider one (`interface.trait`, `field.signature`, `loop.for`, `loop.counted`, `enum_member.tuple`); no is a sibling kind (`class` and `struct`, `match` and `switch`, `with` and `scope`); and a wrapper or a keyword is a member or a transparent container (`declare`, `label`, `decorator`, a type annotation).
+- **A refinement narrows, never widens.** It may add members, narrow a member's kind-set and pin a literal; it never makes a parent's required member optional, and it never admits a kind its parent does not.
+- **Enumerations are const strings:** the token's text as the language spells it, `'const'`, `'&&'`, `'of'`, never a sittir kind name or a kind id, typed per language as a string-literal union. A choice that is a refined leaf is carried by the kind, and its string is derived from it per language, so `logical.and` builds as `&&` in typescript and `and` in python.
+- **Keyword modifiers decompose into members.** `async`, `static`, `readonly`, `abstract`, `declare`, `override`, `const`, `unsafe`, `move`, `mutable`, `accessor`, `optional`, `definite` and `generator` are booleans. `visibility` and `accessorKind` (`get`/`set`) are text where the language spells them as keywords; typescript's accessibility keywords are its `visibility`. Rust's modifier set projects to the same booleans. A modifier with structure (`pub(in path)`, `extern "C"`) is a kind.
+- **A grammar's shape kinds are refinements that pin what they add.** Injectivity (no two kinds of one grammar share a leaf) makes python's typed, default and typed-default parameters, and typescript's optional parameter, abstract class, abstract method signature and generator function, refinements of their parent, each pinning the member it is named for (`optional: true`, `abstract: true`, `generator: true`).
+- **Placement: one test.** Compare two languages' constructs member by member, leaving out members a feature the other language does not compose would make absent (§4.4):
+  - the same members under a different keyword: one kind, two terms (`type_alias`, `module`, `constructor`, `throw`, `extension`);
+  - everything the other construct has, plus members of its own: a refinement under it (`interface.trait`, `field.signature`, `loop.for`, `loop.counted`, `enum_member.tuple`);
+  - neither: sibling kinds (`class` and `struct`, `match` and `switch`, `with` and `scope`);
+  - a wrapper or a keyword: a member or a transparent container (`declare`, `label`, `decorator`, a type annotation).
+  A rust trait has everything a typescript interface has, once typescript's index and call signatures are left out as members of `structural-conformance`, which rust does not compose; it adds default method bodies and associated items. So it is `declaration.interface.trait`, and a Swift protocol is `declaration.interface.protocol`. That keeps the distinction SCIP keeps between interface, trait and protocol, while cross-language reading sees each of them as an interface.
 - **Refinement routes are sugar.** `d.method('__init__', …)` builds the same tree as `d.method.dunder('init', …)`, and both read back as `declaration.method.dunder`, because classification is by match, never by construction route. `$structure()` reports the most specific kind.
 
-## 4. The portability API: features and terms
+### 3.4 How the interfaces are written
 
-Nothing in the vocabulary is language-specific; it is feature-specific. A language that is not object-oriented has no classes, and that is a fact about a feature it does not compose, not a fact about the language. The high-level API aligns the mechanics; the portability API aligns the terminology, in two parts: **features** decide which kinds and members a language has, **terms** decide what the language calls them.
+- **One file per top-level namespace,** plus `context.ts`, `features.ts` and `index.ts`.
+- **Every level is an interface merged with a namespace:** the interface carries the level's members, the namespace its children. A leaf is an interface alone.
+- **Every interface is generic over the language context:** `Name<G extends GrammarContext>`, with `G` passed through every cross-reference. Cross-references go through one import alias (`V.Expression.Call<G>`), so a local interface never shadows a namespace.
+- **Each namespace exports `Any<G>`,** the union of every kind beneath it, the prefix itself included when it is a kind.
+- **`GrammarContext` is the typemap:** one key per top-level namespace, `unknown` in the constraint. `BaseContext` projects each key to `V.<Namespace>.Any<BaseContext>`, the permissive closure. A language's context is generated with its map (§5).
+- **Interfaces are narrow at the top and expand toward the leaves.** A level carries the members every kind beneath it carries, required only where required in all of them; a leaf carries its full shape; a refinement extends its parent and adds or pins. `Declaration<G>` holds little beyond its discriminant, `Declaration.Function<G>` holds a function's full shape, `Function.Generator<G>` adds `generator: true`. A shared member admits the union of what the kinds beneath admit, so a leaf narrows it; `T | T[]` where the kinds beneath disagree on multiplicity.
+- **Every interface carries `kind`,** the dotted path as a string literal: a leaf's own path, a level's the union of every path beneath it. It is the discriminant that makes `Declaration.Any<G>` usable as "any declaration", and it is the same `kind` a structure carries (§8). A grammar field spelled `kind` (typescript's `let` / `const` keyword) takes a converged name, never the discriminant's.
+- **A refinement extends its parent with `kind` narrowed to its own path:** `extends SubKindOf<Parent<G>>`, where `SubKindOf` (in `context.ts`) replaces the parent's `kind` with the template `` `${parent}.${string}` `` and the refinement declares its literal. The checker then reports a refinement that widens a shared member as an incorrect `extends`. `SubKindOf` is applied to interfaces only, never to a union, so its `Omit` cannot collapse one.
+- **Hoisted names are declared.** A leaf may be given an alias at its namespace's root (`Declaration.Trait<G>` for `Declaration.Interface.Trait<G>`, and the builder `declaration.trait(...)`), written as an alias in the vocabulary. The path form always exists. An alias that would collide with another kind's name is an authoring error the checker reports, so adding a kind never removes an alias.
+
+## 4. Features and terms
+
+Nothing in the vocabulary is language-specific; it is feature-specific. A language that is not object-oriented has no classes, and that is a fact about a feature it does not compose, not a fact about the language. The portable API aligns the mechanics; features and terms align the terminology: **features** decide which kinds and members a language has, **terms** decide what the language calls them.
 
 ### 4.1 Features
 
-- **A feature is a named slice of the vocabulary**: a set of kinds, by path, and a set of path-qualified members. The relation is many-to-many in both directions. `declaration.method` is in `classes` and in `interfaces`; the `async` member of a function is in `async-await`; a kind or member is present in a language when at least one of its features is composed, so composition is a plain union and no feature owns anything. The one invariant: a member's feature set is a subset of the union of its kind's feature sets, so a member is never present on an absent kind.
+- **A feature is a named slice of the vocabulary:** a set of kinds, by path, and a set of path-qualified members. The relation is many-to-many. `declaration.method` is in `classes` and in `interfaces`; the `async` member of a function is in `async-await`; a kind or member is present in a language when at least one of its features is composed, so composition is a plain union and no feature owns anything. The one invariant: a member's feature set is a subset of the union of its kind's feature sets, so a member is never present on an absent kind.
 - **Features are atomic.** A feature is the smallest slice some real language composes or omits as a unit: no language takes half of `async-await`, but languages take type parameters without bounds, so `parametric-polymorphism` and `bounded-quantification` are two. A superset such as `oop` is a named composition of atoms, an `includes` edge in the table, never a second source of kinds or members.
 - **Members are shared by feature, never by slot.** Two languages share a member only when the feature behind it is the same. Single inheritance gives `extends?: T`, interface conformance gives `implements: T[]`, multiple inheritance gives `bases: T[]` where a base may be a class or a protocol and the syntax cannot say which; collapsing them because the slots look alike loses a distinction a consumer would have to reconstruct.
-- **Features are named by type-theory terms**, never by a language's keyword: `typeclasses`, not `traits`; `interface-conformance`, not `implements`.
-- **Three relations, three homes.** Grammar to vocabulary lives in `packages/<grammar>/bindings.scm` and says nothing about features. Vocabulary to feature lives in one hand-maintained table beside the interfaces, `packages/types/src/vocabulary/features.ts`, and says nothing about grammars. Language to features lives with the language's context, one composition per language. A language's shape is the intersection of what its composed features admit and what its bindings claim; a claim outside the composition and a composed feature with no claim behind it are both diagnostics.
-- **Grounding languages.** C#, Go, C++ and Swift have columns in the table and no grammar. They exist to test the cuts: C# grounds the mainstream object-oriented slice, Go supplies structural conformance with no inheritance at all, C++ is the second multiple-inheritance language, Swift the second typeclass and error-propagation language. A cut that only makes sense for one of the three built grammars is suspect; a cut two grounding languages share is not.
+- **Features are named by type-theory terms,** never by a language's keyword: `typeclasses`, not `traits`; `interface-conformance`, not `implements`.
+- **Three relations, three homes.** Grammar to vocabulary lives in `bindings.scm` and says nothing about features. Vocabulary to feature lives in `features.ts` and says nothing about grammars. Language to features lives in the language's composition. A language's shape is the intersection of what its composed features admit and what its bindings claim; a claim outside the composition, and a composed feature with no claim behind it, are both diagnostics.
+- **`features.ts` has a column for each language with a grammar.** The table below also has columns for C#, Go, C++ and Swift. They exist to test the cuts: C# grounds the mainstream object-oriented slice, Go supplies structural conformance with no inheritance at all, C++ is the second multiple-inheritance language, Swift the second typeclass and error-propagation language. A cut that only makes sense for one of the three built grammars is suspect; a cut two grounding languages share is not. Nothing can check a column without a grammar, so those columns stay in this document.
 
 ### 4.2 Terms
 
-- **A feature declares its parameters; a language binds the terms.** Every kind and member a feature introduces is a parameter of that feature, defaulting to the canonical vocabulary name. A composition binds terms to parameters: Swift composes `type-aliases` with `typeAlias` bound to `typealias`, rust binds it to `type`, and typescript leaves the default; rust composes `modules` with `module` bound to `mod`.
-- **A term reaches the high-level API everywhere a name shows**: the type alias (`Swift.Declaration.Typealias`), the builder (`typealias(...)`), the documentation, and the accepted spelling of `kind` when a structure is written in that language's context.
+- **A feature declares its parameters; a language binds the terms.** Every kind and member a feature introduces is a parameter of that feature, defaulting to the canonical vocabulary name. A composition binds terms to parameters: Swift composes `type-aliases` with `type_alias` bound to `typealias`, rust binds it to `type`, and typescript leaves the default; rust composes `modules` with `module` bound to `mod`.
+- **A term reaches the portable API everywhere a name shows:** the type alias (`Swift.Declaration.Typealias`), the builder (`typealias(...)`), the documentation, and the accepted spelling of `kind` when a structure is written in that language's context.
 - **The canonical path stays the identity.** `$structure()` emits `declaration.type_alias` for a Swift `typealias`, and the structure builds through the rust builder as a `type` item, because the two languages share the feature. A term is an alias in both directions, never a second kind.
-- **Terms and qualifiers are different tools.** A qualifier is a refinement, a different kind under the semantic one: `expression.call.macro`. A term is the same kind under a language's name. The rule for choosing: if two languages' constructs type-check against each other's builders, it is one kind with two terms; if not, it is a refinement. A rust trait and a typescript interface fail that test in both directions (default method bodies and associated items one way, index and call signatures the other), so `trait` is not a term: it is the refinement `declaration.interface.trait`, and a Swift protocol is `declaration.interface.protocol`. That keeps the distinction SCIP keeps between interface, trait and protocol, while cross-language reading still sees every one of them as an interface.
+- **Terms and qualifiers are different tools.** A qualifier is a refinement, a different kind under the semantic one: `expression.call.macro`. A term is the same kind under a language's name. Which one applies is §3.3's placement test.
 - **Consequence.** The base API and each language's API are the same interfaces under two naming layers, and the only thing maintained per language is its composition.
 
-### 4.4 Presence and requiredness are projected per kind and member
+### 4.3 The feature table
 
-The context `G` carries kind-sets by namespace, and that alone cannot make a member absent or required for one language: a member that references a specific interface (`whereClause: V.Clause.Where<G>`) is untouched by whatever `G['clause']` projects to, and a member's optionality is fixed in the base interface. The composition is therefore applied by a mapped projection over each interface, not through `G`: for every kind the language composes, a member none of the language's composed features contain is stated as `never` (the `Absent` utility of §8), a member the language's claims require is stated as non-optional (`Require`), and everything else keeps the base declaration. The projection is applied to direct interface references as well as to namespace lookups, which is what makes a rust `whereClause` a compile-time error in python and a missing body a compile-time error in rust. A namespace projected to `never` is never how a member disappears.
-
-### 4.3 The feature table, first cut
-
-The first version of the hand-maintained table. ✓ composed; † composed by content, the way `__init__` gives python a constructor (python and Go spell visibility by naming convention, python and rust overload operators through dunders and `impl` blocks); blank, absent. Columns: python, typescript, rust, then the grounding languages.
+✓ composed; † composed by content, the way `__init__` gives python a constructor (python and Go spell visibility by naming convention; python and rust overload operators through dunders and `impl` blocks); blank, absent. Columns: python, typescript, rust, then the grounding languages.
 
 | feature | adds | py | ts | rs | C# | Go | C++ | Swift |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -119,7 +151,7 @@ The first version of the hand-maintained table. ✓ composed; † composed by co
 | single-inheritance | `extends?: T` | | ✓ | | ✓ | | | ✓ |
 | multiple-inheritance | `bases: T[]` | ✓ | | | | | ✓ | |
 | interface-conformance | `implements: T[]` at the type | | ✓ | | ✓ | | | ✓ |
-| structural-conformance | conformance with no declaration | | ✓ | | | ✓ | | |
+| structural-conformance | conformance with no declaration; index and call signatures | | ✓ | | | ✓ | | |
 | typeclasses | conformance declared away from the type (`impl`, `extension`) | | | ✓ | | | | ✓ |
 | open-type-extension | methods added away from the type | | | ✓ | ✓ | ✓ | | ✓ |
 | overloading | several signatures, one name | | ✓ | | ✓ | | ✓ | ✓ |
@@ -147,120 +179,121 @@ The first version of the hand-maintained table. ✓ composed; † composed by co
 | labeled-control-flow | labels on loops and blocks | | ✓ | ✓ | | ✓ | ✓ | ✓ |
 | modules | import, export, re-export, namespace | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 
-Decisions the table records: `enumerations` and `algebraic-data-types` are separate features, since a C# enum and a rust enum share a keyword and nothing else; `decorators` and `attributes` are separate, since Swift's `@` forms are never evaluated applications; `exceptions` and `error-propagation` are separate, since Swift has both and rust has only the second. `oop` as a superset reads as `classes`, one of the inheritance features, `interface-conformance`, `accessors`, `visibility`; that composition names typescript, C# and Swift exactly, and python and C++ with the other inheritance feature. Two rows are held loosely: `interfaces` places rust's trait under typescript's interface as a refinement, with `typeclasses` carrying the conformance side, and `open-type-extension` is kept apart from `typeclasses` because C# and Go have the former without the latter. `comprehensions` and `jsx` are real features shaped by one language each and compose as leaves under `expression` without a row here.
+Decisions the table records: `enumerations` and `algebraic-data-types` are separate features, since a C# enum and a rust enum share a keyword and nothing else; `decorators` and `attributes` are separate, since Swift's `@` forms are never evaluated applications; `exceptions` and `error-propagation` are separate, since Swift has both and rust has only the second. `oop` as a superset reads as `classes`, one of the inheritance features, `interface-conformance`, `accessors` and `visibility`; that composition names typescript, C# and Swift exactly, and python and C++ with the other inheritance feature. `open-type-extension` is kept apart from `typeclasses` because C# and Go have the former without the latter. `comprehensions` and `jsx` are real features shaped by one language each and compose as leaves under `expression` without a row here.
 
-## 5. The base type tree
+### 4.4 Presence and requiredness are projected per kind and member
 
-`packages/types/src/vocabulary/` is **emitter output**. `sittir tool bindings-inventory --emit` writes what the bindings and each grammar's slot model imply into that directory by default (or into another directory the caller names), and the checked-in files are that result, regenerated and never hand-edited. The emission is itself dogfood: the inventory builds every interface, namespace, union, lookup and template literal type through the typescript package's strict factories and renders it with the native engine, so a defect in that surface shows up in the emitted tree rather than being worked around. Convergence (§6) is an editorial act on the bindings and the derivation, proven by re-emitting.
+The context `G` carries kind-sets by namespace, and that alone cannot make a member absent or required for one language: a member that references a specific interface (`whereClause: V.Clause.Where<G>`) is untouched by whatever `G['clause']` projects to, and a member's optionality is fixed in its interface.
 
-- **One file per top-level namespace**, plus `context.ts` and `index.ts`.
-- **Every level is an interface merged with a namespace**: the interface carries the level's members, the namespace its children. A leaf is an interface alone. A refinement is `extends Parent<G> { readonly operator: '+' }`.
-- **Every interface is generic over the grammar context**: `Name<G extends GrammarContext>`, with `G` passed through every cross-reference. Cross-references go through one import alias (`V.Expression.Call<G>`) so a local interface never shadows a namespace.
-- **Each namespace exports `Any<G>`**, the flattened union of every claimed kind beneath it, the prefix itself included when it is claimed.
-- **`GrammarContext` is the typemap**: one key per top-level namespace, `unknown` in the constraint. **`BaseContext`** projects each key to `V.<Namespace>.Any<BaseContext>`, the permissive closure. A per-language context is the projection over that language's composed features (§4), narrowed by what its bindings claim and by its slot model; the derivation of those is the next step (§11).
-- **Interfaces are narrow at the top and expand toward the leaves**, the opposite of the namespaces. A level no grammar claims carries exactly the members every claimed kind beneath it carries, required only when required in all of them; a claimed level carries its own claim's members; a leaf carries everything its claims give it; a refinement extends its parent and adds or pins. `Declaration<G>` therefore holds little beyond its discriminant, `Declaration.Function<G>` holds a function's full shape, and `Function.Generator<G>` adds `generator: true`. A shared member admits the union of what the kinds beneath admit, so a leaf narrows it. `T | T[]` where the kinds beneath disagree on multiplicity.
-- **Every interface carries `kind`**, the dotted path as a string literal: a leaf's own path, a level's the union of every claimed path beneath it, a refinement's its own path. It is the discriminant that makes `Declaration.Any<G>` usable as the type for "any declaration": shared members read directly, the rest after narrowing on `kind`, and it is the same `kind` a structure carries (§8). A grammar field spelled `kind` (typescript's `let` / `const` keyword) takes a converged name in the bindings, never the discriminant's.
-- **`Unmapped<'grammar:kind'>`** is a nominal placeholder for a grammar kind a member admits that no binding claims yet. It keeps the gap visible in the types and keeps the subtype relation honest; its count is the work list of the next bindings pass, recorded as a ceiling in `packages/tools/tests/inventory/bindings-inventory.ceiling.json`.
-- **A refinement only narrows.** It may add members, narrow a member's kind-set, and pin an enumeration; it never makes a parent's required member optional. The compiler reports the widening as an incorrect `extends`.
-- **The derived union table** (grammar union → vocabulary kinds) is what the inventory computes from each grammar's supertypes: a supertype is admitted when at least half of its subtypes resolve to a vocabulary kind, and a whole namespace stands for it only when every claimed kind in that namespace is covered. Requiring every subtype is the follow-up, possible once the bindings claim the remaining unmapped subtype references (129 at the time of writing), because it would otherwise raise the `Unmapped` ceiling; it is how the per-context kind-sets are read.
+- The composition is applied by a mapped projection over each interface, not through `G`. For every kind the language composes, a member is stated as `never` (`Absent`) when none of the language's composed features contain it or when the language's bindings give it no route; a member the language's claims require is stated as non-optional (`Require`); everything else keeps its declaration.
+- The projection applies to direct interface references as well as to namespace lookups. That is what makes a rust `whereClause` a compile-time error in python and a missing body a compile-time error in rust. A namespace projected to `never` is never how a member disappears.
+- The projections run in the checker for every language context, so they are held to a type-check gate (§10): their cost is measured against the whole workspace's type-check time, as the node types' surface is.
+
+## 5. The map
+
+The map is what the generator makes of a grammar's bindings and its slot model. It is generated with the grammar package, like its factories, and never hand-edited.
+
+### 5.1 What it holds
+
+For one grammar:
+
+- **Read entries,** per grammar kind: the vocabulary kinds it can be, most specific first, each with what selects it: field literals the node must have (`operator: "+"`), predicates on captured nodes (`#eq?`, `#match?`), the template's holes.
+- **Build entries,** per vocabulary kind: the factories that build it, each with the literals it pins.
+- **Member routes,** per entry: for each member capture, the slot it lands in, as a path from the claimed node through any transparent wrapper to the slot (`class_heritage` → `extends_clause` → value), and whether the member is a slot's value or a token's presence.
+- **Container assignments:** for a container pattern, which captures it assigns to the element it wraps, and the route to each.
+- **The language's context:** per namespace, the vocabulary kinds the grammar claims, with the sets admitted whole under §3.2. This is the `G` the language's interfaces are instantiated with.
+- **Token classes:** the keyword and punctuation classes of §2.1, for highlighting.
+- **Unmapped kinds:** each grammar kind a routed slot admits that no claim covers. Its count is a ratchet that only falls.
+
+### 5.2 How it is typed
+
+- **Against the low-level API.** Each route names the grammar's own slots, so the map type-checks against the grammar's generated types: a route to a slot that does not exist is a compile error in the grammar package, not a runtime surprise.
+- **Against the vocabulary.** The inventory checks that every claimed path is a kind of the vocabulary, that every route's member is a member of that kind's interface, that a refinement's pinned literals are the refinement's pinned members, and that every required member of a claimed kind has a route, or is absent under the language's composition.
+
+### 5.3 Where it is made
+
+- **By the generator,** as part of the grammar package's generated output, regenerated when the grammar or its `bindings.scm` changes and covered by the generated-output check.
+- **`bindings.scm` is read with `@sittir/scm`,** into its typed tree, by the generator's query module: the same module that reads the upstream `tags.scm` and `highlights.scm` for the seed (§2.2) and the grammar's roles. The generator also generates `@sittir/scm`, so it reads through a build of `@sittir/scm` pinned to a known commit, never through the workspace copy: a change that breaks `@sittir/scm` cannot break the generator's ability to regenerate the fix.
+- **A file that does not parse is refused.** The reader names the lines that failed; the compile of each `bindings.scm` against its grammar's parser (§10) is the gate that catches what the parse absorbs.
+- **The inventory** (`sittir tool bindings-inventory`) reads the bindings through the same module and reports what the generator would refuse, plus the diagnostics of §10.
+
+### 5.4 Who reads it
+
+- **`from(structure)`** finds the build entries for the structure's `kind`, routes each member to its slot and calls the low-level loose builder (§8).
+- **`$structure()`** takes a node's read entries in order, tests each entry's literals and predicates on the node, and reads each member along its route.
+- **The highlighting projection** reads the token classes.
 
 ## 6. Convergence rules
 
-Names converge before kinds. Both passes are recorded, member by member, in `2026-09-13-base-vocabulary-draft.md`; the rules are:
+Names converge before kinds. The rules govern the names the vocabulary uses and the names captures give. The convergence record for the first vocabulary is `2026-09-13-base-vocabulary-draft.md`.
 
-**Names.** Rules (1) and (2) are applied by the derivation to every slot, so the bindings never spell them; a capture renames a slot only for the kinds whose claims carry it, never grammar-wide. (0) Two languages share a member only when the feature behind it is the same, never because the slots look alike: typescript's `extends` (single inheritance), its `implements` (interface conformance) and python's bases (multiple inheritance) are three members of three features, and the earlier `heritage` that merged them is reversed. (1) A marker boolean takes the keyword it marks. (2) A modifier enum takes the noun. (3) Layout is not a member. (4) Containers keep the shared name (`parameters`, `arguments`, `body`, `statements`, `typeParameters`, `typeArguments`). (5) Otherwise the majority upstream name over the claiming grammars wins; a tie is a recorded choice.
+**Names.** The seed's model expansion applies rules (1) and (2) to every slot it turns into a capture, and an authored capture follows them too. A capture names a slot only in the claims it sits in, never grammar-wide.
 
-**Kinds.** (1) Containers unwrap to their element kind-set as a list. (2) A wrapper clause that carries one member around punctuation is transparent: typescript's type annotation makes `returnType: type`; python's suite forms make a function body `statement.block`, the encoding chosen at build time. (3) A member's kind is the smallest kind-set covering every grammar's admitted set. (4) Text leaves are strings. (5) Exclusive markers decompose. (6) Inclusion is a DAG with full-coverage admission and flattened unions. (7) Refinements narrow, never widen.
+0. Two languages share a member only when the feature behind it is the same, never because the slots look alike (§4.1).
+1. A marker boolean takes the keyword it marks.
+2. A modifier enum takes the noun.
+3. Layout is not a member.
+4. Containers keep the shared name (`parameters`, `arguments`, `body`, `statements`, `typeParameters`, `typeArguments`).
+5. Otherwise the majority upstream name over the claiming grammars wins; a tie is a recorded choice.
 
-Where a grammar's set is narrower than the base (rust's `body` required and a block only), the per-language context carries the narrowing; nothing is re-authored.
+**Kinds.**
+
+1. Containers unwrap to their element kind-set as a list.
+2. A wrapper clause that carries one member around punctuation is transparent: typescript's type annotation makes `returnType: type`; python's suite forms make a function body `statement.block`, the encoding chosen at build time. The slot model decides it: an envelope, an alias or a polymorph whose one non-layout slot holds nodes is transparent. A wrapper with structure of its own (rust's `attributed_parameter`, typescript's class body members) is transparent only through a container pattern, because reading a kind as its content drops whatever its own text says (`impl !Trait`).
+3. A member's kind is the smallest kind-set covering every grammar's admitted set.
+4. Text leaves are strings.
+5. Exclusive markers decompose.
+6. Inclusion is a DAG with full-coverage admission and flattened unions.
+7. Refinements narrow, never widen.
+
+Where a grammar's set is narrower than the vocabulary's (rust's `body` required and a block only), the language's context and its projection carry the narrowing; the vocabulary is not re-authored.
 
 ## 7. Template regexes
 
-A `#match?` predicate whose regex is anchored at both ends and made of literal runs and holes is a template: the literals are injected on build, the holes are inputs on build and members on read. Every hole is a named group; the member takes its name; the leaf adds it beside the parent's members (`declaration.method.dunder` has `stem: 'init'` while `declaration.method` keeps `name: '__init__'`). The hole's type is the template literal type (`` `__${string}__` ``), and a hole with a character class is validated on construction. Outside the subset — unanchored, backreferences, lookaround, a quantified literal, alternation that is not itself a template with the choice as a member — a regex is read-only and the inventory says why.
+A `#match?` predicate whose regex is anchored at both ends and made of literal runs and holes is a template: the literals are injected on build, the holes are inputs on build and members on read.
+
+- Every hole is a named group, and the member takes its name. The leaf adds it beside the parent's members: `declaration.method.dunder` has `stem: 'init'` while `declaration.method` keeps `name: '__init__'`.
+- A hole's type is the template literal type (`` `__${string}__` ``), and a hole with a character class is validated on construction.
+- Outside the subset (unanchored, backreferences, lookaround, a quantified literal, alternation that is not itself a template with the choice as a member) a predicate is read-only, and the inventory says why.
+- The regex is in the syntax tree-sitter's query engine and JavaScript share; named groups are written `(?<name>…)`.
 
 ## 8. The structure API
 
-A **structure** is a plain object satisfying a vocabulary interface, discriminated by `kind`, the dotted path. It is `Base<G>` instantiated over a **structure context**, where each namespace's set is the union of structure types rather than node types and leaves are text; a per-language structure is the same over that language's context. Structures are serializable and carry no language.
+A **structure** is a plain object satisfying a vocabulary interface, discriminated by `kind`. It is the vocabulary instantiated over a **structure context**, where each namespace's set is the union of structure types rather than node types and leaves are text; a language's structure is the same over that language's context. Structures are serializable and carry no language.
 
-- **`from(structure)`** builds through the binding's write direction: structure kind → factory, member → slot. It accepts the **loose** form: the strict shape with each member widened to what the slot can disambiguate, derived by one mapped utility, never authored.
-- **`$structure()`** on a node returns the **canonical** form, every member spelled, every `kind` present, the most specific kind reported. Canonical is a subset of loose, so the public surface has one structure type per kind.
-- **Deviation is a type error where it should be.** A structure handed to a language whose context lacks its kind fails on the kind; one that omits a member that language requires fails on `Require`; one that carries a member that language lacks fails because the language's structure states that member as `never` (the `Absent` utility), so an excess member is an error rather than a silent drop. What a language lacks is decided by its feature composition (§4): a kind or member none of the composed features contain is absent, which is what makes the lookup resolve to `never` rather than to an unconstrained `unknown`.
-- **Coercion**, by the slot: a number is the shortest round-trip decimal, an integer in an integral slot and a float where the slot admits only floats (rust gets `0.0` from `0`), and anything that spelling cannot express is given as a string and kept verbatim; a boolean and `null` coerce to a kind (`literal.boolean.true`, `literal.null`) the language spells; a string is an identifier in an identifier-only or mixed slot and a string literal in a string-only slot; an array is a list with elements coerced; an object's `kind` may be omitted exactly when the slot admits one kind. Runtime validates what the types check, since a structure can arrive from JSON.
-- **Positional builders** (`d.method(M.Pub | M.Async, 'deposit', …)`) remain the ergonomic authoring form and produce the same nodes; the structure form is the data interchange.
+- **`from(structure)`** builds through the map: the structure's kind selects a build entry, each member is routed to its slot, and the low-level loose builder coerces the value as its slot's contract says. It accepts the loose form: the canonical shape with each member widened to what its slot's loose coercion accepts, derived by one mapped utility, never authored.
+- **What the portable layer adds to coercion** is only what the low-level contract cannot know:
+  - an object's `kind` may be omitted exactly where the slot admits one vocabulary kind;
+  - `kind` may be spelled with the language's term (§4.2);
+  - a boolean and `null` in a slot that admits a literal kind become that kind as the language spells it (`literal.boolean.true`, `literal.null`).
+  Everything else, a bare string or number included, is the slot's loose coercion as the loose contract states it. Runtime validates what the types check, since a structure can arrive from JSON.
+- **`$structure()`** on a node returns the **canonical** form: every member spelled, every `kind` present, the most specific kind reported. Canonical is a subset of loose, so the public surface has one structure type per kind.
+- **Deviation is a type error where it should be.** A structure handed to a language whose context lacks its kind fails on the kind; one that omits a member that language requires fails on `Require`; one that carries a member that language lacks fails because the language's structure states that member as `never` (`Absent`), so an excess member is an error rather than a silent drop.
 - **A refinement the target lacks degrades to its parent.** A refinement is assignable to its parent by construction, so a python `parameter.typed` structure builds through typescript's `parameter`, and a rust `interface.trait` through typescript's `interface`, as long as it carries no member the target lacks; an excess member (`unsafe`) still fails as `Absent`.
-- **A leaf name unique within its top-level namespace is hoisted to that namespace's root.** `declaration.trait(...)` is `declaration.interface.trait(...)` and `expression.add(...)` is `expression.binary.arithmetic.add(...)`; the path form always exists and the hoisted form is an alias to it, never a second builder. A name that occurs under more than one parent (`signature` under `method`, `function` and `field`; `static` under `method` and `variable`) keeps its path, and the inventory reports the collision rather than guessing. Types follow the builders: `Declaration.Trait<G>` is an alias of `Declaration.Interface.Trait<G>` under the same rule, so a language's term-bound name is the hoisted refinement itself.
+- **Positional builders** (`d.method(M.Pub | M.Async, 'deposit', …)`) remain the ergonomic authoring form and produce the same nodes; the structure form is the data interchange.
 
-## 9. Runtime model
+## 9. Reading
 
-Unchanged in mechanism: one query pass over `shape.scm ++ bindings.scm ++ user.scm`, flat captures materialized to `NodeData`, a native layer that knows captures and nothing about roles, range-scoped and on demand, user-pluggable without regeneration. Totality of the reader is gated by a differential harness against the generated readers on corpora including malformed files before the executor replaces anything. The ast-grep seam shares the tree.
+`$structure()` and the read-side consumers read a parsed node through the map, on the node's own typed surface: its kind selects the read entries, an entry's literals and predicates are tested on the node and its captured children, and members are read along their routes. No query runs over the tree at read time, and the native layer knows nothing about roles. A malformed file reads as far as its nodes do: an error node has no read entry, and its parent's members that route through it are absent.
 
 ## 10. Verification
 
-1. **Totality and injectivity**, computed from `grammar.json` and the bindings by the inventory: every meaningful visible kind claimed or unclaimed with a reason; no two kinds in one grammar share a leaf; the unclaimed count only falls.
-1b. **The bindings compile**: `sittir tool bindings-inventory --check` builds each `bindings.scm` against its grammar's parser and reports tree-sitter's own error for a bad node name or field; the set of compiling grammars is a ratchet in `packages/tools/tests/inventory/bindings-inventory.ceiling.json`.
-2. **Inclusion is a DAG**: the inventory reports cycles; there are none.
-3. **The vocabulary type-checks**; a widening refinement fails there.
-4. **`Unmapped` only falls.**
-5. **Read-side differential** against the generated readers, unchanged.
-6. **Structure round trip**: read, `$structure()`, `from()`, render, parse-equal, over the corpus, as the validator lane that measures coverage for the coercer's retirement.
-7. **Template regexes**: a dunder built from a stem re-parses to the claim; a bare hole is rejected at lift.
-8. **Cross-language errors**: `Python.Declaration.Interface` handed to python fails at compile time because python composes no `interfaces` feature, and a rust `whereClause` handed to python fails because python's bindings claim no where-clause kind (python does compose `bounded-quantification`; a composed feature reaches a member only through a claim behind it); a `Base.Declaration.Function` consumer compiles unchanged against all three contexts.
-9. **Feature closure**: a member's feature set is a subset of the union of its kind's feature sets; a claim outside the language's composition and a composed feature with no claim behind it are both inventory diagnostics.
+1. **Totality and injectivity,** computed from `grammar.json` and the bindings by the inventory: every meaningful visible kind claimed or unclaimed with a reason; no two kinds of one grammar share a leaf; the unclaimed count only falls.
+2. **The bindings compile:** each `bindings.scm` compiles as a query against its grammar's parser, and a bad node or field name is reported with tree-sitter's own error and the line; the set of compiling grammars is a ratchet.
+3. **The bindings read:** each `bindings.scm` reads through `@sittir/scm` with no error node and renders back byte-identical.
+4. **The map type-checks** against the low-level API (§5.2), and the inventory's checks of the map against the vocabulary pass.
+5. **Inclusion is a DAG:** there are no cycles.
+6. **Unmapped only falls.**
+7. **Structure round trip:** read, `$structure()`, `from()`, render, parse-equal, over the corpus, as the validator lane that measures the portable surface's coverage.
+8. **Template regexes:** a dunder built from a stem re-parses to the claim; a bare hole is rejected.
+9. **Cross-language errors:** `Python.Declaration.Interface` handed to python fails at compile time because python composes no `interfaces` feature, and a rust `whereClause` handed to python fails because python's bindings claim no where-clause kind (python does compose `bounded-quantification`; a composed feature reaches a member only through a claim behind it); a `Base.Declaration.Function` consumer compiles unchanged against every language's context.
+10. **Feature closure:** a member's feature set is a subset of the union of its kind's feature sets; a claim outside the language's composition and a composed feature with no claim behind it are both inventory diagnostics.
+11. **Terms are aliases:** a Swift `typealias` structure read as `declaration.type_alias` builds in rust as a `type` item and reads back with the same path; a term never changes what `$structure()` emits.
+12. **Consumer-seat checks,** compile-time, in `packages/types/tests/vocabulary-consumers.test-d.ts`: an ordinary function, method, call and binary satisfy their interfaces; a getter pins `'get'`, `Add` pins `'+'`, an increment cannot omit its operand; a rust `whereClause` on a python function and a rust function without a body are the negative cases.
+13. **Type-check time:** the whole workspace's type-check, before and after a change to the vocabulary, the projections or the map's types, with the same command, does not regress beyond noise.
 
-10. **Terms are aliases**: a Swift `typealias` structure read as `declaration.type_alias` builds in rust as a `type` item and reads back with the same path; a term never changes what `$structure()` emits.
-11. **Consumer-seat checks**, compile-time, in `packages/types/tests/vocabulary-consumers.test-d.ts`: an ordinary function, method, call and binary satisfy their base interfaces; a getter pins `'get'`, `Add` pins `'+'`, an increment cannot omit its operand; once the per-language projections exist, a rust `whereClause` on a python function and a rust function without a body are the negative cases.
+## 11. Open questions
 
-## 11. Next
-
-- The feature table as `packages/types/src/vocabulary/features.ts`, hand-maintained, from §4.3; one composition per language beside its context, with its term bindings.
-- Per-language contexts from each language's composition narrowed by its claims, which is what makes cross-language errors fire.
-- Applied: the reversals the feature lens forces, in the tree and the bindings: `accessibility` into `visibility`; `heritage` into `extends` / `implements` / `bases`; `declaration.trait` under `declaration.interface` as the refinement `declaration.interface.trait`; and the placement audit of every single-grammar kind (§12).
-- The seed generator (§2.2): the tags table, highlights token captures, model expansion, the compose rule in the inventory, and the migration of the three authored files into overrides by diffing each against its seed; python first, as the proof.
-- The exhaustive-capture pass that §2.1 now requires: every member the tree keeps is spelled by a capture, and the tool reports members the tree carries that no capture names.
-- The next bindings pass, driven by the `Unmapped` counts.
-- The inventory's totality and injectivity gates, and a diff mode reporting where the bindings and the emitted tree disagree.
-- The structure builders and `$structure()`, then the round-trip lane, then the coercer's retirement.
-
-Open: trivia and provenance on a structure (a structure has no coordinates; `doc` survives as a member, free trivia needs a `trivia` member or is declared lost); the names of the read-side consumer surface (`roles.as/is/find`) now that the file is `bindings.scm`.
-
-## 12. What changed from the earlier design
-
-| earlier | now |
-| --- | --- |
-| `roles.scm` at the repo root | `packages/<grammar>/bindings.scm`; the file maps the high-level API onto the low-level one |
-| the normalized surface is per grammar and cross-language construction is not a goal | the structure API is the cross-language path, typed by base against language contexts |
-| builders coerce through the factory layer's `coerceTo*` | the high-level layer owns coercion; the low-level layer is strict only; the coercer retires |
-| nested config objects are not part of the surface | structures are the object form, a separate entry point from the positional builders |
-| grammar supertypes claimed where present | never claimed; namespaces are the supertypes; membership derived per context |
-| containers claimed as kinds where visible | bound through their elements; positional claims only for degenerate structured kinds |
-| an `argument` role kind considered | none; a positional argument is the expression |
-| refinements under the nearest namespace regardless | prefix is a kind-set strictly; role namespaces `clause`, `argument`, `element`; `declaration.enum_member` |
-| `modifiers` as a bag or bitflags on the read side | keyword modifiers decompose into members; bitflags remain a positional-builder convenience |
-| enumerations as kind ids or per-label enums | const strings, the token's text |
-| free-text predicates never liftable | template regexes with named holes invert; only the non-template residue is read-only |
-| language-only kinds unclaimed or in extension namespaces | bound under their semantic namespace with a qualifier |
-| authored `vocabulary.ts` type tree, one file | emitted, one file per namespace, by the derivation: interface + namespace per level, `Any<G>`, `GrammarContext` typemap keyed by top-level namespace |
-| context `G` keyed by vocabulary kind | keyed by top-level namespace, projecting kind-sets |
-| `Base<G> & Delta` per grammar as the checker | subtyping by construction; an ancestor types a shared member as the union of what the kinds beneath admit, so a child that widens it fails its `extends` |
-| a level's member optional where not every descendant carries it | interfaces narrow at the top, expanding toward the leaves: an unclaimed level carries only what every claimed kind beneath it shares, a claimed level its own claim, a leaf everything; every interface carries the `kind` discriminant |
-| per-language contexts projected from each grammar's claims alone | a language is a composition of features, narrowed by its claims; features and terms are the portability API |
-| `heritage` converged across `extends`, `implements` and python's bases | three members of three features; members are shared by feature, never by slot |
-| `accessibility` beside `visibility` | one `visibility` member, its shape per language |
-| member captures under the delta principle, the slot model supplying the rest | captures are constructive and exhaustive; the slot model only types what a capture names |
-| one authored `bindings.scm` per grammar | a generated `bindings.seed.scm` from upstream tags and highlights plus the model, overridden per claimed kind by the authored `bindings.scm` |
-| `declaration.trait` beside `declaration.interface` | a refinement, `declaration.interface.trait`: an interface with what only a trait has |
-| `declaration.impl` | `declaration.extension`, rust's `impl` and Swift's `extension`; `impl Trait for T` is `extension.conformance` |
-| `declaration.property` for a typescript property signature | `declaration.field.signature`, as `method.signature` is to `method` |
-| `declaration.method.trait` | a trait's method is `method` with a default body or `method.signature` without |
-| `declaration.parameter.type` | `declaration.type_parameter`, its own kind: it never carries a value |
-| `declaration.decorated`, `declaration.ambient`, `statement.labeled`, `class.static_block`, `module.extern_crate` | containers assign `decorator`, `declare` and `label` to their element; a static block is `statement.block.static`; an extern crate is `statement.import.crate` |
-| `statement.for` as the parent of `for.in` | the loop family: `loop` (body, label) refined by `loop.while`, `loop.do_while`, `loop.for` (a subject) and `loop.counted` (initializer, condition, update) |
-| `statement.with` shared by python and typescript | python's is resource management; typescript's legacy scope injection is `statement.scope` |
-| rust `expression.cast` beside typescript `cast.as` | both `expression.cast.as` |
-| `collection.list` and `collection.array`; `expression.generic` and `instantiation` | one kind each: `collection.list`, `expression.instantiation` |
-| `clause.annotation` and its variants | transparent wrappers: the annotated member takes the type |
-| `type.member`, `type.scoped`, typescript's nested type identifier | one kind, `type.path` |
-| `type.never` claimed by rust alone | `type.primitive.never`, claimed by typescript's `never` too |
-| decorators claimed as `attribute` | `attribute.decorator`, a refinement whose content is an expression |
-| rust enum variants as one `enum_member` | payload shapes are refinements of the member: `enum_member.tuple`, `enum_member.struct` |
-| language-specific names erased into the canonical vocabulary | terms: a feature's names are parameters a language binds, aliases in both directions over one canonical path |
+- **One word, two mechanisms.** "Bindings" names `bindings.scm` and also the `_bindings` key of each grammar's `options` block, which groups option addresses under a user-facing key. One of them should be renamed before the portable API ships; the read-side consumer surface (`roles.as/is/find`) is named by the same decision.
+- **Trivia and provenance on a structure.** A structure has no coordinates. `doc` survives as a member; free trivia needs a `trivia` member or is declared lost.
+- **A user's own bindings.** Whether a user's bindings file compiles to a map composed after the package's, by the seed's per-kind override rule, and whether that happens at generation or at load.

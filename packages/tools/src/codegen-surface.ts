@@ -58,6 +58,8 @@ const MODULES = {
 	generatedMetadata: '../../codegen/src/compiler/generated-metadata.ts',
 	symbolTable: '../../codegen/src/dsl/symbol-table.ts',
 	spacing: '../../codegen/src/dsl/primitives/spacing.ts',
+	preferencePath: '../../codegen/src/dsl/primitives/preference-path.ts',
+	optionsBlock: '../../codegen/src/dsl/wire/options-block.ts',
 	kindDiscriminant: '../../codegen/src/emitters/kind-discriminant.ts',
 	ruleMetadata: '../../codegen/src/dsl/rule-metadata.ts',
 	types: '../../codegen/src/emitters/types.ts',
@@ -96,6 +98,8 @@ export interface CodegenSurface {
 	generatedMetadata: typeof import('../../codegen/src/compiler/generated-metadata.ts');
 	symbolTable: typeof import('../../codegen/src/dsl/symbol-table.ts');
 	spacing: typeof import('../../codegen/src/dsl/primitives/spacing.ts');
+	preferencePath: typeof import('../../codegen/src/dsl/primitives/preference-path.ts');
+	optionsBlock: typeof import('../../codegen/src/dsl/wire/options-block.ts');
 	kindDiscriminant: typeof import('../../codegen/src/emitters/kind-discriminant.ts');
 	ruleMetadata: typeof import('../../codegen/src/dsl/rule-metadata.ts');
 	types: typeof import('../../codegen/src/emitters/types.ts');

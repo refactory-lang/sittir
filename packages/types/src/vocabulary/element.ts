@@ -31,11 +31,85 @@ export namespace Element {
 			readonly kind: 'element.macro.token_repetition';
 			readonly operator: '*' | '+' | '?';
 			readonly tokens?: (
-				| V.Unmapped<'rust:non_special_token'>
-				| V.Identifier.Metavariable<G>
+				| G['identifier']
+				| G['literal']
 				| V.Element.Macro.Any<G>
+				| '!'
+				| '!='
+				| '#'
+				| '%'
+				| '%='
+				| '&'
+				| '&&'
+				| '&='
+				| "'"
+				| '*'
+				| '*='
+				| '+'
+				| '+='
+				| ','
+				| '-'
+				| '-='
+				| '->'
+				| '.'
+				| '..'
+				| '...'
+				| '..='
+				| '/'
+				| '/='
+				| ':'
+				| '::'
+				| ';'
+				| '<'
+				| '<<'
+				| '<<='
+				| '<='
+				| '='
+				| '=='
+				| '=>'
+				| '>'
+				| '>='
+				| '>>'
+				| '>>='
+				| '?'
+				| '@'
+				| '^'
+				| '^='
+				| '_'
+				| 'as'
+				| 'async'
+				| 'await'
+				| 'break'
+				| 'const'
+				| 'continue'
+				| 'default'
+				| 'enum'
+				| 'fn'
+				| 'for'
+				| 'gen'
+				| 'if'
+				| 'impl'
+				| 'let'
+				| 'loop'
+				| 'match'
+				| 'mod'
+				| 'pub'
+				| 'return'
+				| 'static'
+				| 'struct'
+				| 'trait'
+				| 'type'
+				| 'union'
+				| 'unsafe'
+				| 'use'
+				| 'where'
+				| 'while'
+				| '|'
+				| '|='
+				| '||'
+				| V.Type.Primitive<G>
 			)[];
-			// unmapped: <rust:non_special_token>
+			// unmapped: literal:mutable_specifier
 		}
 		export namespace TokenRepetition {
 			export interface Pattern<G extends GrammarContext> extends Simplify<
@@ -45,11 +119,85 @@ export namespace Element {
 				readonly kind: 'element.macro.token_repetition.pattern';
 				readonly operator: '*' | '+' | '?';
 				readonly tokenPatterns?: (
-					| V.Unmapped<'rust:non_special_token'>
-					| V.Identifier.Metavariable<G>
+					| G['identifier']
+					| G['literal']
 					| V.Element.Macro.Any<G>
+					| '!'
+					| '!='
+					| '#'
+					| '%'
+					| '%='
+					| '&'
+					| '&&'
+					| '&='
+					| "'"
+					| '*'
+					| '*='
+					| '+'
+					| '+='
+					| ','
+					| '-'
+					| '-='
+					| '->'
+					| '.'
+					| '..'
+					| '...'
+					| '..='
+					| '/'
+					| '/='
+					| ':'
+					| '::'
+					| ';'
+					| '<'
+					| '<<'
+					| '<<='
+					| '<='
+					| '='
+					| '=='
+					| '=>'
+					| '>'
+					| '>='
+					| '>>'
+					| '>>='
+					| '?'
+					| '@'
+					| '^'
+					| '^='
+					| '_'
+					| 'as'
+					| 'async'
+					| 'await'
+					| 'break'
+					| 'const'
+					| 'continue'
+					| 'default'
+					| 'enum'
+					| 'fn'
+					| 'for'
+					| 'gen'
+					| 'if'
+					| 'impl'
+					| 'let'
+					| 'loop'
+					| 'match'
+					| 'mod'
+					| 'pub'
+					| 'return'
+					| 'static'
+					| 'struct'
+					| 'trait'
+					| 'type'
+					| 'union'
+					| 'unsafe'
+					| 'use'
+					| 'where'
+					| 'while'
+					| '|'
+					| '|='
+					| '||'
+					| V.Type.Primitive<G>
 				)[];
-				// unmapped: <rust:non_special_token>
+				// unmapped: literal:mutable_specifier
 			}
 			export type Any<G extends GrammarContext> =
 				| V.Element.Macro.TokenRepetition<G>
@@ -182,7 +330,7 @@ export namespace Element {
 		readonly kind: 'element.tuple';
 		readonly name: G['identifier'] | V.Pattern.Rest<G>;
 		// t only
-		readonly type: G['type'];
+		readonly type: G['identifier'] | G['type'];
 		// t only
 	}
 	export namespace Tuple {
@@ -190,14 +338,14 @@ export namespace Element {
 			// claimed by t
 			readonly kind: 'element.tuple.member';
 			readonly name: G['identifier'] | V.Pattern.Rest<G>;
-			readonly type: G['type'];
+			readonly type: G['identifier'] | G['type'];
 		}
 		export namespace Member {
 			export interface Optional<G extends GrammarContext> extends Simplify<SubKindOf<V.Element.Tuple.Member<G>>> {
 				// claimed by t
 				readonly kind: 'element.tuple.member.optional';
 				readonly name: G['identifier'];
-				readonly type: G['type'];
+				readonly type: G['identifier'] | G['type'];
 			}
 			export type Any<G extends GrammarContext> = V.Element.Tuple.Member<G> | V.Element.Tuple.Member.Optional<G>;
 		}
@@ -208,7 +356,15 @@ export namespace Element {
 		readonly kind: 'element.type_binding';
 		readonly name: V.Identifier.Type<G>;
 		readonly type: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
-		readonly typeArguments?: G['type'][];
+		readonly typeArguments?: (
+			| V.Clause.Bounds.Removed<G>
+			| V.Element.TypeBinding<G>
+			| V.Expression.Call.Macro<G>
+			| G['identifier']
+			| G['literal']
+			| V.Statement.Block<G>
+			| G['type']
+		)[];
 	}
 	export type Any<G extends GrammarContext> =
 		| V.Element.Macro.Fragment<G>
