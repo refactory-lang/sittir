@@ -208,6 +208,11 @@ function tokenText(v: Visit): string | null {
 
 const isGroup = (v: Visit): boolean => v.node.$type === K.Grouping;
 const isPath = (capture: string): boolean => capture.includes('.');
+const TOKEN_CLASSES: ReadonlySet<string> = new Set(['keyword', 'punctuation']);
+const inClaimPosition = (capture: string, atTop: boolean): boolean =>
+	isPath(capture) || (atTop && !capture.startsWith('_'));
+const isTokenClass = (capture: string): boolean => TOKEN_CLASSES.has(capture.split('.')[0] ?? capture);
+const isClaim = (capture: string, atTop: boolean): boolean => inClaimPosition(capture, atTop) && !isTokenClass(capture);
 const selector = (v: Visit): SlotSelector => ({ field: v.field, kind: namedKind(v) });
 
 function expressionsOf(node: PatternNode, errors: number[]): readonly Expression[] {
@@ -228,7 +233,7 @@ function expressionsOf(node: PatternNode, errors: number[]): readonly Expression
 	}
 }
 
-function readPattern(top: PatternNode, errors: number[]): Pattern {
+function readPattern(top: PatternNode, errors: number[], inherited: readonly ListElement.Parsed[]): Pattern {
 	const nodes: Visit[] = [];
 	const predicates: Predicate.Parsed[] = [];
 	const visit = (
@@ -278,7 +283,7 @@ function readPattern(top: PatternNode, errors: number[]): Pattern {
 				return;
 		}
 	};
-	return { top: visit(top, null, null, false, []), nodes, predicates };
+	return { top: visit(top, null, null, false, inherited), nodes, predicates };
 }
 
 function templateOf(predicate: Predicate.Parsed): Omit<TemplateFact, 'vocabs'> | null {
@@ -342,11 +347,11 @@ function containerFact(kind: string, element: Visit, nodes: readonly Visit[]): C
 function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts): void {
 	const topKind = kindOf(top);
 	const element = nodes.find((v) => captures(v).includes('element'));
-	if (topKind !== null && element !== undefined && !captures(top).some(isPath)) {
+	if (topKind !== null && element !== undefined && !captures(top).some((name) => isPath(name) && !isTokenClass(name))) {
 		facts.containers.push(containerFact(topKind, element, nodes));
 		return;
 	}
-	const vocabs = nodes.flatMap((v) => captures(v).filter(isPath));
+	const vocabs = nodes.flatMap((v) => captures(v).filter((name) => isPath(name) && !isTokenClass(name)));
 	for (const predicate of predicates) {
 		const template = templateOf(predicate);
 		if (template !== null) facts.templates.push({ vocabs, ...template });
@@ -354,12 +359,30 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts): void {
 	const predicated = predicates.length > 0;
 	for (const v of nodes) {
 		for (const name of captures(v)) {
-			if (isPath(name) || (v === top && !name.startsWith('_'))) facts.claims.push(claimFact(v, name, top, predicated));
-			else if (!name.startsWith('_') && name !== 'element') {
+			if (inClaimPosition(name, v === top)) {
+				if (isClaim(name, v === top)) facts.claims.push(claimFact(v, name, top, predicated));
+			} else if (!name.startsWith('_') && name !== 'element') {
 				const member = memberFact(v, name, top, topKind);
 				if (member !== null) facts.members.push(member);
 			}
 		}
+	}
+}
+
+function patternsOf(
+	definition: Definition.Parsed,
+	inherited: readonly ListElement.Parsed[]
+): [PatternNode, readonly ListElement.Parsed[]][] {
+	switch (definition.$type) {
+		case K.NamedNodePlain:
+		case K.NamedNodeSupertyped:
+		case K.AnonymousNode:
+		case K.Grouping:
+			return [[definition, inherited]];
+		case K.List:
+			return definition.definitions().flatMap((option) => patternsOf(option, [...inherited, ...definition.elements()]));
+		default:
+			return [];
 	}
 }
 
@@ -369,15 +392,8 @@ export function readBindings(text: string): BindingFacts {
 	const definitions = definitionsOf(text);
 	if (definitions.length === 0 && text.trim() !== '') errors.push(0);
 	for (const definition of definitions) {
-		switch (definition.$type) {
-			case K.NamedNodePlain:
-			case K.NamedNodeSupertyped:
-			case K.Grouping:
-				patternFacts(readPattern(definition, errors), facts);
-				break;
-			default:
-				errors.push(...unparsed(definition));
-		}
+		errors.push(...unparsed(definition));
+		for (const [top, inherited] of patternsOf(definition, [])) patternFacts(readPattern(top, errors, inherited), facts);
 	}
 	if (errors.length > 0) {
 		const spans = sourceSpans(text);

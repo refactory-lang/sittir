@@ -61,6 +61,27 @@ describe('readBindings', () => {
 		]);
 	});
 
+	it('reads a keyword or punctuation capture in claim position as a token class, never a claim', () => {
+		const { claims, members } = readBindings(
+			[
+				'["def" "class"] @keyword.declaration',
+				'(crate) @keyword.import',
+				'(crate) @identifier.crate',
+				'(lexical_declaration kind: _ @keyword) @declaration.variable'
+			].join('\n')
+		);
+		expect(claims.map((c) => c.vocab)).toEqual(['identifier.crate', 'declaration.variable']);
+		expect(members).toEqual([{ route: 'rename', owner: 'lexical_declaration', key: 'kind', name: 'keyword' }]);
+	});
+
+	it('reads a top-level alternation as one pattern per option', () => {
+		const { claims } = readBindings('[(true) (false)] @literal.boolean');
+		expect(claims.map((c) => [c.vocab, c.kind])).toEqual([
+			['literal.boolean', 'true'],
+			['literal.boolean', 'false']
+		]);
+	});
+
 	it('ignores comments, including one that holds quotes and parentheses', () => {
 		const { claims } = readBindings('; a comment with "quotes" and (parens\n(identifier) @identifier');
 		expect(claims.map((c) => c.vocab)).toEqual(['identifier']);

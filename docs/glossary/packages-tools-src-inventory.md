@@ -9,10 +9,13 @@ The bindings inventory: `sittir tool bindings-inventory`. It reads each grammar'
 ```text
 Reads a bindings file into binding facts. The file is parsed with the scm
 engine into the query grammar's typed tree, and each top-level pattern (a named
-node or a grouping) is read; a top-level list is a token class and yields no
-fact. In a pattern, a dotted capture, or a capture on the top node that does
-not start with `_`, is a claim: its kind is the node's (`_` for a wildcard),
-a grouping's first child's, and none on a token. Another capture names a
+node, a token or a grouping) is read; a top-level alternation reads as one
+pattern per option, each carrying the alternation's captures. In a pattern, a
+dotted capture, or a capture on the top node that does not start with `_`, is
+in claim position. There, a capture in the `keyword` or `punctuation`
+namespace is a token class, which names no vocabulary kind; any other is a
+claim: its kind is the node's (`_` for a wildcard), a grouping's first
+child's, and none on a token. Another capture names a
 member. On a child of the top node, or on any node of a grouping, it renames
 the member its field or kind names, or, on an unfielded token, marks that
 token's presence; deeper inside a named top it is a nested member of the top
