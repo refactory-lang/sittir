@@ -787,3 +787,50 @@ fn a_shallow_read_materializes_a_child_with_no_named_children() {
     assert_eq!(tokens.len(), 1, "{child}");
     assert_eq!(child.get("$childIndex").and_then(Value::as_u64), Some(0), "it keeps its coordinate: {child}");
 }
+
+/// Every node of a parse, asked for by its span and either kind it carries (the
+/// grammar symbol that parsed it, or the kind it shows as), is the node a
+/// pre-order walk meets first with that span and kind: the outermost one, and
+/// among zero-width siblings at one byte the first. The sources hold
+/// zero-width comment contents and aliased type identifiers.
+#[test]
+fn node_at_span_finds_the_first_node_a_pre_order_walk_meets_with_that_span_and_kind() {
+    use sittir_core::read_untyped_node::node_at_span;
+    use std::collections::HashMap;
+    let sources = [
+        include_str!("../src/engine.rs"),
+        "\n//!\n\n/*!*/\n\n//\n\n///\nlet x;\n",
+        "fn f(\n    x: Foo,\n) -> Bar<T> {\n    let y: Baz = x;\n}\n",
+    ];
+    let mut parser = tree_sitter::Parser::new();
+    parser.set_language(&tree_sitter_rust::LANGUAGE.into()).unwrap();
+    for source in sources {
+        let tree = parser.parse(source, None).unwrap();
+        let mut by_span: HashMap<(usize, usize), Vec<tree_sitter::Node<'_>>> = HashMap::new();
+        let mut cursor = tree.walk();
+        let mut nodes = Vec::new();
+        'walk: loop {
+            let node = cursor.node();
+            nodes.push(node);
+            by_span.entry((node.start_byte(), node.end_byte())).or_default().push(node);
+            if cursor.goto_first_child() {
+                continue;
+            }
+            while !cursor.goto_next_sibling() {
+                if !cursor.goto_parent() {
+                    break 'walk;
+                }
+            }
+        }
+        for node in &nodes {
+            for kind in [node.grammar_id(), node.kind_id()] {
+                let expected = by_span[&(node.start_byte(), node.end_byte())]
+                    .iter()
+                    .find(|candidate| candidate.grammar_id() == kind || candidate.kind_id() == kind)
+                    .map(|found| found.id());
+                let found = node_at_span(&tree, node.start_byte(), node.end_byte(), kind).map(|found| found.id());
+                assert_eq!(found, expected, "{} at {}..{}", node.kind(), node.start_byte(), node.end_byte());
+            }
+        }
+    }
+}

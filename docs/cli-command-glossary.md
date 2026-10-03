@@ -715,6 +715,23 @@ Report the owner and position the reader gives every corpus extra; exits 1 if an
 pnpm exec tsx packages/cli/src/cli.ts tool trivia-placement [options]
 ```
 
+### `tool trivia-timing`
+
+Time reading every node's leading trivia after a deep parse of a file (one line-gap query per node)
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+- `-f, --file <path>` — Source file to parse
+- `-r, --rounds <n>` — Rounds to run; the best is reported (default: `3`)
+- `--json` — Print the timing as JSON
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool trivia-timing [options]
+```
+
 ### `tool uncovered-content`
 
 List corpus nodes whose non-whitespace text no child covers, with the hidden grammar producer; exits 1 if any

@@ -39,6 +39,7 @@ const EXPECTED = [
 	'text-kind-overlap',
 	'spelled-trivia',
 	'trivia-placement',
+	'trivia-timing',
 	'uncovered-content',
 	'variant-derivation-probe',
 	'walk'
