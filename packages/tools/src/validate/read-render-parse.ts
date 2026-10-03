@@ -687,6 +687,15 @@ export async function validateReadRenderParse(
 			// through with entryOk/entryAstMatch still at their initial `true`,
 			// counting as a pass despite testing nothing at all.
 			let entryHadAnyCandidate = false;
+			// A candidate that throws while its input is read, rendered or
+			// captured is a failure in its own right: it is reported and fails
+			// the entry even when another candidate of its kind round-trips.
+			const reportThrown = (failure: (typeof errors)[number]): void => {
+				errors.push(failure);
+				entryHadAnyCandidate = true;
+				entryOk = false;
+				entryAstMatch = false;
+			};
 			for (const kind of testableKinds) {
 				if (shouldStop) break;
 
@@ -737,7 +746,7 @@ export async function validateReadRenderParse(
 								? (hydrateStub(cand.node, handle) as AnyUntypedNode)
 								: (materializeDetached(cand.node, onAccessorThrow) as AnyUntypedNode);
 					} catch (e) {
-						kindErrors.push({
+						reportThrown({
 							name: `${entry.name} [${kind}]`,
 							message: `read: ${(e as Error).message}`,
 							input: inputSource
@@ -927,7 +936,7 @@ export async function validateReadRenderParse(
 							message: `render: ${(e as Error).message}`,
 							input: inputSource
 						};
-						kindErrors.push(failure);
+						reportThrown(failure);
 						reportFailure(options, {
 							grammar,
 							backend: backend ?? 'native',
@@ -957,8 +966,9 @@ export async function validateReadRenderParse(
 				if (!kindHadCandidate) {
 					// `kindHadCandidate` only flips on a full round-trip SUCCESS,
 					// so a kind where every candidate genuinely ATTEMPTED and
-					// FAILED (read threw / re-parse error / kind not found — the
-					// paths that push kindErrors) lands here exactly like a kind
+					// FAILED (re-parse error / kind not found — the paths that
+					// push kindErrors; a thrown candidate is already reported by
+					// reportThrown) lands here exactly like a kind
 					// whose candidates were all neutrally skipped (no supertype,
 					// empty render — paths that push nothing). Distinguish by the
 					// collected errors: real failures must be REPORTED and score
