@@ -6,6 +6,7 @@
  */
 
 import python from '../src/index.ts';
+import type * as T from '../src/types.ts';
 import { createEngine } from '@sittir/common';
 
 const engine = await createEngine(python);
@@ -14,3 +15,8 @@ const engine = await createEngine(python);
 engine.build.identifier('a').$trivia.inner();
 
 engine.build.identifier('a').$trivia.leading();
+
+declare const parsedArgs: T.ArgumentList.Parsed;
+// @ts-expect-error an edited node is never typed as an empty form, so it has no inner position
+parsedArgs.$with.arguments().$trivia.inner();
+parsedArgs.$with.arguments().$trivia.leading();
