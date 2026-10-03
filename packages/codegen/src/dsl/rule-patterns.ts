@@ -932,14 +932,13 @@ interface TerminatedList<P extends PhaseName> {
 	elementSites: RuleStep[][];
 }
 
-function sameListElement<P extends PhaseName>(a: Rule<P>, b: Rule<P>): boolean {
-	const name = separatedListElementName(a);
-	return (name !== null && name === separatedListElementName(b)) || ruleKey(a as RuntimeRule) === ruleKey(b as RuntimeRule);
-}
-
 function sameElementRule<P extends PhaseName>(a: Rule<P>, b: Rule<P>): boolean {
+	const fieldNameOf = (rule: Rule<P>): string | undefined =>
+		isFieldType((rule as { type?: string }).type ?? '') ? (rule as unknown as { name: string }).name : undefined;
 	const unfielded = (rule: Rule<P>): RuntimeRule =>
-		(isFieldType((rule as { type?: string }).type ?? '') ? (rule as unknown as { content: RuntimeRule }).content : rule) as RuntimeRule;
+		(fieldNameOf(rule) === undefined ? rule : (rule as unknown as { content: RuntimeRule }).content) as RuntimeRule;
+	const [nameA, nameB] = [fieldNameOf(a), fieldNameOf(b)];
+	if (nameA !== undefined && nameB !== undefined && nameA !== nameB) return false;
 	return rulesEqual(unfielded(a), unfielded(b));
 }
 
@@ -1030,7 +1029,13 @@ export interface SeparatedListBodyInfo<P extends PhaseName = 'normalize'> {
 	element: Rule<P>;
 	separatorRule: Rule<P>;
 	flatMembers: Rule<P>[];
+	repeat?: Rule<P>;
+	leading?: SeparatorFlank;
+	trailing?: SeparatorFlank;
+	carrier?: Rule<P>;
 }
+
+export type SeparatorFlank = 'mandatory' | 'optional';
 
 export function separatedListBodyInfo<P extends PhaseName>(body: Rule<P>, symbols: SymbolSource): SeparatedListBodyInfo<P> | null {
 	if (!isSeqType((body as { type?: string }).type)) return null;
@@ -1063,10 +1068,11 @@ export function separatedListBodyInfo<P extends PhaseName>(body: Rule<P>, symbol
 		});
 		if (nestedIdx !== -1) {
 			const headMembers = (members[nestedIdx] as unknown as { members: Rule<P>[] }).members;
-			return separatedListBodyInfo({
+			const flattened = separatedListBodyInfo({
 				...body,
 				members: [...members.slice(0, nestedIdx), ...headMembers, ...members.slice(nestedIdx + 1)]
 			} as Rule<P>, symbols);
+			return flattened === null ? null : { ...flattened, carrier: members[nestedIdx]! };
 		}
 	}
 
@@ -1074,46 +1080,50 @@ export function separatedListBodyInfo<P extends PhaseName>(body: Rule<P>, symbol
 	if (repeatIdx === -1) return null;
 	const detected = separatorRepeatOf(members[repeatIdx]!)!;
 	const separatorIsChoice = typeEq(detected.separator.type, 'CHOICE');
-	const separatorLiteral = typeEq(detected.separator.type, 'STRING')
-		? ((detected.separator as { value?: unknown }).value as string)
-		: null;
+	const separatorArms = separatorIsChoice ? membersOf(detected.separator as Rule<P>) : [];
+	const isSeparatorArm = (rule: Rule<P>): boolean =>
+		[detected.separator as Rule<P>, ...separatorArms].some((s) => rulesEqual(rule as RuntimeRule, s as RuntimeRule));
+	const isSeparator = (rule: Rule<P> | undefined): boolean =>
+		rule !== undefined &&
+		(isSeparatorArm(rule) || (separatorIsChoice && isChoiceType((rule as { type?: string }).type ?? '') && membersOf(rule).some(isSeparatorArm)));
 	const elementName = separatedListElementName(detected.content as Rule<P>);
 
 	if (detected.trailing !== true) {
 		if (repeatIdx === 0) {
 			if (!typeEq((members[0] as { type?: string }).type, 'REPEAT1')) return null;
 			if (members.length !== 2) return null;
-			const flank = optionalContentOf(members[1]!);
-			const flankLit =
-				flank && isStringType((flank as { type?: string }).type) ? (flank as { value?: unknown }).value : null;
-			if (flankLit === null || (separatorLiteral !== null && flankLit !== separatorLiteral)) return null;
+			if (!isSeparator(optionalContentOf(members[1]!))) return null;
 			return {
 				elementName,
 				flankCarrying: true,
 				form: 'leading' as const,
 				element: detected.content as Rule<P>,
 				separatorRule: detected.separator as Rule<P>,
-				flatMembers: members
+				flatMembers: members,
+				repeat: members[0]!,
+				leading: 'mandatory' as const,
+				trailing: 'optional' as const
 			};
 		}
 		const head = members[repeatIdx - 1]!;
-		if (!sameListElement(head, detected.content as Rule<P>)) return null;
+		if (!sameElementRule(head, detected.content as Rule<P>)) return null;
 		let flankCarrying = separatorIsChoice;
+		let leading: SeparatorFlank | undefined;
+		let trailing: SeparatorFlank | undefined;
+		const flank = (i: number, presence: SeparatorFlank): void => {
+			if (i < repeatIdx) leading = presence;
+			else trailing = presence;
+		};
 		for (const [i, m] of members.entries()) {
 			if (i === repeatIdx || i === repeatIdx - 1) continue;
-			if (isStringType((m as { type?: string }).type) && (m as { value?: unknown }).value === separatorLiteral) {
+			const inner = optionalContentOf(m);
+			if (inner === undefined && isSeparator(m)) {
+				flank(i, 'mandatory');
 				continue;
 			}
-			const inner = optionalContentOf(m);
-			const innerLit =
-				inner && isStringType((inner as { type?: string }).type) ? (inner as { value?: unknown }).value : null;
-			const innerMatchesChoiceSep =
-				inner !== undefined && separatorIsChoice && isChoiceType((inner as { type?: string }).type ?? '');
-			if (
-				(innerLit !== null && (separatorLiteral === null || innerLit === separatorLiteral)) ||
-				innerMatchesChoiceSep
-			) {
+			if (isSeparator(inner)) {
 				flankCarrying = true;
+				flank(i, 'optional');
 				continue;
 			}
 			return null;
@@ -1124,21 +1134,26 @@ export function separatedListBodyInfo<P extends PhaseName>(body: Rule<P>, symbol
 			form: 'head' as const,
 			element: detected.content as Rule<P>,
 			separatorRule: detected.separator as Rule<P>,
-			flatMembers: members
+			flatMembers: members,
+			repeat: members[repeatIdx]!,
+			leading,
+			trailing
 		};
 	}
 
 	if (repeatIdx !== 0 || members.length !== 2) return null;
 	const tail = optionalContentOf(members[1]!);
 	if (tail === undefined) return null;
-	if (!sameListElement(tail, detected.content as Rule<P>)) return null;
+	if (!sameElementRule(tail, detected.content as Rule<P>)) return null;
 	return {
 		elementName,
 		flankCarrying: true,
 		form: 'tail' as const,
 		element: detected.content as Rule<P>,
 		separatorRule: detected.separator as Rule<P>,
-		flatMembers: members
+		flatMembers: members,
+		repeat: members[0]!,
+		trailing: 'optional' as const
 	};
 }
 
