@@ -163,8 +163,8 @@ macro_rules! napi_engine {
             /// `trailing` are `{ kind, start }` runs in source order, each
             /// classified among the grammar's whitespace members whose text
             /// holds a line break; `previous` is the `{ start, end }` span of
-            /// the sibling the leading runs separate the node from, `null`
-            /// for its parent's first.
+            /// the sibling owner before the outermost node spanning exactly the
+            /// node's bytes, `null` when that node is its parent's first.
             #[::napi_derive::napi]
             pub fn line_gaps_of(
                 &self,

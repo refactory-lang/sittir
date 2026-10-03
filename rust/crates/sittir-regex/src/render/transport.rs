@@ -219,88 +219,88 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            AnyTransport::Pattern(t) => t.leading_seam(),
-            AnyTransport::Alternation(t) => t.leading_seam(),
-            AnyTransport::Term(t) => t.leading_seam(),
-            AnyTransport::AnyCharacter(t) => t.leading_seam(),
-            AnyTransport::StartAssertion(t) => t.leading_seam(),
-            AnyTransport::EndAssertion(t) => t.leading_seam(),
-            AnyTransport::BoundaryAssertion(t) => t.leading_seam(),
-            AnyTransport::NonBoundaryAssertion(t) => t.leading_seam(),
-            AnyTransport::LookaroundAssertion(t) => t.leading_seam(),
-            AnyTransport::LookaheadAssertion(t) => t.leading_seam(),
-            AnyTransport::LookbehindAssertion(t) => t.leading_seam(),
-            AnyTransport::PatternCharacter(t) => t.leading_seam(),
-            AnyTransport::CharacterClass(t) => t.leading_seam(),
-            AnyTransport::PosixCharacterClass(t) => t.leading_seam(),
-            AnyTransport::PosixClassName(t) => t.leading_seam(),
-            AnyTransport::ClassRange(t) => t.leading_seam(),
-            AnyTransport::ClassCharacter(t) => t.leading_seam(),
-            AnyTransport::AnonymousCapturingGroup(t) => t.leading_seam(),
-            AnyTransport::NamedCapturingGroup(t) => t.leading_seam(),
-            AnyTransport::NonCapturingGroup(t) => t.leading_seam(),
-            AnyTransport::Flags(t) => t.leading_seam(),
-            AnyTransport::ZeroOrMore(t) => t.leading_seam(),
-            AnyTransport::OneOrMore(t) => t.leading_seam(),
-            AnyTransport::Optional(t) => t.leading_seam(),
-            AnyTransport::CountQuantifier(t) => t.leading_seam(),
-            AnyTransport::BackreferenceEscape(t) => t.leading_seam(),
-            AnyTransport::NamedGroupBackreference(t) => t.leading_seam(),
-            AnyTransport::DecimalEscape(t) => t.leading_seam(),
-            AnyTransport::CharacterClassEscape(t) => t.leading_seam(),
-            AnyTransport::UnicodeCharacterEscape(t) => t.leading_seam(),
-            AnyTransport::UnicodePropertyValueExpression(t) => t.leading_seam(),
-            AnyTransport::UnicodePropertyValue(t) => t.leading_seam(),
-            AnyTransport::ControlEscape(t) => t.leading_seam(),
-            AnyTransport::ControlLetterEscape(t) => t.leading_seam(),
-            AnyTransport::IdentityEscape(t) => t.leading_seam(),
-            AnyTransport::GroupName(t) => t.leading_seam(),
-            AnyTransport::DecimalDigits(t) => t.leading_seam(),
-            AnyTransport::TermGroup(t) => t.leading_seam(),
-            AnyTransport::CountQuantifierGroup(t) => t.leading_seam(),
-            AnyTransport::CountQuantifierArm(t) => t.leading_seam(),
-            AnyTransport::CharacterClassEscapeArm(t) => t.leading_seam(),
-            AnyTransport::UnicodePropertyValueExpressionGroup(t) => t.leading_seam(),
-            AnyTransport::CharacterClassEscapeText1(t) => t.leading_seam(),
-            AnyTransport::CharacterClassEscapeText2(t) => t.leading_seam(),
-            AnyTransport::Negation(t) => t.leading_seam(),
-            AnyTransport::InlineFlagsGroupEnable(t) => t.leading_seam(),
-            AnyTransport::InlineFlagsGroupToggle(t) => t.leading_seam(),
-            AnyTransport::InlineFlagsGroupDisable(t) => t.leading_seam(),
-            AnyTransport::Tight(t) => t.leading_seam(),
-            AnyTransport::Newline(t) => t.leading_seam(),
-            AnyTransport::Blankline(t) => t.leading_seam(),
-            AnyTransport::DoubleBlankline(t) => t.leading_seam(),
-            AnyTransport::Lazy(t) => t.leading_seam(),
-            AnyTransport::UnicodePropertyName(t) => t.leading_seam(),
-            AnyTransport::Caret(t) => t.leading_seam(),
-            AnyTransport::LparenQmark(t) => t.leading_seam(),
-            AnyTransport::Eq(t) => t.leading_seam(),
-            AnyTransport::Bang(t) => t.leading_seam(),
-            AnyTransport::Rparen(t) => t.leading_seam(),
-            AnyTransport::LparenQmarkLt(t) => t.leading_seam(),
-            AnyTransport::Lbrack(t) => t.leading_seam(),
-            AnyTransport::Dash(t) => t.leading_seam(),
-            AnyTransport::BslashDash(t) => t.leading_seam(),
-            AnyTransport::Rbrack(t) => t.leading_seam(),
-            AnyTransport::LbrackColon(t) => t.leading_seam(),
-            AnyTransport::ColonRbrack(t) => t.leading_seam(),
-            AnyTransport::Lparen(t) => t.leading_seam(),
-            AnyTransport::LparenQmarkPLt(t) => t.leading_seam(),
-            AnyTransport::Gt(t) => t.leading_seam(),
-            AnyTransport::LparenQmarkColon(t) => t.leading_seam(),
-            AnyTransport::Star(t) => t.leading_seam(),
-            AnyTransport::Qmark(t) => t.leading_seam(),
-            AnyTransport::Plus(t) => t.leading_seam(),
-            AnyTransport::Lbrace(t) => t.leading_seam(),
-            AnyTransport::Rbrace(t) => t.leading_seam(),
-            AnyTransport::Bslashk(t) => t.leading_seam(),
-            AnyTransport::Lt(t) => t.leading_seam(),
-            AnyTransport::LparenQmarkPEq(t) => t.leading_seam(),
-            AnyTransport::Comma(t) => t.leading_seam(),
-            AnyTransport::Colon(t) => t.leading_seam(),
+            AnyTransport::Pattern(t) => t.source_gap(),
+            AnyTransport::Alternation(t) => t.source_gap(),
+            AnyTransport::Term(t) => t.source_gap(),
+            AnyTransport::AnyCharacter(t) => t.source_gap(),
+            AnyTransport::StartAssertion(t) => t.source_gap(),
+            AnyTransport::EndAssertion(t) => t.source_gap(),
+            AnyTransport::BoundaryAssertion(t) => t.source_gap(),
+            AnyTransport::NonBoundaryAssertion(t) => t.source_gap(),
+            AnyTransport::LookaroundAssertion(t) => t.source_gap(),
+            AnyTransport::LookaheadAssertion(t) => t.source_gap(),
+            AnyTransport::LookbehindAssertion(t) => t.source_gap(),
+            AnyTransport::PatternCharacter(t) => t.source_gap(),
+            AnyTransport::CharacterClass(t) => t.source_gap(),
+            AnyTransport::PosixCharacterClass(t) => t.source_gap(),
+            AnyTransport::PosixClassName(t) => t.source_gap(),
+            AnyTransport::ClassRange(t) => t.source_gap(),
+            AnyTransport::ClassCharacter(t) => t.source_gap(),
+            AnyTransport::AnonymousCapturingGroup(t) => t.source_gap(),
+            AnyTransport::NamedCapturingGroup(t) => t.source_gap(),
+            AnyTransport::NonCapturingGroup(t) => t.source_gap(),
+            AnyTransport::Flags(t) => t.source_gap(),
+            AnyTransport::ZeroOrMore(t) => t.source_gap(),
+            AnyTransport::OneOrMore(t) => t.source_gap(),
+            AnyTransport::Optional(t) => t.source_gap(),
+            AnyTransport::CountQuantifier(t) => t.source_gap(),
+            AnyTransport::BackreferenceEscape(t) => t.source_gap(),
+            AnyTransport::NamedGroupBackreference(t) => t.source_gap(),
+            AnyTransport::DecimalEscape(t) => t.source_gap(),
+            AnyTransport::CharacterClassEscape(t) => t.source_gap(),
+            AnyTransport::UnicodeCharacterEscape(t) => t.source_gap(),
+            AnyTransport::UnicodePropertyValueExpression(t) => t.source_gap(),
+            AnyTransport::UnicodePropertyValue(t) => t.source_gap(),
+            AnyTransport::ControlEscape(t) => t.source_gap(),
+            AnyTransport::ControlLetterEscape(t) => t.source_gap(),
+            AnyTransport::IdentityEscape(t) => t.source_gap(),
+            AnyTransport::GroupName(t) => t.source_gap(),
+            AnyTransport::DecimalDigits(t) => t.source_gap(),
+            AnyTransport::TermGroup(t) => t.source_gap(),
+            AnyTransport::CountQuantifierGroup(t) => t.source_gap(),
+            AnyTransport::CountQuantifierArm(t) => t.source_gap(),
+            AnyTransport::CharacterClassEscapeArm(t) => t.source_gap(),
+            AnyTransport::UnicodePropertyValueExpressionGroup(t) => t.source_gap(),
+            AnyTransport::CharacterClassEscapeText1(t) => t.source_gap(),
+            AnyTransport::CharacterClassEscapeText2(t) => t.source_gap(),
+            AnyTransport::Negation(t) => t.source_gap(),
+            AnyTransport::InlineFlagsGroupEnable(t) => t.source_gap(),
+            AnyTransport::InlineFlagsGroupToggle(t) => t.source_gap(),
+            AnyTransport::InlineFlagsGroupDisable(t) => t.source_gap(),
+            AnyTransport::Tight(t) => t.source_gap(),
+            AnyTransport::Newline(t) => t.source_gap(),
+            AnyTransport::Blankline(t) => t.source_gap(),
+            AnyTransport::DoubleBlankline(t) => t.source_gap(),
+            AnyTransport::Lazy(t) => t.source_gap(),
+            AnyTransport::UnicodePropertyName(t) => t.source_gap(),
+            AnyTransport::Caret(t) => t.source_gap(),
+            AnyTransport::LparenQmark(t) => t.source_gap(),
+            AnyTransport::Eq(t) => t.source_gap(),
+            AnyTransport::Bang(t) => t.source_gap(),
+            AnyTransport::Rparen(t) => t.source_gap(),
+            AnyTransport::LparenQmarkLt(t) => t.source_gap(),
+            AnyTransport::Lbrack(t) => t.source_gap(),
+            AnyTransport::Dash(t) => t.source_gap(),
+            AnyTransport::BslashDash(t) => t.source_gap(),
+            AnyTransport::Rbrack(t) => t.source_gap(),
+            AnyTransport::LbrackColon(t) => t.source_gap(),
+            AnyTransport::ColonRbrack(t) => t.source_gap(),
+            AnyTransport::Lparen(t) => t.source_gap(),
+            AnyTransport::LparenQmarkPLt(t) => t.source_gap(),
+            AnyTransport::Gt(t) => t.source_gap(),
+            AnyTransport::LparenQmarkColon(t) => t.source_gap(),
+            AnyTransport::Star(t) => t.source_gap(),
+            AnyTransport::Qmark(t) => t.source_gap(),
+            AnyTransport::Plus(t) => t.source_gap(),
+            AnyTransport::Lbrace(t) => t.source_gap(),
+            AnyTransport::Rbrace(t) => t.source_gap(),
+            AnyTransport::Bslashk(t) => t.source_gap(),
+            AnyTransport::Lt(t) => t.source_gap(),
+            AnyTransport::LparenQmarkPEq(t) => t.source_gap(),
+            AnyTransport::Comma(t) => t.source_gap(),
+            AnyTransport::Colon(t) => t.source_gap(),
             AnyTransport::Literal0_65_71 => None,
             AnyTransport::Literal1_62_61_6e_67 => None,
             AnyTransport::Literal2_6e_65_67_61_74_69_6f_6e => None,
@@ -315,7 +315,106 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Literal11_6e_6f_6e_5f_62_6f_75_6e_64_61_72_79_5f_61_73_73_65_72_74_69_6f_6e => None,
             AnyTransport::Literal12_61_6e_79_5f_63_68_61_72_61_63_74_65_72 => None,
             AnyTransport::Literal13_71_6d_61_72_6b => None,
-            AnyTransport::Verbatim(t) => t.leading_seam(),
+            AnyTransport::Verbatim(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            AnyTransport::Pattern(t) => t.gap_edges(),
+            AnyTransport::Alternation(t) => t.gap_edges(),
+            AnyTransport::Term(t) => t.gap_edges(),
+            AnyTransport::AnyCharacter(t) => t.gap_edges(),
+            AnyTransport::StartAssertion(t) => t.gap_edges(),
+            AnyTransport::EndAssertion(t) => t.gap_edges(),
+            AnyTransport::BoundaryAssertion(t) => t.gap_edges(),
+            AnyTransport::NonBoundaryAssertion(t) => t.gap_edges(),
+            AnyTransport::LookaroundAssertion(t) => t.gap_edges(),
+            AnyTransport::LookaheadAssertion(t) => t.gap_edges(),
+            AnyTransport::LookbehindAssertion(t) => t.gap_edges(),
+            AnyTransport::PatternCharacter(t) => t.gap_edges(),
+            AnyTransport::CharacterClass(t) => t.gap_edges(),
+            AnyTransport::PosixCharacterClass(t) => t.gap_edges(),
+            AnyTransport::PosixClassName(t) => t.gap_edges(),
+            AnyTransport::ClassRange(t) => t.gap_edges(),
+            AnyTransport::ClassCharacter(t) => t.gap_edges(),
+            AnyTransport::AnonymousCapturingGroup(t) => t.gap_edges(),
+            AnyTransport::NamedCapturingGroup(t) => t.gap_edges(),
+            AnyTransport::NonCapturingGroup(t) => t.gap_edges(),
+            AnyTransport::Flags(t) => t.gap_edges(),
+            AnyTransport::ZeroOrMore(t) => t.gap_edges(),
+            AnyTransport::OneOrMore(t) => t.gap_edges(),
+            AnyTransport::Optional(t) => t.gap_edges(),
+            AnyTransport::CountQuantifier(t) => t.gap_edges(),
+            AnyTransport::BackreferenceEscape(t) => t.gap_edges(),
+            AnyTransport::NamedGroupBackreference(t) => t.gap_edges(),
+            AnyTransport::DecimalEscape(t) => t.gap_edges(),
+            AnyTransport::CharacterClassEscape(t) => t.gap_edges(),
+            AnyTransport::UnicodeCharacterEscape(t) => t.gap_edges(),
+            AnyTransport::UnicodePropertyValueExpression(t) => t.gap_edges(),
+            AnyTransport::UnicodePropertyValue(t) => t.gap_edges(),
+            AnyTransport::ControlEscape(t) => t.gap_edges(),
+            AnyTransport::ControlLetterEscape(t) => t.gap_edges(),
+            AnyTransport::IdentityEscape(t) => t.gap_edges(),
+            AnyTransport::GroupName(t) => t.gap_edges(),
+            AnyTransport::DecimalDigits(t) => t.gap_edges(),
+            AnyTransport::TermGroup(t) => t.gap_edges(),
+            AnyTransport::CountQuantifierGroup(t) => t.gap_edges(),
+            AnyTransport::CountQuantifierArm(t) => t.gap_edges(),
+            AnyTransport::CharacterClassEscapeArm(t) => t.gap_edges(),
+            AnyTransport::UnicodePropertyValueExpressionGroup(t) => t.gap_edges(),
+            AnyTransport::CharacterClassEscapeText1(t) => t.gap_edges(),
+            AnyTransport::CharacterClassEscapeText2(t) => t.gap_edges(),
+            AnyTransport::Negation(t) => t.gap_edges(),
+            AnyTransport::InlineFlagsGroupEnable(t) => t.gap_edges(),
+            AnyTransport::InlineFlagsGroupToggle(t) => t.gap_edges(),
+            AnyTransport::InlineFlagsGroupDisable(t) => t.gap_edges(),
+            AnyTransport::Tight(t) => t.gap_edges(),
+            AnyTransport::Newline(t) => t.gap_edges(),
+            AnyTransport::Blankline(t) => t.gap_edges(),
+            AnyTransport::DoubleBlankline(t) => t.gap_edges(),
+            AnyTransport::Lazy(t) => t.gap_edges(),
+            AnyTransport::UnicodePropertyName(t) => t.gap_edges(),
+            AnyTransport::Caret(t) => t.gap_edges(),
+            AnyTransport::LparenQmark(t) => t.gap_edges(),
+            AnyTransport::Eq(t) => t.gap_edges(),
+            AnyTransport::Bang(t) => t.gap_edges(),
+            AnyTransport::Rparen(t) => t.gap_edges(),
+            AnyTransport::LparenQmarkLt(t) => t.gap_edges(),
+            AnyTransport::Lbrack(t) => t.gap_edges(),
+            AnyTransport::Dash(t) => t.gap_edges(),
+            AnyTransport::BslashDash(t) => t.gap_edges(),
+            AnyTransport::Rbrack(t) => t.gap_edges(),
+            AnyTransport::LbrackColon(t) => t.gap_edges(),
+            AnyTransport::ColonRbrack(t) => t.gap_edges(),
+            AnyTransport::Lparen(t) => t.gap_edges(),
+            AnyTransport::LparenQmarkPLt(t) => t.gap_edges(),
+            AnyTransport::Gt(t) => t.gap_edges(),
+            AnyTransport::LparenQmarkColon(t) => t.gap_edges(),
+            AnyTransport::Star(t) => t.gap_edges(),
+            AnyTransport::Qmark(t) => t.gap_edges(),
+            AnyTransport::Plus(t) => t.gap_edges(),
+            AnyTransport::Lbrace(t) => t.gap_edges(),
+            AnyTransport::Rbrace(t) => t.gap_edges(),
+            AnyTransport::Bslashk(t) => t.gap_edges(),
+            AnyTransport::Lt(t) => t.gap_edges(),
+            AnyTransport::LparenQmarkPEq(t) => t.gap_edges(),
+            AnyTransport::Comma(t) => t.gap_edges(),
+            AnyTransport::Colon(t) => t.gap_edges(),
+            AnyTransport::Literal0_65_71 => None,
+            AnyTransport::Literal1_62_61_6e_67 => None,
+            AnyTransport::Literal2_6e_65_67_61_74_69_6f_6e => None,
+            AnyTransport::Literal3_64_61_73_68 => None,
+            AnyTransport::Literal4_62_73_6c_61_73_68_5f_64_61_73_68 => None,
+            AnyTransport::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_5f_6c_74 => None,
+            AnyTransport::Literal6_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_50_5f_6c_74 => None,
+            AnyTransport::Literal7_6c_61_7a_79 => None,
+            AnyTransport::Literal8_73_74_61_72_74_5f_61_73_73_65_72_74_69_6f_6e => None,
+            AnyTransport::Literal9_65_6e_64_5f_61_73_73_65_72_74_69_6f_6e => None,
+            AnyTransport::Literal10_62_6f_75_6e_64_61_72_79_5f_61_73_73_65_72_74_69_6f_6e => None,
+            AnyTransport::Literal11_6e_6f_6e_5f_62_6f_75_6e_64_61_72_79_5f_61_73_73_65_72_74_69_6f_6e => None,
+            AnyTransport::Literal12_61_6e_79_5f_63_68_61_72_61_63_74_65_72 => None,
+            AnyTransport::Literal13_71_6d_61_72_6b => None,
+            AnyTransport::Verbatim(t) => t.gap_edges(),
         }
     }
 }
@@ -715,13 +814,22 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::Text(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            TriviaTransport::Newline(t) => t.leading_seam(),
-            TriviaTransport::Blankline(t) => t.leading_seam(),
-            TriviaTransport::DoubleBlankline(t) => t.leading_seam(),
-            TriviaTransport::Verbatim(t) => t.leading_seam(),
-            TriviaTransport::Text(t) => t.leading_seam(),
+            TriviaTransport::Newline(t) => t.source_gap(),
+            TriviaTransport::Blankline(t) => t.source_gap(),
+            TriviaTransport::DoubleBlankline(t) => t.source_gap(),
+            TriviaTransport::Verbatim(t) => t.source_gap(),
+            TriviaTransport::Text(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            TriviaTransport::Newline(t) => t.gap_edges(),
+            TriviaTransport::Blankline(t) => t.gap_edges(),
+            TriviaTransport::DoubleBlankline(t) => t.gap_edges(),
+            TriviaTransport::Verbatim(t) => t.gap_edges(),
+            TriviaTransport::Text(t) => t.gap_edges(),
         }
     }
 }
@@ -835,10 +943,16 @@ impl ::sittir_core::prepare::Prepare for PatternContentTransportSlot {
             PatternContentTransportSlot::Term(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            PatternContentTransportSlot::Alternation(t) => t.leading_seam(),
-            PatternContentTransportSlot::Term(t) => t.leading_seam(),
+            PatternContentTransportSlot::Alternation(t) => t.source_gap(),
+            PatternContentTransportSlot::Term(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            PatternContentTransportSlot::Alternation(t) => t.gap_edges(),
+            PatternContentTransportSlot::Term(t) => t.gap_edges(),
         }
     }
 }
@@ -953,10 +1067,16 @@ impl ::sittir_core::prepare::Prepare for LookaroundAssertionContentTransportSlot
             LookaroundAssertionContentTransportSlot::LookbehindAssertion(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            LookaroundAssertionContentTransportSlot::LookaheadAssertion(t) => t.leading_seam(),
-            LookaroundAssertionContentTransportSlot::LookbehindAssertion(t) => t.leading_seam(),
+            LookaroundAssertionContentTransportSlot::LookaheadAssertion(t) => t.source_gap(),
+            LookaroundAssertionContentTransportSlot::LookbehindAssertion(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            LookaroundAssertionContentTransportSlot::LookaheadAssertion(t) => t.gap_edges(),
+            LookaroundAssertionContentTransportSlot::LookbehindAssertion(t) => t.gap_edges(),
         }
     }
 }
@@ -1414,17 +1534,30 @@ impl ::sittir_core::prepare::Prepare for CharacterClassClassAtomsTransportSlot {
             CharacterClassClassAtomsTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            CharacterClassClassAtomsTransportSlot::ClassCharacter(t) => t.leading_seam(),
-            CharacterClassClassAtomsTransportSlot::CharacterClassEscape(t) => t.leading_seam(),
-            CharacterClassClassAtomsTransportSlot::ControlEscape(t) => t.leading_seam(),
-            CharacterClassClassAtomsTransportSlot::ControlLetterEscape(t) => t.leading_seam(),
-            CharacterClassClassAtomsTransportSlot::IdentityEscape(t) => t.leading_seam(),
-            CharacterClassClassAtomsTransportSlot::PosixCharacterClass(t) => t.leading_seam(),
-            CharacterClassClassAtomsTransportSlot::ClassRange(t) => t.leading_seam(),
+            CharacterClassClassAtomsTransportSlot::ClassCharacter(t) => t.source_gap(),
+            CharacterClassClassAtomsTransportSlot::CharacterClassEscape(t) => t.source_gap(),
+            CharacterClassClassAtomsTransportSlot::ControlEscape(t) => t.source_gap(),
+            CharacterClassClassAtomsTransportSlot::ControlLetterEscape(t) => t.source_gap(),
+            CharacterClassClassAtomsTransportSlot::IdentityEscape(t) => t.source_gap(),
+            CharacterClassClassAtomsTransportSlot::PosixCharacterClass(t) => t.source_gap(),
+            CharacterClassClassAtomsTransportSlot::ClassRange(t) => t.source_gap(),
             CharacterClassClassAtomsTransportSlot::Literal4_62_73_6c_61_73_68_5f_64_61_73_68 => None,
-            CharacterClassClassAtomsTransportSlot::Verbatim(t) => t.leading_seam(),
+            CharacterClassClassAtomsTransportSlot::Verbatim(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            CharacterClassClassAtomsTransportSlot::ClassCharacter(t) => t.gap_edges(),
+            CharacterClassClassAtomsTransportSlot::CharacterClassEscape(t) => t.gap_edges(),
+            CharacterClassClassAtomsTransportSlot::ControlEscape(t) => t.gap_edges(),
+            CharacterClassClassAtomsTransportSlot::ControlLetterEscape(t) => t.gap_edges(),
+            CharacterClassClassAtomsTransportSlot::IdentityEscape(t) => t.gap_edges(),
+            CharacterClassClassAtomsTransportSlot::PosixCharacterClass(t) => t.gap_edges(),
+            CharacterClassClassAtomsTransportSlot::ClassRange(t) => t.gap_edges(),
+            CharacterClassClassAtomsTransportSlot::Literal4_62_73_6c_61_73_68_5f_64_61_73_68 => None,
+            CharacterClassClassAtomsTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
 }
@@ -1808,13 +1941,22 @@ impl ::sittir_core::prepare::Prepare for ClassRangeStartTransportSlot {
             ClassRangeStartTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            ClassRangeStartTransportSlot::ClassCharacter(t) => t.leading_seam(),
-            ClassRangeStartTransportSlot::CharacterClassEscape(t) => t.leading_seam(),
-            ClassRangeStartTransportSlot::ControlEscape(t) => t.leading_seam(),
+            ClassRangeStartTransportSlot::ClassCharacter(t) => t.source_gap(),
+            ClassRangeStartTransportSlot::CharacterClassEscape(t) => t.source_gap(),
+            ClassRangeStartTransportSlot::ControlEscape(t) => t.source_gap(),
             ClassRangeStartTransportSlot::Literal3_64_61_73_68 => None,
-            ClassRangeStartTransportSlot::Verbatim(t) => t.leading_seam(),
+            ClassRangeStartTransportSlot::Verbatim(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            ClassRangeStartTransportSlot::ClassCharacter(t) => t.gap_edges(),
+            ClassRangeStartTransportSlot::CharacterClassEscape(t) => t.gap_edges(),
+            ClassRangeStartTransportSlot::ControlEscape(t) => t.gap_edges(),
+            ClassRangeStartTransportSlot::Literal3_64_61_73_68 => None,
+            ClassRangeStartTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
 }
@@ -1962,13 +2104,22 @@ impl ::sittir_core::prepare::Prepare for ClassRangeEndTransportSlot {
             ClassRangeEndTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            ClassRangeEndTransportSlot::ClassCharacter(t) => t.leading_seam(),
-            ClassRangeEndTransportSlot::CharacterClassEscape(t) => t.leading_seam(),
-            ClassRangeEndTransportSlot::ControlEscape(t) => t.leading_seam(),
+            ClassRangeEndTransportSlot::ClassCharacter(t) => t.source_gap(),
+            ClassRangeEndTransportSlot::CharacterClassEscape(t) => t.source_gap(),
+            ClassRangeEndTransportSlot::ControlEscape(t) => t.source_gap(),
             ClassRangeEndTransportSlot::Literal3_64_61_73_68 => None,
-            ClassRangeEndTransportSlot::Verbatim(t) => t.leading_seam(),
+            ClassRangeEndTransportSlot::Verbatim(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            ClassRangeEndTransportSlot::ClassCharacter(t) => t.gap_edges(),
+            ClassRangeEndTransportSlot::CharacterClassEscape(t) => t.gap_edges(),
+            ClassRangeEndTransportSlot::ControlEscape(t) => t.gap_edges(),
+            ClassRangeEndTransportSlot::Literal3_64_61_73_68 => None,
+            ClassRangeEndTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
 }
@@ -2226,11 +2377,18 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierContentTransportSlot {
             CountQuantifierContentTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            CountQuantifierContentTransportSlot::CountQuantifierArm(t) => t.leading_seam(),
-            CountQuantifierContentTransportSlot::DecimalDigits(t) => t.leading_seam(),
-            CountQuantifierContentTransportSlot::Verbatim(t) => t.leading_seam(),
+            CountQuantifierContentTransportSlot::CountQuantifierArm(t) => t.source_gap(),
+            CountQuantifierContentTransportSlot::DecimalDigits(t) => t.source_gap(),
+            CountQuantifierContentTransportSlot::Verbatim(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            CountQuantifierContentTransportSlot::CountQuantifierArm(t) => t.gap_edges(),
+            CountQuantifierContentTransportSlot::DecimalDigits(t) => t.gap_edges(),
+            CountQuantifierContentTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
 }
@@ -2453,12 +2611,20 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeContentTransportSlo
             CharacterClassEscapeContentTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeText1(t) => t.leading_seam(),
-            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeArm(t) => t.leading_seam(),
-            CharacterClassEscapeContentTransportSlot::UnicodeCharacterEscape(t) => t.leading_seam(),
-            CharacterClassEscapeContentTransportSlot::Verbatim(t) => t.leading_seam(),
+            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeText1(t) => t.source_gap(),
+            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeArm(t) => t.source_gap(),
+            CharacterClassEscapeContentTransportSlot::UnicodeCharacterEscape(t) => t.source_gap(),
+            CharacterClassEscapeContentTransportSlot::Verbatim(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeText1(t) => t.gap_edges(),
+            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeArm(t) => t.gap_edges(),
+            CharacterClassEscapeContentTransportSlot::UnicodeCharacterEscape(t) => t.gap_edges(),
+            CharacterClassEscapeContentTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
 }
@@ -2595,13 +2761,22 @@ impl ::sittir_core::prepare::Prepare for TermGroupQuantifierTransportSlot {
             TermGroupQuantifierTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            TermGroupQuantifierTransportSlot::ZeroOrMore(t) => t.leading_seam(),
-            TermGroupQuantifierTransportSlot::OneOrMore(t) => t.leading_seam(),
-            TermGroupQuantifierTransportSlot::Optional(t) => t.leading_seam(),
-            TermGroupQuantifierTransportSlot::CountQuantifier(t) => t.leading_seam(),
-            TermGroupQuantifierTransportSlot::Verbatim(t) => t.leading_seam(),
+            TermGroupQuantifierTransportSlot::ZeroOrMore(t) => t.source_gap(),
+            TermGroupQuantifierTransportSlot::OneOrMore(t) => t.source_gap(),
+            TermGroupQuantifierTransportSlot::Optional(t) => t.source_gap(),
+            TermGroupQuantifierTransportSlot::CountQuantifier(t) => t.source_gap(),
+            TermGroupQuantifierTransportSlot::Verbatim(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            TermGroupQuantifierTransportSlot::ZeroOrMore(t) => t.gap_edges(),
+            TermGroupQuantifierTransportSlot::OneOrMore(t) => t.gap_edges(),
+            TermGroupQuantifierTransportSlot::Optional(t) => t.gap_edges(),
+            TermGroupQuantifierTransportSlot::CountQuantifier(t) => t.gap_edges(),
+            TermGroupQuantifierTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
 }
@@ -2783,31 +2958,58 @@ impl ::sittir_core::prepare::Prepare for TermGroupContentTransportSlot {
             TermGroupContentTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            TermGroupContentTransportSlot::LookaroundAssertion(t) => t.leading_seam(),
-            TermGroupContentTransportSlot::PatternCharacter(t) => t.leading_seam(),
-            TermGroupContentTransportSlot::CharacterClass(t) => t.leading_seam(),
-            TermGroupContentTransportSlot::PosixCharacterClass(t) => t.leading_seam(),
-            TermGroupContentTransportSlot::DecimalEscape(t) => t.leading_seam(),
-            TermGroupContentTransportSlot::CharacterClassEscape(t) => t.leading_seam(),
-            TermGroupContentTransportSlot::ControlEscape(t) => t.leading_seam(),
-            TermGroupContentTransportSlot::ControlLetterEscape(t) => t.leading_seam(),
-            TermGroupContentTransportSlot::IdentityEscape(t) => t.leading_seam(),
-            TermGroupContentTransportSlot::BackreferenceEscape(t) => t.leading_seam(),
-            TermGroupContentTransportSlot::NamedGroupBackreference(t) => t.leading_seam(),
-            TermGroupContentTransportSlot::AnonymousCapturingGroup(t) => t.leading_seam(),
-            TermGroupContentTransportSlot::NamedCapturingGroup(t) => t.leading_seam(),
-            TermGroupContentTransportSlot::NonCapturingGroup(t) => t.leading_seam(),
-            TermGroupContentTransportSlot::InlineFlagsGroupEnable(t) => t.leading_seam(),
-            TermGroupContentTransportSlot::InlineFlagsGroupToggle(t) => t.leading_seam(),
-            TermGroupContentTransportSlot::InlineFlagsGroupDisable(t) => t.leading_seam(),
+            TermGroupContentTransportSlot::LookaroundAssertion(t) => t.source_gap(),
+            TermGroupContentTransportSlot::PatternCharacter(t) => t.source_gap(),
+            TermGroupContentTransportSlot::CharacterClass(t) => t.source_gap(),
+            TermGroupContentTransportSlot::PosixCharacterClass(t) => t.source_gap(),
+            TermGroupContentTransportSlot::DecimalEscape(t) => t.source_gap(),
+            TermGroupContentTransportSlot::CharacterClassEscape(t) => t.source_gap(),
+            TermGroupContentTransportSlot::ControlEscape(t) => t.source_gap(),
+            TermGroupContentTransportSlot::ControlLetterEscape(t) => t.source_gap(),
+            TermGroupContentTransportSlot::IdentityEscape(t) => t.source_gap(),
+            TermGroupContentTransportSlot::BackreferenceEscape(t) => t.source_gap(),
+            TermGroupContentTransportSlot::NamedGroupBackreference(t) => t.source_gap(),
+            TermGroupContentTransportSlot::AnonymousCapturingGroup(t) => t.source_gap(),
+            TermGroupContentTransportSlot::NamedCapturingGroup(t) => t.source_gap(),
+            TermGroupContentTransportSlot::NonCapturingGroup(t) => t.source_gap(),
+            TermGroupContentTransportSlot::InlineFlagsGroupEnable(t) => t.source_gap(),
+            TermGroupContentTransportSlot::InlineFlagsGroupToggle(t) => t.source_gap(),
+            TermGroupContentTransportSlot::InlineFlagsGroupDisable(t) => t.source_gap(),
             TermGroupContentTransportSlot::Literal8_73_74_61_72_74_5f_61_73_73_65_72_74_69_6f_6e => None,
             TermGroupContentTransportSlot::Literal9_65_6e_64_5f_61_73_73_65_72_74_69_6f_6e => None,
             TermGroupContentTransportSlot::Literal10_62_6f_75_6e_64_61_72_79_5f_61_73_73_65_72_74_69_6f_6e => None,
             TermGroupContentTransportSlot::Literal11_6e_6f_6e_5f_62_6f_75_6e_64_61_72_79_5f_61_73_73_65_72_74_69_6f_6e => None,
             TermGroupContentTransportSlot::Literal12_61_6e_79_5f_63_68_61_72_61_63_74_65_72 => None,
-            TermGroupContentTransportSlot::Verbatim(t) => t.leading_seam(),
+            TermGroupContentTransportSlot::Verbatim(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            TermGroupContentTransportSlot::LookaroundAssertion(t) => t.gap_edges(),
+            TermGroupContentTransportSlot::PatternCharacter(t) => t.gap_edges(),
+            TermGroupContentTransportSlot::CharacterClass(t) => t.gap_edges(),
+            TermGroupContentTransportSlot::PosixCharacterClass(t) => t.gap_edges(),
+            TermGroupContentTransportSlot::DecimalEscape(t) => t.gap_edges(),
+            TermGroupContentTransportSlot::CharacterClassEscape(t) => t.gap_edges(),
+            TermGroupContentTransportSlot::ControlEscape(t) => t.gap_edges(),
+            TermGroupContentTransportSlot::ControlLetterEscape(t) => t.gap_edges(),
+            TermGroupContentTransportSlot::IdentityEscape(t) => t.gap_edges(),
+            TermGroupContentTransportSlot::BackreferenceEscape(t) => t.gap_edges(),
+            TermGroupContentTransportSlot::NamedGroupBackreference(t) => t.gap_edges(),
+            TermGroupContentTransportSlot::AnonymousCapturingGroup(t) => t.gap_edges(),
+            TermGroupContentTransportSlot::NamedCapturingGroup(t) => t.gap_edges(),
+            TermGroupContentTransportSlot::NonCapturingGroup(t) => t.gap_edges(),
+            TermGroupContentTransportSlot::InlineFlagsGroupEnable(t) => t.gap_edges(),
+            TermGroupContentTransportSlot::InlineFlagsGroupToggle(t) => t.gap_edges(),
+            TermGroupContentTransportSlot::InlineFlagsGroupDisable(t) => t.gap_edges(),
+            TermGroupContentTransportSlot::Literal8_73_74_61_72_74_5f_61_73_73_65_72_74_69_6f_6e => None,
+            TermGroupContentTransportSlot::Literal9_65_6e_64_5f_61_73_73_65_72_74_69_6f_6e => None,
+            TermGroupContentTransportSlot::Literal10_62_6f_75_6e_64_61_72_79_5f_61_73_73_65_72_74_69_6f_6e => None,
+            TermGroupContentTransportSlot::Literal11_6e_6f_6e_5f_62_6f_75_6e_64_61_72_79_5f_61_73_73_65_72_74_69_6f_6e => None,
+            TermGroupContentTransportSlot::Literal12_61_6e_79_5f_63_68_61_72_61_63_74_65_72 => None,
+            TermGroupContentTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
 }
@@ -3212,6 +3414,8 @@ pub struct PatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<PatternContentTransportSlot>,
 }
@@ -3245,8 +3449,11 @@ impl ::sittir_core::prepare::Prepare for PatternTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -3277,6 +3484,8 @@ pub struct AlternationTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terms"))]
     pub terms: Vec<Option<::sittir_core::SlotValue<TermTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terms_separator_space_before"))]
@@ -3306,19 +3515,17 @@ impl ::sittir_core::render::Render for AlternationTransport {
 impl ::sittir_core::prepare::Prepare for AlternationTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
-            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.terms.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.as_ref().and_then(|i| i.coord()), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "|", options::allowed(options::SITE_ALTERNATION_TERMS_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ALTERNATION_TERMS_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.terms_separator_space_before.is_none() { self.terms_separator_space_before = gaps.before; }
-            if self.terms_separator_space_after.is_none() { self.terms_separator_space_after = gaps.after; }
-        }
+        ::sittir_core::prepare::fill_list_gaps(self.terms.iter_mut().map(Option::as_mut), "|", options::allowed(options::SITE_ALTERNATION_TERMS_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ALTERNATION_TERMS_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.terms_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_ALTERNATION_TERMS_SEPARATOR_SPACE_BEFORE].arm);
         self.terms_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_ALTERNATION_TERMS_SEPARATOR_SPACE_AFTER].arm);
         self.terms.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -3349,6 +3556,8 @@ pub struct TermTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_term_group"))]
     pub term_group: Vec<::sittir_core::SlotValue<TermGroupTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_term_group_separator_space"))]
@@ -3376,19 +3585,17 @@ impl ::sittir_core::render::Render for TermTransport {
 impl ::sittir_core::prepare::Prepare for TermTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        let separated_term_group = {
-            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.term_group.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_TERM_TERM_GROUP_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.term_group_separator_space.is_none() { self.term_group_separator_space = gaps.before; }
-            gaps.separated
-        };
+        ::sittir_core::prepare::fill_list_gaps(self.term_group.iter_mut().map(Some), "", options::allowed(options::SITE_TERM_TERM_GROUP_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.term_group_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TERM_TERM_GROUP_SEPARATOR_SPACE].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.term_group.iter_mut().map(Some), options::SEATS_TERM_TERM_GROUP, &separated_term_group, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.term_group.iter_mut().map(Some), options::SEATS_TERM_TERM_GROUP, ctx);
         self.term_group.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -3416,6 +3623,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TermTransport> {
 pub struct AnyCharacterTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -3442,8 +3650,11 @@ impl ::sittir_core::prepare::Prepare for AnyCharacterTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -3453,19 +3664,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyCharacterTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => ".".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| ".".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -3481,9 +3695,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyCharacterTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| ".".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -3523,6 +3739,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AnyCharacterTransport> {
 pub struct StartAssertionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -3549,8 +3766,11 @@ impl ::sittir_core::prepare::Prepare for StartAssertionTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -3560,19 +3780,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for StartAssertionTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "^".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "^".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -3588,9 +3811,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for StartAssertionTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "^".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -3630,6 +3855,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StartAssertionTransport> {
 pub struct EndAssertionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -3656,8 +3882,11 @@ impl ::sittir_core::prepare::Prepare for EndAssertionTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -3667,19 +3896,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for EndAssertionTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "$".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "$".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -3695,9 +3927,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for EndAssertionTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "$".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -3737,6 +3971,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<EndAssertionTransport> {
 pub struct BoundaryAssertionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -3763,8 +3998,11 @@ impl ::sittir_core::prepare::Prepare for BoundaryAssertionTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -3774,19 +4012,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundaryAssertionTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "\\b".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "\\b".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -3802,9 +4043,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundaryAssertionTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "\\b".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -3844,6 +4087,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BoundaryAssertionTransport> {
 pub struct NonBoundaryAssertionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -3870,8 +4114,11 @@ impl ::sittir_core::prepare::Prepare for NonBoundaryAssertionTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -3881,19 +4128,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonBoundaryAssertionTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "\\B".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "\\B".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -3909,9 +4159,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonBoundaryAssertionTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "\\B".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -3954,6 +4206,8 @@ pub struct LookaroundAssertionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<LookaroundAssertionContentTransportSlot>,
 }
@@ -3982,8 +4236,11 @@ impl ::sittir_core::prepare::Prepare for LookaroundAssertionTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -4014,6 +4271,8 @@ pub struct LookaheadAssertionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
@@ -4046,8 +4305,11 @@ impl ::sittir_core::prepare::Prepare for LookaheadAssertionTransport {
         self.pattern.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -4078,6 +4340,8 @@ pub struct LookbehindAssertionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
@@ -4110,8 +4374,11 @@ impl ::sittir_core::prepare::Prepare for LookbehindAssertionTransport {
         self.pattern.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -4139,6 +4406,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LookbehindAssertionTransport> 
 pub struct PatternCharacterTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -4165,8 +4433,11 @@ impl ::sittir_core::prepare::Prepare for PatternCharacterTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -4176,7 +4447,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternCharacterTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -4189,13 +4461,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternCharacterTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -4211,9 +4485,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternCharacterTransport {
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -4256,6 +4532,8 @@ pub struct CharacterClassTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_leading"))]
     pub leading: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_atoms"))]
@@ -4294,8 +4572,11 @@ impl ::sittir_core::prepare::Prepare for CharacterClassTransport {
         self.negation.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -4326,6 +4607,8 @@ pub struct PosixCharacterClassTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_posix_class_name"))]
     pub posix_class_name: ::sittir_core::SlotValue<PosixClassNameTransport>,
 }
@@ -4355,8 +4638,11 @@ impl ::sittir_core::prepare::Prepare for PosixCharacterClassTransport {
         self.posix_class_name.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -4384,6 +4670,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PosixCharacterClassTransport> 
 pub struct PosixClassNameTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -4410,8 +4697,11 @@ impl ::sittir_core::prepare::Prepare for PosixClassNameTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -4421,7 +4711,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PosixClassNameTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -4434,13 +4725,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for PosixClassNameTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -4456,9 +4749,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for PosixClassNameTransport {
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -4501,6 +4796,8 @@ pub struct ClassRangeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_start"))]
     pub start: ::sittir_core::SlotValue<ClassRangeStartTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_end"))]
@@ -4533,8 +4830,11 @@ impl ::sittir_core::prepare::Prepare for ClassRangeTransport {
         self.end.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -4562,6 +4862,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassRangeTransport> {
 pub struct ClassCharacterTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -4588,8 +4889,11 @@ impl ::sittir_core::prepare::Prepare for ClassCharacterTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -4599,7 +4903,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassCharacterTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -4612,13 +4917,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassCharacterTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -4634,9 +4941,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassCharacterTransport {
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -4679,6 +4988,8 @@ pub struct AnonymousCapturingGroupTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: ::sittir_core::SlotValue<PatternTransport>,
 }
@@ -4708,8 +5019,11 @@ impl ::sittir_core::prepare::Prepare for AnonymousCapturingGroupTransport {
         self.pattern.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -4740,6 +5054,8 @@ pub struct NamedCapturingGroupTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_group_name"))]
     pub group_name: ::sittir_core::SlotValue<GroupNameTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
@@ -4775,8 +5091,11 @@ impl ::sittir_core::prepare::Prepare for NamedCapturingGroupTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -4807,6 +5126,8 @@ pub struct NonCapturingGroupTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: ::sittir_core::SlotValue<PatternTransport>,
 }
@@ -4836,8 +5157,11 @@ impl ::sittir_core::prepare::Prepare for NonCapturingGroupTransport {
         self.pattern.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -4865,6 +5189,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NonCapturingGroupTransport> {
 pub struct FlagsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -4891,8 +5216,11 @@ impl ::sittir_core::prepare::Prepare for FlagsTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -4902,7 +5230,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for FlagsTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -4915,13 +5244,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for FlagsTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -4937,9 +5268,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for FlagsTransport {
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -4979,6 +5312,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FlagsTransport> {
 pub struct ZeroOrMoreTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -5005,8 +5339,11 @@ impl ::sittir_core::prepare::Prepare for ZeroOrMoreTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5016,7 +5353,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ZeroOrMoreTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -5029,13 +5367,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for ZeroOrMoreTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -5051,9 +5391,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ZeroOrMoreTransport {
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -5093,6 +5435,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ZeroOrMoreTransport> {
 pub struct OneOrMoreTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -5119,8 +5462,11 @@ impl ::sittir_core::prepare::Prepare for OneOrMoreTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5130,7 +5476,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for OneOrMoreTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -5143,13 +5490,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for OneOrMoreTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -5165,9 +5514,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for OneOrMoreTransport {
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -5207,6 +5558,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<OneOrMoreTransport> {
 pub struct OptionalTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -5233,8 +5585,11 @@ impl ::sittir_core::prepare::Prepare for OptionalTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5244,7 +5599,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -5257,13 +5613,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -5279,9 +5637,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalTransport {
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -5324,6 +5684,8 @@ pub struct CountQuantifierTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<CountQuantifierContentTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lazy"))]
@@ -5356,8 +5718,11 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierTransport {
         self.lazy.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5388,6 +5753,8 @@ pub struct BackreferenceEscapeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_group_name"))]
     pub group_name: ::sittir_core::SlotValue<GroupNameTransport>,
 }
@@ -5417,8 +5784,11 @@ impl ::sittir_core::prepare::Prepare for BackreferenceEscapeTransport {
         self.group_name.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5449,6 +5819,8 @@ pub struct NamedGroupBackreferenceTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_group_name"))]
     pub group_name: ::sittir_core::SlotValue<GroupNameTransport>,
 }
@@ -5478,8 +5850,11 @@ impl ::sittir_core::prepare::Prepare for NamedGroupBackreferenceTransport {
         self.group_name.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5507,6 +5882,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedGroupBackreferenceTranspo
 pub struct DecimalEscapeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -5533,8 +5909,11 @@ impl ::sittir_core::prepare::Prepare for DecimalEscapeTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5544,7 +5923,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecimalEscapeTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -5557,13 +5937,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecimalEscapeTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -5579,9 +5961,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecimalEscapeTransport {
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -5624,6 +6008,8 @@ pub struct CharacterClassEscapeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<CharacterClassEscapeContentTransportSlot>,
 }
@@ -5652,8 +6038,11 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5681,6 +6070,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CharacterClassEscapeTransport>
 pub struct UnicodeCharacterEscapeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -5707,8 +6097,11 @@ impl ::sittir_core::prepare::Prepare for UnicodeCharacterEscapeTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5718,7 +6111,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnicodeCharacterEscapeTransport 
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -5731,13 +6125,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnicodeCharacterEscapeTransport 
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -5753,9 +6149,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnicodeCharacterEscapeTransport 
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -5798,6 +6196,8 @@ pub struct UnicodePropertyValueExpressionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_unicode_property_value_expression_group"))]
     pub unicode_property_value_expression_group: Option<::sittir_core::SlotValue<UnicodePropertyValueExpressionGroupTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_unicode_property_value"))]
@@ -5830,8 +6230,11 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueExpressionTransport
         self.unicode_property_value.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5859,6 +6262,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UnicodePropertyValueExpression
 pub struct UnicodePropertyValueTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -5885,8 +6289,11 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5896,7 +6303,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnicodePropertyValueTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -5909,13 +6317,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnicodePropertyValueTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -5931,9 +6341,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnicodePropertyValueTransport {
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -5973,6 +6385,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UnicodePropertyValueTransport>
 pub struct ControlEscapeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -5999,8 +6412,11 @@ impl ::sittir_core::prepare::Prepare for ControlEscapeTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6010,7 +6426,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ControlEscapeTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -6023,13 +6440,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for ControlEscapeTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -6045,9 +6464,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ControlEscapeTransport {
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -6087,6 +6508,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ControlEscapeTransport> {
 pub struct ControlLetterEscapeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -6113,8 +6535,11 @@ impl ::sittir_core::prepare::Prepare for ControlLetterEscapeTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6124,7 +6549,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ControlLetterEscapeTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -6137,13 +6563,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for ControlLetterEscapeTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -6159,9 +6587,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ControlLetterEscapeTransport {
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -6204,6 +6634,8 @@ pub struct IdentityEscapeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: String,
 }
@@ -6232,8 +6664,11 @@ impl ::sittir_core::prepare::Prepare for IdentityEscapeTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6261,6 +6696,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IdentityEscapeTransport> {
 pub struct GroupNameTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -6287,8 +6723,11 @@ impl ::sittir_core::prepare::Prepare for GroupNameTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6298,7 +6737,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for GroupNameTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -6311,13 +6751,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for GroupNameTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -6333,9 +6775,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for GroupNameTransport {
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -6375,6 +6819,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GroupNameTransport> {
 pub struct DecimalDigitsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -6401,8 +6846,11 @@ impl ::sittir_core::prepare::Prepare for DecimalDigitsTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6412,7 +6860,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecimalDigitsTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -6425,13 +6874,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecimalDigitsTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -6447,9 +6898,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecimalDigitsTransport {
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -6492,6 +6945,8 @@ pub struct TermGroupTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_quantifier"))]
     pub quantifier: Option<::sittir_core::SlotValue<TermGroupQuantifierTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
@@ -6524,8 +6979,11 @@ impl ::sittir_core::prepare::Prepare for TermGroupTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6556,6 +7014,8 @@ pub struct CountQuantifierGroupTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decimal_digits"))]
     pub decimal_digits: Option<::sittir_core::SlotValue<DecimalDigitsTransport>>,
 }
@@ -6585,8 +7045,11 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierGroupTransport {
         self.decimal_digits.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6617,6 +7080,8 @@ pub struct CountQuantifierArmTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decimal_digits"))]
     pub decimal_digits: ::sittir_core::SlotValue<DecimalDigitsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_count_quantifier_group"))]
@@ -6649,8 +7114,11 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierArmTransport {
         self.count_quantifier_group.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6681,6 +7149,8 @@ pub struct CharacterClassEscapeArmTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_unicode_property_value_expression"))]
     pub unicode_property_value_expression: ::sittir_core::SlotValue<UnicodePropertyValueExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_character_class_escape_text2"))]
@@ -6713,8 +7183,11 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeArmTransport {
         self.character_class_escape_text2.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6745,6 +7218,8 @@ pub struct UnicodePropertyValueExpressionGroupTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_unicode_property_name"))]
     pub unicode_property_name: ::sittir_core::SlotValue<UnicodePropertyNameTransport>,
 }
@@ -6774,8 +7249,11 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueExpressionGroupTran
         self.unicode_property_name.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6803,6 +7281,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UnicodePropertyValueExpression
 pub struct CharacterClassEscapeText1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -6829,8 +7308,11 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeText1Transport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6840,7 +7322,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassEscapeText1Transpo
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -6853,13 +7336,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassEscapeText1Transpo
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -6875,9 +7360,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassEscapeText1Transpo
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -6917,6 +7404,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CharacterClassEscapeText1Trans
 pub struct CharacterClassEscapeText2Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -6943,8 +7431,11 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeText2Transport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6954,7 +7445,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassEscapeText2Transpo
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -6967,13 +7459,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassEscapeText2Transpo
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -6989,9 +7483,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassEscapeText2Transpo
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -7031,6 +7527,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CharacterClassEscapeText2Trans
 pub struct NegationTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -7057,8 +7554,11 @@ impl ::sittir_core::prepare::Prepare for NegationTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -7068,7 +7568,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NegationTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "^".to_string(),
@@ -7080,13 +7581,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for NegationTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "^".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -7104,6 +7607,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NegationTransport {
                 return Ok(Self {
                     transport_trivia_data: None,
                     edges: None,
+                    source_gap: None,
                     text,
                 });
             }
@@ -7114,6 +7618,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NegationTransport {
                 return Ok(Self {
                     transport_trivia_data: None,
                     edges: None,
+                    source_gap: None,
                     text: "^".to_string(),
                 });
             }
@@ -7123,9 +7628,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for NegationTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "^".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -7168,6 +7675,8 @@ pub struct InlineFlagsGroupEnableTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enabled"))]
     pub enabled: ::sittir_core::SlotValue<FlagsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
@@ -7200,8 +7709,11 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupEnableTransport {
         self.pattern.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -7232,6 +7744,8 @@ pub struct InlineFlagsGroupToggleTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enabled"))]
     pub enabled: ::sittir_core::SlotValue<FlagsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_disabled"))]
@@ -7267,8 +7781,11 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupToggleTransport {
         self.pattern.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -7299,6 +7816,8 @@ pub struct InlineFlagsGroupDisableTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_disabled"))]
     pub disabled: ::sittir_core::SlotValue<FlagsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
@@ -7331,8 +7850,11 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupDisableTransport {
         self.pattern.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -7360,6 +7882,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<InlineFlagsGroupDisableTranspo
 pub struct TightTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -7386,8 +7909,11 @@ impl ::sittir_core::prepare::Prepare for TightTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -7397,7 +7923,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TightTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -7410,13 +7937,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for TightTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -7432,9 +7961,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for TightTransport {
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -7474,6 +8005,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TightTransport> {
 pub struct NewlineTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -7500,8 +8032,11 @@ impl ::sittir_core::prepare::Prepare for NewlineTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -7511,19 +8046,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for NewlineTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "\n".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "\n".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -7539,9 +8077,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for NewlineTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "\n".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -7581,6 +8121,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NewlineTransport> {
 pub struct BlanklineTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -7607,8 +8148,11 @@ impl ::sittir_core::prepare::Prepare for BlanklineTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -7618,19 +8162,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for BlanklineTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "\n\n".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "\n\n".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -7646,9 +8193,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for BlanklineTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "\n\n".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -7688,6 +8237,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BlanklineTransport> {
 pub struct DoubleBlanklineTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -7714,8 +8264,11 @@ impl ::sittir_core::prepare::Prepare for DoubleBlanklineTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -7725,19 +8278,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for DoubleBlanklineTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "\n\n\n".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "\n\n\n".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -7753,9 +8309,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for DoubleBlanklineTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "\n\n\n".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -7798,6 +8356,8 @@ pub struct LazyTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<AnyTransport>>,
 }
@@ -7826,8 +8386,11 @@ impl ::sittir_core::prepare::Prepare for LazyTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -7858,6 +8421,8 @@ pub struct UnicodePropertyNameTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<UnicodePropertyValueTransport>,
 }
@@ -7886,8 +8451,11 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyNameTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -7915,6 +8483,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UnicodePropertyNameTransport> 
 pub struct CaretTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -7941,8 +8510,11 @@ impl ::sittir_core::prepare::Prepare for CaretTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -7952,19 +8524,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaretTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "^".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "^".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -7980,9 +8555,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaretTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "^".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -8022,6 +8599,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CaretTransport> {
 pub struct LparenQmarkTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -8048,8 +8626,11 @@ impl ::sittir_core::prepare::Prepare for LparenQmarkTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -8059,19 +8640,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "(?".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "(?".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -8087,9 +8671,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "(?".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -8129,6 +8715,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LparenQmarkTransport> {
 pub struct EqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -8155,8 +8742,11 @@ impl ::sittir_core::prepare::Prepare for EqTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -8166,19 +8756,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "=".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -8194,9 +8787,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "=".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -8236,6 +8831,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<EqTransport> {
 pub struct BangTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -8262,8 +8858,11 @@ impl ::sittir_core::prepare::Prepare for BangTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -8273,19 +8872,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "!".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "!".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -8301,9 +8903,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "!".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -8343,6 +8947,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BangTransport> {
 pub struct RparenTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -8369,8 +8974,11 @@ impl ::sittir_core::prepare::Prepare for RparenTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -8380,19 +8988,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for RparenTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => ")".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| ")".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -8408,9 +9019,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for RparenTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| ")".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -8450,6 +9063,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RparenTransport> {
 pub struct LparenQmarkLtTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -8476,8 +9090,11 @@ impl ::sittir_core::prepare::Prepare for LparenQmarkLtTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -8487,19 +9104,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkLtTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "(?<".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "(?<".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -8515,9 +9135,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkLtTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "(?<".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -8557,6 +9179,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LparenQmarkLtTransport> {
 pub struct LbrackTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -8583,8 +9206,11 @@ impl ::sittir_core::prepare::Prepare for LbrackTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -8594,19 +9220,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbrackTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "[".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "[".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -8622,9 +9251,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbrackTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "[".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -8664,6 +9295,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LbrackTransport> {
 pub struct DashTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -8690,8 +9322,11 @@ impl ::sittir_core::prepare::Prepare for DashTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -8701,19 +9336,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "-".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "-".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -8729,9 +9367,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "-".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -8771,6 +9411,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DashTransport> {
 pub struct BslashDashTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -8797,8 +9438,11 @@ impl ::sittir_core::prepare::Prepare for BslashDashTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -8808,19 +9452,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for BslashDashTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "\\-".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "\\-".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -8836,9 +9483,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for BslashDashTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "\\-".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -8878,6 +9527,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BslashDashTransport> {
 pub struct RbrackTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -8904,8 +9554,11 @@ impl ::sittir_core::prepare::Prepare for RbrackTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -8915,19 +9568,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbrackTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "]".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "]".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -8943,9 +9599,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbrackTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "]".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -8985,6 +9643,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RbrackTransport> {
 pub struct LbrackColonTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -9011,8 +9670,11 @@ impl ::sittir_core::prepare::Prepare for LbrackColonTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -9022,19 +9684,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbrackColonTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "[:".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "[:".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -9050,9 +9715,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbrackColonTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "[:".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -9092,6 +9759,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LbrackColonTransport> {
 pub struct ColonRbrackTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -9118,8 +9786,11 @@ impl ::sittir_core::prepare::Prepare for ColonRbrackTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -9129,19 +9800,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonRbrackTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => ":]".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| ":]".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -9157,9 +9831,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonRbrackTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| ":]".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -9199,6 +9875,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ColonRbrackTransport> {
 pub struct LparenTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -9225,8 +9902,11 @@ impl ::sittir_core::prepare::Prepare for LparenTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -9236,19 +9916,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "(".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "(".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -9264,9 +9947,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "(".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -9306,6 +9991,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LparenTransport> {
 pub struct LparenQmarkPLtTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -9332,8 +10018,11 @@ impl ::sittir_core::prepare::Prepare for LparenQmarkPLtTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -9343,19 +10032,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkPLtTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "(?P<".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "(?P<".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -9371,9 +10063,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkPLtTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "(?P<".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -9413,6 +10107,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LparenQmarkPLtTransport> {
 pub struct GtTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -9439,8 +10134,11 @@ impl ::sittir_core::prepare::Prepare for GtTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -9450,19 +10148,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => ">".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| ">".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -9478,9 +10179,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| ">".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -9520,6 +10223,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GtTransport> {
 pub struct LparenQmarkColonTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -9546,8 +10250,11 @@ impl ::sittir_core::prepare::Prepare for LparenQmarkColonTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -9557,19 +10264,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkColonTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "(?:".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "(?:".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -9585,9 +10295,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkColonTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "(?:".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -9627,6 +10339,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LparenQmarkColonTransport> {
 pub struct StarTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -9653,8 +10366,11 @@ impl ::sittir_core::prepare::Prepare for StarTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -9664,19 +10380,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "*".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "*".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -9692,9 +10411,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "*".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -9734,6 +10455,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StarTransport> {
 pub struct QmarkTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -9760,8 +10482,11 @@ impl ::sittir_core::prepare::Prepare for QmarkTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -9771,19 +10496,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "?".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "?".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -9799,9 +10527,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "?".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -9841,6 +10571,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<QmarkTransport> {
 pub struct PlusTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -9867,8 +10598,11 @@ impl ::sittir_core::prepare::Prepare for PlusTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -9878,19 +10612,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "+".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "+".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -9906,9 +10643,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "+".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -9948,6 +10687,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PlusTransport> {
 pub struct LbraceTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -9974,8 +10714,11 @@ impl ::sittir_core::prepare::Prepare for LbraceTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -9985,19 +10728,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbraceTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "{".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "{".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -10013,9 +10759,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbraceTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "{".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -10055,6 +10803,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LbraceTransport> {
 pub struct RbraceTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -10081,8 +10830,11 @@ impl ::sittir_core::prepare::Prepare for RbraceTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -10092,19 +10844,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbraceTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "}".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "}".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -10120,9 +10875,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbraceTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "}".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -10162,6 +10919,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RbraceTransport> {
 pub struct BslashkTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -10188,8 +10946,11 @@ impl ::sittir_core::prepare::Prepare for BslashkTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -10199,19 +10960,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for BslashkTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "\\k".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "\\k".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -10227,9 +10991,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for BslashkTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "\\k".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -10269,6 +11035,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BslashkTransport> {
 pub struct LtTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -10295,8 +11062,11 @@ impl ::sittir_core::prepare::Prepare for LtTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -10306,19 +11076,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "<".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "<".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -10334,9 +11107,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "<".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -10376,6 +11151,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LtTransport> {
 pub struct LparenQmarkPEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -10402,8 +11178,11 @@ impl ::sittir_core::prepare::Prepare for LparenQmarkPEqTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -10413,19 +11192,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkPEqTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "(?P=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "(?P=".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -10441,9 +11223,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkPEqTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "(?P=".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -10483,6 +11267,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LparenQmarkPEqTransport> {
 pub struct CommaTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -10509,8 +11294,11 @@ impl ::sittir_core::prepare::Prepare for CommaTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -10520,19 +11308,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => ",".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| ",".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -10548,9 +11339,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| ",".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -10590,6 +11383,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CommaTransport> {
 pub struct ColonTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -10616,8 +11410,11 @@ impl ::sittir_core::prepare::Prepare for ColonTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -10627,19 +11424,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => ":".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| ":".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -10655,9 +11455,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| ":".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }

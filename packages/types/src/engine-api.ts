@@ -14,7 +14,8 @@ export type LineGapAddress =
 
 /**
  * The line-break runs a read node owns, before it and in its closing gap, each in source order, and the span of the
- * sibling its leading runs separate it from (`null` when it is its parent's first). A run holds only while that sibling
+ * sibling owner before it: before the outermost node spanning exactly its bytes, so a list item wrapped in an item
+ * node reports the item before it (`null` when that node is its parent's first). A run holds only while that sibling
  * is still the node's neighbour.
  */
 export interface LineGaps {

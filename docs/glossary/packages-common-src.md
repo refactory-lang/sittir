@@ -253,7 +253,7 @@ The text a node renders to in the engine it was built or read in. It takes the e
 
 ### `packages/common/src/utils.ts::rebuilt`
 
-What every `$with` setter runs its rebuild through. It runs the rebuild inside the node's own engine (or plainly, when the node has none) and hands the source node's trivia to the node the rebuild returns. Inner trivia can only travel to a node that is still empty: once the rebuild gives the node a child, the comment would sit beside it, so the call throws and names the kind.
+What every `$with` setter runs its rebuild through. It runs the rebuild inside the node's own engine (or plainly, when the node has none) and hands the source node's trivia to the node the rebuild returns, together with what it keeps of the source node (`carryEdit`). Inner trivia can only travel to a node that is still empty: once the rebuild gives the node a child, the comment would sit beside it, so the call throws and names the kind.
 
 ### `packages/common/src/utils.ts::triviaSide`
 
@@ -275,11 +275,29 @@ Carries read provenance from a read object to the object rebuilt from it, which 
 
 Which edges of a list item face a neighbour other than the one its source had there. A derived whitespace run is the gap between a node and one particular neighbour, so it holds only while that neighbour is still there; otherwise the seat decides the gap. The leading edge changed when the item before it in the rebuilt list is not the sibling its leading runs were measured from (`readDerivedSides`, judged by tree and span through `isSourceSibling`), or, for the list's first item, when the source had such a sibling. The trailing edge changed when the item is no longer last, since only a last item owns a closing gap. Only a derived side can change: a side whose trivia was written keeps what was written. An item with no derived runs has no changed edges. The render root changes on both edges, because it has no neighbour at all.
 
-A read item whose leading side is derived and whose leading edge is kept crosses with `held` on its trivia. That mark lets the run it opens with vote in its list's gap class (`classify_list_gaps`). Written trivia never carries it, so whitespace written on a built item is a spelling for that item and never evidence of how the source spaced the list.
+### `packages/common/src/transport-data.ts::sourceAdjacent`
+
+Whether a list item still follows the sibling it followed in its source: the item before it in the rebuilt list is that sibling, by tree and span (`isSourceSibling`, against `readDerivedSides`'s `previous`). The neighbour rule (`changedEdges`) and the gap evidence (`sourceGapOf`) both ask this one question, so a gap that keeps its source bytes and a derived run that holds are decided by the same test.
+
+### `packages/common/src/transport-data.ts::sourceGapOf`
+
+The source range a list item sends as `$_gap`: from its source predecessor's end to its own source start, in the tree both were read from, when the item is still source-adjacent and no derived line-gap run already spells that gap. A run the item's leading trivia opens with is the gap itself, so the native fill never classifies the same gap twice. The first item of a list sends nothing; its gap faces the parent's opener, not a list neighbour. A live render sends the range, `{ $treeHandle, $span }`, as evidence only: the gap is classified, never sliced. Data detached from its tree carries the same gap as its bytes, `{ $text }`, which only `selfContainedRenderInput` writes, and the native fill classifies both forms through one path.
+
+### `packages/common/src/transport-data.ts::evidenceOf`
+
+The node whose source identity stands for a list entry. A rebuilt list mints its item wrappers afresh (a list kind's item envelope around each element), so the entry itself has no source; the one node it holds does. Slots the wrapper leaves empty do not count, so a wrapper with an optional slot it does not fill is still looked through. Adjacency is judged on these nodes on both sides of a gap.
+
+### `packages/common/src/transport-data.ts::sourceOf`
+
+Where a node sits in its source: a read node's own tree token, tree handle, span and stamped kind, or, for a node an edit rebuilt, the identity the edit carried forward from the node it replaced. It is evidence of layout only: an edited node never folds and never slices, but it can still be found in its source (line gaps derive for it) and judged adjacent to its neighbours. The identity is kept under a private, non-enumerable symbol, so it never reaches the wire and a spread copy never inherits it; `$span` stays the public fact of a node whose text is its source's.
 
 ### `packages/common/src/transport-data.ts::withoutChangedEdges`
 
 Drops the whitespace runs on the changed edges of a node's trivia: on the leading side the runs before its first comment, on the trailing side the runs after its last. Comments always stay with their owner, and so does a run between a comment and its owner, because that run's neighbour is the comment. A node left with no trivia can fold to its coordinate again.
+
+### `packages/common/src/utils.ts::carryEdit`
+
+What an edited node keeps of the node it was rebuilt from (`rebuilt`, the one place every `$with` setter returns through): that a read produced it (`carryRead`), where it sits in the source (`carrySource`), and which of its trivia sides were written. Its line gaps then derive from the same source position, so an edit whose neighbours are unchanged keeps the gaps its source had around it, and a side the caller rewrote stays written.
 
 ### `packages/common/src/utils.ts::readDerivedSides`
 

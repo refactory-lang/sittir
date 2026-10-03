@@ -125,11 +125,36 @@ describe('a rebuilt list gives each parsed item the gap its seat declares', () =
 	it('takes the seat before a kept comment when the item before it was removed', () => {
 		const root = rust.parse('use x;\nfn f() {}\n\n// c\nuse y;\n');
 		const [x, , y] = root.statements();
-		const seated = rust.parse('use x;\nuse y;\n');
-		const [sx, sy] = seated.statements();
-		if (sy === undefined || typeof sy === 'number') throw new Error('expected a parsed statement');
-		const expected = seated.$with.statements(sx!, sy.$trivia.leading('// c')).$render();
-		expect(root.$with.statements(x!, y!).$render()).toBe(expected);
+		expect(root.$with.statements(x!, y!).$render()).toBe('use x;\n\n// c\nuse y;\n');
+	});
+
+	it('gives an inserted attribute its own seat before the item it now leads', () => {
+		const root = rust.parse('use x;\n\nfn f() {}\n\nfn g() {}\n');
+		const [x, f, g] = root.statements();
+		const inline = rust.parse('#[inline]\nfn h() {}\n').statements()[0];
+		expect(root.$with.statements(x!, inline!, f!, g!).$render()).toBe('use x;\n\n#[inline]\nfn f() {}\n\nfn g() {}\n');
+	});
+
+	it('keeps the source gap before an edited item whose neighbour is unchanged', () => {
+		const root = python.parse('import x\ndef f():\n    pass\n');
+		const [x, f] = root.statements();
+		if (f === undefined || typeof f === 'number' || !python.is.functionDefinition(f)) throw new Error('expected a function definition');
+		expect(root.$with.statements(x!, f.$with.name(python.build.identifier('g'))).$render()).toBe('import x\ndef g():\n    pass\n');
+	});
+
+	it('keeps a tight same-line gap beside an edited item', () => {
+		const item = rust.parse('fn f(a: u8,b: i8) {}\n').statements()[0];
+		if (item === undefined || typeof item === 'number' || !rust.is.functionItem(item)) throw new Error('expected a function item');
+		const parameters = item.parameters();
+		const list = parameters.elements();
+		if (list === undefined) throw new Error('expected parameters');
+		const [first, second] = list.items();
+		const a = first?.content();
+		const b = second?.content();
+		if (a === undefined || typeof a === 'number' || !rust.is.parameter(a)) throw new Error('expected a parameter');
+		if (b === undefined || typeof b === 'number' || !rust.is.parameter(b)) throw new Error('expected a parameter');
+		const edited = b.$with.type(a.type()) as typeof b;
+		expect(parameters.$with.elements(a, edited).$render()).toBe('(a: u8,b: u8)');
 	});
 
 	it('python: takes the seat when a removed statement sat between two kept ones', () => {

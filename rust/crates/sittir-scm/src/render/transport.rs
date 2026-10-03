@@ -153,61 +153,61 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            AnyTransport::Program(t) => t.leading_seam(),
-            AnyTransport::EscapeSequence(t) => t.leading_seam(),
-            AnyTransport::Quantifier(t) => t.leading_seam(),
-            AnyTransport::Identifier(t) => t.leading_seam(),
-            AnyTransport::ImmediateIdentifier(t) => t.leading_seam(),
-            AnyTransport::Capture(t) => t.leading_seam(),
-            AnyTransport::String(t) => t.leading_seam(),
-            AnyTransport::ImmediateString(t) => t.leading_seam(),
-            AnyTransport::StringContent(t) => t.leading_seam(),
-            AnyTransport::Parameters(t) => t.leading_seam(),
-            AnyTransport::Comment(t) => t.leading_seam(),
-            AnyTransport::List(t) => t.leading_seam(),
-            AnyTransport::Grouping(t) => t.leading_seam(),
-            AnyTransport::MissingNode(t) => t.leading_seam(),
-            AnyTransport::AnonymousNode(t) => t.leading_seam(),
-            AnyTransport::FieldDefinition(t) => t.leading_seam(),
-            AnyTransport::NegatedField(t) => t.leading_seam(),
-            AnyTransport::Predicate(t) => t.leading_seam(),
-            AnyTransport::PredicateType(t) => t.leading_seam(),
-            AnyTransport::ListElementQuantifier(t) => t.leading_seam(),
-            AnyTransport::GroupExpressionArm(t) => t.leading_seam(),
-            AnyTransport::NamedNodeExpressionArm(t) => t.leading_seam(),
-            AnyTransport::GroupingGroup(t) => t.leading_seam(),
-            AnyTransport::StringContentText(t) => t.leading_seam(),
-            AnyTransport::Anchor(t) => t.leading_seam(),
-            AnyTransport::NamedNodePlain(t) => t.leading_seam(),
-            AnyTransport::NamedNodeSupertyped(t) => t.leading_seam(),
-            AnyTransport::NamedNodeGroupChildren(t) => t.leading_seam(),
-            AnyTransport::NamedNodeGroupAnchoredLast(t) => t.leading_seam(),
-            AnyTransport::Tight(t) => t.leading_seam(),
-            AnyTransport::Space(t) => t.leading_seam(),
-            AnyTransport::Tab(t) => t.leading_seam(),
-            AnyTransport::Newline(t) => t.leading_seam(),
-            AnyTransport::Blankline(t) => t.leading_seam(),
-            AnyTransport::DoubleBlankline(t) => t.leading_seam(),
-            AnyTransport::Indent(t) => t.leading_seam(),
-            AnyTransport::Dedent(t) => t.leading_seam(),
-            AnyTransport::Star(t) => t.leading_seam(),
-            AnyTransport::Plus(t) => t.leading_seam(),
-            AnyTransport::Qmark(t) => t.leading_seam(),
-            AnyTransport::At(t) => t.leading_seam(),
-            AnyTransport::Dquote(t) => t.leading_seam(),
-            AnyTransport::Lbrack(t) => t.leading_seam(),
-            AnyTransport::Rbrack(t) => t.leading_seam(),
-            AnyTransport::Lparen(t) => t.leading_seam(),
-            AnyTransport::Rparen(t) => t.leading_seam(),
-            AnyTransport::MissingKeyword(t) => t.leading_seam(),
-            AnyTransport::Underscore(t) => t.leading_seam(),
-            AnyTransport::Colon(t) => t.leading_seam(),
-            AnyTransport::Bang(t) => t.leading_seam(),
-            AnyTransport::Pound(t) => t.leading_seam(),
-            AnyTransport::Dot(t) => t.leading_seam(),
-            AnyTransport::Slash(t) => t.leading_seam(),
+            AnyTransport::Program(t) => t.source_gap(),
+            AnyTransport::EscapeSequence(t) => t.source_gap(),
+            AnyTransport::Quantifier(t) => t.source_gap(),
+            AnyTransport::Identifier(t) => t.source_gap(),
+            AnyTransport::ImmediateIdentifier(t) => t.source_gap(),
+            AnyTransport::Capture(t) => t.source_gap(),
+            AnyTransport::String(t) => t.source_gap(),
+            AnyTransport::ImmediateString(t) => t.source_gap(),
+            AnyTransport::StringContent(t) => t.source_gap(),
+            AnyTransport::Parameters(t) => t.source_gap(),
+            AnyTransport::Comment(t) => t.source_gap(),
+            AnyTransport::List(t) => t.source_gap(),
+            AnyTransport::Grouping(t) => t.source_gap(),
+            AnyTransport::MissingNode(t) => t.source_gap(),
+            AnyTransport::AnonymousNode(t) => t.source_gap(),
+            AnyTransport::FieldDefinition(t) => t.source_gap(),
+            AnyTransport::NegatedField(t) => t.source_gap(),
+            AnyTransport::Predicate(t) => t.source_gap(),
+            AnyTransport::PredicateType(t) => t.source_gap(),
+            AnyTransport::ListElementQuantifier(t) => t.source_gap(),
+            AnyTransport::GroupExpressionArm(t) => t.source_gap(),
+            AnyTransport::NamedNodeExpressionArm(t) => t.source_gap(),
+            AnyTransport::GroupingGroup(t) => t.source_gap(),
+            AnyTransport::StringContentText(t) => t.source_gap(),
+            AnyTransport::Anchor(t) => t.source_gap(),
+            AnyTransport::NamedNodePlain(t) => t.source_gap(),
+            AnyTransport::NamedNodeSupertyped(t) => t.source_gap(),
+            AnyTransport::NamedNodeGroupChildren(t) => t.source_gap(),
+            AnyTransport::NamedNodeGroupAnchoredLast(t) => t.source_gap(),
+            AnyTransport::Tight(t) => t.source_gap(),
+            AnyTransport::Space(t) => t.source_gap(),
+            AnyTransport::Tab(t) => t.source_gap(),
+            AnyTransport::Newline(t) => t.source_gap(),
+            AnyTransport::Blankline(t) => t.source_gap(),
+            AnyTransport::DoubleBlankline(t) => t.source_gap(),
+            AnyTransport::Indent(t) => t.source_gap(),
+            AnyTransport::Dedent(t) => t.source_gap(),
+            AnyTransport::Star(t) => t.source_gap(),
+            AnyTransport::Plus(t) => t.source_gap(),
+            AnyTransport::Qmark(t) => t.source_gap(),
+            AnyTransport::At(t) => t.source_gap(),
+            AnyTransport::Dquote(t) => t.source_gap(),
+            AnyTransport::Lbrack(t) => t.source_gap(),
+            AnyTransport::Rbrack(t) => t.source_gap(),
+            AnyTransport::Lparen(t) => t.source_gap(),
+            AnyTransport::Rparen(t) => t.source_gap(),
+            AnyTransport::MissingKeyword(t) => t.source_gap(),
+            AnyTransport::Underscore(t) => t.source_gap(),
+            AnyTransport::Colon(t) => t.source_gap(),
+            AnyTransport::Bang(t) => t.source_gap(),
+            AnyTransport::Pound(t) => t.source_gap(),
+            AnyTransport::Dot(t) => t.source_gap(),
+            AnyTransport::Slash(t) => t.source_gap(),
             AnyTransport::Literal0_75_6e_64_65_72_73_63_6f_72_65 => None,
             AnyTransport::Literal1_70_6f_75_6e_64 => None,
             AnyTransport::Literal2_64_6f_74 => None,
@@ -216,7 +216,73 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Literal5_73_74_61_72 => None,
             AnyTransport::Literal6_70_6c_75_73 => None,
             AnyTransport::Literal7_61_6e_63_68_6f_72 => None,
-            AnyTransport::Verbatim(t) => t.leading_seam(),
+            AnyTransport::Verbatim(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            AnyTransport::Program(t) => t.gap_edges(),
+            AnyTransport::EscapeSequence(t) => t.gap_edges(),
+            AnyTransport::Quantifier(t) => t.gap_edges(),
+            AnyTransport::Identifier(t) => t.gap_edges(),
+            AnyTransport::ImmediateIdentifier(t) => t.gap_edges(),
+            AnyTransport::Capture(t) => t.gap_edges(),
+            AnyTransport::String(t) => t.gap_edges(),
+            AnyTransport::ImmediateString(t) => t.gap_edges(),
+            AnyTransport::StringContent(t) => t.gap_edges(),
+            AnyTransport::Parameters(t) => t.gap_edges(),
+            AnyTransport::Comment(t) => t.gap_edges(),
+            AnyTransport::List(t) => t.gap_edges(),
+            AnyTransport::Grouping(t) => t.gap_edges(),
+            AnyTransport::MissingNode(t) => t.gap_edges(),
+            AnyTransport::AnonymousNode(t) => t.gap_edges(),
+            AnyTransport::FieldDefinition(t) => t.gap_edges(),
+            AnyTransport::NegatedField(t) => t.gap_edges(),
+            AnyTransport::Predicate(t) => t.gap_edges(),
+            AnyTransport::PredicateType(t) => t.gap_edges(),
+            AnyTransport::ListElementQuantifier(t) => t.gap_edges(),
+            AnyTransport::GroupExpressionArm(t) => t.gap_edges(),
+            AnyTransport::NamedNodeExpressionArm(t) => t.gap_edges(),
+            AnyTransport::GroupingGroup(t) => t.gap_edges(),
+            AnyTransport::StringContentText(t) => t.gap_edges(),
+            AnyTransport::Anchor(t) => t.gap_edges(),
+            AnyTransport::NamedNodePlain(t) => t.gap_edges(),
+            AnyTransport::NamedNodeSupertyped(t) => t.gap_edges(),
+            AnyTransport::NamedNodeGroupChildren(t) => t.gap_edges(),
+            AnyTransport::NamedNodeGroupAnchoredLast(t) => t.gap_edges(),
+            AnyTransport::Tight(t) => t.gap_edges(),
+            AnyTransport::Space(t) => t.gap_edges(),
+            AnyTransport::Tab(t) => t.gap_edges(),
+            AnyTransport::Newline(t) => t.gap_edges(),
+            AnyTransport::Blankline(t) => t.gap_edges(),
+            AnyTransport::DoubleBlankline(t) => t.gap_edges(),
+            AnyTransport::Indent(t) => t.gap_edges(),
+            AnyTransport::Dedent(t) => t.gap_edges(),
+            AnyTransport::Star(t) => t.gap_edges(),
+            AnyTransport::Plus(t) => t.gap_edges(),
+            AnyTransport::Qmark(t) => t.gap_edges(),
+            AnyTransport::At(t) => t.gap_edges(),
+            AnyTransport::Dquote(t) => t.gap_edges(),
+            AnyTransport::Lbrack(t) => t.gap_edges(),
+            AnyTransport::Rbrack(t) => t.gap_edges(),
+            AnyTransport::Lparen(t) => t.gap_edges(),
+            AnyTransport::Rparen(t) => t.gap_edges(),
+            AnyTransport::MissingKeyword(t) => t.gap_edges(),
+            AnyTransport::Underscore(t) => t.gap_edges(),
+            AnyTransport::Colon(t) => t.gap_edges(),
+            AnyTransport::Bang(t) => t.gap_edges(),
+            AnyTransport::Pound(t) => t.gap_edges(),
+            AnyTransport::Dot(t) => t.gap_edges(),
+            AnyTransport::Slash(t) => t.gap_edges(),
+            AnyTransport::Literal0_75_6e_64_65_72_73_63_6f_72_65 => None,
+            AnyTransport::Literal1_70_6f_75_6e_64 => None,
+            AnyTransport::Literal2_64_6f_74 => None,
+            AnyTransport::Literal3_71_6d_61_72_6b => None,
+            AnyTransport::Literal4_62_61_6e_67 => None,
+            AnyTransport::Literal5_73_74_61_72 => None,
+            AnyTransport::Literal6_70_6c_75_73 => None,
+            AnyTransport::Literal7_61_6e_63_68_6f_72 => None,
+            AnyTransport::Verbatim(t) => t.gap_edges(),
         }
     }
 }
@@ -514,16 +580,28 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::Text(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            TriviaTransport::Comment(t) => t.leading_seam(),
-            TriviaTransport::Space(t) => t.leading_seam(),
-            TriviaTransport::Tab(t) => t.leading_seam(),
-            TriviaTransport::Newline(t) => t.leading_seam(),
-            TriviaTransport::Blankline(t) => t.leading_seam(),
-            TriviaTransport::DoubleBlankline(t) => t.leading_seam(),
-            TriviaTransport::Verbatim(t) => t.leading_seam(),
-            TriviaTransport::Text(t) => t.leading_seam(),
+            TriviaTransport::Comment(t) => t.source_gap(),
+            TriviaTransport::Space(t) => t.source_gap(),
+            TriviaTransport::Tab(t) => t.source_gap(),
+            TriviaTransport::Newline(t) => t.source_gap(),
+            TriviaTransport::Blankline(t) => t.source_gap(),
+            TriviaTransport::DoubleBlankline(t) => t.source_gap(),
+            TriviaTransport::Verbatim(t) => t.source_gap(),
+            TriviaTransport::Text(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            TriviaTransport::Comment(t) => t.gap_edges(),
+            TriviaTransport::Space(t) => t.gap_edges(),
+            TriviaTransport::Tab(t) => t.gap_edges(),
+            TriviaTransport::Newline(t) => t.gap_edges(),
+            TriviaTransport::Blankline(t) => t.gap_edges(),
+            TriviaTransport::DoubleBlankline(t) => t.gap_edges(),
+            TriviaTransport::Verbatim(t) => t.gap_edges(),
+            TriviaTransport::Text(t) => t.gap_edges(),
         }
     }
 }
@@ -660,15 +738,26 @@ impl ::sittir_core::prepare::Prepare for DefinitionTransport {
             DefinitionTransport::FieldDefinition(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            DefinitionTransport::NamedNode(t) => t.leading_seam(),
-            DefinitionTransport::AnonymousNode(t) => t.leading_seam(),
-            DefinitionTransport::MissingNode(t) => t.leading_seam(),
-            DefinitionTransport::Grouping(t) => t.leading_seam(),
-            DefinitionTransport::Predicate(t) => t.leading_seam(),
-            DefinitionTransport::List(t) => t.leading_seam(),
-            DefinitionTransport::FieldDefinition(t) => t.leading_seam(),
+            DefinitionTransport::NamedNode(t) => t.source_gap(),
+            DefinitionTransport::AnonymousNode(t) => t.source_gap(),
+            DefinitionTransport::MissingNode(t) => t.source_gap(),
+            DefinitionTransport::Grouping(t) => t.source_gap(),
+            DefinitionTransport::Predicate(t) => t.source_gap(),
+            DefinitionTransport::List(t) => t.source_gap(),
+            DefinitionTransport::FieldDefinition(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            DefinitionTransport::NamedNode(t) => t.gap_edges(),
+            DefinitionTransport::AnonymousNode(t) => t.gap_edges(),
+            DefinitionTransport::MissingNode(t) => t.gap_edges(),
+            DefinitionTransport::Grouping(t) => t.gap_edges(),
+            DefinitionTransport::Predicate(t) => t.gap_edges(),
+            DefinitionTransport::List(t) => t.gap_edges(),
+            DefinitionTransport::FieldDefinition(t) => t.gap_edges(),
         }
     }
 }
@@ -868,10 +957,16 @@ impl ::sittir_core::prepare::Prepare for NamedNodeTransport {
             NamedNodeTransport::NamedNodeSupertyped(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            NamedNodeTransport::NamedNodePlain(t) => t.leading_seam(),
-            NamedNodeTransport::NamedNodeSupertyped(t) => t.leading_seam(),
+            NamedNodeTransport::NamedNodePlain(t) => t.source_gap(),
+            NamedNodeTransport::NamedNodeSupertyped(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            NamedNodeTransport::NamedNodePlain(t) => t.gap_edges(),
+            NamedNodeTransport::NamedNodeSupertyped(t) => t.gap_edges(),
         }
     }
 }
@@ -1001,10 +1096,16 @@ impl ::sittir_core::prepare::Prepare for ListElementTransport {
             ListElementTransport::ListElementQuantifier(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            ListElementTransport::Capture(t) => t.leading_seam(),
-            ListElementTransport::ListElementQuantifier(t) => t.leading_seam(),
+            ListElementTransport::Capture(t) => t.source_gap(),
+            ListElementTransport::ListElementQuantifier(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            ListElementTransport::Capture(t) => t.gap_edges(),
+            ListElementTransport::ListElementQuantifier(t) => t.gap_edges(),
         }
     }
 }
@@ -1127,10 +1228,16 @@ impl ::sittir_core::prepare::Prepare for NamedNodeGroupTransport {
             NamedNodeGroupTransport::NamedNodeGroupAnchoredLast(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            NamedNodeGroupTransport::NamedNodeGroupChildren(t) => t.leading_seam(),
-            NamedNodeGroupTransport::NamedNodeGroupAnchoredLast(t) => t.leading_seam(),
+            NamedNodeGroupTransport::NamedNodeGroupChildren(t) => t.source_gap(),
+            NamedNodeGroupTransport::NamedNodeGroupAnchoredLast(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            NamedNodeGroupTransport::NamedNodeGroupChildren(t) => t.gap_edges(),
+            NamedNodeGroupTransport::NamedNodeGroupAnchoredLast(t) => t.gap_edges(),
         }
     }
 }
@@ -1256,11 +1363,18 @@ impl ::sittir_core::prepare::Prepare for StringContentContentTransportSlot {
             StringContentContentTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            StringContentContentTransportSlot::StringContentText(t) => t.leading_seam(),
-            StringContentContentTransportSlot::EscapeSequence(t) => t.leading_seam(),
-            StringContentContentTransportSlot::Verbatim(t) => t.leading_seam(),
+            StringContentContentTransportSlot::StringContentText(t) => t.source_gap(),
+            StringContentContentTransportSlot::EscapeSequence(t) => t.source_gap(),
+            StringContentContentTransportSlot::Verbatim(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            StringContentContentTransportSlot::StringContentText(t) => t.gap_edges(),
+            StringContentContentTransportSlot::EscapeSequence(t) => t.gap_edges(),
+            StringContentContentTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
 }
@@ -1386,12 +1500,20 @@ impl ::sittir_core::prepare::Prepare for ParametersElementsTransportSlot {
             ParametersElementsTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            ParametersElementsTransportSlot::Capture(t) => t.leading_seam(),
-            ParametersElementsTransportSlot::String(t) => t.leading_seam(),
-            ParametersElementsTransportSlot::Identifier(t) => t.leading_seam(),
-            ParametersElementsTransportSlot::Verbatim(t) => t.leading_seam(),
+            ParametersElementsTransportSlot::Capture(t) => t.source_gap(),
+            ParametersElementsTransportSlot::String(t) => t.source_gap(),
+            ParametersElementsTransportSlot::Identifier(t) => t.source_gap(),
+            ParametersElementsTransportSlot::Verbatim(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            ParametersElementsTransportSlot::Capture(t) => t.gap_edges(),
+            ParametersElementsTransportSlot::String(t) => t.gap_edges(),
+            ParametersElementsTransportSlot::Identifier(t) => t.gap_edges(),
+            ParametersElementsTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
 }
@@ -1524,11 +1646,18 @@ impl ::sittir_core::prepare::Prepare for MissingNodeNameTransportSlot {
             MissingNodeNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            MissingNodeNameTransportSlot::Identifier(t) => t.leading_seam(),
-            MissingNodeNameTransportSlot::String(t) => t.leading_seam(),
-            MissingNodeNameTransportSlot::Verbatim(t) => t.leading_seam(),
+            MissingNodeNameTransportSlot::Identifier(t) => t.source_gap(),
+            MissingNodeNameTransportSlot::String(t) => t.source_gap(),
+            MissingNodeNameTransportSlot::Verbatim(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            MissingNodeNameTransportSlot::Identifier(t) => t.gap_edges(),
+            MissingNodeNameTransportSlot::String(t) => t.gap_edges(),
+            MissingNodeNameTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
 }
@@ -1650,9 +1779,15 @@ impl ::sittir_core::prepare::Prepare for AnonymousNodeNameTransportSlot {
             AnonymousNodeNameTransportSlot::Literal0_75_6e_64_65_72_73_63_6f_72_65 => Ok(()),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            AnonymousNodeNameTransportSlot::String(t) => t.leading_seam(),
+            AnonymousNodeNameTransportSlot::String(t) => t.source_gap(),
+            AnonymousNodeNameTransportSlot::Literal0_75_6e_64_65_72_73_63_6f_72_65 => None,
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            AnonymousNodeNameTransportSlot::String(t) => t.gap_edges(),
             AnonymousNodeNameTransportSlot::Literal0_75_6e_64_65_72_73_63_6f_72_65 => None,
         }
     }
@@ -2130,17 +2265,30 @@ impl ::sittir_core::prepare::Prepare for GroupExpressionArmLeftTransportSlot {
             GroupExpressionArmLeftTransportSlot::GroupExpressionArm(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            GroupExpressionArmLeftTransportSlot::NamedNodePlain(t) => t.leading_seam(),
-            GroupExpressionArmLeftTransportSlot::NamedNodeSupertyped(t) => t.leading_seam(),
-            GroupExpressionArmLeftTransportSlot::AnonymousNode(t) => t.leading_seam(),
-            GroupExpressionArmLeftTransportSlot::MissingNode(t) => t.leading_seam(),
-            GroupExpressionArmLeftTransportSlot::Grouping(t) => t.leading_seam(),
-            GroupExpressionArmLeftTransportSlot::Predicate(t) => t.leading_seam(),
-            GroupExpressionArmLeftTransportSlot::List(t) => t.leading_seam(),
-            GroupExpressionArmLeftTransportSlot::FieldDefinition(t) => t.leading_seam(),
-            GroupExpressionArmLeftTransportSlot::GroupExpressionArm(t) => t.leading_seam(),
+            GroupExpressionArmLeftTransportSlot::NamedNodePlain(t) => t.source_gap(),
+            GroupExpressionArmLeftTransportSlot::NamedNodeSupertyped(t) => t.source_gap(),
+            GroupExpressionArmLeftTransportSlot::AnonymousNode(t) => t.source_gap(),
+            GroupExpressionArmLeftTransportSlot::MissingNode(t) => t.source_gap(),
+            GroupExpressionArmLeftTransportSlot::Grouping(t) => t.source_gap(),
+            GroupExpressionArmLeftTransportSlot::Predicate(t) => t.source_gap(),
+            GroupExpressionArmLeftTransportSlot::List(t) => t.source_gap(),
+            GroupExpressionArmLeftTransportSlot::FieldDefinition(t) => t.source_gap(),
+            GroupExpressionArmLeftTransportSlot::GroupExpressionArm(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            GroupExpressionArmLeftTransportSlot::NamedNodePlain(t) => t.gap_edges(),
+            GroupExpressionArmLeftTransportSlot::NamedNodeSupertyped(t) => t.gap_edges(),
+            GroupExpressionArmLeftTransportSlot::AnonymousNode(t) => t.gap_edges(),
+            GroupExpressionArmLeftTransportSlot::MissingNode(t) => t.gap_edges(),
+            GroupExpressionArmLeftTransportSlot::Grouping(t) => t.gap_edges(),
+            GroupExpressionArmLeftTransportSlot::Predicate(t) => t.gap_edges(),
+            GroupExpressionArmLeftTransportSlot::List(t) => t.gap_edges(),
+            GroupExpressionArmLeftTransportSlot::FieldDefinition(t) => t.gap_edges(),
+            GroupExpressionArmLeftTransportSlot::GroupExpressionArm(t) => t.gap_edges(),
         }
     }
 }
@@ -2332,17 +2480,30 @@ impl ::sittir_core::prepare::Prepare for GroupExpressionArmRightTransportSlot {
             GroupExpressionArmRightTransportSlot::GroupExpressionArm(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            GroupExpressionArmRightTransportSlot::NamedNodePlain(t) => t.leading_seam(),
-            GroupExpressionArmRightTransportSlot::NamedNodeSupertyped(t) => t.leading_seam(),
-            GroupExpressionArmRightTransportSlot::AnonymousNode(t) => t.leading_seam(),
-            GroupExpressionArmRightTransportSlot::MissingNode(t) => t.leading_seam(),
-            GroupExpressionArmRightTransportSlot::Grouping(t) => t.leading_seam(),
-            GroupExpressionArmRightTransportSlot::Predicate(t) => t.leading_seam(),
-            GroupExpressionArmRightTransportSlot::List(t) => t.leading_seam(),
-            GroupExpressionArmRightTransportSlot::FieldDefinition(t) => t.leading_seam(),
-            GroupExpressionArmRightTransportSlot::GroupExpressionArm(t) => t.leading_seam(),
+            GroupExpressionArmRightTransportSlot::NamedNodePlain(t) => t.source_gap(),
+            GroupExpressionArmRightTransportSlot::NamedNodeSupertyped(t) => t.source_gap(),
+            GroupExpressionArmRightTransportSlot::AnonymousNode(t) => t.source_gap(),
+            GroupExpressionArmRightTransportSlot::MissingNode(t) => t.source_gap(),
+            GroupExpressionArmRightTransportSlot::Grouping(t) => t.source_gap(),
+            GroupExpressionArmRightTransportSlot::Predicate(t) => t.source_gap(),
+            GroupExpressionArmRightTransportSlot::List(t) => t.source_gap(),
+            GroupExpressionArmRightTransportSlot::FieldDefinition(t) => t.source_gap(),
+            GroupExpressionArmRightTransportSlot::GroupExpressionArm(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            GroupExpressionArmRightTransportSlot::NamedNodePlain(t) => t.gap_edges(),
+            GroupExpressionArmRightTransportSlot::NamedNodeSupertyped(t) => t.gap_edges(),
+            GroupExpressionArmRightTransportSlot::AnonymousNode(t) => t.gap_edges(),
+            GroupExpressionArmRightTransportSlot::MissingNode(t) => t.gap_edges(),
+            GroupExpressionArmRightTransportSlot::Grouping(t) => t.gap_edges(),
+            GroupExpressionArmRightTransportSlot::Predicate(t) => t.gap_edges(),
+            GroupExpressionArmRightTransportSlot::List(t) => t.gap_edges(),
+            GroupExpressionArmRightTransportSlot::FieldDefinition(t) => t.gap_edges(),
+            GroupExpressionArmRightTransportSlot::GroupExpressionArm(t) => t.gap_edges(),
         }
     }
 }
@@ -2536,18 +2697,32 @@ impl ::sittir_core::prepare::Prepare for NamedNodeExpressionArmLeftTransportSlot
             NamedNodeExpressionArmLeftTransportSlot::NamedNodeExpressionArm(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            NamedNodeExpressionArmLeftTransportSlot::NamedNodePlain(t) => t.leading_seam(),
-            NamedNodeExpressionArmLeftTransportSlot::NamedNodeSupertyped(t) => t.leading_seam(),
-            NamedNodeExpressionArmLeftTransportSlot::AnonymousNode(t) => t.leading_seam(),
-            NamedNodeExpressionArmLeftTransportSlot::MissingNode(t) => t.leading_seam(),
-            NamedNodeExpressionArmLeftTransportSlot::Grouping(t) => t.leading_seam(),
-            NamedNodeExpressionArmLeftTransportSlot::Predicate(t) => t.leading_seam(),
-            NamedNodeExpressionArmLeftTransportSlot::List(t) => t.leading_seam(),
-            NamedNodeExpressionArmLeftTransportSlot::FieldDefinition(t) => t.leading_seam(),
-            NamedNodeExpressionArmLeftTransportSlot::NegatedField(t) => t.leading_seam(),
-            NamedNodeExpressionArmLeftTransportSlot::NamedNodeExpressionArm(t) => t.leading_seam(),
+            NamedNodeExpressionArmLeftTransportSlot::NamedNodePlain(t) => t.source_gap(),
+            NamedNodeExpressionArmLeftTransportSlot::NamedNodeSupertyped(t) => t.source_gap(),
+            NamedNodeExpressionArmLeftTransportSlot::AnonymousNode(t) => t.source_gap(),
+            NamedNodeExpressionArmLeftTransportSlot::MissingNode(t) => t.source_gap(),
+            NamedNodeExpressionArmLeftTransportSlot::Grouping(t) => t.source_gap(),
+            NamedNodeExpressionArmLeftTransportSlot::Predicate(t) => t.source_gap(),
+            NamedNodeExpressionArmLeftTransportSlot::List(t) => t.source_gap(),
+            NamedNodeExpressionArmLeftTransportSlot::FieldDefinition(t) => t.source_gap(),
+            NamedNodeExpressionArmLeftTransportSlot::NegatedField(t) => t.source_gap(),
+            NamedNodeExpressionArmLeftTransportSlot::NamedNodeExpressionArm(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            NamedNodeExpressionArmLeftTransportSlot::NamedNodePlain(t) => t.gap_edges(),
+            NamedNodeExpressionArmLeftTransportSlot::NamedNodeSupertyped(t) => t.gap_edges(),
+            NamedNodeExpressionArmLeftTransportSlot::AnonymousNode(t) => t.gap_edges(),
+            NamedNodeExpressionArmLeftTransportSlot::MissingNode(t) => t.gap_edges(),
+            NamedNodeExpressionArmLeftTransportSlot::Grouping(t) => t.gap_edges(),
+            NamedNodeExpressionArmLeftTransportSlot::Predicate(t) => t.gap_edges(),
+            NamedNodeExpressionArmLeftTransportSlot::List(t) => t.gap_edges(),
+            NamedNodeExpressionArmLeftTransportSlot::FieldDefinition(t) => t.gap_edges(),
+            NamedNodeExpressionArmLeftTransportSlot::NegatedField(t) => t.gap_edges(),
+            NamedNodeExpressionArmLeftTransportSlot::NamedNodeExpressionArm(t) => t.gap_edges(),
         }
     }
 }
@@ -2750,18 +2925,32 @@ impl ::sittir_core::prepare::Prepare for NamedNodeExpressionArmRightTransportSlo
             NamedNodeExpressionArmRightTransportSlot::NamedNodeExpressionArm(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            NamedNodeExpressionArmRightTransportSlot::NamedNodePlain(t) => t.leading_seam(),
-            NamedNodeExpressionArmRightTransportSlot::NamedNodeSupertyped(t) => t.leading_seam(),
-            NamedNodeExpressionArmRightTransportSlot::AnonymousNode(t) => t.leading_seam(),
-            NamedNodeExpressionArmRightTransportSlot::MissingNode(t) => t.leading_seam(),
-            NamedNodeExpressionArmRightTransportSlot::Grouping(t) => t.leading_seam(),
-            NamedNodeExpressionArmRightTransportSlot::Predicate(t) => t.leading_seam(),
-            NamedNodeExpressionArmRightTransportSlot::List(t) => t.leading_seam(),
-            NamedNodeExpressionArmRightTransportSlot::FieldDefinition(t) => t.leading_seam(),
-            NamedNodeExpressionArmRightTransportSlot::NegatedField(t) => t.leading_seam(),
-            NamedNodeExpressionArmRightTransportSlot::NamedNodeExpressionArm(t) => t.leading_seam(),
+            NamedNodeExpressionArmRightTransportSlot::NamedNodePlain(t) => t.source_gap(),
+            NamedNodeExpressionArmRightTransportSlot::NamedNodeSupertyped(t) => t.source_gap(),
+            NamedNodeExpressionArmRightTransportSlot::AnonymousNode(t) => t.source_gap(),
+            NamedNodeExpressionArmRightTransportSlot::MissingNode(t) => t.source_gap(),
+            NamedNodeExpressionArmRightTransportSlot::Grouping(t) => t.source_gap(),
+            NamedNodeExpressionArmRightTransportSlot::Predicate(t) => t.source_gap(),
+            NamedNodeExpressionArmRightTransportSlot::List(t) => t.source_gap(),
+            NamedNodeExpressionArmRightTransportSlot::FieldDefinition(t) => t.source_gap(),
+            NamedNodeExpressionArmRightTransportSlot::NegatedField(t) => t.source_gap(),
+            NamedNodeExpressionArmRightTransportSlot::NamedNodeExpressionArm(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            NamedNodeExpressionArmRightTransportSlot::NamedNodePlain(t) => t.gap_edges(),
+            NamedNodeExpressionArmRightTransportSlot::NamedNodeSupertyped(t) => t.gap_edges(),
+            NamedNodeExpressionArmRightTransportSlot::AnonymousNode(t) => t.gap_edges(),
+            NamedNodeExpressionArmRightTransportSlot::MissingNode(t) => t.gap_edges(),
+            NamedNodeExpressionArmRightTransportSlot::Grouping(t) => t.gap_edges(),
+            NamedNodeExpressionArmRightTransportSlot::Predicate(t) => t.gap_edges(),
+            NamedNodeExpressionArmRightTransportSlot::List(t) => t.gap_edges(),
+            NamedNodeExpressionArmRightTransportSlot::FieldDefinition(t) => t.gap_edges(),
+            NamedNodeExpressionArmRightTransportSlot::NegatedField(t) => t.gap_edges(),
+            NamedNodeExpressionArmRightTransportSlot::NamedNodeExpressionArm(t) => t.gap_edges(),
         }
     }
 }
@@ -2962,17 +3151,30 @@ impl ::sittir_core::prepare::Prepare for GroupingGroupGroupExpressionTransportSl
             GroupingGroupGroupExpressionTransportSlot::GroupExpressionArm(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            GroupingGroupGroupExpressionTransportSlot::NamedNodePlain(t) => t.leading_seam(),
-            GroupingGroupGroupExpressionTransportSlot::NamedNodeSupertyped(t) => t.leading_seam(),
-            GroupingGroupGroupExpressionTransportSlot::AnonymousNode(t) => t.leading_seam(),
-            GroupingGroupGroupExpressionTransportSlot::MissingNode(t) => t.leading_seam(),
-            GroupingGroupGroupExpressionTransportSlot::Grouping(t) => t.leading_seam(),
-            GroupingGroupGroupExpressionTransportSlot::Predicate(t) => t.leading_seam(),
-            GroupingGroupGroupExpressionTransportSlot::List(t) => t.leading_seam(),
-            GroupingGroupGroupExpressionTransportSlot::FieldDefinition(t) => t.leading_seam(),
-            GroupingGroupGroupExpressionTransportSlot::GroupExpressionArm(t) => t.leading_seam(),
+            GroupingGroupGroupExpressionTransportSlot::NamedNodePlain(t) => t.source_gap(),
+            GroupingGroupGroupExpressionTransportSlot::NamedNodeSupertyped(t) => t.source_gap(),
+            GroupingGroupGroupExpressionTransportSlot::AnonymousNode(t) => t.source_gap(),
+            GroupingGroupGroupExpressionTransportSlot::MissingNode(t) => t.source_gap(),
+            GroupingGroupGroupExpressionTransportSlot::Grouping(t) => t.source_gap(),
+            GroupingGroupGroupExpressionTransportSlot::Predicate(t) => t.source_gap(),
+            GroupingGroupGroupExpressionTransportSlot::List(t) => t.source_gap(),
+            GroupingGroupGroupExpressionTransportSlot::FieldDefinition(t) => t.source_gap(),
+            GroupingGroupGroupExpressionTransportSlot::GroupExpressionArm(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            GroupingGroupGroupExpressionTransportSlot::NamedNodePlain(t) => t.gap_edges(),
+            GroupingGroupGroupExpressionTransportSlot::NamedNodeSupertyped(t) => t.gap_edges(),
+            GroupingGroupGroupExpressionTransportSlot::AnonymousNode(t) => t.gap_edges(),
+            GroupingGroupGroupExpressionTransportSlot::MissingNode(t) => t.gap_edges(),
+            GroupingGroupGroupExpressionTransportSlot::Grouping(t) => t.gap_edges(),
+            GroupingGroupGroupExpressionTransportSlot::Predicate(t) => t.gap_edges(),
+            GroupingGroupGroupExpressionTransportSlot::List(t) => t.gap_edges(),
+            GroupingGroupGroupExpressionTransportSlot::FieldDefinition(t) => t.gap_edges(),
+            GroupingGroupGroupExpressionTransportSlot::GroupExpressionArm(t) => t.gap_edges(),
         }
     }
 }
@@ -3254,11 +3456,18 @@ impl ::sittir_core::prepare::Prepare for NamedNodePlainNameTransportSlot {
             NamedNodePlainNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            NamedNodePlainNameTransportSlot::Identifier(t) => t.leading_seam(),
+            NamedNodePlainNameTransportSlot::Identifier(t) => t.source_gap(),
             NamedNodePlainNameTransportSlot::Literal0_75_6e_64_65_72_73_63_6f_72_65 => None,
-            NamedNodePlainNameTransportSlot::Verbatim(t) => t.leading_seam(),
+            NamedNodePlainNameTransportSlot::Verbatim(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            NamedNodePlainNameTransportSlot::Identifier(t) => t.gap_edges(),
+            NamedNodePlainNameTransportSlot::Literal0_75_6e_64_65_72_73_63_6f_72_65 => None,
+            NamedNodePlainNameTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
 }
@@ -3384,11 +3593,18 @@ impl ::sittir_core::prepare::Prepare for NamedNodeSupertypedNameTransportSlot {
             NamedNodeSupertypedNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            NamedNodeSupertypedNameTransportSlot::ImmediateIdentifier(t) => t.leading_seam(),
-            NamedNodeSupertypedNameTransportSlot::ImmediateString(t) => t.leading_seam(),
-            NamedNodeSupertypedNameTransportSlot::Verbatim(t) => t.leading_seam(),
+            NamedNodeSupertypedNameTransportSlot::ImmediateIdentifier(t) => t.source_gap(),
+            NamedNodeSupertypedNameTransportSlot::ImmediateString(t) => t.source_gap(),
+            NamedNodeSupertypedNameTransportSlot::Verbatim(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            NamedNodeSupertypedNameTransportSlot::ImmediateIdentifier(t) => t.gap_edges(),
+            NamedNodeSupertypedNameTransportSlot::ImmediateString(t) => t.gap_edges(),
+            NamedNodeSupertypedNameTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
 }
@@ -3532,18 +3748,32 @@ impl ::sittir_core::prepare::Prepare for NamedNodeGroupChildrenNamedNodeExpressi
             NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NamedNodeExpressionArm(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NamedNodePlain(t) => t.leading_seam(),
-            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NamedNodeSupertyped(t) => t.leading_seam(),
-            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::AnonymousNode(t) => t.leading_seam(),
-            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::MissingNode(t) => t.leading_seam(),
-            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::Grouping(t) => t.leading_seam(),
-            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::Predicate(t) => t.leading_seam(),
-            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::List(t) => t.leading_seam(),
-            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::FieldDefinition(t) => t.leading_seam(),
-            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NegatedField(t) => t.leading_seam(),
-            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NamedNodeExpressionArm(t) => t.leading_seam(),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NamedNodePlain(t) => t.source_gap(),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NamedNodeSupertyped(t) => t.source_gap(),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::AnonymousNode(t) => t.source_gap(),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::MissingNode(t) => t.source_gap(),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::Grouping(t) => t.source_gap(),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::Predicate(t) => t.source_gap(),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::List(t) => t.source_gap(),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::FieldDefinition(t) => t.source_gap(),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NegatedField(t) => t.source_gap(),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NamedNodeExpressionArm(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NamedNodePlain(t) => t.gap_edges(),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NamedNodeSupertyped(t) => t.gap_edges(),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::AnonymousNode(t) => t.gap_edges(),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::MissingNode(t) => t.gap_edges(),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::Grouping(t) => t.gap_edges(),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::Predicate(t) => t.gap_edges(),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::List(t) => t.gap_edges(),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::FieldDefinition(t) => t.gap_edges(),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NegatedField(t) => t.gap_edges(),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NamedNodeExpressionArm(t) => t.gap_edges(),
         }
     }
 }
@@ -3848,18 +4078,32 @@ impl ::sittir_core::prepare::Prepare for NamedNodeGroupAnchoredLastNamedNodeExpr
             NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NamedNodeExpressionArm(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NamedNodePlain(t) => t.leading_seam(),
-            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NamedNodeSupertyped(t) => t.leading_seam(),
-            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::AnonymousNode(t) => t.leading_seam(),
-            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::MissingNode(t) => t.leading_seam(),
-            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::Grouping(t) => t.leading_seam(),
-            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::Predicate(t) => t.leading_seam(),
-            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::List(t) => t.leading_seam(),
-            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::FieldDefinition(t) => t.leading_seam(),
-            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NegatedField(t) => t.leading_seam(),
-            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NamedNodeExpressionArm(t) => t.leading_seam(),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NamedNodePlain(t) => t.source_gap(),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NamedNodeSupertyped(t) => t.source_gap(),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::AnonymousNode(t) => t.source_gap(),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::MissingNode(t) => t.source_gap(),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::Grouping(t) => t.source_gap(),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::Predicate(t) => t.source_gap(),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::List(t) => t.source_gap(),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::FieldDefinition(t) => t.source_gap(),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NegatedField(t) => t.source_gap(),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NamedNodeExpressionArm(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NamedNodePlain(t) => t.gap_edges(),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NamedNodeSupertyped(t) => t.gap_edges(),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::AnonymousNode(t) => t.gap_edges(),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::MissingNode(t) => t.gap_edges(),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::Grouping(t) => t.gap_edges(),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::Predicate(t) => t.gap_edges(),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::List(t) => t.gap_edges(),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::FieldDefinition(t) => t.gap_edges(),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NegatedField(t) => t.gap_edges(),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NamedNodeExpressionArm(t) => t.gap_edges(),
         }
     }
 }
@@ -4062,18 +4306,32 @@ impl ::sittir_core::prepare::Prepare for NamedNodeGroupAnchoredLastLastTransport
             NamedNodeGroupAnchoredLastLastTransportSlot::NamedNodeExpressionArm(t) => t.prepare(ctx),
         }
     }
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            NamedNodeGroupAnchoredLastLastTransportSlot::NamedNodePlain(t) => t.leading_seam(),
-            NamedNodeGroupAnchoredLastLastTransportSlot::NamedNodeSupertyped(t) => t.leading_seam(),
-            NamedNodeGroupAnchoredLastLastTransportSlot::AnonymousNode(t) => t.leading_seam(),
-            NamedNodeGroupAnchoredLastLastTransportSlot::MissingNode(t) => t.leading_seam(),
-            NamedNodeGroupAnchoredLastLastTransportSlot::Grouping(t) => t.leading_seam(),
-            NamedNodeGroupAnchoredLastLastTransportSlot::Predicate(t) => t.leading_seam(),
-            NamedNodeGroupAnchoredLastLastTransportSlot::List(t) => t.leading_seam(),
-            NamedNodeGroupAnchoredLastLastTransportSlot::FieldDefinition(t) => t.leading_seam(),
-            NamedNodeGroupAnchoredLastLastTransportSlot::NegatedField(t) => t.leading_seam(),
-            NamedNodeGroupAnchoredLastLastTransportSlot::NamedNodeExpressionArm(t) => t.leading_seam(),
+            NamedNodeGroupAnchoredLastLastTransportSlot::NamedNodePlain(t) => t.source_gap(),
+            NamedNodeGroupAnchoredLastLastTransportSlot::NamedNodeSupertyped(t) => t.source_gap(),
+            NamedNodeGroupAnchoredLastLastTransportSlot::AnonymousNode(t) => t.source_gap(),
+            NamedNodeGroupAnchoredLastLastTransportSlot::MissingNode(t) => t.source_gap(),
+            NamedNodeGroupAnchoredLastLastTransportSlot::Grouping(t) => t.source_gap(),
+            NamedNodeGroupAnchoredLastLastTransportSlot::Predicate(t) => t.source_gap(),
+            NamedNodeGroupAnchoredLastLastTransportSlot::List(t) => t.source_gap(),
+            NamedNodeGroupAnchoredLastLastTransportSlot::FieldDefinition(t) => t.source_gap(),
+            NamedNodeGroupAnchoredLastLastTransportSlot::NegatedField(t) => t.source_gap(),
+            NamedNodeGroupAnchoredLastLastTransportSlot::NamedNodeExpressionArm(t) => t.source_gap(),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            NamedNodeGroupAnchoredLastLastTransportSlot::NamedNodePlain(t) => t.gap_edges(),
+            NamedNodeGroupAnchoredLastLastTransportSlot::NamedNodeSupertyped(t) => t.gap_edges(),
+            NamedNodeGroupAnchoredLastLastTransportSlot::AnonymousNode(t) => t.gap_edges(),
+            NamedNodeGroupAnchoredLastLastTransportSlot::MissingNode(t) => t.gap_edges(),
+            NamedNodeGroupAnchoredLastLastTransportSlot::Grouping(t) => t.gap_edges(),
+            NamedNodeGroupAnchoredLastLastTransportSlot::Predicate(t) => t.gap_edges(),
+            NamedNodeGroupAnchoredLastLastTransportSlot::List(t) => t.gap_edges(),
+            NamedNodeGroupAnchoredLastLastTransportSlot::FieldDefinition(t) => t.gap_edges(),
+            NamedNodeGroupAnchoredLastLastTransportSlot::NegatedField(t) => t.gap_edges(),
+            NamedNodeGroupAnchoredLastLastTransportSlot::NamedNodeExpressionArm(t) => t.gap_edges(),
         }
     }
 }
@@ -4358,6 +4616,8 @@ pub struct ProgramTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_definitions"))]
     pub definitions: Option<Vec<::sittir_core::SlotValue<DefinitionTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_definitions_separator_space"))]
@@ -4390,19 +4650,17 @@ impl ::sittir_core::prepare::Prepare for ProgramTransport {
         let flanks = ::sittir_core::prepare::root_flanks(first, last, options::allowed(options::SITE_PROGRAM_PROGRAM_BEFORE), options::allowed(options::SITE_PROGRAM_PROGRAM_AFTER), &options::WHITESPACE, ctx);
         ::sittir_core::prepare::fill_edges(self, flanks);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_definitions = {
-            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.definitions.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_PROGRAM_DEFINITIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.definitions_separator_space.is_none() { self.definitions_separator_space = gaps.before; }
-            gaps.separated
-        };
+        if let Some(gap_items) = self.definitions.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_PROGRAM_DEFINITIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
         self.definitions_separator_space.get_or_insert(ctx.options.spacing[options::SITE_PROGRAM_DEFINITIONS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.definitions.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_PROGRAM_DEFINITIONS, &separated_definitions, ctx); }
+        if let Some(seated_items) = self.definitions.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_PROGRAM_DEFINITIONS, ctx); }
         self.definitions.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -4433,6 +4691,8 @@ pub struct EscapeSequenceTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: String,
 }
@@ -4461,8 +4721,11 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -4586,6 +4849,7 @@ impl ::sittir_core::render::Render for QuantifierEnum {
 pub struct IdentifierTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -4612,8 +4876,11 @@ impl ::sittir_core::prepare::Prepare for IdentifierTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -4623,7 +4890,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -4636,13 +4904,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -4658,9 +4928,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -4700,6 +4972,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IdentifierTransport> {
 pub struct ImmediateIdentifierTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -4726,8 +4999,11 @@ impl ::sittir_core::prepare::Prepare for ImmediateIdentifierTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -4737,7 +5013,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImmediateIdentifierTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -4750,13 +5027,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImmediateIdentifierTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -4772,9 +5051,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImmediateIdentifierTransport {
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -4817,6 +5098,8 @@ pub struct CaptureTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<ImmediateIdentifierTransport, true>,
 }
@@ -4846,8 +5129,11 @@ impl ::sittir_core::prepare::Prepare for CaptureTransport {
         self.name.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -4878,6 +5164,8 @@ pub struct StringTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_string_content"))]
     pub string_content: Option<::sittir_core::SlotValue<StringContentTransport>>,
 }
@@ -4907,8 +5195,11 @@ impl ::sittir_core::prepare::Prepare for StringTransport {
         self.string_content.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -4939,6 +5230,8 @@ pub struct ImmediateStringTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_string_content"))]
     pub string_content: Option<::sittir_core::SlotValue<StringContentTransport>>,
 }
@@ -4968,8 +5261,11 @@ impl ::sittir_core::prepare::Prepare for ImmediateStringTransport {
         self.string_content.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5000,6 +5296,8 @@ pub struct StringContentTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<::sittir_core::SlotValue<StringContentContentTransportSlot, true>>>,
 }
@@ -5028,8 +5326,11 @@ impl ::sittir_core::prepare::Prepare for StringContentTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5060,6 +5361,8 @@ pub struct ParametersTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Vec<::sittir_core::SlotValue<ParametersElementsTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_separator_space"))]
@@ -5088,19 +5391,17 @@ impl ::sittir_core::prepare::Prepare for ParametersTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_elements = {
-            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.elements.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_PARAMETERS_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.elements_separator_space.is_none() { self.elements_separator_space = gaps.before; }
-            gaps.separated
-        };
+        ::sittir_core::prepare::fill_list_gaps(self.elements.iter_mut().map(Some), "", options::allowed(options::SITE_PARAMETERS_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.elements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_ELEMENTS_SEPARATOR_SPACE].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.elements.iter_mut().map(Some), options::SEATS_PARAMETERS_ELEMENTS, &separated_elements, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.elements.iter_mut().map(Some), options::SEATS_PARAMETERS_ELEMENTS, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5131,6 +5432,8 @@ pub struct CommentTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: String,
 }
@@ -5159,8 +5462,11 @@ impl ::sittir_core::prepare::Prepare for CommentTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5191,6 +5497,8 @@ pub struct ListTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_definitions"))]
     pub definitions: Vec<::sittir_core::SlotValue<DefinitionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
@@ -5223,28 +5531,21 @@ impl ::sittir_core::prepare::Prepare for ListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_definitions = {
-            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.definitions.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_LIST_DEFINITIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.definitions_separator_space.is_none() { self.definitions_separator_space = gaps.before; }
-            gaps.separated
-        };
-        let separated_elements = {
-            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.elements.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_LIST_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.elements_separator_space.is_none() { self.elements_separator_space = gaps.before; }
-            gaps.separated
-        };
+        ::sittir_core::prepare::fill_list_gaps(self.definitions.iter_mut().map(Some), "", options::allowed(options::SITE_LIST_DEFINITIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
+        if let Some(gap_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_LIST_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
         self.definitions_separator_space.get_or_insert(ctx.options.spacing[options::SITE_LIST_DEFINITIONS_SEPARATOR_SPACE].arm);
         self.elements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_LIST_ELEMENTS_SEPARATOR_SPACE].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.definitions.iter_mut().map(Some), options::SEATS_LIST_DEFINITIONS, &separated_definitions, ctx);
-        if let Some(seated_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_LIST_ELEMENTS, &separated_elements, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.definitions.iter_mut().map(Some), options::SEATS_LIST_DEFINITIONS, ctx);
+        if let Some(seated_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_LIST_ELEMENTS, ctx); }
         self.definitions.prepare(ctx)?;
         self.elements.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5275,6 +5576,8 @@ pub struct GroupingTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<Vec<::sittir_core::SlotValue<ListElementTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_grouping_group"))]
@@ -5307,28 +5610,21 @@ impl ::sittir_core::prepare::Prepare for GroupingTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_elements = {
-            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.elements.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_GROUPING_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.elements_separator_space.is_none() { self.elements_separator_space = gaps.before; }
-            gaps.separated
-        };
-        let separated_grouping_group = {
-            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.grouping_group.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_GROUPING_GROUPING_GROUP_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.grouping_group_separator_space.is_none() { self.grouping_group_separator_space = gaps.before; }
-            gaps.separated
-        };
+        if let Some(gap_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_GROUPING_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.grouping_group.iter_mut().map(Some), "", options::allowed(options::SITE_GROUPING_GROUPING_GROUP_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.elements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_GROUPING_ELEMENTS_SEPARATOR_SPACE].arm);
         self.grouping_group_separator_space.get_or_insert(ctx.options.spacing[options::SITE_GROUPING_GROUPING_GROUP_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_GROUPING_ELEMENTS, &separated_elements, ctx); }
-        ::sittir_core::prepare::fill_seated_gaps(self.grouping_group.iter_mut().map(Some), options::SEATS_GROUPING_GROUPING_GROUP, &separated_grouping_group, ctx);
+        if let Some(seated_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_GROUPING_ELEMENTS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.grouping_group.iter_mut().map(Some), options::SEATS_GROUPING_GROUPING_GROUP, ctx);
         self.elements.prepare(ctx)?;
         self.grouping_group.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5359,6 +5655,8 @@ pub struct MissingNodeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: Option<::sittir_core::SlotValue<MissingNodeNameTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
@@ -5389,20 +5687,18 @@ impl ::sittir_core::prepare::Prepare for MissingNodeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_elements = {
-            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.elements.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_MISSING_NODE_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.elements_separator_space.is_none() { self.elements_separator_space = gaps.before; }
-            gaps.separated
-        };
+        if let Some(gap_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_MISSING_NODE_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
         self.elements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MISSING_NODE_ELEMENTS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_MISSING_NODE_ELEMENTS, &separated_elements, ctx); }
+        if let Some(seated_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_MISSING_NODE_ELEMENTS, ctx); }
         self.name.prepare(ctx)?;
         self.elements.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5433,6 +5729,8 @@ pub struct AnonymousNodeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<AnonymousNodeNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
@@ -5463,20 +5761,18 @@ impl ::sittir_core::prepare::Prepare for AnonymousNodeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_elements = {
-            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.elements.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_ANONYMOUS_NODE_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.elements_separator_space.is_none() { self.elements_separator_space = gaps.before; }
-            gaps.separated
-        };
+        if let Some(gap_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_ANONYMOUS_NODE_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
         self.elements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ANONYMOUS_NODE_ELEMENTS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_ANONYMOUS_NODE_ELEMENTS, &separated_elements, ctx); }
+        if let Some(seated_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_ANONYMOUS_NODE_ELEMENTS, ctx); }
         self.name.prepare(ctx)?;
         self.elements.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5507,6 +5803,8 @@ pub struct FieldDefinitionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_definition"))]
@@ -5539,8 +5837,11 @@ impl ::sittir_core::prepare::Prepare for FieldDefinitionTransport {
         self.definition.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5571,6 +5872,8 @@ pub struct NegatedFieldTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]
     pub identifier: ::sittir_core::SlotValue<IdentifierTransport>,
 }
@@ -5600,8 +5903,11 @@ impl ::sittir_core::prepare::Prepare for NegatedFieldTransport {
         self.identifier.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5632,6 +5938,8 @@ pub struct PredicateTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_prefix"))]
     pub prefix: ::sittir_core::SlotValue<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
@@ -5670,8 +5978,11 @@ impl ::sittir_core::prepare::Prepare for PredicateTransport {
         self.parameters.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5790,6 +6101,8 @@ pub struct ListElementQuantifierTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_quantifier"))]
     pub quantifier: ::sittir_core::SlotValue<QuantifierEnum>,
 }
@@ -5818,8 +6131,11 @@ impl ::sittir_core::prepare::Prepare for ListElementQuantifierTransport {
         self.quantifier.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5850,6 +6166,8 @@ pub struct GroupExpressionArmTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<Box<GroupExpressionArmLeftTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
@@ -5882,8 +6200,11 @@ impl ::sittir_core::prepare::Prepare for GroupExpressionArmTransport {
         self.right.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5914,6 +6235,8 @@ pub struct NamedNodeExpressionArmTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<Box<NamedNodeExpressionArmLeftTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
@@ -5946,8 +6269,11 @@ impl ::sittir_core::prepare::Prepare for NamedNodeExpressionArmTransport {
         self.right.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -5978,6 +6304,8 @@ pub struct GroupingGroupTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_group_expression"))]
     pub group_expression: ::sittir_core::SlotValue<GroupingGroupGroupExpressionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anchor"))]
@@ -6010,8 +6338,11 @@ impl ::sittir_core::prepare::Prepare for GroupingGroupTransport {
         self.anchor.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6039,6 +6370,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GroupingGroupTransport> {
 pub struct StringContentTextTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -6065,8 +6397,11 @@ impl ::sittir_core::prepare::Prepare for StringContentTextTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6076,7 +6411,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentTextTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -6089,13 +6425,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentTextTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -6111,9 +6449,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentTextTransport {
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -6153,6 +6493,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StringContentTextTransport> {
 pub struct AnchorTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -6179,8 +6520,11 @@ impl ::sittir_core::prepare::Prepare for AnchorTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6190,7 +6534,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnchorTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => ".".to_string(),
@@ -6202,13 +6547,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnchorTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| ".".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -6226,6 +6573,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnchorTransport {
                 return Ok(Self {
                     transport_trivia_data: None,
                     edges: None,
+                    source_gap: None,
                     text,
                 });
             }
@@ -6236,6 +6584,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnchorTransport {
                 return Ok(Self {
                     transport_trivia_data: None,
                     edges: None,
+                    source_gap: None,
                     text: ".".to_string(),
                 });
             }
@@ -6245,9 +6594,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnchorTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| ".".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -6290,6 +6641,8 @@ pub struct NamedNodePlainTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<NamedNodePlainNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
@@ -6322,21 +6675,19 @@ impl ::sittir_core::prepare::Prepare for NamedNodePlainTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_elements = {
-            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.elements.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_NAMED_NODE_PLAIN_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.elements_separator_space.is_none() { self.elements_separator_space = gaps.before; }
-            gaps.separated
-        };
+        if let Some(gap_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_NAMED_NODE_PLAIN_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
         self.elements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_NAMED_NODE_PLAIN_ELEMENTS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_NAMED_NODE_PLAIN_ELEMENTS, &separated_elements, ctx); }
+        if let Some(seated_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_NAMED_NODE_PLAIN_ELEMENTS, ctx); }
         self.name.prepare(ctx)?;
         self.elements.prepare(ctx)?;
         self.named_node_group.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6367,6 +6718,8 @@ pub struct NamedNodeSupertypedTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_supertype"))]
     pub supertype: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
@@ -6401,22 +6754,20 @@ impl ::sittir_core::prepare::Prepare for NamedNodeSupertypedTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_elements = {
-            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.elements.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.elements_separator_space.is_none() { self.elements_separator_space = gaps.before; }
-            gaps.separated
-        };
+        if let Some(gap_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
         self.elements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_NAMED_NODE_SUPERTYPED_ELEMENTS, &separated_elements, ctx); }
+        if let Some(seated_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_NAMED_NODE_SUPERTYPED_ELEMENTS, ctx); }
         self.supertype.prepare(ctx)?;
         self.name.prepare(ctx)?;
         self.elements.prepare(ctx)?;
         self.named_node_group.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6447,6 +6798,8 @@ pub struct NamedNodeGroupChildrenTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_named_node_expressions"))]
     pub named_node_expressions: Vec<::sittir_core::SlotValue<NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anchor"))]
@@ -6477,20 +6830,18 @@ impl ::sittir_core::prepare::Prepare for NamedNodeGroupChildrenTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_named_node_expressions = {
-            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.named_node_expressions.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.named_node_expressions_separator_space.is_none() { self.named_node_expressions_separator_space = gaps.before; }
-            gaps.separated
-        };
+        ::sittir_core::prepare::fill_list_gaps(self.named_node_expressions.iter_mut().map(Some), "", options::allowed(options::SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.named_node_expressions_separator_space.get_or_insert(ctx.options.spacing[options::SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.named_node_expressions.iter_mut().map(Some), options::SEATS_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS, &separated_named_node_expressions, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.named_node_expressions.iter_mut().map(Some), options::SEATS_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS, ctx);
         self.named_node_expressions.prepare(ctx)?;
         self.anchor.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6521,6 +6872,8 @@ pub struct NamedNodeGroupAnchoredLastTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_named_node_expressions"))]
     pub named_node_expressions: Option<Vec<::sittir_core::SlotValue<NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_last"))]
@@ -6553,21 +6906,19 @@ impl ::sittir_core::prepare::Prepare for NamedNodeGroupAnchoredLastTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_named_node_expressions = {
-            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.named_node_expressions.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.named_node_expressions_separator_space.is_none() { self.named_node_expressions_separator_space = gaps.before; }
-            gaps.separated
-        };
+        if let Some(gap_items) = self.named_node_expressions.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
         self.named_node_expressions_separator_space.get_or_insert(ctx.options.spacing[options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.named_node_expressions.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS, &separated_named_node_expressions, ctx); }
+        if let Some(seated_items) = self.named_node_expressions.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS, ctx); }
         self.named_node_expressions.prepare(ctx)?;
         self.last.prepare(ctx)?;
         self.anchor.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6595,6 +6946,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeGroupAnchoredLastTran
 pub struct TightTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -6621,8 +6973,11 @@ impl ::sittir_core::prepare::Prepare for TightTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6632,7 +6987,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TightTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -6645,13 +7001,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for TightTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -6667,9 +7025,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for TightTransport {
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -6709,6 +7069,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TightTransport> {
 pub struct SpaceTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -6735,8 +7096,11 @@ impl ::sittir_core::prepare::Prepare for SpaceTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6746,19 +7110,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for SpaceTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => " ".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| " ".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -6774,9 +7141,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for SpaceTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| " ".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -6816,6 +7185,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SpaceTransport> {
 pub struct TabTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -6842,8 +7212,11 @@ impl ::sittir_core::prepare::Prepare for TabTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6853,19 +7226,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for TabTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "\t".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "\t".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -6881,9 +7257,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for TabTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "\t".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -6923,6 +7301,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TabTransport> {
 pub struct NewlineTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -6949,8 +7328,11 @@ impl ::sittir_core::prepare::Prepare for NewlineTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -6960,19 +7342,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for NewlineTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "\n".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "\n".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -6988,9 +7373,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for NewlineTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "\n".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -7030,6 +7417,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NewlineTransport> {
 pub struct BlanklineTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -7056,8 +7444,11 @@ impl ::sittir_core::prepare::Prepare for BlanklineTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -7067,19 +7458,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for BlanklineTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "\n\n".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "\n\n".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -7095,9 +7489,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for BlanklineTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "\n\n".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -7137,6 +7533,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BlanklineTransport> {
 pub struct DoubleBlanklineTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -7163,8 +7560,11 @@ impl ::sittir_core::prepare::Prepare for DoubleBlanklineTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -7174,19 +7574,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for DoubleBlanklineTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "\n\n\n".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "\n\n\n".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -7202,9 +7605,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for DoubleBlanklineTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "\n\n\n".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -7244,6 +7649,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DoubleBlanklineTransport> {
 pub struct IndentTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -7270,8 +7676,11 @@ impl ::sittir_core::prepare::Prepare for IndentTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -7281,7 +7690,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -7294,13 +7704,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -7316,9 +7728,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -7358,6 +7772,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IndentTransport> {
 pub struct DedentTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -7384,8 +7799,11 @@ impl ::sittir_core::prepare::Prepare for DedentTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -7395,7 +7813,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -7408,13 +7827,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -7430,9 +7851,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
         let text: String = obj.get("$text")?.unwrap_or_default();
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -7472,6 +7895,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DedentTransport> {
 pub struct StarTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -7498,8 +7922,11 @@ impl ::sittir_core::prepare::Prepare for StarTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -7509,19 +7936,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "*".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "*".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -7537,9 +7967,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "*".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -7579,6 +8011,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StarTransport> {
 pub struct PlusTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -7605,8 +8038,11 @@ impl ::sittir_core::prepare::Prepare for PlusTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -7616,19 +8052,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "+".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "+".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -7644,9 +8083,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "+".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -7686,6 +8127,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PlusTransport> {
 pub struct QmarkTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -7712,8 +8154,11 @@ impl ::sittir_core::prepare::Prepare for QmarkTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -7723,19 +8168,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "?".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "?".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -7751,9 +8199,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "?".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -7793,6 +8243,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<QmarkTransport> {
 pub struct AtTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -7819,8 +8270,11 @@ impl ::sittir_core::prepare::Prepare for AtTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -7830,19 +8284,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "@".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "@".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -7858,9 +8315,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "@".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -7900,6 +8359,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AtTransport> {
 pub struct DquoteTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -7926,8 +8386,11 @@ impl ::sittir_core::prepare::Prepare for DquoteTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -7937,19 +8400,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for DquoteTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "\"".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "\"".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -7965,9 +8431,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for DquoteTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "\"".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -8007,6 +8475,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DquoteTransport> {
 pub struct LbrackTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -8033,8 +8502,11 @@ impl ::sittir_core::prepare::Prepare for LbrackTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -8044,19 +8516,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbrackTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "[".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "[".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -8072,9 +8547,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbrackTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "[".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -8114,6 +8591,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LbrackTransport> {
 pub struct RbrackTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -8140,8 +8618,11 @@ impl ::sittir_core::prepare::Prepare for RbrackTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -8151,19 +8632,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbrackTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "]".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "]".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -8179,9 +8663,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbrackTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "]".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -8221,6 +8707,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RbrackTransport> {
 pub struct LparenTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -8247,8 +8734,11 @@ impl ::sittir_core::prepare::Prepare for LparenTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -8258,19 +8748,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "(".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "(".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -8286,9 +8779,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "(".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -8328,6 +8823,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LparenTransport> {
 pub struct RparenTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -8354,8 +8850,11 @@ impl ::sittir_core::prepare::Prepare for RparenTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -8365,19 +8864,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for RparenTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => ")".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| ")".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -8393,9 +8895,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for RparenTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| ")".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -8435,6 +8939,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RparenTransport> {
 pub struct MissingKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -8461,8 +8966,11 @@ impl ::sittir_core::prepare::Prepare for MissingKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -8472,19 +8980,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for MissingKeywordTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "MISSING".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "MISSING".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -8500,9 +9011,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for MissingKeywordTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "MISSING".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -8542,6 +9055,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MissingKeywordTransport> {
 pub struct UnderscoreTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -8568,8 +9082,11 @@ impl ::sittir_core::prepare::Prepare for UnderscoreTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -8579,19 +9096,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnderscoreTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "_".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "_".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -8607,9 +9127,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnderscoreTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "_".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -8649,6 +9171,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UnderscoreTransport> {
 pub struct ColonTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -8675,8 +9198,11 @@ impl ::sittir_core::prepare::Prepare for ColonTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -8686,19 +9212,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => ":".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| ":".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -8714,9 +9243,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| ":".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -8756,6 +9287,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ColonTransport> {
 pub struct BangTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -8782,8 +9314,11 @@ impl ::sittir_core::prepare::Prepare for BangTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -8793,19 +9328,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "!".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "!".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -8821,9 +9359,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "!".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -8863,6 +9403,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BangTransport> {
 pub struct PoundTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -8889,8 +9430,11 @@ impl ::sittir_core::prepare::Prepare for PoundTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -8900,19 +9444,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for PoundTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "#".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "#".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -8928,9 +9475,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for PoundTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "#".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -8970,6 +9519,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PoundTransport> {
 pub struct DotTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -8996,8 +9546,11 @@ impl ::sittir_core::prepare::Prepare for DotTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -9007,19 +9560,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => ".".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| ".".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -9035,9 +9591,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| ".".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }
@@ -9077,6 +9635,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DotTransport> {
 pub struct SlashTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
+    pub source_gap: Option<::sittir_core::slot::SourceGap>,
     pub text: String,
 }
 
@@ -9103,8 +9662,11 @@ impl ::sittir_core::prepare::Prepare for SlashTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
-    fn leading_seam(&self) -> Option<&str> {
-        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        self.source_gap.as_ref()
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.edges.get_or_insert_with(Default::default))
     }
 }
 
@@ -9114,19 +9676,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
+        let mut __transport_trivia_data: Option<TransportTrivia> = None;
+        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "/".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
+                __transport_trivia_data = obj.get("$_trivia")?;
+                __source_gap = obj.get("$_gap")?;
                 obj.get("$text")?.unwrap_or_else(|| "/".to_string())
             }
         };
         Ok(Self {
-            transport_trivia_data: __trivia,
+            transport_trivia_data: __transport_trivia_data,
             edges: None,
+            source_gap: __source_gap,
             text,
         })
     }
@@ -9142,9 +9707,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
         let text: String = obj.get("$text")?.unwrap_or_else(|| "/".to_string());
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
+        let source_gap = obj.get("$_gap")?;
         Ok(Self {
             transport_trivia_data,
             edges,
+            source_gap,
             text,
         })
     }

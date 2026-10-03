@@ -1,13 +1,14 @@
 //! The walk a render makes over every slot before writing a byte: it checks
-//! each coordinate against the tree it names, classifies the gaps between
-//! still-parsed list items, and fills every unset spacing and flank field
-//! from the resolved options. The context is an argument at every level;
+//! each coordinate against the tree it names, gives each list gap that is
+//! still adjacent in the source its source class, and fills every unset
+//! spacing and flank field from the resolved options. The context is an argument at every level;
 //! nothing ambient carries the trees or the table.
 
 use crate::options::{EdgeArm, Edged, Edges, ResolvedOptions, Side};
 use crate::types::KindId;
 use crate::render::{CoordinateError, SourceTable};
-use crate::slot::SlotValue;
+use crate::slot::{SeamArm, SlotValue, SourceGap};
+use crate::render::WhitespaceTable;
 
 /// Everything a render reads that is not the transport itself.
 pub struct RenderContext<'a> {
@@ -120,40 +121,104 @@ pub fn seat_site(table: &[u16], kind: KindId) -> Option<usize> {
     }
 }
 
+/// Give every list gap that is still adjacent in the source its source class.
+/// An item carries its gap toward the item before it (`Prepare::source_gap`)
+/// only when the two were adjacent siblings in the source both were read from
+/// and no derived line-gap run already spells that gap. The gap's text splits
+/// at the separator `token`. The side before it classifies among
+/// `allowed_before` onto the earlier item's `after` edge. The side after it
+/// classifies among `allowed_after` onto the later item's `before` edge.
+/// With no token, the whole gap is the before side. Both edges hold at trivia
+/// strength, the strength of a source fact, so neither the list's site nor a
+/// seat replaces them. A gap holding text other than whitespace and one
+/// separator is not a gap the classes can spell, and stays the seat's.
+pub fn fill_list_gaps<'i, T: Prepare + 'i, const ADJACENT: bool>(
+    items: impl Iterator<Item = Option<&'i mut SlotValue<T, ADJACENT>>>,
+    token: &str,
+    allowed_before: &[u16],
+    allowed_after: &[u16],
+    table: &WhitespaceTable,
+    ctx: &RenderContext<'_>,
+) {
+    let mut present: Vec<&'i mut SlotValue<T, ADJACENT>> = items.flatten().collect();
+    for index in 1..present.len() {
+        let Some((lead, trail)) = present[index]
+            .source_gap()
+            .and_then(|gap| gap.text(ctx.sources))
+            .and_then(|text| single_separator(text, token))
+            .map(|(lead, trail)| (lead.to_owned(), trail.to_owned()))
+        else {
+            continue;
+        };
+        let (lead, trail) = (lead.as_str(), trail.as_str());
+        if let Some(arm) = crate::classify::classify_whitespace(lead, allowed_before, table) {
+            set_gap_edge(present[index - 1], Side::After, arm);
+        }
+        if !token.is_empty() {
+            if let Some(arm) = crate::classify::classify_whitespace(trail, allowed_after, table) {
+                set_gap_edge(present[index], Side::Before, arm);
+            }
+        }
+    }
+}
+
+/// The text before and after the one separator a gap between adjacent items
+/// holds; the whole gap before it when there is no separator to split at.
+fn single_separator<'g>(gap: &'g str, token: &str) -> Option<(&'g str, &'g str)> {
+    if token.is_empty() {
+        return Some((gap, ""));
+    }
+    let at = gap.find(token)?;
+    (gap.rfind(token)? == at).then(|| (&gap[..at], &gap[at + token.len()..]))
+}
+
+fn set_gap_edge<T: Prepare, const ADJACENT: bool>(item: &mut SlotValue<T, ADJACENT>, side: Side, arm: u16) {
+    let seam = SeamArm { arm, strength: crate::spacing::SEAM_TRIVIA };
+    match item {
+        SlotValue::Coord(coord) => {
+            let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });
+            match side {
+                Side::Before => edges.before.get_or_insert(seam),
+                Side::After => edges.after.get_or_insert(seam),
+            };
+        }
+        SlotValue::Transport(t) => {
+            if let Some(edges) = t.gap_edges() {
+                match side {
+                    Side::Before => edges.before.get_or_insert(EdgeArm::from(seam)),
+                    Side::After => edges.after.get_or_insert(EdgeArm::from(seam)),
+                };
+            }
+        }
+    }
+}
+
 /// Fill the gap after every present element but the last present one from
 /// the slot's seat table: a seated element's base `after` edge takes its
-/// seat's resolved arm and strength unless the wire already set it. A
-/// coordinate takes its seat the same way, except when the element after it
-/// is a coordinate and `separated` marks the pair's source gap as classified
-/// into the slot's own site: that gap is the source's. An absent element
-/// renders nothing, so it neither takes a gap nor counts as the sibling that
-/// makes the gap before it.
+/// seat's resolved arm and strength unless something already set it, the wire
+/// or the gap's source class (`fill_list_gaps`, which runs first). An absent
+/// element renders nothing, so it neither takes a gap nor counts as the
+/// sibling that makes the gap before it.
 pub fn fill_seated_gaps<'i, T: SeatTarget + 'i, const ADJACENT: bool>(
     items: impl Iterator<Item = Option<&'i mut SlotValue<T, ADJACENT>>>,
     table: &[u16],
-    separated: &[bool],
     ctx: &RenderContext<'_>,
 ) {
-    let present: Vec<(usize, &'i mut SlotValue<T, ADJACENT>)> =
-        items.enumerate().filter_map(|(index, item)| item.map(|value| (index, value))).collect();
-    let source_follows: Vec<bool> = present
-        .windows(2)
-        .map(|pair| pair[1].1.coord().is_some() && separated.get(pair[0].0).copied().unwrap_or(false))
-        .collect();
-    for ((_, item), source_follows) in present.into_iter().zip(source_follows) {
+    let present: Vec<&'i mut SlotValue<T, ADJACENT>> = items.flatten().collect();
+    let last = present.len().saturating_sub(1);
+    for item in present.into_iter().take(last) {
         match item {
             SlotValue::Transport(t) => {
                 if let Some((edges, site)) = t.seat_target(table) {
                     edges.after.get_or_insert(EdgeArm::from(ctx.options.spacing[site]));
                 }
             }
-            SlotValue::Coord(coord) if !source_follows => {
+            SlotValue::Coord(coord) => {
                 if let Some(site) = coord.kind_in(ctx.sources).and_then(|kind| seat_site(table, kind)) {
                     let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });
                     edges.after.get_or_insert(ctx.options.spacing[site]);
                 }
             }
-            SlotValue::Coord(_) => {}
         }
     }
 }
@@ -161,10 +226,14 @@ pub fn fill_seated_gaps<'i, T: SeatTarget + 'i, const ADJACENT: bool>(
 pub trait Prepare {
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError>;
 
-    /// The whitespace run this value's leading trivia opens with: the gap it
-    /// keeps toward the item before it. None for a coordinate, and for a
-    /// value whose leading trivia is empty or opens with a comment.
-    fn leading_seam(&self) -> Option<&str> {
+    /// The source gap toward the list item before this value, when the wire
+    /// says the two are still adjacent in their source (`$_gap`).
+    fn source_gap(&self) -> Option<&SourceGap> {
+        None
+    }
+
+    /// The base edges a list gap beside this value is written on: its own.
+    fn gap_edges(&mut self) -> Option<&mut Edges> {
         None
     }
 }
@@ -177,10 +246,16 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
         match self {
             SlotValue::Coord(coord) => {
                 coord.resolve(ctx.sources)?;
-                let seated = coord.edges.and_then(|edges| edges.after);
+                let seated = coord.edges;
                 coord.edges = coord.kind_in(ctx.sources).and_then(|kind| ctx.options.edge_arms(kind));
-                if let Some(after) = seated {
-                    coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None }).after = Some(after);
+                if let Some(seated) = seated {
+                    let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });
+                    if seated.before.is_some() {
+                        edges.before = seated.before;
+                    }
+                    if seated.after.is_some() {
+                        edges.after = seated.after;
+                    }
                 }
                 Ok(())
             }
@@ -188,10 +263,10 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
         }
     }
 
-    fn leading_seam(&self) -> Option<&str> {
+    fn source_gap(&self) -> Option<&SourceGap> {
         match self {
-            SlotValue::Transport(t) => t.leading_seam(),
-            SlotValue::Coord(_) => None,
+            SlotValue::Transport(t) => t.source_gap(),
+            SlotValue::Coord(coord) => coord.gap.as_ref(),
         }
     }
 }
@@ -210,8 +285,12 @@ impl<T: Prepare> Prepare for Option<T> {
         }
     }
 
-    fn leading_seam(&self) -> Option<&str> {
-        self.as_ref()?.leading_seam()
+    fn source_gap(&self) -> Option<&SourceGap> {
+        self.as_ref()?.source_gap()
+    }
+
+    fn gap_edges(&mut self) -> Option<&mut Edges> {
+        self.as_mut()?.gap_edges()
     }
 }
 
@@ -220,8 +299,12 @@ impl<T: Prepare + ?Sized> Prepare for Box<T> {
         (**self).prepare(ctx)
     }
 
-    fn leading_seam(&self) -> Option<&str> {
-        (**self).leading_seam()
+    fn source_gap(&self) -> Option<&SourceGap> {
+        (**self).source_gap()
+    }
+
+    fn gap_edges(&mut self) -> Option<&mut Edges> {
+        (**self).gap_edges()
     }
 }
 
@@ -236,8 +319,8 @@ inert!(String, bool, u8, u16);
 
 #[cfg(test)]
 mod tests {
-    use super::root_flanks;
-    use crate::classify::classify_list_gaps;
+    use super::{fill_list_gaps, root_flanks};
+    use crate::slot::{SlotValue, SourceGap};
     use crate::engine::encode_handle;
     use crate::options::ResolvedOptions;
     use crate::render::{SourceTable, WhitespaceTable};
@@ -300,28 +383,50 @@ mod tests {
         assert_eq!(before_flank(&coordinate(1, 4, true), "\n#!\n"), None);
     }
 
-    fn separated(second_text_only: bool) -> bool {
-        let sources = Sources(HashMap::from([(3, Arc::from("a,b"))]));
+    fn after_and_before(source: &str, second_gap: Option<(u32, u32)>) -> (Option<u16>, Option<u16>) {
+        let gap = second_gap.map(|(start, end)| SourceGap::Range { handle: encode_handle(3, 0), span: Span { start, end } });
+        filled(source, gap)
+    }
+
+    fn filled(source: &str, second_gap: Option<SourceGap>) -> (Option<u16>, Option<u16>) {
+        let sources = Sources(HashMap::from([(3, Arc::from(source))]));
+        let options = ResolvedOptions::default();
+        let ctx = RenderContext {
+            options: &options,
+            sources: &sources,
+        };
+        let end = source.len() as u32;
         let first = coordinate(0, 1, false);
-        let second = coordinate(2, 3, second_text_only);
-        classify_list_gaps(
-            &[crate::classify::GapItem { coord: Some(&first), held: None }, crate::classify::GapItem { coord: Some(&second), held: None }],
-            &sources,
-            ",",
-            &[TIGHT],
-            &[TIGHT],
-            &TABLE,
-        )
-        .separated[0]
+        let second = NodeCoordinate {
+            gap: second_gap,
+            ..coordinate(end - 1, end, false)
+        };
+        let mut items: Vec<SlotValue<String>> = vec![SlotValue::Coord(first), SlotValue::Coord(second)];
+        fill_list_gaps(items.iter_mut().map(Some), ",", &[TIGHT, NEWLINE], &[TIGHT, NEWLINE], &TABLE, &ctx);
+        let edge = |item: &SlotValue<String>, after: bool| match item {
+            SlotValue::Coord(coord) => coord.edges.and_then(|edges| if after { edges.after } else { edges.before }).map(|seam| seam.arm),
+            SlotValue::Transport(_) => None,
+        };
+        (edge(&items[0], true), edge(&items[1], false))
     }
 
     #[test]
-    fn a_gap_between_tree_addressed_items_is_a_source_separator() {
-        assert!(separated(false));
+    fn a_source_adjacent_gap_splits_at_its_separator_onto_both_neighbours() {
+        assert_eq!(after_and_before("a,\nb", Some((1, 3))), (Some(TIGHT), Some(NEWLINE)));
     }
 
     #[test]
-    fn a_gap_beside_an_item_that_addresses_its_text_only_is_not() {
-        assert!(!separated(true));
+    fn a_detached_gap_carrying_its_text_fills_the_same_edges_as_its_range() {
+        assert_eq!(filled("a,\nb", Some(SourceGap::Text(",\n".to_owned()))), (Some(TIGHT), Some(NEWLINE)));
+    }
+
+    #[test]
+    fn a_gap_holding_more_than_one_separator_is_left_to_the_seat() {
+        assert_eq!(after_and_before("a,x,b", Some((1, 4))), (None, None));
+    }
+
+    #[test]
+    fn an_item_that_carries_no_source_gap_is_left_to_the_seat() {
+        assert_eq!(after_and_before("a,\nb", None), (None, None));
     }
 }

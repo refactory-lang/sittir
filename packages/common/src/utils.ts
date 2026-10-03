@@ -1,6 +1,6 @@
 import type { AnyUntypedNode, LineGap, LineGapAddress, LineGaps, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { detachCoordinate, holdsSlots, isRead, type DerivedSides } from './transport-data.ts';
+import { carryRead, carrySource, detachCoordinate, holdsSlots, isRead, sourceOf, type DerivedSides } from './transport-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { currentHandle, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
@@ -51,6 +51,7 @@ export function renderText(handle: EngineHandle | undefined, node: object): stri
 export function rebuilt<R>(source: object, handle: EngineHandle | undefined, build: () => R): R {
 	const node = source as AnyUntypedNode;
 	const result = handle === undefined ? build() : inEngine(handle, build);
+	if (isNode(result)) carryEdit(node, result);
 	const trivia = node.$_trivia;
 	if (trivia === undefined || !isNode(result)) return result;
 	if (Object.values(trivia.inner ?? {}).some((entries) => (entries?.length ?? 0) > 0) && !isEmptyNode(result)) {
@@ -132,6 +133,19 @@ const writtenSides = new WeakMap<object, Set<TriviaSideName>>();
 const readLineGaps = new WeakMap<object, LineGaps>();
 const composedTrivia = new WeakMap<object, NodeTrivia | undefined>();
 
+/**
+ * Hand an edited node what it keeps of the node it was rebuilt from: that
+ * the read produced it, where it sits in the source, and which trivia sides
+ * were written. Its line gaps then derive from the same source position, and
+ * a side the caller rewrote stays written.
+ */
+function carryEdit(from: object, to: object): void {
+	carryRead(from, to);
+	carrySource(from, to);
+	const written = writtenSides.get(from);
+	if (written !== undefined) writtenSides.set(to, new Set(written));
+}
+
 function markWritten(node: object, side: TriviaSideName): void {
 	const sides = writtenSides.get(node) ?? new Set<TriviaSideName>();
 	sides.add(side);
@@ -195,7 +209,8 @@ function lineGapAddressOf(node: AnyUntypedNode): LineGapAddress | undefined {
 	if (typeof record.$treeHandle === 'number' && record.$span !== undefined && typeof node.$type === 'number') {
 		return { treeHandle: record.$treeHandle, span: record.$span, kind: node.$type };
 	}
-	return undefined;
+	const source = sourceOf(node);
+	return source === undefined ? undefined : { treeHandle: source.treeHandle, span: source.span, kind: source.kind };
 }
 
 /** Comment entries and whitespace runs of one side merged in source order; `undefined` when both are empty. */
@@ -657,7 +672,7 @@ export { hydrateStub, isStub, readUntypedNode, type Stub, type TreeHandle } from
 export { currentHandle } from './engine-scope.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toTransportData, STORED_TRIVIA, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead } from './transport-data.ts';
+export { toTransportData, STORED_TRIVIA, sourceGapOf, type TriviaView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead } from './transport-data.ts';
 export { carryTree, treeTokenOf, type TreeToken } from './tree-token.ts';
 export {
 	projectInterior,

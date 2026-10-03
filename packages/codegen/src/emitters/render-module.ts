@@ -2711,10 +2711,17 @@ function prepareEnumImpl(
 		`    }`,
 		...(anyPayload
 			? [
-					`    fn leading_seam(&self) -> Option<&str> {`,
+					`    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {`,
 					`        match self {`,
 					...arms.map((a) =>
-						a.payload ? `            ${enumName}::${a.variant}(t) => t.leading_seam(),` : `            ${enumName}::${a.variant} => None,`
+						a.payload ? `            ${enumName}::${a.variant}(t) => t.source_gap(),` : `            ${enumName}::${a.variant} => None,`
+					),
+					`        }`,
+					`    }`,
+					`    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {`,
+					`        match self {`,
+					...arms.map((a) =>
+						a.payload ? `            ${enumName}::${a.variant}(t) => t.gap_edges(),` : `            ${enumName}::${a.variant} => None,`
 					),
 					`        }`,
 					`    }`
@@ -2809,12 +2816,7 @@ function listGapTokenOf(field: AssembledNonterminal): string | undefined {
 	return texts.length === 1 ? texts[0] : undefined;
 }
 
-function listGapClassification(
-	plan: RenderPlan,
-	node: AssembledNode,
-	seated: ReadonlySet<string>,
-	classified: Set<string>
-): string[] {
+function listGapClassification(plan: RenderPlan, node: AssembledNode): string[] {
 	const body: string[] = [];
 	const slotModel = renderSlotModelOf(node);
 	for (const field of [...slotModel.named, ...slotModel.unnamed]) {
@@ -2825,30 +2827,18 @@ function listGapClassification(
 		const token = sites.gap !== undefined ? '' : listGapTokenOf(field);
 		if (token === undefined) continue;
 		const ident = rustFieldIdent(field.storageName);
-		const items = isTransportRequired(field)
-			? `self.${ident}.iter()`
-			: `self.${ident}.as_deref().unwrap_or(&[]).iter()`;
-		const each = hasOptionalElements(field) ? 'item.as_ref().and_then(|i| i.coord())' : 'item.coord()';
+		const items = hasOptionalElements(field) ? 'iter_mut().map(Option::as_mut)' : 'iter_mut().map(Some)';
 		const allowedOf = (site: SpacingSite | undefined) =>
 			site === undefined ? '&[]' : `options::allowed(options::${site.constName})`;
-		const binds = field.name !== undefined && seated.has(field.name);
-		if (binds) classified.add(field.name!);
+		const call = (list: string) =>
+			`::sittir_core::prepare::fill_list_gaps(${list}.${items}, ${JSON.stringify(token)}, ${allowedOf(first)}, ${allowedOf(sites.after)}, &options::WHITESPACE, ctx);`;
 		body.push(
-			binds ? `        let ${separatedLocal(field.name!)} = {` : `        {`,
-			`            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = ${items}.map(|item| ::sittir_core::classify::GapItem { coord: ${each}, held: ${PREPARE_MOD}::Prepare::leading_seam(item) }).collect();`,
-			`            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ${JSON.stringify(token)}, ${allowedOf(first)}, ${allowedOf(sites.after)}, &options::WHITESPACE);`
+			isTransportRequired(field)
+				? `        ${call(`self.${ident}`)}`
+				: `        if let Some(gap_items) = self.${ident}.as_mut() { ${call('gap_items')} }`
 		);
-		if (first !== undefined) {
-			const f = rustFieldIdent(first.fieldIdent);
-			body.push(`            if self.${f}.is_none() { self.${f} = gaps.before; }`);
-		}
-		if (sites.after !== undefined) {
-			const a = rustFieldIdent(sites.after.fieldIdent);
-			body.push(`            if self.${a}.is_none() { self.${a} = gaps.after; }`);
-		}
-		body.push(binds ? `            gaps.separated` : '', binds ? `        };` : `        }`);
 	}
-	return body.filter((line) => line !== '');
+	return body;
 }
 
 function spacingFieldExprs(
@@ -3031,11 +3021,8 @@ function seatedListFields(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMa
 	return fields;
 }
 
-function separatedLocal(fieldName: string): string {
-	return `separated_${rustFieldIdent(fieldName)}`;
-}
 
-function seatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap, classified: ReadonlySet<string>): string[] {
+function seatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): string[] {
 	const lines: string[] = [];
 	const seated = seatedListFields(plan, node, nodeMap);
 	const slotModel = renderSlotModelOf(node);
@@ -3044,11 +3031,10 @@ function seatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap, clas
 		const ident = rustFieldIdent(field.name);
 		const table = `options::${seatTableName(node.display.name, field.name)}`;
 		const items = hasOptionalElements(field) ? 'iter_mut().map(Option::as_mut)' : 'iter_mut().map(Some)';
-		const separated = classified.has(field.name) ? `&${separatedLocal(field.name)}` : '&[]';
 		lines.push(
 			isTransportRequired(field)
-				? `        ::sittir_core::prepare::fill_seated_gaps(self.${ident}.${items}, ${table}, ${separated}, ctx);`
-				: `        if let Some(seated_items) = self.${ident}.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.${items}, ${table}, ${separated}, ctx); }`
+				? `        ::sittir_core::prepare::fill_seated_gaps(self.${ident}.${items}, ${table}, ctx);`
+				: `        if let Some(seated_items) = self.${ident}.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.${items}, ${table}, ctx); }`
 		);
 	}
 	return lines;
@@ -3109,15 +3095,14 @@ function prepareStructImpl(
 	if (isCompound) {
 		body.push(...rootEdgeStamp(plan, node, fillFields));
 		if (kindEdgeSidesOf(plan, node).size > 0) body.push('        ::sittir_core::prepare::prepare_edges(self, ctx);');
-		const classified = new Set<string>();
-		body.push(...listGapClassification(plan, node, seatedListFields(plan, node, nodeMap), classified));
+		body.push(...listGapClassification(plan, node));
 		for (const site of synthesizedSpacingSites(plan, node)) {
 			if (!carriesPerNodeValue(site)) continue;
 			body.push(
 				`        self.${rustFieldIdent(site.fieldIdent)}.get_or_insert(ctx.options.spacing[options::${site.constName}].arm);`
 			);
 		}
-		body.push(...seatLoops(plan, node, nodeMap, classified));
+		body.push(...seatLoops(plan, node, nodeMap));
 		const delim = node instanceof AssembledList ? delimiterSiteOf(plan, node) : undefined;
 		if (delim !== undefined) {
 			body.push(`        self.delimiter.get_or_insert(ctx.options.delimiter[options::${delim.constName}]);`);
@@ -3134,8 +3119,11 @@ function prepareStructImpl(
 		...body,
 		`        Ok(())`,
 		`    }`,
-		`    fn leading_seam(&self) -> Option<&str> {`,
-		`        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())`,
+		`    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {`,
+		`        self.source_gap.as_ref()`,
+		`    }`,
+		`    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {`,
+		`        Some(self.edges.get_or_insert_with(Default::default))`,
 		`    }`,
 		`}`,
 		''
@@ -3317,8 +3305,14 @@ function renderTransportDataStruct(
 	return lines;
 }
 
-function declareLeafTriviaCapture(): string {
-	return `        let mut __trivia: Option<TransportTrivia> = None;`;
+function leafCaptureLocal(f: TransportMetadataField): string {
+	return `__${f.rustName}`;
+}
+
+function declareLeafMetadataCapture(): string[] {
+	return TRANSPORT_METADATA_FIELDS.filter((f) => f.onWire).map(
+		(f) => `        let mut ${leafCaptureLocal(f)}: ${f.rustType} = None;`
+	);
 }
 
 function renderLeafTransportNapiImpls(
@@ -3334,7 +3328,7 @@ function renderLeafTransportNapiImpls(
 	lines.push(`        env: ::napi::sys::napi_env,`);
 	lines.push(`        napi_val: ::napi::sys::napi_value,`);
 	lines.push(`    ) -> ::napi::Result<Self> {`);
-	lines.push(declareLeafTriviaCapture());
+	lines.push(...declareLeafMetadataCapture());
 	lines.push(`        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {`);
 	lines.push(`            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,`);
 	if (defaultTextLiteral !== undefined) {
@@ -3367,7 +3361,9 @@ function renderLeafTransportNapiImpls(
 	}
 	lines.push(`            _ => {`);
 	lines.push(`                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
-	lines.push(`                __trivia = obj.get("$_trivia")?;`);
+	for (const f of TRANSPORT_METADATA_FIELDS.filter((f) => f.onWire)) {
+		lines.push(`                ${leafCaptureLocal(f)} = obj.get(${JSON.stringify(f.jsName)})?;`);
+	}
 	lines.push(
 		defaultTextLiteral !== undefined
 			? `                obj.get("$text")?.unwrap_or_else(|| ${rustStringLiteral(defaultTextLiteral)}.to_string())`
@@ -3377,7 +3373,7 @@ function renderLeafTransportNapiImpls(
 	lines.push(`        };`);
 	lines.push(`        Ok(Self {`);
 	for (const f of TRANSPORT_METADATA_FIELDS) {
-		lines.push(`            ${f.rustName}: ${f.rustName === 'transport_trivia_data' ? '__trivia' : 'None'},`);
+		lines.push(`            ${f.rustName}: ${f.onWire ? leafCaptureLocal(f) : 'None'},`);
 	}
 	lines.push(`            text,`);
 	lines.push(`        })`);
@@ -3452,11 +3448,13 @@ interface TransportMetadataField {
 	jsName: string;
 	rustName: string;
 	rustType: string;
+	onWire: boolean;
 }
 
 const TRANSPORT_METADATA_FIELDS: readonly TransportMetadataField[] = [
-	{ jsName: '$_trivia', rustName: 'transport_trivia_data', rustType: 'Option<TransportTrivia>' },
-	{ jsName: '$_edges', rustName: 'edges', rustType: 'Option<::sittir_core::options::Edges>' }
+	{ jsName: '$_trivia', rustName: 'transport_trivia_data', rustType: 'Option<TransportTrivia>', onWire: true },
+	{ jsName: '$_edges', rustName: 'edges', rustType: 'Option<::sittir_core::options::Edges>', onWire: false },
+	{ jsName: '$_gap', rustName: 'source_gap', rustType: 'Option<::sittir_core::slot::SourceGap>', onWire: true }
 ];
 
 function renderTransportMetadataFields(): string[] {

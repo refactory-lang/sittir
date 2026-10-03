@@ -25,7 +25,14 @@
 /// (`RenderSink::end_line_after`), so a line-terminated kind holds its line
 /// end before any trailing trivia renders.
 ///
-/// `$self` has a `transport_trivia_data: Option<TransportTrivia<T>>` field;
+/// Around the node, before its leading entries and after the render, the
+/// sink is handed each side of its stamped base edges
+/// (`RenderSink::unsited_edge`), which writes a stamp only where the kind
+/// has no edge site of its own: a list gap's source class or a seat on a
+/// leaf item renders even though no template writes that edge.
+///
+/// `$self` has a `transport_trivia_data: Option<TransportTrivia<T>>` field
+/// and an `edges: Option<Edges>` field;
 /// bool/enum transport variants have none and write directly to `$w`.
 ///
 /// `render_with_trivia!(token self, w, ...)` is the form for an anonymous
@@ -36,11 +43,15 @@
 macro_rules! render_with_trivia {
     (token $self:expr, $w:expr, $kind:expr, $render:expr) => {
         (|| -> $crate::render::RenderResult {
+            if let Some(__kind) = $kind {
+                $w.unsited_edge(__kind, $crate::options::Side::Before, $self.edges.and_then(|e| e.before));
+            }
             if let Some(ref __trivia) = $self.transport_trivia_data {
                 __trivia.render_leading($w)?;
             }
             $render?;
             if let Some(__kind) = $kind {
+                $w.unsited_edge(__kind, $crate::options::Side::After, $self.edges.and_then(|e| e.after));
                 $w.end_line_after(__kind);
             }
             if let Some(ref __trivia) = $self.transport_trivia_data {
@@ -52,11 +63,15 @@ macro_rules! render_with_trivia {
     ($self:expr, $w:expr, $kind:expr, $render:expr) => {
         (|| -> $crate::render::RenderResult {
             $w.seat_trailing()?;
+            if let Some(__kind) = $kind {
+                $w.unsited_edge(__kind, $crate::options::Side::Before, $self.edges.and_then(|e| e.before));
+            }
             if let Some(ref __trivia) = $self.transport_trivia_data {
                 __trivia.render_leading($w)?;
             }
             $render?;
             if let Some(__kind) = $kind {
+                $w.unsited_edge(__kind, $crate::options::Side::After, $self.edges.and_then(|e| e.after));
                 $w.end_line_after(__kind);
             }
             $w.seat_trailing()?;
@@ -98,11 +113,12 @@ mod trivia_macro_tests {
     struct MockTransport {
         text: &'static str,
         transport_trivia_data: Option<TransportTrivia<MockTrivia>>,
+        edges: Option<crate::options::Edges>,
     }
 
     impl Render for MockTransport {
         fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
-            render_with_trivia!(self, w, None, w.text(self.text))
+            render_with_trivia!(self, w, Some(crate::types::KindId(9)), w.text(self.text))
         }
     }
 
@@ -127,11 +143,11 @@ mod trivia_macro_tests {
     ) -> MockTransport {
         MockTransport {
             text,
+            edges: None,
             transport_trivia_data: Some(TransportTrivia {
                 leading: entries(leading, false),
                 trailing: entries(trailing, same_line),
                 inner: None,
-                held: false,
             }),
         }
     }
@@ -156,8 +172,37 @@ mod trivia_macro_tests {
         let t = MockTransport {
             text: "CONTENT",
             transport_trivia_data: None,
+            edges: None,
         };
         assert_eq!(render(&t), "CONTENT");
+    }
+
+    #[test]
+    fn a_stamped_edge_of_a_kind_with_no_edge_site_is_written_around_the_node() {
+        use crate::options::{EdgeArm, Edges};
+        use crate::spacing::{SEAM_DECLARED, SEAM_TRIVIA};
+        const TIGHT: u16 = 1;
+        const SPACE: u16 = 2;
+        fn text_of(kind: u16) -> &'static str {
+            if kind == SPACE {
+                " "
+            } else {
+                ""
+            }
+        }
+        const TABLE: crate::render::WhitespaceTable = crate::render::WhitespaceTable { text_of, indent: 0, dedent: 0 };
+        let tight = Some(EdgeArm { arm: TIGHT, strength: Some(SEAM_TRIVIA) });
+        let first = MockTransport { text: "a", transport_trivia_data: None, edges: Some(Edges { before: None, after: tight }) };
+        let second = MockTransport { text: "b", transport_trivia_data: None, edges: Some(Edges { before: tight, after: None }) };
+        let mut out = String::new();
+        let mut w = crate::spacing::SpacingWriter::new(&mut out, crate::spacing::WordMatcher::default_ident()).with_table(&TABLE);
+        first.render(&mut w).unwrap();
+        w.site_with(SPACE, SEAM_DECLARED);
+        w.text(",").unwrap();
+        w.site_with(SPACE, SEAM_DECLARED);
+        second.render(&mut w).unwrap();
+        w.finish().unwrap();
+        assert_eq!(out, "a,b");
     }
 
     #[test]
@@ -237,6 +282,7 @@ mod trivia_macro_tests {
                 let parent = MockTransport {
                     text: "",
                     transport_trivia_data: None,
+                    edges: None,
                 };
                 render_with_trivia!(parent, w, None, {
                     w.text("{")?;
@@ -296,7 +342,7 @@ mod trivia_macro_tests {
             }
         }
         let left = owner("a", &[], &["/* x */"], true);
-        let plus = Token(MockTransport { text: "+", transport_trivia_data: None });
+        let plus = Token(MockTransport { text: "+", transport_trivia_data: None, edges: None });
         let right = owner("b", &[], &[], false);
         let text = render_with(|w| {
             left.render(w)?;

@@ -1,11 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { readTrivia } from '@sittir/common/utils';
+import { STORED_TRIVIA } from '@sittir/common/utils';
 import { selfContainedRenderInput } from '../read-render-parse.ts';
 
 const LEAF = 7;
 const COMPOUND = 9;
 const isLeafKind = (kindId: number): boolean => kindId === LEAF;
-const storedTrivia = (node: object) => readTrivia(node, undefined);
 const source = 'ab()// c';
 
 describe('selfContainedRenderInput', () => {
@@ -19,7 +18,7 @@ describe('selfContainedRenderInput', () => {
 			},
 			source,
 			isLeafKind,
-			storedTrivia
+			STORED_TRIVIA
 		);
 		expect(out).toEqual({
 			$type: COMPOUND,
@@ -29,7 +28,7 @@ describe('selfContainedRenderInput', () => {
 	});
 
 	it('gives a storage-less leaf its bytes and keeps a captured $text as it is', () => {
-		expect(selfContainedRenderInput({ $type: LEAF, $span: { start: 0, end: 2 }, $text: 'zz' }, source, isLeafKind, storedTrivia)).toEqual({
+		expect(selfContainedRenderInput({ $type: LEAF, $span: { start: 0, end: 2 }, $text: 'zz' }, source, isLeafKind, STORED_TRIVIA)).toEqual({
 			$type: LEAF,
 			$span: { start: 0, end: 2 },
 			$text: 'zz'
@@ -38,7 +37,7 @@ describe('selfContainedRenderInput', () => {
 
 	it('keeps a storage-less compound as its identity, never as text', () => {
 		expect(
-			selfContainedRenderInput({ $type: COMPOUND, $handle: 1, $span: { start: 2, end: 4 } }, source, isLeafKind, storedTrivia)
+			selfContainedRenderInput({ $type: COMPOUND, $handle: 1, $span: { start: 2, end: 4 } }, source, isLeafKind, STORED_TRIVIA)
 		).toEqual({ $type: COMPOUND, $span: { start: 2, end: 4 } });
 	});
 
@@ -54,7 +53,7 @@ describe('selfContainedRenderInput', () => {
 			},
 			source,
 			isLeafKind,
-			storedTrivia
+			STORED_TRIVIA
 		) as { $_trivia: unknown };
 		expect(out.$_trivia).toEqual({ leading: [{ $type: 3, $text: '// c' }], trailing: [{ $type: 3, $text: '// d' }] });
 	});
@@ -71,7 +70,7 @@ describe('selfContainedRenderInput', () => {
 			},
 			source,
 			isLeafKind,
-			storedTrivia
+			STORED_TRIVIA
 		) as { $_trivia: unknown };
 		expect(out.$_trivia).toEqual({
 			trailing: [{ $type: 3, $text: '// c', $sameLine: true, $tokensBetween: 1 }],

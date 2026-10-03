@@ -194,6 +194,38 @@ export function markEdited<T extends object>(data: T): Omit<T, (typeof COORDINAT
 	return rest;
 }
 
+/** Where a node sits in the source it came from: the tree, held by its token, and the node's span and stamped kind there. */
+export interface SourceIdentity {
+	readonly token: TreeToken;
+	readonly treeHandle: number;
+	readonly span: { readonly start: number; readonly end: number };
+	readonly kind: number;
+}
+
+const SOURCE = Symbol('sittir.source');
+
+/**
+ * The source identity of a node: a read node's own coordinate and tree, or
+ * the identity an edit carried forward from the node it rebuilt
+ * (`markEdited`). Evidence of layout only; nothing slices it.
+ */
+export function sourceOf(node: object): SourceIdentity | undefined {
+	const carried = (node as { [SOURCE]?: SourceIdentity })[SOURCE];
+	if (carried !== undefined) return carried;
+	const record = node as Record<string, unknown>;
+	const token = treeTokenOf(node);
+	const treeHandle = treeHandleOf(record);
+	const span = record.$span as { readonly start: number; readonly end: number } | undefined;
+	if (token === undefined || treeHandle === undefined || span === undefined || typeof record.$type !== 'number') return undefined;
+	return { token, treeHandle, span, kind: record.$type };
+}
+
+/** Make `to` keep the source identity `from` has: the node an edit rebuilt from it. */
+export function carrySource(from: object, to: object): void {
+	const source = sourceOf(from);
+	if (source !== undefined) Object.defineProperty(to, SOURCE, { value: source, enumerable: false, configurable: true });
+}
+
 /**
  * `markEdited` for a node edited in place: the node keeps its identity and
  * methods, and loses the coordinate that would fold it back to its pre-edit
@@ -256,19 +288,65 @@ function changedEdges(list: readonly unknown[], index: number, view: TriviaView)
 	if (!isRecord(entry)) return NO_EDGES;
 	const derived = view.derived(entry);
 	if (derived === undefined) return NO_EDGES;
-	const { previous } = derived;
+	const kept = index === 0 ? derived.previous === null : sourceAdjacent(list, index, derived);
+	return { leading: derived.leading && !kept, trailing: derived.trailing && index < list.length - 1 };
+}
+
+function sourceAdjacent(list: readonly unknown[], index: number, derived: DerivedSides): boolean {
 	const before = list[index - 1];
-	return {
-		leading:
-			derived.leading &&
-			(index === 0 ? previous !== null : previous === null || !(isRecord(before) && isSourceSibling(before, entry, previous))),
-		trailing: derived.trailing && index < list.length - 1
-	};
+	const entry = list[index];
+	return (
+		derived.previous !== null &&
+		isRecord(before) &&
+		isRecord(entry) &&
+		isSourceSibling(evidenceOf(before), evidenceOf(entry), derived.previous)
+	);
+}
+
+function isPresent(value: unknown): boolean {
+	return value != null && !(Array.isArray(value) && value.length === 0);
+}
+
+/**
+ * The node whose source identity stands for a list entry: the entry itself,
+ * or, for a wrapper built around one node (a list item's envelope, which a
+ * rebuilt list mints afresh), the one node it holds; slots it leaves empty
+ * do not count.
+ */
+function evidenceOf(entry: Record<string, unknown>): Record<string, unknown> {
+	if (sourceOf(entry) !== undefined) return entry;
+	const content = entry._content;
+	const held = Object.keys(entry).filter((key) => isStorageKey(key) && isPresent(entry[key]));
+	return isRecord(content) && held.length === 1 && held[0] === '_content' ? evidenceOf(content) : entry;
+}
+
+/**
+ * The source bytes between a list item and the item before it, when the two
+ * are still adjacent there and no derived line-gap run already spells that
+ * gap: the range from the predecessor's end to the item's start in the tree
+ * both were read from.
+ */
+export function sourceGapOf(
+	list: readonly unknown[],
+	index: number,
+	view: TriviaView,
+	trivia: unknown
+): { readonly $treeHandle: number; readonly $span: { readonly start: number; readonly end: number } } | undefined {
+	const entry = list[index];
+	if (index === 0 || !isRecord(entry)) return undefined;
+	const evidence = evidenceOf(entry);
+	const derived = view.derived(evidence);
+	if (derived === undefined || derived.previous === null || !sourceAdjacent(list, index, derived)) return undefined;
+	if (isRecord(trivia) && typeof (trivia.leading as readonly unknown[] | undefined)?.[0] === 'number') return undefined;
+	const source = sourceOf(evidence);
+	if (source === undefined) return undefined;
+	return { $treeHandle: source.treeHandle, $span: { start: derived.previous.end, end: source.span.start } };
 }
 
 function isSourceSibling(candidate: Record<string, unknown>, node: Record<string, unknown>, span: { readonly start: number; readonly end: number }): boolean {
-	const own = candidate.$span as { readonly start?: unknown; readonly end?: unknown } | undefined;
-	return treeTokenOf(candidate) === treeTokenOf(node) && own?.start === span.start && own?.end === span.end;
+	const own = sourceOf(candidate);
+	const other = sourceOf(node);
+	return own !== undefined && other !== undefined && own.token === other.token && own.span.start === span.start && own.span.end === span.end;
 }
 
 function withoutChangedEdges(trivia: unknown, changed: ChangedEdges): unknown {
@@ -289,10 +367,17 @@ function assertTriviaHoldsTree(entries: readonly unknown[]): void {
 }
 
 function toTransportValue(value: unknown, view: TriviaView, changed: ChangedEdges): unknown {
-	if (Array.isArray(value)) return value.map((entry, index) => toTransportValue(entry, view, changedEdges(value, index, view)));
+	if (Array.isArray(value)) {
+		return value.map((entry, index) => {
+			const changed = changedEdges(value, index, view);
+			const out = toTransportValue(entry, view, changed);
+			const gap = isRecord(entry) ? sourceGapOf(value, index, view, withoutChangedEdges(view.trivia(entry), changed)) : undefined;
+			if (gap !== undefined && isRecord(out)) out.$_gap = gap;
+			return out;
+		});
+	}
 	if (!isRecord(value)) return value;
 	const trivia = withoutChangedEdges(view.trivia(value), changed);
-	const held = !changed.leading && view.derived(value)?.leading === true;
 	if (canFold(value, trivia)) {
 		assertHoldsTree(value);
 		return foldToCoordinate(value);
@@ -306,7 +391,7 @@ function toTransportValue(value: unknown, view: TriviaView, changed: ChangedEdge
 		if (typeof raw === 'function') continue;
 		out[key] = isStorageKey(key) ? toTransportValue(raw, view, NO_EDGES) : raw;
 	}
-	if (trivia != null) out.$_trivia = held ? { ...trivia, held } : trivia;
+	if (trivia != null) out.$_trivia = trivia;
 	// Past the fold, nothing is a coordinate: a leaf that kept its trivia
 	// crosses as itself, and a storage-bearing node rebuilds from its slots
 	// with neither its pre-edit text nor the span that would slice it.

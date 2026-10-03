@@ -12,7 +12,7 @@ import { writeSync } from 'node:fs';
 
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
 import { sourceSpans, spanSlicer, type TriviaSides } from '@sittir/common';
-import { hydrateStub, isStub, mapTriviaEntries, readTrivia } from '@sittir/common/utils';
+import { hydrateStub, isStub, mapTriviaEntries, readDerivedSides, readTrivia, sourceGapOf, type TriviaView } from '@sittir/common/utils';
 import { deriveRuleKinds } from './render-bodies.ts';
 import { load } from '../codegen-surface.ts';
 
@@ -363,14 +363,16 @@ export function leadingTriviaRenderedWidth(
  * empty slots, and a storage-less trivia entry becomes its text with the
  * kind the reader stamped on it, `{ $type, $text }`, plus `$sameLine` and
  * `$tokensBetween` when it shares its owner's row. Each node's trivia is
- * taken through `triviaOf`, the view the render read, so the input carries the
- * line-gap whitespace the validated render printed.
+ * taken through `view`, the view the render read, so the input carries the
+ * line-gap whitespace the validated render printed, and each list gap the
+ * render kept from the source travels as its bytes (`$_gap: { $text }`), since
+ * a range into a tree means nothing once the input leaves it.
  */
 export function selfContainedRenderInput(
 	data: unknown,
 	source: string,
 	isLeafKind: (kindId: number) => boolean,
-	triviaOf: (node: object) => NodeTrivia | undefined
+	view: TriviaView
 ): unknown {
 	const slice = spanSlicer(source);
 	const textOf = (record: Record<string, unknown>): string | undefined => {
@@ -392,7 +394,14 @@ export function selfContainedRenderInput(
 			return { ...kind, $text: text, $sameLine: true, $tokensBetween: record.$tokensBetween };
 		});
 	const walk = (value: unknown): unknown => {
-		if (Array.isArray(value)) return value.map(walk);
+		if (Array.isArray(value)) {
+			return value.map((entry, index) => {
+				const out = walk(entry);
+				const gap = entry !== null && typeof entry === 'object' ? sourceGapOf(value, index, view, view.trivia(entry as Record<string, unknown>)) : undefined;
+				if (gap !== undefined && out !== null && typeof out === 'object') (out as Record<string, unknown>).$_gap = { $text: slice(gap.$span) };
+				return out;
+			});
+		}
 		if (value === null || typeof value !== 'object') return value;
 		const record = value as Record<string, unknown>;
 		const out: Record<string, unknown> = {};
@@ -401,7 +410,7 @@ export function selfContainedRenderInput(
 			if (key === '$_trivia') continue;
 			out[key] = key.startsWith('_') || key === '$other' ? walk(raw) : raw;
 		}
-		const trivia = triviaOf(record);
+		const trivia = view.trivia(record);
 		if (trivia != null) out.$_trivia = mapTriviaEntries(trivia as TriviaSides<unknown>, walkTrivia);
 		const shown = typeof out.$type === 'number' ? nativeShownKindId(out as { $type: number }) : undefined;
 		if (!hasStorage(out) && shown !== undefined && isLeafKind(shown) && out.$text === undefined) {
@@ -557,6 +566,7 @@ export async function validateReadRenderParse(
 	const nativeEngine = await loadNativeEngine(grammar);
 	const render = (node: AnyUntypedNode): string => nativeEngine.render(node).toString();
 	const triviaOf = (node: object): NodeTrivia | undefined => readTrivia(node, nativeEngine.diagnostics.lineGapsOf);
+	const view: TriviaView = { trivia: triviaOf, derived: (node) => readDerivedSides(node, nativeEngine.diagnostics.lineGapsOf) };
 	// The kinds the renderer can handle are those with an emitted body.
 	const ruleKinds = deriveRuleKinds(grammar);
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
@@ -903,7 +913,7 @@ export async function validateReadRenderParse(
 									kind: 'render',
 									grammar,
 									pattern: renderedKind,
-									input: selfContainedRenderInput(data, entry.source, isLeafKind, triviaOf),
+									input: selfContainedRenderInput(data, entry.source, isLeafKind, view),
 									expectedOutput: rendered
 								});
 								options.onFixture({

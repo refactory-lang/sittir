@@ -414,8 +414,9 @@ pub struct LineGap {
 }
 
 /// The line-break runs a node owns, in source order on each side, and the
-/// owner the leading runs separate it from: the sibling owner before it, or
-/// none when it is its parent's first.
+/// owner before it among its siblings: the sibling owner before the outermost
+/// node spanning exactly its bytes (a list item's wrapper holds the item's
+/// neighbours, not the item), or none when that node is its parent's first.
 #[derive(Debug, Clone, Default, PartialEq, Eq, serde::Serialize)]
 pub struct LineGaps {
     pub leading: Vec<LineGap>,
@@ -454,9 +455,14 @@ pub fn line_gaps(
             }
         }
     };
+    let outer = outermost_same_span(node);
+    if outer.parent().is_some_and(|up| up.start_byte() != outer.start_byte()) {
+        gaps.previous = extras_run(outer, |n| n.prev_sibling(), model)
+            .1
+            .map(|p| Span { start: p.start_byte() as u32, end: p.end_byte() as u32 });
+    }
     if parent.start_byte() != node.start_byte() {
         let (before, prev) = extras_run(node, |n| n.prev_sibling(), model);
-        gaps.previous = prev.map(|p| Span { start: p.start_byte() as u32, end: p.end_byte() as u32 });
         let bound = prev_end(node, parent);
         let mut start = bound;
         let mut owned = Vec::new();
@@ -507,6 +513,19 @@ pub fn node_at_span<'t>(tree: &'t tree_sitter::Tree, start: usize, end: usize, k
         found
     }
     search(tree.root_node(), start, end, kind)
+}
+
+/// The outermost node spanning exactly the bytes `node` spans: the node
+/// itself unless a wrapper holds it alone.
+fn outermost_same_span(node: tree_sitter::Node<'_>) -> tree_sitter::Node<'_> {
+    let mut outer = node;
+    while let Some(up) = outer.parent() {
+        if up.start_byte() != node.start_byte() || up.end_byte() != node.end_byte() {
+            break;
+        }
+        outer = up;
+    }
+    outer
 }
 
 /// Where the bytes before a node's leading gap end: its previous sibling that
