@@ -22,7 +22,6 @@ describe('selfContainedRenderInput', () => {
 		);
 		expect(out).toEqual({
 			$type: COMPOUND,
-			$span: { start: 0, end: 4 },
 			_name: { $type: LEAF, $span: { start: 0, end: 2 }, $text: 'ab' }
 		});
 	});

@@ -463,7 +463,7 @@ mod tests {
     }
 
     fn after_and_before(source: &str, second_gap: Option<(u32, u32)>) -> (Option<u16>, Option<u16>) {
-        let gap = second_gap.map(|(start, end)| SourceGap { handle: encode_handle(3, 0), span: Span { start, end } });
+        let gap = second_gap.map(|(start, end)| SourceGap::Range { handle: encode_handle(3, 0), span: Span { start, end } });
         filled(source, gap)
     }
 
@@ -526,6 +526,12 @@ mod tests {
 
     /// The flank arms a list spanning `list` in `source` takes, with the flanks the transport kept.
     fn flanks(source: &str, list: &str, before: bool, after: bool) -> (Option<u16>, Option<u16>) {
+        let start = source.find(list).unwrap() as u32;
+        let span = Span { start, end: start + list.len() as u32 };
+        flanks_from(source, crate::slot::FlankSource::Tree(encode_handle(3, 0)), span, before, after)
+    }
+
+    fn flanks_from(source: &str, from: crate::slot::FlankSource, span: Span, before: bool, after: bool) -> (Option<u16>, Option<u16>) {
         use crate::options::{EdgeSite, SiteSpec};
         use crate::slot::SourceFlank;
         static EDGES: [EdgeSite; 1] = [EdgeSite { before: 0, after: 1 }];
@@ -540,10 +546,8 @@ mod tests {
             ..ResolvedOptions::default()
         };
         let ctx = RenderContext { options: &options, sources: &sources };
-        let start = source.find(list).unwrap() as u32;
-        let span = Span { start, end: start + list.len() as u32 };
         let flank = SourceFlank {
-            handle: encode_handle(3, 0),
+            source: from,
             span,
             before,
             after,
@@ -573,6 +577,22 @@ mod tests {
     #[test]
     fn a_same_line_list_keeps_its_tight_flanks() {
         assert_eq!(flanks("f(a, b)", "a, b", true, true), (Some(TIGHT), Some(TIGHT)));
+    }
+
+    #[test]
+    fn a_detached_window_from_the_openers_line_to_the_closer_classifies_as_its_tree_does() {
+        let source = "fn g() {\n    f(\n        a,\n        b\n    );\n}\n";
+        let list = "a,\n        b";
+        let start = source.find(list).unwrap();
+        let window_start = source[..start].trim_end().rfind('\n').map_or(0, |i| i + 1);
+        let closer = start + list.len() + source[start + list.len()..].find(')').unwrap();
+        let window = &source[window_start..=closer];
+        let relative = Span { start: (start - window_start) as u32, end: (start - window_start + list.len()) as u32 };
+        assert_eq!(
+            flanks_from("", crate::slot::FlankSource::Text(window.to_string()), relative, true, true),
+            flanks(source, list, true, true)
+        );
+        assert_eq!(flanks(source, list, true, true), (Some(INDENT), Some(DEDENT)));
     }
 
     #[test]

@@ -482,6 +482,10 @@ Every trivia side is walked (leading, trailing and inner), and a node found in a
 // factory-rt failures.
 ```
 
+### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.python.expression`
+
+A python expression fragment is reparsed inside brackets, `_ = (…)`. A node's render is its own bytes, laid out for the context it was read in, and python allows a line break inside an expression only within brackets (implicit line joining). A fragment read from inside brackets, such as a `concatenated_string` whose strings sit on separate lines, is valid only in a bracketed context. The parentheses supply that context for every expression fragment, and the reparsed node at the fragment's offset is still the fragment itself.
+
 ### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.typescript.interface_body`
 
 ```text
@@ -1346,6 +1350,8 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
 A wrapped tree as plain data with no coordinates: `materialize` resolves every accessor, then `detachCoordinates` drops what would tie the data to the tree it was read from. It is the input for a render that must not slice that tree: the probe's trace, read-render-parse's deep mode and the detached-render tests.
 
 Detaching removes the hold on the tree with the coordinates, and a leaf whose slots are projected from its text keeps a text-only coordinate that a render still slices. The result is therefore given the tree of the root it was made from (`holdingTreeOf`), so it renders for as long as it is held.
+
+Each copied node keeps the source identity of the node it copies (`carrySource`), as a live rebuild does. A copy is not sliced, but its list gaps, list flanks and derived line-gap runs are still classified from the source, so the validator's render follows the source layout the way an edit would, rather than falling back to canonical.
 
 ### `packages/tools/src/validate/common.ts::holdingTreeOf`
 

@@ -3,6 +3,10 @@ import type { AnyUntypedNode } from '@sittir/types';
 import { carryTree } from '@sittir/common/utils';
 import { loadNativeEngine, readNodeOf, materializeDetached, readNativeTree } from '../common.ts';
 import { detachedRenderer } from './helpers/detached-renderer.ts';
+import { createEngine } from '@sittir/common';
+import { languageByName } from '../../languages.ts';
+
+const rust = await createEngine(await languageByName('rust'));
 
 describe('read trivia layout, rendered detached', () => {
 	it('keeps a same-line line comment on its line and breaks once after it', async () => {
@@ -50,13 +54,13 @@ describe('read trivia layout, rendered detached', () => {
 		expect((await detachedRenderer('rust'))('fn g() {} /* t */\n\nfn h() {}')).toBe('fn g() {} /* t */\n\nfn h() {}\n');
 	});
 
-	it("detached read seats an own-line comment as the next owner's leading entry", async () => {
+	it('detached read keeps an own-line comment between items in its source layout', async () => {
 		const rust = await detachedRenderer('rust');
-		expect(rust('fn g() {}\n/* t */\n\nfn h() {}')).toBe('fn g() {}\n\n/* t */\nfn h() {}\n');
-		expect(rust('fn g() {}\n// t\n\nfn h() {}')).toBe('fn g() {}\n\n// t\nfn h() {}\n');
+		expect(rust('fn g() {}\n/* t */\n\nfn h() {}')).toBe('fn g() {}\n/* t */\n\nfn h() {}\n');
+		expect(rust('fn g() {}\n// t\n\nfn h() {}')).toBe('fn g() {}\n// t\n\nfn h() {}\n');
 		const typescript = await detachedRenderer('typescript');
-		expect(typescript('a;\n/* c */\n\nb;')).toBe('a;\n\n/* c */\nb;\n');
-		expect(typescript('a;\n// c\n\nb;')).toBe('a;\n\n// c\nb;\n');
+		expect(typescript('a;\n/* c */\n\nb;')).toBe('a;\n/* c */\n\nb;\n');
+		expect(typescript('a;\n// c\n\nb;')).toBe('a;\n// c\n\nb;\n');
 	});
 
 	it('lays root entries one per line, since the root gap starts a line', async () => {
@@ -92,5 +96,26 @@ describe('an ERROR node, rendered detached', () => {
 		expect(render('from a import (  # c\n    *)\n')).toBe('from a import (  # c\n    *)\n');
 		expect(render('x = 1 $ 2\n')).toBe('x = 1 $ 2\n');
 		expect(render('x = 1\n@@@\ny = 2\n')).toBe('x = 1\n@@@\ny = 2\n');
+	});
+});
+
+describe('a list, rendered detached', () => {
+	it('keeps the source flanks and gaps of a multi-line argument list', async () => {
+		const source = 'fn f() {\n    g(\n        a,\n        b\n    );\n}\n';
+		expect((await detachedRenderer('rust'))(source)).toBe(source);
+	});
+});
+
+describe('a detached copy of a read node', () => {
+	const renderCopy = async (node: unknown): Promise<string> => (await loadNativeEngine('rust')).render(materializeDetached(node)).toString();
+
+	it('renders a copied multi-line parameter list with its source breaks and depth', async () => {
+		const item = rust.parse('fn f(\n    a: u8,\n    b: i32\n) {}\n').statements()[0];
+		if (item === undefined || typeof item === 'number' || !rust.is.functionItem(item)) throw new Error('expected a function item');
+		expect(await renderCopy(item.parameters())).toBe('(\n    a: u8,\n    b: i32\n)');
+	});
+
+	it('renders a copied function item with the block comment before it', async () => {
+		expect(await renderCopy(rust.parse('\n/* plain block comment */\nfn main() {}\n').statements()[0])).toBe('/* plain block comment */\nfn main() {}');
 	});
 });

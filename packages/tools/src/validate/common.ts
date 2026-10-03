@@ -3,7 +3,7 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createEngine, detachCoordinates, dumpMetrics, sliceSpan } from '@sittir/common';
-import { carryRead, holdTree, readDerivedSides, readTrivia, treeTokenOf, type TriviaView } from '@sittir/common/utils';
+import { carryRead, carrySource, holdTree, readDerivedSides, readTrivia, treeTokenOf, type TriviaView } from '@sittir/common/utils';
 import {
 	hydrateStub,
 	isStub,
@@ -546,7 +546,7 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		lhs_expression: (r) => `(${r} = null);`
 	},
 	python: {
-		expression: (r) => `_ = ${r}`,
+		expression: (r) => `_ = (${r})`,
 		type: (r) => `_: ${r} = None`,
 		pattern: (r) => `for ${r} in _: pass`,
 		simple_statement: (r) => r,
@@ -1017,6 +1017,7 @@ function materializeValue(value: unknown, onAccessorThrow?: (rec: AccessorThrowR
 		}
 		materialized[key] = materializeValue(raw, onAccessorThrow);
 	}
+	carrySource(value, materialized);
 	return carryRead(value, materialized);
 }
 

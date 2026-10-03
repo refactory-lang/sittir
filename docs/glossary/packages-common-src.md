@@ -285,7 +285,7 @@ The source range a list item sends as `$_gap`: from its source predecessor's end
 
 ### `packages/common/src/transport-data.ts::listItemsOf`
 
-The items of a list node: the one array a kind a rebuild constructs around existing nodes (`TriviaView.isWrapper`) holds as its only present node or array storage. A group around one node holds a node and is not a list node; a kind holding an array beside another node (an item's attribute list beside the item) is not one either.
+The items of a list node: the one array a kind a rebuild constructs around existing nodes (`TriviaView.isWrapper`) holds as its only present slot node or array. Its unslotted children (`$other`), such as the separators of a read list, are not slots and do not count. A group around one node holds a node and is not a list node; a kind holding an array beside another node (an item's attribute list beside the item) is not one either.
 
 ### `packages/common/src/transport-data.ts::sourceFlankOf`
 
@@ -294,6 +294,10 @@ A list node's flanks as the transport sends them (`$_flank`): the tree handle an
 ### `packages/common/src/transport-data.ts::SourceFlankEvidence`
 
 The `$_flank` wire shape: `$treeHandle`, `$span`, `$before`, `$after`.
+
+### `packages/common/src/transport-data.ts::toDetachedTransportData`
+
+The transport for data leaving the tree it was read from, such as a render fixture's input. It is the same walk as `toTransportData`: each entry's changed edges, the trivia that crosses, the bearer a rebuilt wrapper's edges pass to, the gaps and the flanks are all judged the same way, so a detached render lays out what a live render of the same data does. The one difference is that no node folds to a coordinate, and trivia coordinates are not asserted to hold their tree, because the caller turns every range into the text it names before the data leaves.
 
 ### `packages/common/src/transport-data.ts::crossingTrivia`
 
@@ -304,7 +308,7 @@ A node's trivia as it crosses: without the runs whose neighbour changed (`withou
 The node whose source identity stands for a list entry. A rebuild constructs some wrappers afresh around the one node they hold (an alias envelope, or a kind enrich mints, such as rust's `_attributed_parameter` around each parameter), so the entry itself has no source; the node it holds does. Two conditions, one per fact:
 
 - the entry's kind is one the view says a rebuild mints around one node (`TriviaView.isWrapper`), a classification stamped per grammar, never guessed from slot names;
-- the entry holds exactly one present node. Slots it leaves empty do not count, so a group whose optional slot is unfilled is still looked through; one holding two nodes is not.
+- the entry holds exactly one present node in its slots. Slots it leaves empty do not count, so a group whose optional slot is unfilled is still looked through; one holding two nodes is not. Its unslotted children (`$other`) never count.
 
 An entry with its own source identity is its own evidence. Adjacency is judged on these nodes on both sides of a gap.
 
@@ -371,6 +375,10 @@ An elements slot's `$with` setter. Its elements are rest arguments, so one array
 ### `packages/common/src/utils.ts::seatWith`
 
 A seated key's `$with` setter. Through a present group it writes the group's own field; with no value it leaves the group absent; with a value it builds an absent group from that field alone when no other field is required, and otherwise throws naming the required fields. A key that spells the seat's slot also takes the whole group.
+
+### `packages/common/src/transport-data.ts::isSlotKey`
+
+Whether a key names one of a node's slots (`_<name>`). Slots are a subset of storage (`isStorageKey`), which also includes the node's unslotted children (`$other`): the anonymous tokens a read keeps, such as a list's separators. A question about the nodes a node holds in its slots counts slots only, so these tokens never count as held nodes. That covers a list node's items (`listItemsOf`) and the one node a rebuilt wrapper stands for (`evidenceOf`). `holdsSlots` and `isStorageKey` are built on it.
 
 ### `packages/common/src/transport-data.ts::isDataKey`
 

@@ -34,20 +34,27 @@ pub struct NodeCoordinate {
 }
 
 /// The bytes between a list item and the item before it, in the source both
-/// were read from, when the two are still adjacent there: the tagged handle of
-/// their tree and the gap's byte range. Evidence of layout only; nothing
-/// slices it into the output.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct SourceGap {
-    pub handle: u64,
-    pub span: Span,
+/// were read from, when the two are still adjacent there. A live render names
+/// them by their tree's tagged handle and byte range; data detached from its
+/// tree carries the bytes themselves. Evidence of layout only; nothing slices
+/// it into the output.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum SourceGap {
+    Range { handle: u64, span: Span },
+    Text(String),
 }
 
 impl SourceGap {
-    /// The gap's bytes, when its tree is still in `sources`.
-    pub fn text<'s>(&self, sources: &'s dyn SourceTable) -> Option<&'s str> {
-        let (tree_id, _) = decode_handle(self.handle);
-        sources.source_of(tree_id)?.get(self.span.start as usize..self.span.end as usize)
+    /// The gap's bytes: the range read from its tree, when the tree is still in
+    /// `sources`, or the text the gap carries.
+    pub fn text<'g>(&'g self, sources: &'g dyn SourceTable) -> Option<&'g str> {
+        match self {
+            SourceGap::Range { handle, span } => {
+                let (tree_id, _) = decode_handle(*handle);
+                sources.source_of(tree_id)?.get(span.start as usize..span.end as usize)
+            }
+            SourceGap::Text(text) => Some(text),
+        }
     }
 }
 
@@ -55,14 +62,17 @@ impl SourceGap {
 impl ::napi::bindgen_prelude::FromNapiValue for SourceGap {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
+        if let Some(text) = obj.get::<String>("$text")? {
+            return Ok(Self::Text(text));
+        }
         let handle = obj
             .get::<f64>("$treeHandle")?
-            .ok_or_else(|| ::napi::Error::from_reason("a source gap names its tree in $treeHandle"))?;
+            .ok_or_else(|| ::napi::Error::from_reason("a source gap names its tree in $treeHandle or carries its $text"))?;
         let handle = crate::napi_engine::checked_index(handle, "$treeHandle")?;
         let span: Span = obj
             .get("$span")?
             .ok_or_else(|| ::napi::Error::from_reason(format!("source gap in tree {handle} carries no $span")))?;
-        Ok(Self { handle, span })
+        Ok(Self::Range { handle, span })
     }
 }
 
@@ -73,22 +83,35 @@ impl ::napi::bindgen_prelude::ToNapiValue for SourceGap {
     }
 }
 
-/// A list node's flanks in the source it was read from: the tagged handle of
-/// its tree, the node's span there, and which flanks the transport kept, each
-/// only while the list's edge item is still the source's edge item. Evidence
-/// of layout only; nothing slices it into the output.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+/// A list node's flanks in the source it was read from: the source, the
+/// node's span in it, and which flanks the transport kept, each only while the
+/// list's edge item is still the source's edge item. Evidence of layout only;
+/// nothing slices it into the output.
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SourceFlank {
-    pub handle: u64,
+    pub source: FlankSource,
     pub span: Span,
     pub before: bool,
     pub after: bool,
 }
 
+/// The source a flank's span counts into. A live render names the tree by its
+/// tagged handle; data detached from its tree carries a window of the source
+/// itself, from the start of the opener's line to the closer.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum FlankSource {
+    Tree(u64),
+    Text(String),
+}
+
 impl SourceFlank {
-    /// The source `span` counts into, when the tree is still in `sources`.
-    pub fn source<'s>(&self, sources: &'s dyn SourceTable) -> Option<&'s str> {
-        sources.source_of(decode_handle(self.handle).0).map(|source| &**source)
+    /// The source `span` counts into: the tree's, when it is still in
+    /// `sources`, or the window the flank carries.
+    pub fn source<'f>(&'f self, sources: &'f dyn SourceTable) -> Option<&'f str> {
+        match &self.source {
+            FlankSource::Tree(handle) => sources.source_of(decode_handle(*handle).0).map(|source| &**source),
+            FlankSource::Text(text) => Some(text),
+        }
     }
 }
 
@@ -96,15 +119,20 @@ impl SourceFlank {
 impl ::napi::bindgen_prelude::FromNapiValue for SourceFlank {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        let handle = obj
-            .get::<f64>("$treeHandle")?
-            .ok_or_else(|| ::napi::Error::from_reason("source flanks name their tree in $treeHandle"))?;
-        let handle = crate::napi_engine::checked_index(handle, "$treeHandle")?;
+        let source = match obj.get::<String>("$text")? {
+            Some(text) => FlankSource::Text(text),
+            None => {
+                let handle = obj
+                    .get::<f64>("$treeHandle")?
+                    .ok_or_else(|| ::napi::Error::from_reason("source flanks name their tree in $treeHandle or carry its $text"))?;
+                FlankSource::Tree(crate::napi_engine::checked_index(handle, "$treeHandle")?)
+            }
+        };
         let span: Span = obj
             .get("$span")?
             .ok_or_else(|| ::napi::Error::from_reason("source flanks carry no $span"))?;
         Ok(Self {
-            handle,
+            source,
             span,
             before: obj.get::<bool>("$before")?.unwrap_or(false),
             after: obj.get::<bool>("$after")?.unwrap_or(false),
