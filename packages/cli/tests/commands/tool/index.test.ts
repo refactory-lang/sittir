@@ -13,6 +13,7 @@ const EXPECTED = [
 	'classify',
 	'codemod-corpus',
 	'corpus-coverage-census',
+	'default-diff',
 	'defect-histogram',
 	'diff-failures',
 	'dump-ast-mismatches',

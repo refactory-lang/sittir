@@ -11,6 +11,7 @@ import { checkBaseline } from './check-baseline.ts';
 import { checkPerf } from './check-perf.ts';
 import { classify } from './classify.ts';
 import { codemodCorpus } from './codemod-corpus.ts';
+import { defaultDiff } from './default-diff.ts';
 import { corpusCoverageCensus } from './corpus-coverage-census.ts';
 import { defectHistogram } from './defect-histogram.ts';
 import { diffFailures } from './diff-failures.ts';
@@ -56,6 +57,7 @@ export const toolModules: readonly CommandModule[] = [
 	classify,
 	codemodCorpus,
 	corpusCoverageCensus,
+	defaultDiff,
 	defectHistogram,
 	diffFailures,
 	dumpAstMismatches,

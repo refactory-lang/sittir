@@ -259,7 +259,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "async fn abc() {}\n\nasync fn main() {\n    let x = futures.await ?;\n}\n"
+    "expectedOutput": "async fn abc() {}\n\nasync fn main() {\n    let x = futures.await?;\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -267,9 +267,9 @@
     "sourceIn": "\nasync fn abc() {}\n\nasync fn main() {\n    let x = futures.await?;\n}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "async fn abc() {}\n\nasync fn main() {\n    let x = futures.await ?;\n}\n",
+    "expectedSourceOut": "async fn abc() {}\n\nasync fn main() {\n    let x = futures.await?;\n}\n",
     "expectedReparseTree": "(source_file statements: (function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) body: (block statements: (let_declaration pattern: (identifier) value: (try_expression value: (await_expression expression: (identifier)))))))",
-    "wrappedText": "async fn abc() {}\n\nasync fn main() {\n    let x = futures.await ?;\n}\n",
+    "wrappedText": "async fn abc() {}\n\nasync fn main() {\n    let x = futures.await?;\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -533,7 +533,7 @@
         "body"
       ]
     },
-    "expectedOutput": "async fn main() {\n    let x = futures.await ?;\n}"
+    "expectedOutput": "async fn main() {\n    let x = futures.await?;\n}"
   },
   {
     "kind": "roundtrip",
@@ -541,9 +541,9 @@
     "sourceIn": "async fn main() {\n    let x = futures.await?;\n}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "async fn main() {\n    let x = futures.await ?;\n}",
+    "expectedSourceOut": "async fn main() {\n    let x = futures.await?;\n}",
     "expectedReparseTree": "(function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) body: (block statements: (let_declaration pattern: (identifier) value: (try_expression value: (await_expression expression: (identifier))))))",
-    "wrappedText": "async fn main() {\n    let x = futures.await ?;\n}",
+    "wrappedText": "async fn main() {\n    let x = futures.await?;\n}",
     "wrappedOffset": 0
   },
   {
@@ -761,7 +761,7 @@
         }
       ]
     },
-    "expectedOutput": "{\n    let x = futures.await ?;\n}"
+    "expectedOutput": "{\n    let x = futures.await?;\n}"
   },
   {
     "kind": "roundtrip",
@@ -769,9 +769,9 @@
     "sourceIn": "{\n    let x = futures.await?;\n}",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{\n    let x = futures.await ?;\n}",
+    "expectedSourceOut": "{\n    let x = futures.await?;\n}",
     "expectedReparseTree": "(block statements: (let_declaration pattern: (identifier) value: (try_expression value: (await_expression expression: (identifier)))))",
-    "wrappedText": "fn _f() { let _ = {\n    let x = futures.await ?;\n}; }",
+    "wrappedText": "fn _f() { let _ = {\n    let x = futures.await?;\n}; }",
     "wrappedOffset": 18
   },
   {
@@ -877,7 +877,7 @@
         "value"
       ]
     },
-    "expectedOutput": "let x = futures.await ?;"
+    "expectedOutput": "let x = futures.await?;"
   },
   {
     "kind": "roundtrip",
@@ -885,9 +885,9 @@
     "sourceIn": "let x = futures.await?;",
     "pattern": "let_declaration",
     "edits": [],
-    "expectedSourceOut": "let x = futures.await ?;",
+    "expectedSourceOut": "let x = futures.await?;",
     "expectedReparseTree": "(let_declaration pattern: (identifier) value: (try_expression value: (await_expression expression: (identifier))))",
-    "wrappedText": "let x = futures.await ?;",
+    "wrappedText": "let x = futures.await?;",
     "wrappedOffset": 0
   },
   {
@@ -945,7 +945,7 @@
         }
       ]
     },
-    "expectedOutput": "futures.await ?"
+    "expectedOutput": "futures.await?"
   },
   {
     "kind": "roundtrip",
@@ -953,9 +953,9 @@
     "sourceIn": "futures.await?",
     "pattern": "try_expression",
     "edits": [],
-    "expectedSourceOut": "futures.await ?",
+    "expectedSourceOut": "futures.await?",
     "expectedReparseTree": "(try_expression value: (await_expression expression: (identifier)))",
-    "wrappedText": "fn _f() { let _ = futures.await ?; }",
+    "wrappedText": "fn _f() { let _ = futures.await?; }",
     "wrappedOffset": 18
   },
   {
@@ -1448,7 +1448,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "futures.await;\nfutures.await ?;\nfutures.await ?.await ?;\nfutures.await ?.function().await ?;\n"
+    "expectedOutput": "futures.await;\nfutures.await?;\nfutures.await?.await?;\nfutures.await?.function().await?;\n"
   },
   {
     "kind": "roundtrip",
@@ -1456,9 +1456,9 @@
     "sourceIn": "\nfutures.await;\nfutures.await?;\nfutures.await?.await?;\nfutures.await?.function().await?;\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "futures.await;\nfutures.await ?;\nfutures.await ?.await ?;\nfutures.await ?.function().await ?;\n",
+    "expectedSourceOut": "futures.await;\nfutures.await?;\nfutures.await?.await?;\nfutures.await?.function().await?;\n",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (await_expression expression: (identifier)))) statements: (expression_statement (expression_statement_with_semi expression: (try_expression value: (await_expression expression: (identifier))))) statements: (expression_statement (expression_statement_with_semi expression: (try_expression value: (await_expression expression: (try_expression value: (await_expression expression: (identifier))))))) statements: (expression_statement (expression_statement_with_semi expression: (try_expression value: (await_expression expression: (call_expression function: (field_expression value: (try_expression value: (await_expression expression: (identifier))) field: (field_identifier)) arguments: (arguments)))))))",
-    "wrappedText": "futures.await;\nfutures.await ?;\nfutures.await ?.await ?;\nfutures.await ?.function().await ?;\n",
+    "wrappedText": "futures.await;\nfutures.await?;\nfutures.await?.await?;\nfutures.await?.function().await?;\n",
     "wrappedOffset": 0
   },
   {
@@ -1645,7 +1645,7 @@
         }
       ]
     },
-    "expectedOutput": "futures.await ?.await"
+    "expectedOutput": "futures.await?.await"
   },
   {
     "kind": "roundtrip",
@@ -1653,9 +1653,9 @@
     "sourceIn": "futures.await?.await",
     "pattern": "await_expression",
     "edits": [],
-    "expectedSourceOut": "futures.await ?.await",
+    "expectedSourceOut": "futures.await?.await",
     "expectedReparseTree": "(await_expression expression: (try_expression value: (await_expression expression: (identifier))))",
-    "wrappedText": "fn _f() { let _ = futures.await ?.await; }",
+    "wrappedText": "fn _f() { let _ = futures.await?.await; }",
     "wrappedOffset": 18
   },
   {
@@ -1844,7 +1844,7 @@
         }
       ]
     },
-    "expectedOutput": "futures.await ?.function().await"
+    "expectedOutput": "futures.await?.function().await"
   },
   {
     "kind": "roundtrip",
@@ -1852,9 +1852,9 @@
     "sourceIn": "futures.await?.function().await",
     "pattern": "await_expression",
     "edits": [],
-    "expectedSourceOut": "futures.await ?.function().await",
+    "expectedSourceOut": "futures.await?.function().await",
     "expectedReparseTree": "(await_expression expression: (call_expression function: (field_expression value: (try_expression value: (await_expression expression: (identifier))) field: (field_identifier)) arguments: (arguments)))",
-    "wrappedText": "fn _f() { let _ = futures.await ?.function().await; }",
+    "wrappedText": "fn _f() { let _ = futures.await?.function().await; }",
     "wrappedOffset": 18
   },
   {
@@ -1964,7 +1964,7 @@
         }
       ]
     },
-    "expectedOutput": "futures.await ?"
+    "expectedOutput": "futures.await?"
   },
   {
     "kind": "roundtrip",
@@ -1972,9 +1972,9 @@
     "sourceIn": "futures.await?",
     "pattern": "try_expression",
     "edits": [],
-    "expectedSourceOut": "futures.await ?",
+    "expectedSourceOut": "futures.await?",
     "expectedReparseTree": "(try_expression value: (await_expression expression: (identifier)))",
-    "wrappedText": "fn _f() { let _ = futures.await ?; }",
+    "wrappedText": "fn _f() { let _ = futures.await?; }",
     "wrappedOffset": 18
   },
   {
@@ -2073,7 +2073,7 @@
         }
       ]
     },
-    "expectedOutput": "futures.await ?.await ?"
+    "expectedOutput": "futures.await?.await?"
   },
   {
     "kind": "roundtrip",
@@ -2081,9 +2081,9 @@
     "sourceIn": "futures.await?.await?",
     "pattern": "try_expression",
     "edits": [],
-    "expectedSourceOut": "futures.await ?.await ?",
+    "expectedSourceOut": "futures.await?.await?",
     "expectedReparseTree": "(try_expression value: (await_expression expression: (try_expression value: (await_expression expression: (identifier)))))",
-    "wrappedText": "fn _f() { let _ = futures.await ?.await ?; }",
+    "wrappedText": "fn _f() { let _ = futures.await?.await?; }",
     "wrappedOffset": 18
   },
   {
@@ -2141,7 +2141,7 @@
         }
       ]
     },
-    "expectedOutput": "futures.await ?"
+    "expectedOutput": "futures.await?"
   },
   {
     "kind": "roundtrip",
@@ -2149,9 +2149,9 @@
     "sourceIn": "futures.await?",
     "pattern": "try_expression",
     "edits": [],
-    "expectedSourceOut": "futures.await ?",
+    "expectedSourceOut": "futures.await?",
     "expectedReparseTree": "(try_expression value: (await_expression expression: (identifier)))",
-    "wrappedText": "fn _f() { let _ = futures.await ?; }",
+    "wrappedText": "fn _f() { let _ = futures.await?; }",
     "wrappedOffset": 18
   },
   {
@@ -2304,7 +2304,7 @@
         }
       ]
     },
-    "expectedOutput": "futures.await ?.function().await ?"
+    "expectedOutput": "futures.await?.function().await?"
   },
   {
     "kind": "roundtrip",
@@ -2312,9 +2312,9 @@
     "sourceIn": "futures.await?.function().await?",
     "pattern": "try_expression",
     "edits": [],
-    "expectedSourceOut": "futures.await ?.function().await ?",
+    "expectedSourceOut": "futures.await?.function().await?",
     "expectedReparseTree": "(try_expression value: (await_expression expression: (call_expression function: (field_expression value: (try_expression value: (await_expression expression: (identifier))) field: (field_identifier)) arguments: (arguments))))",
-    "wrappedText": "fn _f() { let _ = futures.await ?.function().await ?; }",
+    "wrappedText": "fn _f() { let _ = futures.await?.function().await?; }",
     "wrappedOffset": 18
   },
   {
@@ -2372,7 +2372,7 @@
         }
       ]
     },
-    "expectedOutput": "futures.await ?"
+    "expectedOutput": "futures.await?"
   },
   {
     "kind": "roundtrip",
@@ -2380,9 +2380,9 @@
     "sourceIn": "futures.await?",
     "pattern": "try_expression",
     "edits": [],
-    "expectedSourceOut": "futures.await ?",
+    "expectedSourceOut": "futures.await?",
     "expectedReparseTree": "(try_expression value: (await_expression expression: (identifier)))",
-    "wrappedText": "fn _f() { let _ = futures.await ?; }",
+    "wrappedText": "fn _f() { let _ = futures.await?; }",
     "wrappedOffset": 18
   },
   {
@@ -2494,7 +2494,7 @@
         "arguments"
       ]
     },
-    "expectedOutput": "futures.await ?.function()"
+    "expectedOutput": "futures.await?.function()"
   },
   {
     "kind": "roundtrip",
@@ -2502,9 +2502,9 @@
     "sourceIn": "futures.await?.function()",
     "pattern": "call_expression",
     "edits": [],
-    "expectedSourceOut": "futures.await ?.function()",
+    "expectedSourceOut": "futures.await?.function()",
     "expectedReparseTree": "(call_expression function: (field_expression value: (try_expression value: (await_expression expression: (identifier))) field: (field_identifier)) arguments: (arguments))",
-    "wrappedText": "fn _f() { let _ = futures.await ?.function(); }",
+    "wrappedText": "fn _f() { let _ = futures.await?.function(); }",
     "wrappedOffset": 18
   },
   {
@@ -2597,7 +2597,7 @@
         "field"
       ]
     },
-    "expectedOutput": "futures.await ?.function"
+    "expectedOutput": "futures.await?.function"
   },
   {
     "kind": "roundtrip",
@@ -2605,9 +2605,9 @@
     "sourceIn": "futures.await?.function",
     "pattern": "field_expression",
     "edits": [],
-    "expectedSourceOut": "futures.await ?.function",
+    "expectedSourceOut": "futures.await?.function",
     "expectedReparseTree": "(field_expression value: (try_expression value: (await_expression expression: (identifier))) field: (field_identifier))",
-    "wrappedText": "fn _f() { let _ = futures.await ?.function; }",
+    "wrappedText": "fn _f() { let _ = futures.await?.function; }",
     "wrappedOffset": 18
   },
   {
@@ -8693,7 +8693,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "fn main() {}\n\nfn add(x: i32, y: i32) -> i32 {\n    return x + y;\n}\n\nfn takes_slice(slice: &str) {\n    println!(\"Got: {}\", slice);\n}\n\nfn foo() -> [u32; 2] {\n    return [1, 2];\n}\n\nfn foo() -> (u32, u16) {\n    return (1, 2);\n}\n\nfn foo() {\n    return\n}\n\nfn foo(x: impl FnOnce() -> result::Result<T, E>) {}\n\nfn foo(#[attr] x: i32, #[attr] x: i64) {}\n\nfn accumulate(self) -> Machine<{\n    State::Accumulate\n}> {}\n\nfn foo(bar: impl for <'a> Baz<Quux<'a>>) {}\n"
+    "expectedOutput": "fn main() {}\n\nfn add(x: i32, y: i32) -> i32 {\n    return x + y;\n}\n\nfn takes_slice(slice: &str) {\n    println!(\"Got: {}\", slice);\n}\n\nfn foo() -> [u32; 2] {\n    return [1, 2];\n}\n\nfn foo() -> (u32, u16) {\n    return (1, 2);\n}\n\nfn foo() {\n    return\n}\n\nfn foo(x: impl FnOnce() -> result::Result<T, E>) {}\n\nfn foo(#[attr] x: i32, #[attr] x: i64) {}\n\nfn accumulate(self) -> Machine<{\n    State::Accumulate\n}> {}\n\nfn foo(bar: impl for<'a> Baz<Quux<'a>>) {}\n"
   },
   {
     "kind": "roundtrip",
@@ -8701,9 +8701,9 @@
     "sourceIn": "\nfn main() {}\n\nfn add(x: i32, y: i32) -> i32 {\n    return x + y;\n}\n\nfn takes_slice(slice: &str) {\n    println!(\"Got: {}\", slice);\n}\n\nfn foo() -> [u32; 2] {\n    return [1, 2];\n}\n\nfn foo() -> (u32, u16) {\n    return (1, 2);\n}\n\nfn foo() {\n    return\n}\n\nfn foo(x: impl FnOnce() -> result::Result<T, E>) {}\n\nfn foo(#[attr] x: i32, #[attr] x: i64) {}\n\nfn accumulate(self) -> Machine<{State::Accumulate}> {}\n\nfn foo(bar: impl for<'a> Baz<Quux<'a>>) {}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "fn main() {}\n\nfn add(x: i32, y: i32) -> i32 {\n    return x + y;\n}\n\nfn takes_slice(slice: &str) {\n    println!(\"Got: {}\", slice);\n}\n\nfn foo() -> [u32; 2] {\n    return [1, 2];\n}\n\nfn foo() -> (u32, u16) {\n    return (1, 2);\n}\n\nfn foo() {\n    return\n}\n\nfn foo(x: impl FnOnce() -> result::Result<T, E>) {}\n\nfn foo(#[attr] x: i32, #[attr] x: i64) {}\n\nfn accumulate(self) -> Machine<{\n    State::Accumulate\n}> {}\n\nfn foo(bar: impl for <'a> Baz<Quux<'a>>) {}\n",
+    "expectedSourceOut": "fn main() {}\n\nfn add(x: i32, y: i32) -> i32 {\n    return x + y;\n}\n\nfn takes_slice(slice: &str) {\n    println!(\"Got: {}\", slice);\n}\n\nfn foo() -> [u32; 2] {\n    return [1, 2];\n}\n\nfn foo() -> (u32, u16) {\n    return (1, 2);\n}\n\nfn foo() {\n    return\n}\n\nfn foo(x: impl FnOnce() -> result::Result<T, E>) {}\n\nfn foo(#[attr] x: i32, #[attr] x: i64) {}\n\nfn accumulate(self) -> Machine<{\n    State::Accumulate\n}> {}\n\nfn foo(bar: impl for<'a> Baz<Quux<'a>>) {}\n",
     "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters) body: (block)) statements: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (primitive_type))) item: (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) return_type: (primitive_type) body: (block statements: (expression_statement (expression_statement_with_semi expression: (return_expression expression: (binary_expression left: (identifier) right: (identifier))))))) statements: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (reference_type type: (primitive_type)))))) body: (block statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))))) statements: (function_item name: (identifier) parameters: (parameters) return_type: (array_type element: (primitive_type) length: (integer_literal_decimal)) body: (block statements: (expression_statement (expression_statement_with_semi expression: (return_expression expression: (array_expression_list elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)) item: (attributed_argument (integer_literal_decimal))))))))) statements: (function_item name: (identifier) parameters: (parameters) return_type: (tuple_type (types item: (primitive_type) item: (primitive_type))) body: (block statements: (expression_statement (expression_statement_with_semi expression: (return_expression expression: (tuple_expression (expressions item: (integer_literal_decimal) item: (integer_literal_decimal)))))))) statements: (function_item name: (identifier) parameters: (parameters) body: (block trailing_expression: (return_expression))) statements: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (abstract_type trait: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters) return_type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier)) item: (type_argument (type_identifier))))))))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter name: (identifier) type: (primitive_type))) item: (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter name: (identifier) type: (primitive_type))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (self_parameter self: (self))))) return_type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier))))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (abstract_type type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) trait: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (lifetime name: (identifier))))))))))))))) body: (block)))",
-    "wrappedText": "fn main() {}\n\nfn add(x: i32, y: i32) -> i32 {\n    return x + y;\n}\n\nfn takes_slice(slice: &str) {\n    println!(\"Got: {}\", slice);\n}\n\nfn foo() -> [u32; 2] {\n    return [1, 2];\n}\n\nfn foo() -> (u32, u16) {\n    return (1, 2);\n}\n\nfn foo() {\n    return\n}\n\nfn foo(x: impl FnOnce() -> result::Result<T, E>) {}\n\nfn foo(#[attr] x: i32, #[attr] x: i64) {}\n\nfn accumulate(self) -> Machine<{\n    State::Accumulate\n}> {}\n\nfn foo(bar: impl for <'a> Baz<Quux<'a>>) {}\n",
+    "wrappedText": "fn main() {}\n\nfn add(x: i32, y: i32) -> i32 {\n    return x + y;\n}\n\nfn takes_slice(slice: &str) {\n    println!(\"Got: {}\", slice);\n}\n\nfn foo() -> [u32; 2] {\n    return [1, 2];\n}\n\nfn foo() -> (u32, u16) {\n    return (1, 2);\n}\n\nfn foo() {\n    return\n}\n\nfn foo(x: impl FnOnce() -> result::Result<T, E>) {}\n\nfn foo(#[attr] x: i32, #[attr] x: i64) {}\n\nfn accumulate(self) -> Machine<{\n    State::Accumulate\n}> {}\n\nfn foo(bar: impl for<'a> Baz<Quux<'a>>) {}\n",
     "wrappedOffset": 0
   },
   {
@@ -11333,7 +11333,7 @@
         "body"
       ]
     },
-    "expectedOutput": "fn foo(bar: impl for <'a> Baz<Quux<'a>>) {}"
+    "expectedOutput": "fn foo(bar: impl for<'a> Baz<Quux<'a>>) {}"
   },
   {
     "kind": "roundtrip",
@@ -11341,9 +11341,9 @@
     "sourceIn": "fn foo(bar: impl for<'a> Baz<Quux<'a>>) {}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn foo(bar: impl for <'a> Baz<Quux<'a>>) {}",
+    "expectedSourceOut": "fn foo(bar: impl for<'a> Baz<Quux<'a>>) {}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (abstract_type type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) trait: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (lifetime name: (identifier))))))))))))))) body: (block))",
-    "wrappedText": "fn foo(bar: impl for <'a> Baz<Quux<'a>>) {}",
+    "wrappedText": "fn foo(bar: impl for<'a> Baz<Quux<'a>>) {}",
     "wrappedOffset": 0
   },
   {
@@ -12732,7 +12732,7 @@
         }
       ]
     },
-    "expectedOutput": "(bar: impl for <'a> Baz<Quux<'a>>)"
+    "expectedOutput": "(bar: impl for<'a> Baz<Quux<'a>>)"
   },
   {
     "kind": "roundtrip",
@@ -12740,9 +12740,9 @@
     "sourceIn": "(bar: impl for<'a> Baz<Quux<'a>>)",
     "pattern": "parameters",
     "edits": [],
-    "expectedSourceOut": "(bar: impl for <'a> Baz<Quux<'a>>)",
+    "expectedSourceOut": "(bar: impl for<'a> Baz<Quux<'a>>)",
     "expectedReparseTree": "(parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (abstract_type type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) trait: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (lifetime name: (identifier)))))))))))))))",
-    "wrappedText": "fn _f(bar: impl for <'a> Baz<Quux<'a>>) {}",
+    "wrappedText": "fn _f(bar: impl for<'a> Baz<Quux<'a>>) {}",
     "wrappedOffset": 5
   },
   {
@@ -14489,7 +14489,7 @@
         "type"
       ]
     },
-    "expectedOutput": "bar: impl for <'a> Baz<Quux<'a>>"
+    "expectedOutput": "bar: impl for<'a> Baz<Quux<'a>>"
   },
   {
     "kind": "roundtrip",
@@ -14497,9 +14497,9 @@
     "sourceIn": "bar: impl for<'a> Baz<Quux<'a>>",
     "pattern": "parameter",
     "edits": [],
-    "expectedSourceOut": "bar: impl for <'a> Baz<Quux<'a>>",
+    "expectedSourceOut": "bar: impl for<'a> Baz<Quux<'a>>",
     "expectedReparseTree": "(parameter name: (identifier) type: (abstract_type type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) trait: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (lifetime name: (identifier))))))))))))",
-    "wrappedText": "fn _f(bar: impl for <'a> Baz<Quux<'a>>) {}",
+    "wrappedText": "fn _f(bar: impl for<'a> Baz<Quux<'a>>) {}",
     "wrappedOffset": 6
   },
   {
@@ -16187,7 +16187,7 @@
         "trait"
       ]
     },
-    "expectedOutput": "impl for <'a> Baz<Quux<'a>>"
+    "expectedOutput": "impl for<'a> Baz<Quux<'a>>"
   },
   {
     "kind": "roundtrip",
@@ -16195,9 +16195,9 @@
     "sourceIn": "impl for<'a> Baz<Quux<'a>>",
     "pattern": "abstract_type",
     "edits": [],
-    "expectedSourceOut": "impl for <'a> Baz<Quux<'a>>",
+    "expectedSourceOut": "impl for<'a> Baz<Quux<'a>>",
     "expectedReparseTree": "(abstract_type type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) trait: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (lifetime name: (identifier)))))))))))",
-    "wrappedText": "type _X = impl for <'a> Baz<Quux<'a>>;",
+    "wrappedText": "type _X = impl for<'a> Baz<Quux<'a>>;",
     "wrappedOffset": 10
   },
   {
@@ -31696,7 +31696,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "let Foo::Bar {\n    texts,\n    values, } = foo().bar().await ? else {\n    return Err(index)\n};\n\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};\n"
+    "expectedOutput": "let Foo::Bar {\n    texts,\n    values, } = foo().bar().await? else {\n    return Err(index)\n};\n\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};\n"
   },
   {
     "kind": "roundtrip",
@@ -31704,9 +31704,9 @@
     "sourceIn": "\nlet Foo::Bar {\n    texts,\n    values,\n} = foo().bar().await? else {\n    return Err(index)\n};\n\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "let Foo::Bar {\n    texts,\n    values, } = foo().bar().await ? else {\n    return Err(index)\n};\n\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};\n",
+    "expectedSourceOut": "let Foo::Bar {\n    texts,\n    values, } = foo().bar().await? else {\n    return Err(index)\n};\n\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};\n",
     "expectedReparseTree": "(source_file statements: (let_declaration pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) fields: (struct_pattern_elements item: (field_pattern_shorthand name: (shorthand_field_identifier)) item: (field_pattern_shorthand name: (shorthand_field_identifier)))) value: (try_expression value: (await_expression expression: (call_expression function: (field_expression value: (call_expression function: (identifier) arguments: (arguments)) field: (field_identifier)) arguments: (arguments)))) alternative: (block trailing_expression: (return_expression expression: (call_expression function: (identifier) arguments: (arguments elements: (arguments_elements item: (attributed_argument (identifier)))))))) statements: (let_declaration pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier) alternative: (block statements: (let_declaration pattern: (identifier) value: (identifier) alternative: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments)))) statements: (expression_statement (expression_statement_with_semi expression: (break_expression))))) statements: (expression_statement (expression_statement_with_semi expression: (continue_expression))))))",
-    "wrappedText": "let Foo::Bar {\n    texts,\n    values, } = foo().bar().await ? else {\n    return Err(index)\n};\n\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};\n",
+    "wrappedText": "let Foo::Bar {\n    texts,\n    values, } = foo().bar().await? else {\n    return Err(index)\n};\n\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};\n",
     "wrappedOffset": 0
   },
   {
@@ -32168,7 +32168,7 @@
         "alternative"
       ]
     },
-    "expectedOutput": "let Foo::Bar {\n    texts,\n    values, } = foo().bar().await ? else {\n    return Err(index)\n};"
+    "expectedOutput": "let Foo::Bar {\n    texts,\n    values, } = foo().bar().await? else {\n    return Err(index)\n};"
   },
   {
     "kind": "roundtrip",
@@ -32176,9 +32176,9 @@
     "sourceIn": "let Foo::Bar {\n    texts,\n    values,\n} = foo().bar().await? else {\n    return Err(index)\n};",
     "pattern": "let_declaration",
     "edits": [],
-    "expectedSourceOut": "let Foo::Bar {\n    texts,\n    values, } = foo().bar().await ? else {\n    return Err(index)\n};",
+    "expectedSourceOut": "let Foo::Bar {\n    texts,\n    values, } = foo().bar().await? else {\n    return Err(index)\n};",
     "expectedReparseTree": "(let_declaration pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) fields: (struct_pattern_elements item: (field_pattern_shorthand name: (shorthand_field_identifier)) item: (field_pattern_shorthand name: (shorthand_field_identifier)))) value: (try_expression value: (await_expression expression: (call_expression function: (field_expression value: (call_expression function: (identifier) arguments: (arguments)) field: (field_identifier)) arguments: (arguments)))) alternative: (block trailing_expression: (return_expression expression: (call_expression function: (identifier) arguments: (arguments elements: (arguments_elements item: (attributed_argument (identifier))))))))",
-    "wrappedText": "let Foo::Bar {\n    texts,\n    values, } = foo().bar().await ? else {\n    return Err(index)\n};",
+    "wrappedText": "let Foo::Bar {\n    texts,\n    values, } = foo().bar().await? else {\n    return Err(index)\n};",
     "wrappedOffset": 0
   },
   {
@@ -33195,7 +33195,7 @@
         }
       ]
     },
-    "expectedOutput": "foo().bar().await ?"
+    "expectedOutput": "foo().bar().await?"
   },
   {
     "kind": "roundtrip",
@@ -33203,9 +33203,9 @@
     "sourceIn": "foo().bar().await?",
     "pattern": "try_expression",
     "edits": [],
-    "expectedSourceOut": "foo().bar().await ?",
+    "expectedSourceOut": "foo().bar().await?",
     "expectedReparseTree": "(try_expression value: (await_expression expression: (call_expression function: (field_expression value: (call_expression function: (identifier) arguments: (arguments)) field: (field_identifier)) arguments: (arguments))))",
-    "wrappedText": "fn _f() { let _ = foo().bar().await ?; }",
+    "wrappedText": "fn _f() { let _ = foo().bar().await?; }",
     "wrappedOffset": 18
   },
   {
@@ -80633,7 +80633,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "impl <'a> iter::Iterator for Self::Iter<'a> {}\n\nimpl ConvertTo<i64> for i32 {\n    fn convert(&self) -> i64 {\n        *self as i64\n    }\n}\n"
+    "expectedOutput": "impl<'a> iter::Iterator for Self::Iter<'a> {}\n\nimpl ConvertTo<i64> for i32 {\n    fn convert(&self) -> i64 {\n        *self as i64\n    }\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -80641,9 +80641,9 @@
     "sourceIn": "\nimpl<'a> iter::Iterator for Self::Iter<'a> {\n}\n\nimpl ConvertTo<i64> for i32 {\n    fn convert(&self) -> i64 { *self as i64 }\n}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "impl <'a> iter::Iterator for Self::Iter<'a> {}\n\nimpl ConvertTo<i64> for i32 {\n    fn convert(&self) -> i64 {\n        *self as i64\n    }\n}\n",
+    "expectedSourceOut": "impl<'a> iter::Iterator for Self::Iter<'a> {}\n\nimpl ConvertTo<i64> for i32 {\n    fn convert(&self) -> i64 {\n        *self as i64\n    }\n}\n",
     "expectedReparseTree": "(source_file statements: (impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) trait_clause: (impl_item_positive_clause trait: (scoped_type_identifier path: (identifier) name: (type_identifier))) type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (lifetime name: (identifier)))))) (declaration_list)) statements: (impl_item_body trait_clause: (impl_item_positive_clause trait: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (primitive_type)))))) type: (primitive_type) (declaration_list declarations: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (self_parameter self: (self))))) return_type: (primitive_type) body: (block trailing_expression: (type_cast_expression value: (unary_expression operand: (self)) type: (primitive_type)))))))",
-    "wrappedText": "impl <'a> iter::Iterator for Self::Iter<'a> {}\n\nimpl ConvertTo<i64> for i32 {\n    fn convert(&self) -> i64 {\n        *self as i64\n    }\n}\n",
+    "wrappedText": "impl<'a> iter::Iterator for Self::Iter<'a> {}\n\nimpl ConvertTo<i64> for i32 {\n    fn convert(&self) -> i64 {\n        *self as i64\n    }\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -80946,7 +80946,7 @@
         "declaration_list"
       ]
     },
-    "expectedOutput": "impl <'a> iter::Iterator for Self::Iter<'a> {}"
+    "expectedOutput": "impl<'a> iter::Iterator for Self::Iter<'a> {}"
   },
   {
     "kind": "roundtrip",
@@ -80954,9 +80954,9 @@
     "sourceIn": "impl<'a> iter::Iterator for Self::Iter<'a> {\n}",
     "pattern": "impl_item_body",
     "edits": [],
-    "expectedSourceOut": "impl <'a> iter::Iterator for Self::Iter<'a> {}",
+    "expectedSourceOut": "impl<'a> iter::Iterator for Self::Iter<'a> {}",
     "expectedReparseTree": "(impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) trait_clause: (impl_item_positive_clause trait: (scoped_type_identifier path: (identifier) name: (type_identifier))) type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (lifetime name: (identifier)))))) (declaration_list))",
-    "wrappedText": "impl <'a> iter::Iterator for Self::Iter<'a> {}",
+    "wrappedText": "impl<'a> iter::Iterator for Self::Iter<'a> {}",
     "wrappedOffset": 0
   },
   {
@@ -84824,7 +84824,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "impl <K: Debug + Ord> Debug for OccupiedError<K>;\nimpl <K: Debug + Ord> Display for OccupiedError<K>;\n"
+    "expectedOutput": "impl<K: Debug + Ord> Debug for OccupiedError<K>;\nimpl<K: Debug + Ord> Display for OccupiedError<K>;\n"
   },
   {
     "kind": "roundtrip",
@@ -84832,9 +84832,9 @@
     "sourceIn": "\nimpl<K: Debug + Ord> Debug for OccupiedError<K>;\nimpl<K: Debug + Ord> Display for OccupiedError<K>;\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "impl <K: Debug + Ord> Debug for OccupiedError<K>;\nimpl <K: Debug + Ord> Display for OccupiedError<K>;\n",
+    "expectedSourceOut": "impl<K: Debug + Ord> Debug for OccupiedError<K>;\nimpl<K: Debug + Ord> Display for OccupiedError<K>;\n",
     "expectedReparseTree": "(source_file statements: (impl_item_semi type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier)))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier)))))) statements: (impl_item_semi type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier)))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier)))))))",
-    "wrappedText": "impl <K: Debug + Ord> Debug for OccupiedError<K>;\nimpl <K: Debug + Ord> Display for OccupiedError<K>;\n",
+    "wrappedText": "impl<K: Debug + Ord> Debug for OccupiedError<K>;\nimpl<K: Debug + Ord> Display for OccupiedError<K>;\n",
     "wrappedOffset": 0
   },
   {
@@ -85121,7 +85121,7 @@
         "type"
       ]
     },
-    "expectedOutput": "impl <K: Debug + Ord> Debug for OccupiedError<K>;"
+    "expectedOutput": "impl<K: Debug + Ord> Debug for OccupiedError<K>;"
   },
   {
     "kind": "roundtrip",
@@ -85129,9 +85129,9 @@
     "sourceIn": "impl<K: Debug + Ord> Debug for OccupiedError<K>;",
     "pattern": "impl_item_semi",
     "edits": [],
-    "expectedSourceOut": "impl <K: Debug + Ord> Debug for OccupiedError<K>;",
+    "expectedSourceOut": "impl<K: Debug + Ord> Debug for OccupiedError<K>;",
     "expectedReparseTree": "(impl_item_semi type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier)))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))))",
-    "wrappedText": "impl <K: Debug + Ord> Debug for OccupiedError<K>;",
+    "wrappedText": "impl<K: Debug + Ord> Debug for OccupiedError<K>;",
     "wrappedOffset": 0
   },
   {
@@ -85418,7 +85418,7 @@
         "type"
       ]
     },
-    "expectedOutput": "impl <K: Debug + Ord> Display for OccupiedError<K>;"
+    "expectedOutput": "impl<K: Debug + Ord> Display for OccupiedError<K>;"
   },
   {
     "kind": "roundtrip",
@@ -85426,9 +85426,9 @@
     "sourceIn": "impl<K: Debug + Ord> Display for OccupiedError<K>;",
     "pattern": "impl_item_semi",
     "edits": [],
-    "expectedSourceOut": "impl <K: Debug + Ord> Display for OccupiedError<K>;",
+    "expectedSourceOut": "impl<K: Debug + Ord> Display for OccupiedError<K>;",
     "expectedReparseTree": "(impl_item_semi type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier)))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))))",
-    "wrappedText": "impl <K: Debug + Ord> Display for OccupiedError<K>;",
+    "wrappedText": "impl<K: Debug + Ord> Display for OccupiedError<K>;",
     "wrappedOffset": 0
   },
   {
@@ -91591,7 +91591,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "trait Foo<T: ? Sized> {}\n\nfn univariant(this: &impl ? Sized, that: &(impl LayoutCalculator + ? Sized)) {}\n"
+    "expectedOutput": "trait Foo<T: ?Sized> {}\n\nfn univariant(this: &impl ?Sized, that: &(impl LayoutCalculator + ?Sized)) {}\n"
   },
   {
     "kind": "roundtrip",
@@ -91599,9 +91599,9 @@
     "sourceIn": "\ntrait Foo<T: ?Sized> {\n}\n\nfn univariant(this: &impl ?Sized, that: &(impl LayoutCalculator + ?Sized)) {}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "trait Foo<T: ? Sized> {}\n\nfn univariant(this: &impl ? Sized, that: &(impl LayoutCalculator + ? Sized)) {}\n",
+    "expectedSourceOut": "trait Foo<T: ?Sized> {}\n\nfn univariant(this: &impl ?Sized, that: &(impl LayoutCalculator + ?Sized)) {}\n",
     "expectedReparseTree": "(source_file statements: (trait_item name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (removed_trait_bound type: (type_identifier))))))) body: (declaration_list)) statements: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (reference_type type: (abstract_type trait: (removed_trait_bound type: (type_identifier)))))) item: (attributed_parameter (parameter name: (identifier) type: (reference_type type: (tuple_type (types item: (bounded_type left: (abstract_type trait: (type_identifier)) right: (removed_trait_bound type: (type_identifier)))))))))) body: (block)))",
-    "wrappedText": "trait Foo<T: ? Sized> {}\n\nfn univariant(this: &impl ? Sized, that: &(impl LayoutCalculator + ? Sized)) {}\n",
+    "wrappedText": "trait Foo<T: ?Sized> {}\n\nfn univariant(this: &impl ?Sized, that: &(impl LayoutCalculator + ?Sized)) {}\n",
     "wrappedOffset": 0
   },
   {
@@ -91771,7 +91771,7 @@
         "body"
       ]
     },
-    "expectedOutput": "trait Foo<T: ? Sized> {}"
+    "expectedOutput": "trait Foo<T: ?Sized> {}"
   },
   {
     "kind": "roundtrip",
@@ -91779,9 +91779,9 @@
     "sourceIn": "trait Foo<T: ?Sized> {\n}",
     "pattern": "trait_item",
     "edits": [],
-    "expectedSourceOut": "trait Foo<T: ? Sized> {}",
+    "expectedSourceOut": "trait Foo<T: ?Sized> {}",
     "expectedReparseTree": "(trait_item name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (removed_trait_bound type: (type_identifier))))))) body: (declaration_list))",
-    "wrappedText": "trait Foo<T: ? Sized> {}",
+    "wrappedText": "trait Foo<T: ?Sized> {}",
     "wrappedOffset": 0
   },
   {
@@ -92101,7 +92101,7 @@
         }
       ]
     },
-    "expectedOutput": "<T: ? Sized>"
+    "expectedOutput": "<T: ?Sized>"
   },
   {
     "kind": "roundtrip",
@@ -92109,9 +92109,9 @@
     "sourceIn": "<T: ?Sized>",
     "pattern": "type_parameters",
     "edits": [],
-    "expectedSourceOut": "<T: ? Sized>",
+    "expectedSourceOut": "<T: ?Sized>",
     "expectedReparseTree": "(type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (removed_trait_bound type: (type_identifier)))))))",
-    "wrappedText": "fn _f<T: ? Sized>() {}",
+    "wrappedText": "fn _f<T: ?Sized>() {}",
     "wrappedOffset": 5
   },
   {
@@ -92191,7 +92191,7 @@
         "bounds"
       ]
     },
-    "expectedOutput": "T: ? Sized"
+    "expectedOutput": "T: ?Sized"
   },
   {
     "kind": "roundtrip",
@@ -92199,9 +92199,9 @@
     "sourceIn": "T: ?Sized",
     "pattern": "type_parameter",
     "edits": [],
-    "expectedSourceOut": "T: ? Sized",
+    "expectedSourceOut": "T: ?Sized",
     "expectedReparseTree": "(type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (removed_trait_bound type: (type_identifier))))",
-    "wrappedText": "fn _f<T: ? Sized>() {}",
+    "wrappedText": "fn _f<T: ?Sized>() {}",
     "wrappedOffset": 6
   },
   {
@@ -92239,7 +92239,7 @@
         }
       ]
     },
-    "expectedOutput": "? Sized"
+    "expectedOutput": "?Sized"
   },
   {
     "kind": "roundtrip",
@@ -92247,9 +92247,9 @@
     "sourceIn": "?Sized",
     "pattern": "removed_trait_bound",
     "edits": [],
-    "expectedSourceOut": "? Sized",
+    "expectedSourceOut": "?Sized",
     "expectedReparseTree": "(removed_trait_bound type: (type_identifier))",
-    "wrappedText": "type _X = ? Sized;",
+    "wrappedText": "type _X = ?Sized;",
     "wrappedOffset": 10
   },
   {
@@ -92287,7 +92287,7 @@
         }
       ]
     },
-    "expectedOutput": "? Sized"
+    "expectedOutput": "?Sized"
   },
   {
     "kind": "roundtrip",
@@ -92295,9 +92295,9 @@
     "sourceIn": "?Sized",
     "pattern": "removed_trait_bound",
     "edits": [],
-    "expectedSourceOut": "? Sized",
+    "expectedSourceOut": "?Sized",
     "expectedReparseTree": "(removed_trait_bound type: (type_identifier))",
-    "wrappedText": "type _X = ? Sized;",
+    "wrappedText": "type _X = ?Sized;",
     "wrappedOffset": 10
   },
   {
@@ -92335,7 +92335,7 @@
         }
       ]
     },
-    "expectedOutput": "? Sized"
+    "expectedOutput": "?Sized"
   },
   {
     "kind": "roundtrip",
@@ -92343,9 +92343,9 @@
     "sourceIn": "?Sized",
     "pattern": "removed_trait_bound",
     "edits": [],
-    "expectedSourceOut": "? Sized",
+    "expectedSourceOut": "?Sized",
     "expectedReparseTree": "(removed_trait_bound type: (type_identifier))",
-    "wrappedText": "type _X = ? Sized;",
+    "wrappedText": "type _X = ?Sized;",
     "wrappedOffset": 10
   },
   {
@@ -92718,7 +92718,7 @@
         "body"
       ]
     },
-    "expectedOutput": "fn univariant(this: &impl ? Sized, that: &(impl LayoutCalculator + ? Sized)) {}"
+    "expectedOutput": "fn univariant(this: &impl ?Sized, that: &(impl LayoutCalculator + ?Sized)) {}"
   },
   {
     "kind": "roundtrip",
@@ -92726,9 +92726,9 @@
     "sourceIn": "fn univariant(this: &impl ?Sized, that: &(impl LayoutCalculator + ?Sized)) {}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn univariant(this: &impl ? Sized, that: &(impl LayoutCalculator + ? Sized)) {}",
+    "expectedSourceOut": "fn univariant(this: &impl ?Sized, that: &(impl LayoutCalculator + ?Sized)) {}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (reference_type type: (abstract_type trait: (removed_trait_bound type: (type_identifier)))))) item: (attributed_parameter (parameter name: (identifier) type: (reference_type type: (tuple_type (types item: (bounded_type left: (abstract_type trait: (type_identifier)) right: (removed_trait_bound type: (type_identifier)))))))))) body: (block))",
-    "wrappedText": "fn univariant(this: &impl ? Sized, that: &(impl LayoutCalculator + ? Sized)) {}",
+    "wrappedText": "fn univariant(this: &impl ?Sized, that: &(impl LayoutCalculator + ?Sized)) {}",
     "wrappedOffset": 0
   },
   {
@@ -93064,7 +93064,7 @@
         }
       ]
     },
-    "expectedOutput": "(this: &impl ? Sized, that: &(impl LayoutCalculator + ? Sized))"
+    "expectedOutput": "(this: &impl ?Sized, that: &(impl LayoutCalculator + ?Sized))"
   },
   {
     "kind": "roundtrip",
@@ -93072,9 +93072,9 @@
     "sourceIn": "(this: &impl ?Sized, that: &(impl LayoutCalculator + ?Sized))",
     "pattern": "parameters",
     "edits": [],
-    "expectedSourceOut": "(this: &impl ? Sized, that: &(impl LayoutCalculator + ? Sized))",
+    "expectedSourceOut": "(this: &impl ?Sized, that: &(impl LayoutCalculator + ?Sized))",
     "expectedReparseTree": "(parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (reference_type type: (abstract_type trait: (removed_trait_bound type: (type_identifier)))))) item: (attributed_parameter (parameter name: (identifier) type: (reference_type type: (tuple_type (types item: (bounded_type left: (abstract_type trait: (type_identifier)) right: (removed_trait_bound type: (type_identifier))))))))))",
-    "wrappedText": "fn _f(this: &impl ? Sized, that: &(impl LayoutCalculator + ? Sized)) {}",
+    "wrappedText": "fn _f(this: &impl ?Sized, that: &(impl LayoutCalculator + ?Sized)) {}",
     "wrappedOffset": 5
   },
   {
@@ -93174,7 +93174,7 @@
         "type"
       ]
     },
-    "expectedOutput": "this: &impl ? Sized"
+    "expectedOutput": "this: &impl ?Sized"
   },
   {
     "kind": "roundtrip",
@@ -93182,9 +93182,9 @@
     "sourceIn": "this: &impl ?Sized",
     "pattern": "parameter",
     "edits": [],
-    "expectedSourceOut": "this: &impl ? Sized",
+    "expectedSourceOut": "this: &impl ?Sized",
     "expectedReparseTree": "(parameter name: (identifier) type: (reference_type type: (abstract_type trait: (removed_trait_bound type: (type_identifier)))))",
-    "wrappedText": "fn _f(this: &impl ? Sized) {}",
+    "wrappedText": "fn _f(this: &impl ?Sized) {}",
     "wrappedOffset": 6
   },
   {
@@ -93361,7 +93361,7 @@
         "type"
       ]
     },
-    "expectedOutput": "that: &(impl LayoutCalculator + ? Sized)"
+    "expectedOutput": "that: &(impl LayoutCalculator + ?Sized)"
   },
   {
     "kind": "roundtrip",
@@ -93369,9 +93369,9 @@
     "sourceIn": "that: &(impl LayoutCalculator + ?Sized)",
     "pattern": "parameter",
     "edits": [],
-    "expectedSourceOut": "that: &(impl LayoutCalculator + ? Sized)",
+    "expectedSourceOut": "that: &(impl LayoutCalculator + ?Sized)",
     "expectedReparseTree": "(parameter name: (identifier) type: (reference_type type: (tuple_type (types item: (bounded_type left: (abstract_type trait: (type_identifier)) right: (removed_trait_bound type: (type_identifier)))))))",
-    "wrappedText": "fn _f(that: &(impl LayoutCalculator + ? Sized)) {}",
+    "wrappedText": "fn _f(that: &(impl LayoutCalculator + ?Sized)) {}",
     "wrappedOffset": 6
   },
   {
@@ -93441,7 +93441,7 @@
         }
       ]
     },
-    "expectedOutput": "&impl ? Sized"
+    "expectedOutput": "&impl ?Sized"
   },
   {
     "kind": "roundtrip",
@@ -93449,9 +93449,9 @@
     "sourceIn": "&impl ?Sized",
     "pattern": "reference_type",
     "edits": [],
-    "expectedSourceOut": "&impl ? Sized",
+    "expectedSourceOut": "&impl ?Sized",
     "expectedReparseTree": "(reference_type type: (abstract_type trait: (removed_trait_bound type: (type_identifier))))",
-    "wrappedText": "type _X = &impl ? Sized;",
+    "wrappedText": "type _X = &impl ?Sized;",
     "wrappedOffset": 10
   },
   {
@@ -93598,7 +93598,7 @@
         }
       ]
     },
-    "expectedOutput": "&(impl LayoutCalculator + ? Sized)"
+    "expectedOutput": "&(impl LayoutCalculator + ?Sized)"
   },
   {
     "kind": "roundtrip",
@@ -93606,9 +93606,9 @@
     "sourceIn": "&(impl LayoutCalculator + ?Sized)",
     "pattern": "reference_type",
     "edits": [],
-    "expectedSourceOut": "&(impl LayoutCalculator + ? Sized)",
+    "expectedSourceOut": "&(impl LayoutCalculator + ?Sized)",
     "expectedReparseTree": "(reference_type type: (tuple_type (types item: (bounded_type left: (abstract_type trait: (type_identifier)) right: (removed_trait_bound type: (type_identifier))))))",
-    "wrappedText": "type _X = &(impl LayoutCalculator + ? Sized);",
+    "wrappedText": "type _X = &(impl LayoutCalculator + ?Sized);",
     "wrappedOffset": 10
   },
   {
@@ -93662,7 +93662,7 @@
         }
       ]
     },
-    "expectedOutput": "impl ? Sized"
+    "expectedOutput": "impl ?Sized"
   },
   {
     "kind": "roundtrip",
@@ -93670,9 +93670,9 @@
     "sourceIn": "impl ?Sized",
     "pattern": "abstract_type",
     "edits": [],
-    "expectedSourceOut": "impl ? Sized",
+    "expectedSourceOut": "impl ?Sized",
     "expectedReparseTree": "(abstract_type trait: (removed_trait_bound type: (type_identifier)))",
-    "wrappedText": "type _X = impl ? Sized;",
+    "wrappedText": "type _X = impl ?Sized;",
     "wrappedOffset": 10
   },
   {
@@ -93851,7 +93851,7 @@
         }
       ]
     },
-    "expectedOutput": "(impl LayoutCalculator + ? Sized)"
+    "expectedOutput": "(impl LayoutCalculator + ?Sized)"
   },
   {
     "kind": "roundtrip",
@@ -93859,9 +93859,9 @@
     "sourceIn": "(impl LayoutCalculator + ?Sized)",
     "pattern": "tuple_type",
     "edits": [],
-    "expectedSourceOut": "(impl LayoutCalculator + ? Sized)",
+    "expectedSourceOut": "(impl LayoutCalculator + ?Sized)",
     "expectedReparseTree": "(tuple_type (types item: (bounded_type left: (abstract_type trait: (type_identifier)) right: (removed_trait_bound type: (type_identifier)))))",
-    "wrappedText": "type _X = (impl LayoutCalculator + ? Sized);",
+    "wrappedText": "type _X = (impl LayoutCalculator + ?Sized);",
     "wrappedOffset": 10
   },
   {
@@ -93950,7 +93950,7 @@
         "right"
       ]
     },
-    "expectedOutput": "impl LayoutCalculator + ? Sized"
+    "expectedOutput": "impl LayoutCalculator + ?Sized"
   },
   {
     "kind": "roundtrip",
@@ -93958,9 +93958,9 @@
     "sourceIn": "impl LayoutCalculator + ?Sized",
     "pattern": "bounded_type",
     "edits": [],
-    "expectedSourceOut": "impl LayoutCalculator + ? Sized",
+    "expectedSourceOut": "impl LayoutCalculator + ?Sized",
     "expectedReparseTree": "(bounded_type left: (abstract_type trait: (type_identifier)) right: (removed_trait_bound type: (type_identifier)))",
-    "wrappedText": "type _X = impl LayoutCalculator + ? Sized;",
+    "wrappedText": "type _X = impl LayoutCalculator + ?Sized;",
     "wrappedOffset": 10
   },
   {
@@ -94291,7 +94291,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "impl <T: AstDeref<Target: HasNodeId>> HasNodeId for T {}\n"
+    "expectedOutput": "impl<T: AstDeref<Target: HasNodeId>> HasNodeId for T {}\n"
   },
   {
     "kind": "roundtrip",
@@ -94299,9 +94299,9 @@
     "sourceIn": "\nimpl<T: AstDeref<Target: HasNodeId>> HasNodeId for T {}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "impl <T: AstDeref<Target: HasNodeId>> HasNodeId for T {}\n",
+    "expectedSourceOut": "impl<T: AstDeref<Target: HasNodeId>> HasNodeId for T {}\n",
     "expectedReparseTree": "(source_file statements: (impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier) (trait_bounds bounds: (type_identifier))))))))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (type_identifier) (declaration_list)))",
-    "wrappedText": "impl <T: AstDeref<Target: HasNodeId>> HasNodeId for T {}\n",
+    "wrappedText": "impl<T: AstDeref<Target: HasNodeId>> HasNodeId for T {}\n",
     "wrappedOffset": 0
   },
   {
@@ -94596,7 +94596,7 @@
         "declaration_list"
       ]
     },
-    "expectedOutput": "impl <T: AstDeref<Target: HasNodeId>> HasNodeId for T {}"
+    "expectedOutput": "impl<T: AstDeref<Target: HasNodeId>> HasNodeId for T {}"
   },
   {
     "kind": "roundtrip",
@@ -94604,9 +94604,9 @@
     "sourceIn": "impl<T: AstDeref<Target: HasNodeId>> HasNodeId for T {}",
     "pattern": "impl_item_body",
     "edits": [],
-    "expectedSourceOut": "impl <T: AstDeref<Target: HasNodeId>> HasNodeId for T {}",
+    "expectedSourceOut": "impl<T: AstDeref<Target: HasNodeId>> HasNodeId for T {}",
     "expectedReparseTree": "(impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier) (trait_bounds bounds: (type_identifier))))))))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (type_identifier) (declaration_list))",
-    "wrappedText": "impl <T: AstDeref<Target: HasNodeId>> HasNodeId for T {}",
+    "wrappedText": "impl<T: AstDeref<Target: HasNodeId>> HasNodeId for T {}",
     "wrappedOffset": 0
   },
   {
@@ -97690,7 +97690,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "impl Trait for T {\n    type Associated = T where 'static: 'static;\n}\n"
+    "expectedOutput": "impl Trait for T {\n    type Associated = T where 'static : 'static;\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -97698,9 +97698,9 @@
     "sourceIn": "\nimpl Trait for T {\n    type Associated = T where 'static: 'static;\n}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "impl Trait for T {\n    type Associated = T where 'static: 'static;\n}\n",
+    "expectedSourceOut": "impl Trait for T {\n    type Associated = T where 'static : 'static;\n}\n",
     "expectedReparseTree": "(source_file statements: (impl_item_body trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (type_identifier) (declaration_list declarations: (type_item name: (type_identifier) type: (type_identifier) trailing_where_clause: (where_clause (where_predicates item: (where_predicate left: (lifetime name: (identifier)) bounds: (trait_bounds bounds: (lifetime name: (identifier))))))))))",
-    "wrappedText": "impl Trait for T {\n    type Associated = T where 'static: 'static;\n}\n",
+    "wrappedText": "impl Trait for T {\n    type Associated = T where 'static : 'static;\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -97990,7 +97990,7 @@
         "declaration_list"
       ]
     },
-    "expectedOutput": "impl Trait for T {\n    type Associated = T where 'static: 'static;\n}"
+    "expectedOutput": "impl Trait for T {\n    type Associated = T where 'static : 'static;\n}"
   },
   {
     "kind": "roundtrip",
@@ -97998,9 +97998,9 @@
     "sourceIn": "impl Trait for T {\n    type Associated = T where 'static: 'static;\n}",
     "pattern": "impl_item_body",
     "edits": [],
-    "expectedSourceOut": "impl Trait for T {\n    type Associated = T where 'static: 'static;\n}",
+    "expectedSourceOut": "impl Trait for T {\n    type Associated = T where 'static : 'static;\n}",
     "expectedReparseTree": "(impl_item_body trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (type_identifier) (declaration_list declarations: (type_item name: (type_identifier) type: (type_identifier) trailing_where_clause: (where_clause (where_predicates item: (where_predicate left: (lifetime name: (identifier)) bounds: (trait_bounds bounds: (lifetime name: (identifier)))))))))",
-    "wrappedText": "impl Trait for T {\n    type Associated = T where 'static: 'static;\n}",
+    "wrappedText": "impl Trait for T {\n    type Associated = T where 'static : 'static;\n}",
     "wrappedOffset": 0
   },
   {
@@ -98316,7 +98316,7 @@
         "trailing_where_clause"
       ]
     },
-    "expectedOutput": "type Associated = T where 'static: 'static;"
+    "expectedOutput": "type Associated = T where 'static : 'static;"
   },
   {
     "kind": "roundtrip",
@@ -98324,9 +98324,9 @@
     "sourceIn": "type Associated = T where 'static: 'static;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type Associated = T where 'static: 'static;",
+    "expectedSourceOut": "type Associated = T where 'static : 'static;",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (type_identifier) trailing_where_clause: (where_clause (where_predicates item: (where_predicate left: (lifetime name: (identifier)) bounds: (trait_bounds bounds: (lifetime name: (identifier)))))))",
-    "wrappedText": "type Associated = T where 'static: 'static;",
+    "wrappedText": "type Associated = T where 'static : 'static;",
     "wrappedOffset": 0
   },
   {
@@ -105942,7 +105942,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "trait T: for <'a> AddAssign<&'a usize> {}\n\ntype FnObject<'b> = dyn for <'a> FnLike<&'a isize, &'a isize> +'b;\n"
+    "expectedOutput": "trait T: for<'a> AddAssign<&'a usize> {}\n\ntype FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> +'b;\n"
   },
   {
     "kind": "roundtrip",
@@ -105950,9 +105950,9 @@
     "sourceIn": "\ntrait T: for<'a> AddAssign<&'a usize> {\n}\n\ntype FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "trait T: for <'a> AddAssign<&'a usize> {}\n\ntype FnObject<'b> = dyn for <'a> FnLike<&'a isize, &'a isize> +'b;\n",
+    "expectedSourceOut": "trait T: for<'a> AddAssign<&'a usize> {}\n\ntype FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> +'b;\n",
     "expectedReparseTree": "(source_file statements: (trait_item name: (type_identifier) bounds: (trait_bounds bounds: (higher_ranked_trait_bound type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type)))))))) body: (declaration_list)) statements: (type_item name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (bounded_type left: (dynamic_type trait: (higher_ranked_trait_bound type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type))) item: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type)))))))) right: (lifetime name: (identifier)))))",
-    "wrappedText": "trait T: for <'a> AddAssign<&'a usize> {}\n\ntype FnObject<'b> = dyn for <'a> FnLike<&'a isize, &'a isize> +'b;\n",
+    "wrappedText": "trait T: for<'a> AddAssign<&'a usize> {}\n\ntype FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> +'b;\n",
     "wrappedOffset": 0
   },
   {
@@ -106237,7 +106237,7 @@
         "body"
       ]
     },
-    "expectedOutput": "trait T: for <'a> AddAssign<&'a usize> {}"
+    "expectedOutput": "trait T: for<'a> AddAssign<&'a usize> {}"
   },
   {
     "kind": "roundtrip",
@@ -106245,9 +106245,9 @@
     "sourceIn": "trait T: for<'a> AddAssign<&'a usize> {\n}",
     "pattern": "trait_item",
     "edits": [],
-    "expectedSourceOut": "trait T: for <'a> AddAssign<&'a usize> {}",
+    "expectedSourceOut": "trait T: for<'a> AddAssign<&'a usize> {}",
     "expectedReparseTree": "(trait_item name: (type_identifier) bounds: (trait_bounds bounds: (higher_ranked_trait_bound type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type)))))))) body: (declaration_list))",
-    "wrappedText": "trait T: for <'a> AddAssign<&'a usize> {}",
+    "wrappedText": "trait T: for<'a> AddAssign<&'a usize> {}",
     "wrappedOffset": 0
   },
   {
@@ -107679,7 +107679,7 @@
         "type"
       ]
     },
-    "expectedOutput": "type FnObject<'b> = dyn for <'a> FnLike<&'a isize, &'a isize> +'b;"
+    "expectedOutput": "type FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> +'b;"
   },
   {
     "kind": "roundtrip",
@@ -107687,9 +107687,9 @@
     "sourceIn": "type FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type FnObject<'b> = dyn for <'a> FnLike<&'a isize, &'a isize> +'b;",
+    "expectedSourceOut": "type FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> +'b;",
     "expectedReparseTree": "(type_item name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (bounded_type left: (dynamic_type trait: (higher_ranked_trait_bound type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type))) item: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type)))))))) right: (lifetime name: (identifier))))",
-    "wrappedText": "type FnObject<'b> = dyn for <'a> FnLike<&'a isize, &'a isize> +'b;",
+    "wrappedText": "type FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> +'b;",
     "wrappedOffset": 0
   },
   {
@@ -108042,7 +108042,7 @@
         "right"
       ]
     },
-    "expectedOutput": "dyn for <'a> FnLike<&'a isize, &'a isize> +'b"
+    "expectedOutput": "dyn for<'a> FnLike<&'a isize, &'a isize> +'b"
   },
   {
     "kind": "roundtrip",
@@ -108050,9 +108050,9 @@
     "sourceIn": "dyn for<'a> FnLike<&'a isize, &'a isize> + 'b",
     "pattern": "bounded_type",
     "edits": [],
-    "expectedSourceOut": "dyn for <'a> FnLike<&'a isize, &'a isize> +'b",
+    "expectedSourceOut": "dyn for<'a> FnLike<&'a isize, &'a isize> +'b",
     "expectedReparseTree": "(bounded_type left: (dynamic_type trait: (higher_ranked_trait_bound type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type))) item: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type)))))))) right: (lifetime name: (identifier)))",
-    "wrappedText": "type _X = dyn for <'a> FnLike<&'a isize, &'a isize> +'b;",
+    "wrappedText": "type _X = dyn for<'a> FnLike<&'a isize, &'a isize> +'b;",
     "wrappedOffset": 10
   },
   {
@@ -108359,7 +108359,7 @@
         }
       ]
     },
-    "expectedOutput": "dyn for <'a> FnLike<&'a isize, &'a isize>"
+    "expectedOutput": "dyn for<'a> FnLike<&'a isize, &'a isize>"
   },
   {
     "kind": "roundtrip",
@@ -108367,9 +108367,9 @@
     "sourceIn": "dyn for<'a> FnLike<&'a isize, &'a isize>",
     "pattern": "dynamic_type",
     "edits": [],
-    "expectedSourceOut": "dyn for <'a> FnLike<&'a isize, &'a isize>",
+    "expectedSourceOut": "dyn for<'a> FnLike<&'a isize, &'a isize>",
     "expectedReparseTree": "(dynamic_type trait: (higher_ranked_trait_bound type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type))) item: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type))))))))",
-    "wrappedText": "type _X = dyn for <'a> FnLike<&'a isize, &'a isize>;",
+    "wrappedText": "type _X = dyn for<'a> FnLike<&'a isize, &'a isize>;",
     "wrappedOffset": 10
   },
   {
@@ -115142,7 +115142,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "fn walk<F>(&self, it: &mut F) -> bool\nwhere F: FnMut(&Pat) -> bool\n{\n    return false\n}\n\nimpl <'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {}\n\nimpl <T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c: 'b,\n{}\n\nimpl <'a, E> Read\nwhere &'a E: Read,\n{}\n\nimpl <T> A for B<T> where (T, T, T): C, {}\n\nimpl <T> A for B<T>\nwhere for <'a> D<T>: E<'a>,\n{}\n\npub trait A<B> where B: C,\n{}\n\nfn foo<A>() where A: B + As<f64>, f64: As<A> {}\n\nimpl <A> Default for B<A> where * mut A: C + D {}\n"
+    "expectedOutput": "fn walk<F>(&self, it: &mut F) -> bool\nwhere F: FnMut(&Pat) -> bool\n{\n    return false\n}\n\nimpl<'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {}\n\nimpl<T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c : 'b,\n{}\n\nimpl<'a, E> Read\nwhere &'a E: Read,\n{}\n\nimpl<T> A for B<T> where (T, T, T): C, {}\n\nimpl<T> A for B<T>\nwhere for<'a> D<T>: E<'a>,\n{}\n\npub trait A<B> where B: C,\n{}\n\nfn foo<A>() where A: B + As<f64>, f64: As<A> {}\n\nimpl<A> Default for B<A> where * mut A: C + D {}\n"
   },
   {
     "kind": "roundtrip",
@@ -115150,9 +115150,9 @@
     "sourceIn": "\nfn walk<F>(&self, it: &mut F) -> bool\n    where F: FnMut(&Pat) -> bool\n{\n  return false\n}\n\nimpl<'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {\n}\n\nimpl<T> A for B<T>\n    where C<T>: D,\n          T: 'c,\n          'c: 'b,\n{\n}\n\nimpl<'a, E> Read\nwhere &'a E: Read,\n{\n}\n\nimpl<T> A for B<T> where (T, T, T): C, {}\n\nimpl<T> A for B<T>\n    where for<'a> D<T>: E<'a>,\n{\n}\n\npub trait A<B> where B: C,\n{\n}\n\nfn foo<A>() where A: B + As<f64>, f64: As<A> {}\n\nimpl<A> Default for B<A> where *mut A: C + D {}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "fn walk<F>(&self, it: &mut F) -> bool\nwhere F: FnMut(&Pat) -> bool\n{\n    return false\n}\n\nimpl <'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {}\n\nimpl <T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c: 'b,\n{}\n\nimpl <'a, E> Read\nwhere &'a E: Read,\n{}\n\nimpl <T> A for B<T> where (T, T, T): C, {}\n\nimpl <T> A for B<T>\nwhere for <'a> D<T>: E<'a>,\n{}\n\npub trait A<B> where B: C,\n{}\n\nfn foo<A>() where A: B + As<f64>, f64: As<A> {}\n\nimpl <A> Default for B<A> where * mut A: C + D {}\n",
+    "expectedSourceOut": "fn walk<F>(&self, it: &mut F) -> bool\nwhere F: FnMut(&Pat) -> bool\n{\n    return false\n}\n\nimpl<'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {}\n\nimpl<T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c : 'b,\n{}\n\nimpl<'a, E> Read\nwhere &'a E: Read,\n{}\n\nimpl<T> A for B<T> where (T, T, T): C, {}\n\nimpl<T> A for B<T>\nwhere for<'a> D<T>: E<'a>,\n{}\n\npub trait A<B> where B: C,\n{}\n\nfn foo<A>() where A: B + As<f64>, f64: As<A> {}\n\nimpl<A> Default for B<A> where * mut A: C + D {}\n",
     "expectedReparseTree": "(source_file statements: (function_item name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (self_parameter self: (self))) item: (attributed_parameter (parameter name: (identifier) type: (reference_type mutable: (mutable_specifier) type: (type_identifier)))))) return_type: (primitive_type) where_clause: (where_clause (where_predicates item: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (reference_type type: (type_identifier))))) return_type: (primitive_type)))))) body: (block trailing_expression: (return_expression expression: (boolean_literal)))) statements: (impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))) item: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (lifetime name: (identifier)) bounds: (type_identifier)))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (lifetime name: (identifier))) item: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates item: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime name: (identifier)))))) (declaration_list)) statements: (impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates item: (where_predicate left: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))) bounds: (trait_bounds bounds: (type_identifier))) item: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime name: (identifier)))) item: (where_predicate left: (lifetime name: (identifier)) bounds: (trait_bounds bounds: (lifetime name: (identifier)))))) (declaration_list)) statements: (impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))) item: (attributed_type_parameter (type_parameter name: (type_identifier))))) type: (type_identifier) where_clause: (where_clause (where_predicates item: (where_predicate left: (reference_type lifetime: (lifetime name: (identifier)) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier))))) (declaration_list)) statements: (impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates item: (where_predicate left: (tuple_type (types item: (type_identifier) item: (type_identifier) item: (type_identifier))) bounds: (trait_bounds bounds: (type_identifier))))) (declaration_list)) statements: (impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates item: (where_predicate left: (higher_ranked_trait_bound type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier)))))) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (lifetime name: (identifier)))))))))) (declaration_list)) statements: (trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) where_clause: (where_clause (where_predicates item: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier))))) body: (declaration_list)) statements: (function_item name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) parameters: (parameters) where_clause: (where_clause (where_predicates item: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier) bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (primitive_type))))))) item: (where_predicate left: (primitive_type) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))))))) body: (block)) statements: (impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates item: (where_predicate left: (pointer_type_mut (mutable_specifier) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier))))) (declaration_list)))",
-    "wrappedText": "fn walk<F>(&self, it: &mut F) -> bool\nwhere F: FnMut(&Pat) -> bool\n{\n    return false\n}\n\nimpl <'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {}\n\nimpl <T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c: 'b,\n{}\n\nimpl <'a, E> Read\nwhere &'a E: Read,\n{}\n\nimpl <T> A for B<T> where (T, T, T): C, {}\n\nimpl <T> A for B<T>\nwhere for <'a> D<T>: E<'a>,\n{}\n\npub trait A<B> where B: C,\n{}\n\nfn foo<A>() where A: B + As<f64>, f64: As<A> {}\n\nimpl <A> Default for B<A> where * mut A: C + D {}\n",
+    "wrappedText": "fn walk<F>(&self, it: &mut F) -> bool\nwhere F: FnMut(&Pat) -> bool\n{\n    return false\n}\n\nimpl<'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {}\n\nimpl<T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c : 'b,\n{}\n\nimpl<'a, E> Read\nwhere &'a E: Read,\n{}\n\nimpl<T> A for B<T> where (T, T, T): C, {}\n\nimpl<T> A for B<T>\nwhere for<'a> D<T>: E<'a>,\n{}\n\npub trait A<B> where B: C,\n{}\n\nfn foo<A>() where A: B + As<f64>, f64: As<A> {}\n\nimpl<A> Default for B<A> where * mut A: C + D {}\n",
     "wrappedOffset": 0
   },
   {
@@ -120622,7 +120622,7 @@
         "declaration_list"
       ]
     },
-    "expectedOutput": "impl <'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {}"
+    "expectedOutput": "impl<'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {}"
   },
   {
     "kind": "roundtrip",
@@ -120630,9 +120630,9 @@
     "sourceIn": "impl<'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {\n}",
     "pattern": "impl_item_body",
     "edits": [],
-    "expectedSourceOut": "impl <'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {}",
+    "expectedSourceOut": "impl<'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {}",
     "expectedReparseTree": "(impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))) item: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (lifetime name: (identifier)) bounds: (type_identifier)))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (lifetime name: (identifier))) item: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates item: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime name: (identifier)))))) (declaration_list))",
-    "wrappedText": "impl <'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {}",
+    "wrappedText": "impl<'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {}",
     "wrappedOffset": 0
   },
   {
@@ -121212,7 +121212,7 @@
         "declaration_list"
       ]
     },
-    "expectedOutput": "impl <T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c: 'b,\n{}"
+    "expectedOutput": "impl<T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c : 'b,\n{}"
   },
   {
     "kind": "roundtrip",
@@ -121220,9 +121220,9 @@
     "sourceIn": "impl<T> A for B<T>\n    where C<T>: D,\n          T: 'c,\n          'c: 'b,\n{\n}",
     "pattern": "impl_item_body",
     "edits": [],
-    "expectedSourceOut": "impl <T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c: 'b,\n{}",
+    "expectedSourceOut": "impl<T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c : 'b,\n{}",
     "expectedReparseTree": "(impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates item: (where_predicate left: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))) bounds: (trait_bounds bounds: (type_identifier))) item: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime name: (identifier)))) item: (where_predicate left: (lifetime name: (identifier)) bounds: (trait_bounds bounds: (lifetime name: (identifier)))))) (declaration_list))",
-    "wrappedText": "impl <T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c: 'b,\n{}",
+    "wrappedText": "impl<T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c : 'b,\n{}",
     "wrappedOffset": 0
   },
   {
@@ -121548,7 +121548,7 @@
         "declaration_list"
       ]
     },
-    "expectedOutput": "impl <'a, E> Read\nwhere &'a E: Read,\n{}"
+    "expectedOutput": "impl<'a, E> Read\nwhere &'a E: Read,\n{}"
   },
   {
     "kind": "roundtrip",
@@ -121556,9 +121556,9 @@
     "sourceIn": "impl<'a, E> Read\nwhere &'a E: Read,\n{\n}",
     "pattern": "impl_item_body",
     "edits": [],
-    "expectedSourceOut": "impl <'a, E> Read\nwhere &'a E: Read,\n{}",
+    "expectedSourceOut": "impl<'a, E> Read\nwhere &'a E: Read,\n{}",
     "expectedReparseTree": "(impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))) item: (attributed_type_parameter (type_parameter name: (type_identifier))))) type: (type_identifier) where_clause: (where_clause (where_predicates item: (where_predicate left: (reference_type lifetime: (lifetime name: (identifier)) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier))))) (declaration_list))",
-    "wrappedText": "impl <'a, E> Read\nwhere &'a E: Read,\n{}",
+    "wrappedText": "impl<'a, E> Read\nwhere &'a E: Read,\n{}",
     "wrappedOffset": 0
   },
   {
@@ -121979,7 +121979,7 @@
         "declaration_list"
       ]
     },
-    "expectedOutput": "impl <T> A for B<T> where (T, T, T): C, {}"
+    "expectedOutput": "impl<T> A for B<T> where (T, T, T): C, {}"
   },
   {
     "kind": "roundtrip",
@@ -121987,9 +121987,9 @@
     "sourceIn": "impl<T> A for B<T> where (T, T, T): C, {}",
     "pattern": "impl_item_body",
     "edits": [],
-    "expectedSourceOut": "impl <T> A for B<T> where (T, T, T): C, {}",
+    "expectedSourceOut": "impl<T> A for B<T> where (T, T, T): C, {}",
     "expectedReparseTree": "(impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates item: (where_predicate left: (tuple_type (types item: (type_identifier) item: (type_identifier) item: (type_identifier))) bounds: (trait_bounds bounds: (type_identifier))))) (declaration_list))",
-    "wrappedText": "impl <T> A for B<T> where (T, T, T): C, {}",
+    "wrappedText": "impl<T> A for B<T> where (T, T, T): C, {}",
     "wrappedOffset": 0
   },
   {
@@ -122576,7 +122576,7 @@
         "declaration_list"
       ]
     },
-    "expectedOutput": "impl <T> A for B<T>\nwhere for <'a> D<T>: E<'a>,\n{}"
+    "expectedOutput": "impl<T> A for B<T>\nwhere for<'a> D<T>: E<'a>,\n{}"
   },
   {
     "kind": "roundtrip",
@@ -122584,9 +122584,9 @@
     "sourceIn": "impl<T> A for B<T>\n    where for<'a> D<T>: E<'a>,\n{\n}",
     "pattern": "impl_item_body",
     "edits": [],
-    "expectedSourceOut": "impl <T> A for B<T>\nwhere for <'a> D<T>: E<'a>,\n{}",
+    "expectedSourceOut": "impl<T> A for B<T>\nwhere for<'a> D<T>: E<'a>,\n{}",
     "expectedReparseTree": "(impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates item: (where_predicate left: (higher_ranked_trait_bound type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier)))))) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (lifetime name: (identifier)))))))))) (declaration_list))",
-    "wrappedText": "impl <T> A for B<T>\nwhere for <'a> D<T>: E<'a>,\n{}",
+    "wrappedText": "impl<T> A for B<T>\nwhere for<'a> D<T>: E<'a>,\n{}",
     "wrappedOffset": 0
   },
   {
@@ -122945,7 +122945,7 @@
         "declaration_list"
       ]
     },
-    "expectedOutput": "impl <A> Default for B<A> where * mut A: C + D {}"
+    "expectedOutput": "impl<A> Default for B<A> where * mut A: C + D {}"
   },
   {
     "kind": "roundtrip",
@@ -122953,9 +122953,9 @@
     "sourceIn": "impl<A> Default for B<A> where *mut A: C + D {}",
     "pattern": "impl_item_body",
     "edits": [],
-    "expectedSourceOut": "impl <A> Default for B<A> where * mut A: C + D {}",
+    "expectedSourceOut": "impl<A> Default for B<A> where * mut A: C + D {}",
     "expectedReparseTree": "(impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates item: (where_predicate left: (pointer_type_mut (mutable_specifier) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier))))) (declaration_list))",
-    "wrappedText": "impl <A> Default for B<A> where * mut A: C + D {}",
+    "wrappedText": "impl<A> Default for B<A> where * mut A: C + D {}",
     "wrappedOffset": 0
   },
   {
@@ -132863,7 +132863,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "a.unwrap() ?;\n&a ?;\n"
+    "expectedOutput": "a.unwrap()?;\n&a?;\n"
   },
   {
     "kind": "roundtrip",
@@ -132871,9 +132871,9 @@
     "sourceIn": "\na.unwrap()?;\n&a?;\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "a.unwrap() ?;\n&a ?;\n",
+    "expectedSourceOut": "a.unwrap()?;\n&a?;\n",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (try_expression value: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments))))) statements: (expression_statement (expression_statement_with_semi expression: (reference_expression_bare value: (try_expression value: (identifier))))))",
-    "wrappedText": "a.unwrap() ?;\n&a ?;\n",
+    "wrappedText": "a.unwrap()?;\n&a?;\n",
     "wrappedOffset": 0
   },
   {
@@ -132960,7 +132960,7 @@
         }
       ]
     },
-    "expectedOutput": "a.unwrap() ?"
+    "expectedOutput": "a.unwrap()?"
   },
   {
     "kind": "roundtrip",
@@ -132968,9 +132968,9 @@
     "sourceIn": "a.unwrap()?",
     "pattern": "try_expression",
     "edits": [],
-    "expectedSourceOut": "a.unwrap() ?",
+    "expectedSourceOut": "a.unwrap()?",
     "expectedReparseTree": "(try_expression value: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))",
-    "wrappedText": "fn _f() { let _ = a.unwrap() ?; }",
+    "wrappedText": "fn _f() { let _ = a.unwrap()?; }",
     "wrappedOffset": 18
   },
   {
@@ -133003,7 +133003,7 @@
         }
       ]
     },
-    "expectedOutput": "a ?"
+    "expectedOutput": "a?"
   },
   {
     "kind": "roundtrip",
@@ -133011,9 +133011,9 @@
     "sourceIn": "a?",
     "pattern": "try_expression",
     "edits": [],
-    "expectedSourceOut": "a ?",
+    "expectedSourceOut": "a?",
     "expectedReparseTree": "(try_expression value: (identifier))",
-    "wrappedText": "fn _f() { let _ = a ?; }",
+    "wrappedText": "fn _f() { let _ = a?; }",
     "wrappedOffset": 18
   },
   {
@@ -133232,7 +133232,7 @@
         }
       ]
     },
-    "expectedOutput": "&a ?"
+    "expectedOutput": "&a?"
   },
   {
     "kind": "roundtrip",
@@ -133240,9 +133240,9 @@
     "sourceIn": "&a?",
     "pattern": "reference_expression_bare",
     "edits": [],
-    "expectedSourceOut": "&a ?",
+    "expectedSourceOut": "&a?",
     "expectedReparseTree": "(reference_expression_bare value: (try_expression value: (identifier)))",
-    "wrappedText": "fn _f() { let _ = &a ?; }",
+    "wrappedText": "fn _f() { let _ = &a?; }",
     "wrappedOffset": 18
   },
   {
@@ -181828,7 +181828,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "const {\n    1 + 3\n}\n\n;if *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n} else {\n    x\n}\nlet three_ranges = [const {\n    (0..=5).into_inner()\n}; 3];\n"
+    "expectedOutput": "const {\n    1 + 3\n}\n;if *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n} else {\n    x\n}\nlet three_ranges = [const {\n    (0..=5).into_inner()\n}; 3];\n"
   },
   {
     "kind": "roundtrip",
@@ -181836,9 +181836,9 @@
     "sourceIn": "\nconst { 1 + 3 };\nif *x < 0 { const { &4i32.pow(4) } } else { x }\nlet three_ranges = [const { (0..=5).into_inner() }; 3];\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "const {\n    1 + 3\n}\n\n;if *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n} else {\n    x\n}\nlet three_ranges = [const {\n    (0..=5).into_inner()\n}; 3];\n",
+    "expectedSourceOut": "const {\n    1 + 3\n}\n;if *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n} else {\n    x\n}\nlet three_ranges = [const {\n    (0..=5).into_inner()\n}; 3];\n",
     "expectedReparseTree": "(source_file statements: (expression_statement (const_block body: (block trailing_expression: (binary_expression left: (integer_literal_decimal) right: (integer_literal_decimal))))) statements: (empty_statement) statements: (expression_statement (if_expression condition: (binary_expression left: (unary_expression operand: (identifier)) right: (integer_literal_decimal)) consequence: (block statements: (expression_statement (const_block body: (block trailing_expression: (reference_expression_bare value: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))))))) alternative: (else_clause body: (block trailing_expression: (identifier))))) statements: (let_declaration pattern: (identifier) value: (array_expression_semi element: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (parenthesized_expression expression: (range_expression_binary start: (integer_literal_decimal) end: (integer_literal_decimal))) field: (field_identifier)) arguments: (arguments)))) length: (integer_literal_decimal))))",
-    "wrappedText": "const {\n    1 + 3\n}\n\n;if *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n} else {\n    x\n}\nlet three_ranges = [const {\n    (0..=5).into_inner()\n}; 3];\n",
+    "wrappedText": "const {\n    1 + 3\n}\n;if *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n} else {\n    x\n}\nlet three_ranges = [const {\n    (0..=5).into_inner()\n}; 3];\n",
     "wrappedOffset": 0
   },
   {
@@ -191550,7 +191550,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "a!(* a *);\na!(& a &);\na!(- a -);\na!(b + c + +);\na!('a'..='z');\na!('\\u{0}'..='\\u{2}');\na!('lifetime)\ndefault!(a);\nunion!(a);\na!($);\na!($ ());\na!($ a $);\na!($ {$ ([a])});\na!($ a $ a:ident $ ($ a);*);\n"
+    "expectedOutput": "a!(* a *);\na!(& a &);\na!(- a -);\na!(b + c + +);\na!('a'..='z');\na!('\\u{0}'..='\\u{2}');\na!('lifetime)\ndefault!(a);\nunion!(a);\na!($);\na!($());\na!($ a $);\na!($ {$([a])});\na!($ a $ a:ident $($ a);*);\n"
   },
   {
     "kind": "roundtrip",
@@ -191558,9 +191558,9 @@
     "sourceIn": "\na!(* a *);\na!(& a &);\na!(- a -);\na!(b + c + +);\na!('a'..='z');\na!('\\u{0}'..='\\u{2}');\na!('lifetime)\ndefault!(a);\nunion!(a);\na!($);\na!($());\na!($ a $);\na!(${$([ a ])});\na!($a $a:ident $($a);*);\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "a!(* a *);\na!(& a &);\na!(- a -);\na!(b + c + +);\na!('a'..='z');\na!('\\u{0}'..='\\u{2}');\na!('lifetime)\ndefault!(a);\nunion!(a);\na!($);\na!($ ());\na!($ a $);\na!($ {$ ([a])});\na!($ a $ a:ident $ ($ a);*);\n",
+    "expectedSourceOut": "a!(* a *);\na!(& a &);\na!(- a -);\na!(b + c + +);\na!('a'..='z');\na!('\\u{0}'..='\\u{2}');\na!('lifetime)\ndefault!(a);\nunion!(a);\na!($);\na!($());\na!($ a $);\na!($ {$([a])});\na!($ a $ a:ident $($ a);*);\n",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (char_literal_plain)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (char_literal_plain)))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (char_literal_escaped_unicode_braced)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (char_literal_escaped_unicode_braced)))))) statements: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token) delim_tokens: (non_special_token (identifier)))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren)))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (delim_token_tree_paren))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (delim_token_tree_brace delim_tokens: (delim_token_tree_paren delim_tokens: (delim_token_tree_bracket delim_tokens: (non_special_token (identifier))))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (identifier))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)))))))",
-    "wrappedText": "a!(* a *);\na!(& a &);\na!(- a -);\na!(b + c + +);\na!('a'..='z');\na!('\\u{0}'..='\\u{2}');\na!('lifetime)\ndefault!(a);\nunion!(a);\na!($);\na!($ ());\na!($ a $);\na!($ {$ ([a])});\na!($ a $ a:ident $ ($ a);*);\n",
+    "wrappedText": "a!(* a *);\na!(& a &);\na!(- a -);\na!(b + c + +);\na!('a'..='z');\na!('\\u{0}'..='\\u{2}');\na!('lifetime)\ndefault!(a);\nunion!(a);\na!($);\na!($());\na!($ a $);\na!($ {$([a])});\na!($ a $ a:ident $($ a);*);\n",
     "wrappedOffset": 0
   },
   {
@@ -192650,7 +192650,7 @@
         "arguments"
       ]
     },
-    "expectedOutput": "a!($ ())"
+    "expectedOutput": "a!($())"
   },
   {
     "kind": "roundtrip",
@@ -192658,9 +192658,9 @@
     "sourceIn": "a!($())",
     "pattern": "macro_invocation",
     "edits": [],
-    "expectedSourceOut": "a!($ ())",
+    "expectedSourceOut": "a!($())",
     "expectedReparseTree": "(macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (delim_token_tree_paren)))",
-    "wrappedText": "a!($ ())",
+    "wrappedText": "a!($())",
     "wrappedOffset": 0
   },
   {
@@ -192913,7 +192913,7 @@
         "arguments"
       ]
     },
-    "expectedOutput": "a!($ {$ ([a])})"
+    "expectedOutput": "a!($ {$([a])})"
   },
   {
     "kind": "roundtrip",
@@ -192921,9 +192921,9 @@
     "sourceIn": "a!(${$([ a ])})",
     "pattern": "macro_invocation",
     "edits": [],
-    "expectedSourceOut": "a!($ {$ ([a])})",
+    "expectedSourceOut": "a!($ {$([a])})",
     "expectedReparseTree": "(macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (delim_token_tree_brace delim_tokens: (delim_token_tree_paren delim_tokens: (delim_token_tree_bracket delim_tokens: (non_special_token (identifier)))))))",
-    "wrappedText": "a!($ {$ ([a])})",
+    "wrappedText": "a!($ {$([a])})",
     "wrappedOffset": 0
   },
   {
@@ -193108,7 +193108,7 @@
         "arguments"
       ]
     },
-    "expectedOutput": "a!($ a $ a:ident $ ($ a);*)"
+    "expectedOutput": "a!($ a $ a:ident $($ a);*)"
   },
   {
     "kind": "roundtrip",
@@ -193116,9 +193116,9 @@
     "sourceIn": "a!($a $a:ident $($a);*)",
     "pattern": "macro_invocation",
     "edits": [],
-    "expectedSourceOut": "a!($ a $ a:ident $ ($ a);*)",
+    "expectedSourceOut": "a!($ a $ a:ident $($ a);*)",
     "expectedReparseTree": "(macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (identifier))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation))))",
-    "wrappedText": "a!($ a $ a:ident $ ($ a);*)",
+    "wrappedText": "a!($ a $ a:ident $($ a);*)",
     "wrappedOffset": 0
   },
   {
@@ -193896,7 +193896,7 @@
         }
       ]
     },
-    "expectedOutput": "($ ())"
+    "expectedOutput": "($())"
   },
   {
     "kind": "roundtrip",
@@ -193904,9 +193904,9 @@
     "sourceIn": "($())",
     "pattern": "delim_token_tree_paren",
     "edits": [],
-    "expectedSourceOut": "($ ())",
+    "expectedSourceOut": "($())",
     "expectedReparseTree": "(delim_token_tree_paren delim_tokens: (delim_token_tree_paren))",
-    "wrappedText": "fn _f() { mac! ($ ()) }",
+    "wrappedText": "fn _f() { mac! ($()) }",
     "wrappedOffset": 15
   },
   {
@@ -194126,7 +194126,7 @@
         }
       ]
     },
-    "expectedOutput": "($ {$ ([a])})"
+    "expectedOutput": "($ {$([a])})"
   },
   {
     "kind": "roundtrip",
@@ -194134,9 +194134,9 @@
     "sourceIn": "(${$([ a ])})",
     "pattern": "delim_token_tree_paren",
     "edits": [],
-    "expectedSourceOut": "($ {$ ([a])})",
+    "expectedSourceOut": "($ {$([a])})",
     "expectedReparseTree": "(delim_token_tree_paren delim_tokens: (delim_token_tree_brace delim_tokens: (delim_token_tree_paren delim_tokens: (delim_token_tree_bracket delim_tokens: (non_special_token (identifier))))))",
-    "wrappedText": "fn _f() { mac! ($ {$ ([a])}) }",
+    "wrappedText": "fn _f() { mac! ($ {$([a])}) }",
     "wrappedOffset": 15
   },
   {
@@ -194377,7 +194377,7 @@
         }
       ]
     },
-    "expectedOutput": "($ a $ a:ident $ ($ a);*)"
+    "expectedOutput": "($ a $ a:ident $($ a);*)"
   },
   {
     "kind": "roundtrip",
@@ -194385,9 +194385,9 @@
     "sourceIn": "($a $a:ident $($a);*)",
     "pattern": "delim_token_tree_paren",
     "edits": [],
-    "expectedSourceOut": "($ a $ a:ident $ ($ a);*)",
+    "expectedSourceOut": "($ a $ a:ident $($ a);*)",
     "expectedReparseTree": "(delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (identifier))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)))",
-    "wrappedText": "fn _f() { mac! ($ a $ a:ident $ ($ a);*) }",
+    "wrappedText": "fn _f() { mac! ($ a $ a:ident $($ a);*) }",
     "wrappedOffset": 15
   },
   {
@@ -194643,7 +194643,7 @@
         }
       ]
     },
-    "expectedOutput": "{$ ([a])}"
+    "expectedOutput": "{$([a])}"
   },
   {
     "kind": "roundtrip",
@@ -194651,9 +194651,9 @@
     "sourceIn": "{$([ a ])}",
     "pattern": "delim_token_tree_brace",
     "edits": [],
-    "expectedSourceOut": "{$ ([a])}",
+    "expectedSourceOut": "{$([a])}",
     "expectedReparseTree": "(delim_token_tree_brace delim_tokens: (delim_token_tree_paren delim_tokens: (delim_token_tree_bracket delim_tokens: (non_special_token (identifier)))))",
-    "wrappedText": "fn _f() { mac! {$ ([a])} }",
+    "wrappedText": "fn _f() { mac! {$([a])} }",
     "wrappedOffset": 15
   },
   {
@@ -196994,7 +196994,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "macro_rules! say_hello {() => (\nprintln!(\"Hello!\");\n)\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e: expr) => (println!(\"mode X: {}\", $e));\n    (y => $e: expr) => (println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {(\n$($x: expr; [$($y: expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}\n\nmacro_rules! zero_or_one {\n    ($($e: expr) , ?) => {\n    $($e) , ?\n    };\n}\n\nmacro_rules! empty[\n    () => {};\n];\n"
+    "expectedOutput": "macro_rules! say_hello {() =>(\nprintln!(\"Hello!\");\n)\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e:expr) =>(println!(\"mode X: {}\", $e));\n    (y => $e:expr) =>(println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {(\n$($x:expr; [$($y:expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}\n\nmacro_rules! zero_or_one {\n    ($($e:expr) , ?) => {\n    $($e) , ?\n    };\n}\n\nmacro_rules! empty[\n    () => {};\n];\n"
   },
   {
     "kind": "roundtrip",
@@ -197002,9 +197002,9 @@
     "sourceIn": "\nmacro_rules! say_hello {\n    () => (\n        println!(\"Hello!\");\n    )\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e:expr) => (println!(\"mode X: {}\", $e));\n    (y => $e:expr) => (println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {\n    (\n      $($x:expr; [ $( $y:expr ),* ]);*\n    ) => {\n      $($($x + $e),*),*\n    }\n}\n\nmacro_rules! zero_or_one {\n    ($($e:expr),?) => {\n        $($e),?\n    };\n}\n\nmacro_rules! empty [\n    () => {};\n];\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "macro_rules! say_hello {() => (\nprintln!(\"Hello!\");\n)\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e: expr) => (println!(\"mode X: {}\", $e));\n    (y => $e: expr) => (println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {(\n$($x: expr; [$($y: expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}\n\nmacro_rules! zero_or_one {\n    ($($e: expr) , ?) => {\n    $($e) , ?\n    };\n}\n\nmacro_rules! empty[\n    () => {};\n];\n",
+    "expectedSourceOut": "macro_rules! say_hello {() =>(\nprintln!(\"Hello!\");\n)\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e:expr) =>(println!(\"mode X: {}\", $e));\n    (y => $e:expr) =>(println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {(\n$($x:expr; [$($y:expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}\n\nmacro_rules! zero_or_one {\n    ($($e:expr) , ?) => {\n    $($e) , ?\n    };\n}\n\nmacro_rules! empty[\n    () => {};\n];\n",
     "expectedReparseTree": "(source_file statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))) tokens: (non_special_token (token_tree_punctuation)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren) right: (token_tree_brace tokens: (non_special_token (integer_literal_decimal)) tokens: (non_special_token (token_tree_punctuation)) tokens: (non_special_token (integer_literal_decimal)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))) item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable) separator: (token_repetition_pattern_text)) separator: (token_repetition_pattern_text)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (metavariable) separator: (token_repetition_pattern_text)))))) statements: (macro_definition_bracket name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren) right: (token_tree_brace)))))",
-    "wrappedText": "macro_rules! say_hello {() => (\nprintln!(\"Hello!\");\n)\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e: expr) => (println!(\"mode X: {}\", $e));\n    (y => $e: expr) => (println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {(\n$($x: expr; [$($y: expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}\n\nmacro_rules! zero_or_one {\n    ($($e: expr) , ?) => {\n    $($e) , ?\n    };\n}\n\nmacro_rules! empty[\n    () => {};\n];\n",
+    "wrappedText": "macro_rules! say_hello {() =>(\nprintln!(\"Hello!\");\n)\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e:expr) =>(println!(\"mode X: {}\", $e));\n    (y => $e:expr) =>(println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {(\n$($x:expr; [$($y:expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}\n\nmacro_rules! zero_or_one {\n    ($($e:expr) , ?) => {\n    $($e) , ?\n    };\n}\n\nmacro_rules! empty[\n    () => {};\n];\n",
     "wrappedOffset": 0
   },
   {
@@ -197249,7 +197249,7 @@
         "macro_rules"
       ]
     },
-    "expectedOutput": "macro_rules! say_hello {() => (\nprintln!(\"Hello!\");\n)\n}"
+    "expectedOutput": "macro_rules! say_hello {() =>(\nprintln!(\"Hello!\");\n)\n}"
   },
   {
     "kind": "roundtrip",
@@ -197257,9 +197257,9 @@
     "sourceIn": "macro_rules! say_hello {\n    () => (\n        println!(\"Hello!\");\n    )\n}",
     "pattern": "macro_definition_brace",
     "edits": [],
-    "expectedSourceOut": "macro_rules! say_hello {() => (\nprintln!(\"Hello!\");\n)\n}",
+    "expectedSourceOut": "macro_rules! say_hello {() =>(\nprintln!(\"Hello!\");\n)\n}",
     "expectedReparseTree": "(macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))) tokens: (non_special_token (token_tree_punctuation))))))",
-    "wrappedText": "macro_rules! say_hello {() => (\nprintln!(\"Hello!\");\n)\n}",
+    "wrappedText": "macro_rules! say_hello {() =>(\nprintln!(\"Hello!\");\n)\n}",
     "wrappedOffset": 0
   },
   {
@@ -198021,7 +198021,7 @@
         "macro_rules"
       ]
     },
-    "expectedOutput": "macro_rules! foo {\n    (x => $e: expr) => (println!(\"mode X: {}\", $e));\n    (y => $e: expr) => (println!(\"mode Y: {}\", $e))\n}"
+    "expectedOutput": "macro_rules! foo {\n    (x => $e:expr) =>(println!(\"mode X: {}\", $e));\n    (y => $e:expr) =>(println!(\"mode Y: {}\", $e))\n}"
   },
   {
     "kind": "roundtrip",
@@ -198029,9 +198029,9 @@
     "sourceIn": "macro_rules! foo {\n    (x => $e:expr) => (println!(\"mode X: {}\", $e));\n    (y => $e:expr) => (println!(\"mode Y: {}\", $e))\n}",
     "pattern": "macro_definition_brace",
     "edits": [],
-    "expectedSourceOut": "macro_rules! foo {\n    (x => $e: expr) => (println!(\"mode X: {}\", $e));\n    (y => $e: expr) => (println!(\"mode Y: {}\", $e))\n}",
+    "expectedSourceOut": "macro_rules! foo {\n    (x => $e:expr) =>(println!(\"mode X: {}\", $e));\n    (y => $e:expr) =>(println!(\"mode Y: {}\", $e))\n}",
     "expectedReparseTree": "(macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))) item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable))))))",
-    "wrappedText": "macro_rules! foo {\n    (x => $e: expr) => (println!(\"mode X: {}\", $e));\n    (y => $e: expr) => (println!(\"mode Y: {}\", $e))\n}",
+    "wrappedText": "macro_rules! foo {\n    (x => $e:expr) =>(println!(\"mode X: {}\", $e));\n    (y => $e:expr) =>(println!(\"mode Y: {}\", $e))\n}",
     "wrappedOffset": 0
   },
   {
@@ -198522,7 +198522,7 @@
         "macro_rules"
       ]
     },
-    "expectedOutput": "macro_rules! o_O {(\n$($x: expr; [$($y: expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}"
+    "expectedOutput": "macro_rules! o_O {(\n$($x:expr; [$($y:expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}"
   },
   {
     "kind": "roundtrip",
@@ -198530,9 +198530,9 @@
     "sourceIn": "macro_rules! o_O {\n    (\n      $($x:expr; [ $( $y:expr ),* ]);*\n    ) => {\n      $($($x + $e),*),*\n    }\n}",
     "pattern": "macro_definition_brace",
     "edits": [],
-    "expectedSourceOut": "macro_rules! o_O {(\n$($x: expr; [$($y: expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}",
+    "expectedSourceOut": "macro_rules! o_O {(\n$($x:expr; [$($y:expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}",
     "expectedReparseTree": "(macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable) separator: (token_repetition_pattern_text)) separator: (token_repetition_pattern_text))))))",
-    "wrappedText": "macro_rules! o_O {(\n$($x: expr; [$($y: expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}",
+    "wrappedText": "macro_rules! o_O {(\n$($x:expr; [$($y:expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}",
     "wrappedOffset": 0
   },
   {
@@ -198834,7 +198834,7 @@
         "macro_rules"
       ]
     },
-    "expectedOutput": "macro_rules! zero_or_one {\n    ($($e: expr) , ?) => {\n    $($e) , ?\n    };\n}"
+    "expectedOutput": "macro_rules! zero_or_one {\n    ($($e:expr) , ?) => {\n    $($e) , ?\n    };\n}"
   },
   {
     "kind": "roundtrip",
@@ -198842,9 +198842,9 @@
     "sourceIn": "macro_rules! zero_or_one {\n    ($($e:expr),?) => {\n        $($e),?\n    };\n}",
     "pattern": "macro_definition_brace",
     "edits": [],
-    "expectedSourceOut": "macro_rules! zero_or_one {\n    ($($e: expr) , ?) => {\n    $($e) , ?\n    };\n}",
+    "expectedSourceOut": "macro_rules! zero_or_one {\n    ($($e:expr) , ?) => {\n    $($e) , ?\n    };\n}",
     "expectedReparseTree": "(macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (metavariable) separator: (token_repetition_pattern_text))))))",
-    "wrappedText": "macro_rules! zero_or_one {\n    ($($e: expr) , ?) => {\n    $($e) , ?\n    };\n}",
+    "wrappedText": "macro_rules! zero_or_one {\n    ($($e:expr) , ?) => {\n    $($e) , ?\n    };\n}",
     "wrappedOffset": 0
   },
   {

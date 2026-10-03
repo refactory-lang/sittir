@@ -1,12 +1,8 @@
 // Generated from the grammars' bindings.scm and slot models. Do not edit.
 import type { GrammarContext } from './context.ts';
-
 import type { Simplify } from 'type-fest';
-
 import type { SubKindOf } from './utils.ts';
-
 import type * as V from './index.ts';
-
 export interface Comment<G extends GrammarContext> {
 	// claimed by t
 	readonly kind: 'comment';

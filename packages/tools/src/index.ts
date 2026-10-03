@@ -66,6 +66,7 @@ export {
 	type CodemodCorpusFile,
 	type CodemodCorpusResult
 } from './exercise/codemod-corpus.ts';
+export { run as defaultDiff } from './exercise/default-diff.ts';
 export { run as triviaTiming, measureTriviaTiming, type TriviaTimingOptions, type TriviaTiming } from './profile/trivia-timing.ts';
 export { run as exercise, type ExerciseOptions } from './exercise/roundtrip.ts';
 export { emitParityFixtures, runRoundtripProbes } from './post-generate.ts';

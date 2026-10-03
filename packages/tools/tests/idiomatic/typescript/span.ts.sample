@@ -1,0 +1,77 @@
+/** A byte range into a source string, as the reader stamps it. */
+export interface ByteSpan {
+  readonly start: number;
+  readonly end: number;
+}
+
+/** A range of string indices (UTF-16 code units), as `String.prototype.slice` and a tree-sitter node's `startIndex` / `endIndex` count them. */
+export interface IndexRange {
+  readonly start: number;
+  readonly end: number;
+}
+
+/** One source's byte spans, related to its text and its string indices. */
+export interface SourceSpans {
+  /** The source's length in UTF-8 bytes: the upper bound of a span. */
+  readonly byteLength: number;
+  /** The text a byte span covers. */
+  slice(span: ByteSpan): string;
+  /** The string indices of a byte span. */
+  toIndices(span: ByteSpan): IndexRange;
+  /** The byte span of a range of string indices. */
+  toSpan(range: IndexRange): ByteSpan;
+}
+
+/**
+ * The one path from a byte span to text or to string indices.
+ *
+ * A read node's `$span` and a trivia entry's offsets
+ * count UTF-8 bytes (tree-sitter's byte range). A JS string indexes UTF-16
+ * code units, so `source.slice(span.start, span.end)` and a comparison of a
+ * span with a string index drift after the first multibyte character.
+ *
+ * @param source - The source the spans index.
+ * @returns The source's spans. The source is encoded once, so keep the result
+ * for a source that is sliced or converted many times.
+ */
+export function sourceSpans(source: string): SourceSpans {
+  const bytes = new TextEncoder().encode(source);
+  const decoder = new TextDecoder("utf-8", { ignoreBOM: true });
+  const ascii = bytes.length === source.length;
+  const indexOf = (offset: number): number =>
+    ascii ? offset : decoder.decode(bytes.subarray(0, offset)).length;
+  const offsetOf = (index: number): number =>
+    ascii ? index : new TextEncoder().encode(source.slice(0, index)).length;
+  return {
+    byteLength: bytes.length,
+    slice: (span) => decoder.decode(bytes.subarray(span.start, span.end)),
+    toIndices: (span) => ({ start: indexOf(span.start), end: indexOf(span.end) }),
+    toSpan: (range) => ({ start: offsetOf(range.start), end: offsetOf(range.end) }),
+  };
+}
+
+/**
+ * A slicer of one source by byte span, for a source that is sliced many times.
+ *
+ * @param source - The source the spans index.
+ * @returns A function giving the text a byte span covers.
+ */
+export function spanSlicer(source: string): (span: ByteSpan) => string {
+  return sourceSpans(source).slice;
+}
+
+/**
+ * The text a byte span covers.
+ *
+ * @param source - The source the span indexes.
+ * @param span - A byte span, such as a read node's `$span`.
+ * @returns The covered text.
+ */
+export function sliceSpan(source: string, span: ByteSpan): string {
+  return sourceSpans(source).slice(span);
+}
+
+/** The length of `text` in UTF-8 bytes: the unit spans count in. */
+export function byteLength(text: string): number {
+  return new TextEncoder().encode(text).length;
+}

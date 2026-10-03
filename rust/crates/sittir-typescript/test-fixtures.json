@@ -2672,7 +2672,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void ;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string) ;\n\n  greeting: string ;\n  showGreeting(): void ;\n}\n\ndeclare module Foo.Bar {\n  export var foo;\n}\n\n;declare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n"
+    "expectedOutput": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void ;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string) ;\n\n  greeting: string ;\n  showGreeting(): void ;\n}\n\ndeclare module Foo.Bar {\n  export var foo;\n}\n;declare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -2680,9 +2680,9 @@
     "sourceIn": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n\n    interface LogOptions {\n      verbose?: boolean;\n    }\n    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void ;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string) ;\n\n  greeting: string ;\n  showGreeting(): void ;\n}\n\ndeclare module Foo.Bar {\n  export var foo;\n}\n\n;declare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
+    "expectedSourceOut": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void ;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string) ;\n\n  greeting: string ;\n  showGreeting(): void ;\n}\n\ndeclare module Foo.Bar {\n  export var foo;\n}\n;declare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
     "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (string_double elements: (string_fragment))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator_plain name: (identifier))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon)))))",
-    "wrappedText": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void ;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string) ;\n\n  greeting: string ;\n  showGreeting(): void ;\n}\n\ndeclare module Foo.Bar {\n  export var foo;\n}\n\n;declare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
+    "wrappedText": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void ;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string) ;\n\n  greeting: string ;\n  showGreeting(): void ;\n}\n\ndeclare module Foo.Bar {\n  export var foo;\n}\n;declare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -3883,7 +3883,7 @@
         }
       ]
     },
-    "expectedOutput": "declare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n"
+    "expectedOutput": "declare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -3891,9 +3891,9 @@
     "sourceIn": "declare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n\n    interface LogOptions {\n      verbose?: boolean;\n    }\n    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }\n}",
     "pattern": "ambient_declaration",
     "edits": [],
-    "expectedSourceOut": "declare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n",
+    "expectedSourceOut": "declare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n",
     "expectedReparseTree": "(ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon))))",
-    "wrappedText": "declare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n",
+    "wrappedText": "declare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -9199,7 +9199,7 @@
         "body"
       ]
     },
-    "expectedOutput": "namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n"
+    "expectedOutput": "namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -9207,9 +9207,9 @@
     "sourceIn": "namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n\n    interface LogOptions {\n      verbose?: boolean;\n    }\n    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }\n}",
     "pattern": "internal_module",
     "edits": [],
-    "expectedSourceOut": "namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n",
+    "expectedSourceOut": "namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n",
     "expectedReparseTree": "(internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon)))",
-    "wrappedText": "namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n",
+    "wrappedText": "namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -9818,7 +9818,7 @@
         "automatic_semicolon"
       ]
     },
-    "expectedOutput": "{\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n"
+    "expectedOutput": "{\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -9826,9 +9826,9 @@
     "sourceIn": "{\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n\n    interface LogOptions {\n      verbose?: boolean;\n    }\n    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }\n}",
     "pattern": "statement_block",
     "edits": [],
-    "expectedSourceOut": "{\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n",
+    "expectedSourceOut": "{\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n",
     "expectedReparseTree": "(statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon))",
-    "wrappedText": "{\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n",
+    "wrappedText": "{\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -11344,7 +11344,7 @@
         "body"
       ]
     },
-    "expectedOutput": "interface LogOptions {\n  verbose ?: boolean;\n}"
+    "expectedOutput": "interface LogOptions {\n  verbose?: boolean;\n}"
   },
   {
     "kind": "roundtrip",
@@ -11352,9 +11352,9 @@
     "sourceIn": "interface LogOptions {\n      verbose?: boolean;\n    }",
     "pattern": "interface_declaration",
     "edits": [],
-    "expectedSourceOut": "interface LogOptions {\n  verbose ?: boolean;\n}",
+    "expectedSourceOut": "interface LogOptions {\n  verbose?: boolean;\n}",
     "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))",
-    "wrappedText": "interface LogOptions {\n  verbose ?: boolean;\n}",
+    "wrappedText": "interface LogOptions {\n  verbose?: boolean;\n}",
     "wrappedOffset": 0
   },
   {
@@ -11597,7 +11597,7 @@
         "body"
       ]
     },
-    "expectedOutput": "interface AlertOptions {\n  modal: boolean;\n  title ?: string;\n  color ?: string;\n}"
+    "expectedOutput": "interface AlertOptions {\n  modal: boolean;\n  title?: string;\n  color?: string;\n}"
   },
   {
     "kind": "roundtrip",
@@ -11605,9 +11605,9 @@
     "sourceIn": "interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }",
     "pattern": "interface_declaration",
     "edits": [],
-    "expectedSourceOut": "interface AlertOptions {\n  modal: boolean;\n  title ?: string;\n  color ?: string;\n}",
+    "expectedSourceOut": "interface AlertOptions {\n  modal: boolean;\n  title?: string;\n  color?: string;\n}",
     "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))",
-    "wrappedText": "interface AlertOptions {\n  modal: boolean;\n  title ?: string;\n  color ?: string;\n}",
+    "wrappedText": "interface AlertOptions {\n  modal: boolean;\n  title?: string;\n  color?: string;\n}",
     "wrappedOffset": 0
   },
   {
@@ -11703,7 +11703,7 @@
         ]
       }
     },
-    "expectedOutput": "{\n  verbose ?: boolean;\n}"
+    "expectedOutput": "{\n  verbose?: boolean;\n}"
   },
   {
     "kind": "roundtrip",
@@ -11711,9 +11711,9 @@
     "sourceIn": "{\n      verbose?: boolean;\n    }",
     "pattern": "interface_body",
     "edits": [],
-    "expectedSourceOut": "{\n  verbose ?: boolean;\n}",
+    "expectedSourceOut": "{\n  verbose?: boolean;\n}",
     "expectedReparseTree": "(interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "interface _I {\n  verbose ?: boolean;\n}",
+    "wrappedText": "interface _I {\n  verbose?: boolean;\n}",
     "wrappedOffset": 13
   },
   {
@@ -11921,7 +11921,7 @@
         ]
       }
     },
-    "expectedOutput": "{\n  modal: boolean;\n  title ?: string;\n  color ?: string;\n}"
+    "expectedOutput": "{\n  modal: boolean;\n  title?: string;\n  color?: string;\n}"
   },
   {
     "kind": "roundtrip",
@@ -11929,9 +11929,9 @@
     "sourceIn": "{\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }",
     "pattern": "interface_body",
     "edits": [],
-    "expectedSourceOut": "{\n  modal: boolean;\n  title ?: string;\n  color ?: string;\n}",
+    "expectedSourceOut": "{\n  modal: boolean;\n  title?: string;\n  color?: string;\n}",
     "expectedReparseTree": "(interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "interface _I {\n  modal: boolean;\n  title ?: string;\n  color ?: string;\n}",
+    "wrappedText": "interface _I {\n  modal: boolean;\n  title?: string;\n  color?: string;\n}",
     "wrappedOffset": 13
   },
   {
@@ -12022,7 +12022,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{\n  verbose ?: boolean;\n}"
+    "expectedOutput": "{\n  verbose?: boolean;\n}"
   },
   {
     "kind": "roundtrip",
@@ -12030,9 +12030,9 @@
     "sourceIn": "{\n      verbose?: boolean;\n    }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{\n  verbose ?: boolean;\n}",
+    "expectedSourceOut": "{\n  verbose?: boolean;\n}",
     "expectedReparseTree": "(interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "interface _I {\n  verbose ?: boolean;\n}",
+    "wrappedText": "interface _I {\n  verbose?: boolean;\n}",
     "wrappedOffset": 13
   },
   {
@@ -12235,7 +12235,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{\n  modal: boolean;\n  title ?: string;\n  color ?: string;\n}"
+    "expectedOutput": "{\n  modal: boolean;\n  title?: string;\n  color?: string;\n}"
   },
   {
     "kind": "roundtrip",
@@ -12243,9 +12243,9 @@
     "sourceIn": "{\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{\n  modal: boolean;\n  title ?: string;\n  color ?: string;\n}",
+    "expectedSourceOut": "{\n  modal: boolean;\n  title?: string;\n  color?: string;\n}",
     "expectedReparseTree": "(interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "interface _I {\n  modal: boolean;\n  title ?: string;\n  color ?: string;\n}",
+    "wrappedText": "interface _I {\n  modal: boolean;\n  title?: string;\n  color?: string;\n}",
     "wrappedOffset": 13
   },
   {
@@ -12295,7 +12295,7 @@
         "type"
       ]
     },
-    "expectedOutput": "verbose ?: boolean"
+    "expectedOutput": "verbose?: boolean"
   },
   {
     "kind": "roundtrip",
@@ -12303,9 +12303,9 @@
     "sourceIn": "verbose?: boolean",
     "pattern": "property_signature",
     "edits": [],
-    "expectedSourceOut": "verbose ?: boolean",
+    "expectedSourceOut": "verbose?: boolean",
     "expectedReparseTree": "(property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))",
-    "wrappedText": "interface _I { verbose ?: boolean }",
+    "wrappedText": "interface _I { verbose?: boolean }",
     "wrappedOffset": 15
   },
   {
@@ -12413,7 +12413,7 @@
         "type"
       ]
     },
-    "expectedOutput": "title ?: string"
+    "expectedOutput": "title?: string"
   },
   {
     "kind": "roundtrip",
@@ -12421,9 +12421,9 @@
     "sourceIn": "title?: string",
     "pattern": "property_signature",
     "edits": [],
-    "expectedSourceOut": "title ?: string",
+    "expectedSourceOut": "title?: string",
     "expectedReparseTree": "(property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))",
-    "wrappedText": "interface _I { title ?: string }",
+    "wrappedText": "interface _I { title?: string }",
     "wrappedOffset": 15
   },
   {
@@ -12473,7 +12473,7 @@
         "type"
       ]
     },
-    "expectedOutput": "color ?: string"
+    "expectedOutput": "color?: string"
   },
   {
     "kind": "roundtrip",
@@ -12481,9 +12481,9 @@
     "sourceIn": "color?: string",
     "pattern": "property_signature",
     "edits": [],
-    "expectedSourceOut": "color ?: string",
+    "expectedSourceOut": "color?: string",
     "expectedReparseTree": "(property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))",
-    "wrappedText": "interface _I { color ?: string }",
+    "wrappedText": "interface _I { color?: string }",
     "wrappedOffset": 15
   },
   {
@@ -29261,7 +29261,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "module Promise {\n  var on: {}\n  export function resolve<R>(value ?: Thenable<R>): Promise<R> ;\n}\n\ndeclare module \"example\"\n\ndeclare module \"example\" {}\n"
+    "expectedOutput": "module Promise {\n  var on: {}\n  export function resolve<R>(value?: Thenable<R>): Promise<R> ;\n}\n\ndeclare module \"example\"\n\ndeclare module \"example\" {}\n"
   },
   {
     "kind": "roundtrip",
@@ -29269,9 +29269,9 @@
     "sourceIn": "\nmodule Promise {\n    var on: {}\n    export function resolve<R>(value?: Thenable<R>): Promise<R>;\n}\n\ndeclare module \"example\"\n\ndeclare module \"example\" { }\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "module Promise {\n  var on: {}\n  export function resolve<R>(value ?: Thenable<R>): Promise<R> ;\n}\n\ndeclare module \"example\"\n\ndeclare module \"example\" {}\n",
+    "expectedSourceOut": "module Promise {\n  var on: {}\n  export function resolve<R>(value?: Thenable<R>): Promise<R> ;\n}\n\ndeclare module \"example\"\n\ndeclare module \"example\" {}\n",
     "expectedReparseTree": "(program statements: (module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type))) terminator: (automatic_semicolon)) statements: (export_statement_default_declaration declaration: (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (module name: (string_double elements: (string_fragment)))) statements: (ambient_declaration (module name: (string_double elements: (string_fragment)) body: (statement_block automatic_semicolon: (automatic_semicolon)))))",
-    "wrappedText": "module Promise {\n  var on: {}\n  export function resolve<R>(value ?: Thenable<R>): Promise<R> ;\n}\n\ndeclare module \"example\"\n\ndeclare module \"example\" {}\n",
+    "wrappedText": "module Promise {\n  var on: {}\n  export function resolve<R>(value?: Thenable<R>): Promise<R> ;\n}\n\ndeclare module \"example\"\n\ndeclare module \"example\" {}\n",
     "wrappedOffset": 0
   },
   {
@@ -29808,7 +29808,7 @@
         "body"
       ]
     },
-    "expectedOutput": "module Promise {\n  var on: {}\n  export function resolve<R>(value ?: Thenable<R>): Promise<R> ;\n}\n"
+    "expectedOutput": "module Promise {\n  var on: {}\n  export function resolve<R>(value?: Thenable<R>): Promise<R> ;\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -29816,9 +29816,9 @@
     "sourceIn": "module Promise {\n    var on: {}\n    export function resolve<R>(value?: Thenable<R>): Promise<R>;\n}",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "module Promise {\n  var on: {}\n  export function resolve<R>(value ?: Thenable<R>): Promise<R> ;\n}\n",
+    "expectedSourceOut": "module Promise {\n  var on: {}\n  export function resolve<R>(value?: Thenable<R>): Promise<R> ;\n}\n",
     "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type))) terminator: (automatic_semicolon)) statements: (export_statement_default_declaration declaration: (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))) automatic_semicolon: (automatic_semicolon)))",
-    "wrappedText": "module Promise {\n  var on: {}\n  export function resolve<R>(value ?: Thenable<R>): Promise<R> ;\n}\n",
+    "wrappedText": "module Promise {\n  var on: {}\n  export function resolve<R>(value?: Thenable<R>): Promise<R> ;\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -30498,7 +30498,7 @@
         "automatic_semicolon"
       ]
     },
-    "expectedOutput": "{\n  var on: {}\n  export function resolve<R>(value ?: Thenable<R>): Promise<R> ;\n}\n"
+    "expectedOutput": "{\n  var on: {}\n  export function resolve<R>(value?: Thenable<R>): Promise<R> ;\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -30506,9 +30506,9 @@
     "sourceIn": "{\n    var on: {}\n    export function resolve<R>(value?: Thenable<R>): Promise<R>;\n}",
     "pattern": "statement_block",
     "edits": [],
-    "expectedSourceOut": "{\n  var on: {}\n  export function resolve<R>(value ?: Thenable<R>): Promise<R> ;\n}\n",
+    "expectedSourceOut": "{\n  var on: {}\n  export function resolve<R>(value?: Thenable<R>): Promise<R> ;\n}\n",
     "expectedReparseTree": "(statement_block statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type))) terminator: (automatic_semicolon)) statements: (export_statement_default_declaration declaration: (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))) automatic_semicolon: (automatic_semicolon))",
-    "wrappedText": "{\n  var on: {}\n  export function resolve<R>(value ?: Thenable<R>): Promise<R> ;\n}\n",
+    "wrappedText": "{\n  var on: {}\n  export function resolve<R>(value?: Thenable<R>): Promise<R> ;\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -31393,7 +31393,7 @@
       ],
       "_decorator": []
     },
-    "expectedOutput": "export function resolve<R>(value ?: Thenable<R>): Promise<R> ;"
+    "expectedOutput": "export function resolve<R>(value?: Thenable<R>): Promise<R> ;"
   },
   {
     "kind": "roundtrip",
@@ -31401,9 +31401,9 @@
     "sourceIn": "export function resolve<R>(value?: Thenable<R>): Promise<R>;",
     "pattern": "export_statement_default_declaration",
     "edits": [],
-    "expectedSourceOut": "export function resolve<R>(value ?: Thenable<R>): Promise<R> ;",
+    "expectedSourceOut": "export function resolve<R>(value?: Thenable<R>): Promise<R> ;",
     "expectedReparseTree": "(export_statement_default_declaration declaration: (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))",
-    "wrappedText": "export function resolve<R>(value ?: Thenable<R>): Promise<R> ;",
+    "wrappedText": "export function resolve<R>(value?: Thenable<R>): Promise<R> ;",
     "wrappedOffset": 0
   },
   {
@@ -31778,7 +31778,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "function resolve<R>(value ?: Thenable<R>): Promise<R> ;"
+    "expectedOutput": "function resolve<R>(value?: Thenable<R>): Promise<R> ;"
   },
   {
     "kind": "roundtrip",
@@ -31786,9 +31786,9 @@
     "sourceIn": "function resolve<R>(value?: Thenable<R>): Promise<R>;",
     "pattern": "function_signature",
     "edits": [],
-    "expectedSourceOut": "function resolve<R>(value ?: Thenable<R>): Promise<R> ;",
+    "expectedSourceOut": "function resolve<R>(value?: Thenable<R>): Promise<R> ;",
     "expectedReparseTree": "(function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))",
-    "wrappedText": "function resolve<R>(value ?: Thenable<R>): Promise<R> ;",
+    "wrappedText": "function resolve<R>(value?: Thenable<R>): Promise<R> ;",
     "wrappedOffset": 0
   },
   {
@@ -32209,7 +32209,7 @@
         }
       ]
     },
-    "expectedOutput": "(value ?: Thenable<R>)"
+    "expectedOutput": "(value?: Thenable<R>)"
   },
   {
     "kind": "roundtrip",
@@ -32217,9 +32217,9 @@
     "sourceIn": "(value?: Thenable<R>)",
     "pattern": "formal_parameters",
     "edits": [],
-    "expectedSourceOut": "(value ?: Thenable<R>)",
+    "expectedSourceOut": "(value?: Thenable<R>)",
     "expectedReparseTree": "(formal_parameters elements: (formal_parameters_elements item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))))",
-    "wrappedText": "function _f(value ?: Thenable<R>) {}",
+    "wrappedText": "function _f(value?: Thenable<R>) {}",
     "wrappedOffset": 11
   },
   {
@@ -48028,7 +48028,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "class Foo {\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept ?: (result: T) => boolean | Promise<boolean>, timeoutMessage ?: string, retryCount ?: number): Promise<T> ;\n\n  public readonly async bar ?<T>() ;\n  private static bar() ;\n  private static async bar(): T ;\n}\n"
+    "expectedOutput": "class Foo {\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number): Promise<T> ;\n\n  public readonly async bar ?<T>() ;\n  private static bar() ;\n  private static async bar(): T ;\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -48036,9 +48036,9 @@
     "sourceIn": "\nclass Foo {\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number): Promise<T>;\n\n  public readonly async bar?<T>();\n  private static bar();\n  private static async bar(): T;\n}\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "class Foo {\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept ?: (result: T) => boolean | Promise<boolean>, timeoutMessage ?: string, retryCount ?: number): Promise<T> ;\n\n  public readonly async bar ?<T>() ;\n  private static bar() ;\n  private static async bar(): T ;\n}\n",
+    "expectedSourceOut": "class Foo {\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number): Promise<T> ;\n\n  public readonly async bar ?<T>() ;\n  private static bar() ;\n  private static async bar(): T ;\n}\n",
     "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (union_type left: (type_identifier) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (union_type left: (type_identifier) right: (literal_type (undefined)))))))))) item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (union_type left: (predefined_type) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (predefined_type)))))))) item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))) members: (class_body_member_declaration member: (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters))) members: (class_body_member_declaration member: (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters))) members: (class_body_member_declaration member: (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))) automatic_semicolon: (automatic_semicolon)))",
-    "wrappedText": "class Foo {\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept ?: (result: T) => boolean | Promise<boolean>, timeoutMessage ?: string, retryCount ?: number): Promise<T> ;\n\n  public readonly async bar ?<T>() ;\n  private static bar() ;\n  private static async bar(): T ;\n}\n",
+    "wrappedText": "class Foo {\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number): Promise<T> ;\n\n  public readonly async bar ?<T>() ;\n  private static bar() ;\n  private static async bar(): T ;\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -49243,7 +49243,7 @@
       ],
       "_decorator": []
     },
-    "expectedOutput": "class Foo {\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept ?: (result: T) => boolean | Promise<boolean>, timeoutMessage ?: string, retryCount ?: number): Promise<T> ;\n\n  public readonly async bar ?<T>() ;\n  private static bar() ;\n  private static async bar(): T ;\n}\n"
+    "expectedOutput": "class Foo {\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number): Promise<T> ;\n\n  public readonly async bar ?<T>() ;\n  private static bar() ;\n  private static async bar(): T ;\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -49251,9 +49251,9 @@
     "sourceIn": "class Foo {\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number): Promise<T>;\n\n  public readonly async bar?<T>();\n  private static bar();\n  private static async bar(): T;\n}",
     "pattern": "class_declaration",
     "edits": [],
-    "expectedSourceOut": "class Foo {\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept ?: (result: T) => boolean | Promise<boolean>, timeoutMessage ?: string, retryCount ?: number): Promise<T> ;\n\n  public readonly async bar ?<T>() ;\n  private static bar() ;\n  private static async bar(): T ;\n}\n",
+    "expectedSourceOut": "class Foo {\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number): Promise<T> ;\n\n  public readonly async bar ?<T>() ;\n  private static bar() ;\n  private static async bar(): T ;\n}\n",
     "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (union_type left: (type_identifier) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (union_type left: (type_identifier) right: (literal_type (undefined)))))))))) item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (union_type left: (predefined_type) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (predefined_type)))))))) item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))) members: (class_body_member_declaration member: (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters))) members: (class_body_member_declaration member: (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters))) members: (class_body_member_declaration member: (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))) automatic_semicolon: (automatic_semicolon))",
-    "wrappedText": "class Foo {\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept ?: (result: T) => boolean | Promise<boolean>, timeoutMessage ?: string, retryCount ?: number): Promise<T> ;\n\n  public readonly async bar ?<T>() ;\n  private static bar() ;\n  private static async bar(): T ;\n}\n",
+    "wrappedText": "class Foo {\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number): Promise<T> ;\n\n  public readonly async bar ?<T>() ;\n  private static bar() ;\n  private static async bar(): T ;\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -50772,7 +50772,7 @@
         }
       ]
     },
-    "expectedOutput": "{\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept ?: (result: T) => boolean | Promise<boolean>, timeoutMessage ?: string, retryCount ?: number): Promise<T> ;\n\n  public readonly async bar ?<T>() ;\n  private static bar() ;\n  private static async bar(): T ;\n}"
+    "expectedOutput": "{\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number): Promise<T> ;\n\n  public readonly async bar ?<T>() ;\n  private static bar() ;\n  private static async bar(): T ;\n}"
   },
   {
     "kind": "roundtrip",
@@ -50780,9 +50780,9 @@
     "sourceIn": "{\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number): Promise<T>;\n\n  public readonly async bar?<T>();\n  private static bar();\n  private static async bar(): T;\n}",
     "pattern": "class_body",
     "edits": [],
-    "expectedSourceOut": "{\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept ?: (result: T) => boolean | Promise<boolean>, timeoutMessage ?: string, retryCount ?: number): Promise<T> ;\n\n  public readonly async bar ?<T>() ;\n  private static bar() ;\n  private static async bar(): T ;\n}",
+    "expectedSourceOut": "{\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number): Promise<T> ;\n\n  public readonly async bar ?<T>() ;\n  private static bar() ;\n  private static async bar(): T ;\n}",
     "expectedReparseTree": "(class_body members: (class_body_member_declaration member: (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (union_type left: (type_identifier) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (union_type left: (type_identifier) right: (literal_type (undefined)))))))))) item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (union_type left: (predefined_type) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (predefined_type)))))))) item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))) members: (class_body_member_declaration member: (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters))) members: (class_body_member_declaration member: (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters))) members: (class_body_member_declaration member: (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))",
-    "wrappedText": "class _C {\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept ?: (result: T) => boolean | Promise<boolean>, timeoutMessage ?: string, retryCount ?: number): Promise<T> ;\n\n  public readonly async bar ?<T>() ;\n  private static bar() ;\n  private static async bar(): T ;\n}",
+    "wrappedText": "class _C {\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number): Promise<T> ;\n\n  public readonly async bar ?<T>() ;\n  private static bar() ;\n  private static async bar(): T ;\n}",
     "wrappedOffset": 9
   },
   {
@@ -51613,7 +51613,7 @@
         }
       ]
     },
-    "expectedOutput": "(func: () => T | Promise<T | undefined>, accept ?: (result: T) => boolean | Promise<boolean>, timeoutMessage ?: string, retryCount ?: number)"
+    "expectedOutput": "(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number)"
   },
   {
     "kind": "roundtrip",
@@ -51621,9 +51621,9 @@
     "sourceIn": "(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number)",
     "pattern": "formal_parameters",
     "edits": [],
-    "expectedSourceOut": "(func: () => T | Promise<T | undefined>, accept ?: (result: T) => boolean | Promise<boolean>, timeoutMessage ?: string, retryCount ?: number)",
+    "expectedSourceOut": "(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number)",
     "expectedReparseTree": "(formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (union_type left: (type_identifier) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (union_type left: (type_identifier) right: (literal_type (undefined)))))))))) item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (union_type left: (predefined_type) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (predefined_type)))))))) item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "function _f(func: () => T | Promise<T | undefined>, accept ?: (result: T) => boolean | Promise<boolean>, timeoutMessage ?: string, retryCount ?: number) {}",
+    "wrappedText": "function _f(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number) {}",
     "wrappedOffset": 11
   },
   {
@@ -58877,7 +58877,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "@ baz @ bam\nclass Foo {\n  @ foo\n  static 2: string ;\n  @ bar.buzz(grue)\n  public static 2: string = 'string' ;\n  @ readonly\n  readonly 'hello' ?: int = 'string' ;\n  @ readonly\n  fooBar(@ required param: any, @ optional param2 ?: any) {}\n}\n"
+    "expectedOutput": "@ baz @ bam\nclass Foo {\n  @ foo\n  static 2: string ;\n  @ bar.buzz(grue)\n  public static 2: string = 'string' ;\n  @ readonly\n  readonly 'hello' ?: int = 'string' ;\n  @ readonly\n  fooBar(@ required param: any, @ optional param2?: any) {}\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -58885,9 +58885,9 @@
     "sourceIn": "\n@baz @bam class Foo {\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "@ baz @ bam\nclass Foo {\n  @ foo\n  static 2: string ;\n  @ bar.buzz(grue)\n  public static 2: string = 'string' ;\n  @ readonly\n  readonly 'hello' ?: int = 'string' ;\n  @ readonly\n  fooBar(@ required param: any, @ optional param2 ?: any) {}\n}\n",
+    "expectedSourceOut": "@ baz @ bam\nclass Foo {\n  @ foo\n  static 2: string ;\n  @ bar.buzz(grue)\n  public static 2: string = 'string' ;\n  @ readonly\n  readonly 'hello' ?: int = 'string' ;\n  @ readonly\n  fooBar(@ required param: any, @ optional param2?: any) {}\n}\n",
     "expectedReparseTree": "(program statements: (class_declaration decorator: (decorator expression: (identifier)) decorator: (decorator expression: (identifier)) name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition decorator: (decorator expression: (identifier)) name: (number_decimal) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (public_field_definition decorator: (decorator expression: (decorator_call_expression function: (decorator_member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string_single elements: (string_fragment)))) members: (class_body_member_declaration member: (public_field_definition decorator: (decorator expression: (identifier)) name: (string_single elements: (string_fragment)) type: (type_annotation type: (type_identifier)) value: (string_single elements: (string_fragment)))) members: (class_body_member_method decorator: (decorator expression: (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter decorator: (decorator expression: (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter decorator: (decorator expression: (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
-    "wrappedText": "@ baz @ bam\nclass Foo {\n  @ foo\n  static 2: string ;\n  @ bar.buzz(grue)\n  public static 2: string = 'string' ;\n  @ readonly\n  readonly 'hello' ?: int = 'string' ;\n  @ readonly\n  fooBar(@ required param: any, @ optional param2 ?: any) {}\n}\n",
+    "wrappedText": "@ baz @ bam\nclass Foo {\n  @ foo\n  static 2: string ;\n  @ bar.buzz(grue)\n  public static 2: string = 'string' ;\n  @ readonly\n  readonly 'hello' ?: int = 'string' ;\n  @ readonly\n  fooBar(@ required param: any, @ optional param2?: any) {}\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -59796,7 +59796,7 @@
         "automatic_semicolon"
       ]
     },
-    "expectedOutput": "@ baz @ bam\nclass Foo {\n  @ foo\n  static 2: string ;\n  @ bar.buzz(grue)\n  public static 2: string = 'string' ;\n  @ readonly\n  readonly 'hello' ?: int = 'string' ;\n  @ readonly\n  fooBar(@ required param: any, @ optional param2 ?: any) {}\n}\n"
+    "expectedOutput": "@ baz @ bam\nclass Foo {\n  @ foo\n  static 2: string ;\n  @ bar.buzz(grue)\n  public static 2: string = 'string' ;\n  @ readonly\n  readonly 'hello' ?: int = 'string' ;\n  @ readonly\n  fooBar(@ required param: any, @ optional param2?: any) {}\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -59804,9 +59804,9 @@
     "sourceIn": "@baz @bam class Foo {\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}",
     "pattern": "class_declaration",
     "edits": [],
-    "expectedSourceOut": "@ baz @ bam\nclass Foo {\n  @ foo\n  static 2: string ;\n  @ bar.buzz(grue)\n  public static 2: string = 'string' ;\n  @ readonly\n  readonly 'hello' ?: int = 'string' ;\n  @ readonly\n  fooBar(@ required param: any, @ optional param2 ?: any) {}\n}\n",
+    "expectedSourceOut": "@ baz @ bam\nclass Foo {\n  @ foo\n  static 2: string ;\n  @ bar.buzz(grue)\n  public static 2: string = 'string' ;\n  @ readonly\n  readonly 'hello' ?: int = 'string' ;\n  @ readonly\n  fooBar(@ required param: any, @ optional param2?: any) {}\n}\n",
     "expectedReparseTree": "(class_declaration decorator: (decorator expression: (identifier)) decorator: (decorator expression: (identifier)) name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition decorator: (decorator expression: (identifier)) name: (number_decimal) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (public_field_definition decorator: (decorator expression: (decorator_call_expression function: (decorator_member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string_single elements: (string_fragment)))) members: (class_body_member_declaration member: (public_field_definition decorator: (decorator expression: (identifier)) name: (string_single elements: (string_fragment)) type: (type_annotation type: (type_identifier)) value: (string_single elements: (string_fragment)))) members: (class_body_member_method decorator: (decorator expression: (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter decorator: (decorator expression: (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter decorator: (decorator expression: (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
-    "wrappedText": "@ baz @ bam\nclass Foo {\n  @ foo\n  static 2: string ;\n  @ bar.buzz(grue)\n  public static 2: string = 'string' ;\n  @ readonly\n  readonly 'hello' ?: int = 'string' ;\n  @ readonly\n  fooBar(@ required param: any, @ optional param2 ?: any) {}\n}\n",
+    "wrappedText": "@ baz @ bam\nclass Foo {\n  @ foo\n  static 2: string ;\n  @ bar.buzz(grue)\n  public static 2: string = 'string' ;\n  @ readonly\n  readonly 'hello' ?: int = 'string' ;\n  @ readonly\n  fooBar(@ required param: any, @ optional param2?: any) {}\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -60683,7 +60683,7 @@
         }
       ]
     },
-    "expectedOutput": "{\n  @ foo\n  static 2: string ;\n  @ bar.buzz(grue)\n  public static 2: string = 'string' ;\n  @ readonly\n  readonly 'hello' ?: int = 'string' ;\n  @ readonly\n  fooBar(@ required param: any, @ optional param2 ?: any) {}\n}"
+    "expectedOutput": "{\n  @ foo\n  static 2: string ;\n  @ bar.buzz(grue)\n  public static 2: string = 'string' ;\n  @ readonly\n  readonly 'hello' ?: int = 'string' ;\n  @ readonly\n  fooBar(@ required param: any, @ optional param2?: any) {}\n}"
   },
   {
     "kind": "roundtrip",
@@ -60691,9 +60691,9 @@
     "sourceIn": "{\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}",
     "pattern": "class_body",
     "edits": [],
-    "expectedSourceOut": "{\n  @ foo\n  static 2: string ;\n  @ bar.buzz(grue)\n  public static 2: string = 'string' ;\n  @ readonly\n  readonly 'hello' ?: int = 'string' ;\n  @ readonly\n  fooBar(@ required param: any, @ optional param2 ?: any) {}\n}",
+    "expectedSourceOut": "{\n  @ foo\n  static 2: string ;\n  @ bar.buzz(grue)\n  public static 2: string = 'string' ;\n  @ readonly\n  readonly 'hello' ?: int = 'string' ;\n  @ readonly\n  fooBar(@ required param: any, @ optional param2?: any) {}\n}",
     "expectedReparseTree": "(class_body members: (class_body_member_declaration member: (public_field_definition decorator: (decorator expression: (identifier)) name: (number_decimal) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (public_field_definition decorator: (decorator expression: (decorator_call_expression function: (decorator_member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string_single elements: (string_fragment)))) members: (class_body_member_declaration member: (public_field_definition decorator: (decorator expression: (identifier)) name: (string_single elements: (string_fragment)) type: (type_annotation type: (type_identifier)) value: (string_single elements: (string_fragment)))) members: (class_body_member_method decorator: (decorator expression: (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter decorator: (decorator expression: (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter decorator: (decorator expression: (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon)))",
-    "wrappedText": "class _C {\n  @ foo\n  static 2: string ;\n  @ bar.buzz(grue)\n  public static 2: string = 'string' ;\n  @ readonly\n  readonly 'hello' ?: int = 'string' ;\n  @ readonly\n  fooBar(@ required param: any, @ optional param2 ?: any) {}\n}",
+    "wrappedText": "class _C {\n  @ foo\n  static 2: string ;\n  @ bar.buzz(grue)\n  public static 2: string = 'string' ;\n  @ readonly\n  readonly 'hello' ?: int = 'string' ;\n  @ readonly\n  fooBar(@ required param: any, @ optional param2?: any) {}\n}",
     "wrappedOffset": 9
   },
   {
@@ -61480,7 +61480,7 @@
         }
       ]
     },
-    "expectedOutput": "(@ required param: any, @ optional param2 ?: any)"
+    "expectedOutput": "(@ required param: any, @ optional param2?: any)"
   },
   {
     "kind": "roundtrip",
@@ -61488,9 +61488,9 @@
     "sourceIn": "(@required param: any, @optional param2?: any)",
     "pattern": "formal_parameters",
     "edits": [],
-    "expectedSourceOut": "(@ required param: any, @ optional param2 ?: any)",
+    "expectedSourceOut": "(@ required param: any, @ optional param2?: any)",
     "expectedReparseTree": "(formal_parameters elements: (formal_parameters_elements item: (required_parameter decorator: (decorator expression: (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter decorator: (decorator expression: (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "function _f(@ required param: any, @ optional param2 ?: any) {}",
+    "wrappedText": "function _f(@ required param: any, @ optional param2?: any) {}",
     "wrappedOffset": 11
   },
   {
@@ -135862,7 +135862,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "let x: (result: string) => any;\nconst foo: (this: Readable, size ?: number) => any;\n"
+    "expectedOutput": "let x: (result: string) => any;\nconst foo: (this: Readable, size?: number) => any;\n"
   },
   {
     "kind": "roundtrip",
@@ -135870,9 +135870,9 @@
     "sourceIn": "\nlet x: (result: string) => any;\nconst foo: (this: Readable, size?: number) => any;\n\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "let x: (result: string) => any;\nconst foo: (this: Readable, size ?: number) => any;\n",
+    "expectedSourceOut": "let x: (result: string) => any;\nconst foo: (this: Readable, size?: number) => any;\n",
     "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type))))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (this) type: (type_annotation type: (type_identifier))) item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type))))))",
-    "wrappedText": "let x: (result: string) => any;\nconst foo: (this: Readable, size ?: number) => any;\n",
+    "wrappedText": "let x: (result: string) => any;\nconst foo: (this: Readable, size?: number) => any;\n",
     "wrappedOffset": 0
   },
   {
@@ -136271,7 +136271,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "const foo: (this: Readable, size ?: number) => any;"
+    "expectedOutput": "const foo: (this: Readable, size?: number) => any;"
   },
   {
     "kind": "roundtrip",
@@ -136279,9 +136279,9 @@
     "sourceIn": "const foo: (this: Readable, size?: number) => any;",
     "pattern": "lexical_declaration",
     "edits": [],
-    "expectedSourceOut": "const foo: (this: Readable, size ?: number) => any;",
+    "expectedSourceOut": "const foo: (this: Readable, size?: number) => any;",
     "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (this) type: (type_annotation type: (type_identifier))) item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type)))))",
-    "wrappedText": "const foo: (this: Readable, size ?: number) => any;",
+    "wrappedText": "const foo: (this: Readable, size?: number) => any;",
     "wrappedOffset": 0
   },
   {
@@ -136652,7 +136652,7 @@
         "type"
       ]
     },
-    "expectedOutput": "foo: (this: Readable, size ?: number) => any"
+    "expectedOutput": "foo: (this: Readable, size?: number) => any"
   },
   {
     "kind": "roundtrip",
@@ -136660,9 +136660,9 @@
     "sourceIn": "foo: (this: Readable, size?: number) => any",
     "pattern": "variable_declarator_plain",
     "edits": [],
-    "expectedSourceOut": "foo: (this: Readable, size ?: number) => any",
+    "expectedSourceOut": "foo: (this: Readable, size?: number) => any",
     "expectedReparseTree": "(variable_declarator_plain name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (this) type: (type_annotation type: (type_identifier))) item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type))))",
-    "wrappedText": "let foo: (this: Readable, size ?: number) => any;",
+    "wrappedText": "let foo: (this: Readable, size?: number) => any;",
     "wrappedOffset": 4
   },
   {
@@ -137029,7 +137029,7 @@
         }
       ]
     },
-    "expectedOutput": ": (this: Readable, size ?: number) => any"
+    "expectedOutput": ": (this: Readable, size?: number) => any"
   },
   {
     "kind": "roundtrip",
@@ -137037,9 +137037,9 @@
     "sourceIn": ": (this: Readable, size?: number) => any",
     "pattern": "type_annotation",
     "edits": [],
-    "expectedSourceOut": ": (this: Readable, size ?: number) => any",
+    "expectedSourceOut": ": (this: Readable, size?: number) => any",
     "expectedReparseTree": "(type_annotation type: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (this) type: (type_annotation type: (type_identifier))) item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type)))",
-    "wrappedText": "let _: (this: Readable, size ?: number) => any;",
+    "wrappedText": "let _: (this: Readable, size?: number) => any;",
     "wrappedOffset": 5
   },
   {
@@ -137422,7 +137422,7 @@
         "return_type"
       ]
     },
-    "expectedOutput": "(this: Readable, size ?: number) => any"
+    "expectedOutput": "(this: Readable, size?: number) => any"
   },
   {
     "kind": "roundtrip",
@@ -137430,9 +137430,9 @@
     "sourceIn": "(this: Readable, size?: number) => any",
     "pattern": "function_type",
     "edits": [],
-    "expectedSourceOut": "(this: Readable, size ?: number) => any",
+    "expectedSourceOut": "(this: Readable, size?: number) => any",
     "expectedReparseTree": "(function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (this) type: (type_annotation type: (type_identifier))) item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (predefined_type))",
-    "wrappedText": "type _X = (this: Readable, size ?: number) => any;",
+    "wrappedText": "type _X = (this: Readable, size?: number) => any;",
     "wrappedOffset": 10
   },
   {
@@ -137691,7 +137691,7 @@
         }
       ]
     },
-    "expectedOutput": "(this: Readable, size ?: number)"
+    "expectedOutput": "(this: Readable, size?: number)"
   },
   {
     "kind": "roundtrip",
@@ -137699,9 +137699,9 @@
     "sourceIn": "(this: Readable, size?: number)",
     "pattern": "formal_parameters",
     "edits": [],
-    "expectedSourceOut": "(this: Readable, size ?: number)",
+    "expectedSourceOut": "(this: Readable, size?: number)",
     "expectedReparseTree": "(formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (this) type: (type_annotation type: (type_identifier))) item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "function _f(this: Readable, size ?: number) {}",
+    "wrappedText": "function _f(this: Readable, size?: number) {}",
     "wrappedOffset": 11
   },
   {
@@ -152236,7 +152236,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "type FileMergeData = {\n  document: Doc,\n  headDocument: Doc,\n  baseDocument: Doc,\n  conflicts: ConflictInfo[]\n}\n\ntype ConflictInfo = {\n  start ?: LineHandle,\n  middle ?: LineHandle,\n  end ?: LineHandle\n}\n"
+    "expectedOutput": "type FileMergeData = {\n  document: Doc,\n  headDocument: Doc,\n  baseDocument: Doc,\n  conflicts: ConflictInfo[]\n}\n\ntype ConflictInfo = {\n  start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -152244,9 +152244,9 @@
     "sourceIn": "\ntype FileMergeData = {\n  document: Doc,\n  headDocument: Doc,\n  baseDocument: Doc,\n  conflicts: ConflictInfo[]\n}\n\ntype ConflictInfo = {\n  start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle\n}\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "type FileMergeData = {\n  document: Doc,\n  headDocument: Doc,\n  baseDocument: Doc,\n  conflicts: ConflictInfo[]\n}\n\ntype ConflictInfo = {\n  start ?: LineHandle,\n  middle ?: LineHandle,\n  end ?: LineHandle\n}\n",
+    "expectedSourceOut": "type FileMergeData = {\n  document: Doc,\n  headDocument: Doc,\n  baseDocument: Doc,\n  conflicts: ConflictInfo[]\n}\n\ntype ConflictInfo = {\n  start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle\n}\n",
     "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) item: (property_signature name: (property_identifier) type: (type_annotation type: (array_type type: (type_identifier)))))) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))))) terminator: (automatic_semicolon)))",
-    "wrappedText": "type FileMergeData = {\n  document: Doc,\n  headDocument: Doc,\n  baseDocument: Doc,\n  conflicts: ConflictInfo[]\n}\n\ntype ConflictInfo = {\n  start ?: LineHandle,\n  middle ?: LineHandle,\n  end ?: LineHandle\n}\n",
+    "wrappedText": "type FileMergeData = {\n  document: Doc,\n  headDocument: Doc,\n  baseDocument: Doc,\n  conflicts: ConflictInfo[]\n}\n\ntype ConflictInfo = {\n  start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -152912,7 +152912,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "type ConflictInfo = {\n  start ?: LineHandle,\n  middle ?: LineHandle,\n  end ?: LineHandle\n}\n"
+    "expectedOutput": "type ConflictInfo = {\n  start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -152920,9 +152920,9 @@
     "sourceIn": "type ConflictInfo = {\n  start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle\n}",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type ConflictInfo = {\n  start ?: LineHandle,\n  middle ?: LineHandle,\n  end ?: LineHandle\n}\n",
+    "expectedSourceOut": "type ConflictInfo = {\n  start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle\n}\n",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))))) terminator: (automatic_semicolon))",
-    "wrappedText": "type ConflictInfo = {\n  start ?: LineHandle,\n  middle ?: LineHandle,\n  end ?: LineHandle\n}\n",
+    "wrappedText": "type ConflictInfo = {\n  start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -153784,7 +153784,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{\n  start ?: LineHandle,\n  middle ?: LineHandle,\n  end ?: LineHandle\n}"
+    "expectedOutput": "{\n  start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle\n}"
   },
   {
     "kind": "roundtrip",
@@ -153792,9 +153792,9 @@
     "sourceIn": "{\n  start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle\n}",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{\n  start ?: LineHandle,\n  middle ?: LineHandle,\n  end ?: LineHandle\n}",
+    "expectedSourceOut": "{\n  start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle\n}",
     "expectedReparseTree": "(object_type members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier)))))",
-    "wrappedText": "type _X = {\n  start ?: LineHandle,\n  middle ?: LineHandle,\n  end ?: LineHandle\n};",
+    "wrappedText": "type _X = {\n  start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle\n};",
     "wrappedOffset": 10
   },
   {
@@ -154171,7 +154171,7 @@
         "type"
       ]
     },
-    "expectedOutput": "start ?: LineHandle"
+    "expectedOutput": "start?: LineHandle"
   },
   {
     "kind": "roundtrip",
@@ -154179,9 +154179,9 @@
     "sourceIn": "start?: LineHandle",
     "pattern": "property_signature",
     "edits": [],
-    "expectedSourceOut": "start ?: LineHandle",
+    "expectedSourceOut": "start?: LineHandle",
     "expectedReparseTree": "(property_signature name: (property_identifier) type: (type_annotation type: (type_identifier)))",
-    "wrappedText": "interface _I { start ?: LineHandle }",
+    "wrappedText": "interface _I { start?: LineHandle }",
     "wrappedOffset": 15
   },
   {
@@ -154245,7 +154245,7 @@
         "type"
       ]
     },
-    "expectedOutput": "middle ?: LineHandle"
+    "expectedOutput": "middle?: LineHandle"
   },
   {
     "kind": "roundtrip",
@@ -154253,9 +154253,9 @@
     "sourceIn": "middle?: LineHandle",
     "pattern": "property_signature",
     "edits": [],
-    "expectedSourceOut": "middle ?: LineHandle",
+    "expectedSourceOut": "middle?: LineHandle",
     "expectedReparseTree": "(property_signature name: (property_identifier) type: (type_annotation type: (type_identifier)))",
-    "wrappedText": "interface _I { middle ?: LineHandle }",
+    "wrappedText": "interface _I { middle?: LineHandle }",
     "wrappedOffset": 15
   },
   {
@@ -154319,7 +154319,7 @@
         "type"
       ]
     },
-    "expectedOutput": "end ?: LineHandle"
+    "expectedOutput": "end?: LineHandle"
   },
   {
     "kind": "roundtrip",
@@ -154327,9 +154327,9 @@
     "sourceIn": "end?: LineHandle",
     "pattern": "property_signature",
     "edits": [],
-    "expectedSourceOut": "end ?: LineHandle",
+    "expectedSourceOut": "end?: LineHandle",
     "expectedReparseTree": "(property_signature name: (property_identifier) type: (type_annotation type: (type_identifier)))",
-    "wrappedText": "interface _I { end ?: LineHandle }",
+    "wrappedText": "interface _I { end?: LineHandle }",
     "wrappedOffset": 15
   },
   {
@@ -247059,7 +247059,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void ;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string) ;\n\n  greeting: string ;\n  showGreeting(): void ;\n}\n\ndeclare module Foo.Bar {\n  export var foo;\n}\n\n;declare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  for (let i = 0; i < 3; i++) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n"
+    "expectedOutput": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void ;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string) ;\n\n  greeting: string ;\n  showGreeting(): void ;\n}\n\ndeclare module Foo.Bar {\n  export var foo;\n}\n;declare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  for (let i = 0; i < 3; i++) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -247067,9 +247067,9 @@
     "sourceIn": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n\n    interface LogOptions {\n      verbose?: boolean;\n    }\n    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  for (let i = 0; i < 3; i++) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void ;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string) ;\n\n  greeting: string ;\n  showGreeting(): void ;\n}\n\ndeclare module Foo.Bar {\n  export var foo;\n}\n\n;declare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  for (let i = 0; i < 3; i++) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
+    "expectedSourceOut": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void ;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string) ;\n\n  greeting: string ;\n  showGreeting(): void ;\n}\n\ndeclare module Foo.Bar {\n  export var foo;\n}\n;declare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  for (let i = 0; i < 3; i++) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
     "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (string_double elements: (string_fragment))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator_plain name: (identifier))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (number_decimal))) condition: (binary_expression left: (identifier) right: (number_decimal)) increment: (update_expression_postfix argument: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon)))))",
-    "wrappedText": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void ;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string) ;\n\n  greeting: string ;\n  showGreeting(): void ;\n}\n\ndeclare module Foo.Bar {\n  export var foo;\n}\n\n;declare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  for (let i = 0; i < 3; i++) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
+    "wrappedText": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void ;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string) ;\n\n  greeting: string ;\n  showGreeting(): void ;\n}\n\ndeclare module Foo.Bar {\n  export var foo;\n}\n;declare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  for (let i = 0; i < 3; i++) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -248270,7 +248270,7 @@
         }
       ]
     },
-    "expectedOutput": "declare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n"
+    "expectedOutput": "declare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -248278,9 +248278,9 @@
     "sourceIn": "declare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n\n    interface LogOptions {\n      verbose?: boolean;\n    }\n    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }\n}",
     "pattern": "ambient_declaration",
     "edits": [],
-    "expectedSourceOut": "declare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n",
+    "expectedSourceOut": "declare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n",
     "expectedReparseTree": "(ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon))))",
-    "wrappedText": "declare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n",
+    "wrappedText": "declare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -253892,7 +253892,7 @@
         "body"
       ]
     },
-    "expectedOutput": "namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n"
+    "expectedOutput": "namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -253900,9 +253900,9 @@
     "sourceIn": "namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n\n    interface LogOptions {\n      verbose?: boolean;\n    }\n    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }\n}",
     "pattern": "internal_module",
     "edits": [],
-    "expectedSourceOut": "namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n",
+    "expectedSourceOut": "namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n",
     "expectedReparseTree": "(internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon)))",
-    "wrappedText": "namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n",
+    "wrappedText": "namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -254511,7 +254511,7 @@
         "automatic_semicolon"
       ]
     },
-    "expectedOutput": "{\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n"
+    "expectedOutput": "{\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -254519,9 +254519,9 @@
     "sourceIn": "{\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n\n    interface LogOptions {\n      verbose?: boolean;\n    }\n    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }\n}",
     "pattern": "statement_block",
     "edits": [],
-    "expectedSourceOut": "{\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n",
+    "expectedSourceOut": "{\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n",
     "expectedReparseTree": "(statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon))",
-    "wrappedText": "{\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose ?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title ?: string;\n    color ?: string;\n  }\n}\n",
+    "wrappedText": "{\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -256259,7 +256259,7 @@
         "body"
       ]
     },
-    "expectedOutput": "interface LogOptions {\n  verbose ?: boolean;\n}"
+    "expectedOutput": "interface LogOptions {\n  verbose?: boolean;\n}"
   },
   {
     "kind": "roundtrip",
@@ -256267,9 +256267,9 @@
     "sourceIn": "interface LogOptions {\n      verbose?: boolean;\n    }",
     "pattern": "interface_declaration",
     "edits": [],
-    "expectedSourceOut": "interface LogOptions {\n  verbose ?: boolean;\n}",
+    "expectedSourceOut": "interface LogOptions {\n  verbose?: boolean;\n}",
     "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))",
-    "wrappedText": "interface LogOptions {\n  verbose ?: boolean;\n}",
+    "wrappedText": "interface LogOptions {\n  verbose?: boolean;\n}",
     "wrappedOffset": 0
   },
   {
@@ -256512,7 +256512,7 @@
         "body"
       ]
     },
-    "expectedOutput": "interface AlertOptions {\n  modal: boolean;\n  title ?: string;\n  color ?: string;\n}"
+    "expectedOutput": "interface AlertOptions {\n  modal: boolean;\n  title?: string;\n  color?: string;\n}"
   },
   {
     "kind": "roundtrip",
@@ -256520,9 +256520,9 @@
     "sourceIn": "interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }",
     "pattern": "interface_declaration",
     "edits": [],
-    "expectedSourceOut": "interface AlertOptions {\n  modal: boolean;\n  title ?: string;\n  color ?: string;\n}",
+    "expectedSourceOut": "interface AlertOptions {\n  modal: boolean;\n  title?: string;\n  color?: string;\n}",
     "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))))",
-    "wrappedText": "interface AlertOptions {\n  modal: boolean;\n  title ?: string;\n  color ?: string;\n}",
+    "wrappedText": "interface AlertOptions {\n  modal: boolean;\n  title?: string;\n  color?: string;\n}",
     "wrappedOffset": 0
   },
   {
@@ -256618,7 +256618,7 @@
         ]
       }
     },
-    "expectedOutput": "{\n  verbose ?: boolean;\n}"
+    "expectedOutput": "{\n  verbose?: boolean;\n}"
   },
   {
     "kind": "roundtrip",
@@ -256626,9 +256626,9 @@
     "sourceIn": "{\n      verbose?: boolean;\n    }",
     "pattern": "interface_body",
     "edits": [],
-    "expectedSourceOut": "{\n  verbose ?: boolean;\n}",
+    "expectedSourceOut": "{\n  verbose?: boolean;\n}",
     "expectedReparseTree": "(interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "interface _I {\n  verbose ?: boolean;\n}",
+    "wrappedText": "interface _I {\n  verbose?: boolean;\n}",
     "wrappedOffset": 13
   },
   {
@@ -256836,7 +256836,7 @@
         ]
       }
     },
-    "expectedOutput": "{\n  modal: boolean;\n  title ?: string;\n  color ?: string;\n}"
+    "expectedOutput": "{\n  modal: boolean;\n  title?: string;\n  color?: string;\n}"
   },
   {
     "kind": "roundtrip",
@@ -256844,9 +256844,9 @@
     "sourceIn": "{\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }",
     "pattern": "interface_body",
     "edits": [],
-    "expectedSourceOut": "{\n  modal: boolean;\n  title ?: string;\n  color ?: string;\n}",
+    "expectedSourceOut": "{\n  modal: boolean;\n  title?: string;\n  color?: string;\n}",
     "expectedReparseTree": "(interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "interface _I {\n  modal: boolean;\n  title ?: string;\n  color ?: string;\n}",
+    "wrappedText": "interface _I {\n  modal: boolean;\n  title?: string;\n  color?: string;\n}",
     "wrappedOffset": 13
   },
   {
@@ -256937,7 +256937,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{\n  verbose ?: boolean;\n}"
+    "expectedOutput": "{\n  verbose?: boolean;\n}"
   },
   {
     "kind": "roundtrip",
@@ -256945,9 +256945,9 @@
     "sourceIn": "{\n      verbose?: boolean;\n    }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{\n  verbose ?: boolean;\n}",
+    "expectedSourceOut": "{\n  verbose?: boolean;\n}",
     "expectedReparseTree": "(interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "interface _I {\n  verbose ?: boolean;\n}",
+    "wrappedText": "interface _I {\n  verbose?: boolean;\n}",
     "wrappedOffset": 13
   },
   {
@@ -257150,7 +257150,7 @@
         "closing"
       ]
     },
-    "expectedOutput": "{\n  modal: boolean;\n  title ?: string;\n  color ?: string;\n}"
+    "expectedOutput": "{\n  modal: boolean;\n  title?: string;\n  color?: string;\n}"
   },
   {
     "kind": "roundtrip",
@@ -257158,9 +257158,9 @@
     "sourceIn": "{\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{\n  modal: boolean;\n  title ?: string;\n  color ?: string;\n}",
+    "expectedSourceOut": "{\n  modal: boolean;\n  title?: string;\n  color?: string;\n}",
     "expectedReparseTree": "(interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "interface _I {\n  modal: boolean;\n  title ?: string;\n  color ?: string;\n}",
+    "wrappedText": "interface _I {\n  modal: boolean;\n  title?: string;\n  color?: string;\n}",
     "wrappedOffset": 13
   },
   {
@@ -257210,7 +257210,7 @@
         "type"
       ]
     },
-    "expectedOutput": "verbose ?: boolean"
+    "expectedOutput": "verbose?: boolean"
   },
   {
     "kind": "roundtrip",
@@ -257218,9 +257218,9 @@
     "sourceIn": "verbose?: boolean",
     "pattern": "property_signature",
     "edits": [],
-    "expectedSourceOut": "verbose ?: boolean",
+    "expectedSourceOut": "verbose?: boolean",
     "expectedReparseTree": "(property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))",
-    "wrappedText": "interface _I { verbose ?: boolean }",
+    "wrappedText": "interface _I { verbose?: boolean }",
     "wrappedOffset": 15
   },
   {
@@ -257328,7 +257328,7 @@
         "type"
       ]
     },
-    "expectedOutput": "title ?: string"
+    "expectedOutput": "title?: string"
   },
   {
     "kind": "roundtrip",
@@ -257336,9 +257336,9 @@
     "sourceIn": "title?: string",
     "pattern": "property_signature",
     "edits": [],
-    "expectedSourceOut": "title ?: string",
+    "expectedSourceOut": "title?: string",
     "expectedReparseTree": "(property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))",
-    "wrappedText": "interface _I { title ?: string }",
+    "wrappedText": "interface _I { title?: string }",
     "wrappedOffset": 15
   },
   {
@@ -257388,7 +257388,7 @@
         "type"
       ]
     },
-    "expectedOutput": "color ?: string"
+    "expectedOutput": "color?: string"
   },
   {
     "kind": "roundtrip",
@@ -257396,9 +257396,9 @@
     "sourceIn": "color?: string",
     "pattern": "property_signature",
     "edits": [],
-    "expectedSourceOut": "color ?: string",
+    "expectedSourceOut": "color?: string",
     "expectedReparseTree": "(property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))",
-    "wrappedText": "interface _I { color ?: string }",
+    "wrappedText": "interface _I { color?: string }",
     "wrappedOffset": 15
   },
   {

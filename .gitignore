@@ -100,3 +100,4 @@ packages/tools/src/**/*.d.ts.map
 handoff.md
 .codex/
 packages/*/.vitest-report.json
+/packages/tools/.default-diff/

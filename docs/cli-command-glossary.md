@@ -272,6 +272,27 @@ Declared rule kinds with zero corpus exposure
 pnpm exec tsx packages/cli/src/cli.ts tool corpus-coverage-census [options]
 ```
 
+### `tool default-diff`
+
+Rebuild idiomatic source through the builders with default render options, list every gap that differs, and attribute each to the render option site that fixes it
+
+**Arguments**
+
+- `files…` (required) — Source files of one grammar, formatted with the language formatter first
+
+**Options**
+
+- `--grammar <name>` — Grammar the files are written in
+- `--no-attribute` — List the differing gaps only; skip the per-site experiments
+- `--rendered-dir <dir>` — Write each file's rendered text into this directory
+- `--json` — Print the result as JSON
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool default-diff <files> [options]
+```
+
 ### `tool defect-histogram`
 
 Group read-render-parse failures by defect signature (deepest transport frame)

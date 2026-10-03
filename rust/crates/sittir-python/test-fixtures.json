@@ -174106,7 +174106,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "@ a.b\nclass C:\n    @ d(1)\n    @ e[2].f.g\n    def f():\n        g\n\n    @ f()\n    async def f():\n        g\n\n\n@ buttons[0].clicked.connect\ndef spam():\n    ...\n"
+    "expectedOutput": "@a.b\nclass C:\n    @d(1)\n    @e[2].f.g\n    def f():\n        g\n\n    @f()\n    async def f():\n        g\n\n\n@buttons[0].clicked.connect\ndef spam():\n    ...\n"
   },
   {
     "kind": "roundtrip",
@@ -174114,9 +174114,9 @@
     "sourceIn": "\n@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n\n@buttons[0].clicked.connect\ndef spam():\n    ...\n",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "@ a.b\nclass C:\n    @ d(1)\n    @ e[2].f.g\n    def f():\n        g\n\n    @ f()\n    async def f():\n        g\n\n\n@ buttons[0].clicked.connect\ndef spam():\n    ...\n",
+    "expectedSourceOut": "@a.b\nclass C:\n    @d(1)\n    @e[2].f.g\n    def f():\n        g\n\n    @f()\n    async def f():\n        g\n\n\n@buttons[0].clicked.connect\ndef spam():\n    ...\n",
     "expectedReparseTree": "(module statements: (decorated_definition (decorator expression: (attribute object: (identifier) attribute: (identifier)) newline: (newline)) definition: (class_definition name: (identifier) body: (suite_block (block statements: (decorated_definition (decorator expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain)))) newline: (newline)) (decorator expression: (attribute object: (attribute object: (subscript value: (identifier) (subscripts subscript: (integer_decimal_plain))) attribute: (identifier)) attribute: (identifier)) newline: (newline)) definition: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)))))) statements: (decorated_definition (decorator expression: (call function: (identifier) arguments: (argument_list)) newline: (newline)) definition: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)))))))))) statements: (decorated_definition (decorator expression: (attribute object: (attribute object: (subscript value: (identifier) (subscripts subscript: (integer_decimal_plain))) attribute: (identifier)) attribute: (identifier)) newline: (newline)) definition: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (ellipsis))) (newline)))))))",
-    "wrappedText": "@ a.b\nclass C:\n    @ d(1)\n    @ e[2].f.g\n    def f():\n        g\n\n    @ f()\n    async def f():\n        g\n\n\n@ buttons[0].clicked.connect\ndef spam():\n    ...\n",
+    "wrappedText": "@a.b\nclass C:\n    @d(1)\n    @e[2].f.g\n    def f():\n        g\n\n    @f()\n    async def f():\n        g\n\n\n@buttons[0].clicked.connect\ndef spam():\n    ...\n",
     "wrappedOffset": 0
   },
   {

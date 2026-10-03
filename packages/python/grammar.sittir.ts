@@ -70,6 +70,7 @@ export default sittirGrammar(base, {
 		yield_from_clause: ($) => seq('from', $.expression)
 	},
 	options: {
+		decorator: { '"@"/after': preference('tight') },
 		indent: preference('    '),
 		gap: { separator: preference('tight') },
 		integer_hex: { 'prefix:': preference('0x') },
