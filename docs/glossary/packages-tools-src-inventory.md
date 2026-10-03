@@ -46,7 +46,7 @@ How a captured node finds its slot in a model node: by its field when it has one
 
 ### `packages/tools/src/inventory/bindings.ts::bindingPatterns`
 
-Each top-level definition with the line it starts on and its source text, sliced by the node's byte span. Spans count UTF-8 bytes and the bindings files carry multibyte comment rules, so slicing and line numbers go through `sourceSpans`. The unit `bindingIssues` compiles on its own.
+Each top-level definition with the line it starts on and its source text, sliced by the node's byte span. Spans count UTF-8 bytes and the bindings files carry multibyte comment rules, so slicing and line numbers go through `sourceSpans`. It is the unit `bindingIssues` compiles on its own, and `readBindings` reads the file through it, so a container's facts record the line and text given here.
 
 ### `packages/tools/src/inventory/bindings.ts::BindingsSyntaxError`
 

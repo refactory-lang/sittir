@@ -92,9 +92,7 @@ export interface BindingFacts {
 	readonly unclaimed: readonly UnclaimedFact[];
 }
 
-export interface BindingPattern {
-	readonly line: number;
-	readonly source: string;
+export interface BindingPattern extends PatternOrigin {
 	readonly definition: Definition.Parsed;
 }
 
@@ -448,17 +446,15 @@ function patternsOf(
 export function readBindings(text: string): BindingFacts {
 	const facts: Facts = { claims: [], members: [], containers: [], templates: [], unclaimed: [] };
 	const errors: number[] = [];
-	const definitions = definitionsOf(text);
-	const spans = sourceSpans(text);
-	if (definitions.length === 0 && text.trim() !== '') errors.push(0);
-	for (const definition of definitions) {
+	const patterns = bindingPatterns(text);
+	if (patterns.length === 0 && text.trim() !== '') errors.push(0);
+	for (const { definition, ...origin } of patterns) {
 		errors.push(...unparsed(definition));
-		const span = spanOf(definition);
-		const origin = { line: lineOf(text, spans, span.start), source: spans.slice(span) };
 		for (const [top, inherited] of patternsOf(definition, []))
 			patternFacts(readPattern(top, errors, inherited), facts, origin);
 	}
 	if (errors.length > 0) {
+		const spans = sourceSpans(text);
 		const lines = new Set(errors.map((offset) => lineOf(text, spans, offset)));
 		throw new BindingsSyntaxError([...lines].sort((a, b) => a - b));
 	}
