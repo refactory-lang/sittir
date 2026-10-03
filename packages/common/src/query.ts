@@ -72,9 +72,10 @@ const FACET: ProxyHandler<Facet> = {
 		if (typeof key !== 'string') return undefined;
 		if (key === '$children') return walkView(facet, 1);
 		if (key === '$descendants') return walkView(facet, undefined);
-		const accessor = slotsOf(facet.context.hooks.querySlots, facet.kind).has(key) ? key : undefined;
-		if (accessor === undefined) return refuse(`query: ${kindLabel(facet.context, facet.kind)} has no slot '${key}'`);
-		return new View(facet.context, { slot: accessor, node: facet.node }, []);
+		if (slotsOf(facet.context.hooks.querySlots, facet.kind).has(key))
+			return new View(facet.context, { slot: key, node: facet.node }, []);
+		if (key === 'then') return undefined;
+		return refuse(`query: ${kindLabel(facet.context, facet.kind)} has no slot '${key}'`);
 	},
 	has: (facet, key) => typeof key === 'string' && facetNames(facet).includes(key),
 	ownKeys: (facet) => [...facetNames(facet)],

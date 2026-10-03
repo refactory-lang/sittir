@@ -72,7 +72,7 @@ The tree handle of the parse a node was read from, through the token the node ho
 
 ### `packages/common/src/query.ts::queryFacet`
 
-Makes a parsed node's query facet: a Proxy over the node, its address, its kind and its tree, with one handler shared by every facet (`FACET`). It refuses a node that holds no tree or has no address, pointing at `$commit()`. The facet answers `$children`, `$descendants` and the accessor names in the kind's `querySlots` row, each with a new lazy view, and refuses any other string key; a symbol key reads as `undefined`, and the facet cannot be written.
+Makes a parsed node's query facet: a Proxy over the node, its address, its kind and its tree, with one handler shared by every facet (`FACET`). It refuses a node that holds no tree or has no address, pointing at `$commit()`. The facet answers `$children`, `$descendants` and the accessor names in the kind's `querySlots` row, each with a new lazy view, and refuses any other string key except `then`. `then` and a symbol key read as `undefined`: an async function that returns a facet resolves its value by reading `then`, so refusing it would make that return reject. A slot named `then` would still read as its view. The facet cannot be written.
 
 ### `packages/common/src/query.ts::TreeQuery`
 

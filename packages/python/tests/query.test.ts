@@ -54,6 +54,13 @@ describe('the query facet of a parsed node', () => {
 		expect([...py.query(root).$children].map(occurrence)).toEqual([...root.$query().$children].map(occurrence));
 	});
 
+	it('resolves as itself when an async function returns it: then reads as undefined', async () => {
+		const facet = root.$query();
+		expect((facet as unknown as Record<string, unknown>).then).toBeUndefined();
+		const resolved = await (async () => root.$query())();
+		expect(Object.keys(resolved)).toEqual(Object.keys(facet));
+	});
+
 	it('names its slots and the two traversals, and refuses any other name', () => {
 		const facet = root.$query();
 		expect(Object.keys(facet)).toEqual(['$children', '$descendants', 'statements']);
