@@ -61,4 +61,25 @@ describe('a read node carries the line breaks before it as whitespace trivia', (
 		expect(b!.$trivia.leading()).toEqual([newline]);
 		expect(b!.$trivia.trailing()).toEqual([newline]);
 	});
+
+	it('finds every node of a deep read by its coordinate, a zero-width comment content included', () => {
+		const source = '\n//!\n\n/*!*/\n\n//\n\n///\nlet x;\n';
+		const addresses: { treeHandle: number; span: { start: number; end: number }; kind: number }[] = [];
+		const visit = (value: unknown): void => {
+			if (Array.isArray(value)) return value.forEach(visit);
+			if (value === null || typeof value !== 'object') return;
+			const node = value as Record<string, unknown>;
+			const span = node.$span as { start: number; end: number } | undefined;
+			if (typeof node.$treeHandle === 'number' && span !== undefined && typeof node.$type === 'number') {
+				addresses.push({ treeHandle: node.$treeHandle, span, kind: node.$type });
+			}
+			for (const key of Object.keys(node)) if (key.startsWith('_')) visit(node[key]);
+			const trivia = node.$_trivia as { leading?: unknown[]; trailing?: unknown[] } | undefined;
+			visit(trivia?.leading);
+			visit(trivia?.trailing);
+		};
+		visit(rs.parse(source, { deep: true }));
+		expect(addresses.some(({ span }) => span.start === span.end)).toBe(true);
+		for (const address of addresses) expect(() => rs.diagnostics.lineGapsOf(address)).not.toThrow();
+	});
 });

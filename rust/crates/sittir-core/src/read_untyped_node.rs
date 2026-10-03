@@ -491,24 +491,22 @@ pub fn line_gaps(
 }
 
 /// The node a coordinate names: of the nodes spanning exactly `start..end`,
-/// the outermost the read stamped `kind`.
+/// the outermost the read stamped `kind`. The search descends from the root
+/// through every node whose range contains the span, so a zero-width node is
+/// found beside a sibling that ends or starts at the same byte.
 pub fn node_at_span<'t>(tree: &'t tree_sitter::Tree, start: usize, end: usize, kind: u16) -> Option<tree_sitter::Node<'t>> {
-    let mut cursor = tree.root_node().descendant_for_byte_range(start, end)?;
-    let mut found = None;
-    loop {
-        if cursor.start_byte() != start || cursor.end_byte() != end {
-            if found.is_some() || cursor.end_byte() - cursor.start_byte() > end - start {
-                break;
-            }
-        } else if stamped_kind(&cursor).0 == kind {
-            found = Some(cursor);
+    fn search<'t>(node: tree_sitter::Node<'t>, start: usize, end: usize, kind: u16) -> Option<tree_sitter::Node<'t>> {
+        if node.start_byte() == start && node.end_byte() == end && stamped_kind(&node).0 == kind {
+            return Some(node);
         }
-        match cursor.parent() {
-            Some(parent) => cursor = parent,
-            None => break,
-        }
+        let mut cursor = node.walk();
+        let found = node
+            .children(&mut cursor)
+            .filter(|child| child.start_byte() <= start && end <= child.end_byte())
+            .find_map(|child| search(child, start, end, kind));
+        found
     }
-    found
+    search(tree.root_node(), start, end, kind)
 }
 
 /// Where the bytes before a node's leading gap end: its previous sibling that
