@@ -13491,7 +13491,7 @@ Kinds with a `reclaimsAnonymousChild` slot keep `$other`, because their wrap rea
 
 ### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.finalize`
 
-Assembles the wrap module. `wrapNode`, the one function every wrapped node passes through (the parsed root, each child hydrated on demand, trivia entries), runs its per-kind wrap function inside `inTreeEngine`, so a node is built under the engine that read its tree however long after the parse it is first reached.
+Assembles the wrap module. `wrapNode`, the one function every wrapped node passes through (the parsed root, each child hydrated on demand, trivia entries), runs its per-kind wrap function inside `inTreeEngine`, so a node is built under the engine that read its tree however long after the parse it is first reached. It carries read provenance (`carryRead`) from the read data to the wrapped node, so the wrapped node derives its line-gap trivia the way the read data would.
 
 `readUntypedNode` and `readNode` take an optional level count, which reaches the native read. `hydrateSelf` reads a stub of a list owner's kind (`listViewOwners`, emitted as `_LIST_OWNER_KINDS`) two levels at once, and every other stub one level.
 
@@ -15977,7 +15977,9 @@ before and after edge, either absent when the kind owns no seam on that side.
 
 A `Prepare` impl for a generated enum: payload variants delegate to the
 payload's `prepare(ctx)`, unit variants (literals) are `Ok(())`. The match
-is the tail expression, so the impl's result is whichever arm ran.
+is the tail expression, so the impl's result is whichever arm ran. An enum
+with payloads also delegates `leading_seam`, so a list vote reaches the
+leading trivia of whichever kind the item is.
 
 ### `packages/codegen/src/emitters/render-module.ts::PREPARE_MOD`
 
@@ -16009,7 +16011,8 @@ The grammar root's prepare lines that give an edited root its source flanks, ahe
 
 ### `packages/codegen/src/emitters/render-module.ts::prepareStructImpl`
 
-A transport struct's `Prepare` impl. A compound kind first fills its own
+A transport struct's `Prepare` impl. Every struct answers `leading_seam`
+from its own trivia (`TransportTrivia::leading_seam`). A compound kind first fills its own
 base edges (for the grammar root, from its source flanks, `rootEdgeStamp`;
 then from its edge row, `prepare_edges`, only for a kind that owns
 kind-edge sites), then lets the source speak for its repeated slots
@@ -16065,11 +16068,19 @@ wrap drop expression use.
 ### `packages/codegen/src/emitters/render-module.ts::listGapClassification`
 
 The block a generated `prepare` runs before it fills any site from the
-option table: for every repeated slot with a gap site, collect the items'
-coordinates (`SlotValue::coord`, `None` for a rebuilt item) and let
-`sittir_core::classify::classify_list_gaps` measure the source bytes between
-surviving neighbours, then take the majority class per side into the site
-field only when the wire left it empty. Precedence for a list site is
+option table: for every repeated slot with a gap site, collect each item's
+coordinate (`SlotValue::coord`, `None` for an item that crossed as a
+transport) and the whitespace run its leading trivia opens with
+(`Prepare::leading_seam`, the line-gap run a read item keeps toward an
+unchanged predecessor, answered only when the transport marked its trivia
+`held`), and let `sittir_core::classify::classify_list_gaps`
+take one vote per source gap, then take the majority class per side into the
+site field only when the wire left it empty. A gap votes either through the
+coordinate pair around it or through the run the item after it carries,
+never both: when a comment splits the gap, the run that votes is the one
+facing the predecessor, the edge the transport's neighbour rule tests. So an
+item that kept its run keeps its exact gap, and only an item without one (a
+new item) takes the majority. Precedence for a list site is
 therefore: the value the wire carried, the class of the source gaps, the
 engine's option table, the grammar's default. The block precedes the
 `get_or_insert` fills because a fill would make the class unreachable; it

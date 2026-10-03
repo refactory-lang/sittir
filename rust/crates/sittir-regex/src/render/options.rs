@@ -311,6 +311,9 @@ pub fn allowed(site: usize) -> &'static [u16] {
     SPACING_SITES[site].3
 }
 
+/// Every whitespace member, the domain of `spacing_text`.
+pub const WHITESPACE_KINDS: &[u16] = &[47, 48, 49, 50];
+
 pub const WHITESPACE: ::sittir_core::render::WhitespaceTable = ::sittir_core::render::WhitespaceTable { text_of: spacing_text, indent: INDENT_KIND, dedent: DEDENT_KIND };
 
 /// Per spacing site, in vector order: the arm its table holds by default and the strength that default carries.

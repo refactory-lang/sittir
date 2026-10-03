@@ -11,7 +11,7 @@ export function rebuildPython4spaceGenerated() {
 	}))), py.build.simpleStatements.strict(py.build.importFromStatement.strict({
 		moduleName: py.build.dottedName.strict(py.build.identifier("typing")),
 		content: py.build.importList.strict(py.build.dottedName.strict(py.build.identifier("Optional"))),
-	})), py.build.classDefinition.strict({
+	})).$trivia.leading(py.kinds.Blankline), py.build.classDefinition.strict({
 		name: py.build.identifier("User"),
 		body: py.build.suite.block.strict(py.build.functionDefinition.strict({
 			name: py.build.identifier("__init__"),
@@ -50,8 +50,8 @@ export function rebuildPython4spaceGenerated() {
 				}), py.build.stringContent.strict(py.build.stringFragment("!"))],
 				stringEnd: py.build.stringEnd("\""),
 			})))),
-		})),
-	}), py.build.functionDefinition.strict({
+		}).$trivia.leading(py.kinds.Blankline)),
+	}).$trivia.leading(py.kinds.DoubleBlankline), py.build.functionDefinition.strict({
 		name: py.build.identifier("find_user"),
 		parameters: py.build.parameters.strict(py.build.typedParameter.strict({
 			name: py.build.identifier("users"),
@@ -81,5 +81,5 @@ export function rebuildPython4spaceGenerated() {
 				consequence: py.build.suite.block.strict(py.build.simpleStatements.strict(py.build.returnStatement.strict(py.build.identifier("user")))),
 			})),
 		}), py.build.simpleStatements.strict(py.build.returnStatement.strict(py.kinds.None))),
-	}));
+	}).$trivia.leading(py.kinds.DoubleBlankline));
 }

@@ -456,7 +456,8 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		const from = transportRs.indexOf('impl ::sittir_core::prepare::Prepare for ArgumentsElementsTransport {');
 		expect(from).toBeGreaterThan(-1);
 		const body = transportRs.slice(from, transportRs.indexOf('\n}\n', from));
-		expect(body).toContain('::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ","');
+		expect(body).toContain('held: ::sittir_core::prepare::Prepare::leading_seam(item) }');
+		expect(body).toContain('::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ","');
 		expect(body).toContain('&options::WHITESPACE)');
 		// The class taken from the source beats the table and loses to the wire:
 		// the classification precedes every `get_or_insert` fill of the same site.

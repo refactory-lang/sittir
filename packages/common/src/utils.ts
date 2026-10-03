@@ -1,6 +1,6 @@
-import type { AnyUntypedNode, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, LineGap, LineGapAddress, LineGaps, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { detachCoordinate, holdsSlots } from './transport-data.ts';
+import { detachCoordinate, holdsSlots, isRead, type DerivedSides } from './transport-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { currentHandle, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
@@ -106,21 +106,110 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 		detachCoordinate(node);
 		return inner;
 	};
-	const store = (trivia: NodeTrivia): AnyUntypedNode => {
+	const store = (trivia: NodeTrivia, side: TriviaSideName): AnyUntypedNode => {
+		markWritten(node, side);
 		setTriviaData(node, trivia);
 		return node;
 	};
 	const innerAt = (gap: string, items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => {
 		if (!gapsOf().includes(gap)) throw new Error(`trivia: ${kind()} has no gap '${gap}'`);
 		if (items.length === 0) return node.$_trivia?.inner?.[gap] ?? [];
-		return store({ ...node.$_trivia, inner: writeInner({ ...node.$_trivia?.inner, [gap]: entriesOf(items) }) });
+		return store({ ...node.$_trivia, inner: writeInner({ ...node.$_trivia?.inner, [gap]: entriesOf(items) }) }, 'inner');
 	};
 	return {
 		side: (position: 'leading' | 'trailing', items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] =>
-			items.length === 0 ? (node.$_trivia?.[position] ?? []) : store({ ...node.$_trivia, [position]: entriesOf(items) }),
+			items.length === 0
+				? (readTrivia(node, handle.lineGapsOf)?.[position] ?? [])
+				: store({ ...node.$_trivia, [position]: entriesOf(items) }, position),
 		inner: (items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => innerAt(gapsOf()[0]!, items),
 		innerAt
 	};
+}
+
+type TriviaSideName = 'leading' | 'trailing' | 'inner';
+
+const writtenSides = new WeakMap<object, Set<TriviaSideName>>();
+const readLineGaps = new WeakMap<object, LineGaps>();
+const composedTrivia = new WeakMap<object, NodeTrivia | undefined>();
+
+function markWritten(node: object, side: TriviaSideName): void {
+	const sides = writtenSides.get(node) ?? new Set<TriviaSideName>();
+	sides.add(side);
+	writtenSides.set(node, sides);
+	composedTrivia.delete(node);
+}
+
+function isDerivedSide(node: object, side: 'leading' | 'trailing'): boolean {
+	return writtenSides.get(node)?.has(side) !== true;
+}
+
+/**
+ * A read node's trivia as its parse has it: the comment entries the reader
+ * gave it, with the line-break whitespace it owns before it and in its
+ * closing gap interleaved by position. The line gaps are asked for once, on
+ * the first read; a side whose trivia was written holds what was written,
+ * and the other side keeps what the read gives it.
+ */
+export function readTrivia(target: object, lineGapsOf: ((address: LineGapAddress) => LineGaps) | undefined): NodeTrivia | undefined {
+	const node = target as AnyUntypedNode;
+	const stored = node.$_trivia;
+	const gaps = lineGapsRead(node, lineGapsOf);
+	if (gaps === undefined || (gaps.leading.length === 0 && gaps.trailing.length === 0)) return stored;
+	if (composedTrivia.has(node)) return composedTrivia.get(node);
+	const leading = isDerivedSide(node, 'leading') ? interleaved(stored?.leading, gaps.leading) : stored?.leading;
+	const trailing = isDerivedSide(node, 'trailing') ? interleaved(stored?.trailing, gaps.trailing) : stored?.trailing;
+	const trivia = { ...stored, leading, trailing };
+	composedTrivia.set(node, trivia);
+	return trivia;
+}
+
+/**
+ * Which sides of a read node's trivia are derived from its line gaps, and the
+ * span of the sibling its leading runs separate it from (`null` for its
+ * parent's first); `undefined` when `readTrivia` derives nothing for it.
+ */
+export function readDerivedSides(
+	target: object,
+	lineGapsOf: ((address: LineGapAddress) => LineGaps) | undefined
+): DerivedSides | undefined {
+	const gaps = lineGapsRead(target, lineGapsOf);
+	if (gaps === undefined) return undefined;
+	return { previous: gaps.previous, leading: isDerivedSide(target, 'leading'), trailing: isDerivedSide(target, 'trailing') };
+}
+
+function lineGapsRead(target: object, lineGapsOf: ((address: LineGapAddress) => LineGaps) | undefined): LineGaps | undefined {
+	const node = target as AnyUntypedNode;
+	const address = lineGapAddressOf(node);
+	if (!isRead(node) || address === undefined || lineGapsOf === undefined) return undefined;
+	const cached = readLineGaps.get(node);
+	if (cached !== undefined) return cached;
+	const gaps = lineGapsOf(address);
+	readLineGaps.set(node, gaps);
+	return gaps;
+}
+
+/** How the line-gap query names a read node: its handle, else its tree's tag, span and kind; `undefined` for a node no read gave. */
+function lineGapAddressOf(node: AnyUntypedNode): LineGapAddress | undefined {
+	const record = node as unknown as { readonly $handle?: unknown; readonly $treeHandle?: unknown; readonly $span?: { readonly start: number; readonly end: number } };
+	if (typeof record.$handle === 'number') return { handle: record.$handle };
+	if (typeof record.$treeHandle === 'number' && record.$span !== undefined && typeof node.$type === 'number') {
+		return { treeHandle: record.$treeHandle, span: record.$span, kind: node.$type };
+	}
+	return undefined;
+}
+
+/** Comment entries and whitespace runs of one side merged in source order; `undefined` when both are empty. */
+function interleaved(entries: readonly TriviaEntry[] | undefined, gaps: readonly LineGap[]): readonly TriviaEntry[] | undefined {
+	const positioned: { readonly at: number; readonly entry: TriviaEntry }[] = [];
+	let at = -1;
+	for (const entry of entries ?? []) {
+		const start = typeof entry === 'number' ? undefined : (entry as { readonly $span?: { readonly start: number } }).$span?.start;
+		at = start ?? at;
+		positioned.push({ at, entry });
+	}
+	for (const gap of gaps) positioned.push({ at: gap.start, entry: gap.kind });
+	positioned.sort((a, b) => a.at - b.at);
+	return positioned.length === 0 ? undefined : positioned.map(({ entry }) => entry);
 }
 
 /** `node.$trivia.leading(...)` and `.trailing(...)`: set the position and return the node, or read it with no items. */
@@ -568,7 +657,7 @@ export { hydrateStub, isStub, readUntypedNode, type Stub, type TreeHandle } from
 export { currentHandle } from './engine-scope.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toTransportData, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree } from './transport-data.ts';
+export { toTransportData, STORED_TRIVIA, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead } from './transport-data.ts';
 export { carryTree, treeTokenOf, type TreeToken } from './tree-token.ts';
 export {
 	projectInterior,

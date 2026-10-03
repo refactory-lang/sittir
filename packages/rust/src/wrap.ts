@@ -10,6 +10,7 @@ import {
 	holdsSlots,
 	markEdited as $edited,
 	carryTree,
+	carryRead,
 	treeHandleOf,
 	mapTriviaEntries,
 	projectInterior,
@@ -19857,7 +19858,10 @@ export function wrapNode(data: _UntypedNode, tree: TreeHandle): unknown {
 	const fn = typeof type === 'number' ? _wrapTable[type] : undefined;
 	const own = _dropSpelling(type === data.$type ? _withoutDisplay(data) : data);
 	const shown = own.$_trivia == null ? own : { ...own, $_trivia: _wrapTrivia(own.$_trivia, tree) };
-	return inTreeEngine(tree, () => (fn ? fn(shown, tree) : _hydrateUnknownKindChildren(shown, tree)));
+	return carryRead(
+		data,
+		inTreeEngine(tree, () => (fn ? fn(shown, tree) : _hydrateUnknownKindChildren(shown, tree)))
+	);
 }
 
 /**

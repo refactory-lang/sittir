@@ -17,7 +17,7 @@ export function rebuildSpliceGenerated() {
 		}).$trivia.leading(rs.build.lineComment.docInner.strict(rs.build.docComment(" Byte-level `apply_edits` on a source string.\n")), rs.build.lineComment.docInner.strict(rs.build.docComment("\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" Sorts edits by `start_pos` descending, applies each as a raw byte\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" splice on a `String`. Descending order guarantees earlier edits\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" aren't shifted by later ones, so consumers can produce edits in any\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" order and let us canonicalize.\n")), rs.build.lineComment.docInner.strict(rs.build.docComment("\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" # Overlap handling\n")), rs.build.lineComment.docInner.strict(rs.build.docComment("\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" Overlap detection is **explicitly** the consumer's responsibility —\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" see contracts/napi-api.md `applyEdits` contract. This function does\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" NOT validate that edits are disjoint; overlapping edits fall through\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" to last-wins behavior (after sort-descending, the edit with the\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" greatest `start_pos` applies first, and subsequent edits whose\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" ranges still reference valid offsets within the intermediate string\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" apply afterward).\n")), rs.build.lineComment.docInner.strict(rs.build.docComment("\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" # Validation\n")), rs.build.lineComment.docInner.strict(rs.build.docComment("\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" Per-edit validation: `start_pos <= end_pos <= source.len()` (bytes).\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" Violations return `Err` rather than panic so the napi wrapper can\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" surface a typed error to JS. UTF-8 boundary correctness is also\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" checked on the splice (via `String::replace_range`) — non-char-\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" boundary ranges produce a `Result::Err` instead of panicking.\n"))), rs.build.attributeItem.strict(rs.build.attribute.input.strict({
 			path: rs.build.identifier("derive"),
 			arguments: rs.build.delimTokenTree.paren.strict(rs.build.nonSpecialToken.strict(rs.build.identifier("Debug")), rs.build.nonSpecialToken.strict(rs.kinds.Comma), rs.build.nonSpecialToken.strict(rs.build.identifier("Clone")), rs.build.nonSpecialToken.strict(rs.kinds.Comma), rs.build.nonSpecialToken.strict(rs.build.identifier("PartialEq")), rs.build.nonSpecialToken.strict(rs.kinds.Comma), rs.build.nonSpecialToken.strict(rs.build.identifier("Eq"))),
-		})).$trivia.leading(rs.build.lineComment.docOuter.strict(rs.build.docComment(" Error returned from [`apply_edits`] when an edit is invalid.\n"))), rs.build.enumItem.strict({
+		})).$trivia.leading(rs.kinds.Blankline, rs.build.lineComment.docOuter.strict(rs.build.docComment(" Error returned from [`apply_edits`] when an edit is invalid.\n"))), rs.build.enumItem.strict({
 			visibilityModifier: rs.build.visibilityModifier.pub.strict(),
 			name: rs.build.identifier("SpliceError"),
 			body: rs.build.enumVariantList.strict(rs.build.enumVariantListElements.strict(rs.build.enumVariant.strict({
@@ -154,7 +154,7 @@ export function rebuildSpliceGenerated() {
 					}))],
 				}),
 			})),
-		}), rs.build.implItem.body.positiveClause.strict({
+		}).$trivia.leading(rs.kinds.Blankline), rs.build.implItem.body.positiveClause.strict({
 			traitClause: rs.build.scopedTypeIdentifier.strict({
 				path: rs.build.scopedIdentifier.strict({
 					path: rs.build.identifier("std"),
@@ -164,7 +164,7 @@ export function rebuildSpliceGenerated() {
 			}),
 			type: rs.build.identifier("SpliceError"),
 			declarationList: rs.build.declarationList.strict(),
-		}), rs.build.functionItem.strict({
+		}).$trivia.leading(rs.kinds.Blankline), rs.build.functionItem.strict({
 			visibilityModifier: rs.build.visibilityModifier.pub.strict(),
 			name: rs.build.identifier("apply_edits"),
 			parameters: rs.build.parameters.strict(rs.build.parameter.strict({
@@ -372,7 +372,7 @@ export function rebuildSpliceGenerated() {
 							}),
 						}),
 					})),
-				})).$trivia.leading(rs.build.lineComment.strict(rs.build.lineCommentRegular(" Sort descending by start_pos. Ties broken by end_pos descending —")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" with identical start positions, the longer replacement applies")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" first so the shorter doesn't overwrite its tail. (Tie-breaking is")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" documented consumer-visible behavior; overlap detection is still")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" theirs.)"))), rs.build.letDeclaration.strict({
+				})).$trivia.leading(rs.kinds.Blankline, rs.build.lineComment.strict(rs.build.lineCommentRegular(" Sort descending by start_pos. Ties broken by end_pos descending —")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" with identical start positions, the longer replacement applies")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" first so the shorter doesn't overwrite its tail. (Tie-breaking is")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" documented consumer-visible behavior; overlap detection is still")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" theirs.)"))), rs.build.letDeclaration.strict({
 					mutable: true,
 					pattern: rs.build.identifier("buf"),
 					value: rs.build.callExpression.strict({
@@ -382,7 +382,7 @@ export function rebuildSpliceGenerated() {
 						}),
 						arguments: rs.build.arguments.strict(rs.build.identifier("source")),
 					}),
-				}), rs.build.expressionStatement.strict(rs.build.forExpression.strict({
+				}).$trivia.leading(rs.kinds.Blankline), rs.build.expressionStatement.strict(rs.build.forExpression.strict({
 					pattern: rs.build.identifier("e"),
 					value: rs.build.identifier("edits"),
 					body: rs.build.block.strict({
@@ -425,6 +425,6 @@ export function rebuildSpliceGenerated() {
 					arguments: rs.build.arguments.strict(rs.build.identifier("buf")),
 				}),
 			}),
-		}).$trivia.leading(rs.build.lineComment.docOuter.strict(rs.build.docComment(" Apply a batch of edits to a source string, returning the modified\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" source. See module docs for the sort-descending strategy and the\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" consumer-owned overlap contract.\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment("\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" # Errors\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment("\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" - [`SpliceError::InvalidRange`] if any edit has `end_pos < start_pos`.\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" - [`SpliceError::OutOfBounds`] if any edit's `end_pos` exceeds\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment("   `source.len()` (bytes).\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" - [`SpliceError::NonCharBoundary`] if any edit's start or end is\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment("   not a UTF-8 character boundary of the source.\n")))],
+		}).$trivia.leading(rs.kinds.Blankline, rs.build.lineComment.docOuter.strict(rs.build.docComment(" Apply a batch of edits to a source string, returning the modified\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" source. See module docs for the sort-descending strategy and the\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" consumer-owned overlap contract.\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment("\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" # Errors\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment("\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" - [`SpliceError::InvalidRange`] if any edit has `end_pos < start_pos`.\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" - [`SpliceError::OutOfBounds`] if any edit's `end_pos` exceeds\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment("   `source.len()` (bytes).\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" - [`SpliceError::NonCharBoundary`] if any edit's start or end is\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment("   not a UTF-8 character boundary of the source.\n")))],
 	});
 }
