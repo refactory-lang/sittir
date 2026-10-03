@@ -119,6 +119,15 @@ describe('deriveVocabulary', () => {
 			expect(d.members.get(v)?.has('declare') ?? false, v).toBe(false);
 		expect(d.untargeted).toEqual([]);
 	});
+	it('keeps the bounds of a type argument (`Iterator<Item: Copy>`), a wrapper claimed as a kind of its own', () => {
+		const argument = d.members.get('element.type_argument');
+		expect(argument?.get('constraint')?.kinds).toEqual(new Set(['clause.bounds']));
+		expect(argument?.get('constraint')?.optional).toBe(true);
+		expect(argument?.get('content')?.kinds.has('element.type_binding')).toBe(true);
+		expect(d.members.get('type.generic.turbofish')?.get('typeArguments')?.kinds).toEqual(
+			new Set(['element.type_argument'])
+		);
+	});
 	it('claims a container whose capture has no direct target as a vocabulary kind of its own', () => {
 		const ambient = d.members.get('declaration.ambient');
 		expect([...(ambient?.keys() ?? [])]).toEqual(['content']);

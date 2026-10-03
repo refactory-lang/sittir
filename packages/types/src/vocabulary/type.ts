@@ -144,15 +144,7 @@ export namespace Type {
 		// pt only
 		readonly type?: G['identifier'] | 'default' | 'gen' | 'union' | V.Type.Path<G>;
 		// r only
-		readonly typeArguments?: (
-			| V.Clause.Bounds.Removed<G>
-			| V.Element.TypeBinding<G>
-			| V.Expression.Call.Macro<G>
-			| G['identifier']
-			| G['literal']
-			| V.Statement.Block<G>
-			| G['type']
-		)[];
+		readonly typeArguments?: (V.Element.TypeArgument<G> | G['identifier'] | G['type'])[];
 		// rt only
 		readonly typeParameter?: V.Declaration.TypeParameter<G>;
 		// p only
@@ -162,15 +154,7 @@ export namespace Type {
 			// claimed by r
 			readonly kind: 'type.generic.turbofish';
 			readonly type: G['identifier'];
-			readonly typeArguments: (
-				| V.Clause.Bounds.Removed<G>
-				| V.Element.TypeBinding<G>
-				| V.Expression.Call.Macro<G>
-				| G['identifier']
-				| G['literal']
-				| V.Statement.Block<G>
-				| G['type']
-			)[];
+			readonly typeArguments: V.Element.TypeArgument<G>[];
 		}
 		export type Any<G extends GrammarContext> = V.Type.Generic<G> | V.Type.Generic.Turbofish<G>;
 	}

@@ -182,7 +182,7 @@
 (primitive_type) @type.primitive
 (generic_type) @type.generic
 (generic_type_with_turbofish) @type.generic.turbofish
-(type_argument (_) @element)
+(type_argument (trait_bounds)? @constraint) @element.type_argument
 (reference_type) @type.reference
 (pointer_type) @type.pointer
 (array_type) @type.array
