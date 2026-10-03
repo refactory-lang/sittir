@@ -408,9 +408,9 @@ A list option an owner reads from its list's stored `_<option>`, or the option's
 
 Defines the index positions of a wrapped list or list owner: one getter per position, shared by every wrapped list and not enumerable. A wrapped owner's items are unread until first use, so an index must hydrate them on demand, and a per-node getter would force dictionary mode; one shared getter per position reads the item through `listItemsOf` from whichever list calls it. The getters are the only getters a wrapped node carries.
 
-### `packages/common/src/utils.ts::readStubLength`
+### `packages/common/src/utils.ts::refuseReadStub`
 
-The `length` of an owner built over a read stub with no tree: it cannot count its items, so reading it throws and names the stub. The throwing `length` stays off the node's fields so that a node with a countable list keeps its plain data `length`; only this one case carries the getter, and it is the one getter a built node may have.
+The refusal of a raw factory given a list owner's storage that is a read stub, a parsed list that cannot be counted without its tree. A factory has no tree, and `engine.build` already refuses a bare stub, so the build throws naming the stub rather than carrying a node whose `length` or items cannot be read. A built owner's `length` is always plain data, so it keeps its fast shape.
 
 ### `packages/common/src/utils.ts::groupField`
 
@@ -420,6 +420,3 @@ The value a seated key reads: the group's own reader of that field, or `undefine
 
 The key a node keeps the readers of its seated slots under, by accessor name, for the case where a flattened key spells its slot and so replaces that slot's own accessor. `storedSlotReader` reads it.
 
-### `packages/common/src/utils.ts::unreadableStubItems`
-
-The items reader of a built owner over a read stub with no tree. Every list member reads the items through it, so each throws the stub error instead of failing on a missing reader.

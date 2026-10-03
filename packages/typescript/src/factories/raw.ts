@@ -15,8 +15,7 @@ import {
 	ownerView,
 	ownerElements,
 	listOption,
-	readStubLength,
-	unreadableStubItems,
+	refuseReadStub,
 	seatWith,
 	groupField,
 	STORED_SLOT_READERS,
@@ -200,14 +199,12 @@ export function buildExportClause(...args: unknown[]) {
 function _buildExportClause(value?: AdmitBound<T.ExportSpecifiers, T.AdmittedNodes>): T.ExportClause.Bound {
 	const _export_specifiers = rejectBareText(value, 'ExportClause.exportSpecifiers', 'a built ExportSpecifiers');
 	const listView = ownerView(_export_specifiers, '_item');
-	const listedItems =
-		listView.stored === undefined
-			? undefined
-			: listItems(ownerElements(listView.list, 'items'), {
-					kind: TSKindId.ExportSpecifier,
-					content: 'name',
-					decorations: ['_export_kind', '_alias']
-				});
+	if (listView.stored === undefined) refuseReadStub('_export_specifiers');
+	const listedItems = listItems(ownerElements(listView.list, 'items'), {
+		kind: TSKindId.ExportSpecifier,
+		content: 'name',
+		decorations: ['_export_kind', '_alias']
+	});
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExportClause as const,
@@ -225,9 +222,8 @@ function _buildExportClause(value?: AdmitBound<T.ExportSpecifiers, T.AdmittedNod
 				)
 		},
 		exportSpecifiers: () => _export_specifiers,
-		length: listedItems?.length,
+		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_export_specifiers') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -241,10 +237,8 @@ function _buildExportClause(value?: AdmitBound<T.ExportSpecifiers, T.AdmittedNod
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_export_specifiers');
-	else
-		for (let index = 0; index < listedItems.length; index++)
-			(node as Record<number, unknown>)[index] = listedItems[index];
+	for (let index = 0; index < listedItems.length; index++)
+		(node as Record<number, unknown>)[index] = listedItems[index];
 	return node as unknown as T.ExportClause.Bound;
 }
 
@@ -421,8 +415,8 @@ export function buildNamedImports(...args: unknown[]) {
 function _buildNamedImports(value?: AdmitBound<T.ImportSpecifiers, T.AdmittedNodes>): T.NamedImports.Bound {
 	const _import_specifiers = rejectBareText(value, 'NamedImports.importSpecifiers', 'a built ImportSpecifiers');
 	const listView = ownerView(_import_specifiers, '_item');
-	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
+	if (listView.stored === undefined) refuseReadStub('_import_specifiers');
+	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.NamedImports as const,
@@ -440,9 +434,8 @@ function _buildNamedImports(value?: AdmitBound<T.ImportSpecifiers, T.AdmittedNod
 				)
 		},
 		importSpecifiers: () => _import_specifiers,
-		length: listedItems?.length,
+		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_import_specifiers') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -456,10 +449,8 @@ function _buildNamedImports(value?: AdmitBound<T.ImportSpecifiers, T.AdmittedNod
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_import_specifiers');
-	else
-		for (let index = 0; index < listedItems.length; index++)
-			(node as Record<number, unknown>)[index] = listedItems[index];
+	for (let index = 0; index < listedItems.length; index++)
+		(node as Record<number, unknown>)[index] = listedItems[index];
 	return node as unknown as T.NamedImports.Bound;
 }
 
@@ -3547,8 +3538,8 @@ function _buildFormalParameters(
 ): T.FormalParameters.Bound {
 	const _elements = rejectBareText(value, 'FormalParameters.elements', 'a built FormalParametersElements');
 	const listView = ownerView(_elements, '_item');
-	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
+	if (listView.stored === undefined) refuseReadStub('_elements');
+	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FormalParameters as const,
@@ -3566,9 +3557,8 @@ function _buildFormalParameters(
 				)
 		},
 		elements: () => _elements,
-		length: listedItems?.length,
+		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_elements') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -3582,10 +3572,8 @@ function _buildFormalParameters(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_elements');
-	else
-		for (let index = 0; index < listedItems.length; index++)
-			(node as Record<number, unknown>)[index] = listedItems[index];
+	for (let index = 0; index < listedItems.length; index++)
+		(node as Record<number, unknown>)[index] = listedItems[index];
 	return node as unknown as T.FormalParameters.Bound;
 }
 
@@ -5092,8 +5080,8 @@ export function buildEnumBody(...args: unknown[]) {
 function _buildEnumBody(value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>): T.EnumBody.Bound {
 	const _elements = rejectBareText(value, 'EnumBody.elements', 'a built EnumBodyElements');
 	const listView = ownerView(_elements, '_item');
-	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
+	if (listView.stored === undefined) refuseReadStub('_elements');
+	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.EnumBody as const,
@@ -5111,9 +5099,8 @@ function _buildEnumBody(value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>)
 				)
 		},
 		elements: () => _elements,
-		length: listedItems?.length,
+		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_elements') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -5127,10 +5114,8 @@ function _buildEnumBody(value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>)
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_elements');
-	else
-		for (let index = 0; index < listedItems.length; index++)
-			(node as Record<number, unknown>)[index] = listedItems[index];
+	for (let index = 0; index < listedItems.length; index++)
+		(node as Record<number, unknown>)[index] = listedItems[index];
 	return node as unknown as T.EnumBody.Bound;
 }
 
@@ -6625,8 +6610,8 @@ export function buildTypeArguments(...args: unknown[]) {
 function _buildTypeArguments(value: AdmitBound<T.Types, T.AdmittedNodes>): T.TypeArguments.Bound {
 	const _types = rejectBareText(value, 'TypeArguments.types', 'a built Types');
 	const listView = ownerView(_types, '_item');
-	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
+	if (listView.stored === undefined) refuseReadStub('_types');
+	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TypeArguments as const,
@@ -6642,9 +6627,8 @@ function _buildTypeArguments(value: AdmitBound<T.Types, T.AdmittedNodes>): T.Typ
 				)
 		},
 		types: () => _types,
-		length: listedItems?.length,
+		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_types') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -6657,10 +6641,8 @@ function _buildTypeArguments(value: AdmitBound<T.Types, T.AdmittedNodes>): T.Typ
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_types');
-	else
-		for (let index = 0; index < listedItems.length; index++)
-			(node as Record<number, unknown>)[index] = listedItems[index];
+	for (let index = 0; index < listedItems.length; index++)
+		(node as Record<number, unknown>)[index] = listedItems[index];
 	return node as unknown as T.TypeArguments.Bound;
 }
 
@@ -6924,14 +6906,12 @@ export function buildTypeParameters(...args: unknown[]) {
 function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.AdmittedNodes>): T.TypeParameters.Bound {
 	const _elements = rejectBareText(value, 'TypeParameters.elements', 'a built TypeParametersElements');
 	const listView = ownerView(_elements, '_item');
-	const listedItems =
-		listView.stored === undefined
-			? undefined
-			: listItems(ownerElements(listView.list, 'items'), {
-					kind: TSKindId.TypeParameter,
-					content: 'name',
-					decorations: ['_const', '_constraint', '_value']
-				});
+	if (listView.stored === undefined) refuseReadStub('_elements');
+	const listedItems = listItems(ownerElements(listView.list, 'items'), {
+		kind: TSKindId.TypeParameter,
+		content: 'name',
+		decorations: ['_const', '_constraint', '_value']
+	});
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TypeParameters as const,
@@ -6949,9 +6929,8 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 				)
 		},
 		elements: () => _elements,
-		length: listedItems?.length,
+		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_elements') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -6964,10 +6943,8 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_elements');
-	else
-		for (let index = 0; index < listedItems.length; index++)
-			(node as Record<number, unknown>)[index] = listedItems[index];
+	for (let index = 0; index < listedItems.length; index++)
+		(node as Record<number, unknown>)[index] = listedItems[index];
 	return node as unknown as T.TypeParameters.Bound;
 }
 
@@ -7199,8 +7176,8 @@ export function buildTupleType(...args: unknown[]) {
 function _buildTupleType(value?: AdmitBound<T.TupleTypeMembers, T.AdmittedNodes>): T.TupleType.Bound {
 	const _tuple_type_members = rejectBareText(value, 'TupleType.tupleTypeMembers', 'a built TupleTypeMembers');
 	const listView = ownerView(_tuple_type_members, '_item');
-	const listedItems =
-		listView.stored === undefined ? undefined : listItems(ownerElements(listView.list, 'items'), undefined);
+	if (listView.stored === undefined) refuseReadStub('_tuple_type_members');
+	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TupleType as const,
@@ -7218,9 +7195,8 @@ function _buildTupleType(value?: AdmitBound<T.TupleTypeMembers, T.AdmittedNodes>
 				)
 		},
 		tupleTypeMembers: () => _tuple_type_members,
-		length: listedItems?.length,
+		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
-		[LIST_READ]: listedItems === undefined ? () => unreadableStubItems('_tuple_type_members') : undefined,
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7234,10 +7210,8 @@ function _buildTupleType(value?: AdmitBound<T.TupleTypeMembers, T.AdmittedNodes>
 		},
 		$engine: handle && (() => handle.current)
 	};
-	if (listedItems === undefined) readStubLength(node, '_tuple_type_members');
-	else
-		for (let index = 0; index < listedItems.length; index++)
-			(node as Record<number, unknown>)[index] = listedItems[index];
+	for (let index = 0; index < listedItems.length; index++)
+		(node as Record<number, unknown>)[index] = listedItems[index];
 	return node as unknown as T.TupleType.Bound;
 }
 

@@ -451,20 +451,9 @@ export function defineListIndices(node: object, count: number): void {
 	}
 }
 
-/** The items reader of an owner built over a read stub with no tree: it cannot read them, so it throws and names the stub. */
-export function unreadableStubItems(storage: string): never {
-	throw new Error(`list view: ${storage} is a read stub, which a node built without its tree cannot read`);
-}
-
-/** The `length` of an owner built over a read stub with no tree: it cannot count its items, so reading it throws. */
-export function readStubLength(node: object, storage: string): void {
-	Object.defineProperty(node, 'length', {
-		get(): never {
-			throw new Error(`list view: ${storage} is a read stub, which a node built without its tree cannot count`);
-		},
-		enumerable: false,
-		configurable: true
-	});
+/** The refusal of a list owner built over a read stub: a stub is a parsed list that cannot be counted without its tree, which a raw factory does not have, so the build names the stub as `engine.build` does. */
+export function refuseReadStub(storage: string): never {
+	throw new Error(`list view: ${storage} is a read stub, which a node built without its tree cannot hold; build it from its tree`);
 }
 
 /** The key a list node keeps its frozen items under. */
