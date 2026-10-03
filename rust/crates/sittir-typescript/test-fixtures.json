@@ -17836,6 +17836,7 @@
               }
             }
           ],
+          "_decorator": [],
           "$_trivia": {
             "leading": [
               {
@@ -17850,8 +17851,7 @@
                 "_content": " a comment"
               }
             ]
-          },
-          "_decorator": []
+          }
         },
         {
           "$type": 422,
@@ -18488,6 +18488,7 @@
           }
         }
       ],
+      "_decorator": [],
       "$_trivia": {
         "leading": [
           {
@@ -18502,8 +18503,7 @@
             "_content": " a comment"
           }
         ]
-      },
-      "_decorator": []
+      }
     },
     "expectedOutput": "// a comment\nexport default class A {}\n"
   },
@@ -117563,6 +117563,10 @@
             ]
           },
           "_terminator": 20,
+          "$slotOrder": [
+            "expression",
+            "terminator"
+          ],
           "$_trivia": {
             "leading": [
               {
@@ -117577,11 +117581,7 @@
                 "_content": " above is a signature"
               }
             ]
-          },
-          "$slotOrder": [
-            "expression",
-            "terminator"
-          ]
+          }
         },
         {
           "$type": 246,
@@ -117632,6 +117632,7 @@
                 }
               }
             ],
+            "_statements": [],
             "$_trivia": {
               "leading": [
                 {
@@ -117646,8 +117647,7 @@
                   "_content": " above is a function declaration"
                 }
               ]
-            },
-            "_statements": []
+            }
           },
           "_automatic_semicolon": true,
           "$other": [
@@ -117999,6 +117999,10 @@
         ]
       },
       "_terminator": 20,
+      "$slotOrder": [
+        "expression",
+        "terminator"
+      ],
       "$_trivia": {
         "leading": [
           {
@@ -118013,11 +118017,7 @@
             "_content": " above is a signature"
           }
         ]
-      },
-      "$slotOrder": [
-        "expression",
-        "terminator"
-      ]
+      }
     },
     "expectedOutput": "// above is a signature\nfoo();"
   },
@@ -118160,6 +118160,7 @@
             }
           }
         ],
+        "_statements": [],
         "$_trivia": {
           "leading": [
             {
@@ -118174,8 +118175,7 @@
               "_content": " above is a function declaration"
             }
           ]
-        },
-        "_statements": []
+        }
       },
       "_automatic_semicolon": true,
       "$other": [
@@ -118238,6 +118238,7 @@
           }
         }
       ],
+      "_statements": [],
       "$_trivia": {
         "leading": [
           {
@@ -118252,8 +118253,7 @@
             "_content": " above is a function declaration"
           }
         ]
-      },
-      "_statements": []
+      }
     },
     "expectedOutput": "// above is a function declaration\n{}\n"
   },
@@ -126705,6 +126705,11 @@
             "$span": {
               "start": 47,
               "end": 48
+            },
+            "$_trivia": {
+              "leading": [
+                183
+              ]
             }
           },
           "_parameters": {
@@ -126715,7 +126720,12 @@
               "start": 49,
               "end": 51
             },
-            "$text": "()"
+            "$text": "()",
+            "$_trivia": {
+              "leading": [
+                183
+              ]
+            }
           },
           "_return_type": {
             "$type": 326,
@@ -126885,7 +126895,7 @@
         }
       ]
     },
-    "expectedOutput": "function f(): any {\n  'a';\n  'b';\n}\n\nfunction f(): any {\n  'a'\n  'b'\n}\n"
+    "expectedOutput": "function f(): any {\n  'a';\n  'b';\n}\n\nfunction\nf\n(): any {\n  'a'\n  'b'\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -126893,9 +126903,9 @@
     "sourceIn": "\nfunction f(): any {\n  'a';\n  'b';\n}\n\nfunction\nf\n()\n :\n any {\n  'a'\n  'b'\n}\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "function f(): any {\n  'a';\n  'b';\n}\n\nfunction f(): any {\n  'a'\n  'b'\n}\n",
+    "expectedSourceOut": "function f(): any {\n  'a';\n  'b';\n}\n\nfunction\nf\n(): any {\n  'a'\n  'b'\n}\n",
     "expectedReparseTree": "(program statements: (function_declaration name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (string_single elements: (string_fragment))) statements: (expression_statement expression: (string_single elements: (string_fragment))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)) statements: (function_declaration name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (string_single elements: (string_fragment)) terminator: (automatic_semicolon)) statements: (expression_statement expression: (string_single elements: (string_fragment)) terminator: (automatic_semicolon)) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)))",
-    "wrappedText": "function f(): any {\n  'a';\n  'b';\n}\n\nfunction f(): any {\n  'a'\n  'b'\n}\n",
+    "wrappedText": "function f(): any {\n  'a';\n  'b';\n}\n\nfunction\nf\n(): any {\n  'a'\n  'b'\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -127121,6 +127131,11 @@
         "$span": {
           "start": 47,
           "end": 48
+        },
+        "$_trivia": {
+          "leading": [
+            183
+          ]
         }
       },
       "_parameters": {
@@ -127131,7 +127146,12 @@
           "start": 49,
           "end": 51
         },
-        "$text": "()"
+        "$text": "()",
+        "$_trivia": {
+          "leading": [
+            183
+          ]
+        }
       },
       "_return_type": {
         "$type": 326,
@@ -127299,7 +127319,7 @@
         "automatic_semicolon"
       ]
     },
-    "expectedOutput": "function f(): any {\n  'a'\n  'b'\n}\n"
+    "expectedOutput": "function\nf\n(): any {\n  'a'\n  'b'\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -127307,9 +127327,9 @@
     "sourceIn": "function\nf\n()\n :\n any {\n  'a'\n  'b'\n}",
     "pattern": "function_declaration",
     "edits": [],
-    "expectedSourceOut": "function f(): any {\n  'a'\n  'b'\n}\n",
+    "expectedSourceOut": "function\nf\n(): any {\n  'a'\n  'b'\n}\n",
     "expectedReparseTree": "(function_declaration name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (string_single elements: (string_fragment)) terminator: (automatic_semicolon)) statements: (expression_statement expression: (string_single elements: (string_fragment)) terminator: (automatic_semicolon)) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon))",
-    "wrappedText": "function f(): any {\n  'a'\n  'b'\n}\n",
+    "wrappedText": "function\nf\n(): any {\n  'a'\n  'b'\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -127351,7 +127371,12 @@
         "start": 49,
         "end": 51
       },
-      "$text": "()"
+      "$text": "()",
+      "$_trivia": {
+        "leading": [
+          183
+        ]
+      }
     },
     "expectedOutput": "()"
   },
@@ -182397,6 +182422,11 @@
               }
             }
           ],
+          "$slotOrder": [
+            "name",
+            "value",
+            "terminator"
+          ],
           "$_trivia": {
             "leading": [
               {
@@ -182411,12 +182441,7 @@
                 "_content": " special optional and rest type syntax"
               }
             ]
-          },
-          "$slotOrder": [
-            "name",
-            "value",
-            "terminator"
-          ]
+          }
         },
         {
           "$type": 317,
@@ -182713,6 +182738,11 @@
               }
             }
           ],
+          "$slotOrder": [
+            "name",
+            "value",
+            "terminator"
+          ],
           "$_trivia": {
             "leading": [
               {
@@ -182727,12 +182757,7 @@
                 "_content": " labeled elements"
               }
             ]
-          },
-          "$slotOrder": [
-            "name",
-            "value",
-            "terminator"
-          ]
+          }
         }
       ]
     },
@@ -183460,6 +183485,11 @@
           }
         }
       ],
+      "$slotOrder": [
+        "name",
+        "value",
+        "terminator"
+      ],
       "$_trivia": {
         "leading": [
           {
@@ -183474,12 +183504,7 @@
             "_content": " special optional and rest type syntax"
           }
         ]
-      },
-      "$slotOrder": [
-        "name",
-        "value",
-        "terminator"
-      ]
+      }
     },
     "expectedOutput": "// special optional and rest type syntax\ntype t = [string ?, ...B]\n"
   },
@@ -183793,6 +183818,11 @@
           }
         }
       ],
+      "$slotOrder": [
+        "name",
+        "value",
+        "terminator"
+      ],
       "$_trivia": {
         "leading": [
           {
@@ -183807,12 +183837,7 @@
             "_content": " labeled elements"
           }
         ]
-      },
-      "$slotOrder": [
-        "name",
-        "value",
-        "terminator"
-      ]
+      }
     },
     "expectedOutput": "// labeled elements\ntype t = [a: A, b ?: B, ...c: C[]]\n"
   },
@@ -223606,6 +223631,11 @@
               }
             }
           ],
+          "$slotOrder": [
+            "name",
+            "value",
+            "terminator"
+          ],
           "$_trivia": {
             "leading": [
               {
@@ -223620,12 +223650,7 @@
                 "_content": " These should generate the same AST aside from the parenthesized_type node"
               }
             ]
-          },
-          "$slotOrder": [
-            "name",
-            "value",
-            "terminator"
-          ]
+          }
         },
         {
           "$type": 317,
@@ -223951,6 +223976,11 @@
           }
         }
       ],
+      "$slotOrder": [
+        "name",
+        "value",
+        "terminator"
+      ],
       "$_trivia": {
         "leading": [
           {
@@ -223965,12 +223995,7 @@
             "_content": " These should generate the same AST aside from the parenthesized_type node"
           }
         ]
-      },
-      "$slotOrder": [
-        "name",
-        "value",
-        "terminator"
-      ]
+      }
     },
     "expectedOutput": "// These should generate the same AST aside from the parenthesized_type node\ntype X1 = typeof Y[keyof typeof Z];"
   },
@@ -224977,6 +225002,11 @@
               }
             }
           ],
+          "$slotOrder": [
+            "name",
+            "value",
+            "terminator"
+          ],
           "$_trivia": {
             "leading": [
               {
@@ -225002,12 +225032,7 @@
                 "_content": " \"(typeof f)<T>\" (which are both invalid)"
               }
             ]
-          },
-          "$slotOrder": [
-            "name",
-            "value",
-            "terminator"
-          ]
+          }
         }
       ]
     },
@@ -225151,6 +225176,11 @@
           }
         }
       ],
+      "$slotOrder": [
+        "name",
+        "value",
+        "terminator"
+      ],
       "$_trivia": {
         "leading": [
           {
@@ -225176,12 +225206,7 @@
             "_content": " \"(typeof f)<T>\" (which are both invalid)"
           }
         ]
-      },
-      "$slotOrder": [
-        "name",
-        "value",
-        "terminator"
-      ]
+      }
     },
     "expectedOutput": "// This is a special construct, different from both \"typeof (f<T>)\" and\n// \"(typeof f)<T>\" (which are both invalid)\ntype T = typeof f<T>;"
   },
