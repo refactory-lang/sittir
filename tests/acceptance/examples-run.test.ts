@@ -13,7 +13,6 @@ const SAMPLE_INPUTS: Readonly<Record<string, (scratch: string) => readonly unkno
 	'02-render-round-trip:roundTrip': () => [RUST_SOURCE],
 	'07-read-source:readSource': () => [RUST_SOURCE],
 	'07-read-source:readFirstFunction': () => [RUST_SOURCE],
-	'07-read-source:wrappedLazyAccess': () => [RUST_SOURCE],
 	'09-type-guards:summarizeTopLevelItems': () => [`${RUST_SOURCE}struct Config;\n`],
 	'12-cross-language-migration:interfaceToPythonDataclass': () => ['interface User { name: string; age: number }\n'],
 	'14-format-preserving-transform:renameProcess': () => ['fn process( x:i32 ) {\n\tx\n}\n'],

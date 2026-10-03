@@ -8,13 +8,13 @@ import { describe, expect, it } from 'vitest';
 import {
 	explicitMainFunction,
 	nestedGreetFunction,
-	fromGreetFunction,
+	looseGreetFunction,
 	minimalMainFunction,
 	immutableFunctionUpdates,
 	structSideBySide
 } from '../../../examples/01-construct-nodes.ts';
 import { renderMainFunction, renderUntouched, roundTrip } from '../../../examples/02-render-round-trip.ts';
-import { readSource, readFirstFunction, wrappedLazyAccess } from '../../../examples/07-read-source.ts';
+import { readSource, readFirstFunction } from '../../../examples/07-read-source.ts';
 import { summarizeTopLevelItems } from '../../../examples/09-type-guards.ts';
 import { dogfoodContract, structuralShape } from '../../../examples/helpers.ts';
 import { rebuildSpliceStrict } from '../../../examples/17-dogfood-rust-strict.ts';
@@ -52,18 +52,18 @@ describe('examples/01 construct nodes', () => {
 		expect(text).toContain('name');
 		expect(text).toContain('String');
 	});
-	it('from() accepts keyword strings and bare parameters', () => {
-		expect(fromGreetFunction().$render()).toContain('pub fn greet');
+	it('the loose surface accepts keyword strings and bare parameters', () => {
+		expect(looseGreetFunction().$render()).toContain('pub fn greet');
 	});
-	it('minimal from() builds an empty-bodied main', () => {
+	it('a minimal loose call builds an empty-bodied main', () => {
 		expect(minimalMainFunction().$render()).toContain('fn main');
 	});
 	it('$with updates immutably and keeps the surface', () => {
 		expect(immutableFunctionUpdates().$render()).toContain('greet');
 	});
-	it('strict and from() spellings render identically', () => {
-		const { strictFn, fromFn } = structSideBySide();
-		expect(strictFn.$render()).toBe(fromFn.$render());
+	it('strict and loose spellings render identically', () => {
+		const { strictFn, looseFn } = structSideBySide();
+		expect(strictFn.$render()).toBe(looseFn.$render());
 	});
 });
 
@@ -108,7 +108,7 @@ describe('examples/07 read source', () => {
 		expect(readFirstFunction(source)?.name).toBe('main');
 	});
 	it('lazily accesses body statements through the wrap surface', () => {
-		expect(wrappedLazyAccess(source)?.statements).toBeDefined();
+		expect(readFirstFunction(source)?.statements).toBeDefined();
 	});
 });
 

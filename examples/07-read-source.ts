@@ -16,17 +16,6 @@ export function readFirstFunction(source: string) {
 	return {
 		name: nodeText(first.name()),
 		body: first.body(),
-	};
-}
-
-export function wrappedLazyAccess(source: string) {
-	const file = engine.parse(source);
-	const first = file.statements()[0];
-	if (first === undefined || !engine.is.functionItem(first)) return undefined;
-
-	return {
-		name: nodeText(first.name()),
-		body: first.body(),
 		statements: first.body().statements(),
 	};
 }

@@ -25,18 +25,17 @@ that takes an argument needs a sample input in that test.
 | ---- | ------------- |
 | `01-construct-nodes.ts` | Construct nodes with factories |
 | `02-render-round-trip.ts` | Render UntypedNode to source |
-| `03-trivia.ts` | Attach comments with `.$trivia()` *(pending wrapper ergonomics refresh)* |
+| `03-trivia.ts` | Attach comments with `.$trivia()` |
 | `04-precompiled-templates.ts` | Construction templates — pre-compiled *(pending `snippets.*`)* |
 | `05-inline-templates.ts` | Construction templates — inline *(pending `template(...)`)* |
 | `07-read-source.ts` | Read source into UntypedNode |
 | `09-type-guards.ts` | Type guards |
 | `12-cross-language-migration.ts` | Cross-language migration |
 | `14-format-preserving-transform.ts` | Format-preserving transforms: rename a parsed function with `$with` |
-| `15-generate-file.ts` | Generate a file from scratch *(pending richer Rust generation examples)* |
-| `16-dogfooding.ts` | Dogfooding *(pending template/snippet-free rewrite)* |
+| `15-generate-file.ts` | Generate a file from scratch |
+| `16-dogfooding.ts` | Dogfooding |
 | `17-dogfood-rust-strict.ts` | Dogfooding — rebuild the `dogfood-rust.rs` fixture through `.strict` alone |
 | `18-dogfood-typescript-strict.ts` | Dogfooding — rebuild `common/src/format.ts` through `.strict` alone |
 | `19-dogfood-python-strict.ts` | Dogfooding — rebuild `tools/scripts/probe-sweep.py` through `.strict` alone |
 | `<n>-dogfood-<g>.generated.ts`, `<n>-dogfood-<g>-loose.generated.ts` | Dogfooding — the strict and loose rebuilds `pnpm run gen:examples` prints from each target; never hand-edited |
 | `20-keyword-openers-<g>*.generated.ts`, `21-list-seat-configs-rust*.generated.ts`, `22-trivia-<g>*.generated.ts` | Emitter fixtures (`packages/tools/tests/emit/__fixtures__`) rebuilt by `pnpm run gen:examples`, each on the strict and the loose surface (`-loose`); never hand-edited |
-| `index.ts` | Convenience barrel for all use-case modules |

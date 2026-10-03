@@ -34,7 +34,7 @@ export function nestedGreetFunction() {
 	});
 }
 
-export function fromGreetFunction() {
+export function looseGreetFunction() {
 	return engine.build.statement.function({
 		visibilityModifier: 'pub',
 		name: 'greet',
@@ -75,12 +75,12 @@ export function structSideBySide() {
 		body: engine.build.block.strict(),
 	});
 
-	const fromFn = engine.build.statement.function({
+	const looseFn = engine.build.statement.function({
 		visibilityModifier: 'pub',
 		name: 'config',
 		parameters: engine.build.parameters.strict(),
 		body: engine.build.block.strict(),
 	});
 
-	return { strictFn, fromFn };
+	return { strictFn, looseFn };
 }
