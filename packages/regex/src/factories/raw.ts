@@ -2,7 +2,7 @@
 
 import type * as T from '../types-internal.js';
 import { TSKindId } from '../types.js';
-import type { AdmitBound } from '@sittir/types';
+import type { AdmitBound, NumericLiteral } from '@sittir/types';
 import {
 	currentHandle,
 	rebuilt,
@@ -871,6 +871,9 @@ export function buildGroupName(text: string): T.GroupName.Bound {
 	return node as unknown as T.GroupName.Bound;
 }
 
+export function buildDecimalDigits<const N extends string | number | bigint>(
+	text: N & NumericLiteral<N, true>
+): T.DecimalDigits.Bound;
 export function buildDecimalDigits(text: string | number | bigint): T.DecimalDigits.Bound {
 	text = numberText(10, '', text);
 	if (text.length === 0) throw new Error(`decimal_digits: text must be non-empty`);

@@ -8,6 +8,8 @@ import {
 	interiorSlotGuards,
 	numberInputType,
 	numberTextArgs,
+	numericLiteralSignature,
+	numericConfigSlots,
 	numericLeafShape,
 	numericSlotKeys,
 	numericSlotShape,
@@ -361,7 +363,16 @@ export namespace factory {
 				const reservedType = leafReConsts.get(reservedTypeKey(node.kind));
 				result =
 					reservedType === undefined
-						? emitTextFactory(node, leafTextParams(node), 'text', guard, kindEntries, nodeMap)
+						? emitTextFactory(
+								node,
+								leafTextParams(node),
+								'text',
+								guard,
+								kindEntries,
+								nodeMap,
+								'',
+								shape === undefined ? undefined : numericLiteralSignature(node.rawFactoryName, shape, 'text', `T.${node.typeName}.Bound`)
+							)
 						: emitTextFactory(node, `text: W extends ${reservedType} ? never : W`, 'text', guard, kindEntries, nodeMap, '<const W extends string>');
 				break;
 			}
@@ -918,6 +929,7 @@ interface FactoryParam {
 	readonly rowLooseOptional?: boolean;
 	readonly defaultValue?: string;
 	readonly admitsNodes?: true;
+	readonly numeric?: { readonly typeParams: string; readonly strictType: string };
 }
 
 interface FactorySurface {
@@ -928,6 +940,8 @@ interface FactorySurface {
 	readonly looseParams: string;
 	readonly rowParams: string;
 	readonly rowLooseParams: string;
+	readonly numericParams?: string;
+	readonly numericTypeParams?: string;
 	readonly arity: number | undefined;
 	readonly args: string;
 	readonly elementType?: string;
@@ -954,10 +968,13 @@ function renderSurfaceParams(param: FactoryParam): {
 	looseParams: string;
 	rowParams: string;
 	rowLooseParams: string;
+	numericParams?: string;
+	numericTypeParams?: string;
 	arity: number | undefined;
 } {
 	const strict = (type: string): string => (param.admitsNodes ? admitNodes(type) : type);
 	return {
+		...(param.numeric === undefined ? {} : { numericParams: paramText(param, strict(param.numeric.strictType)), numericTypeParams: param.numeric.typeParams }),
 		arity: param.rest ? undefined : 1,
 		params: paramText(param, strict(param.strictType)),
 		looseParams: paramText(param, param.looseType),
@@ -1028,6 +1045,7 @@ function resolveFactorySurface(
 	return {
 		...surface,
 		params: `${surface.params}, ${trailing}`,
+		...(surface.numericParams === undefined ? {} : { numericParams: `${surface.numericParams}, ${trailing}` }),
 		looseParams: `${surface.looseParams}, ${trailing}`,
 		rowParams: `${surface.rowParams}, ${trailing}`,
 		rowLooseParams: `${surface.rowLooseParams}, ${trailing}`,
@@ -1103,7 +1121,15 @@ function resolveConfigFactorySurface(
 			looseType: looseValueOf(elemType),
 			rowLooseType: `T.${node.typeName}.Loose`,
 			rowLooseOptional: optional || node.argumentOptional(nodeMap),
-			admitsNodes: true
+			admitsNodes: true,
+			...(singleShape === undefined
+				? {}
+				: {
+						numeric: {
+							typeParams: `<const N extends string | ${numberInputType(singleShape)}>`,
+							strictType: `${baseType} | (N & NumericLiteral<N, ${singleShape.base === 'float' ? 'false' : 'true'}>)`
+						}
+					})
 		};
 		return {
 			spreadFacts,
@@ -1129,7 +1155,15 @@ function resolveConfigFactorySurface(
 		strictType: allOptional ? `Partial<${widen(configType)}>` : widen(configType),
 		looseType: `T.${node.typeName}.Loose`,
 		rowStrictType: allOptional ? `Partial<${widen(omitRegistered(`ConfigOf<T.${node.typeName}, T.NamespaceMap>`, node))}>` : widen(omitRegistered(`ConfigOf<T.${node.typeName}, T.NamespaceMap>`, node)),
-		...(allOptional ? { defaultValue: '{}' } : {})
+		...(allOptional ? { defaultValue: '{}' } : {}),
+		...(numericConfigSlots(node) === undefined
+			? {}
+			: {
+					numeric: {
+						typeParams: `<const C extends ${allOptional ? `Partial<${widen(configType)}>` : widen(configType)}>`,
+						strictType: `C & NumericConfig<C, ${numericConfigSlots(node)}, ${allOptional ? `Partial<${widen(configType)}>` : widen(configType)}>`
+					}
+				})
 	};
 	return {
 		spreadFacts,
@@ -1358,7 +1392,9 @@ function emitFieldCarryingFactory(
 		ownText === undefined
 			? [signature]
 			: [
-					`${exportKw}function ${fn}(content: ${ownTextContentType(ownText)}, affix?: true): ${builtName};`,
+					numericSlotShape(ownText.slot) === undefined
+						? `${exportKw}function ${fn}(content: ${ownTextContentType(ownText)}, affix?: true): ${builtName};`
+						: numericLiteralSignature(fn, numericSlotShape(ownText.slot)!, 'content', builtName).replace(/\): /, ', affix?: true): '),
 					`${exportKw}function ${fn}(text: ${ownText.spelledType}, affix: false): ${builtName};`,
 					`${exportKw}function ${fn}(input: ${ownTextContentType(ownText)}, affix: boolean = true): ${builtName} {`,
 					`  const value = affix ? input : unaffixed(String(input), ${JSON.stringify(ownText.open)}, ${JSON.stringify(ownText.close)}, ${JSON.stringify(node.kind)});`
@@ -1467,8 +1503,18 @@ function emitFieldCarryingFactory(
 		return renameUnusedConfigParam(lines);
 	}
 	if (ownText !== undefined) return lines.join('\n');
+	const numericSignature =
+		surface.numericParams === undefined
+			? undefined
+			: `${exportKw}function ${fn}${surface.numericTypeParams}(${surface.numericParams}): ${builtName};`;
 	return renameUnusedConfigParam(
-		withEmptyOverload(nodeMap, node.kind, `${exportKw}function ${fn}`, lines, `${exportKw}function ${fn}(${declarationParams(surface.params)}): ${builtName};`)
+		withEmptyOverload(
+			nodeMap,
+			node.kind,
+			`${exportKw}function ${fn}`,
+			numericSignature === undefined ? lines : [numericSignature, ...lines],
+			numericSignature === undefined ? `${exportKw}function ${fn}(${declarationParams(surface.params)}): ${builtName};` : undefined
+		)
 	);
 }
 
@@ -2244,11 +2290,13 @@ function emitTextFactory(
 	guard?: string,
 	kindEntries?: readonly KindEnumEntry[],
 	nodeMap?: NodeMap,
-	typeParams: string = ''
+	typeParams: string = '',
+	publicSignature?: string
 ): string {
 	const fn = node.rawFactoryName!;
 	const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap!, kindEntries);
-	const body: string[] = [`export function ${fn}${typeParams}(${params}): T.${node.typeName}.Bound {`];
+	const body: string[] = publicSignature === undefined ? [] : [publicSignature];
+	body.push(`export function ${fn}${typeParams}(${params}): T.${node.typeName}.Bound {`);
 	if (guard) body.push(`  ${guard}`);
 	body.push(
 		'  const handle = currentHandle();',
@@ -2414,4 +2462,4 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 	}
 }
 
-const SITTIR_TYPES_IMPORT_CANDIDATES = ['AdmitBound', 'AnyUntypedNode', 'ConfigOf', 'LooseValue', 'NonEmptyArray', 'WidenNumeric'];
+const SITTIR_TYPES_IMPORT_CANDIDATES = ['AdmitBound', 'AnyUntypedNode', 'ConfigOf', 'LooseValue', 'NonEmptyArray', 'NumericConfig', 'NumericLiteral', 'WidenNumeric'];

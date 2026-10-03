@@ -647,6 +647,57 @@ type OptionalKeys<T> = {
 /** A config type whose numeric text slots (the keys of `W`) also accept the JavaScript values `W` gives them (a number, and a bigint for an integer slot), converted to the slot's text by the base builder. */
 export type WidenNumeric<C, W> = { [P in keyof C]: P extends keyof W ? C[P] | W[P] : C[P] };
 
+type NumericRefusal<M extends string, V> = { readonly [K in M]: V };
+
+type DigitOrder<A extends string, B extends string> = A extends B
+	? 'equal'
+	: '0123456789' extends `${string}${A}${string}${B}${string}`
+		? 'less'
+		: 'greater';
+
+type DigitsPastSafeInteger<A extends string, B extends string> = A extends `${infer a}${infer ar}`
+	? B extends `${infer b}${infer br}`
+		? DigitOrder<a, b> extends 'equal'
+			? DigitsPastSafeInteger<ar, br>
+			: DigitOrder<a, b> extends 'greater'
+				? true
+				: false
+		: false
+	: false;
+
+type PastSafeInteger<S extends string> = S extends `${string}e${string}`
+	? true
+	: S extends `${infer _1}${infer _2}${infer _3}${infer _4}${infer _5}${infer _6}${infer _7}${infer _8}${infer _9}${infer _10}${infer _11}${infer _12}${infer _13}${infer _14}${infer _15}${infer _16}${infer Rest}`
+		? Rest extends ''
+			? DigitsPastSafeInteger<S, '9007199254740991'>
+			: true
+		: false;
+
+type NumericLiteralOf<T extends number | bigint, Integer extends boolean> = `${T}` extends `-${string}`
+	? NumericRefusal<'a numeric builder takes a non-negative value', T>
+	: T extends bigint
+		? T
+		: Integer extends true
+			? `${T}` extends `${string}.${string}` | `${string}e-${string}`
+				? NumericRefusal<'this numeric builder takes an integer', T>
+				: PastSafeInteger<`${T}`> extends true
+					? NumericRefusal<'an unsafe integer: pass a bigint', T>
+					: T
+			: T;
+
+/**
+ * The refusal an integer or float builder applies to a literal argument: `N & NumericLiteral<N, Integer>` is `N` for a text, for a bigint or number that is non-negative (and an integer, and a safe integer, when `Integer`), and for a non-literal `number` or `bigint`. A literal the builder refuses at runtime becomes an object type carrying the reason as its key, so the call fails to type-check and the diagnostic names it.
+ */
+export type NumericLiteral<N extends string | number | bigint, Integer extends boolean> = N extends string
+	? N
+	: N extends number | bigint
+		? number extends N
+			? N
+			: bigint extends N
+				? N
+				: NumericLiteralOf<N, Integer>
+		: never;
+
 /**
  * @param Visited - Set of `$type` discriminants already seen on the
  *   current expansion path. Combined with `Depth`, gives belt-and-
@@ -1248,3 +1299,26 @@ export type {
 	TriviaFacts,
 	Types
 } from './engine-api.ts';
+
+type RefusedValue<V, Integer extends boolean> = V extends number | bigint ? NumericLiteral<V, Integer> : V;
+
+type KeysOfAll<K> = K extends unknown ? keyof K : never;
+
+type SlotRefusal<C, K, Integer extends boolean> = C extends unknown ? (K extends keyof C ? RefusedValue<C[K], Integer> : never) : never;
+
+type NoExtraKeys<C, Known> = { readonly [P in Exclude<KeysOfAll<C>, KeysOfAll<Known>>]?: never };
+
+/**
+ * The refusal an object-form builder applies to its config: `C & NumericConfig<C, W, Known>` is `C` unless a numeric slot of `W` (each mapped to whether it is an integer) holds a literal `NumericLiteral` refuses, or `C` names a key `Known` (the config type the builder accepts) does not. A union `C` is judged slot by slot across all its members, and a key one member lacks is not refused for that member.
+ */
+export type NumericConfig<C, W extends Readonly<Record<string, boolean>>, Known = C> = {
+	readonly [K in KeysOfAll<C> & keyof W]?: SlotRefusal<C, K, W[K]>;
+} & NoExtraKeys<C, Known>;
+
+/**
+ * The refusal a loose entry applies to its input `I`: a bare number or bigint literal is judged as `NumericLiteral` judges it (`Bare` says whether the bare value is an integer; `undefined` when the kind takes none), and a config literal as `NumericConfig` does, with `Known` the loose type the entry accepts.
+ */
+export type NumericInput<I, Bare extends boolean | undefined, W extends Readonly<Record<string, boolean>> = {}, Known = I> = (Bare extends boolean
+	? RefusedValue<I, Bare>
+	: unknown) &
+	NumericConfig<I, W, Known>;

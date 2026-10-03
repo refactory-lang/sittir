@@ -6,7 +6,7 @@ import { lexedConfig, numberText, spelledInterior, refuseSiblingLead } from '@si
 import type * as T from '../types-internal.js';
 import { TSKindId, KIND_NAMES } from '../types.js';
 import { Delimiter } from '@sittir/common/utils';
-import type { AnyUntypedNode, NonEmptyArray, SiblingLeadRefusal } from '@sittir/types';
+import type { AnyUntypedNode, NonEmptyArray, NumericInput, SiblingLeadRefusal } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind } from '@sittir/common/utils';
 import { isNode } from '../utils.js';
 
@@ -9027,6 +9027,9 @@ export function resolveIntegerLiteralDecimal_suffix(
 	>(value, _K2, _K2);
 }
 
+export function coerceToIntegerLiteralDecimal<const I extends T.IntegerLiteralDecimal.Loose>(
+	input: I & NumericInput<I, undefined, { content: true }, T.IntegerLiteralDecimal.Loose>
+): ReturnType<typeof F.buildIntegerLiteralDecimal>;
 export function coerceToIntegerLiteralDecimal(
 	input: T.IntegerLiteralDecimal.Loose
 ): ReturnType<typeof F.buildIntegerLiteralDecimal> {
@@ -9057,6 +9060,9 @@ export function resolveIntegerLiteralHex_suffix(
 	>(value, _K2, _K2);
 }
 
+export function coerceToIntegerLiteralHex<const I extends T.IntegerLiteralHex.Loose>(
+	input: I & NumericInput<I, undefined, { content: true }, T.IntegerLiteralHex.Loose>
+): ReturnType<typeof F.buildIntegerLiteralHex>;
 export function coerceToIntegerLiteralHex(
 	input: T.IntegerLiteralHex.Loose
 ): ReturnType<typeof F.buildIntegerLiteralHex> {
@@ -9087,6 +9093,9 @@ export function resolveIntegerLiteralBinary_suffix(
 	>(value, _K2, _K2);
 }
 
+export function coerceToIntegerLiteralBinary<const I extends T.IntegerLiteralBinary.Loose>(
+	input: I & NumericInput<I, undefined, { content: true }, T.IntegerLiteralBinary.Loose>
+): ReturnType<typeof F.buildIntegerLiteralBinary>;
 export function coerceToIntegerLiteralBinary(
 	input: T.IntegerLiteralBinary.Loose
 ): ReturnType<typeof F.buildIntegerLiteralBinary> {
@@ -9117,6 +9126,9 @@ export function resolveIntegerLiteralOctal_suffix(
 	>(value, _K2, _K2);
 }
 
+export function coerceToIntegerLiteralOctal<const I extends T.IntegerLiteralOctal.Loose>(
+	input: I & NumericInput<I, undefined, { content: true }, T.IntegerLiteralOctal.Loose>
+): ReturnType<typeof F.buildIntegerLiteralOctal>;
 export function coerceToIntegerLiteralOctal(
 	input: T.IntegerLiteralOctal.Loose
 ): ReturnType<typeof F.buildIntegerLiteralOctal> {
