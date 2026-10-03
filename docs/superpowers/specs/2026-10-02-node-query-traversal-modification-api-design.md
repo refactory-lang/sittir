@@ -1,433 +1,317 @@
-# Node Access, Query, Traversal, and Modification API
+# Node Access, Query, Traversal and Modification API
 
-**Status:** Proposed  
-**Date:** 2026-10-02  
-**Scope:** wrapped-node API, generated field facets, shared structural query/traversal runtime
+**Status:** Proposed
+**Date:** 2026-10-02
+**Scope:** the wrapped-node surface (slot views, traversal sources, `where`, `$edit`), the native walk behind it, and the edit results that feed the edit lifecycle (#437)
 
 ## 1. Summary
 
-Sittir exposes one coherent protocol for observing and transforming node relationships:
-
 ```ts
-node.field()                       // read/materialize
-node.field.filter(...)             // lazy field query
-node.field.find(...)
+fn.parameters()                                   // the items, materialized: today's accessor
+fn.parameters                                     // a lazy view of the same slot
+fn.parameters.filter(isTyped).find(hasDefault)    // operators build a plan; a terminal runs it
 
-node.$with.field(value)            // replace complete field value
+node.$children                                    // every direct structural child, as a view
+node.$descendants.ofType(kinds.Call)              // a kind filter the native walk applies
+node.$descendants
+	.ofType(kinds.FunctionDefinition)
+	.where((c) => c.name.match(/^test_/).and(c.returnType.eq('None').not()))
+                                                  // a condition the native walk applies
 
-node.$edit.field.add(value)        // transform relative to current value
-node.$edit.field.remove(...)
-node.$edit.field.insert(...)
-node.$edit.field.move(...)
-
-node.children.filter(...)          // lazy traversal
-node.descendants.filter(...)
-node.ancestors.find(...)
+fn.$with.parameters(p1, p2)                       // replace the slot's whole value
+fn.$edit.parameters.insert(1, p)                  // transform relative to the current value
 ```
 
-The central rule is:
+> **Accessors observe. Views describe a lazy selection. `$with` replaces a slot's whole value. `$edit` transforms a slot relative to its current value.**
 
-> **Accessors observe. Queries describe lazy selection. `$with` replaces a complete field value. `$edit` performs a structural transformation relative to the existing relationship.**
+No operation mutates its receiver. On a parsed node, a `$with` or `$edit` result is a draft that `$commit()` commits (§8).
 
-All modification remains immutable. No operation mutates its receiver.
+## 2. Goals and non-goals
 
-## 2. Goals
+Goals:
+- Keep every existing call: `fn.name()`, `block.statements()` and `$with` mean what they mean today.
+- Read a slot or a subtree lazily, with typed narrowing, without materializing it first.
+- One set of verbs for slot views and traversal views.
+- Push kind filters and slot conditions into the native walk, so a selection pays for the nodes it keeps, not for the nodes it visits.
+- Structural edits derived from each slot's finalized cardinality, valid against the grammar, with gaps rendered by one rule (§9).
 
-- Preserve existing callable accessors such as `fn.name()` and `block.statements()`.
-- Add lazy typed queries without materializing repeated fields first.
-- Reuse one query protocol for field queries and traversal.
-- Preserve `$with` as immutable whole-field replacement.
-- Add `$edit` for relative structural operations.
-- Derive editing capabilities from finalized field cardinality and contract restrictions.
-- Preserve type narrowing across query composition.
-- Make structural edits occurrence-aware and grammar-valid.
-- Leave semantic/project-wide queries and refactoring as a later layer.
+Not in this design: mutable nodes, edit transactions, `using`/disposal commits, automatic rebasing of a held view or editor, semantic or cross-file queries, deep rewrite (`node.$edit.remove(node.$descendants…)`), `$ancestors` (§6) and removal by value (§8).
 
-## 3. Non-goals
+## 3. Slot facets
 
-This proposal does not initially define mutable nodes, edit transactions, `using`/disposal commits, automatic rebasing of aliased editors or queries, semantic symbol resolution, cross-file refactoring, type-dependent lookup, or arbitrary deep mutation of query results.
+### 3.1 `x.slot()` materializes
 
-## 4. Field facets
+`fn.parameters()` returns the slot's items as an array; `fn.name()` returns the node or `undefined`. Nothing changes here.
 
-### 4.1 Read/materialize
+### 3.2 `x.slot` is a lazy view
 
-Existing calls retain their meaning:
+`fn.parameters` is a callable view: calling it materializes (`fn.parameters()` above), and its verbs (§4) build and run a plan over the slot's items. A singular slot's view has the same verbs over zero or one item.
+
+The view is made when the slot is read. What it costs depends on where the node carries the getter that makes it (`slot-accessor`, per node with three repeated slots; Node 26, Apple silicon):
+
+| Shape | Build | `x.slot.filter(p)` | `x.slot()` | Heap per node | Allocated per access | Nodes in fast mode |
+|---|---|---|---|---|---|---|
+| today: a method per slot in the literal | 74 ns | none | 11 ns | 464 B | 0 B | 1,000 of 1,000 |
+| a getter in the literal, a new view per read | 435 ns | 525 ns | 334 ns | 936 B | 616 B | 0 of 1,000 |
+| a getter in the literal, the view kept | 417 ns | 375 ns | 133 ns | 936 B | 32 B | 1 of 1,000 |
+| the view made at wrap time, in the literal | 1,019 ns | 307 ns | 72 ns | 1,984 B | 0 B | 1,000 of 1,000 |
+| **a getter on the kind's shared prototype, a new view per read** | **114 ns** | **377 ns** | **234 ns** | **272 B** | **616 B** | **1,000 of 1,000** |
+| a getter on the shared prototype, the view kept in a `WeakMap` | 115 ns | 509 ns | 395 ns | 272 B | 40–64 B | 1,000 of 1,000 |
+
+The `filter` column includes building the one-step plan (about 0.2 µs in every shape).
+
+- **A getter in the node's literal puts every node in dictionary mode.** V8 gives each literal evaluation its own accessor pair, so no two nodes share a shape: 0 of 1,000 nodes stay fast, and the heap per node doubles. #534 removed exactly this (the `$trivia` getter) from every node, so a getter in the literal is excluded, for the views and for `$edit` alike.
+- **A view made at wrap time** keeps the node fast but costs every read node 0.9 µs and 1.5 KB, queried or not.
+- **The callable is the cost.** A bare closure costs 88 B per read and a plain (non-callable) view object 32 B. The verbs need the view's prototype, and `Object.setPrototypeOf` on a fresh function is most of the 616 B. A view bound from one shared function (a bound function inherits its target's prototype) halves it to 320 B but leaves V8's fast bind path.
+
+**Decision:** the views, and `$edit` (§8), are getters on a prototype shared by every node of a kind, set as the literal's `__proto__`. Nodes stay fast and lighter, since the per-slot method closures leave the literal. Each access makes one view, 0.23 µs and 616 B. `x.slot()` goes through the getter too, so it costs 0.23 µs where today's method costs 0.01 µs. Against a node read of 9–15 µs (§5.1) that is under 3%, and a caller that reads a slot repeatedly keeps the view (`const ps = fn.parameters`). Keeping views per node lost to making them per read: a `WeakMap` lookup costs more than the allocation it saves.
+
+The prototype's methods reach the node's tree through the tree token the node already holds (the private symbol `holdReadTree` stamps), not through a closure.
+
+### 3.3 `$with` replaces a slot's whole value
+
+`fn.$with.name(newName)` and `fn.$with.parameters(p1, p2)` build a new parent with that value. It stays in the literal, as today.
+
+### 3.4 `$edit` transforms a slot
+
+`fn.$edit.parameters.insert(1, p)` returns a new parent with the slot's items transformed (§8). There is no `$edit.slot(value)` synonym for `$with`.
+
+## 4. The view verbs
+
+A view has the read-only verbs of an array, lazily:
+
+- **Operators** return a view and run nothing: `filter`, `map`, `flatMap`, `slice`, plus `ofType(kind)` (§5.3) and `where(condition)` (§7).
+- **Terminals** run the plan: `find`, `findIndex`, `some`, `every`, `includes`, `reduce`, `forEach`, `at`. A view is also iterable: `for … of` and spread run the plan and pull results as they are needed.
+
+There is no `toArray`, `length`, `first`, `all` or `count`: `x.slot()` and `[...view]` materialize, and `.length` is the array's. No `Query` type is exported. Each view is typed by its element: `filter` with a type guard narrows, `ofType` narrows to the kind, `where` keeps the type, `map` changes it.
+
+`includes(node)` compares occurrences, not values. A parsed node is the occurrence its coordinate names (tree, span and kind, as `node_at_span` resolves them), and a built node is compared by identity. Value equality is deferred with `remove(value)` (§8).
+
+## 5. Traversal and execution
+
+### 5.1 What a read costs
+
+Every item a view yields is a node read. Today a child is read one native call at a time: the stub's coordinate goes to `readUntypedNode`, the JSON comes back, `holdReadTree` stamps it and `wrapNode` wraps it (`read-cost`, release natives, median of 5 runs, µs per named node):
+
+| File | Named nodes | Native | `JSON.parse` | `holdReadTree` | `wrapNode` | Total | JavaScript share |
+|---|---|---|---|---|---|---|---|
+| python `json/decoder.py` | 2,481 | 4.59 | 1.03 | 0.49 | 2.71 | 8.82 | 48% |
+| python `argparse.py` | 17,509 | 5.41 | 1.02 | 0.50 | 3.37 | 10.30 | 47% |
+| typescript `common/src/engine.ts` | 1,873 | 5.37 | 1.26 | 0.35 | 2.69 | 9.67 | 44% |
+| typescript `emitters/wrap.ts` | 9,761 | 6.44 | 1.23 | 0.38 | 1.80 | 9.85 | 35% |
+| rust `sittir-core/src/render.rs` | 1,382 | 5.36 | 1.29 | 0.44 | 3.27 | 10.36 | 48% |
+| rust `read_untyped_node.rs` | 4,566 | 10.06 | 1.23 | 0.36 | 3.23 | 14.88 | 32% |
+
+One deep read of the same trees costs 3.5–8.7 µs per node natively, so a call's fixed cost beyond the node it carries is 1.0–1.3 µs. A node read is about half native and half JavaScript, and the native half is the read itself (slots, trivia, serialization), not the call. A traversal that hydrates every node pays the whole row per node; one that hydrates only what it keeps pays it per result.
+
+### 5.2 Sources
+
+- `x.slot`: the slot's items, already read with their parent. A stored stub carries its kind, so `ofType` on a slot view filters without hydrating.
+- `$children`: every direct structural child in source order: the named children, merged across slots, without anonymous tokens or trivia.
+- `$descendants`: every structural descendant in depth-first pre-order, the receiver excluded. Comments and other extras are trivia, never descendants.
+
+The names carry `$` because grammars use them as slot names: typescript's `jsx_element` has a `children` slot.
+
+`$ancestors` is deferred. The native table records each node's parent coordinate only for nodes a read has reached, so walking up from an arbitrary node needs native parent links, which are not designed here. `within` and `containing` (filters on an ancestor or a descendant) are deferred with it.
+
+### 5.3 The plan
+
+A view's plan is its source and a list of steps. `ofType` and `where` are declarative, and so is `slice` while nothing opaque precedes it. `filter`, `map` and `flatMap` take JavaScript callbacks and are opaque.
+
+- **The declarative prefix runs natively.** On `$descendants`, the native walk applies the kind filter, the `where` condition and the slice before any node crosses. On `$children` and slot views the coordinates are already in JavaScript, and a `where` condition is evaluated natively over them in one call.
+- **The first opaque step splits the plan.** Everything from it on runs in JavaScript over hydrated nodes.
+- **`ofType` and `where` may move ahead of an opaque `filter`, never ahead of `map` or `flatMap`.** A filter keeps elements and does not change them, so a kind test or a slot condition gives the same result before or after it. A map changes the element the next step sees. A callback must not depend on how many times it runs.
+
+The native walk returns batches of stubs, each with the coordinate it hydrates at. A batch resumes where the previous one stopped, by the path of child indices to the last node visited, so no batch walks again what an earlier one walked. An item is hydrated (§5.1) when a JavaScript step or a terminal needs the node.
+
+### 5.4 Batch size
+
+`batch-walk` runs the native walk prototype on python `argparse.py` (17,509 named nodes). The sparse kind has 112 nodes; the early kind first matches at node 25 and the late one at node 14,960:
+
+| Limit | Calls, all nodes | Native µs per stub | Parse µs per stub | Native µs per match, sparse kind | First batch, early kind | First batch, late kind |
+|---|---|---|---|---|---|---|
+| 1 | 17,510 | 5.22 | 0.73 | 15.68 | 2.7 µs | 916 µs |
+| 4 | 4,378 | 1.50 | 0.38 | 11.43 | 27 µs | 926 µs |
+| 16 | 1,095 | 0.55 | 0.31 | 10.48 | 147 µs | 1,100 µs |
+| 64 | 274 | 0.31 | 0.29 | 10.06 | 995 µs | 1,106 µs |
+| 256 | 69 | 0.23 | 0.28 | 10.00 | 1,126 µs | 1,108 µs |
+| unbounded | 1 | 0.21 | 0.27 | 9.80 | 1,108 µs | 1,089 µs |
+
+Two more inputs give the same curve. python `json/decoder.py` (2,481 nodes): 3.18 µs per stub at a limit of 1, 0.28 at 64 and 0.22 at 256. typescript `emitters/wrap.ts` (9,761 nodes): 7.41, 0.40 and 0.30. A call costs more in the deeper typescript tree because each batch re-seeks its resume path from the walk's root.
+
+- **A stub costs about 0.5–0.6 µs in a large batch** (0.2–0.3 native, 0.3 parse), against 9–15 µs for a node read. The native walk costs 0.06–0.09 µs per node visited: a kind filter over all of `argparse.py` costs 1.1 ms natively, while hydrating every node to filter in JavaScript costs about 180 ms.
+- **A fixed large batch hurts the first result.** With the limit at 64 or more, a `find` for an early match walks the rest of the tree to fill the batch (1.0–1.1 ms). A limit of 1 returns it in 2.7 µs.
+- **Decision: batch limits grow geometrically: 1, 4, 16, 64, then 256 per batch.** The first result arrives after one minimal call. A full walk reaches 256-stub batches after four calls and pays within 10% of an unbounded walk per stub. A terminal that stops early leaves at most one batch's worth of stubs unused, and stubs are never hydrated in advance.
+
+A late first match costs the walk to reach it, whatever the limit (0.9–1.1 ms here). That is the walk, not batching.
+
+## 6. Deferred traversal
+
+`$ancestors`, `within`, `containing`, siblings and a typed parent are deferred until native parent links are designed (§5.2).
+
+## 7. `where`
+
+### 7.1 Surface
 
 ```ts
-fn.name();          // Identifier
-fn.returnType();    // Type | undefined
-fn.parameters();    // readonly Parameter[]
-block.statements(); // readonly Statement[]
+node.$descendants
+	.ofType(kinds.FunctionDefinition)
+	.where((c) => c.name.match(/^_/).and(c.name.match(/^__/).not()));
 ```
 
-Calling a repeated field accessor materializes that field's current values.
+The callback receives a recorder, not a node. The recorder's members are the kind's slots (`c.name`, `c.returnType`), each with `eq(text)` and `match(regExp)`. A comparison returns a condition, and conditions combine with `and`, `or` and `not`. A comparison holds when some value in the slot has the text or matches.
 
-### 4.2 Lazy query
+The recorder is a mapped type over the node type's slot accessors. After `ofType` it has exactly that kind's slots. Over a union it has only the slots every member has, so `$descendants.where((c) => c.name…)` without `ofType` is a type error in python, where no slot is shared by every kind. Verbs added later (a kind test on a slot, a count) extend the recorder without changing v1.
 
-Repeated field accessors also expose query operators:
+### 7.2 Compile target: the native plan
 
-```ts
-const q = block.statements
-  .filter(is.statement.return)
-  .filter(hasExpression);
+`where` compiles to a plan that names model slots (`{ op: 'eq', slot: 'return_type', text: 'int' }`). The native walk evaluates the plan. It finds a slot's values with the function the reader stores children by: one `child_slot` serves both, so the plan names model slots and nothing maps a slot to a parser field a second time. A tree-sitter query string was the alternative. It would need that mapping inverted and shipped to TypeScript, and sittir has no native query runner (`find_and_read` is a stub), so it is not used.
 
-const first = q.first(); // execution
-const all = q.all();     // execution + materialization
-```
+### 7.3 It is sound, so it is in v1
 
-`block.statements.filter(...)` searches only that direct field. It is not recursive.
+The prototype (`where.ts`, `where-cost.mts`, `where-types.ts`, and the native plan in `prototype-descendants.patch`) meets the four conditions:
 
-### 4.3 `$with`: complete replacement
+1. **The recording covers slot access and eq / match / not / and / or.** It refuses everything else at run time: an unknown slot, a call, an assignment, and a regular expression with flags (they are not carried across, so `/x/i` is refused rather than matched case-sensitively).
+2. **The plan uses the reader's routing.** The recorder maps the accessor name to the model slot name (`returnType` → `return_type`), and the native evaluator keys children by the reader's `child_slot`. On each of the six plans in §7.4, the nodes the native plan selects are exactly the nodes a JavaScript reference over each candidate's slot texts selects.
+3. **The mapped types narrow.** `tsc` passes with each misuse marked `@ts-expect-error`, and each mark fails for its stated reason: a slot the kind lacks, a slot not shared over a union, a slot called as a function, a predicate returning a boolean, a condition handed to `filter`, and the kind kept after `where`.
+4. **An ordinary predicate is never taken for a condition.** The callback must return a recorded condition, which the types and a run-time brand both check. A recorder slot is not callable. `eq` and `match` exist only on the recorder, never on a node's slot view, so a condition passed to `filter` fails to type and throws at run time.
 
-```ts
-fn.$with.name(newName);
-fn.$with.parameters([p1, p2]);
-```
+A regular expression crosses as its source and runs under Rust's `regex` crate. A pattern that crate cannot compile (a back-reference, a look-around) is refused at the call, never matched differently.
 
-`$with.field(value)` constructs a new parent whose complete field value is `value`.
+### 7.4 What it saves
 
-### 4.4 `$edit`: relative structural transformation
+`where-cost`, python `argparse.py`: the native walk with the plan, hydrating the matches, against what a `filter` does today (kind filter natively, every candidate hydrated and its slot read through the accessor, the condition tested in JavaScript). Median of 5 runs:
 
-```ts
-fn.$edit.parameters.add(p);
-fn.$edit.parameters.insert(1, p);
-fn.$edit.parameters.remove(p);
-fn.$edit.parameters.move(2, 0);
-```
+| Kind and condition | Candidates | Matches | Native plan | JavaScript filter |
+|---|---|---|---|---|
+| definition: `name eq format_help` | 144 | 3 | 1.3 ms | 3.8 ms |
+| definition: `name match ^_` | 144 | 107 | 2.5 ms | 3.8 ms |
+| definition: `name match ^_ and not ^__` | 144 | 68 | 2.2 ms | 4.0 ms |
+| definition: `name eq add_argument or returnType .` | 144 | 2 | 1.2 ms | 3.7 ms |
+| call: `function eq isinstance` | 657 | 9 | 1.3 ms | 12.8 ms |
+| call: `function match ^self\.` | 657 | 155 | 2.6 ms | 12.7 ms |
 
-Each operation returns a new parent. `$edit` is not a mutable editor.
+Both columns include the same 1.1 ms walk. The JavaScript filter adds about 18 µs per candidate (the candidate read and the slot read). The native plan adds a read only per match, so the saving grows with the candidates a condition rejects: a factor of 10 on calls.
 
-Aliasing is allowed but does not rebase:
+## 8. `$edit`
+
+### 8.1 Surface, by cardinality
+
+- **Required singleton:** `$with` only. No `$edit` member duplicates replacement.
+- **Optional singleton:** `$edit.slot.remove()`.
+- **Repeated:** `add(...items)` (append), `insert(index, ...items)`, `removeAt(index)`, `replaceAt(index, item)` and `move(from, to)`.
+
+Operations are generated from the same finalized slot model as the accessors and `$with`, never from a second registry. An index refers to the slot's items as `x.slot()` returns them.
+
+- **`$edit.slot` reaches through a hoisted list kind.** Where the slot holds a list node, the operations edit the list's items, and the list node and its owner are both rebuilt.
+- **Below a list's minimum, an edit is refused at run time.** It throws from the one edit function in common every facade calls: `removeAt` on the only item of a non-empty list, for instance. The static types do not carry list lengths.
+- **Removal by value is deferred.** `remove(value)` and `replace(value, …)` need value equality, which is not settled; `removeAt` and `replaceAt` target the occurrence by position.
+
+### 8.2 Where `$edit` lives
+
+`$edit` is a getter on the kind's shared prototype (§3.2) and builds the editing facade when it is read. The logic of every operation is one function in common, and each facade only names the slot. The ruling placed `$edit` in the node literal beside `$with` and `$trivia`. A getter there puts every node in dictionary mode (§3.2), which is why it moves to the prototype; §12 records the choice.
+
+### 8.3 Results are drafts
+
+On a parsed node, a `$with` or `$edit` result is a draft in the sense of the edit lifecycle (#437). It keeps its tree association, sends no stale span, and leaves its unchanged children as coordinates.
+
+- `$commit()` commits one draft through tree-sitter and returns it as a coordinate of the new tree version.
+- `engine.commit(...drafts)` commits several drafts of one tree in one version. It takes over the name `engine.edit` had in the lifecycle design.
+- `engine.edit(path, fn)` keeps its name as the file verb.
+- `Project.commit()` is renamed `Project.save()`.
+
+Every result is immutable: `a.$edit.items.add(x)` leaves `a` unchanged and shares `a`'s unchanged substructure.
+
+### 8.4 Aliasing
+
+A held `$edit` facade or view is bound to the node it was read from and never rebases:
 
 ```ts
 const e = fn.$edit;
-const fn2 = e.parameters.add(p); // based on fn
-const fn3 = e.parameters.add(q); // also based on fn
+const fn2 = e.parameters.add(p); // from fn
+const fn3 = e.parameters.add(q); // also from fn
 ```
 
-## 5. Cardinality-derived edit surface
+## 9. Gaps and trivia after an edit
 
-### Required singleton
+An edit changes structure, never byte ranges, and rendering lays out every gap by one rule (#589):
 
-```ts
-fn.name();
-fn.$with.name(name);
-```
+1. **A gap between two items that were adjacent in the source keeps its source bytes.** That covers a line-break run or same-line spacing, and an edited item as well as an untouched one. Adjacency is the neighbour rule's test: the same tree token, and the rebuilt predecessor is the source sibling, by span.
+2. **Every other gap is canonical.** It takes the seat of the kind before it, or a render option when the caller sets one. Nothing is inferred for a gap the source never had.
 
-No `$edit.name` is generated merely to duplicate replacement.
+So `insert` gives the inserted item canonical gaps on both sides. `removeAt(i)` leaves a canonical gap between the new neighbours, since they were not adjacent. `move` makes the gaps around the moved item canonical, and `replaceAt` with a built item does the same. A removed item takes the syntax it owns with it: its separator and the trivia #371's derivation gives it, since every extra has exactly one owner. The line-break whitespace a read records comes from the same derivation (#371). There is no majority vote over a list's gaps.
 
-### Optional singleton
+## 10. Ownership
 
-```ts
-fn.returnType();
-fn.$with.returnType(type);
-fn.$edit.returnType.remove();
-```
+There is no engine or project ownership check. A node renders by its tree handle: live trees are held per language, and a tree lives while a node names it (#540). A slot may hold a node parsed by another engine of the same language.
 
-Removal is structural and belongs to `$edit`.
+## 11. Beside the shared-arena draft
 
-### Repeated field
+The arena draft makes a parsed node a view: an object holding its tree and its row, with its kind's accessors and methods on a per-kind prototype (its first open ruling, recommended there). That is the prototype §3.2 puts the slot getters and `$edit` on, so both designs ask for the same change to how a node is built.
 
-```ts
-fn.parameters();
-fn.parameters.filter(...);
+Under the arena, a stub becomes a row and a batch becomes a range of rows, so the native walk returns rows rather than JSON stubs. The JavaScript half of a node read (§5.1: `JSON.parse`, `holdReadTree` and most of the wrap) is the cost the arena removes. The arena replaces `wire_slot` with routes stamped at generation. The `where` evaluator then reads those routes, so it still shares one routing with the accessors. The plan, the batch limits and the `where` surface do not change.
 
-fn.$with.parameters(parameters);
+## 12. Choices for the maintainer
 
-fn.$edit.parameters.add(parameter);
-fn.$edit.parameters.insert(index, parameter);
-fn.$edit.parameters.remove(parameter);
-fn.$edit.parameters.removeAt(index);
-fn.$edit.parameters.replace(parameter, replacement);
-fn.$edit.parameters.replaceAt(index, replacement);
-fn.$edit.parameters.move(from, to);
-```
-
-Operations are generated only where their semantics are valid for the finalized field contract. Edits must preserve admitted element kinds, cardinality constraints, target restrictions, and project ownership.
-
-## 6. Query protocol
-
-Conceptually:
-
-```ts
-interface Query<T> {
-  filter<S extends T>(guard: (v: T) => v is S): Query<S>;
-  filter(predicate: (v: T) => boolean): Query<T>;
-  ofKind<S extends T>(kind: KindGuard<S>): Query<S>;
-  map<U>(project: (v: T) => U): Query<U>;
-
-  first(): T | undefined;
-  all(): readonly T[];
-  count(): number;
-  some(predicate?: (v: T) => boolean): boolean;
-  every(predicate: (v: T) => boolean): boolean;
-}
-
-interface RepeatedField<T> extends Query<T> {
-  (): readonly T[];
-}
-```
-
-Exact names are implementation-level; the operator/terminal distinction is normative.
-
-### Laziness
-
-Non-terminal operators build a plan. They must not require complete source materialization.
-
-```ts
-block.statements
-  .filter(is.statement.return)
-  .first();
-```
-
-may stop after the first matching statement. The same applies to traversal.
-
-### Explicit terminals
-
-`Query<T>` is initially **not implicitly iterable**. These are intentionally unsupported:
-
-```ts
-for (const x of query) {}
-[...query]
-```
-
-Execution is visible through `all()`, `first()`, `count()`, `some()`, etc. This preserves observable laziness and leaves room for native/tree-sitter-backed execution.
-
-### Narrowing
-
-Type guards and `ofKind` narrow the query result and narrowing composes:
-
-```ts
-const returns = block.statements
-  .filter(is.statement.return);
-// Query<ReturnStatement>
-```
-
-Terminals return ordinary node values, not mutable handles.
-
-## 7. Traversal
-
-Traversal sources implement the same query protocol:
-
-```ts
-node.children.filter(...)
-node.descendants.ofKind(Expression.Call)
-node.ancestors.find(...)
-```
-
-Initial sources:
-
-- `children`: all direct structural children;
-- `descendants`: recursive descendants excluding the receiver;
-- `ancestors`: structural ancestors, nearest first.
-
-A field query is narrower than generic traversal:
-
-```ts
-block.statements.filter(...) // statements field only
-block.children.filter(...)   // every direct structural child
-```
-
-Ordering is deterministic:
-
-- children: structural/source order;
-- descendants: depth-first pre-order;
-- ancestors: nearest parent to root.
-
-Queries operate over structural **occurrences**, not merely object identity. A reusable node value may occur in multiple relationships.
-
-## 8. Edit semantics
-
-### Immutability
-
-For `const b = a.$edit.items.add(x)`:
-
-- `a` is unchanged;
-- `b` represents the changed parent;
-- unchanged substructure may be shared;
-- project/engine ownership is retained.
-
-### Relationship locality
-
-Removal is expressed against the relationship:
-
-```ts
-fn.$edit.parameters.remove(parameter);
-```
-
-not:
-
-```ts
-parameter.remove();
-```
-
-A reusable node value does not intrinsically identify which occurrence should be removed.
-
-### Targeting
-
-`remove(value)` succeeds only when the supplied occurrence/value identifies one member of that field unambiguously. Zero or ambiguous matches produce a diagnostic/error rather than silently choosing.
-
-`removeAt(index)` targets the indexed occurrence.
-
-A future stable occurrence handle may be accepted directly.
-
-### Grammar-owned syntax
-
-Edits modify structure, not byte ranges. Removing `b` from `call(a, b, c)` must produce a valid structure equivalent to `call(a, c)`, including separator/wrapper ownership.
-
-The canonical grammar/render model determines punctuation and wrapper behavior; `$edit` does not create a second text-editing engine.
-
-### Provenance/trivia
-
-Untouched siblings/subtrees retain provenance to the same extent as existing immutable updates. Inserted constructed nodes render newly. Removal also removes syntax structurally owned by that occurrence. Free-comment/trivia ownership requires one deterministic documented policy.
-
-## 9. Query/edit composition
-
-Direct-field query results may feed direct-field edits:
-
-```ts
-const returns = block.statements
-  .filter(is.statement.return)
-  .all();
-
-const changed = block.$edit.statements.removeAll(returns);
-```
-
-`removeAll` is optional for the first implementation, but if present it validates that supplied occurrences belong to the field snapshot.
-
-Deep editing such as:
-
-```ts
-node.$edit.remove(node.descendants.filter(...))
-```
-
-is explicitly deferred. It introduces overlapping matches, multiple parents, ordering, stale occurrences, and root-replacement semantics.
-
-Queries are snapshot-bound. A query created from `block` continues to describe `block` after a new edited block is returned; it does not automatically rebase.
-
-## 10. Construction/project interaction
-
-Strict, hoisted, and vocabulary authoring surfaces converge on compatible canonical node representations. Structural query/traversal belongs to the node/runtime layer, not separate implementations per authoring mode.
-
-Initial manipulation inputs should be **canonical node inputs**. A shared node's `$with`/`$edit` meaning must not vary according to whichever project view last accessed it. View-bound shorthand adapters can be added later if justified.
-
-A transformed project-owned node retains its owner/context. Adding an incompatible foreign-owned node fails unless an explicit import/rehome mechanism exists.
-
-## 11. Semantic queries are a later layer
-
-The core API is structural:
-
-```ts
-fn.descendants.ofKind(Expression.Identifier)
-block.statements.filter(is.statement.return)
-```
-
-It does not claim that an identifier is a resolved reference.
-
-A later project layer may expose:
-
-```ts
-project.referencesOf(declaration)
-project.declarations(...)
-project.usages(...)
-```
-
-using scope/name analysis while reusing this traversal and occurrence infrastructure.
-
-## 12. Compatibility
-
-Existing accessors and `$with` remain source-compatible.
-
-A repeated accessor evolves conceptually from:
-
-```ts
-() => readonly T[]
-```
-
-to a callable `RepeatedField<T>` with lazy query methods. Calling it still returns the same materialized value.
-
-`$edit` uses the reserved `$` namespace to avoid collision with grammar/vocabulary fields.
-
-No `$edit.field(value)` synonym for `$with.field(value)` is introduced: the distinction is semantic, not cosmetic.
+1. **Where the getters live (§3.2, §8.2).** The ruling put `$edit` in the literal as a getter. Measured, a getter in the literal makes every node a dictionary-mode object (0 of 1,000 fast, double heap), which #534 removed. Recommended: getters on a prototype shared per kind, for `$edit` and the slot views, which is also where the arena draft puts a parsed view's accessors (§11). The alternative that keeps the literal free of getters is making every view at wrap time, at 0.9 µs and 1.5 KB per read node.
+2. **`x.slot()` costs 0.23 µs instead of 0.01 µs (§3.2).** This is the price of `x.slot` being a view, under either placement. The alternative is a materializing accessor under another name, which the view ruling rejects.
+3. **`includes` compares occurrences (§4).** Until value equality is settled, a parsed node is its coordinate and a built node its identity.
+4. **`where` moves ahead of an opaque `filter` (§5.3).** The ruling said this of `ofType`. `where` is a predicate of the same kind, so the same reordering is applied to it.
 
 ## 13. Laws
 
-Implementations and generated tests must establish:
-
-### Read law
-```text
-field() = field.all()
-```
-modulo readonly representation.
-
-### Replacement law
-```text
-node.$with.field(v).field() = canonicalize(v)
-```
-
-### Add law
-```text
-node.$edit.items.add(x).items()
-= node.items() with x inserted at the operation-defined position
-```
-
-### Query narrowing law
-A type-guard query terminal cannot return a value outside the narrowed type.
-
-### Snapshot law
-Queries/edit aliases created from node A continue to operate against A after another operation returns node B.
-
-### Validity law
-Every successful `$with` or `$edit` result satisfies the same finalized structural contract as direct construction.
-
-### Locality law
-A direct-field edit changes that relationship and structurally owned syntax, not unrelated occurrences of the same reusable node value.
+- **Read:** `x.slot()` and `[...x.slot]` have the same items.
+- **Replacement:** `node.$with.slot(v).slot()` is `v`, canonicalized.
+- **Add:** `node.$edit.items.add(x).items()` is `node.items()` with `x` appended.
+- **Narrowing:** a terminal of a narrowed view never returns a value outside the narrowed type.
+- **Batching:** a view yields the same items, in the same order, at every batch limit.
+- **Reordering:** moving `ofType` or `where` ahead of an opaque `filter` never changes the items.
+- **Pushdown:** a native `where` selects exactly the nodes the same condition selects in JavaScript.
+- **Snapshot:** a view or facade read from `A` keeps working against `A` after an operation returns `B`.
+- **Validity:** every successful `$with` or `$edit` result satisfies the finalized structural contract of direct construction.
+- **Locality:** a slot edit changes that relationship and the syntax it owns, not other occurrences of the same node value.
+- **Gaps:** after an edit, a gap between items adjacent in the source renders its source bytes, and every other gap renders its seat or the caller's option.
 
 ## 14. Acceptance tests
 
-The first implementation is complete when tests demonstrate:
-
-1. Existing `field()` calls are unchanged.
-2. `field.filter(...).first()` can terminate without materializing all elements.
-3. Guard filtering narrows TypeScript types.
-4. Field and traversal queries share the same compositional operators.
-5. `$with` replaces whole singleton and repeated fields immutably.
-6. Optional singleton `$edit.field.remove()` is generated; required singleton removal is absent.
-7. Repeated fields expose only valid structural operations.
-8. Add/insert/remove/move preserve grammar validity and separator rendering.
-9. Original nodes remain unchanged after edits.
-10. Query and `$edit` aliases remain bound to their original snapshot.
-11. Reused node values can occur in multiple parents without `node.remove()` ambiguity.
-12. Project ownership survives transformation and incompatible ownership is rejected.
-13. Queries are not implicitly iterable.
-14. Deep semantic/project queries are not accidentally exposed as structural guarantees.
+1. Existing `x.slot()` calls and `$with` are unchanged.
+2. `x.slot.filter(p).find(q)` and `x.$descendants.find(q)` return before hydrating the rest of the source.
+3. Type-guard `filter` and `ofType` narrow; `where` keeps the narrowed type.
+4. Slot views and traversal views share every verb.
+5. `$descendants.ofType(k)` hydrates only nodes of kind `k`; the batch limits follow 1, 4, 16, 64, 256.
+6. Every stub a batch returns hydrates to the kind and span it reported.
+7. `where`'s recorder refuses an unknown slot, a call, a plain predicate and a flagged pattern; `filter` refuses a condition.
+8. A native `where` and its JavaScript reference select the same nodes across the three grammars.
+9. Optional singletons have `$edit.slot.remove()`; required singletons have no `$edit` member.
+10. Repeated slots expose `add`, `insert`, `removeAt`, `replaceAt` and `move`, and the shared edit function refuses an edit below a list's minimum.
+11. `$edit` on a slot holding a hoisted list kind edits the list's items.
+12. Add, insert, remove and move render each gap by §9: source bytes between items adjacent in the source, the seat everywhere else.
+13. Original nodes are unchanged after any edit; views and facades stay bound to the node they were read from.
+14. Every node a read returns is a fast-mode object (`%HasFastProperties`).
+15. A slot may hold a node another engine of the same language parsed, and the result renders.
 
 ## 15. Implementation direction
 
-Generation should derive field facets from the same finalized field model used for accessors and `$with`, rather than maintaining a separate handwritten edit/query registry.
+- **Generation:** the slot views, `$edit` facades and the recorder's slot map come from the finalized slot model that already drives the accessors and `$with`. The kind's shared prototype carries the slot getters and `$edit`. The node literal keeps data, `$type`, `$with`, `$trivia`, `$render` and `$engine`, and sets `__proto__`.
+- **Native:** one walk (`descendants`, in the prototype patch): a pre-order cursor walk from a handle with a kind filter, an optional `where` plan, a batch limit and a resume path, minting a handle only for the parents of the stubs it returns. The reader and the plan evaluator share `child_slot`.
+- **JavaScript runtime:** source, plan, terminal and edit primitive are separate pieces in common. The plan splitter moves `ofType` and `where` ahead of opaque filters, sends the declarative prefix to the walk, and pulls geometric batches.
 
-Runtime implementation should separate:
+## 16. Deferred
 
-- **source**: field or traversal producer;
-- **plan**: lazy composable operators;
-- **terminal**: execution/materialization;
-- **edit primitive**: immutable relationship transformation.
+- `$ancestors`, siblings, a typed parent, `within` and `containing`.
+- `remove(value)`, `replace(value, …)`, `removeAll` and value equality.
+- Deep transformation (`node.$edit.remove(node.$descendants…)`).
+- Semantic and project-wide queries (references, declarations, usages), which will reuse this traversal.
+- View-bound ergonomic edit inputs and explicit edit transactions.
 
-The backend may initially execute plans in TypeScript and later lower eligible plans to native/tree-sitter traversal without changing the public API.
+## 17. Tools
 
-## 16. Deferred questions
+The probes live in `scratchpad/node-query/` in the main checkout. Its README says how to run each and which inputs and commits produced the numbers above.
 
-These are intentionally deferred rather than required for v1:
-
-- lazy `flatMap`/cross-field query operators;
-- siblings and typed parent traversal;
-- stable public occurrence handles;
-- `removeAll` and bulk replacement;
-- deep transformation/rewrite API;
-- semantic query integration;
-- view-bound ergonomic edit inputs;
-- explicit edit transactions;
-- async/native query terminals;
-- implicit iteration.
-
-The v1 boundary is deliberately smaller: **typed lazy structural observation plus immutable field-local replacement and modification.**
+| Probe | Measures |
+|---|---|
+| `read-cost.mts` | where a node read's time goes: native call, `JSON.parse`, `holdReadTree`, `wrapNode` (§5.1) |
+| `batch-walk.mts` | the native walk's cost per stub and first-batch latency for each batch limit, and that stubs hydrate correctly (§5.4) |
+| `slot-accessor.mts` | build, read, call, heap, allocation and V8 fast mode of each view shape (§3.2) |
+| `where.ts`, `where-cost.mts`, `where-types.ts` | the `where` prototype, its run-time and compile-time soundness checks, and its cost against a JavaScript filter (§7) |
+| `prototype-descendants.patch` | the native walk, the `where` plan evaluator and the shared `child_slot` the batch and `where` probes run against |
