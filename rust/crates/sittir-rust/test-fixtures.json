@@ -7134,7 +7134,10 @@
                     "start": 196,
                     "end": 199
                   },
-                  "$text": "u16"
+                  "$text": "u16",
+                  "$_gap": {
+                    "$text": ", "
+                  }
                 }
               ],
               "$other": [
@@ -7217,7 +7220,10 @@
                               "start": 218,
                               "end": 219
                             },
-                            "_content": "2"
+                            "_content": "2",
+                            "$_gap": {
+                              "$text": ", "
+                            }
                           }
                         ],
                         "$other": [
@@ -9559,7 +9565,10 @@
                 "start": 196,
                 "end": 199
               },
-              "$text": "u16"
+              "$text": "u16",
+              "$_gap": {
+                "$text": ", "
+              }
             }
           ],
           "$other": [
@@ -9642,7 +9651,10 @@
                           "start": 218,
                           "end": 219
                         },
-                        "_content": "2"
+                        "_content": "2",
+                        "$_gap": {
+                          "$text": ", "
+                        }
                       }
                     ],
                     "$other": [
@@ -12946,7 +12958,10 @@
                         "start": 218,
                         "end": 219
                       },
-                      "_content": "2"
+                      "_content": "2",
+                      "$_gap": {
+                        "$text": ", "
+                      }
                     }
                   ],
                   "$other": [
@@ -14320,7 +14335,10 @@
                 "start": 218,
                 "end": 219
               },
-              "_content": "2"
+              "_content": "2",
+              "$_gap": {
+                "$text": ", "
+              }
             }
           ],
           "$other": [
@@ -15147,7 +15165,10 @@
               "start": 196,
               "end": 199
             },
-            "$text": "u16"
+            "$text": "u16",
+            "$_gap": {
+              "$text": ", "
+            }
           }
         ],
         "$other": [
@@ -15230,7 +15251,10 @@
               "start": 218,
               "end": 219
             },
-            "_content": "2"
+            "_content": "2",
+            "$_gap": {
+              "$text": ", "
+            }
           }
         ],
         "$other": [
@@ -26230,9 +26254,9 @@
     "sourceIn": "\nuse abc;\nuse phrases::japanese;\nuse sayings::english::greetings;\nuse sayings::english::greetings as en_greetings ;\nuse phrases::english::{greetings,farewells};\nuse sayings::japanese::farewells::*;\npub use self::greetings::hello;\nuse sayings::english::{self, greetings as en_greetings, farewells as en_farewells};\nuse three::{ dot::{one, four} };\nuse my::{ some::* };\nuse my::{*};\nuse ::*;\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "use abc;\n\nuse phrases::japanese;\n\nuse sayings::english::greetings;\n\nuse sayings::english::greetings as en_greetings;\n\nuse phrases::english::{greetings, farewells};\n\nuse sayings::japanese::farewells::*;\n\npub use self::greetings::hello;\n\nuse sayings::english::{self, greetings as en_greetings, farewells as en_farewells};\n\nuse three::{dot::{one, four}};\n\nuse my::{some::*};\n\nuse my::{*};\n\nuse ::*;\n",
+    "expectedSourceOut": "use abc;\n\nuse phrases::japanese;\n\nuse sayings::english::greetings;\n\nuse sayings::english::greetings as en_greetings;\n\nuse phrases::english::{greetings,farewells};\n\nuse sayings::japanese::farewells::*;\n\npub use self::greetings::hello;\n\nuse sayings::english::{self, greetings as en_greetings, farewells as en_farewells};\n\nuse three::{dot::{one, four}};\n\nuse my::{some::*};\n\nuse my::{*};\n\nuse ::*;\n",
     "expectedReparseTree": "(source_file statements: (use_declaration argument: (identifier)) statements: (use_declaration argument: (scoped_identifier path: (identifier) name: (identifier))) statements: (use_declaration argument: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier))) statements: (use_declaration argument: (use_as_clause path: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier)) alias: (identifier))) statements: (use_declaration argument: (scoped_use_list path: (scoped_identifier path: (identifier) name: (identifier)) list: (use_list (use_clauses item: (identifier) item: (identifier))))) statements: (use_declaration argument: (use_wildcard (use_wildcard_group path: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier))))) statements: (use_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) argument: (scoped_identifier path: (scoped_identifier path: (self) name: (identifier)) name: (identifier))) statements: (use_declaration argument: (scoped_use_list path: (scoped_identifier path: (identifier) name: (identifier)) list: (use_list (use_clauses item: (self) item: (use_as_clause path: (identifier) alias: (identifier)) item: (use_as_clause path: (identifier) alias: (identifier)))))) statements: (use_declaration argument: (scoped_use_list path: (identifier) list: (use_list (use_clauses item: (scoped_use_list path: (identifier) list: (use_list (use_clauses item: (identifier) item: (identifier)))))))) statements: (use_declaration argument: (scoped_use_list path: (identifier) list: (use_list (use_clauses item: (use_wildcard (use_wildcard_group path: (identifier))))))) statements: (use_declaration argument: (scoped_use_list path: (identifier) list: (use_list (use_clauses item: (use_wildcard))))) statements: (use_declaration argument: (use_wildcard (use_wildcard_group))))",
-    "wrappedText": "use abc;\n\nuse phrases::japanese;\n\nuse sayings::english::greetings;\n\nuse sayings::english::greetings as en_greetings;\n\nuse phrases::english::{greetings, farewells};\n\nuse sayings::japanese::farewells::*;\n\npub use self::greetings::hello;\n\nuse sayings::english::{self, greetings as en_greetings, farewells as en_farewells};\n\nuse three::{dot::{one, four}};\n\nuse my::{some::*};\n\nuse my::{*};\n\nuse ::*;\n",
+    "wrappedText": "use abc;\n\nuse phrases::japanese;\n\nuse sayings::english::greetings;\n\nuse sayings::english::greetings as en_greetings;\n\nuse phrases::english::{greetings,farewells};\n\nuse sayings::japanese::farewells::*;\n\npub use self::greetings::hello;\n\nuse sayings::english::{self, greetings as en_greetings, farewells as en_farewells};\n\nuse three::{dot::{one, four}};\n\nuse my::{some::*};\n\nuse my::{*};\n\nuse ::*;\n",
     "wrappedOffset": 0
   },
   {
@@ -26702,6 +26726,9 @@
                 "$span": {
                   "start": 149,
                   "end": 158
+                },
+                "$_gap": {
+                  "$text": ","
                 }
               }
             ],
@@ -26776,7 +26803,7 @@
         }
       ]
     },
-    "expectedOutput": "use phrases::english::{greetings, farewells};"
+    "expectedOutput": "use phrases::english::{greetings,farewells};"
   },
   {
     "kind": "roundtrip",
@@ -26784,9 +26811,9 @@
     "sourceIn": "use phrases::english::{greetings,farewells};",
     "pattern": "use_declaration",
     "edits": [],
-    "expectedSourceOut": "use phrases::english::{greetings, farewells};",
+    "expectedSourceOut": "use phrases::english::{greetings,farewells};",
     "expectedReparseTree": "(use_declaration argument: (scoped_use_list path: (scoped_identifier path: (identifier) name: (identifier)) list: (use_list (use_clauses item: (identifier) item: (identifier)))))",
-    "wrappedText": "use phrases::english::{greetings, farewells};",
+    "wrappedText": "use phrases::english::{greetings,farewells};",
     "wrappedOffset": 0
   },
   {
@@ -27372,6 +27399,9 @@
                         "$span": {
                           "start": 338,
                           "end": 342
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -46828,6 +46858,9 @@
                             "$span": {
                               "start": 11,
                               "end": 12
+                            },
+                            "$_gap": {
+                              "$text": ", "
                             }
                           }
                         ],
@@ -47199,6 +47232,9 @@
                             "$span": {
                               "start": 55,
                               "end": 56
+                            },
+                            "$_gap": {
+                              "$text": ", "
                             }
                           }
                         ],
@@ -47456,6 +47492,9 @@
                         "$span": {
                           "start": 11,
                           "end": 12
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -47861,6 +47900,9 @@
                         "$span": {
                           "start": 55,
                           "end": 56
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -48102,6 +48144,9 @@
                       "$span": {
                         "start": 11,
                         "end": 12
+                      },
+                      "$_gap": {
+                        "$text": ", "
                       }
                     }
                   ],
@@ -48423,6 +48468,9 @@
                       "$span": {
                         "start": 55,
                         "end": 56
+                      },
+                      "$_gap": {
+                        "$text": ", "
                       }
                     }
                   ],
@@ -48623,6 +48671,9 @@
               "$span": {
                 "start": 11,
                 "end": 12
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -48868,6 +48919,9 @@
               "$span": {
                 "start": 55,
                 "end": 56
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -49039,6 +49093,9 @@
             "$span": {
               "start": 11,
               "end": 12
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -49486,6 +49543,9 @@
             "$span": {
               "start": 55,
               "end": 56
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -63557,6 +63617,9 @@
                                         "start": 25,
                                         "end": 31
                                       }
+                                    },
+                                    "$_gap": {
+                                      "$text": " "
                                     }
                                   },
                                   {
@@ -63799,6 +63862,9 @@
                                         "start": 60,
                                         "end": 66
                                       }
+                                    },
+                                    "$_gap": {
+                                      "$text": " "
                                     }
                                   },
                                   {
@@ -63814,6 +63880,9 @@
                                         "start": 67,
                                         "end": 70
                                       }
+                                    },
+                                    "$_gap": {
+                                      "$text": " "
                                     }
                                   },
                                   {
@@ -63829,6 +63898,9 @@
                                         "start": 71,
                                         "end": 78
                                       }
+                                    },
+                                    "$_gap": {
+                                      "$text": " "
                                     }
                                   },
                                   {
@@ -63844,6 +63916,9 @@
                                         "start": 79,
                                         "end": 81
                                       }
+                                    },
+                                    "$_gap": {
+                                      "$text": " "
                                     }
                                   },
                                   {
@@ -63859,6 +63934,9 @@
                                         "start": 82,
                                         "end": 87
                                       }
+                                    },
+                                    "$_gap": {
+                                      "$text": " "
                                     }
                                   },
                                   {
@@ -63874,6 +63952,9 @@
                                         "start": 88,
                                         "end": 96
                                       }
+                                    },
+                                    "$_gap": {
+                                      "$text": " "
                                     }
                                   },
                                   {
@@ -64174,6 +64255,9 @@
                                 "start": 25,
                                 "end": 31
                               }
+                            },
+                            "$_gap": {
+                              "$text": " "
                             }
                           },
                           {
@@ -64412,6 +64496,9 @@
                                 "start": 60,
                                 "end": 66
                               }
+                            },
+                            "$_gap": {
+                              "$text": " "
                             }
                           },
                           {
@@ -64427,6 +64514,9 @@
                                 "start": 67,
                                 "end": 70
                               }
+                            },
+                            "$_gap": {
+                              "$text": " "
                             }
                           },
                           {
@@ -64442,6 +64532,9 @@
                                 "start": 71,
                                 "end": 78
                               }
+                            },
+                            "$_gap": {
+                              "$text": " "
                             }
                           },
                           {
@@ -64457,6 +64550,9 @@
                                 "start": 79,
                                 "end": 81
                               }
+                            },
+                            "$_gap": {
+                              "$text": " "
                             }
                           },
                           {
@@ -64472,6 +64568,9 @@
                                 "start": 82,
                                 "end": 87
                               }
+                            },
+                            "$_gap": {
+                              "$text": " "
                             }
                           },
                           {
@@ -64487,6 +64586,9 @@
                                 "start": 88,
                                 "end": 96
                               }
+                            },
+                            "$_gap": {
+                              "$text": " "
                             }
                           },
                           {
@@ -64758,6 +64860,9 @@
                               "start": 25,
                               "end": 31
                             }
+                          },
+                          "$_gap": {
+                            "$text": " "
                           }
                         },
                         {
@@ -64977,6 +65082,9 @@
                               "start": 60,
                               "end": 66
                             }
+                          },
+                          "$_gap": {
+                            "$text": " "
                           }
                         },
                         {
@@ -64992,6 +65100,9 @@
                               "start": 67,
                               "end": 70
                             }
+                          },
+                          "$_gap": {
+                            "$text": " "
                           }
                         },
                         {
@@ -65007,6 +65118,9 @@
                               "start": 71,
                               "end": 78
                             }
+                          },
+                          "$_gap": {
+                            "$text": " "
                           }
                         },
                         {
@@ -65022,6 +65136,9 @@
                               "start": 79,
                               "end": 81
                             }
+                          },
+                          "$_gap": {
+                            "$text": " "
                           }
                         },
                         {
@@ -65037,6 +65154,9 @@
                               "start": 82,
                               "end": 87
                             }
+                          },
+                          "$_gap": {
+                            "$text": " "
                           }
                         },
                         {
@@ -65052,6 +65172,9 @@
                               "start": 88,
                               "end": 96
                             }
+                          },
+                          "$_gap": {
+                            "$text": " "
                           }
                         },
                         {
@@ -65304,6 +65427,9 @@
                     "start": 25,
                     "end": 31
                   }
+                },
+                "$_gap": {
+                  "$text": " "
                 }
               },
               {
@@ -65442,6 +65568,9 @@
                     "start": 60,
                     "end": 66
                   }
+                },
+                "$_gap": {
+                  "$text": " "
                 }
               },
               {
@@ -65457,6 +65586,9 @@
                     "start": 67,
                     "end": 70
                   }
+                },
+                "$_gap": {
+                  "$text": " "
                 }
               },
               {
@@ -65472,6 +65604,9 @@
                     "start": 71,
                     "end": 78
                   }
+                },
+                "$_gap": {
+                  "$text": " "
                 }
               },
               {
@@ -65487,6 +65622,9 @@
                     "start": 79,
                     "end": 81
                   }
+                },
+                "$_gap": {
+                  "$text": " "
                 }
               },
               {
@@ -65502,6 +65640,9 @@
                     "start": 82,
                     "end": 87
                   }
+                },
+                "$_gap": {
+                  "$text": " "
                 }
               },
               {
@@ -65517,6 +65658,9 @@
                     "start": 88,
                     "end": 96
                   }
+                },
+                "$_gap": {
+                  "$text": " "
                 }
               },
               {
@@ -65707,6 +65851,9 @@
               "start": 25,
               "end": 31
             }
+          },
+          "$_gap": {
+            "$text": " "
           }
         },
         {
@@ -65787,6 +65934,9 @@
               "start": 60,
               "end": 66
             }
+          },
+          "$_gap": {
+            "$text": " "
           }
         },
         {
@@ -65802,6 +65952,9 @@
               "start": 67,
               "end": 70
             }
+          },
+          "$_gap": {
+            "$text": " "
           }
         },
         {
@@ -65817,6 +65970,9 @@
               "start": 71,
               "end": 78
             }
+          },
+          "$_gap": {
+            "$text": " "
           }
         },
         {
@@ -65832,6 +65988,9 @@
               "start": 79,
               "end": 81
             }
+          },
+          "$_gap": {
+            "$text": " "
           }
         },
         {
@@ -65847,6 +66006,9 @@
               "start": 82,
               "end": 87
             }
+          },
+          "$_gap": {
+            "$text": " "
           }
         },
         {
@@ -65862,6 +66024,9 @@
               "start": 88,
               "end": 96
             }
+          },
+          "$_gap": {
+            "$text": " "
           }
         },
         {
@@ -70029,7 +70194,10 @@
                           "start": 115,
                           "end": 116
                         },
-                        "_content": "7"
+                        "_content": "7",
+                        "$_gap": {
+                          "$text": ", "
+                        }
                       },
                       {
                         "$type": 141,
@@ -70040,7 +70208,10 @@
                           "start": 118,
                           "end": 119
                         },
-                        "_content": "8"
+                        "_content": "8",
+                        "$_gap": {
+                          "$text": ", "
+                        }
                       }
                     ],
                     "$other": [
@@ -70791,7 +70962,10 @@
                       "start": 115,
                       "end": 116
                     },
-                    "_content": "7"
+                    "_content": "7",
+                    "$_gap": {
+                      "$text": ", "
+                    }
                   },
                   {
                     "$type": 141,
@@ -70802,7 +70976,10 @@
                       "start": 118,
                       "end": 119
                     },
-                    "_content": "8"
+                    "_content": "8",
+                    "$_gap": {
+                      "$text": ", "
+                    }
                   }
                 ],
                 "$other": [
@@ -71554,7 +71731,10 @@
                     "start": 115,
                     "end": 116
                   },
-                  "_content": "7"
+                  "_content": "7",
+                  "$_gap": {
+                    "$text": ", "
+                  }
                 },
                 {
                   "$type": 141,
@@ -71565,7 +71745,10 @@
                     "start": 118,
                     "end": 119
                   },
-                  "_content": "8"
+                  "_content": "8",
+                  "$_gap": {
+                    "$text": ", "
+                  }
                 }
               ],
               "$other": [
@@ -73010,7 +73193,10 @@
                 "start": 115,
                 "end": 116
               },
-              "_content": "7"
+              "_content": "7",
+              "$_gap": {
+                "$text": ", "
+              }
             },
             {
               "$type": 141,
@@ -73021,7 +73207,10 @@
                 "start": 118,
                 "end": 119
               },
-              "_content": "8"
+              "_content": "8",
+              "$_gap": {
+                "$text": ", "
+              }
             }
           ],
           "$other": [
@@ -73546,7 +73735,10 @@
               "start": 115,
               "end": 116
             },
-            "_content": "7"
+            "_content": "7",
+            "$_gap": {
+              "$text": ", "
+            }
           },
           {
             "$type": 141,
@@ -73557,7 +73749,10 @@
               "start": 118,
               "end": 119
             },
-            "_content": "8"
+            "_content": "8",
+            "$_gap": {
+              "$text": ", "
+            }
           }
         ],
         "$other": [
@@ -135984,6 +136179,9 @@
                   "$span": {
                     "start": 19,
                     "end": 20
+                  },
+                  "$_gap": {
+                    "$text": ", "
                   }
                 },
                 {
@@ -135994,6 +136192,9 @@
                   "$span": {
                     "start": 22,
                     "end": 23
+                  },
+                  "$_gap": {
+                    "$text": ", "
                   }
                 }
               ],
@@ -136069,7 +136270,10 @@
                     "start": 31,
                     "end": 32
                   },
-                  "_content": "2"
+                  "_content": "2",
+                  "$_gap": {
+                    "$text": ", "
+                  }
                 },
                 {
                   "$type": 141,
@@ -136080,7 +136284,10 @@
                     "start": 34,
                     "end": 35
                   },
-                  "_content": "3"
+                  "_content": "3",
+                  "$_gap": {
+                    "$text": ", "
+                  }
                 }
               ],
               "$other": [
@@ -136282,7 +136489,10 @@
               "start": 31,
               "end": 32
             },
-            "_content": "2"
+            "_content": "2",
+            "$_gap": {
+              "$text": ", "
+            }
           },
           {
             "$type": 141,
@@ -136293,7 +136503,10 @@
               "start": 34,
               "end": 35
             },
-            "_content": "3"
+            "_content": "3",
+            "$_gap": {
+              "$text": ", "
+            }
           }
         ],
         "$other": [
@@ -136500,6 +136713,9 @@
               "$span": {
                 "start": 19,
                 "end": 20
+              },
+              "$_gap": {
+                "$text": ", "
               }
             },
             {
@@ -136510,6 +136726,9 @@
               "$span": {
                 "start": 22,
                 "end": 23
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -136585,7 +136804,10 @@
                 "start": 31,
                 "end": 32
               },
-              "_content": "2"
+              "_content": "2",
+              "$_gap": {
+                "$text": ", "
+              }
             },
             {
               "$type": 141,
@@ -136596,7 +136818,10 @@
                 "start": 34,
                 "end": 35
               },
-              "_content": "3"
+              "_content": "3",
+              "$_gap": {
+                "$text": ", "
+              }
             }
           ],
           "$other": [
@@ -136721,6 +136946,9 @@
             "$span": {
               "start": 19,
               "end": 20
+            },
+            "$_gap": {
+              "$text": ", "
             }
           },
           {
@@ -136731,6 +136959,9 @@
             "$span": {
               "start": 22,
               "end": 23
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -142492,6 +142723,9 @@
                   "$span": {
                     "start": 36,
                     "end": 37
+                  },
+                  "$_gap": {
+                    "$text": "\n    && "
                   }
                 },
                 {
@@ -142636,7 +142870,7 @@
         }
       ]
     },
-    "expectedOutput": "if let Some(a) = b && c && d && let Some(e) = f {}\n"
+    "expectedOutput": "if let Some(a) = b && c\n&& d && let Some(e) = f {}\n"
   },
   {
     "kind": "roundtrip",
@@ -142644,9 +142878,9 @@
     "sourceIn": "\nif let Some(a) = b\n    && c\n    && d\n    && let Some(e) = f\n{\n}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "if let Some(a) = b && c && d && let Some(e) = f {}\n",
+    "expectedSourceOut": "if let Some(a) = b && c\n&& d && let Some(e) = f {}\n",
     "expectedReparseTree": "(source_file statements: (expression_statement (if_expression condition: (let_chain left: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier)) right: (identifier) right: (identifier) right: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier))) consequence: (block))))",
-    "wrappedText": "if let Some(a) = b && c && d && let Some(e) = f {}\n",
+    "wrappedText": "if let Some(a) = b && c\n&& d && let Some(e) = f {}\n",
     "wrappedOffset": 0
   },
   {
@@ -142776,6 +143010,9 @@
             "$span": {
               "start": 36,
               "end": 37
+            },
+            "$_gap": {
+              "$text": "\n    && "
             }
           },
           {
@@ -142917,7 +143154,7 @@
         "consequence"
       ]
     },
-    "expectedOutput": "if let Some(a) = b && c && d && let Some(e) = f {}"
+    "expectedOutput": "if let Some(a) = b && c\n&& d && let Some(e) = f {}"
   },
   {
     "kind": "roundtrip",
@@ -142925,9 +143162,9 @@
     "sourceIn": "if let Some(a) = b\n    && c\n    && d\n    && let Some(e) = f\n{\n}",
     "pattern": "if_expression",
     "edits": [],
-    "expectedSourceOut": "if let Some(a) = b && c && d && let Some(e) = f {}",
+    "expectedSourceOut": "if let Some(a) = b && c\n&& d && let Some(e) = f {}",
     "expectedReparseTree": "(if_expression condition: (let_chain left: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier)) right: (identifier) right: (identifier) right: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier))) consequence: (block))",
-    "wrappedText": "fn _f() { let _ = if let Some(a) = b && c && d && let Some(e) = f {}; }",
+    "wrappedText": "fn _f() { let _ = if let Some(a) = b && c\n&& d && let Some(e) = f {}; }",
     "wrappedOffset": 18
   },
   {
@@ -143458,6 +143695,9 @@
                           "$span": {
                             "start": 76,
                             "end": 77
+                          },
+                          "$_gap": {
+                            "$text": ", "
                           }
                         }
                       ],
@@ -144284,6 +144524,9 @@
                     "$span": {
                       "start": 76,
                       "end": 77
+                    },
+                    "$_gap": {
+                      "$text": ", "
                     }
                   }
                 ],
@@ -144915,6 +145158,9 @@
             "$span": {
               "start": 76,
               "end": 77
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -166578,6 +166824,9 @@
                                     "$span": {
                                       "start": 12,
                                       "end": 13
+                                    },
+                                    "$_gap": {
+                                      "$text": ", "
                                     }
                                   }
                                 ],
@@ -167427,6 +167676,9 @@
                             "$span": {
                               "start": 12,
                               "end": 13
+                            },
+                            "$_gap": {
+                              "$text": ", "
                             }
                           }
                         ],
@@ -168680,6 +168932,9 @@
                           "$span": {
                             "start": 12,
                             "end": 13
+                          },
+                          "$_gap": {
+                            "$text": ", "
                           }
                         }
                       ],
@@ -169564,6 +169819,9 @@
                   "$span": {
                     "start": 12,
                     "end": 13
+                  },
+                  "$_gap": {
+                    "$text": ", "
                   }
                 }
               ],
@@ -170037,6 +170295,9 @@
             "$span": {
               "start": 12,
               "end": 13
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -178733,7 +178994,10 @@
                     "start": 25,
                     "end": 27
                   },
-                  "_content": "n"
+                  "_content": "n",
+                  "$_gap": {
+                    "$text": ""
+                  }
                 },
                 {
                   "$type": 158,
@@ -178743,6 +179007,9 @@
                   "$span": {
                     "start": 27,
                     "end": 30
+                  },
+                  "$_gap": {
+                    "$text": ""
                   }
                 }
               ],
@@ -178819,7 +179086,10 @@
                     "start": 37,
                     "end": 39
                   },
-                  "_content": "\n"
+                  "_content": "\n",
+                  "$_gap": {
+                    "$text": ""
+                  }
                 },
                 {
                   "$type": 158,
@@ -178829,6 +179099,9 @@
                   "$span": {
                     "start": 39,
                     "end": 46
+                  },
+                  "$_gap": {
+                    "$text": ""
                   }
                 }
               ],
@@ -178905,6 +179178,9 @@
                   "$span": {
                     "start": 52,
                     "end": 55
+                  },
+                  "$_gap": {
+                    "$text": ""
                   }
                 },
                 {
@@ -178916,7 +179192,10 @@
                     "start": 55,
                     "end": 57
                   },
-                  "_content": "\""
+                  "_content": "\"",
+                  "$_gap": {
+                    "$text": ""
+                  }
                 }
               ],
               "$other": [
@@ -179055,7 +179334,10 @@
                     "start": 89,
                     "end": 93
                   },
-                  "_content": "x42"
+                  "_content": "x42",
+                  "$_gap": {
+                    "$text": ""
+                  }
                 },
                 {
                   "$type": 154,
@@ -179066,7 +179348,10 @@
                     "start": 93,
                     "end": 97
                   },
-                  "_content": "x43"
+                  "_content": "x43",
+                  "$_gap": {
+                    "$text": ""
+                  }
                 },
                 {
                   "$type": 158,
@@ -179076,6 +179361,9 @@
                   "$span": {
                     "start": 97,
                     "end": 100
+                  },
+                  "$_gap": {
+                    "$text": ""
                   }
                 }
               ],
@@ -179153,7 +179441,10 @@
                     "start": 108,
                     "end": 112
                   },
-                  "_content": "x42"
+                  "_content": "x42",
+                  "$_gap": {
+                    "$text": ""
+                  }
                 },
                 {
                   "$type": 158,
@@ -179163,6 +179454,9 @@
                   "$span": {
                     "start": 112,
                     "end": 114
+                  },
+                  "$_gap": {
+                    "$text": ""
                   }
                 },
                 {
@@ -179174,7 +179468,10 @@
                     "start": 114,
                     "end": 118
                   },
-                  "_content": "x43"
+                  "_content": "x43",
+                  "$_gap": {
+                    "$text": ""
+                  }
                 },
                 {
                   "$type": 158,
@@ -179184,6 +179481,9 @@
                   "$span": {
                     "start": 118,
                     "end": 122
+                  },
+                  "$_gap": {
+                    "$text": ""
                   }
                 }
               ],
@@ -179435,7 +179735,10 @@
             "start": 25,
             "end": 27
           },
-          "_content": "n"
+          "_content": "n",
+          "$_gap": {
+            "$text": ""
+          }
         },
         {
           "$type": 158,
@@ -179445,6 +179748,9 @@
           "$span": {
             "start": 27,
             "end": 30
+          },
+          "$_gap": {
+            "$text": ""
           }
         }
       ],
@@ -179517,7 +179823,10 @@
             "start": 37,
             "end": 39
           },
-          "_content": "\n"
+          "_content": "\n",
+          "$_gap": {
+            "$text": ""
+          }
         },
         {
           "$type": 158,
@@ -179527,6 +179836,9 @@
           "$span": {
             "start": 39,
             "end": 46
+          },
+          "$_gap": {
+            "$text": ""
           }
         }
       ],
@@ -179599,6 +179911,9 @@
           "$span": {
             "start": 52,
             "end": 55
+          },
+          "$_gap": {
+            "$text": ""
           }
         },
         {
@@ -179610,7 +179925,10 @@
             "start": 55,
             "end": 57
           },
-          "_content": "\""
+          "_content": "\"",
+          "$_gap": {
+            "$text": ""
+          }
         }
       ],
       "$other": [
@@ -179741,7 +180059,10 @@
             "start": 89,
             "end": 93
           },
-          "_content": "x42"
+          "_content": "x42",
+          "$_gap": {
+            "$text": ""
+          }
         },
         {
           "$type": 154,
@@ -179752,7 +180073,10 @@
             "start": 93,
             "end": 97
           },
-          "_content": "x43"
+          "_content": "x43",
+          "$_gap": {
+            "$text": ""
+          }
         },
         {
           "$type": 158,
@@ -179762,6 +180086,9 @@
           "$span": {
             "start": 97,
             "end": 100
+          },
+          "$_gap": {
+            "$text": ""
           }
         }
       ],
@@ -179835,7 +180162,10 @@
             "start": 108,
             "end": 112
           },
-          "_content": "x42"
+          "_content": "x42",
+          "$_gap": {
+            "$text": ""
+          }
         },
         {
           "$type": 158,
@@ -179845,6 +180175,9 @@
           "$span": {
             "start": 112,
             "end": 114
+          },
+          "$_gap": {
+            "$text": ""
           }
         },
         {
@@ -179856,7 +180189,10 @@
             "start": 114,
             "end": 118
           },
-          "_content": "x43"
+          "_content": "x43",
+          "$_gap": {
+            "$text": ""
+          }
         },
         {
           "$type": 158,
@@ -179866,6 +180202,9 @@
           "$span": {
             "start": 118,
             "end": 122
+          },
+          "$_gap": {
+            "$text": ""
           }
         }
       ],

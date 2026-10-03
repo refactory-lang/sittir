@@ -453,6 +453,9 @@
                         "$span": {
                           "start": 11,
                           "end": 12
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -553,6 +556,9 @@
                         "$span": {
                           "start": 19,
                           "end": 20
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -751,6 +757,9 @@
               "$span": {
                 "start": 11,
                 "end": 12
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -851,6 +860,9 @@
               "$span": {
                 "start": 19,
                 "end": 20
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -1030,6 +1042,9 @@
             "$span": {
               "start": 11,
               "end": 12
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -1125,6 +1140,9 @@
             "$span": {
               "start": 19,
               "end": 20
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -2826,6 +2844,9 @@
                             "$span": {
                               "start": 12,
                               "end": 13
+                            },
+                            "$_gap": {
+                              "$text": ", "
                             }
                           }
                         ],
@@ -2947,6 +2968,9 @@
                             "$span": {
                               "start": 33,
                               "end": 34
+                            },
+                            "$_gap": {
+                              "$text": ", "
                             }
                           }
                         ],
@@ -3499,6 +3523,9 @@
                   "$span": {
                     "start": 12,
                     "end": 13
+                  },
+                  "$_gap": {
+                    "$text": ", "
                   }
                 }
               ],
@@ -3616,6 +3643,9 @@
                 "$span": {
                   "start": 12,
                   "end": 13
+                },
+                "$_gap": {
+                  "$text": ", "
                 }
               }
             ],
@@ -3732,6 +3762,9 @@
                 "$span": {
                   "start": 33,
                   "end": 34
+                },
+                "$_gap": {
+                  "$text": ", "
                 }
               }
             ],
@@ -4001,6 +4034,9 @@
               "$span": {
                 "start": 12,
                 "end": 13
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -4101,6 +4137,9 @@
               "$span": {
                 "start": 33,
                 "end": 34
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -4312,6 +4351,9 @@
             "$span": {
               "start": 12,
               "end": 13
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -4393,6 +4435,9 @@
             "$span": {
               "start": 33,
               "end": 34
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -5594,6 +5639,9 @@
                           "$span": {
                             "start": 29,
                             "end": 30
+                          },
+                          "$_gap": {
+                            "$text": ", "
                           }
                         }
                       ],
@@ -5988,6 +6036,9 @@
                 "$span": {
                   "start": 29,
                   "end": 30
+                },
+                "$_gap": {
+                  "$text": ", "
                 }
               }
             ],
@@ -6353,6 +6404,9 @@
               "$span": {
                 "start": 29,
                 "end": 30
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -6646,6 +6700,9 @@
             "$span": {
               "start": 29,
               "end": 30
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -8879,7 +8936,10 @@
                                     "start": 13,
                                     "end": 15
                                   },
-                                  "_content": "\""
+                                  "_content": "\"",
+                                  "$_gap": {
+                                    "$text": ""
+                                  }
                                 },
                                 {
                                   "$type": 119,
@@ -8889,6 +8949,9 @@
                                   "$span": {
                                     "start": 15,
                                     "end": 37
+                                  },
+                                  "$_gap": {
+                                    "$text": ""
                                   }
                                 },
                                 {
@@ -8900,7 +8963,10 @@
                                     "start": 37,
                                     "end": 39
                                   },
-                                  "_content": "\""
+                                  "_content": "\"",
+                                  "$_gap": {
+                                    "$text": ""
+                                  }
                                 },
                                 {
                                   "$type": 119,
@@ -8910,6 +8976,9 @@
                                   "$span": {
                                     "start": 39,
                                     "end": 85
+                                  },
+                                  "$_gap": {
+                                    "$text": ""
                                   }
                                 }
                               ]
@@ -9310,7 +9379,10 @@
                           "start": 13,
                           "end": 15
                         },
-                        "_content": "\""
+                        "_content": "\"",
+                        "$_gap": {
+                          "$text": ""
+                        }
                       },
                       {
                         "$type": 119,
@@ -9320,6 +9392,9 @@
                         "$span": {
                           "start": 15,
                           "end": 37
+                        },
+                        "$_gap": {
+                          "$text": ""
                         }
                       },
                       {
@@ -9331,7 +9406,10 @@
                           "start": 37,
                           "end": 39
                         },
-                        "_content": "\""
+                        "_content": "\"",
+                        "$_gap": {
+                          "$text": ""
+                        }
                       },
                       {
                         "$type": 119,
@@ -9341,6 +9419,9 @@
                         "$span": {
                           "start": 39,
                           "end": 85
+                        },
+                        "$_gap": {
+                          "$text": ""
                         }
                       }
                     ]
@@ -9727,7 +9808,10 @@
                         "start": 13,
                         "end": 15
                       },
-                      "_content": "\""
+                      "_content": "\"",
+                      "$_gap": {
+                        "$text": ""
+                      }
                     },
                     {
                       "$type": 119,
@@ -9737,6 +9821,9 @@
                       "$span": {
                         "start": 15,
                         "end": 37
+                      },
+                      "$_gap": {
+                        "$text": ""
                       }
                     },
                     {
@@ -9748,7 +9835,10 @@
                         "start": 37,
                         "end": 39
                       },
-                      "_content": "\""
+                      "_content": "\"",
+                      "$_gap": {
+                        "$text": ""
+                      }
                     },
                     {
                       "$type": 119,
@@ -9758,6 +9848,9 @@
                       "$span": {
                         "start": 39,
                         "end": 85
+                      },
+                      "$_gap": {
+                        "$text": ""
                       }
                     }
                   ]
@@ -10124,7 +10217,10 @@
                       "start": 13,
                       "end": 15
                     },
-                    "_content": "\""
+                    "_content": "\"",
+                    "$_gap": {
+                      "$text": ""
+                    }
                   },
                   {
                     "$type": 119,
@@ -10134,6 +10230,9 @@
                     "$span": {
                       "start": 15,
                       "end": 37
+                    },
+                    "$_gap": {
+                      "$text": ""
                     }
                   },
                   {
@@ -10145,7 +10244,10 @@
                       "start": 37,
                       "end": 39
                     },
-                    "_content": "\""
+                    "_content": "\"",
+                    "$_gap": {
+                      "$text": ""
+                    }
                   },
                   {
                     "$type": 119,
@@ -10155,6 +10257,9 @@
                     "$span": {
                       "start": 39,
                       "end": 85
+                    },
+                    "$_gap": {
+                      "$text": ""
                     }
                   }
                 ]
@@ -10488,7 +10593,10 @@
                 "start": 13,
                 "end": 15
               },
-              "_content": "\""
+              "_content": "\"",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 119,
@@ -10498,6 +10606,9 @@
               "$span": {
                 "start": 15,
                 "end": 37
+              },
+              "$_gap": {
+                "$text": ""
               }
             },
             {
@@ -10509,7 +10620,10 @@
                 "start": 37,
                 "end": 39
               },
-              "_content": "\""
+              "_content": "\"",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 119,
@@ -10519,6 +10633,9 @@
               "$span": {
                 "start": 39,
                 "end": 85
+              },
+              "$_gap": {
+                "$text": ""
               }
             }
           ]
@@ -10978,6 +11095,9 @@
                         "$span": {
                           "start": 34,
                           "end": 39
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -21160,6 +21280,9 @@
                         "$span": {
                           "start": 10,
                           "end": 11
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -21199,6 +21322,9 @@
                         "$span": {
                           "start": 17,
                           "end": 18
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -21335,6 +21461,9 @@
                         "$span": {
                           "start": 30,
                           "end": 31
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       },
                       {
@@ -21345,6 +21474,9 @@
                         "$span": {
                           "start": 33,
                           "end": 34
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -21464,6 +21596,9 @@
                         "$span": {
                           "start": 43,
                           "end": 44
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -21893,6 +22028,9 @@
               "$span": {
                 "start": 10,
                 "end": 11
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -21932,6 +22070,9 @@
               "$span": {
                 "start": 17,
                 "end": 18
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -22068,6 +22209,9 @@
               "$span": {
                 "start": 30,
                 "end": 31
+              },
+              "$_gap": {
+                "$text": ", "
               }
             },
             {
@@ -22078,6 +22222,9 @@
               "$span": {
                 "start": 33,
                 "end": 34
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -22197,6 +22344,9 @@
               "$span": {
                 "start": 43,
                 "end": 44
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -22607,6 +22757,9 @@
             "$span": {
               "start": 10,
               "end": 11
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -22646,6 +22799,9 @@
             "$span": {
               "start": 17,
               "end": 18
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -22777,6 +22933,9 @@
             "$span": {
               "start": 30,
               "end": 31
+            },
+            "$_gap": {
+              "$text": ", "
             }
           },
           {
@@ -22787,6 +22946,9 @@
             "$span": {
               "start": 33,
               "end": 34
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -22901,6 +23063,9 @@
             "$span": {
               "start": 43,
               "end": 44
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -32930,6 +33095,9 @@
                                                       "$span": {
                                                         "start": 109,
                                                         "end": 111
+                                                      },
+                                                      "$_gap": {
+                                                        "$text": ", "
                                                       }
                                                     }
                                                   ],
@@ -33520,6 +33688,9 @@
                                                   "$span": {
                                                     "start": 109,
                                                     "end": 111
+                                                  },
+                                                  "$_gap": {
+                                                    "$text": ", "
                                                   }
                                                 }
                                               ],
@@ -34093,6 +34264,9 @@
                                     "$span": {
                                       "start": 109,
                                       "end": 111
+                                    },
+                                    "$_gap": {
+                                      "$text": ", "
                                     }
                                   }
                                 ],
@@ -34435,6 +34609,9 @@
                               "$span": {
                                 "start": 109,
                                 "end": 111
+                              },
+                              "$_gap": {
+                                "$text": ", "
                               }
                             }
                           ],
@@ -34667,6 +34844,9 @@
                         "$span": {
                           "start": 109,
                           "end": 111
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -34820,6 +35000,9 @@
               "$span": {
                 "start": 109,
                 "end": 111
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -34906,6 +35089,9 @@
             "$span": {
               "start": 109,
               "end": 111
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -35009,6 +35195,9 @@
                           "$span": {
                             "start": 11,
                             "end": 12
+                          },
+                          "$_gap": {
+                            "$text": ", "
                           }
                         }
                       ],
@@ -35488,6 +35677,9 @@
                                 "$span": {
                                   "start": 77,
                                   "end": 78
+                                },
+                                "$_gap": {
+                                  "$text": ", "
                                 }
                               }
                             ],
@@ -35556,6 +35748,9 @@
                           "$span": {
                             "start": 85,
                             "end": 86
+                          },
+                          "$_gap": {
+                            "$text": ", "
                           }
                         }
                       ],
@@ -35681,6 +35876,9 @@
                 "$span": {
                   "start": 11,
                   "end": 12
+                },
+                "$_gap": {
+                  "$text": ", "
                 }
               }
             ],
@@ -36160,6 +36358,9 @@
                       "$span": {
                         "start": 77,
                         "end": 78
+                      },
+                      "$_gap": {
+                        "$text": ", "
                       }
                     }
                   ],
@@ -36228,6 +36429,9 @@
                 "$span": {
                   "start": 85,
                   "end": 86
+                },
+                "$_gap": {
+                  "$text": ", "
                 }
               }
             ],
@@ -36339,6 +36543,9 @@
               "$span": {
                 "start": 11,
                 "end": 12
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -36803,6 +37010,9 @@
                     "$span": {
                       "start": 77,
                       "end": 78
+                    },
+                    "$_gap": {
+                      "$text": ", "
                     }
                   }
                 ],
@@ -36871,6 +37081,9 @@
               "$span": {
                 "start": 85,
                 "end": 86
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -36973,6 +37186,9 @@
           "$span": {
             "start": 11,
             "end": 12
+          },
+          "$_gap": {
+            "$text": ", "
           }
         }
       ],
@@ -37194,6 +37410,9 @@
                 "$span": {
                   "start": 77,
                   "end": 78
+                },
+                "$_gap": {
+                  "$text": ", "
                 }
               }
             ],
@@ -37733,6 +37952,9 @@
             "$span": {
               "start": 77,
               "end": 78
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -37814,6 +38036,9 @@
             "$span": {
               "start": 85,
               "end": 86
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -38448,6 +38673,9 @@
                               "$span": {
                                 "start": 14,
                                 "end": 15
+                              },
+                              "$_gap": {
+                                "$text": ", "
                               }
                             },
                             {
@@ -38458,6 +38686,9 @@
                               "$span": {
                                 "start": 17,
                                 "end": 18
+                              },
+                              "$_gap": {
+                                "$text": ", "
                               }
                             }
                           ],
@@ -38608,6 +38839,9 @@
                     "$span": {
                       "start": 14,
                       "end": 15
+                    },
+                    "$_gap": {
+                      "$text": ", "
                     }
                   },
                   {
@@ -38618,6 +38852,9 @@
                     "$span": {
                       "start": 17,
                       "end": 18
+                    },
+                    "$_gap": {
+                      "$text": ", "
                     }
                   }
                 ],
@@ -38754,6 +38991,9 @@
                   "$span": {
                     "start": 14,
                     "end": 15
+                  },
+                  "$_gap": {
+                    "$text": ", "
                   }
                 },
                 {
@@ -38764,6 +39004,9 @@
                   "$span": {
                     "start": 17,
                     "end": 18
+                  },
+                  "$_gap": {
+                    "$text": ", "
                   }
                 }
               ],
@@ -38912,6 +39155,9 @@
                           "$span": {
                             "start": 19,
                             "end": 20
+                          },
+                          "$_gap": {
+                            "$text": ", "
                           }
                         }
                       ],
@@ -38976,6 +39222,9 @@
                           "$span": {
                             "start": 26,
                             "end": 27
+                          },
+                          "$_gap": {
+                            "$text": ", "
                           }
                         }
                       ],
@@ -39098,6 +39347,9 @@
                               "$span": {
                                 "start": 45,
                                 "end": 46
+                              },
+                              "$_gap": {
+                                "$text": ", "
                               }
                             }
                           ],
@@ -39236,6 +39488,9 @@
                       "$span": {
                         "start": 19,
                         "end": 20
+                      },
+                      "$_gap": {
+                        "$text": ", "
                       }
                     }
                   ],
@@ -39300,6 +39555,9 @@
                       "$span": {
                         "start": 26,
                         "end": 27
+                      },
+                      "$_gap": {
+                        "$text": ", "
                       }
                     }
                   ],
@@ -39422,6 +39680,9 @@
                           "$span": {
                             "start": 45,
                             "end": 46
+                          },
+                          "$_gap": {
+                            "$text": ", "
                           }
                         }
                       ],
@@ -39544,6 +39805,9 @@
                     "$span": {
                       "start": 19,
                       "end": 20
+                    },
+                    "$_gap": {
+                      "$text": ", "
                     }
                   }
                 ],
@@ -39608,6 +39872,9 @@
                     "$span": {
                       "start": 26,
                       "end": 27
+                    },
+                    "$_gap": {
+                      "$text": ", "
                     }
                   }
                 ],
@@ -39738,6 +40005,9 @@
                   "$span": {
                     "start": 19,
                     "end": 20
+                  },
+                  "$_gap": {
+                    "$text": ", "
                   }
                 }
               ],
@@ -39802,6 +40072,9 @@
                   "$span": {
                     "start": 26,
                     "end": 27
+                  },
+                  "$_gap": {
+                    "$text": ", "
                   }
                 }
               ],
@@ -39902,6 +40175,9 @@
             "$span": {
               "start": 19,
               "end": 20
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -39983,6 +40259,9 @@
             "$span": {
               "start": 26,
               "end": 27
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -40313,6 +40592,9 @@
                             "$span": {
                               "start": 51,
                               "end": 52
+                            },
+                            "$_gap": {
+                              "$text": ","
                             }
                           },
                           {
@@ -40323,6 +40605,9 @@
                             "$span": {
                               "start": 53,
                               "end": 54
+                            },
+                            "$_gap": {
+                              "$text": ","
                             }
                           }
                         ],
@@ -40431,7 +40716,7 @@
         }
       ]
     },
-    "expectedOutput": "a = b if c else d\nsomething() if a else d\nslice(1, 1, 1) if a else d\n"
+    "expectedOutput": "a = b if c else d\nsomething() if a else d\nslice(1,1,1) if a else d\n"
   },
   {
     "kind": "roundtrip",
@@ -40439,9 +40724,9 @@
     "sourceIn": "\na = b if c else d\nsomething() if a else d\nslice(1,1,1) if a else d\n",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "a = b if c else d\nsomething() if a else d\nslice(1, 1, 1) if a else d\n",
+    "expectedSourceOut": "a = b if c else d\nsomething() if a else d\nslice(1,1,1) if a else d\n",
     "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq left: (identifier) right: (conditional_expression body: (identifier) condition: (identifier) alternative: (identifier))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (conditional_expression body: (call function: (identifier) arguments: (argument_list)) condition: (identifier) alternative: (identifier)))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (conditional_expression body: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) condition: (identifier) alternative: (identifier)))) (newline)))",
-    "wrappedText": "a = b if c else d\nsomething() if a else d\nslice(1, 1, 1) if a else d\n",
+    "wrappedText": "a = b if c else d\nsomething() if a else d\nslice(1,1,1) if a else d\n",
     "wrappedOffset": 0
   },
   {
@@ -40710,6 +40995,9 @@
                   "$span": {
                     "start": 51,
                     "end": 52
+                  },
+                  "$_gap": {
+                    "$text": ","
                   }
                 },
                 {
@@ -40720,6 +41008,9 @@
                   "$span": {
                     "start": 53,
                     "end": 54
+                  },
+                  "$_gap": {
+                    "$text": ","
                   }
                 }
               ],
@@ -40818,7 +41109,7 @@
         ]
       }
     },
-    "expectedOutput": "slice(1, 1, 1) if a else d"
+    "expectedOutput": "slice(1,1,1) if a else d"
   },
   {
     "kind": "roundtrip",
@@ -40826,9 +41117,9 @@
     "sourceIn": "slice(1,1,1) if a else d",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "slice(1, 1, 1) if a else d",
+    "expectedSourceOut": "slice(1,1,1) if a else d",
     "expectedReparseTree": "(expression_statement (conditional_expression body: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) condition: (identifier) alternative: (identifier)))",
-    "wrappedText": "slice(1, 1, 1) if a else d",
+    "wrappedText": "slice(1,1,1) if a else d",
     "wrappedOffset": 0
   },
   {
@@ -41160,6 +41451,9 @@
                 "$span": {
                   "start": 51,
                   "end": 52
+                },
+                "$_gap": {
+                  "$text": ","
                 }
               },
               {
@@ -41170,6 +41464,9 @@
                 "$span": {
                   "start": 53,
                   "end": 54
+                },
+                "$_gap": {
+                  "$text": ","
                 }
               }
             ],
@@ -41267,7 +41564,7 @@
         "alternative"
       ]
     },
-    "expectedOutput": "slice(1, 1, 1) if a else d"
+    "expectedOutput": "slice(1,1,1) if a else d"
   },
   {
     "kind": "roundtrip",
@@ -41275,9 +41572,9 @@
     "sourceIn": "slice(1,1,1) if a else d",
     "pattern": "conditional_expression",
     "edits": [],
-    "expectedSourceOut": "slice(1, 1, 1) if a else d",
+    "expectedSourceOut": "slice(1,1,1) if a else d",
     "expectedReparseTree": "(conditional_expression body: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) condition: (identifier) alternative: (identifier))",
-    "wrappedText": "_ = slice(1, 1, 1) if a else d",
+    "wrappedText": "_ = slice(1,1,1) if a else d",
     "wrappedOffset": 4
   },
   {
@@ -41371,6 +41668,9 @@
               "$span": {
                 "start": 51,
                 "end": 52
+              },
+              "$_gap": {
+                "$text": ","
               }
             },
             {
@@ -41381,6 +41681,9 @@
               "$span": {
                 "start": 53,
                 "end": 54
+              },
+              "$_gap": {
+                "$text": ","
               }
             }
           ],
@@ -41432,7 +41735,7 @@
         "arguments"
       ]
     },
-    "expectedOutput": "slice(1, 1, 1)"
+    "expectedOutput": "slice(1,1,1)"
   },
   {
     "kind": "roundtrip",
@@ -41440,9 +41743,9 @@
     "sourceIn": "slice(1,1,1)",
     "pattern": "call",
     "edits": [],
-    "expectedSourceOut": "slice(1, 1, 1)",
+    "expectedSourceOut": "slice(1,1,1)",
     "expectedReparseTree": "(call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain))))",
-    "wrappedText": "_ = slice(1, 1, 1)",
+    "wrappedText": "_ = slice(1,1,1)",
     "wrappedOffset": 4
   },
   {
@@ -41503,6 +41806,9 @@
             "$span": {
               "start": 51,
               "end": 52
+            },
+            "$_gap": {
+              "$text": ","
             }
           },
           {
@@ -41513,6 +41819,9 @@
             "$span": {
               "start": 53,
               "end": 54
+            },
+            "$_gap": {
+              "$text": ","
             }
           }
         ],
@@ -41559,7 +41868,7 @@
         }
       ]
     },
-    "expectedOutput": "(1, 1, 1)"
+    "expectedOutput": "(1,1,1)"
   },
   {
     "kind": "roundtrip",
@@ -41567,9 +41876,9 @@
     "sourceIn": "(1,1,1)",
     "pattern": "argument_list",
     "edits": [],
-    "expectedSourceOut": "(1, 1, 1)",
+    "expectedSourceOut": "(1,1,1)",
     "expectedReparseTree": "(argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))",
-    "wrappedText": "_f(1, 1, 1)",
+    "wrappedText": "_f(1,1,1)",
     "wrappedOffset": 2
   },
   {
@@ -43387,6 +43696,9 @@
                         "$span": {
                           "start": 3,
                           "end": 4
+                        },
+                        "$_gap": {
+                          "$text": ","
                         }
                       }
                     ],
@@ -43435,6 +43747,9 @@
                               "$span": {
                                 "start": 10,
                                 "end": 11
+                              },
+                              "$_gap": {
+                                "$text": ","
                               }
                             }
                           ],
@@ -43561,6 +43876,9 @@
                         "$span": {
                           "start": 18,
                           "end": 19
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       },
                       {
@@ -43571,6 +43889,9 @@
                         "$span": {
                           "start": 21,
                           "end": 22
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       },
                       {
@@ -43581,6 +43902,9 @@
                         "$span": {
                           "start": 24,
                           "end": 25
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -43716,7 +44040,7 @@
         }
       ]
     },
-    "expectedOutput": "a, c = [1, 2], 3\nw, x, y, z = 0, *a, c\n"
+    "expectedOutput": "a,c = [1,2], 3\nw, x, y, z = 0, *a, c\n"
   },
   {
     "kind": "roundtrip",
@@ -43724,9 +44048,9 @@
     "sourceIn": "\na,c = [1,2],3\nw, x, y, z = 0, *a, c\n",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "a, c = [1, 2], 3\nw, x, y, z = 0, *a, c\n",
+    "expectedSourceOut": "a,c = [1,2], 3\nw, x, y, z = 0, *a, c\n",
     "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq left: (pattern_list item: (identifier) item: (identifier)) right: (expression_list item: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain))) item: (integer_decimal_plain))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq left: (pattern_list item: (identifier) item: (identifier) item: (identifier) item: (identifier)) right: (expression_list item: (integer_decimal_plain) item: (list_splat_pattern target: (identifier)) item: (identifier))))) (newline)))",
-    "wrappedText": "a, c = [1, 2], 3\nw, x, y, z = 0, *a, c\n",
+    "wrappedText": "a,c = [1,2], 3\nw, x, y, z = 0, *a, c\n",
     "wrappedOffset": 0
   },
   {
@@ -43764,6 +44088,9 @@
               "$span": {
                 "start": 3,
                 "end": 4
+              },
+              "$_gap": {
+                "$text": ","
               }
             }
           ],
@@ -43812,6 +44139,9 @@
                     "$span": {
                       "start": 10,
                       "end": 11
+                    },
+                    "$_gap": {
+                      "$text": ","
                     }
                   }
                 ],
@@ -43890,7 +44220,7 @@
         ]
       }
     },
-    "expectedOutput": "a, c = [1, 2], 3"
+    "expectedOutput": "a,c = [1,2], 3"
   },
   {
     "kind": "roundtrip",
@@ -43898,9 +44228,9 @@
     "sourceIn": "a,c = [1,2],3",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "a, c = [1, 2], 3",
+    "expectedSourceOut": "a,c = [1,2], 3",
     "expectedReparseTree": "(expression_statement (assignment_eq left: (pattern_list item: (identifier) item: (identifier)) right: (expression_list item: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain))) item: (integer_decimal_plain))))",
-    "wrappedText": "a, c = [1, 2], 3",
+    "wrappedText": "a,c = [1,2], 3",
     "wrappedOffset": 0
   },
   {
@@ -43938,6 +44268,9 @@
               "$span": {
                 "start": 18,
                 "end": 19
+              },
+              "$_gap": {
+                "$text": ", "
               }
             },
             {
@@ -43948,6 +44281,9 @@
               "$span": {
                 "start": 21,
                 "end": 22
+              },
+              "$_gap": {
+                "$text": ", "
               }
             },
             {
@@ -43958,6 +44294,9 @@
               "$span": {
                 "start": 24,
                 "end": 25
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -44127,6 +44466,9 @@
             "$span": {
               "start": 3,
               "end": 4
+            },
+            "$_gap": {
+              "$text": ","
             }
           }
         ],
@@ -44175,6 +44517,9 @@
                   "$span": {
                     "start": 10,
                     "end": 11
+                  },
+                  "$_gap": {
+                    "$text": ","
                   }
                 }
               ],
@@ -44252,7 +44597,7 @@
         "right"
       ]
     },
-    "expectedOutput": "a, c = [1, 2], 3"
+    "expectedOutput": "a,c = [1,2], 3"
   },
   {
     "kind": "roundtrip",
@@ -44260,9 +44605,9 @@
     "sourceIn": "a,c = [1,2],3",
     "pattern": "assignment_eq",
     "edits": [],
-    "expectedSourceOut": "a, c = [1, 2], 3",
+    "expectedSourceOut": "a,c = [1,2], 3",
     "expectedReparseTree": "(assignment_eq left: (pattern_list item: (identifier) item: (identifier)) right: (expression_list item: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain))) item: (integer_decimal_plain)))",
-    "wrappedText": "a, c = [1, 2], 3",
+    "wrappedText": "a,c = [1,2], 3",
     "wrappedOffset": 0
   },
   {
@@ -44296,6 +44641,9 @@
             "$span": {
               "start": 18,
               "end": 19
+            },
+            "$_gap": {
+              "$text": ", "
             }
           },
           {
@@ -44306,6 +44654,9 @@
             "$span": {
               "start": 21,
               "end": 22
+            },
+            "$_gap": {
+              "$text": ", "
             }
           },
           {
@@ -44316,6 +44667,9 @@
             "$span": {
               "start": 24,
               "end": 25
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -44484,6 +44838,9 @@
             "$span": {
               "start": 10,
               "end": 11
+            },
+            "$_gap": {
+              "$text": ","
             }
           }
         ],
@@ -44521,7 +44878,7 @@
         }
       ]
     },
-    "expectedOutput": "[1, 2]"
+    "expectedOutput": "[1,2]"
   },
   {
     "kind": "roundtrip",
@@ -44529,9 +44886,9 @@
     "sourceIn": "[1,2]",
     "pattern": "list",
     "edits": [],
-    "expectedSourceOut": "[1, 2]",
+    "expectedSourceOut": "[1,2]",
     "expectedReparseTree": "(list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))",
-    "wrappedText": "_ = [1, 2]",
+    "wrappedText": "_ = [1,2]",
     "wrappedOffset": 4
   },
   {
@@ -44640,6 +44997,9 @@
                           "$span": {
                             "start": 11,
                             "end": 13
+                          },
+                          "$_gap": {
+                            "$text": ", "
                           }
                         },
                         {
@@ -44650,6 +45010,9 @@
                           "$span": {
                             "start": 15,
                             "end": 17
+                          },
+                          "$_gap": {
+                            "$text": ", "
                           }
                         }
                       ],
@@ -44774,6 +45137,9 @@
                 "$span": {
                   "start": 11,
                   "end": 13
+                },
+                "$_gap": {
+                  "$text": ", "
                 }
               },
               {
@@ -44784,6 +45150,9 @@
                 "$span": {
                   "start": 15,
                   "end": 17
+                },
+                "$_gap": {
+                  "$text": ", "
                 }
               }
             ],
@@ -44894,6 +45263,9 @@
               "$span": {
                 "start": 11,
                 "end": 13
+              },
+              "$_gap": {
+                "$text": ", "
               }
             },
             {
@@ -44904,6 +45276,9 @@
               "$span": {
                 "start": 15,
                 "end": 17
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -44999,6 +45374,9 @@
             "$span": {
               "start": 11,
               "end": 13
+            },
+            "$_gap": {
+              "$text": ", "
             }
           },
           {
@@ -45009,6 +45387,9 @@
             "$span": {
               "start": 15,
               "end": 17
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -49843,7 +50224,10 @@
                             "start": 63,
                             "end": 65
                           },
-                          "_content": "\n"
+                          "_content": "\n",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         },
                         {
                           "$type": 119,
@@ -49853,6 +50237,9 @@
                           "$span": {
                             "start": 65,
                             "end": 71
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         }
                       ]
@@ -49935,6 +50322,9 @@
                           "$span": {
                             "start": 79,
                             "end": 87
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         },
                         {
@@ -49946,7 +50336,10 @@
                             "start": 87,
                             "end": 91
                           },
-                          "_content": "x13"
+                          "_content": "x13",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         },
                         {
                           "$type": 119,
@@ -49956,6 +50349,9 @@
                           "$span": {
                             "start": 91,
                             "end": 107
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         }
                       ]
@@ -50039,7 +50435,10 @@
                             "start": 114,
                             "end": 116
                           },
-                          "_content": "1"
+                          "_content": "1",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         },
                         {
                           "$type": 102,
@@ -50050,7 +50449,10 @@
                             "start": 116,
                             "end": 119
                           },
-                          "_content": "12"
+                          "_content": "12",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         },
                         {
                           "$type": 102,
@@ -50061,7 +50463,10 @@
                             "start": 119,
                             "end": 123
                           },
-                          "_content": "123"
+                          "_content": "123",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         },
                         {
                           "$type": 104,
@@ -50072,7 +50477,10 @@
                             "start": 123,
                             "end": 125
                           },
-                          "_content": "'"
+                          "_content": "'",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         },
                         {
                           "$type": 104,
@@ -50083,7 +50491,10 @@
                             "start": 125,
                             "end": 127
                           },
-                          "_content": "\""
+                          "_content": "\"",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         },
                         {
                           "$type": 104,
@@ -50094,7 +50505,10 @@
                             "start": 127,
                             "end": 129
                           },
-                          "_content": "a"
+                          "_content": "a",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         },
                         {
                           "$type": 104,
@@ -50105,7 +50519,10 @@
                             "start": 129,
                             "end": 131
                           },
-                          "_content": "b"
+                          "_content": "b",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         },
                         {
                           "$type": 104,
@@ -50116,7 +50533,10 @@
                             "start": 131,
                             "end": 133
                           },
-                          "_content": "f"
+                          "_content": "f",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         },
                         {
                           "$type": 104,
@@ -50127,7 +50547,10 @@
                             "start": 133,
                             "end": 135
                           },
-                          "_content": "r"
+                          "_content": "r",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         },
                         {
                           "$type": 104,
@@ -50138,7 +50561,10 @@
                             "start": 135,
                             "end": 137
                           },
-                          "_content": "n"
+                          "_content": "n",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         },
                         {
                           "$type": 104,
@@ -50149,7 +50575,10 @@
                             "start": 137,
                             "end": 139
                           },
-                          "_content": "t"
+                          "_content": "t",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         },
                         {
                           "$type": 104,
@@ -50160,7 +50589,10 @@
                             "start": 139,
                             "end": 141
                           },
-                          "_content": "v"
+                          "_content": "v",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         },
                         {
                           "$type": 104,
@@ -50171,7 +50603,10 @@
                             "start": 141,
                             "end": 143
                           },
-                          "_content": "\\"
+                          "_content": "\\",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         }
                       ]
                     }
@@ -51064,7 +51499,10 @@
                   "start": 63,
                   "end": 65
                 },
-                "_content": "\n"
+                "_content": "\n",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 119,
@@ -51074,6 +51512,9 @@
                 "$span": {
                   "start": 65,
                   "end": 71
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               }
             ]
@@ -51156,6 +51597,9 @@
                 "$span": {
                   "start": 79,
                   "end": 87
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               },
               {
@@ -51167,7 +51611,10 @@
                   "start": 87,
                   "end": 91
                 },
-                "_content": "x13"
+                "_content": "x13",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 119,
@@ -51177,6 +51624,9 @@
                 "$span": {
                   "start": 91,
                   "end": 107
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               }
             ]
@@ -51260,7 +51710,10 @@
                   "start": 114,
                   "end": 116
                 },
-                "_content": "1"
+                "_content": "1",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 102,
@@ -51271,7 +51724,10 @@
                   "start": 116,
                   "end": 119
                 },
-                "_content": "12"
+                "_content": "12",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 102,
@@ -51282,7 +51738,10 @@
                   "start": 119,
                   "end": 123
                 },
-                "_content": "123"
+                "_content": "123",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 104,
@@ -51293,7 +51752,10 @@
                   "start": 123,
                   "end": 125
                 },
-                "_content": "'"
+                "_content": "'",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 104,
@@ -51304,7 +51766,10 @@
                   "start": 125,
                   "end": 127
                 },
-                "_content": "\""
+                "_content": "\"",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 104,
@@ -51315,7 +51780,10 @@
                   "start": 127,
                   "end": 129
                 },
-                "_content": "a"
+                "_content": "a",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 104,
@@ -51326,7 +51794,10 @@
                   "start": 129,
                   "end": 131
                 },
-                "_content": "b"
+                "_content": "b",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 104,
@@ -51337,7 +51808,10 @@
                   "start": 131,
                   "end": 133
                 },
-                "_content": "f"
+                "_content": "f",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 104,
@@ -51348,7 +51822,10 @@
                   "start": 133,
                   "end": 135
                 },
-                "_content": "r"
+                "_content": "r",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 104,
@@ -51359,7 +51836,10 @@
                   "start": 135,
                   "end": 137
                 },
-                "_content": "n"
+                "_content": "n",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 104,
@@ -51370,7 +51850,10 @@
                   "start": 137,
                   "end": 139
                 },
-                "_content": "t"
+                "_content": "t",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 104,
@@ -51381,7 +51864,10 @@
                   "start": 139,
                   "end": 141
                 },
-                "_content": "v"
+                "_content": "v",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 104,
@@ -51392,7 +51878,10 @@
                   "start": 141,
                   "end": 143
                 },
-                "_content": "\\"
+                "_content": "\\",
+                "$_gap": {
+                  "$text": ""
+                }
               }
             ]
           }
@@ -52231,7 +52720,10 @@
                 "start": 63,
                 "end": 65
               },
-              "_content": "\n"
+              "_content": "\n",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 119,
@@ -52241,6 +52733,9 @@
               "$span": {
                 "start": 65,
                 "end": 71
+              },
+              "$_gap": {
+                "$text": ""
               }
             }
           ]
@@ -52318,6 +52813,9 @@
               "$span": {
                 "start": 79,
                 "end": 87
+              },
+              "$_gap": {
+                "$text": ""
               }
             },
             {
@@ -52329,7 +52827,10 @@
                 "start": 87,
                 "end": 91
               },
-              "_content": "x13"
+              "_content": "x13",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 119,
@@ -52339,6 +52840,9 @@
               "$span": {
                 "start": 91,
                 "end": 107
+              },
+              "$_gap": {
+                "$text": ""
               }
             }
           ]
@@ -52417,7 +52921,10 @@
                 "start": 114,
                 "end": 116
               },
-              "_content": "1"
+              "_content": "1",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 102,
@@ -52428,7 +52935,10 @@
                 "start": 116,
                 "end": 119
               },
-              "_content": "12"
+              "_content": "12",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 102,
@@ -52439,7 +52949,10 @@
                 "start": 119,
                 "end": 123
               },
-              "_content": "123"
+              "_content": "123",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 104,
@@ -52450,7 +52963,10 @@
                 "start": 123,
                 "end": 125
               },
-              "_content": "'"
+              "_content": "'",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 104,
@@ -52461,7 +52977,10 @@
                 "start": 125,
                 "end": 127
               },
-              "_content": "\""
+              "_content": "\"",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 104,
@@ -52472,7 +52991,10 @@
                 "start": 127,
                 "end": 129
               },
-              "_content": "a"
+              "_content": "a",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 104,
@@ -52483,7 +53005,10 @@
                 "start": 129,
                 "end": 131
               },
-              "_content": "b"
+              "_content": "b",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 104,
@@ -52494,7 +53019,10 @@
                 "start": 131,
                 "end": 133
               },
-              "_content": "f"
+              "_content": "f",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 104,
@@ -52505,7 +53033,10 @@
                 "start": 133,
                 "end": 135
               },
-              "_content": "r"
+              "_content": "r",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 104,
@@ -52516,7 +53047,10 @@
                 "start": 135,
                 "end": 137
               },
-              "_content": "n"
+              "_content": "n",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 104,
@@ -52527,7 +53061,10 @@
                 "start": 137,
                 "end": 139
               },
-              "_content": "t"
+              "_content": "t",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 104,
@@ -52538,7 +53075,10 @@
                 "start": 139,
                 "end": 141
               },
-              "_content": "v"
+              "_content": "v",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 104,
@@ -52549,7 +53089,10 @@
                 "start": 141,
                 "end": 143
               },
-              "_content": "\\"
+              "_content": "\\",
+              "$_gap": {
+                "$text": ""
+              }
             }
           ]
         }
@@ -52866,7 +53409,10 @@
                             "start": 4,
                             "end": 8
                           },
-                          "_content": "x00"
+                          "_content": "x00",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         },
                         {
                           "$type": 119,
@@ -52876,6 +53422,9 @@
                           "$span": {
                             "start": 8,
                             "end": 10
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         }
                       ]
@@ -53433,7 +53982,10 @@
                   "start": 4,
                   "end": 8
                 },
-                "_content": "x00"
+                "_content": "x00",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 119,
@@ -53443,6 +53995,9 @@
                 "$span": {
                   "start": 8,
                   "end": 10
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               }
             ]
@@ -53956,7 +54511,10 @@
                 "start": 4,
                 "end": 8
               },
-              "_content": "x00"
+              "_content": "x00",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 119,
@@ -53966,6 +54524,9 @@
               "$span": {
                 "start": 8,
                 "end": 10
+              },
+              "$_gap": {
+                "$text": ""
               }
             }
           ]
@@ -56112,6 +56673,9 @@
                           "$span": {
                             "start": 67,
                             "end": 69
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         },
                         {
@@ -56122,6 +56686,9 @@
                           "$span": {
                             "start": 69,
                             "end": 71
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         },
                         {
@@ -56132,6 +56699,9 @@
                           "$span": {
                             "start": 71,
                             "end": 73
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         }
                       ]
@@ -56338,6 +56908,9 @@
                           "$span": {
                             "start": 90,
                             "end": 92
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         }
                       ]
@@ -56455,6 +57028,9 @@
                           "$span": {
                             "start": 101,
                             "end": 103
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         },
                         {
@@ -56465,6 +57041,9 @@
                           "$span": {
                             "start": 103,
                             "end": 104
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         },
                         {
@@ -56475,6 +57054,9 @@
                           "$span": {
                             "start": 104,
                             "end": 106
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         }
                       ]
@@ -56556,6 +57138,9 @@
                           "$span": {
                             "start": 112,
                             "end": 114
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         }
                       ]
@@ -58221,6 +58806,9 @@
                 "$span": {
                   "start": 67,
                   "end": 69
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               },
               {
@@ -58231,6 +58819,9 @@
                 "$span": {
                   "start": 69,
                   "end": 71
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               },
               {
@@ -58241,6 +58832,9 @@
                 "$span": {
                   "start": 71,
                   "end": 73
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               }
             ]
@@ -58447,6 +59041,9 @@
                 "$span": {
                   "start": 90,
                   "end": 92
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               }
             ]
@@ -58564,6 +59161,9 @@
                 "$span": {
                   "start": 101,
                   "end": 103
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               },
               {
@@ -58574,6 +59174,9 @@
                 "$span": {
                   "start": 103,
                   "end": 104
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               },
               {
@@ -58584,6 +59187,9 @@
                 "$span": {
                   "start": 104,
                   "end": 106
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               }
             ]
@@ -58665,6 +59271,9 @@
                 "$span": {
                   "start": 112,
                   "end": 114
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               }
             ]
@@ -60027,6 +60636,9 @@
               "$span": {
                 "start": 67,
                 "end": 69
+              },
+              "$_gap": {
+                "$text": ""
               }
             },
             {
@@ -60037,6 +60649,9 @@
               "$span": {
                 "start": 69,
                 "end": 71
+              },
+              "$_gap": {
+                "$text": ""
               }
             },
             {
@@ -60047,6 +60662,9 @@
               "$span": {
                 "start": 71,
                 "end": 73
+              },
+              "$_gap": {
+                "$text": ""
               }
             }
           ]
@@ -60243,6 +60861,9 @@
               "$span": {
                 "start": 90,
                 "end": 92
+              },
+              "$_gap": {
+                "$text": ""
               }
             }
           ]
@@ -60355,6 +60976,9 @@
               "$span": {
                 "start": 101,
                 "end": 103
+              },
+              "$_gap": {
+                "$text": ""
               }
             },
             {
@@ -60365,6 +60989,9 @@
               "$span": {
                 "start": 103,
                 "end": 104
+              },
+              "$_gap": {
+                "$text": ""
               }
             },
             {
@@ -60375,6 +61002,9 @@
               "$span": {
                 "start": 104,
                 "end": 106
+              },
+              "$_gap": {
+                "$text": ""
               }
             }
           ]
@@ -60451,6 +61081,9 @@
               "$span": {
                 "start": 112,
                 "end": 114
+              },
+              "$_gap": {
+                "$text": ""
               }
             }
           ]
@@ -67321,6 +67954,9 @@
                           "$span": {
                             "start": 127,
                             "end": 129
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         },
                         {
@@ -67331,6 +67967,9 @@
                           "$span": {
                             "start": 129,
                             "end": 135
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         },
                         {
@@ -67341,6 +67980,9 @@
                           "$span": {
                             "start": 135,
                             "end": 137
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         },
                         {
@@ -67351,6 +67993,9 @@
                           "$span": {
                             "start": 137,
                             "end": 147
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         }
                       ]
@@ -68224,6 +68869,9 @@
                 "$span": {
                   "start": 127,
                   "end": 129
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               },
               {
@@ -68234,6 +68882,9 @@
                 "$span": {
                   "start": 129,
                   "end": 135
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               },
               {
@@ -68244,6 +68895,9 @@
                 "$span": {
                   "start": 135,
                   "end": 137
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               },
               {
@@ -68254,6 +68908,9 @@
                 "$span": {
                   "start": 137,
                   "end": 147
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               }
             ]
@@ -69093,6 +69750,9 @@
               "$span": {
                 "start": 127,
                 "end": 129
+              },
+              "$_gap": {
+                "$text": ""
               }
             },
             {
@@ -69103,6 +69763,9 @@
               "$span": {
                 "start": 129,
                 "end": 135
+              },
+              "$_gap": {
+                "$text": ""
               }
             },
             {
@@ -69113,6 +69776,9 @@
               "$span": {
                 "start": 135,
                 "end": 137
+              },
+              "$_gap": {
+                "$text": ""
               }
             },
             {
@@ -69123,6 +69789,9 @@
               "$span": {
                 "start": 137,
                 "end": 147
+              },
+              "$_gap": {
+                "$text": ""
               }
             }
           ]
@@ -69389,6 +70058,9 @@
                           "$span": {
                             "start": 6,
                             "end": 7
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         },
                         {
@@ -69400,7 +70072,10 @@
                             "start": 7,
                             "end": 11
                           },
-                          "_content": "123"
+                          "_content": "123",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         },
                         {
                           "$type": 119,
@@ -69410,6 +70085,9 @@
                           "$span": {
                             "start": 11,
                             "end": 12
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         },
                         {
@@ -69421,7 +70099,10 @@
                             "start": 12,
                             "end": 18
                           },
-                          "_content": "u1234"
+                          "_content": "u1234",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         }
                       ]
                     }
@@ -69513,6 +70194,9 @@
                 "$span": {
                   "start": 6,
                   "end": 7
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               },
               {
@@ -69524,7 +70208,10 @@
                   "start": 7,
                   "end": 11
                 },
-                "_content": "123"
+                "_content": "123",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 119,
@@ -69534,6 +70221,9 @@
                 "$span": {
                   "start": 11,
                   "end": 12
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               },
               {
@@ -69545,7 +70235,10 @@
                   "start": 12,
                   "end": 18
                 },
-                "_content": "u1234"
+                "_content": "u1234",
+                "$_gap": {
+                  "$text": ""
+                }
               }
             ]
           }
@@ -69623,6 +70316,9 @@
               "$span": {
                 "start": 6,
                 "end": 7
+              },
+              "$_gap": {
+                "$text": ""
               }
             },
             {
@@ -69634,7 +70330,10 @@
                 "start": 7,
                 "end": 11
               },
-              "_content": "123"
+              "_content": "123",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 119,
@@ -69644,6 +70343,9 @@
               "$span": {
                 "start": 11,
                 "end": 12
+              },
+              "$_gap": {
+                "$text": ""
               }
             },
             {
@@ -69655,7 +70357,10 @@
                 "start": 12,
                 "end": 18
               },
-              "_content": "u1234"
+              "_content": "u1234",
+              "$_gap": {
+                "$text": ""
+              }
             }
           ]
         }
@@ -70727,6 +71432,9 @@
                           "$span": {
                             "start": 85,
                             "end": 91
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         },
                         {
@@ -70737,6 +71445,9 @@
                           "$span": {
                             "start": 91,
                             "end": 113
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         }
                       ]
@@ -70960,6 +71671,9 @@
                           "$span": {
                             "start": 255,
                             "end": 261
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         },
                         {
@@ -70970,6 +71684,9 @@
                           "$span": {
                             "start": 261,
                             "end": 283
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         }
                       ]
@@ -71123,7 +71840,10 @@
                             "start": 365,
                             "end": 367
                           },
-                          "_content": "n"
+                          "_content": "n",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         },
                         {
                           "$type": 103,
@@ -71134,7 +71854,10 @@
                             "start": 367,
                             "end": 369
                           },
-                          "_content": "\n"
+                          "_content": "\n",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         },
                         {
                           "$type": 119,
@@ -71144,6 +71867,9 @@
                           "$span": {
                             "start": 369,
                             "end": 392
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         },
                         {
@@ -71155,7 +71881,10 @@
                             "start": 392,
                             "end": 394
                           },
-                          "_content": "n"
+                          "_content": "n",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         },
                         {
                           "$type": 103,
@@ -71166,7 +71895,10 @@
                             "start": 394,
                             "end": 396
                           },
-                          "_content": "\n"
+                          "_content": "\n",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         },
                         {
                           "$type": 119,
@@ -71176,6 +71908,9 @@
                           "$span": {
                             "start": 396,
                             "end": 423
+                          },
+                          "$_gap": {
+                            "$text": ""
                           }
                         },
                         {
@@ -71187,7 +71922,10 @@
                             "start": 423,
                             "end": 425
                           },
-                          "_content": "n"
+                          "_content": "n",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         },
                         {
                           "$type": 103,
@@ -71198,7 +71936,10 @@
                             "start": 425,
                             "end": 427
                           },
-                          "_content": "\n"
+                          "_content": "\n",
+                          "$_gap": {
+                            "$text": ""
+                          }
                         }
                       ]
                     }
@@ -71360,6 +72101,9 @@
                 "$span": {
                   "start": 85,
                   "end": 91
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               },
               {
@@ -71370,6 +72114,9 @@
                 "$span": {
                   "start": 91,
                   "end": 113
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               }
             ]
@@ -71593,6 +72340,9 @@
                 "$span": {
                   "start": 255,
                   "end": 261
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               },
               {
@@ -71603,6 +72353,9 @@
                 "$span": {
                   "start": 261,
                   "end": 283
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               }
             ]
@@ -71756,7 +72509,10 @@
                   "start": 365,
                   "end": 367
                 },
-                "_content": "n"
+                "_content": "n",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 103,
@@ -71767,7 +72523,10 @@
                   "start": 367,
                   "end": 369
                 },
-                "_content": "\n"
+                "_content": "\n",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 119,
@@ -71777,6 +72536,9 @@
                 "$span": {
                   "start": 369,
                   "end": 392
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               },
               {
@@ -71788,7 +72550,10 @@
                   "start": 392,
                   "end": 394
                 },
-                "_content": "n"
+                "_content": "n",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 103,
@@ -71799,7 +72564,10 @@
                   "start": 394,
                   "end": 396
                 },
-                "_content": "\n"
+                "_content": "\n",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 119,
@@ -71809,6 +72577,9 @@
                 "$span": {
                   "start": 396,
                   "end": 423
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               },
               {
@@ -71820,7 +72591,10 @@
                   "start": 423,
                   "end": 425
                 },
-                "_content": "n"
+                "_content": "n",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 103,
@@ -71831,7 +72605,10 @@
                   "start": 425,
                   "end": 427
                 },
-                "_content": "\n"
+                "_content": "\n",
+                "$_gap": {
+                  "$text": ""
+                }
               }
             ]
           }
@@ -71974,6 +72751,9 @@
               "$span": {
                 "start": 85,
                 "end": 91
+              },
+              "$_gap": {
+                "$text": ""
               }
             },
             {
@@ -71984,6 +72764,9 @@
               "$span": {
                 "start": 91,
                 "end": 113
+              },
+              "$_gap": {
+                "$text": ""
               }
             }
           ]
@@ -72192,6 +72975,9 @@
               "$span": {
                 "start": 255,
                 "end": 261
+              },
+              "$_gap": {
+                "$text": ""
               }
             },
             {
@@ -72202,6 +72988,9 @@
               "$span": {
                 "start": 261,
                 "end": 283
+              },
+              "$_gap": {
+                "$text": ""
               }
             }
           ]
@@ -72345,7 +73134,10 @@
                 "start": 365,
                 "end": 367
               },
-              "_content": "n"
+              "_content": "n",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 103,
@@ -72356,7 +73148,10 @@
                 "start": 367,
                 "end": 369
               },
-              "_content": "\n"
+              "_content": "\n",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 119,
@@ -72366,6 +73161,9 @@
               "$span": {
                 "start": 369,
                 "end": 392
+              },
+              "$_gap": {
+                "$text": ""
               }
             },
             {
@@ -72377,7 +73175,10 @@
                 "start": 392,
                 "end": 394
               },
-              "_content": "n"
+              "_content": "n",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 103,
@@ -72388,7 +73189,10 @@
                 "start": 394,
                 "end": 396
               },
-              "_content": "\n"
+              "_content": "\n",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 119,
@@ -72398,6 +73202,9 @@
               "$span": {
                 "start": 396,
                 "end": 423
+              },
+              "$_gap": {
+                "$text": ""
               }
             },
             {
@@ -72409,7 +73216,10 @@
                 "start": 423,
                 "end": 425
               },
-              "_content": "n"
+              "_content": "n",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 103,
@@ -72420,7 +73230,10 @@
                 "start": 425,
                 "end": 427
               },
-              "_content": "\n"
+              "_content": "\n",
+              "$_gap": {
+                "$text": ""
+              }
             }
           ]
         }
@@ -72503,6 +73316,9 @@
                         "$span": {
                           "start": 5,
                           "end": 6
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       },
                       {
@@ -72532,6 +73348,9 @@
                               "$span": {
                                 "start": 12,
                                 "end": 13
+                              },
+                              "$_gap": {
+                                "$text": ", "
                               }
                             }
                           ],
@@ -73284,6 +74103,9 @@
               "$span": {
                 "start": 5,
                 "end": 6
+              },
+              "$_gap": {
+                "$text": ", "
               }
             },
             {
@@ -73313,6 +74135,9 @@
                     "$span": {
                       "start": 12,
                       "end": 13
+                    },
+                    "$_gap": {
+                      "$text": ", "
                     }
                   }
                 ],
@@ -74051,6 +74876,9 @@
             "$span": {
               "start": 5,
               "end": 6
+            },
+            "$_gap": {
+              "$text": ", "
             }
           },
           {
@@ -74080,6 +74908,9 @@
                   "$span": {
                     "start": 12,
                     "end": 13
+                  },
+                  "$_gap": {
+                    "$text": ", "
                   }
                 }
               ],
@@ -74205,6 +75036,9 @@
             "$span": {
               "start": 12,
               "end": 13
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -75676,6 +76510,9 @@
                                 "$span": {
                                   "start": 16,
                                   "end": 17
+                                },
+                                "$_gap": {
+                                  "$text": ", "
                                 }
                               }
                             ],
@@ -76000,6 +76837,9 @@
                           "$span": {
                             "start": 59,
                             "end": 60
+                          },
+                          "$_gap": {
+                            "$text": ","
                           }
                         }
                       ],
@@ -76084,6 +76924,9 @@
                                   "$span": {
                                     "start": 74,
                                     "end": 75
+                                  },
+                                  "$_gap": {
+                                    "$text": ","
                                   }
                                 },
                                 {
@@ -76094,6 +76937,9 @@
                                   "$span": {
                                     "start": 76,
                                     "end": 77
+                                  },
+                                  "$_gap": {
+                                    "$text": ","
                                   }
                                 }
                               ],
@@ -76208,6 +77054,9 @@
                                   "$span": {
                                     "start": 91,
                                     "end": 92
+                                  },
+                                  "$_gap": {
+                                    "$text": ","
                                   }
                                 },
                                 {
@@ -76218,6 +77067,9 @@
                                   "$span": {
                                     "start": 93,
                                     "end": 94
+                                  },
+                                  "$_gap": {
+                                    "$text": ","
                                   }
                                 }
                               ],
@@ -76552,7 +77404,7 @@
         }
       ]
     },
-    "expectedOutput": "[a + b for (a, b) in items]\n[a for b in c for a in b]\n[(x, y) for x in [1, 2, 3] for y in [1, 2, 3] if True]\n[a for a in lambda: True, lambda: False if a()]\n"
+    "expectedOutput": "[a + b for (a, b) in items]\n[a for b in c for a in b]\n[(x,y) for x in [1,2,3] for y in [1,2,3] if True]\n[a for a in lambda: True, lambda: False if a()]\n"
   },
   {
     "kind": "roundtrip",
@@ -76560,9 +77412,9 @@
     "sourceIn": "\n[a + b for (a, b) in items]\n[a for b in c for a in b]\n[(x,y) for x in [1,2,3] for y in [1,2,3] if True]\n[a for a in lambda: True, lambda: False if a()]\n",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "[a + b for (a, b) in items]\n[a for b in c for a in b]\n[(x, y) for x in [1, 2, 3] for y in [1, 2, 3] if True]\n[a for a in lambda: True, lambda: False if a()]\n",
+    "expectedSourceOut": "[a + b for (a, b) in items]\n[a for b in c for a in b]\n[(x,y) for x in [1,2,3] for y in [1,2,3] if True]\n[a for a in lambda: True, lambda: False if a()]\n",
     "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (binary_operator left: (identifier) right: (identifier)) (comprehension_clauses content: (for_in_clause left: (tuple_pattern (patterns item: (identifier) item: (identifier))) right: (identifier)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) (comprehension_clauses content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (if_clause condition: (true)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (lambda_within_for_in_clause body: (true)) right: (lambda_within_for_in_clause body: (false))) content: (if_clause condition: (call function: (identifier) arguments: (argument_list))))))) (newline)))",
-    "wrappedText": "[a + b for (a, b) in items]\n[a for b in c for a in b]\n[(x, y) for x in [1, 2, 3] for y in [1, 2, 3] if True]\n[a for a in lambda: True, lambda: False if a()]\n",
+    "wrappedText": "[a + b for (a, b) in items]\n[a for b in c for a in b]\n[(x,y) for x in [1,2,3] for y in [1,2,3] if True]\n[a for a in lambda: True, lambda: False if a()]\n",
     "wrappedOffset": 0
   },
   {
@@ -76644,6 +77496,9 @@
                       "$span": {
                         "start": 16,
                         "end": 17
+                      },
+                      "$_gap": {
+                        "$text": ", "
                       }
                     }
                   ],
@@ -76968,6 +77823,9 @@
                 "$span": {
                   "start": 59,
                   "end": 60
+                },
+                "$_gap": {
+                  "$text": ","
                 }
               }
             ],
@@ -77052,6 +77910,9 @@
                         "$span": {
                           "start": 74,
                           "end": 75
+                        },
+                        "$_gap": {
+                          "$text": ","
                         }
                       },
                       {
@@ -77062,6 +77923,9 @@
                         "$span": {
                           "start": 76,
                           "end": 77
+                        },
+                        "$_gap": {
+                          "$text": ","
                         }
                       }
                     ],
@@ -77176,6 +78040,9 @@
                         "$span": {
                           "start": 91,
                           "end": 92
+                        },
+                        "$_gap": {
+                          "$text": ","
                         }
                       },
                       {
@@ -77186,6 +78053,9 @@
                         "$span": {
                           "start": 93,
                           "end": 94
+                        },
+                        "$_gap": {
+                          "$text": ","
                         }
                       }
                     ],
@@ -77303,7 +78173,7 @@
         ]
       }
     },
-    "expectedOutput": "[(x, y) for x in [1, 2, 3] for y in [1, 2, 3] if True]"
+    "expectedOutput": "[(x,y) for x in [1,2,3] for y in [1,2,3] if True]"
   },
   {
     "kind": "roundtrip",
@@ -77311,9 +78181,9 @@
     "sourceIn": "[(x,y) for x in [1,2,3] for y in [1,2,3] if True]",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "[(x, y) for x in [1, 2, 3] for y in [1, 2, 3] if True]",
+    "expectedSourceOut": "[(x,y) for x in [1,2,3] for y in [1,2,3] if True]",
     "expectedReparseTree": "(expression_statement (list_comprehension body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) (comprehension_clauses content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (if_clause condition: (true)))))",
-    "wrappedText": "[(x, y) for x in [1, 2, 3] for y in [1, 2, 3] if True]",
+    "wrappedText": "[(x,y) for x in [1,2,3] for y in [1,2,3] if True]",
     "wrappedOffset": 0
   },
   {
@@ -77598,6 +78468,9 @@
                     "$span": {
                       "start": 16,
                       "end": 17
+                    },
+                    "$_gap": {
+                      "$text": ", "
                     }
                   }
                 ],
@@ -77912,6 +78785,9 @@
               "$span": {
                 "start": 59,
                 "end": 60
+              },
+              "$_gap": {
+                "$text": ","
               }
             }
           ],
@@ -77996,6 +78872,9 @@
                       "$span": {
                         "start": 74,
                         "end": 75
+                      },
+                      "$_gap": {
+                        "$text": ","
                       }
                     },
                     {
@@ -78006,6 +78885,9 @@
                       "$span": {
                         "start": 76,
                         "end": 77
+                      },
+                      "$_gap": {
+                        "$text": ","
                       }
                     }
                   ],
@@ -78120,6 +79002,9 @@
                       "$span": {
                         "start": 91,
                         "end": 92
+                      },
+                      "$_gap": {
+                        "$text": ","
                       }
                     },
                     {
@@ -78130,6 +79015,9 @@
                       "$span": {
                         "start": 93,
                         "end": 94
+                      },
+                      "$_gap": {
+                        "$text": ","
                       }
                     }
                   ],
@@ -78246,7 +79134,7 @@
         "comprehension_clauses"
       ]
     },
-    "expectedOutput": "[(x, y) for x in [1, 2, 3] for y in [1, 2, 3] if True]"
+    "expectedOutput": "[(x,y) for x in [1,2,3] for y in [1,2,3] if True]"
   },
   {
     "kind": "roundtrip",
@@ -78254,9 +79142,9 @@
     "sourceIn": "[(x,y) for x in [1,2,3] for y in [1,2,3] if True]",
     "pattern": "list_comprehension",
     "edits": [],
-    "expectedSourceOut": "[(x, y) for x in [1, 2, 3] for y in [1, 2, 3] if True]",
+    "expectedSourceOut": "[(x,y) for x in [1,2,3] for y in [1,2,3] if True]",
     "expectedReparseTree": "(list_comprehension body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) (comprehension_clauses content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (if_clause condition: (true))))",
-    "wrappedText": "_ = [(x, y) for x in [1, 2, 3] for y in [1, 2, 3] if True]",
+    "wrappedText": "_ = [(x,y) for x in [1,2,3] for y in [1,2,3] if True]",
     "wrappedOffset": 4
   },
   {
@@ -78540,6 +79428,9 @@
             "$span": {
               "start": 16,
               "end": 17
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -78621,6 +79512,9 @@
             "$span": {
               "start": 59,
               "end": 60
+            },
+            "$_gap": {
+              "$text": ","
             }
           }
         ],
@@ -78658,7 +79552,7 @@
         }
       ]
     },
-    "expectedOutput": "(x, y)"
+    "expectedOutput": "(x,y)"
   },
   {
     "kind": "roundtrip",
@@ -78666,9 +79560,9 @@
     "sourceIn": "(x,y)",
     "pattern": "tuple",
     "edits": [],
-    "expectedSourceOut": "(x, y)",
+    "expectedSourceOut": "(x,y)",
     "expectedReparseTree": "(tuple elements: (tuple_elements item: (identifier) item: (identifier)))",
-    "wrappedText": "_ = (x, y)",
+    "wrappedText": "_ = (x,y)",
     "wrappedOffset": 4
   },
   {
@@ -78702,6 +79596,9 @@
             "$span": {
               "start": 74,
               "end": 75
+            },
+            "$_gap": {
+              "$text": ","
             }
           },
           {
@@ -78712,6 +79609,9 @@
             "$span": {
               "start": 76,
               "end": 77
+            },
+            "$_gap": {
+              "$text": ","
             }
           }
         ],
@@ -78758,7 +79658,7 @@
         }
       ]
     },
-    "expectedOutput": "[1, 2, 3]"
+    "expectedOutput": "[1,2,3]"
   },
   {
     "kind": "roundtrip",
@@ -78766,9 +79666,9 @@
     "sourceIn": "[1,2,3]",
     "pattern": "list",
     "edits": [],
-    "expectedSourceOut": "[1, 2, 3]",
+    "expectedSourceOut": "[1,2,3]",
     "expectedReparseTree": "(list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))",
-    "wrappedText": "_ = [1, 2, 3]",
+    "wrappedText": "_ = [1,2,3]",
     "wrappedOffset": 4
   },
   {
@@ -78802,6 +79702,9 @@
             "$span": {
               "start": 91,
               "end": 92
+            },
+            "$_gap": {
+              "$text": ","
             }
           },
           {
@@ -78812,6 +79715,9 @@
             "$span": {
               "start": 93,
               "end": 94
+            },
+            "$_gap": {
+              "$text": ","
             }
           }
         ],
@@ -78858,7 +79764,7 @@
         }
       ]
     },
-    "expectedOutput": "[1, 2, 3]"
+    "expectedOutput": "[1,2,3]"
   },
   {
     "kind": "roundtrip",
@@ -78866,9 +79772,9 @@
     "sourceIn": "[1,2,3]",
     "pattern": "list",
     "edits": [],
-    "expectedSourceOut": "[1, 2, 3]",
+    "expectedSourceOut": "[1,2,3]",
     "expectedReparseTree": "(list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))",
-    "wrappedText": "_ = [1, 2, 3]",
+    "wrappedText": "_ = [1,2,3]",
     "wrappedOffset": 4
   },
   {
@@ -81493,6 +82399,9 @@
                               "$span": {
                                 "start": 14,
                                 "end": 15
+                              },
+                              "$_gap": {
+                                "$text": ", "
                               }
                             }
                           ],
@@ -81881,6 +82790,9 @@
                     "$span": {
                       "start": 14,
                       "end": 15
+                    },
+                    "$_gap": {
+                      "$text": ", "
                     }
                   }
                 ],
@@ -82255,6 +83167,9 @@
                   "$span": {
                     "start": 14,
                     "end": 15
+                  },
+                  "$_gap": {
+                    "$text": ", "
                   }
                 }
               ],
@@ -82592,6 +83507,9 @@
                         "$span": {
                           "start": 5,
                           "end": 6
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       },
                       {
@@ -82602,6 +83520,9 @@
                         "$span": {
                           "start": 8,
                           "end": 9
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -82797,6 +83718,9 @@
               "$span": {
                 "start": 5,
                 "end": 6
+              },
+              "$_gap": {
+                "$text": ", "
               }
             },
             {
@@ -82807,6 +83731,9 @@
               "$span": {
                 "start": 8,
                 "end": 9
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -82988,6 +83915,9 @@
             "$span": {
               "start": 5,
               "end": 6
+            },
+            "$_gap": {
+              "$text": ", "
             }
           },
           {
@@ -82998,6 +83928,9 @@
             "$span": {
               "start": 8,
               "end": 9
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -83374,6 +84307,9 @@
                               "$span": {
                                 "start": 17,
                                 "end": 18
+                              },
+                              "$_gap": {
+                                "$text": ", "
                               }
                             },
                             {
@@ -83384,6 +84320,9 @@
                               "$span": {
                                 "start": 20,
                                 "end": 21
+                              },
+                              "$_gap": {
+                                "$text": ", "
                               }
                             }
                           ],
@@ -83815,6 +84754,9 @@
                     "$span": {
                       "start": 17,
                       "end": 18
+                    },
+                    "$_gap": {
+                      "$text": ", "
                     }
                   },
                   {
@@ -83825,6 +84767,9 @@
                     "$span": {
                       "start": 20,
                       "end": 21
+                    },
+                    "$_gap": {
+                      "$text": ", "
                     }
                   }
                 ],
@@ -84242,6 +85187,9 @@
                   "$span": {
                     "start": 17,
                     "end": 18
+                  },
+                  "$_gap": {
+                    "$text": ", "
                   }
                 },
                 {
@@ -84252,6 +85200,9 @@
                   "$span": {
                     "start": 20,
                     "end": 21
+                  },
+                  "$_gap": {
+                    "$text": ", "
                   }
                 }
               ],
@@ -84795,6 +85746,9 @@
                         "$span": {
                           "start": 8,
                           "end": 9
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -84881,6 +85835,9 @@
                         "$span": {
                           "start": 15,
                           "end": 16
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       },
                       {
@@ -84891,6 +85848,9 @@
                         "$span": {
                           "start": 18,
                           "end": 19
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -84995,6 +85955,9 @@
                         "$span": {
                           "start": 30,
                           "end": 34
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -85123,6 +86086,9 @@
               "$span": {
                 "start": 8,
                 "end": 9
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -85209,6 +86175,9 @@
               "$span": {
                 "start": 15,
                 "end": 16
+              },
+              "$_gap": {
+                "$text": ", "
               }
             },
             {
@@ -85219,6 +86188,9 @@
               "$span": {
                 "start": 18,
                 "end": 19
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -85323,6 +86295,9 @@
               "$span": {
                 "start": 30,
                 "end": 34
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -85432,6 +86407,9 @@
             "$span": {
               "start": 8,
               "end": 9
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -85513,6 +86491,9 @@
             "$span": {
               "start": 15,
               "end": 16
+            },
+            "$_gap": {
+              "$text": ", "
             }
           },
           {
@@ -85523,6 +86504,9 @@
             "$span": {
               "start": 18,
               "end": 19
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -85622,6 +86606,9 @@
             "$span": {
               "start": 30,
               "end": 34
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -85834,6 +86821,9 @@
                               "$span": {
                                 "start": 17,
                                 "end": 18
+                              },
+                              "$_gap": {
+                                "$text": ", "
                               }
                             },
                             {
@@ -85844,6 +86834,9 @@
                               "$span": {
                                 "start": 20,
                                 "end": 21
+                              },
+                              "$_gap": {
+                                "$text": ", "
                               }
                             }
                           ],
@@ -86000,6 +86993,9 @@
                             "$span": {
                               "start": 41,
                               "end": 42
+                            },
+                            "$_gap": {
+                              "$text": ", "
                             }
                           }
                         ],
@@ -86069,6 +87065,9 @@
                                 "$span": {
                                   "start": 51,
                                   "end": 52
+                                },
+                                "$_gap": {
+                                  "$text": ", "
                                 }
                               }
                             ],
@@ -86423,6 +87422,9 @@
                                     "$span": {
                                       "start": 107,
                                       "end": 109
+                                    },
+                                    "$_gap": {
+                                      "$text": ", "
                                     }
                                   }
                                 ],
@@ -86690,6 +87692,9 @@
                     "$span": {
                       "start": 17,
                       "end": 18
+                    },
+                    "$_gap": {
+                      "$text": ", "
                     }
                   },
                   {
@@ -86700,6 +87705,9 @@
                     "$span": {
                       "start": 20,
                       "end": 21
+                    },
+                    "$_gap": {
+                      "$text": ", "
                     }
                   }
                 ],
@@ -86856,6 +87864,9 @@
                   "$span": {
                     "start": 41,
                     "end": 42
+                  },
+                  "$_gap": {
+                    "$text": ", "
                   }
                 }
               ],
@@ -86925,6 +87936,9 @@
                       "$span": {
                         "start": 51,
                         "end": 52
+                      },
+                      "$_gap": {
+                        "$text": ", "
                       }
                     }
                   ],
@@ -87279,6 +88293,9 @@
                           "$span": {
                             "start": 107,
                             "end": 109
+                          },
+                          "$_gap": {
+                            "$text": ", "
                           }
                         }
                       ],
@@ -87532,6 +88549,9 @@
                   "$span": {
                     "start": 17,
                     "end": 18
+                  },
+                  "$_gap": {
+                    "$text": ", "
                   }
                 },
                 {
@@ -87542,6 +88562,9 @@
                   "$span": {
                     "start": 20,
                     "end": 21
+                  },
+                  "$_gap": {
+                    "$text": ", "
                   }
                 }
               ],
@@ -87679,6 +88702,9 @@
               "$span": {
                 "start": 41,
                 "end": 42
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -87748,6 +88774,9 @@
                   "$span": {
                     "start": 51,
                     "end": 52
+                  },
+                  "$_gap": {
+                    "$text": ", "
                   }
                 }
               ],
@@ -88087,6 +89116,9 @@
                         "$span": {
                           "start": 107,
                           "end": 109
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -88439,6 +89471,9 @@
                 "$span": {
                   "start": 41,
                   "end": 42
+                },
+                "$_gap": {
+                  "$text": ", "
                 }
               }
             ],
@@ -88508,6 +89543,9 @@
                     "$span": {
                       "start": 51,
                       "end": 52
+                    },
+                    "$_gap": {
+                      "$text": ", "
                     }
                   }
                 ],
@@ -88651,6 +89689,9 @@
               "$span": {
                 "start": 107,
                 "end": 109
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -88737,6 +89778,9 @@
             "$span": {
               "start": 41,
               "end": 42
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -88818,6 +89862,9 @@
             "$span": {
               "start": 107,
               "end": 109
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -89756,6 +90803,9 @@
                                           "$span": {
                                             "start": 190,
                                             "end": 202
+                                          },
+                                          "$_gap": {
+                                            "$text": ", "
                                           }
                                         }
                                       ],
@@ -90499,6 +91549,9 @@
               "$span": {
                 "start": 190,
                 "end": 202
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -91003,6 +92056,9 @@
             "$span": {
               "start": 190,
               "end": 202
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -91745,6 +92801,9 @@
                 "$span": {
                   "start": 190,
                   "end": 202
+                },
+                "$_gap": {
+                  "$text": ", "
                 }
               }
             ],
@@ -92522,6 +93581,9 @@
                                                   "$span": {
                                                     "start": 113,
                                                     "end": 125
+                                                  },
+                                                  "$_gap": {
+                                                    "$text": ", "
                                                   }
                                                 }
                                               ],
@@ -92833,6 +93895,9 @@
               "$span": {
                 "start": 113,
                 "end": 125
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -93060,6 +94125,9 @@
             "$span": {
               "start": 113,
               "end": 125
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -93255,6 +94323,9 @@
                 "$span": {
                   "start": 113,
                   "end": 125
+                },
+                "$_gap": {
+                  "$text": ", "
                 }
               }
             ],
@@ -99623,6 +100694,9 @@
                         "$span": {
                           "start": 18,
                           "end": 19
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -99662,6 +100736,9 @@
                         "$span": {
                           "start": 25,
                           "end": 26
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -99830,6 +100907,9 @@
                         "$span": {
                           "start": 50,
                           "end": 55
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -100039,6 +101119,9 @@
                           "$span": {
                             "start": 98,
                             "end": 99
+                          },
+                          "$_gap": {
+                            "$text": ", "
                           }
                         },
                         {
@@ -100049,6 +101132,9 @@
                           "$span": {
                             "start": 101,
                             "end": 102
+                          },
+                          "$_gap": {
+                            "$text": ", "
                           }
                         }
                       ],
@@ -100349,6 +101435,9 @@
               "$span": {
                 "start": 18,
                 "end": 19
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -100388,6 +101477,9 @@
               "$span": {
                 "start": 25,
                 "end": 26
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -100556,6 +101648,9 @@
               "$span": {
                 "start": 50,
                 "end": 55
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -100765,6 +101860,9 @@
                 "$span": {
                   "start": 98,
                   "end": 99
+                },
+                "$_gap": {
+                  "$text": ", "
                 }
               },
               {
@@ -100775,6 +101873,9 @@
                 "$span": {
                   "start": 101,
                   "end": 102
+                },
+                "$_gap": {
+                  "$text": ", "
                 }
               }
             ],
@@ -100939,6 +102040,9 @@
             "$span": {
               "start": 18,
               "end": 19
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -100978,6 +102082,9 @@
             "$span": {
               "start": 25,
               "end": 26
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -101054,6 +102161,9 @@
             "$span": {
               "start": 50,
               "end": 55
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -101258,6 +102368,9 @@
               "$span": {
                 "start": 98,
                 "end": 99
+              },
+              "$_gap": {
+                "$text": ", "
               }
             },
             {
@@ -101268,6 +102381,9 @@
               "$span": {
                 "start": 101,
                 "end": 102
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -101588,6 +102704,9 @@
             "$span": {
               "start": 98,
               "end": 99
+            },
+            "$_gap": {
+              "$text": ", "
             }
           },
           {
@@ -101598,6 +102717,9 @@
             "$span": {
               "start": 101,
               "end": 102
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -107347,6 +108469,9 @@
                       "$span": {
                         "start": 11,
                         "end": 12
+                      },
+                      "$_gap": {
+                        "$text": ", "
                       }
                     },
                     {
@@ -107357,6 +108482,9 @@
                       "$span": {
                         "start": 14,
                         "end": 15
+                      },
+                      "$_gap": {
+                        "$text": ", "
                       }
                     }
                   ],
@@ -107838,6 +108966,9 @@
             "$span": {
               "start": 11,
               "end": 12
+            },
+            "$_gap": {
+              "$text": ", "
             }
           },
           {
@@ -107848,6 +108979,9 @@
             "$span": {
               "start": 14,
               "end": 15
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -111251,6 +112385,9 @@
                                           "$span": {
                                             "start": 80,
                                             "end": 81
+                                          },
+                                          "$_gap": {
+                                            "$text": ", "
                                           }
                                         }
                                       ],
@@ -112523,6 +113660,9 @@
               "$span": {
                 "start": 80,
                 "end": 81
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -113113,6 +114253,9 @@
             "$span": {
               "start": 80,
               "end": 81
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -113673,6 +114816,9 @@
                 "$span": {
                   "start": 80,
                   "end": 81
+                },
+                "$_gap": {
+                  "$text": ", "
                 }
               }
             ],
@@ -114484,6 +115630,9 @@
                                           "$span": {
                                             "start": 71,
                                             "end": 72
+                                          },
+                                          "$_gap": {
+                                            "$text": ", "
                                           }
                                         }
                                       ],
@@ -114727,6 +115876,9 @@
               "$span": {
                 "start": 71,
                 "end": 72
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -114897,6 +116049,9 @@
             "$span": {
               "start": 71,
               "end": 72
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -115098,6 +116253,9 @@
                 "$span": {
                   "start": 71,
                   "end": 72
+                },
+                "$_gap": {
+                  "$text": ", "
                 }
               }
             ],
@@ -115435,6 +116593,9 @@
                                           "$span": {
                                             "start": 57,
                                             "end": 61
+                                          },
+                                          "$_gap": {
+                                            "$text": "."
                                           }
                                         }
                                       ],
@@ -115591,6 +116752,9 @@
                                           "$span": {
                                             "start": 115,
                                             "end": 116
+                                          },
+                                          "$_gap": {
+                                            "$text": ", "
                                           }
                                         }
                                       ],
@@ -115978,6 +117142,9 @@
               "$span": {
                 "start": 115,
                 "end": 116
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -116148,6 +117315,9 @@
             "$span": {
               "start": 115,
               "end": 116
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -116327,6 +117497,9 @@
           "$span": {
             "start": 57,
             "end": 61
+          },
+          "$_gap": {
+            "$text": "."
           }
         }
       ],
@@ -116438,6 +117611,9 @@
                 "$span": {
                   "start": 115,
                   "end": 116
+                },
+                "$_gap": {
+                  "$text": ", "
                 }
               }
             ],
@@ -117886,6 +119062,9 @@
                                                 "$span": {
                                                   "start": 302,
                                                   "end": 303
+                                                },
+                                                "$_gap": {
+                                                  "$text": "."
                                                 }
                                               }
                                             ],
@@ -119285,6 +120464,9 @@
           "$span": {
             "start": 302,
             "end": 303
+          },
+          "$_gap": {
+            "$text": "."
           }
         }
       ],
@@ -126052,6 +127234,9 @@
                                   "$span": {
                                     "start": 76,
                                     "end": 80
+                                  },
+                                  "$_gap": {
+                                    "$text": "."
                                   }
                                 }
                               ],
@@ -128353,6 +129538,9 @@
           "$span": {
             "start": 76,
             "end": 80
+          },
+          "$_gap": {
+            "$text": "."
           }
         }
       ],
@@ -130934,6 +132122,9 @@
                               "$span": {
                                 "start": 22,
                                 "end": 23
+                              },
+                              "$_gap": {
+                                "$text": "."
                               }
                             }
                           ],
@@ -131044,6 +132235,9 @@
                             "$span": {
                               "start": 38,
                               "end": 39
+                            },
+                            "$_gap": {
+                              "$text": "."
                             }
                           },
                           {
@@ -131054,6 +132248,9 @@
                             "$span": {
                               "start": 40,
                               "end": 41
+                            },
+                            "$_gap": {
+                              "$text": "."
                             }
                           }
                         ],
@@ -131212,6 +132409,9 @@
           "$span": {
             "start": 22,
             "end": 23
+          },
+          "$_gap": {
+            "$text": "."
           }
         }
       ],
@@ -131267,6 +132467,9 @@
           "$span": {
             "start": 38,
             "end": 39
+          },
+          "$_gap": {
+            "$text": "."
           }
         },
         {
@@ -131277,6 +132480,9 @@
           "$span": {
             "start": 40,
             "end": 41
+          },
+          "$_gap": {
+            "$text": "."
           }
         }
       ],
@@ -131652,6 +132858,9 @@
                       "$span": {
                         "start": 61,
                         "end": 62
+                      },
+                      "$_gap": {
+                        "$text": "."
                       }
                     }
                   ],
@@ -132357,6 +133566,9 @@
           "$span": {
             "start": 61,
             "end": 62
+          },
+          "$_gap": {
+            "$text": "."
           }
         }
       ],
@@ -133289,6 +134501,9 @@
                         "$span": {
                           "start": 18,
                           "end": 19
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -134287,6 +135502,9 @@
                     "$span": {
                       "start": 20,
                       "end": 21
+                    },
+                    "$_gap": {
+                      "$text": ", "
                     }
                   }
                 ],
@@ -134464,6 +135682,9 @@
                       "$span": {
                         "start": 12,
                         "end": 13
+                      },
+                      "$_gap": {
+                        "$text": ", "
                       }
                     },
                     {
@@ -134474,6 +135695,9 @@
                       "$span": {
                         "start": 15,
                         "end": 16
+                      },
+                      "$_gap": {
+                        "$text": ", "
                       }
                     }
                   ],
@@ -134544,6 +135768,9 @@
                       "$span": {
                         "start": 20,
                         "end": 21
+                      },
+                      "$_gap": {
+                        "$text": ", "
                       }
                     },
                     {
@@ -134554,6 +135781,9 @@
                       "$span": {
                         "start": 23,
                         "end": 24
+                      },
+                      "$_gap": {
+                        "$text": ", "
                       }
                     }
                   ],
@@ -134728,6 +135958,9 @@
             "$span": {
               "start": 12,
               "end": 13
+            },
+            "$_gap": {
+              "$text": ", "
             }
           },
           {
@@ -134738,6 +135971,9 @@
             "$span": {
               "start": 15,
               "end": 16
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -134808,6 +136044,9 @@
             "$span": {
               "start": 20,
               "end": 21
+            },
+            "$_gap": {
+              "$text": ", "
             }
           },
           {
@@ -134818,6 +136057,9 @@
             "$span": {
               "start": 23,
               "end": 24
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -136438,6 +137680,9 @@
                       "start": 73,
                       "end": 74
                     }
+                  },
+                  "$_gap": {
+                    "$text": "; "
                   }
                 }
               ],
@@ -137623,6 +138868,9 @@
                 "$span": {
                   "start": 11,
                   "end": 12
+                },
+                "$_gap": {
+                  "$text": ", "
                 }
               }
             ],
@@ -137741,6 +138989,9 @@
                         "$span": {
                           "start": 53,
                           "end": 54
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -139121,6 +140372,9 @@
                       "$span": {
                         "start": 53,
                         "end": 54
+                      },
+                      "$_gap": {
+                        "$text": ", "
                       }
                     }
                   ],
@@ -142755,6 +144009,9 @@
                   "$span": {
                     "start": 57,
                     "end": 58
+                  },
+                  "$_gap": {
+                    "$text": ", "
                   }
                 }
               ],
@@ -144520,6 +145777,9 @@
               "$span": {
                 "start": 57,
                 "end": 58
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -146198,6 +147458,9 @@
             "$span": {
               "start": 57,
               "end": 58
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -147396,6 +148659,9 @@
           "$span": {
             "start": 57,
             "end": 58
+          },
+          "$_gap": {
+            "$text": ", "
           }
         }
       ],
@@ -148719,6 +149985,9 @@
                         "$span": {
                           "start": 10,
                           "end": 11
+                        },
+                        "$_gap": {
+                          "$text": ","
                         }
                       }
                     ],
@@ -148829,6 +150098,9 @@
                                 "$span": {
                                   "start": 27,
                                   "end": 28
+                                },
+                                "$_gap": {
+                                  "$text": ","
                                 }
                               }
                             ],
@@ -149409,6 +150681,9 @@
                   "$span": {
                     "start": 118,
                     "end": 119
+                  },
+                  "$_gap": {
+                    "$text": ", "
                   }
                 },
                 {
@@ -149632,6 +150907,9 @@
                               "$span": {
                                 "start": 158,
                                 "end": 159
+                              },
+                              "$_gap": {
+                                "$text": ","
                               }
                             },
                             {
@@ -149642,6 +150920,9 @@
                               "$span": {
                                 "start": 160,
                                 "end": 161
+                              },
+                              "$_gap": {
+                                "$text": ","
                               }
                             },
                             {
@@ -149652,6 +150933,9 @@
                               "$span": {
                                 "start": 162,
                                 "end": 163
+                              },
+                              "$_gap": {
+                                "$text": ","
                               }
                             },
                             {
@@ -149662,6 +150946,9 @@
                               "$span": {
                                 "start": 164,
                                 "end": 169
+                              },
+                              "$_gap": {
+                                "$text": ","
                               }
                             }
                           ],
@@ -150248,7 +151535,7 @@
         }
       ]
     },
-    "expectedOutput": "def e((a, b)):\n    return (a, b)\n\n\ndef e(*list: str):\n    pass\n\n\ndef e(**list: str):\n    pass\n\n\ndef f():\n    nonlocal a\n\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n    return h, i, j, k, kwarg\n\n\ndef h(*a):\n    i((*a))\n    j(((*a)))\n\n\ndef foo():\n    pass \\\n\\\n\\\n"
+    "expectedOutput": "def e((a,b)):\n    return (a,b)\n\n\ndef e(*list: str):\n    pass\n\n\ndef e(**list: str):\n    pass\n\n\ndef f():\n    nonlocal a\n\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n    return h,i,j,k,kwarg\n\n\ndef h(*a):\n    i((*a))\n    j(((*a)))\n\n\ndef foo():\n    pass \\\n\\\n\\\n"
   },
   {
     "kind": "roundtrip",
@@ -150256,9 +151543,9 @@
     "sourceIn": "\ndef e((a,b)):\n  return (a,b)\n\ndef e(*list: str):\n  pass\n\ndef e(**list: str):\n  pass\n\ndef f():\n  nonlocal a\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\n\ndef h(*a):\n  i((*a))\n  j(((*a)))\n\ndef foo():\n    pass \\\n\\\n\\\n",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "def e((a, b)):\n    return (a, b)\n\n\ndef e(*list: str):\n    pass\n\n\ndef e(**list: str):\n    pass\n\n\ndef f():\n    nonlocal a\n\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n    return h, i, j, k, kwarg\n\n\ndef h(*a):\n    i((*a))\n    j(((*a)))\n\n\ndef foo():\n    pass \\\n\\\n\\\n",
+    "expectedSourceOut": "def e((a,b)):\n    return (a,b)\n\n\ndef e(*list: str):\n    pass\n\n\ndef e(**list: str):\n    pass\n\n\ndef f():\n    nonlocal a\n\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n    return h,i,j,k,kwarg\n\n\ndef h(*a):\n    i((*a))\n    j(((*a)))\n\n\ndef foo():\n    pass \\\n\\\n\\\n",
     "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (tuple_pattern (patterns item: (identifier) item: (identifier))))) body: (suite_block (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement (tuple elements: (tuple_elements item: (identifier) item: (identifier))))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (typed_parameter name: (list_splat_pattern target: (identifier)) type: (type (identifier))))) body: (suite_block (block statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (typed_parameter name: (dictionary_splat_pattern target: (identifier)) type: (type (identifier))))) body: (suite_block (block statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements elements: (simple_statements_elements item: (nonlocal_statement names: (identifier))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier) item: (identifier) item: (positional_separator) item: (identifier) item: (keyword_separator) item: (default_parameter name: (identifier) value: (integer_decimal_plain)) item: (dictionary_splat_pattern target: (identifier)))) body: (suite_block (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement (expression_list item: (identifier) item: (identifier) item: (identifier) item: (identifier) item: (identifier)))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (list_splat_pattern target: (identifier)))) body: (suite_block (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier))))))))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline))))) (line_continuation_newline) (line_continuation_newline) (line_continuation_newline))",
-    "wrappedText": "def e((a, b)):\n    return (a, b)\n\n\ndef e(*list: str):\n    pass\n\n\ndef e(**list: str):\n    pass\n\n\ndef f():\n    nonlocal a\n\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n    return h, i, j, k, kwarg\n\n\ndef h(*a):\n    i((*a))\n    j(((*a)))\n\n\ndef foo():\n    pass \\\n\\\n\\\n",
+    "wrappedText": "def e((a,b)):\n    return (a,b)\n\n\ndef e(*list: str):\n    pass\n\n\ndef e(**list: str):\n    pass\n\n\ndef f():\n    nonlocal a\n\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n    return h,i,j,k,kwarg\n\n\ndef h(*a):\n    i((*a))\n    j(((*a)))\n\n\ndef foo():\n    pass \\\n\\\n\\\n",
     "wrappedOffset": 0
   },
   {
@@ -150315,6 +151602,9 @@
                     "$span": {
                       "start": 10,
                       "end": 11
+                    },
+                    "$_gap": {
+                      "$text": ","
                     }
                   }
                 ],
@@ -150425,6 +151715,9 @@
                             "$span": {
                               "start": 27,
                               "end": 28
+                            },
+                            "$_gap": {
+                              "$text": ","
                             }
                           }
                         ],
@@ -150511,7 +151804,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def e((a, b)):\n    return (a, b)\n"
+    "expectedOutput": "def e((a,b)):\n    return (a,b)\n"
   },
   {
     "kind": "roundtrip",
@@ -150519,9 +151812,9 @@
     "sourceIn": "def e((a,b)):\n  return (a,b)",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def e((a, b)):\n    return (a, b)\n",
+    "expectedSourceOut": "def e((a,b)):\n    return (a,b)\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (tuple_pattern (patterns item: (identifier) item: (identifier))))) body: (suite_block (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement (tuple elements: (tuple_elements item: (identifier) item: (identifier))))) (newline)))))",
-    "wrappedText": "def e((a, b)):\n    return (a, b)\n",
+    "wrappedText": "def e((a,b)):\n    return (a,b)\n",
     "wrappedOffset": 0
   },
   {
@@ -151073,6 +152366,9 @@
               "$span": {
                 "start": 118,
                 "end": 119
+              },
+              "$_gap": {
+                "$text": ", "
               }
             },
             {
@@ -151296,6 +152592,9 @@
                           "$span": {
                             "start": 158,
                             "end": 159
+                          },
+                          "$_gap": {
+                            "$text": ","
                           }
                         },
                         {
@@ -151306,6 +152605,9 @@
                           "$span": {
                             "start": 160,
                             "end": 161
+                          },
+                          "$_gap": {
+                            "$text": ","
                           }
                         },
                         {
@@ -151316,6 +152618,9 @@
                           "$span": {
                             "start": 162,
                             "end": 163
+                          },
+                          "$_gap": {
+                            "$text": ","
                           }
                         },
                         {
@@ -151326,6 +152631,9 @@
                           "$span": {
                             "start": 164,
                             "end": 169
+                          },
+                          "$_gap": {
+                            "$text": ","
                           }
                         }
                       ],
@@ -151418,7 +152726,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def g(h, i, /, j, *, k=100, **kwarg):\n    return h, i, j, k, kwarg\n"
+    "expectedOutput": "def g(h, i, /, j, *, k=100, **kwarg):\n    return h,i,j,k,kwarg\n"
   },
   {
     "kind": "roundtrip",
@@ -151426,9 +152734,9 @@
     "sourceIn": "def g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def g(h, i, /, j, *, k=100, **kwarg):\n    return h, i, j, k, kwarg\n",
+    "expectedSourceOut": "def g(h, i, /, j, *, k=100, **kwarg):\n    return h,i,j,k,kwarg\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier) item: (identifier) item: (positional_separator) item: (identifier) item: (keyword_separator) item: (default_parameter name: (identifier) value: (integer_decimal_plain)) item: (dictionary_splat_pattern target: (identifier)))) body: (suite_block (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement (expression_list item: (identifier) item: (identifier) item: (identifier) item: (identifier) item: (identifier)))) (newline)))))",
-    "wrappedText": "def g(h, i, /, j, *, k=100, **kwarg):\n    return h, i, j, k, kwarg\n",
+    "wrappedText": "def g(h, i, /, j, *, k=100, **kwarg):\n    return h,i,j,k,kwarg\n",
     "wrappedOffset": 0
   },
   {
@@ -151997,6 +153305,9 @@
                   "$span": {
                     "start": 10,
                     "end": 11
+                  },
+                  "$_gap": {
+                    "$text": ","
                   }
                 }
               ],
@@ -152058,7 +153369,7 @@
         }
       ]
     },
-    "expectedOutput": "((a, b))"
+    "expectedOutput": "((a,b))"
   },
   {
     "kind": "roundtrip",
@@ -152066,9 +153377,9 @@
     "sourceIn": "((a,b))",
     "pattern": "parameters",
     "edits": [],
-    "expectedSourceOut": "((a, b))",
+    "expectedSourceOut": "((a,b))",
     "expectedReparseTree": "(parameters elements: (parameters_elements item: (tuple_pattern (patterns item: (identifier) item: (identifier)))))",
-    "wrappedText": "def _f((a, b)):\n    pass",
+    "wrappedText": "def _f((a,b)):\n    pass",
     "wrappedOffset": 6
   },
   {
@@ -152351,6 +153662,9 @@
             "$span": {
               "start": 118,
               "end": 119
+            },
+            "$_gap": {
+              "$text": ", "
             }
           },
           {
@@ -152681,6 +153995,9 @@
                 "$span": {
                   "start": 10,
                   "end": 11
+                },
+                "$_gap": {
+                  "$text": ","
                 }
               }
             ],
@@ -152721,7 +154038,7 @@
       ],
       "_delimiter": 0
     },
-    "expectedOutput": "(a, b)"
+    "expectedOutput": "(a,b)"
   },
   {
     "kind": "roundtrip",
@@ -152729,9 +154046,9 @@
     "sourceIn": "(a,b)",
     "pattern": "parameters_elements",
     "edits": [],
-    "expectedSourceOut": "(a, b)",
+    "expectedSourceOut": "(a,b)",
     "expectedReparseTree": "(parameters_elements item: (tuple_pattern (patterns item: (identifier) item: (identifier))))",
-    "wrappedText": "def _f((a, b)):\n    pass",
+    "wrappedText": "def _f((a,b)):\n    pass",
     "wrappedOffset": 7
   },
   {
@@ -152933,6 +154250,9 @@
           "$span": {
             "start": 118,
             "end": 119
+          },
+          "$_gap": {
+            "$text": ", "
           }
         },
         {
@@ -153185,6 +154505,9 @@
             "$span": {
               "start": 10,
               "end": 11
+            },
+            "$_gap": {
+              "$text": ","
             }
           }
         ],
@@ -153222,7 +154545,7 @@
         }
       ]
     },
-    "expectedOutput": "(a, b)"
+    "expectedOutput": "(a,b)"
   },
   {
     "kind": "roundtrip",
@@ -153230,9 +154553,9 @@
     "sourceIn": "(a,b)",
     "pattern": "tuple_pattern",
     "edits": [],
-    "expectedSourceOut": "(a, b)",
+    "expectedSourceOut": "(a,b)",
     "expectedReparseTree": "(tuple_pattern (patterns item: (identifier) item: (identifier)))",
-    "wrappedText": "for (a, b) in _: pass",
+    "wrappedText": "for (a,b) in _: pass",
     "wrappedOffset": 4
   },
   {
@@ -153266,6 +154589,9 @@
             "$span": {
               "start": 27,
               "end": 28
+            },
+            "$_gap": {
+              "$text": ","
             }
           }
         ],
@@ -153303,7 +154629,7 @@
         }
       ]
     },
-    "expectedOutput": "(a, b)"
+    "expectedOutput": "(a,b)"
   },
   {
     "kind": "roundtrip",
@@ -153311,9 +154637,9 @@
     "sourceIn": "(a,b)",
     "pattern": "tuple",
     "edits": [],
-    "expectedSourceOut": "(a, b)",
+    "expectedSourceOut": "(a,b)",
     "expectedReparseTree": "(tuple elements: (tuple_elements item: (identifier) item: (identifier)))",
-    "wrappedText": "_ = (a, b)",
+    "wrappedText": "_ = (a,b)",
     "wrappedOffset": 4
   },
   {
@@ -154369,6 +155695,9 @@
                   "$span": {
                     "start": 191,
                     "end": 192
+                  },
+                  "$_gap": {
+                    "$text": ", "
                   }
                 }
               ],
@@ -154718,6 +156047,9 @@
               "$span": {
                 "start": 191,
                 "end": 192
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -154879,6 +156211,9 @@
             "$span": {
               "start": 191,
               "end": 192
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -154956,6 +156291,9 @@
           "$span": {
             "start": 191,
             "end": 192
+          },
+          "$_gap": {
+            "$text": ", "
           }
         }
       ],
@@ -155818,6 +157156,9 @@
                         "$span": {
                           "start": 164,
                           "end": 165
+                        },
+                        "$_gap": {
+                          "$text": ", "
                         }
                       }
                     ],
@@ -156718,6 +158059,9 @@
                   "$span": {
                     "start": 164,
                     "end": 165
+                  },
+                  "$_gap": {
+                    "$text": ", "
                   }
                 }
               ],
@@ -156911,6 +158255,9 @@
             "$span": {
               "start": 164,
               "end": 165
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -157015,6 +158362,9 @@
                   "$span": {
                     "start": 12,
                     "end": 13
+                  },
+                  "$_gap": {
+                    "$text": ", "
                   }
                 }
               ],
@@ -157230,6 +158580,9 @@
             "$span": {
               "start": 12,
               "end": 13
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -162461,6 +163814,9 @@
                     "$span": {
                       "start": 20,
                       "end": 21
+                    },
+                    "$_gap": {
+                      "$text": ", "
                     }
                   }
                 ],
@@ -162779,6 +164135,9 @@
                     "$span": {
                       "start": 50,
                       "end": 51
+                    },
+                    "$_gap": {
+                      "$text": ", "
                     }
                   }
                 ],
@@ -165907,6 +167266,9 @@
                     "start": 11,
                     "end": 14
                   }
+                },
+                "$_gap": {
+                  "$text": "; "
                 }
               }
             ],
@@ -165965,6 +167327,9 @@
                     "start": 20,
                     "end": 23
                   }
+                },
+                "$_gap": {
+                  "$text": "; "
                 }
               }
             ],
@@ -166262,6 +167627,9 @@
                                 "start": 27,
                                 "end": 32
                               }
+                            },
+                            "$_gap": {
+                              "$text": ", "
                             }
                           }
                         ],
@@ -166478,6 +167846,9 @@
                                 "start": 59,
                                 "end": 60
                               }
+                            },
+                            "$_gap": {
+                              "$text": ", "
                             }
                           }
                         ],
@@ -166704,6 +168075,9 @@
                                 "start": 94,
                                 "end": 97
                               }
+                            },
+                            "$_gap": {
+                              "$text": ", "
                             }
                           }
                         ],
@@ -167388,6 +168762,9 @@
                                         "$span": {
                                           "start": 271,
                                           "end": 274
+                                        },
+                                        "$_gap": {
+                                          "$text": ", "
                                         }
                                       }
                                     ],
@@ -167700,6 +169077,9 @@
                     "start": 27,
                     "end": 32
                   }
+                },
+                "$_gap": {
+                  "$text": ", "
                 }
               }
             ],
@@ -168000,6 +169380,9 @@
                     "start": 59,
                     "end": 60
                   }
+                },
+                "$_gap": {
+                  "$text": ", "
                 }
               }
             ],
@@ -168320,6 +169703,9 @@
                     "start": 94,
                     "end": 97
                   }
+                },
+                "$_gap": {
+                  "$text": ", "
                 }
               }
             ],
@@ -169251,6 +170637,9 @@
                             "$span": {
                               "start": 271,
                               "end": 274
+                            },
+                            "$_gap": {
+                              "$text": ", "
                             }
                           }
                         ],
@@ -169407,6 +170796,9 @@
                   "$span": {
                     "start": 271,
                     "end": 274
+                  },
+                  "$_gap": {
+                    "$text": ", "
                   }
                 }
               ],
@@ -169542,6 +170934,9 @@
               "$span": {
                 "start": 271,
                 "end": 274
+              },
+              "$_gap": {
+                "$text": ", "
               }
             }
           ],
@@ -169745,6 +171140,9 @@
             "$span": {
               "start": 271,
               "end": 274
+            },
+            "$_gap": {
+              "$text": ", "
             }
           }
         ],
@@ -173398,7 +174796,10 @@
                               "start": 7,
                               "end": 9
                             },
-                            "_content": "n"
+                            "_content": "n",
+                            "$_gap": {
+                              "$text": ""
+                            }
                           },
                           {
                             "$type": 119,
@@ -173408,6 +174809,9 @@
                             "$span": {
                               "start": 9,
                               "end": 10
+                            },
+                            "$_gap": {
+                              "$text": ""
                             }
                           },
                           {
@@ -173419,7 +174823,10 @@
                               "start": 10,
                               "end": 12
                             },
-                            "_content": "t"
+                            "_content": "t",
+                            "$_gap": {
+                              "$text": ""
+                            }
                           },
                           {
                             "$type": 119,
@@ -173429,6 +174836,9 @@
                             "$span": {
                               "start": 12,
                               "end": 13
+                            },
+                            "$_gap": {
+                              "$text": ""
                             }
                           }
                         ]
@@ -173541,7 +174951,10 @@
                               "start": 22,
                               "end": 24
                             },
-                            "_content": "'"
+                            "_content": "'",
+                            "$_gap": {
+                              "$text": ""
+                            }
                           },
                           {
                             "$type": 119,
@@ -173551,6 +174964,9 @@
                             "$span": {
                               "start": 24,
                               "end": 25
+                            },
+                            "$_gap": {
+                              "$text": ""
                             }
                           },
                           {
@@ -173562,7 +174978,10 @@
                               "start": 25,
                               "end": 27
                             },
-                            "_content": "t"
+                            "_content": "t",
+                            "$_gap": {
+                              "$text": ""
+                            }
                           },
                           {
                             "$type": 119,
@@ -173572,6 +174991,9 @@
                             "$span": {
                               "start": 27,
                               "end": 33
+                            },
+                            "$_gap": {
+                              "$text": ""
                             }
                           }
                         ]
@@ -174144,7 +175566,10 @@
                     "start": 7,
                     "end": 9
                   },
-                  "_content": "n"
+                  "_content": "n",
+                  "$_gap": {
+                    "$text": ""
+                  }
                 },
                 {
                   "$type": 119,
@@ -174154,6 +175579,9 @@
                   "$span": {
                     "start": 9,
                     "end": 10
+                  },
+                  "$_gap": {
+                    "$text": ""
                   }
                 },
                 {
@@ -174165,7 +175593,10 @@
                     "start": 10,
                     "end": 12
                   },
-                  "_content": "t"
+                  "_content": "t",
+                  "$_gap": {
+                    "$text": ""
+                  }
                 },
                 {
                   "$type": 119,
@@ -174175,6 +175606,9 @@
                   "$span": {
                     "start": 12,
                     "end": 13
+                  },
+                  "$_gap": {
+                    "$text": ""
                   }
                 }
               ]
@@ -174287,7 +175721,10 @@
                     "start": 22,
                     "end": 24
                   },
-                  "_content": "'"
+                  "_content": "'",
+                  "$_gap": {
+                    "$text": ""
+                  }
                 },
                 {
                   "$type": 119,
@@ -174297,6 +175734,9 @@
                   "$span": {
                     "start": 24,
                     "end": 25
+                  },
+                  "$_gap": {
+                    "$text": ""
                   }
                 },
                 {
@@ -174308,7 +175748,10 @@
                     "start": 25,
                     "end": 27
                   },
-                  "_content": "t"
+                  "_content": "t",
+                  "$_gap": {
+                    "$text": ""
+                  }
                 },
                 {
                   "$type": 119,
@@ -174318,6 +175761,9 @@
                   "$span": {
                     "start": 27,
                     "end": 33
+                  },
+                  "$_gap": {
+                    "$text": ""
                   }
                 }
               ]
@@ -174876,7 +176322,10 @@
                   "start": 7,
                   "end": 9
                 },
-                "_content": "n"
+                "_content": "n",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 119,
@@ -174886,6 +176335,9 @@
                 "$span": {
                   "start": 9,
                   "end": 10
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               },
               {
@@ -174897,7 +176349,10 @@
                   "start": 10,
                   "end": 12
                 },
-                "_content": "t"
+                "_content": "t",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 119,
@@ -174907,6 +176362,9 @@
                 "$span": {
                   "start": 12,
                   "end": 13
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               }
             ]
@@ -175014,7 +176472,10 @@
                   "start": 22,
                   "end": 24
                 },
-                "_content": "'"
+                "_content": "'",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 119,
@@ -175024,6 +176485,9 @@
                 "$span": {
                   "start": 24,
                   "end": 25
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               },
               {
@@ -175035,7 +176499,10 @@
                   "start": 25,
                   "end": 27
                 },
-                "_content": "t"
+                "_content": "t",
+                "$_gap": {
+                  "$text": ""
+                }
               },
               {
                 "$type": 119,
@@ -175045,6 +176512,9 @@
                 "$span": {
                   "start": 27,
                   "end": 33
+                },
+                "$_gap": {
+                  "$text": ""
                 }
               }
             ]
@@ -175573,7 +177043,10 @@
                 "start": 7,
                 "end": 9
               },
-              "_content": "n"
+              "_content": "n",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 119,
@@ -175583,6 +177056,9 @@
               "$span": {
                 "start": 9,
                 "end": 10
+              },
+              "$_gap": {
+                "$text": ""
               }
             },
             {
@@ -175594,7 +177070,10 @@
                 "start": 10,
                 "end": 12
               },
-              "_content": "t"
+              "_content": "t",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 119,
@@ -175604,6 +177083,9 @@
               "$span": {
                 "start": 12,
                 "end": 13
+              },
+              "$_gap": {
+                "$text": ""
               }
             }
           ]
@@ -175681,7 +177163,10 @@
                 "start": 22,
                 "end": 24
               },
-              "_content": "'"
+              "_content": "'",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 119,
@@ -175691,6 +177176,9 @@
               "$span": {
                 "start": 24,
                 "end": 25
+              },
+              "$_gap": {
+                "$text": ""
               }
             },
             {
@@ -175702,7 +177190,10 @@
                 "start": 25,
                 "end": 27
               },
-              "_content": "t"
+              "_content": "t",
+              "$_gap": {
+                "$text": ""
+              }
             },
             {
               "$type": 119,
@@ -175712,6 +177203,9 @@
               "$span": {
                 "start": 27,
                 "end": 33
+              },
+              "$_gap": {
+                "$text": ""
               }
             }
           ]
