@@ -11,7 +11,7 @@
 
 import type { AnyUntypedNode } from '@sittir/types';
 import { sliceSpan } from '@sittir/common';
-import { hydrateStub, isStub } from '@sittir/common/utils';
+import { hydrateStub, isStub, spanOf } from '@sittir/common/utils';
 import type { TokenInterior, TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import {
@@ -518,7 +518,8 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 					} else if (shape === 'text') {
 						// A text-shaped factory takes the node's bytes, which its span
 						// addresses whether or not the reader captured them as `$text`.
-						const textForFactory = readData.$span ? sliceSpan(entry.source, readData.$span) : (readData.$text ?? '');
+						const span = spanOf(readData);
+						const textForFactory = span ? sliceSpan(entry.source, span) : (readData.$text ?? '');
 						factoryResult = (factory as (text: string) => AnyUntypedNode)(textForFactory);
 					} else if (shape === 'elements') {
 						// separatedList factory: spread with a LEADING optional

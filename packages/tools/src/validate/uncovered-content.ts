@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { allGrammars, assertGrammar, grammarPackage, sittirDirOf } from '@sittir/codegen/grammars';
 import { invoke } from '../codegen-surface.ts';
+import { spanOf } from '@sittir/common/utils';
 import { loadCorpusEntries, loadKindNameFromId, loadNativeEngine, readNativeTree } from './common.ts';
 
 interface Rule {
@@ -113,16 +114,17 @@ function readNodes(value: unknown, out: ReadNode[]): void {
 	}
 	if (value === null || typeof value !== 'object') return;
 	const node = value as Record<string, unknown>;
-	if (typeof node.$type === 'number' && node.$span !== undefined) out.push(node as unknown as ReadNode);
+	if (typeof node.$type === 'number' && spanOf(node) !== undefined) out.push(node as unknown as ReadNode);
 	for (const child of Object.values(node)) readNodes(child, out);
 }
 
 function uncoveredRuns(source: Buffer, node: ReadNode, descendants: readonly ReadNode[]): string[] {
-	const span = node.$span!;
+	const span = spanOf(node)!;
 	const covered = new Uint8Array(span.end - span.start);
-	for (const { $span } of descendants) {
-		const start = Math.max($span!.start, span.start);
-		const end = Math.min($span!.end, span.end);
+	for (const descendant of descendants) {
+		const inner = spanOf(descendant)!;
+		const start = Math.max(inner.start, span.start);
+		const end = Math.min(inner.end, span.end);
 		if (end > start) covered.fill(1, start - span.start, end - span.start);
 	}
 	const runs: string[] = [];
@@ -166,8 +168,11 @@ export async function computeUncoveredContentCensus(name: string): Promise<Uncov
 		for (const node of all) {
 			const nested: ReadNode[] = [];
 			for (const [key, value] of Object.entries(node)) if (key !== '$span') readNodes(value, nested);
-			const span = node.$span!;
-			const descendants = nested.filter(({ $span }) => $span!.start < span.end && $span!.end > span.start);
+			const span = spanOf(node)!;
+			const descendants = nested.filter((nestedNode) => {
+				const inner = spanOf(nestedNode)!;
+				return inner.start < span.end && inner.end > span.start;
+			});
 			if (descendants.length === 0) continue;
 			const runs = uncoveredRuns(source, node, descendants);
 			if (runs.length === 0) continue;

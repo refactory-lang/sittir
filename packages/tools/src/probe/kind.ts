@@ -110,7 +110,7 @@ import { load } from '../codegen-surface.ts';
 import type * as TS from 'web-tree-sitter';
 import type { AnyUntypedNode, AnyTreeNode } from '@sittir/types';
 import { sourceSpans, type ByteSpan, type SourceSpans } from '@sittir/common';
-import { isStub, readUntypedNode, STORED_TRIVIA, toTransportData } from '@sittir/common/utils';
+import { spanOf, isStub, readUntypedNode, STORED_TRIVIA, toTransportData } from '@sittir/common/utils';
 // ---------------------------------------------------------------------------
 // CLI
 // ---------------------------------------------------------------------------
@@ -1246,7 +1246,7 @@ export function findInUntypedNode(
 function findInUntypedNodeByRange(node: unknown, start: number, end: number): unknown | null {
 	if (!node || typeof node !== 'object') return null;
 	const n = node as Record<string, unknown>;
-	const span = n.$span as { start: number; end: number } | undefined;
+	const span = spanOf(n);
 	if (!span) return null;
 	if (span.start > start || span.end < end) return null;
 	const recurseInto = (child: unknown): unknown | null => findInUntypedNodeByRange(child, start, end);

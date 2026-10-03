@@ -1,4 +1,4 @@
-import { type ByteSpan, type SourceSpans, createEngine, sourceSpans } from '@sittir/common';
+import { type SourceSpans, createEngine, sourceSpans } from '@sittir/common';
 import { ERROR_KIND_ID, spanOf } from '@sittir/common/utils';
 import scm, {
 	type AnonymousNode,
