@@ -667,7 +667,7 @@ function defaultedValueExpr(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
-	if (isMultiple(f)) return `(${valueExpr} ?? [])`;
+	if (isMultiple(f)) return isNonEmpty(f) ? valueExpr : `(${valueExpr} ?? [])`;
 	const emptyDefault = emptyDefaultOf(f, nodeMap, kindEntries);
 	return emptyDefault ? `orDefault(${valueExpr}, () => ${emptyDefault})` : valueExpr;
 }
@@ -761,7 +761,7 @@ function fieldCarryingBuiltTypeSurface(
 		spreadTarget === null ? '' : ` | T.${nodeMap.nodes.get(spreadTarget)!.typeName}.${member}`;
 	let setters: SlotSetter[];
 	if (spreadFacts) {
-		setters = [{ name: spreadFacts.slot.propertyName, input: `${surface.elementType!}[]`, optional: false, rest: true }];
+		setters = [{ name: spreadFacts.slot.propertyName, input: elementsTypeOf(spreadFacts.nonEmpty, surface.elementType!), optional: false, rest: true }];
 	} else if (singleField) {
 		const setterType = setterElemType(singleField, surface.directParamType!, surface.directParamType!, nodeMap, true);
 		setters = [
@@ -1066,14 +1066,16 @@ function resolveConfigFactorySurface(
 	if (spreadFacts) {
 		const elementType = constructionChildElementType({ children: [spreadFacts.slot] }, nodeMap, kindEntries);
 		if (spreadFacts.multiple) {
+			const rowLooseElement = [`T.${node.typeName}.Loose`, ...new Set([elementType, coercedChildElementType(spreadFacts.slot, nodeMap)].map(looseValueOf))].join(' | ');
+			const { nonEmpty } = spreadFacts;
 			const param: FactoryParam = {
 				label: 'children',
 				optional: false,
 				rest: true,
-				strictType: `${elementType}[]`,
-				looseType: `${looseValueOf(elementType)}[]`,
-				rowLooseType: `(${[`T.${node.typeName}.Loose`, ...new Set([elementType, coercedChildElementType(spreadFacts.slot, nodeMap)].map(looseValueOf))].join(' | ')})[]`,
-				admitsNodes: true
+				strictType: elementsTypeOf(nonEmpty, nonEmpty ? admitNodes(elementType) : elementType),
+				looseType: elementsTypeOf(nonEmpty, looseValueOf(elementType)),
+				rowLooseType: `(${rowLooseElement})[]`,
+				...(nonEmpty ? {} : { admitsNodes: true as const })
 			};
 			return {
 				spreadFacts,
@@ -1350,7 +1352,7 @@ function emitFieldCarryingFactory(
 		const elementType = surface.elementType!;
 		const setter = spreadFacts.slot.propertyName;
 		valueSourceFor = (f) => (f === spreadFacts.slot ? admittedSlotInput(f, 'children', nodeMap, kindEntries, node.typeName) : '');
-		setters = [{ name: setter, params: `...vs: ${elementType}[]`, body: `${fn}(...restItems(${JSON.stringify(setter)}, vs))` }];
+		setters = [{ name: setter, params: `...vs: ${elementsTypeOf(spreadFacts.nonEmpty, elementType)}`, body: `${fn}(...restItems(${JSON.stringify(setter)}, vs))` }];
 	} else if (singleField) {
 		const elemType = surface.directParamType!;
 		valueSourceFor = (f) =>

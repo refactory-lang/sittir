@@ -11375,7 +11375,7 @@ A slot that can default to its empty form stores `orDefault(<config value>, () =
 
 ### `packages/codegen/src/emitters/factories.ts::defaultedValueExpr`
 
-A slot's value expression with its omission filled: `(<value> ?? [])` for a multiple slot, `orDefault(<value>, () => <default>)` when `emptyDefaultOf` gives the slot a default, and the bare value otherwise. `slotStorageExpr` applies it to a config key; the direct-value surface applies it to `value` when that slot holds fixed text.
+A slot's value expression with its omission filled: `(<value> ?? [])` for a multiple slot (a slot the model marks non-empty is not defaulted: its type requires the value, and an omitted one fails where it is used instead of building an empty required list), `orDefault(<value>, () => <default>)` when `emptyDefaultOf` gives the slot a default, and the bare value otherwise. `slotStorageExpr` applies it to a config key; the direct-value surface applies it to `value` when that slot holds fixed text.
 
 ### `packages/codegen/src/emitters/factories.ts::fieldElementType`
 
@@ -16517,6 +16517,8 @@ The call arguments for one sub-factory case, following the arm shapes `shape` em
 ### `packages/codegen/src/emitters/factories.ts::resolveConfigFactorySurface`
 
 The loose row of a kind that takes one argument is that kind's own `Loose`, by name: a config kind's, a single-slot kind's and a single-child kind's alike. `Loose` is what the coercer accepts (the config, the built or parsed node itself, and the bare value of the kind's sole slot), so the row and the coercer's parameter are one type and a wrapper's row takes its target's config with no second spelling. A child of a supertype given as a config must carry its `$type`, because nothing else says which kind it is; the row does not admit an untagged one. A kind that spreads its children takes, per element, its own `Loose`, the strict element widened through `LooseValue`, and the element the coercer resolves (`coercedChildElementType`).
+
+The rest parameter of a spreading kind is typed from the slot's own cardinality, with the function a list's elements use (`elementsTypeOf`): a slot the model marks non-empty takes `NonEmptyArray` of the admitted element (strict) and the `$with` setter takes the same, so the empty call is a compile-time refusal beside the runtime guard; the loose row stays an array, because a tuple row would make `Loose` refer to itself.
 
 #### body
 

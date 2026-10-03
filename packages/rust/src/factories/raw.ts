@@ -1747,15 +1747,15 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 }
 
 export function buildFunctionModifiers(
-	...children: AdmitBound<
-		(
+	...children: NonEmptyArray<
+		AdmitBound<
 			| TSKindId.AsyncKeyword
 			| TSKindId.DefaultKeyword
 			| TSKindId.ConstKeyword
 			| TSKindId.UnsafeKeyword
-			| T.ExternModifier
-		)[],
-		T.AdmittedNodes
+			| T.ExternModifier,
+			T.AdmittedNodes
+		>
 	>
 ): T.FunctionModifiers.Bound {
 	_assertNonEmpty(children, 'function_modifiers.children');
@@ -1768,13 +1768,13 @@ export function buildFunctionModifiers(
 		_modifier,
 		$with: {
 			modifiers: (
-				...vs: (
+				...vs: NonEmptyArray<
 					| TSKindId.AsyncKeyword
 					| TSKindId.DefaultKeyword
 					| TSKindId.ConstKeyword
 					| TSKindId.UnsafeKeyword
 					| T.ExternModifier
-				)[]
+				>
 			) => rebuilt(node, handle, () => buildFunctionModifiers(...restItems('modifiers', vs)))
 		},
 		modifiers: () => _modifier,
@@ -2030,9 +2030,8 @@ export function buildAssociatedType(config: T.AssociatedType.Config): T.Associat
 }
 
 export function buildTraitBounds(
-	...children: AdmitBound<
-		((T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types)[],
-		T.AdmittedNodes
+	...children: NonEmptyArray<
+		AdmitBound<(T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types, T.AdmittedNodes>
 	>
 ): T.TraitBounds.Bound {
 	_assertNonEmpty(children, 'trait_bounds.children');
@@ -2047,7 +2046,7 @@ export function buildTraitBounds(
 		$named: true as const,
 		_bounds,
 		$with: {
-			bounds: (...vs: ((T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types)[]) =>
+			bounds: (...vs: NonEmptyArray<(T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildTraitBounds(...restItems('bounds', vs)))
 		},
 		bounds: () => _bounds,
@@ -9589,15 +9588,15 @@ export function buildFunctionTypeFnForm(
 	value?: AdmitBound<T.FunctionModifiers, T.AdmittedNodes>
 ): ReturnType<typeof _buildFunctionTypeFnForm>;
 export function buildFunctionTypeFnForm(
-	...children: AdmitBound<
-		(
+	...children: NonEmptyArray<
+		AdmitBound<
 			| TSKindId.AsyncKeyword
 			| TSKindId.DefaultKeyword
 			| TSKindId.ConstKeyword
 			| TSKindId.UnsafeKeyword
-			| T.ExternModifier
-		)[],
-		T.AdmittedNodes
+			| T.ExternModifier,
+			T.AdmittedNodes
+		>
 	>
 ): ReturnType<typeof _buildFunctionTypeFnForm>;
 export function buildFunctionTypeFnForm(...args: unknown[]) {

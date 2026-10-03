@@ -2370,7 +2370,7 @@ export interface AssertStatement {
 		>;
 	};
 	readonly __slotHints__?: {
-		readonly expressions: SlotHint<T.Expression[], false, true>;
+		readonly expressions: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 	};
 	expressions(): NonEmptyArray<Expression>;
 }
@@ -2822,7 +2822,7 @@ export interface GlobalStatement {
 	readonly $type: TSKindId.GlobalStatement;
 	readonly _names: NonEmptyArray<Identifier>;
 	readonly __slotHints__?: {
-		readonly names: SlotHint<T.Identifier[], false, true>;
+		readonly names: SlotHint<NonEmptyArray<T.Identifier>, false, true>;
 	};
 	names(): NonEmptyArray<Identifier>;
 }
@@ -2831,7 +2831,7 @@ export interface NonlocalStatement {
 	readonly $type: TSKindId.NonlocalStatement;
 	readonly _names: NonEmptyArray<Identifier>;
 	readonly __slotHints__?: {
-		readonly names: SlotHint<T.Identifier[], false, true>;
+		readonly names: SlotHint<NonEmptyArray<T.Identifier>, false, true>;
 	};
 	names(): NonEmptyArray<Identifier>;
 }
@@ -3008,7 +3008,7 @@ export interface DottedName {
 	readonly $type: TSKindId.DottedName;
 	readonly _names: NonEmptyArray<Identifier>;
 	readonly __slotHints__?: {
-		readonly names: SlotHint<T.Identifier[], false, true>;
+		readonly names: SlotHint<NonEmptyArray<T.Identifier>, false, true>;
 	};
 	names(): NonEmptyArray<Identifier>;
 }
@@ -3152,7 +3152,7 @@ export interface UnionPattern {
 	};
 	readonly __slotHints__?: {
 		readonly patterns: SlotHint<
-			(
+			NonEmptyArray<
 				| T.ClassPattern
 				| T.SplatPattern
 				| T.UnionPattern
@@ -3168,7 +3168,7 @@ export interface UnionPattern {
 				| T.ComplexPattern
 				| T.DottedName
 				| TSKindId.WildcardPattern
-			)[],
+			>,
 			false,
 			true,
 			T.SimplePatternNegative.Config
@@ -4379,7 +4379,7 @@ export interface ConcatenatedString {
 	readonly $type: TSKindId.ConcatenatedString;
 	readonly _string: NonEmptyArray<String>;
 	readonly __slotHints__?: {
-		readonly strings: SlotHint<T.String[], false, true>;
+		readonly strings: SlotHint<NonEmptyArray<T.String>, false, true>;
 	};
 	strings(): NonEmptyArray<String>;
 }
@@ -4974,7 +4974,7 @@ export interface ExceptClauseExceptionList {
 		>;
 	};
 	readonly __slotHints__?: {
-		readonly values: SlotHint<T.Expression[], false, true>;
+		readonly values: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 	};
 	values(): NonEmptyArray<Expression>;
 }
@@ -10842,7 +10842,7 @@ export namespace AssertStatement {
 	}
 	export type Loose = LooseFor<TSKindId.AssertStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AssertStatement>;
-	export type BuildArgs = [...children: AdmitBound<T.Expression[], T.AdmittedNodes>];
+	export type BuildArgs = [...children: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>];
 	export type LooseArgs = [
 		...children: (
 			| T.AssertStatement.Loose
@@ -11256,7 +11256,7 @@ export namespace GlobalStatement {
 	}
 	export type Loose = LooseFor<TSKindId.GlobalStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.GlobalStatement>;
-	export type BuildArgs = [...children: AdmitBound<T.Identifier[], T.AdmittedNodes>];
+	export type BuildArgs = [...children: NonEmptyArray<AdmitBound<T.Identifier, T.AdmittedNodes>>];
 	export type LooseArgs = [
 		...children: (
 			| T.GlobalStatement.Loose
@@ -11278,7 +11278,7 @@ export namespace NonlocalStatement {
 	}
 	export type Loose = LooseFor<TSKindId.NonlocalStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NonlocalStatement>;
-	export type BuildArgs = [...children: AdmitBound<T.Identifier[], T.AdmittedNodes>];
+	export type BuildArgs = [...children: NonEmptyArray<AdmitBound<T.Identifier, T.AdmittedNodes>>];
 	export type LooseArgs = [
 		...children: (
 			| T.NonlocalStatement.Loose
@@ -11487,7 +11487,7 @@ export namespace DottedName {
 	}
 	export type Loose = LooseFor<TSKindId.DottedName>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DottedName>;
-	export type BuildArgs = [...children: AdmitBound<T.Identifier[], T.AdmittedNodes>];
+	export type BuildArgs = [...children: NonEmptyArray<AdmitBound<T.Identifier, T.AdmittedNodes>>];
 	export type LooseArgs = [
 		...children: (
 			| T.DottedName.Loose
@@ -11577,8 +11577,8 @@ export namespace UnionPattern {
 	export type Loose = LooseFor<TSKindId.UnionPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnionPattern>;
 	export type BuildArgs = [
-		...children: AdmitBound<
-			(
+		...children: NonEmptyArray<
+			AdmitBound<
 				| T.ClassPattern
 				| T.SplatPattern
 				| T.UnionPattern
@@ -11593,9 +11593,9 @@ export namespace UnionPattern {
 				| T.SimplePatternNegative
 				| T.ComplexPattern
 				| T.DottedName
-				| TSKindId.WildcardPattern
-			)[],
-			T.AdmittedNodes
+				| TSKindId.WildcardPattern,
+				T.AdmittedNodes
+			>
 		>
 	];
 	export type LooseArgs = [
@@ -12682,7 +12682,7 @@ export namespace ConcatenatedString {
 	}
 	export type Loose = LooseFor<TSKindId.ConcatenatedString>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConcatenatedString>;
-	export type BuildArgs = [...children: AdmitBound<T.String[], T.AdmittedNodes>];
+	export type BuildArgs = [...children: NonEmptyArray<AdmitBound<T.String, T.AdmittedNodes>>];
 	export type LooseArgs = [
 		...children: (T.ConcatenatedString.Loose | LooseValue<T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 	];
@@ -13882,7 +13882,7 @@ export namespace ExceptClauseExceptionList {
 	}
 	export type Loose = LooseFor<TSKindId.ExceptClauseExceptionList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExceptClauseExceptionList>;
-	export type BuildArgs = [...children: AdmitBound<T.Expression[], T.AdmittedNodes>];
+	export type BuildArgs = [...children: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>];
 	export type LooseArgs = [
 		...children: (
 			| T.ExceptClauseExceptionList.Loose

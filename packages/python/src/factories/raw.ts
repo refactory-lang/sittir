@@ -526,7 +526,7 @@ export function buildChevron(value: AdmitBound<T.Expression, T.AdmittedNodes>): 
 }
 
 export function buildAssertStatement(
-	...children: AdmitBound<T.Expression[], T.AdmittedNodes>
+	...children: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>
 ): T.AssertStatement.Bound {
 	_assertNonEmpty(children, 'assert_statement.children');
 	const _expression = rejectBareText(children, 'AssertStatement.expression', 'a built Expression');
@@ -537,7 +537,7 @@ export function buildAssertStatement(
 		$named: true as const,
 		_expression,
 		$with: {
-			expressions: (...vs: T.Expression[]) =>
+			expressions: (...vs: NonEmptyArray<T.Expression>) =>
 				rebuilt(node, handle, () => buildAssertStatement(...restItems('expressions', vs)))
 		},
 		expressions: () => _expression,
@@ -1410,7 +1410,7 @@ export function buildDictionarySplat(value: AdmitBound<T.Expression, T.AdmittedN
 }
 
 export function buildGlobalStatement(
-	...children: AdmitBound<T.Identifier[], T.AdmittedNodes>
+	...children: NonEmptyArray<AdmitBound<T.Identifier, T.AdmittedNodes>>
 ): T.GlobalStatement.Bound {
 	_assertNonEmpty(children, 'global_statement.children');
 	const _names = rejectBareText(children, 'GlobalStatement.names', 'buildIdentifier(…)');
@@ -1421,7 +1421,8 @@ export function buildGlobalStatement(
 		$named: true as const,
 		_names,
 		$with: {
-			names: (...vs: T.Identifier[]) => rebuilt(node, handle, () => buildGlobalStatement(...restItems('names', vs)))
+			names: (...vs: NonEmptyArray<T.Identifier>) =>
+				rebuilt(node, handle, () => buildGlobalStatement(...restItems('names', vs)))
 		},
 		names: () => _names,
 		$render: () => renderText(handle, node),
@@ -1435,7 +1436,7 @@ export function buildGlobalStatement(
 }
 
 export function buildNonlocalStatement(
-	...children: AdmitBound<T.Identifier[], T.AdmittedNodes>
+	...children: NonEmptyArray<AdmitBound<T.Identifier, T.AdmittedNodes>>
 ): T.NonlocalStatement.Bound {
 	_assertNonEmpty(children, 'nonlocal_statement.children');
 	const _names = rejectBareText(children, 'NonlocalStatement.names', 'buildIdentifier(…)');
@@ -1446,7 +1447,8 @@ export function buildNonlocalStatement(
 		$named: true as const,
 		_names,
 		$with: {
-			names: (...vs: T.Identifier[]) => rebuilt(node, handle, () => buildNonlocalStatement(...restItems('names', vs)))
+			names: (...vs: NonEmptyArray<T.Identifier>) =>
+				rebuilt(node, handle, () => buildNonlocalStatement(...restItems('names', vs)))
 		},
 		names: () => _names,
 		$render: () => renderText(handle, node),
@@ -1743,7 +1745,7 @@ function _buildArgumentList(value?: AdmitBound<T.ArgumentListElements, T.Admitte
 }
 
 export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): T.DecoratedDefinition.Bound {
-	const _decorator = rejectBareText(config.decorator ?? [], 'DecoratedDefinition.decorator', 'a built Decorator');
+	const _decorator = rejectBareText(config.decorator, 'DecoratedDefinition.decorator', 'a built Decorator');
 	const _definition = rejectBareText(
 		config.definition,
 		'DecoratedDefinition.definition',
@@ -1887,7 +1889,9 @@ function _buildExpressionList(
 	return node as unknown as T.ExpressionList.Bound;
 }
 
-export function buildDottedName(...children: AdmitBound<T.Identifier[], T.AdmittedNodes>): T.DottedName.Bound {
+export function buildDottedName(
+	...children: NonEmptyArray<AdmitBound<T.Identifier, T.AdmittedNodes>>
+): T.DottedName.Bound {
 	_assertNonEmpty(children, 'dotted_name.children');
 	const _names = rejectBareText(children, 'DottedName.names', 'buildIdentifier(…)');
 	const handle = currentHandle();
@@ -1897,7 +1901,8 @@ export function buildDottedName(...children: AdmitBound<T.Identifier[], T.Admitt
 		$named: true as const,
 		_names,
 		$with: {
-			names: (...vs: T.Identifier[]) => rebuilt(node, handle, () => buildDottedName(...restItems('names', vs)))
+			names: (...vs: NonEmptyArray<T.Identifier>) =>
+				rebuilt(node, handle, () => buildDottedName(...restItems('names', vs)))
 		},
 		names: () => _names,
 		$render: () => renderText(handle, node),
@@ -2031,8 +2036,8 @@ export function buildCaseAsPattern(config: T.CaseAsPattern.Config): T.CaseAsPatt
 }
 
 export function buildUnionPattern(
-	...children: AdmitBound<
-		(
+	...children: NonEmptyArray<
+		AdmitBound<
 			| T.ClassPattern
 			| T.SplatPattern
 			| T.UnionPattern
@@ -2047,9 +2052,9 @@ export function buildUnionPattern(
 			| T.SimplePatternNegative
 			| T.ComplexPattern
 			| T.DottedName
-			| TSKindId.WildcardPattern
-		)[],
-		T.AdmittedNodes
+			| TSKindId.WildcardPattern,
+			T.AdmittedNodes
+		>
 	>
 ): T.UnionPattern.Bound {
 	_assertNonEmpty(children, 'union_pattern.children');
@@ -2071,7 +2076,7 @@ export function buildUnionPattern(
 						args,
 						{ slot: 'patterns', keys: ['sign', 'value'], make: buildSimplePatternNegative },
 						(
-							...vs: (
+							...vs: NonEmptyArray<
 								| T.ClassPattern
 								| T.SplatPattern
 								| T.UnionPattern
@@ -2087,7 +2092,7 @@ export function buildUnionPattern(
 								| T.ComplexPattern
 								| T.DottedName
 								| TSKindId.WildcardPattern
-							)[]
+							>
 						) => buildUnionPattern(...restItems('patterns', vs))
 					)
 				)
@@ -2994,7 +2999,7 @@ export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.
 		'a built PrimaryExpression'
 	);
 	const _comparators = rejectBareText(
-		config.comparators ?? [],
+		config.comparators,
 		'ComparisonOperator.comparators',
 		'a built ComparisonOperatorComparator'
 	);
@@ -4219,7 +4224,7 @@ export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Bo
 	const _async = coerceBooleanKeywordStorage(rejectBareText(config.async, 'ForInClause.async', 'a boolean'));
 	const _left = rejectBareText(config.left, 'ForInClause.left', 'a built Pattern / PatternList');
 	const _right = rejectBareText(
-		kindIdStorage<NonNullable<T.ForInClause['_right']>>(config.right ?? []),
+		kindIdStorage<NonNullable<T.ForInClause['_right']>>(config.right),
 		'ForInClause.right',
 		'a built Expression / LambdaWithinForInClause'
 	);
@@ -4329,7 +4334,7 @@ export function buildConditionalExpression(config: T.ConditionalExpression.Confi
 }
 
 export function buildConcatenatedString(
-	...children: AdmitBound<T.String[], T.AdmittedNodes>
+	...children: NonEmptyArray<AdmitBound<T.String, T.AdmittedNodes>>
 ): T.ConcatenatedString.Bound {
 	_assertNonEmpty(children, 'concatenated_string.children');
 	const _string = rejectBareText(children, 'ConcatenatedString.string', 'a built String');
@@ -4340,7 +4345,8 @@ export function buildConcatenatedString(
 		$named: true as const,
 		_string,
 		$with: {
-			strings: (...vs: T.String[]) => rebuilt(node, handle, () => buildConcatenatedString(...restItems('strings', vs)))
+			strings: (...vs: NonEmptyArray<T.String>) =>
+				rebuilt(node, handle, () => buildConcatenatedString(...restItems('strings', vs)))
 		},
 		strings: () => _string,
 		$render: () => renderText(handle, node),
@@ -6537,7 +6543,7 @@ export function buildSimplePatternNegative(config: T.SimplePatternNegative.Confi
 }
 
 export function buildExceptClauseExceptionList(
-	...children: AdmitBound<T.Expression[], T.AdmittedNodes>
+	...children: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>
 ): T.ExceptClauseExceptionList.Bound {
 	_assertNonEmpty(children, 'except_clause_exception_list.children');
 	const _value = rejectBareText(children, 'ExceptClauseExceptionList.value', 'a built Expression');
@@ -6548,7 +6554,7 @@ export function buildExceptClauseExceptionList(
 		$named: true as const,
 		_value,
 		$with: {
-			values: (...vs: T.Expression[]) =>
+			values: (...vs: NonEmptyArray<T.Expression>) =>
 				rebuilt(node, handle, () => buildExceptClauseExceptionList(...restItems('values', vs)))
 		},
 		values: () => _value,

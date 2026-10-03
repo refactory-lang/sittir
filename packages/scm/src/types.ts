@@ -578,7 +578,7 @@ export interface Parameters {
 	readonly $type: TSKindId.Parameters;
 	readonly _elements: NonEmptyArray<Capture | String | Identifier>;
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<(T.Capture | T.String | T.Identifier)[], false, true>;
+		readonly elements: SlotHint<NonEmptyArray<T.Capture | T.String | T.Identifier>, false, true>;
 	};
 	elements(): NonEmptyArray<Capture | String | Identifier>;
 }
@@ -1808,7 +1808,9 @@ export namespace Parameters {
 	}
 	export type Loose = LooseFor<TSKindId.Parameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Parameters>;
-	export type BuildArgs = [...children: AdmitBound<(T.Capture | T.String | T.Identifier)[], T.AdmittedNodes>];
+	export type BuildArgs = [
+		...children: NonEmptyArray<AdmitBound<T.Capture | T.String | T.Identifier, T.AdmittedNodes>>
+	];
 	export type LooseArgs = [
 		...children: (
 			| T.Parameters.Loose
