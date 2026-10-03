@@ -1,4 +1,4 @@
-import type { AnyUntypedNode } from './core-types.ts';
+import type { AnyUntypedNode, TriviaSetter } from './core-types.ts';
 
 export interface SlotHint<Input, Optional extends boolean = false, Rest extends boolean = false, Config = never> {
 	readonly input: Input;
@@ -140,9 +140,12 @@ type ResolveInput<V, ByBound> =
 				? Readonly<R>
 				: R
 		: never;
-export type WithSlot<Self, K extends PropertyKey, V, ByBound, Lookup> = Remap<Self, K | '$with'> & {
+type BoundFormOf<Self, ByBound> = Self extends { readonly $type: infer T } ? (T extends keyof ByBound ? ByBound[T] : Self) : Self;
+type DraftTrivia<Self, ByBound> = Self extends { readonly $trivia: TriviaSetter<any, infer Trivia> } ? TriviaSetter<BoundFormOf<Self, ByBound>, Trivia> : never;
+export type WithSlot<Self, K extends PropertyKey, V, ByBound, Lookup> = Remap<Self, K | '$with' | '$trivia'> & {
 	[P in K]: () => ResolveInput<V, ByBound>;
 } & {
+	readonly $trivia: DraftTrivia<Self, ByBound>;
 	readonly $with: WithOf<WithSlot<Self, K, V, ByBound, Lookup>, ByBound, Lookup>;
 };
 

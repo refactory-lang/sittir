@@ -22,6 +22,7 @@ export function parsedSurface(): string {
 	expectTrue<Equals<typeof item, T.FunctionItem.Parsed>>();
 	expectTrue<Equals<ReturnType<typeof item.parameters>, T.Parameters.Parsed>>();
 	const edited = item.$with.parameters(rs.build.parameters());
+	expectTrue<Equals<ReturnType<typeof edited.$trivia.trailing>, T.FunctionItem.Bound>>();
 	expectTrue<Equals<ReturnType<typeof edited.parameters>, T.Parameters.Bound>>();
 	expectTrue<Equals<ReturnType<typeof edited.body>, T.Block.Parsed>>();
 	return edited.$render();
