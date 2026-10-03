@@ -1,8 +1,5 @@
-/** A byte range into a source string, as the reader stamps it. */
-export interface ByteSpan {
-	readonly start: number;
-	readonly end: number;
-}
+export type { ByteSpan } from '@sittir/types';
+import type { ByteSpan } from '@sittir/types';
 
 /** A range of string indices (UTF-16 code units), as `String.prototype.slice` and a tree-sitter node's `startIndex` / `endIndex` count them. */
 export interface IndexRange {

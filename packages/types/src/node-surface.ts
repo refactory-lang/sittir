@@ -1,4 +1,4 @@
-import type { AnyUntypedNode } from './core-types.ts';
+import type { AnyUntypedNode, ByteSpan } from './core-types.ts';
 
 export interface SlotHint<Input, Optional extends boolean = false, Rest extends boolean = false, Config = never> {
 	readonly input: Input;
@@ -258,6 +258,7 @@ type SurfaceOf<N, ByChild> = Storage<N> &
 		readonly __slotHints__?: HintsOf<N>;
 	};
 export type BoundOf<N, ByBound> = SurfaceOf<N, ByBound>;
-export type ParsedOf<N, ByParsed> = SurfaceOf<N, ByParsed>;
+/** A node a parse returns: the bound surface plus the `$span` every read node carries, the byte range of its source text. */
+export type ParsedOf<N, ByParsed> = SurfaceOf<N, ByParsed> & { readonly $span: ByteSpan };
 export type WithNode<Self, ByBound, ByParsed, Of = Self> = WithOf<Self, ByBound, AdmitLookup<ByBound, ByParsed>, Of>;
 export type BoundWithNode<Self, ByBound, ByParsed, Of = Self> = Setters<Self, ByBound, AdmitLookup<ByBound, ByParsed>, true, Of>;
