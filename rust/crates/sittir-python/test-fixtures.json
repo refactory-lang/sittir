@@ -3467,7 +3467,16 @@
                   ]
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "async def region_exists(region: str)",
+                "$span": {
+                  "start": 24,
+                  "end": 35
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -5136,7 +5145,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "async def region_exists(region: str)",
+            "$span": {
+              "start": 24,
+              "end": 35
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -5418,7 +5436,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "async def region_exists(region: str)",
+          "$span": {
+            "start": 24,
+            "end": 35
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -5509,7 +5536,16 @@
           ]
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "async def region_exists(region: str)",
+        "$span": {
+          "start": 24,
+          "end": 35
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "region: str"
   },
@@ -7489,7 +7525,16 @@
                   }
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "def a(print)",
+                "$span": {
+                  "start": 6,
+                  "end": 11
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -7660,7 +7705,16 @@
                   ]
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "def a(printer=print)",
+                "$span": {
+                  "start": 6,
+                  "end": 19
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -7813,7 +7867,16 @@
                   ]
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "def a(*print)",
+                "$span": {
+                  "start": 6,
+                  "end": 12
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -7966,7 +8029,16 @@
                   ]
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "def a(**print)",
+                "$span": {
+                  "start": 6,
+                  "end": 13
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -8247,7 +8319,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "def a(print)",
+            "$span": {
+              "start": 6,
+              "end": 11
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -8435,7 +8516,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "def a(printer=print)",
+            "$span": {
+              "start": 6,
+              "end": 19
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -8600,7 +8690,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "def a(*print)",
+            "$span": {
+              "start": 6,
+              "end": 12
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -8765,7 +8864,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "def a(**print)",
+            "$span": {
+              "start": 6,
+              "end": 13
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -9034,7 +9142,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "def a(print)",
+          "$span": {
+            "start": 6,
+            "end": 11
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -9124,7 +9241,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "def a(printer=print)",
+          "$span": {
+            "start": 6,
+            "end": 19
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -9191,7 +9317,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "def a(*print)",
+          "$span": {
+            "start": 6,
+            "end": 12
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -9258,7 +9393,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "def a(**print)",
+          "$span": {
+            "start": 6,
+            "end": 13
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -9341,7 +9485,16 @@
           }
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "def a(print)",
+        "$span": {
+          "start": 6,
+          "end": 11
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "print"
   },
@@ -9406,7 +9559,16 @@
           ]
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "def a(printer=print)",
+        "$span": {
+          "start": 6,
+          "end": 19
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "printer=print"
   },
@@ -9448,7 +9610,16 @@
           ]
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "def a(*print)",
+        "$span": {
+          "start": 6,
+          "end": 12
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "*print"
   },
@@ -9490,7 +9661,16 @@
           ]
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "def a(**print)",
+        "$span": {
+          "start": 6,
+          "end": 13
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "**print"
   },
@@ -12099,7 +12279,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "print async, await\n",
+                      "$span": {
+                        "start": 6,
+                        "end": 18
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -22793,7 +22982,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "a = 1\na, b =",
+                      "$span": {
+                        "start": 6,
+                        "end": 10
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "_right": {
                     "$type": 180,
@@ -22835,7 +23033,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "a, b = 1, 2\na",
+                      "$span": {
+                        "start": 7,
+                        "end": 11
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -22949,7 +23156,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "a, b = 1, 2\na, *c =",
+                      "$span": {
+                        "start": 12,
+                        "end": 17
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "_right": {
                     "$type": 180,
@@ -23013,7 +23229,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "a, *c = 1, 2, 3\na",
+                      "$span": {
+                        "start": 8,
+                        "end": 15
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -23098,7 +23323,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 2
+                    "_delimiter": 2,
+                    "$_flank": {
+                      "$text": "a, *c = 1, 2, 3\na, =",
+                      "$span": {
+                        "start": 16,
+                        "end": 18
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "_right": {
                     "$type": 180,
@@ -23140,7 +23374,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "a, = 1, 2\na",
+                      "$span": {
+                        "start": 5,
+                        "end": 9
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -23446,7 +23689,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "a[b] = c = d\na, *b.c =",
+                      "$span": {
+                        "start": 13,
+                        "end": 20
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "_right": {
                     "$type": 1,
@@ -23629,7 +23881,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "a = 1\na, b =",
+            "$span": {
+              "start": 6,
+              "end": 10
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "_right": {
           "$type": 180,
@@ -23671,7 +23932,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "a, b = 1, 2\na",
+            "$span": {
+              "start": 7,
+              "end": 11
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -23771,7 +24041,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "a, b = 1, 2\na, *c =",
+            "$span": {
+              "start": 12,
+              "end": 17
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "_right": {
           "$type": 180,
@@ -23835,7 +24114,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "a, *c = 1, 2, 3\na",
+            "$span": {
+              "start": 8,
+              "end": 15
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -23906,7 +24194,16 @@
               }
             }
           ],
-          "_delimiter": 2
+          "_delimiter": 2,
+          "$_flank": {
+            "$text": "a, *c = 1, 2, 3\na, =",
+            "$span": {
+              "start": 16,
+              "end": 18
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "_right": {
           "$type": 180,
@@ -23948,7 +24245,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "a, = 1, 2\na",
+            "$span": {
+              "start": 5,
+              "end": 9
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -24226,7 +24532,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "a[b] = c = d\na, *b.c =",
+            "$span": {
+              "start": 13,
+              "end": 20
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "_right": {
           "$type": 1,
@@ -24373,7 +24688,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "a = 1\na, b =",
+          "$span": {
+            "start": 6,
+            "end": 10
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "_right": {
         "$type": 180,
@@ -24415,7 +24739,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "a, b = 1, 2\na",
+          "$span": {
+            "start": 7,
+            "end": 11
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -24510,7 +24843,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "a, b = 1, 2\na, *c =",
+          "$span": {
+            "start": 12,
+            "end": 17
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "_right": {
         "$type": 180,
@@ -24574,7 +24916,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "a, *c = 1, 2, 3\na",
+          "$span": {
+            "start": 8,
+            "end": 15
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -24640,7 +24991,16 @@
             }
           }
         ],
-        "_delimiter": 2
+        "_delimiter": 2,
+        "$_flank": {
+          "$text": "a, *c = 1, 2, 3\na, =",
+          "$span": {
+            "start": 16,
+            "end": 18
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "_right": {
         "$type": 180,
@@ -24682,7 +25042,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "a, = 1, 2\na",
+          "$span": {
+            "start": 5,
+            "end": 9
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -25007,7 +25376,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "a[b] = c = d\na, *b.c =",
+          "$span": {
+            "start": 13,
+            "end": 20
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "_right": {
         "$type": 1,
@@ -28359,7 +28737,16 @@
                   ]
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "def foo(answer=(p := 42))",
+                "$span": {
+                  "start": 8,
+                  "end": 24
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -28637,7 +29024,16 @@
                   ]
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "def foo(answer: (p := 42) = 5)",
+                "$span": {
+                  "start": 8,
+                  "end": 29
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -33811,7 +34207,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "def foo(answer=(p := 42))",
+            "$span": {
+              "start": 8,
+              "end": 24
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -34101,7 +34506,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "def foo(answer: (p := 42) = 5)",
+            "$span": {
+              "start": 8,
+              "end": 29
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -34352,7 +34766,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "def foo(answer=(p := 42))",
+          "$span": {
+            "start": 8,
+            "end": 24
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -34522,7 +34945,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "def foo(answer: (p := 42) = 5)",
+          "$span": {
+            "start": 8,
+            "end": 29
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -34663,7 +35095,16 @@
           ]
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "def foo(answer=(p := 42))",
+        "$span": {
+          "start": 8,
+          "end": 24
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "answer=(p := 42)"
   },
@@ -34808,7 +35249,16 @@
           ]
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "def foo(answer: (p := 42) = 5)",
+        "$span": {
+          "start": 8,
+          "end": 29
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "answer: (p := 42) = 5"
   },
@@ -37679,7 +38129,16 @@
                           }
                         }
                       ],
-                      "_delimiter": 0
+                      "_delimiter": 0,
+                      "$_flank": {
+                        "$text": "lambda b, c:",
+                        "$span": {
+                          "start": 7,
+                          "end": 11
+                        },
+                        "$before": true,
+                        "$after": true
+                      }
                     }
                   },
                   "_body": {
@@ -38085,7 +38544,16 @@
                           }
                         }
                       ],
-                      "_delimiter": 0
+                      "_delimiter": 0,
+                      "$_flank": {
+                        "$text": "lambda a, b = c, *d, **e:",
+                        "$span": {
+                          "start": 7,
+                          "end": 24
+                        },
+                        "$before": true,
+                        "$after": true
+                      }
                     }
                   },
                   "_body": {
@@ -38216,7 +38684,16 @@
                                 }
                               }
                             ],
-                            "_delimiter": 0
+                            "_delimiter": 0,
+                            "$_flank": {
+                              "$text": "lambda (a, b)",
+                              "$span": {
+                                "start": 8,
+                                "end": 12
+                              },
+                              "$before": true,
+                              "$after": true
+                            }
                           },
                           "$other": [
                             {
@@ -38240,7 +38717,16 @@
                           ]
                         }
                       ],
-                      "_delimiter": 0
+                      "_delimiter": 0,
+                      "$_flank": {
+                        "$text": "lambda (a, b):",
+                        "$span": {
+                          "start": 7,
+                          "end": 13
+                        },
+                        "$before": true,
+                        "$after": false
+                      }
                     }
                   },
                   "_body": {
@@ -38287,7 +38773,16 @@
                           }
                         }
                       ],
-                      "_delimiter": 0
+                      "_delimiter": 0,
+                      "$_flank": {
+                        "$text": "lambda (a, b): (a, b)",
+                        "$span": {
+                          "start": 16,
+                          "end": 20
+                        },
+                        "$before": true,
+                        "$after": true
+                      }
                     },
                     "$other": [
                       {
@@ -38432,7 +38927,16 @@
                 }
               }
             ],
-            "_delimiter": 0
+            "_delimiter": 0,
+            "$_flank": {
+              "$text": "lambda b, c:",
+              "$span": {
+                "start": 7,
+                "end": 11
+              },
+              "$before": true,
+              "$after": true
+            }
           }
         },
         "_body": {
@@ -38815,7 +39319,16 @@
                 }
               }
             ],
-            "_delimiter": 0
+            "_delimiter": 0,
+            "$_flank": {
+              "$text": "lambda a, b = c, *d, **e:",
+              "$span": {
+                "start": 7,
+                "end": 24
+              },
+              "$before": true,
+              "$after": true
+            }
           }
         },
         "_body": {
@@ -38932,7 +39445,16 @@
                       }
                     }
                   ],
-                  "_delimiter": 0
+                  "_delimiter": 0,
+                  "$_flank": {
+                    "$text": "lambda (a, b)",
+                    "$span": {
+                      "start": 8,
+                      "end": 12
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
                 },
                 "$other": [
                   {
@@ -38956,7 +39478,16 @@
                 ]
               }
             ],
-            "_delimiter": 0
+            "_delimiter": 0,
+            "$_flank": {
+              "$text": "lambda (a, b):",
+              "$span": {
+                "start": 7,
+                "end": 13
+              },
+              "$before": true,
+              "$after": false
+            }
           }
         },
         "_body": {
@@ -39003,7 +39534,16 @@
                 }
               }
             ],
-            "_delimiter": 0
+            "_delimiter": 0,
+            "$_flank": {
+              "$text": "lambda (a, b): (a, b)",
+              "$span": {
+                "start": 16,
+                "end": 20
+              },
+              "$before": true,
+              "$after": true
+            }
           },
           "$other": [
             {
@@ -39117,7 +39657,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "lambda b, c:",
+            "$span": {
+              "start": 7,
+              "end": 11
+            },
+            "$before": true,
+            "$after": true
+          }
         }
       },
       "_body": {
@@ -39490,7 +40039,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "lambda a, b = c, *d, **e:",
+            "$span": {
+              "start": 7,
+              "end": 24
+            },
+            "$before": true,
+            "$after": true
+          }
         }
       },
       "_body": {
@@ -39602,7 +40160,16 @@
                     }
                   }
                 ],
-                "_delimiter": 0
+                "_delimiter": 0,
+                "$_flank": {
+                  "$text": "lambda (a, b)",
+                  "$span": {
+                    "start": 8,
+                    "end": 12
+                  },
+                  "$before": true,
+                  "$after": true
+                }
               },
               "$other": [
                 {
@@ -39626,7 +40193,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "lambda (a, b):",
+            "$span": {
+              "start": 7,
+              "end": 13
+            },
+            "$before": true,
+            "$after": false
+          }
         }
       },
       "_body": {
@@ -39673,7 +40249,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "lambda (a, b): (a, b)",
+            "$span": {
+              "start": 16,
+              "end": 20
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -39778,7 +40363,16 @@
           }
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "lambda b, c:",
+        "$span": {
+          "start": 7,
+          "end": 11
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "b, c"
   },
@@ -39943,7 +40537,16 @@
           }
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "lambda a, b = c, *d, **e:",
+        "$span": {
+          "start": 7,
+          "end": 24
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "a, b=c, *d, **e"
   },
@@ -40011,7 +40614,16 @@
                 }
               }
             ],
-            "_delimiter": 0
+            "_delimiter": 0,
+            "$_flank": {
+              "$text": "lambda (a, b)",
+              "$span": {
+                "start": 8,
+                "end": 12
+              },
+              "$before": true,
+              "$after": true
+            }
           },
           "$other": [
             {
@@ -40035,7 +40647,16 @@
           ]
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "lambda (a, b):",
+        "$span": {
+          "start": 7,
+          "end": 13
+        },
+        "$before": true,
+        "$after": false
+      }
     },
     "expectedOutput": "(a, b)"
   },
@@ -40571,7 +41192,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "lambda (a, b)",
+          "$span": {
+            "start": 8,
+            "end": 12
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -40655,7 +41285,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "lambda (a, b): (a, b)",
+          "$span": {
+            "start": 16,
+            "end": 20
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -40811,7 +41450,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "(foo, *bar, *baz)",
+                      "$span": {
+                        "start": 1,
+                        "end": 16
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -40978,7 +41626,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "(foo, *bar, *baz)",
+            "$span": {
+              "start": 1,
+              "end": 16
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -41117,7 +41774,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "(foo, *bar, *baz)",
+          "$span": {
+            "start": 1,
+            "end": 16
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -41346,7 +42012,16 @@
                               }
                             }
                           ],
-                          "_delimiter": 0
+                          "_delimiter": 0,
+                          "$_flank": {
+                            "$text": "(a, yield a, b, c)",
+                            "$span": {
+                              "start": 10,
+                              "end": 17
+                            },
+                            "$before": true,
+                            "$after": true
+                          }
                         },
                         "$other": [
                           {
@@ -41375,7 +42050,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "(a, yield a, b, c)",
+                      "$span": {
+                        "start": 1,
+                        "end": 17
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -41529,7 +42213,16 @@
                     }
                   }
                 ],
-                "_delimiter": 0
+                "_delimiter": 0,
+                "$_flank": {
+                  "$text": "(a, yield a, b, c)",
+                  "$span": {
+                    "start": 10,
+                    "end": 17
+                  },
+                  "$before": true,
+                  "$after": true
+                }
               },
               "$other": [
                 {
@@ -41558,7 +42251,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "(a, yield a, b, c)",
+            "$span": {
+              "start": 1,
+              "end": 17
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -41684,7 +42386,16 @@
                   }
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "(a, yield a, b, c)",
+                "$span": {
+                  "start": 10,
+                  "end": 17
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -41713,7 +42424,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "(a, yield a, b, c)",
+          "$span": {
+            "start": 1,
+            "end": 17
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -41829,7 +42549,16 @@
                           }
                         }
                       ],
-                      "_delimiter": 0
+                      "_delimiter": 0,
+                      "$_flank": {
+                        "$text": "def comp_args((a, b)",
+                        "$span": {
+                          "start": 15,
+                          "end": 19
+                        },
+                        "$before": true,
+                        "$after": true
+                      }
                     },
                     "$other": [
                       {
@@ -41896,7 +42625,16 @@
                           }
                         }
                       ],
-                      "_delimiter": 0
+                      "_delimiter": 0,
+                      "$_flank": {
+                        "$text": "def comp_args((a, b)=(3, 4)",
+                        "$span": {
+                          "start": 22,
+                          "end": 26
+                        },
+                        "$before": true,
+                        "$after": true
+                      }
                     },
                     "$other": [
                       {
@@ -41936,7 +42674,16 @@
                   ]
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "def comp_args((a, b)=(3, 4))",
+                "$span": {
+                  "start": 14,
+                  "end": 27
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -42021,7 +42768,16 @@
                               }
                             }
                           ],
-                          "_delimiter": 0
+                          "_delimiter": 0,
+                          "$_flank": {
+                            "$text": "    return a, b\n",
+                            "$span": {
+                              "start": 11,
+                              "end": 15
+                            },
+                            "$before": true,
+                            "$after": true
+                          }
                         },
                         "$other": [
                           {
@@ -42181,7 +42937,16 @@
                       }
                     }
                   ],
-                  "_delimiter": 0
+                  "_delimiter": 0,
+                  "$_flank": {
+                    "$text": "def comp_args((a, b)",
+                    "$span": {
+                      "start": 15,
+                      "end": 19
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
                 },
                 "$other": [
                   {
@@ -42248,7 +43013,16 @@
                       }
                     }
                   ],
-                  "_delimiter": 0
+                  "_delimiter": 0,
+                  "$_flank": {
+                    "$text": "def comp_args((a, b)=(3, 4)",
+                    "$span": {
+                      "start": 22,
+                      "end": 26
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
                 },
                 "$other": [
                   {
@@ -42288,7 +43062,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "def comp_args((a, b)=(3, 4))",
+            "$span": {
+              "start": 14,
+              "end": 27
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -42373,7 +43156,16 @@
                           }
                         }
                       ],
-                      "_delimiter": 0
+                      "_delimiter": 0,
+                      "$_flank": {
+                        "$text": "    return a, b\n",
+                        "$span": {
+                          "start": 11,
+                          "end": 15
+                        },
+                        "$before": true,
+                        "$after": true
+                      }
                     },
                     "$other": [
                       {
@@ -42512,7 +43304,16 @@
                     }
                   }
                 ],
-                "_delimiter": 0
+                "_delimiter": 0,
+                "$_flank": {
+                  "$text": "def comp_args((a, b)",
+                  "$span": {
+                    "start": 15,
+                    "end": 19
+                  },
+                  "$before": true,
+                  "$after": true
+                }
               },
               "$other": [
                 {
@@ -42579,7 +43380,16 @@
                     }
                   }
                 ],
-                "_delimiter": 0
+                "_delimiter": 0,
+                "$_flank": {
+                  "$text": "def comp_args((a, b)=(3, 4)",
+                  "$span": {
+                    "start": 22,
+                    "end": 26
+                  },
+                  "$before": true,
+                  "$after": true
+                }
               },
               "$other": [
                 {
@@ -42619,7 +43429,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "def comp_args((a, b)=(3, 4))",
+          "$span": {
+            "start": 14,
+            "end": 27
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -42712,7 +43531,16 @@
                   }
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "def comp_args((a, b)",
+                "$span": {
+                  "start": 15,
+                  "end": 19
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -42779,7 +43607,16 @@
                   }
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "def comp_args((a, b)=(3, 4)",
+                "$span": {
+                  "start": 22,
+                  "end": 26
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -42819,7 +43656,16 @@
           ]
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "def comp_args((a, b)=(3, 4))",
+        "$span": {
+          "start": 14,
+          "end": 27
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "(a, b)=(3, 4)"
   },
@@ -42882,7 +43728,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "def comp_args((a, b)",
+          "$span": {
+            "start": 15,
+            "end": 19
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -42966,7 +43821,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "def comp_args((a, b)=(3, 4)",
+          "$span": {
+            "start": 22,
+            "end": 26
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -45525,13 +46389,14 @@
                                 }
                               ],
                               "_delimiter": 0,
-                              "$_trivia": {
-                                "leading": [
-                                  115
-                                ],
-                                "trailing": [
-                                  115
-                                ]
+                              "$_flank": {
+                                "$text": "    c = [\n3\n    ]",
+                                "$span": {
+                                  "start": 10,
+                                  "end": 11
+                                },
+                                "$before": true,
+                                "$after": true
                               }
                             },
                             "$other": [
@@ -45635,7 +46500,7 @@
         }
       ]
     },
-    "expectedOutput": "def a():\n    b(1,\n    2)\n\n    c = [\n    3\n    ]\n"
+    "expectedOutput": "def a():\n    b(1,\n    2)\n\n    c = [3]\n"
   },
   {
     "kind": "roundtrip",
@@ -45643,9 +46508,9 @@
     "sourceIn": "\ndef a():\n    b(\n1,\n2\n    )\n\n    c = [\n3\n    ]\n",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "def a():\n    b(1,\n    2)\n\n    c = [\n    3\n    ]\n",
+    "expectedSourceOut": "def a():\n    b(1,\n    2)\n\n    c = [3]\n",
     "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq left: (identifier) right: (list (collection_elements item: (integer_decimal_plain)))))) (newline))))))",
-    "wrappedText": "def a():\n    b(1,\n    2)\n\n    c = [\n    3\n    ]\n",
+    "wrappedText": "def a():\n    b(1,\n    2)\n\n    c = [3]\n",
     "wrappedOffset": 0
   },
   {
@@ -45861,13 +46726,14 @@
                             }
                           ],
                           "_delimiter": 0,
-                          "$_trivia": {
-                            "leading": [
-                              115
-                            ],
-                            "trailing": [
-                              115
-                            ]
+                          "$_flank": {
+                            "$text": "    c = [\n3\n    ]",
+                            "$span": {
+                              "start": 10,
+                              "end": 11
+                            },
+                            "$before": true,
+                            "$after": true
                           }
                         },
                         "$other": [
@@ -45964,7 +46830,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def a():\n    b(1,\n    2)\n\n    c = [\n    3\n    ]\n"
+    "expectedOutput": "def a():\n    b(1,\n    2)\n\n    c = [3]\n"
   },
   {
     "kind": "roundtrip",
@@ -45972,9 +46838,9 @@
     "sourceIn": "def a():\n    b(\n1,\n2\n    )\n\n    c = [\n3\n    ]",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def a():\n    b(1,\n    2)\n\n    c = [\n    3\n    ]\n",
+    "expectedSourceOut": "def a():\n    b(1,\n    2)\n\n    c = [3]\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq left: (identifier) right: (list (collection_elements item: (integer_decimal_plain)))))) (newline)))))",
-    "wrappedText": "def a():\n    b(1,\n    2)\n\n    c = [\n    3\n    ]\n",
+    "wrappedText": "def a():\n    b(1,\n    2)\n\n    c = [3]\n",
     "wrappedOffset": 0
   },
   {
@@ -46166,13 +47032,14 @@
               }
             ],
             "_delimiter": 0,
-            "$_trivia": {
-              "leading": [
-                115
-              ],
-              "trailing": [
-                115
-              ]
+            "$_flank": {
+              "$text": "    c = [\n3\n    ]",
+              "$span": {
+                "start": 10,
+                "end": 11
+              },
+              "$before": true,
+              "$after": true
             }
           },
           "$other": [
@@ -46213,7 +47080,7 @@
         ]
       }
     },
-    "expectedOutput": "c = [\n3\n]"
+    "expectedOutput": "c = [3]"
   },
   {
     "kind": "roundtrip",
@@ -46221,9 +47088,9 @@
     "sourceIn": "c = [\n3\n    ]",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "c = [\n3\n]",
+    "expectedSourceOut": "c = [3]",
     "expectedReparseTree": "(expression_statement (assignment_eq left: (identifier) right: (list (collection_elements item: (integer_decimal_plain)))))",
-    "wrappedText": "c = [\n3\n]",
+    "wrappedText": "c = [3]",
     "wrappedOffset": 0
   },
   {
@@ -46474,13 +47341,14 @@
             }
           ],
           "_delimiter": 0,
-          "$_trivia": {
-            "leading": [
-              115
-            ],
-            "trailing": [
-              115
-            ]
+          "$_flank": {
+            "$text": "    c = [\n3\n    ]",
+            "$span": {
+              "start": 10,
+              "end": 11
+            },
+            "$before": true,
+            "$after": true
           }
         },
         "$other": [
@@ -46520,7 +47388,7 @@
         "right"
       ]
     },
-    "expectedOutput": "c = [\n3\n]"
+    "expectedOutput": "c = [3]"
   },
   {
     "kind": "roundtrip",
@@ -46528,9 +47396,9 @@
     "sourceIn": "c = [\n3\n    ]",
     "pattern": "assignment_eq",
     "edits": [],
-    "expectedSourceOut": "c = [\n3\n]",
+    "expectedSourceOut": "c = [3]",
     "expectedReparseTree": "(assignment_eq left: (identifier) right: (list (collection_elements item: (integer_decimal_plain))))",
-    "wrappedText": "c = [\n3\n]",
+    "wrappedText": "c = [3]",
     "wrappedOffset": 0
   },
   {
@@ -46558,13 +47426,14 @@
           }
         ],
         "_delimiter": 0,
-        "$_trivia": {
-          "leading": [
-            115
-          ],
-          "trailing": [
-            115
-          ]
+        "$_flank": {
+          "$text": "    c = [\n3\n    ]",
+          "$span": {
+            "start": 10,
+            "end": 11
+          },
+          "$before": true,
+          "$after": true
         }
       },
       "$other": [
@@ -46588,7 +47457,7 @@
         }
       ]
     },
-    "expectedOutput": "[\n3\n]"
+    "expectedOutput": "[3]"
   },
   {
     "kind": "roundtrip",
@@ -46596,9 +47465,9 @@
     "sourceIn": "[\n3\n    ]",
     "pattern": "list",
     "edits": [],
-    "expectedSourceOut": "[\n3\n]",
+    "expectedSourceOut": "[3]",
     "expectedReparseTree": "(list (collection_elements item: (integer_decimal_plain)))",
-    "wrappedText": "_ = ([\n3\n])",
+    "wrappedText": "_ = ([3])",
     "wrappedOffset": 5
   },
   {
@@ -46667,7 +47536,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "\na,c =",
+                      "$span": {
+                        "start": 1,
+                        "end": 4
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "_right": {
                     "$type": 180,
@@ -46718,7 +47596,16 @@
                               }
                             }
                           ],
-                          "_delimiter": 0
+                          "_delimiter": 0,
+                          "$_flank": {
+                            "$text": "a,c = [1,2]",
+                            "$span": {
+                              "start": 7,
+                              "end": 10
+                            },
+                            "$before": true,
+                            "$after": true
+                          }
                         },
                         "$other": [
                           {
@@ -46766,7 +47653,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "a,c = [1,2],3\nw",
+                      "$span": {
+                        "start": 6,
+                        "end": 13
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -46903,7 +47799,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "a,c = [1,2],3\nw, x, y, z =",
+                      "$span": {
+                        "start": 14,
+                        "end": 24
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "_right": {
                     "$type": 180,
@@ -46983,7 +47888,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "w, x, y, z = 0, *a, c\n",
+                      "$span": {
+                        "start": 13,
+                        "end": 21
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -47094,7 +48008,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "\na,c =",
+            "$span": {
+              "start": 1,
+              "end": 4
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "_right": {
           "$type": 180,
@@ -47145,7 +48068,16 @@
                     }
                   }
                 ],
-                "_delimiter": 0
+                "_delimiter": 0,
+                "$_flank": {
+                  "$text": "a,c = [1,2]",
+                  "$span": {
+                    "start": 7,
+                    "end": 10
+                  },
+                  "$before": true,
+                  "$after": true
+                }
               },
               "$other": [
                 {
@@ -47193,7 +48125,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "a,c = [1,2],3\nw",
+            "$span": {
+              "start": 6,
+              "end": 13
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -47321,7 +48262,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "a,c = [1,2],3\nw, x, y, z =",
+            "$span": {
+              "start": 14,
+              "end": 24
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "_right": {
           "$type": 180,
@@ -47401,7 +48351,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "w, x, y, z = 0, *a, c\n",
+            "$span": {
+              "start": 13,
+              "end": 21
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -47481,7 +48440,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "\na,c =",
+          "$span": {
+            "start": 1,
+            "end": 4
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "_right": {
         "$type": 180,
@@ -47532,7 +48500,16 @@
                   }
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "a,c = [1,2]",
+                "$span": {
+                  "start": 7,
+                  "end": 10
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -47580,7 +48557,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "a,c = [1,2],3\nw",
+          "$span": {
+            "start": 6,
+            "end": 13
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -47703,7 +48689,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "a,c = [1,2],3\nw, x, y, z =",
+          "$span": {
+            "start": 14,
+            "end": 24
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "_right": {
         "$type": 180,
@@ -47783,7 +48778,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "w, x, y, z = 0, *a, c\n",
+          "$span": {
+            "start": 13,
+            "end": 21
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -47862,7 +48866,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "a,c = [1,2]",
+          "$span": {
+            "start": 7,
+            "end": 10
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -60670,7 +61683,16 @@
                             }
                           }
                         ],
-                        "_delimiter": 2
+                        "_delimiter": 2,
+                        "$_flank": {
+                          "$text": "f\"{c,}",
+                          "$span": {
+                            "start": 3,
+                            "end": 5
+                          },
+                          "$before": true,
+                          "$after": true
+                        }
                       },
                       "$other": [
                         {
@@ -60927,7 +61949,16 @@
                             }
                           }
                         ],
-                        "_delimiter": 2
+                        "_delimiter": 2,
+                        "$_flank": {
+                          "$text": "f\"{*a,}",
+                          "$span": {
+                            "start": 3,
+                            "end": 6
+                          },
+                          "$before": true,
+                          "$after": true
+                        }
                       },
                       "$other": [
                         {
@@ -61350,7 +62381,16 @@
                   }
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "def test(self)",
+                "$span": {
+                  "start": 9,
+                  "end": 13
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -62957,7 +63997,16 @@
                   }
                 }
               ],
-              "_delimiter": 2
+              "_delimiter": 2,
+              "$_flank": {
+                "$text": "f\"{c,}",
+                "$span": {
+                  "start": 3,
+                  "end": 5
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -63186,7 +64235,16 @@
                   }
                 }
               ],
-              "_delimiter": 2
+              "_delimiter": 2,
+              "$_flank": {
+                "$text": "f\"{*a,}",
+                "$span": {
+                  "start": 3,
+                  "end": 6
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -64831,7 +65889,16 @@
                 }
               }
             ],
-            "_delimiter": 2
+            "_delimiter": 2,
+            "$_flank": {
+              "$text": "f\"{c,}",
+              "$span": {
+                "start": 3,
+                "end": 5
+              },
+              "$before": true,
+              "$after": true
+            }
           },
           "$other": [
             {
@@ -65050,7 +66117,16 @@
                 }
               }
             ],
-            "_delimiter": 2
+            "_delimiter": 2,
+            "$_flank": {
+              "$text": "f\"{*a,}",
+              "$span": {
+                "start": 3,
+                "end": 6
+              },
+              "$before": true,
+              "$after": true
+            }
           },
           "$other": [
             {
@@ -66938,7 +68014,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "def test(self)",
+            "$span": {
+              "start": 9,
+              "end": 13
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -67361,7 +68446,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "def test(self)",
+          "$span": {
+            "start": 9,
+            "end": 13
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -67568,7 +68662,16 @@
           }
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "def test(self)",
+        "$span": {
+          "start": 9,
+          "end": 13
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "self"
   },
@@ -77483,7 +78586,16 @@
                               }
                             }
                           ],
-                          "_delimiter": 0
+                          "_delimiter": 0,
+                          "$_flank": {
+                            "$text": "[a, b, [c, d]",
+                            "$span": {
+                              "start": 8,
+                              "end": 12
+                            },
+                            "$before": true,
+                            "$after": true
+                          }
                         },
                         "$other": [
                           {
@@ -77530,7 +78642,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "[a, b, [c, d]]",
+                      "$span": {
+                        "start": 1,
+                        "end": 13
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -77620,7 +78741,16 @@
                         ]
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "[*()]",
+                      "$span": {
+                        "start": 1,
+                        "end": 4
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -77715,7 +78845,16 @@
                         ]
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "[*[]]",
+                      "$span": {
+                        "start": 1,
+                        "end": 4
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -77810,7 +78949,16 @@
                         ]
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "[*a]",
+                      "$span": {
+                        "start": 1,
+                        "end": 3
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -77935,7 +79083,16 @@
                         ]
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "[*a.b]",
+                      "$span": {
+                        "start": 1,
+                        "end": 5
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -78116,7 +79273,16 @@
                         ]
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "[*a[b].c]",
+                      "$span": {
+                        "start": 1,
+                        "end": 8
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -78230,7 +79396,16 @@
                         ]
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "[*a()]",
+                      "$span": {
+                        "start": 1,
+                        "end": 5
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -78378,7 +79553,16 @@
                     }
                   }
                 ],
-                "_delimiter": 0
+                "_delimiter": 0,
+                "$_flank": {
+                  "$text": "[a, b, [c, d]",
+                  "$span": {
+                    "start": 8,
+                    "end": 12
+                  },
+                  "$before": true,
+                  "$after": true
+                }
               },
               "$other": [
                 {
@@ -78425,7 +79609,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "[a, b, [c, d]]",
+            "$span": {
+              "start": 1,
+              "end": 13
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -78506,7 +79699,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "[*()]",
+            "$span": {
+              "start": 1,
+              "end": 4
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -78587,7 +79789,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "[*[]]",
+            "$span": {
+              "start": 1,
+              "end": 4
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -78668,7 +79879,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "[*a]",
+            "$span": {
+              "start": 1,
+              "end": 3
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -78779,7 +79999,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "[*a.b]",
+            "$span": {
+              "start": 1,
+              "end": 5
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -78946,7 +80175,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "[*a[b].c]",
+            "$span": {
+              "start": 1,
+              "end": 8
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -79046,7 +80284,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "[*a()]",
+            "$span": {
+              "start": 1,
+              "end": 5
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -79163,7 +80410,16 @@
                   }
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "[a, b, [c, d]",
+                "$span": {
+                  "start": 8,
+                  "end": 12
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -79210,7 +80466,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "[a, b, [c, d]]",
+          "$span": {
+            "start": 1,
+            "end": 13
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -79294,7 +80559,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "[a, b, [c, d]",
+          "$span": {
+            "start": 8,
+            "end": 12
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -79370,7 +80644,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "[*()]",
+          "$span": {
+            "start": 1,
+            "end": 4
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -79446,7 +80729,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "[*[]]",
+          "$span": {
+            "start": 1,
+            "end": 4
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -79549,7 +80841,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "[*a]",
+          "$span": {
+            "start": 1,
+            "end": 3
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -79655,7 +80956,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "[*a.b]",
+          "$span": {
+            "start": 1,
+            "end": 5
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -79817,7 +81127,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "[*a[b].c]",
+          "$span": {
+            "start": 1,
+            "end": 8
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -79912,7 +81231,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "[*a()]",
+          "$span": {
+            "start": 1,
+            "end": 5
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -80804,7 +82132,16 @@
                                 }
                               }
                             ],
-                            "_delimiter": 0
+                            "_delimiter": 0,
+                            "$_flank": {
+                              "$text": "[a + b for (a, b)",
+                              "$span": {
+                                "start": 12,
+                                "end": 16
+                              },
+                              "$before": true,
+                              "$after": true
+                            }
                           },
                           "$other": [
                             {
@@ -81157,7 +82494,16 @@
                           }
                         }
                       ],
-                      "_delimiter": 0
+                      "_delimiter": 0,
+                      "$_flank": {
+                        "$text": "[(x,y)",
+                        "$span": {
+                          "start": 2,
+                          "end": 5
+                        },
+                        "$before": true,
+                        "$after": true
+                      }
                     },
                     "$other": [
                       {
@@ -81266,7 +82612,16 @@
                                   }
                                 }
                               ],
-                              "_delimiter": 0
+                              "_delimiter": 0,
+                              "$_flank": {
+                                "$text": "[(x,y) for x in [1,2,3]",
+                                "$span": {
+                                  "start": 17,
+                                  "end": 22
+                                },
+                                "$before": true,
+                                "$after": true
+                              }
                             },
                             "$other": [
                               {
@@ -81396,7 +82751,16 @@
                                   }
                                 }
                               ],
-                              "_delimiter": 0
+                              "_delimiter": 0,
+                              "$_flank": {
+                                "$text": "[(x,y) for x in [1,2,3] for y in [1,2,3]",
+                                "$span": {
+                                  "start": 34,
+                                  "end": 39
+                                },
+                                "$before": true,
+                                "$after": true
+                              }
                             },
                             "$other": [
                               {
@@ -81859,7 +83223,16 @@
                       }
                     }
                   ],
-                  "_delimiter": 0
+                  "_delimiter": 0,
+                  "$_flank": {
+                    "$text": "[a + b for (a, b)",
+                    "$span": {
+                      "start": 12,
+                      "end": 16
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
                 },
                 "$other": [
                   {
@@ -82189,7 +83562,16 @@
                 }
               }
             ],
-            "_delimiter": 0
+            "_delimiter": 0,
+            "$_flank": {
+              "$text": "[(x,y)",
+              "$span": {
+                "start": 2,
+                "end": 5
+              },
+              "$before": true,
+              "$after": true
+            }
           },
           "$other": [
             {
@@ -82298,7 +83680,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "[(x,y) for x in [1,2,3]",
+                      "$span": {
+                        "start": 17,
+                        "end": 22
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -82428,7 +83819,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "[(x,y) for x in [1,2,3] for y in [1,2,3]",
+                      "$span": {
+                        "start": 34,
+                        "end": 39
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -82846,7 +84246,16 @@
                     }
                   }
                 ],
-                "_delimiter": 0
+                "_delimiter": 0,
+                "$_flank": {
+                  "$text": "[a + b for (a, b)",
+                  "$span": {
+                    "start": 12,
+                    "end": 16
+                  },
+                  "$before": true,
+                  "$after": true
+                }
               },
               "$other": [
                 {
@@ -83166,7 +84575,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "[(x,y)",
+            "$span": {
+              "start": 2,
+              "end": 5
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -83275,7 +84693,16 @@
                       }
                     }
                   ],
-                  "_delimiter": 0
+                  "_delimiter": 0,
+                  "$_flank": {
+                    "$text": "[(x,y) for x in [1,2,3]",
+                    "$span": {
+                      "start": 17,
+                      "end": 22
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
                 },
                 "$other": [
                   {
@@ -83405,7 +84832,16 @@
                       }
                     }
                   ],
-                  "_delimiter": 0
+                  "_delimiter": 0,
+                  "$_flank": {
+                    "$text": "[(x,y) for x in [1,2,3] for y in [1,2,3]",
+                    "$span": {
+                      "start": 34,
+                      "end": 39
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
                 },
                 "$other": [
                   {
@@ -83821,7 +85257,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "[a + b for (a, b)",
+          "$span": {
+            "start": 12,
+            "end": 16
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -83905,7 +85350,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "[(x,y)",
+          "$span": {
+            "start": 2,
+            "end": 5
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -84011,7 +85465,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "[(x,y) for x in [1,2,3]",
+          "$span": {
+            "start": 17,
+            "end": 22
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -84117,7 +85580,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "[(x,y) for x in [1,2,3] for y in [1,2,3]",
+          "$span": {
+            "start": 34,
+            "end": 39
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -87104,7 +88576,16 @@
                               }
                             }
                           ],
-                          "_delimiter": 0
+                          "_delimiter": 0,
+                          "$_flank": {
+                            "$text": "{a: b for a, b i",
+                            "$span": {
+                              "start": 10,
+                              "end": 14
+                            },
+                            "$before": true,
+                            "$after": true
+                          }
                         },
                         "_right": [
                           {
@@ -87524,7 +89005,16 @@
                     }
                   }
                 ],
-                "_delimiter": 0
+                "_delimiter": 0,
+                "$_flank": {
+                  "$text": "{a: b for a, b i",
+                  "$span": {
+                    "start": 10,
+                    "end": 14
+                  },
+                  "$before": true,
+                  "$after": true
+                }
               },
               "_right": [
                 {
@@ -87904,7 +89394,16 @@
                   }
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "{a: b for a, b i",
+                "$span": {
+                  "start": 10,
+                  "end": 14
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "_right": [
               {
@@ -88278,7 +89777,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 2
+                    "_delimiter": 2,
+                    "$_flank": {
+                      "$text": "{a, b, c,}",
+                      "$span": {
+                        "start": 1,
+                        "end": 9
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -88368,7 +89876,16 @@
                         ]
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "{*{}}",
+                      "$span": {
+                        "start": 1,
+                        "end": 4
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -88515,7 +90032,16 @@
               }
             }
           ],
-          "_delimiter": 2
+          "_delimiter": 2,
+          "$_flank": {
+            "$text": "{a, b, c,}",
+            "$span": {
+              "start": 1,
+              "end": 9
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -88596,7 +90122,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "{*{}}",
+            "$span": {
+              "start": 1,
+              "end": 4
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -88712,7 +90247,16 @@
             }
           }
         ],
-        "_delimiter": 2
+        "_delimiter": 2,
+        "$_flank": {
+          "$text": "{a, b, c,}",
+          "$span": {
+            "start": 1,
+            "end": 9
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -88788,7 +90332,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "{*{}}",
+          "$span": {
+            "start": 1,
+            "end": 4
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -89113,7 +90666,16 @@
                               }
                             }
                           ],
-                          "_delimiter": 0
+                          "_delimiter": 0,
+                          "$_flank": {
+                            "$text": "{a[b][c] for a, b, c i",
+                            "$span": {
+                              "start": 13,
+                              "end": 20
+                            },
+                            "$before": true,
+                            "$after": true
+                          }
                         },
                         "_right": [
                           {
@@ -89607,7 +91169,16 @@
                     }
                   }
                 ],
-                "_delimiter": 0
+                "_delimiter": 0,
+                "$_flank": {
+                  "$text": "{a[b][c] for a, b, c i",
+                  "$span": {
+                    "start": 13,
+                    "end": 20
+                  },
+                  "$before": true,
+                  "$after": true
+                }
               },
               "_right": [
                 {
@@ -90061,7 +91632,16 @@
                   }
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "{a[b][c] for a, b, c i",
+                "$span": {
+                  "start": 13,
+                  "end": 20
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "_right": [
               {
@@ -90637,7 +92217,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "(a, b)",
+                      "$span": {
+                        "start": 1,
+                        "end": 5
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -90771,7 +92360,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 2
+                    "_delimiter": 2,
+                    "$_flank": {
+                      "$text": "(a, b, c,)",
+                      "$span": {
+                        "start": 1,
+                        "end": 9
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -90874,7 +92472,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "(print, exec)",
+                      "$span": {
+                        "start": 1,
+                        "end": 12
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -91022,7 +92629,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "(a, b)",
+            "$span": {
+              "start": 1,
+              "end": 5
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -91142,7 +92758,16 @@
               }
             }
           ],
-          "_delimiter": 2
+          "_delimiter": 2,
+          "$_flank": {
+            "$text": "(a, b, c,)",
+            "$span": {
+              "start": 1,
+              "end": 9
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -91231,7 +92856,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "(print, exec)",
+            "$span": {
+              "start": 1,
+              "end": 12
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -91343,7 +92977,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "(a, b)",
+          "$span": {
+            "start": 1,
+            "end": 5
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -91458,7 +93101,16 @@
             }
           }
         ],
-        "_delimiter": 2
+        "_delimiter": 2,
+        "$_flank": {
+          "$text": "(a, b, c,)",
+          "$span": {
+            "start": 1,
+            "end": 9
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -91542,7 +93194,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "(print, exec)",
+          "$span": {
+            "start": 1,
+            "end": 12
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -91797,7 +93458,16 @@
                               }
                             }
                           ],
-                          "_delimiter": 0
+                          "_delimiter": 0,
+                          "$_flank": {
+                            "$text": "(a[b][c] for a, b, c i",
+                            "$span": {
+                              "start": 13,
+                              "end": 20
+                            },
+                            "$before": true,
+                            "$after": true
+                          }
                         },
                         "_right": [
                           {
@@ -91956,7 +93626,16 @@
                             }
                           }
                         ],
-                        "_delimiter": 0
+                        "_delimiter": 0,
+                        "$_flank": {
+                          "$text": "dict((a, b)",
+                          "$span": {
+                            "start": 6,
+                            "end": 10
+                          },
+                          "$before": true,
+                          "$after": true
+                        }
                       },
                       "$other": [
                         {
@@ -92028,7 +93707,16 @@
                                 }
                               }
                             ],
-                            "_delimiter": 0
+                            "_delimiter": 0,
+                            "$_flank": {
+                              "$text": "dict((a, b) for a, b i",
+                              "$span": {
+                                "start": 16,
+                                "end": 20
+                              },
+                              "$before": true,
+                              "$after": true
+                            }
                           },
                           "_right": [
                             {
@@ -92752,7 +94440,16 @@
                     }
                   }
                 ],
-                "_delimiter": 0
+                "_delimiter": 0,
+                "$_flank": {
+                  "$text": "(a[b][c] for a, b, c i",
+                  "$span": {
+                    "start": 13,
+                    "end": 20
+                  },
+                  "$before": true,
+                  "$after": true
+                }
               },
               "_right": [
                 {
@@ -92902,7 +94599,16 @@
                   }
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "dict((a, b)",
+                "$span": {
+                  "start": 6,
+                  "end": 10
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -92974,7 +94680,16 @@
                       }
                     }
                   ],
-                  "_delimiter": 0
+                  "_delimiter": 0,
+                  "$_flank": {
+                    "$text": "dict((a, b) for a, b i",
+                    "$span": {
+                      "start": 16,
+                      "end": 20
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
                 },
                 "_right": [
                   {
@@ -93639,7 +95354,16 @@
                   }
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "(a[b][c] for a, b, c i",
+                "$span": {
+                  "start": 13,
+                  "end": 20
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "_right": [
               {
@@ -93770,7 +95494,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "dict((a, b)",
+            "$span": {
+              "start": 6,
+              "end": 10
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -93842,7 +95575,16 @@
                   }
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "dict((a, b) for a, b i",
+                "$span": {
+                  "start": 16,
+                  "end": 20
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "_right": [
               {
@@ -94578,7 +96320,16 @@
                 }
               }
             ],
-            "_delimiter": 0
+            "_delimiter": 0,
+            "$_flank": {
+              "$text": "dict((a, b)",
+              "$span": {
+                "start": 6,
+                "end": 10
+              },
+              "$before": true,
+              "$after": true
+            }
           },
           "$other": [
             {
@@ -94650,7 +96401,16 @@
                     }
                   }
                 ],
-                "_delimiter": 0
+                "_delimiter": 0,
+                "$_flank": {
+                  "$text": "dict((a, b) for a, b i",
+                  "$span": {
+                    "start": 16,
+                    "end": 20
+                  },
+                  "$before": true,
+                  "$after": true
+                }
               },
               "_right": [
                 {
@@ -94894,7 +96654,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "dict((a, b)",
+          "$span": {
+            "start": 6,
+            "end": 10
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -95359,7 +97128,16 @@
                                         ]
                                       }
                                     ],
-                                    "_delimiter": 0
+                                    "_delimiter": 0,
+                                    "$_flank": {
+                                      "$text": "        print(\"Goodbye!\")\n        q",
+                                      "$span": {
+                                        "start": 13,
+                                        "end": 25
+                                      },
+                                      "$before": true,
+                                      "$after": true
+                                    }
                                   },
                                   "$other": [
                                     {
@@ -96535,16 +98313,7 @@
                     ]
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "match command.split():\n    case [\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here\n",
-                "$span": {
-                  "start": 22,
-                  "end": 326
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             }
           },
           "$other": [
@@ -99143,16 +100912,7 @@
                     ]
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "match command.split():\n    case [\"drop\", *objects]:\n        for obj in objects:\n            character.drop(obj, current_room)\n",
-                "$span": {
-                  "start": 22,
-                  "end": 125
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             }
           },
           "$other": [
@@ -100857,7 +102617,16 @@
                                         ]
                                       }
                                     ],
-                                    "_delimiter": 0
+                                    "_delimiter": 0,
+                                    "$_flank": {
+                                      "$text": "        print(f\"Sorry, I couldn't understand {command!r}\")\n",
+                                      "$span": {
+                                        "start": 13,
+                                        "end": 58
+                                      },
+                                      "$before": true,
+                                      "$after": true
+                                    }
                                   },
                                   "$other": [
                                     {
@@ -100927,16 +102696,7 @@
                     ]
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "match command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")\n",
-                "$span": {
-                  "start": 22,
-                  "end": 226
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             }
           },
           "$other": [
@@ -103050,16 +104810,7 @@
                     ]
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "match command.split():\n    case [\"north\"] | [\"go\", \"north\"]:\n        current_room = current_room.neighbor(\"north\")\n    case [\"get\", obj] | [\"pick\", \"up\", obj] | [\"pick\", obj, \"up\"]:\n        pass\n",
-                "$span": {
-                  "start": 22,
-                  "end": 194
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             }
           },
           "$other": [
@@ -105455,16 +107206,7 @@
                     ]
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "match command.split():\n    case [\"go\", (\"north\" | \"south\" | \"east\" | \"west\") as direction]:\n        current_room = current_room.neighbor(direction)\n",
-                "$span": {
-                  "start": 22,
-                  "end": 147
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             }
           },
           "$other": [
@@ -106684,7 +108426,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "match = 2\nmatch, a =",
+                      "$span": {
+                        "start": 10,
+                        "end": 18
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "_right": {
                     "$type": 180,
@@ -106726,7 +108477,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "match, a = 2, 3\nm",
+                      "$span": {
+                        "start": 11,
+                        "end": 15
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -106925,7 +108685,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "match: int = secret\nx, match =",
+                      "$span": {
+                        "start": 20,
+                        "end": 28
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "_right": {
                     "$type": 180,
@@ -107006,7 +108775,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "x, match = 2, \"hey, what's up?\"\n*",
+                      "$span": {
+                        "start": 11,
+                        "end": 31
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -107111,7 +108889,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "x, match = 2, \"hey, what's up?\"\n*match, last =",
+                      "$span": {
+                        "start": 32,
+                        "end": 44
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "_right": {
                     "$type": 232,
@@ -107179,7 +108966,16 @@
                           }
                         }
                       ],
-                      "_delimiter": 0
+                      "_delimiter": 0,
+                      "$_flank": {
+                        "$text": "*match, last = [1, 2, 3]",
+                        "$span": {
+                          "start": 16,
+                          "end": 23
+                        },
+                        "$before": true,
+                        "$after": true
+                      }
                     },
                     "$other": [
                       {
@@ -107282,7 +109078,16 @@
                   ]
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "def foo(**match)",
+                "$span": {
+                  "start": 8,
+                  "end": 15
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -107504,7 +109309,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "match = 2\nmatch, a =",
+            "$span": {
+              "start": 10,
+              "end": 18
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "_right": {
           "$type": 180,
@@ -107546,7 +109360,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "match, a = 2, 3\nm",
+            "$span": {
+              "start": 11,
+              "end": 15
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -107717,7 +109540,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "match: int = secret\nx, match =",
+            "$span": {
+              "start": 20,
+              "end": 28
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "_right": {
           "$type": 180,
@@ -107798,7 +109630,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "x, match = 2, \"hey, what's up?\"\n*",
+            "$span": {
+              "start": 11,
+              "end": 31
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -107889,7 +109730,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "x, match = 2, \"hey, what's up?\"\n*match, last =",
+            "$span": {
+              "start": 32,
+              "end": 44
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "_right": {
           "$type": 232,
@@ -107957,7 +109807,16 @@
                 }
               }
             ],
-            "_delimiter": 0
+            "_delimiter": 0,
+            "$_flank": {
+              "$text": "*match, last = [1, 2, 3]",
+              "$span": {
+                "start": 16,
+                "end": 23
+              },
+              "$before": true,
+              "$after": true
+            }
           },
           "$other": [
             {
@@ -108115,7 +109974,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "match = 2\nmatch, a =",
+          "$span": {
+            "start": 10,
+            "end": 18
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "_right": {
         "$type": 180,
@@ -108157,7 +110025,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "match, a = 2, 3\nm",
+          "$span": {
+            "start": 11,
+            "end": 15
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -108236,7 +110113,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "match: int = secret\nx, match =",
+          "$span": {
+            "start": 20,
+            "end": 28
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "_right": {
         "$type": 180,
@@ -108317,7 +110203,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "x, match = 2, \"hey, what's up?\"\n*",
+          "$span": {
+            "start": 11,
+            "end": 31
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -108403,7 +110298,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "x, match = 2, \"hey, what's up?\"\n*match, last =",
+          "$span": {
+            "start": 32,
+            "end": 44
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "_right": {
         "$type": 232,
@@ -108471,7 +110375,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "*match, last = [1, 2, 3]",
+            "$span": {
+              "start": 16,
+              "end": 23
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -108807,7 +110720,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "*match, last = [1, 2, 3]",
+          "$span": {
+            "start": 16,
+            "end": 23
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -108888,7 +110810,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "def foo(**match)",
+            "$span": {
+              "start": 8,
+              "end": 15
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -109017,7 +110948,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "def foo(**match)",
+          "$span": {
+            "start": 8,
+            "end": 15
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -109080,7 +111020,16 @@
           ]
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "def foo(**match)",
+        "$span": {
+          "start": 8,
+          "end": 15
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "**match"
   },
@@ -109151,7 +111100,16 @@
                           }
                         }
                       ],
-                      "_delimiter": 0
+                      "_delimiter": 0,
+                      "$_flank": {
+                        "$text": "a = [match]",
+                        "$span": {
+                          "start": 5,
+                          "end": 10
+                        },
+                        "$before": true,
+                        "$after": true
+                      }
                     },
                     "$other": [
                       {
@@ -109255,7 +111213,16 @@
                           }
                         }
                       ],
-                      "_delimiter": 0
+                      "_delimiter": 0,
+                      "$_flank": {
+                        "$text": "match = [match]",
+                        "$span": {
+                          "start": 9,
+                          "end": 14
+                        },
+                        "$before": true,
+                        "$after": true
+                      }
                     },
                     "$other": [
                       {
@@ -109377,7 +111344,16 @@
                 }
               }
             ],
-            "_delimiter": 0
+            "_delimiter": 0,
+            "$_flank": {
+              "$text": "a = [match]",
+              "$span": {
+                "start": 5,
+                "end": 10
+              },
+              "$before": true,
+              "$after": true
+            }
           },
           "$other": [
             {
@@ -109472,7 +111448,16 @@
                 }
               }
             ],
-            "_delimiter": 0
+            "_delimiter": 0,
+            "$_flank": {
+              "$text": "match = [match]",
+              "$span": {
+                "start": 9,
+                "end": 14
+              },
+              "$before": true,
+              "$after": true
+            }
           },
           "$other": [
             {
@@ -109563,7 +111548,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "a = [match]",
+            "$span": {
+              "start": 5,
+              "end": 10
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -109653,7 +111647,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "match = [match]",
+            "$span": {
+              "start": 9,
+              "end": 14
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -109729,7 +111732,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "a = [match]",
+          "$span": {
+            "start": 5,
+            "end": 10
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -109789,7 +111801,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "match = [match]",
+          "$span": {
+            "start": 9,
+            "end": 14
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -111590,7 +113611,16 @@
                           }
                         }
                       ],
-                      "_delimiter": 0
+                      "_delimiter": 0,
+                      "$_flank": {
+                        "$text": "a = [case]",
+                        "$span": {
+                          "start": 5,
+                          "end": 9
+                        },
+                        "$before": true,
+                        "$after": true
+                      }
                     },
                     "$other": [
                       {
@@ -111694,7 +113724,16 @@
                           }
                         }
                       ],
-                      "_delimiter": 0
+                      "_delimiter": 0,
+                      "$_flank": {
+                        "$text": "case = [case]",
+                        "$span": {
+                          "start": 8,
+                          "end": 12
+                        },
+                        "$before": true,
+                        "$after": true
+                      }
                     },
                     "$other": [
                       {
@@ -111974,7 +114013,16 @@
                 }
               }
             ],
-            "_delimiter": 0
+            "_delimiter": 0,
+            "$_flank": {
+              "$text": "a = [case]",
+              "$span": {
+                "start": 5,
+                "end": 9
+              },
+              "$before": true,
+              "$after": true
+            }
           },
           "$other": [
             {
@@ -112069,7 +114117,16 @@
                 }
               }
             ],
-            "_delimiter": 0
+            "_delimiter": 0,
+            "$_flank": {
+              "$text": "case = [case]",
+              "$span": {
+                "start": 8,
+                "end": 12
+              },
+              "$before": true,
+              "$after": true
+            }
           },
           "$other": [
             {
@@ -112304,7 +114361,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "a = [case]",
+            "$span": {
+              "start": 5,
+              "end": 9
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -112394,7 +114460,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "case = [case]",
+            "$span": {
+              "start": 8,
+              "end": 12
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -112609,7 +114684,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "a = [case]",
+          "$span": {
+            "start": 5,
+            "end": 9
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -112669,7 +114753,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "case = [case]",
+          "$span": {
+            "start": 8,
+            "end": 12
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -113299,16 +115392,7 @@
                     ]
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "match 0:\n    case 0 if False:\n        x = False\n    case 0 if True:\n        x = True\n",
-                "$span": {
-                  "start": 8,
-                  "end": 84
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             }
           },
           "$other": [
@@ -114575,16 +116659,7 @@
                     ]
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "match xxx:\n    case 3 | -3:\n      pass\n    case \"something\":\n      pass\n    case \"something\" \"else\":\n      pass\n    case 1.0 | -1.0:\n      pass\n    case True | False:\n      pass\n    case None:\n      pass\n",
-                "$span": {
-                  "start": 10,
-                  "end": 203
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             }
           },
           "$other": [
@@ -115087,7 +117162,16 @@
                       }
                     }
                   ],
-                  "_delimiter": 0
+                  "_delimiter": 0,
+                  "$_flank": {
+                    "$text": "match (0, 1, 2)",
+                    "$span": {
+                      "start": 7,
+                      "end": 14
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
                 },
                 "$other": [
                   {
@@ -115542,16 +117626,7 @@
                     ]
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "match (0, 1, 2):\n    case 0,1:\n        x = 0\n    case 0, *x:\n        x = 0\n",
-                "$span": {
-                  "start": 16,
-                  "end": 74
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             }
           },
           "$other": [
@@ -115669,7 +117744,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "match (0, 1, 2)",
+          "$span": {
+            "start": 7,
+            "end": 14
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -116183,16 +118267,7 @@
                     ]
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "match x,:\n    case *x,:\n        y = 0\n",
-                "$span": {
-                  "start": 9,
-                  "end": 37
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             }
           },
           "$other": [
@@ -116636,16 +118711,7 @@
                     ]
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "match ..., ...:\n    case a, b:\n        return locals()\n",
-                "$span": {
-                  "start": 15,
-                  "end": 54
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             }
           },
           "$other": [
@@ -117150,16 +119216,7 @@
                     ]
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "match match:\n    case case:\n        x = 0",
-                "$span": {
-                  "start": 12,
-                  "end": 41
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             }
           },
           "$other": [
@@ -120630,16 +122687,7 @@
                     ]
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "match event.get():\n    case Click(position=(x, y)):\n        handle_click_at(x, y)\n    case KeyPress(key_name=\"Q\") | Quit():\n        game.quit()\n    case KeyPress(key_name=\"up arrow\"):\n        game.go_north()\n        ...\n    case KeyPress():\n        pass # Ignore other keystrokes\n    case other_event:\n        raise ValueError(f\"Unrecognized event: {other_event}\")\n",
-                "$span": {
-                  "start": 18,
-                  "end": 364
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             }
           },
           "$other": [
@@ -122981,16 +125029,7 @@
                     ]
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "match event.get():\n    case Click((x, y)):\n        handle_click_at(x, y)\n",
-                "$span": {
-                  "start": 18,
-                  "end": 72
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             }
           },
           "$other": [
@@ -124386,16 +126425,7 @@
                     ]
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "match event.get():\n    case Click((x, y), button=Button.LEFT):  # This is a left click\n        handle_click_at(x, y)\n    case Click():\n        pass  # ignore other clicks\n",
-                "$span": {
-                  "start": 18,
-                  "end": 170
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             }
           },
           "$other": [
@@ -127337,16 +129367,7 @@
                             ]
                           }
                         }
-                      ],
-                      "$_flank": {
-                        "$text": "    match action:\n        case {\"text\": message, \"color\": c}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": duration}:\n            ui.wait(duration)\n        case {\"sound\": url, \"format\": \"ogg\"}:\n            ui.play(url)\n        case {a.b: c}:\n            action()\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")",
-                        "$span": {
-                          "start": 17,
-                          "end": 393
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
+                      ]
                     }
                   },
                   "$other": [
@@ -132455,16 +134476,7 @@
                             ]
                           }
                         }
-                      ],
-                      "$_flank": {
-                        "$text": "    match action:\n        case {\"text\": str(message), \"color\": str(c)}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": float(duration)}:\n            ui.wait(duration)\n        case {\"sound\": str(url), \"format\": \"ogg\"}:\n            ui.play(url)\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")\n",
-                        "$span": {
-                          "start": 17,
-                          "end": 371
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
+                      ]
                     }
                   },
                   "$other": [
@@ -138038,16 +140050,7 @@
                     ]
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "match x:\n    case Something(): # no args\n        foo1()\n    case Something.Else(): # more complex class name\n        foo2()\n    case Point2D(0, 1, 2): # three args\n        foo3()\n    case Point3D(x=0, y=0, z=0): # kw args\n        foo4()\n    case Point3D(34, x=0, y=0, z=0): # positional + kw args\n        foo5()\n    case Point2D(0, 1, 2,): # three args + trail comma\n        foo6()\n    case Point3D(x=0, y=0, z=0,): # kw args + trail comma\n        foo7()\n    case Point3D(34, x=0, y=0, z=0,): # positional + kw args + trail comma\n        foo8()\n",
-                "$span": {
-                  "start": 8,
-                  "end": 544
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             }
           },
           "$other": [
@@ -140302,16 +142305,7 @@
                     ]
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "match x:\n    case  -3 + 5j:\n        pass\n    case  -3 + 5j as b2:\n        pass\n    case 3j as b1, -3 + 5j as b2:\n        pass\n    case  -3. + 5j:\n        pass\n    case  3 - 5.j:\n        pass\n",
-                "$span": {
-                  "start": 8,
-                  "end": 190
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             }
           },
           "$other": [
@@ -140669,16 +142663,7 @@
                     ]
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "match x:\n    case a1, *a2, a3:\n        pass\n",
-                "$span": {
-                  "start": 8,
-                  "end": 43
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             }
           },
           "$other": [
@@ -140874,7 +142859,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "import a, b\ni",
+                      "$span": {
+                        "start": 7,
+                        "end": 11
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   }
                 },
                 "$other": [
@@ -141000,7 +142994,16 @@
                         ]
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "import b.c as d\ni",
+                      "$span": {
+                        "start": 7,
+                        "end": 15
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   }
                 },
                 "$other": [
@@ -141123,7 +143126,16 @@
                         ]
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "import a.b.c\n",
+                      "$span": {
+                        "start": 7,
+                        "end": 12
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   }
                 },
                 "$other": [
@@ -141446,7 +143458,16 @@
                       ]
                     }
                   ],
-                  "_delimiter": 0
+                  "_delimiter": 0,
+                  "$_flank": {
+                    "$text": "from a import b\nf",
+                    "$span": {
+                      "start": 14,
+                      "end": 15
+                    },
+                    "$before": false,
+                    "$after": true
+                  }
                 },
                 "$other": [
                   {
@@ -141656,7 +143677,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "from a import (b, c)",
+                      "$span": {
+                        "start": 15,
+                        "end": 19
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -141803,7 +143833,16 @@
                       ]
                     }
                   ],
-                  "_delimiter": 0
+                  "_delimiter": 0,
+                  "$_flank": {
+                    "$text": "from a.b import c\nf",
+                    "$span": {
+                      "start": 16,
+                      "end": 17
+                    },
+                    "$before": false,
+                    "$after": true
+                  }
                 },
                 "$other": [
                   {
@@ -141903,7 +143942,16 @@
                       ]
                     }
                   ],
-                  "_delimiter": 0
+                  "_delimiter": 0,
+                  "$_flank": {
+                    "$text": "from . import b\nf",
+                    "$span": {
+                      "start": 14,
+                      "end": 15
+                    },
+                    "$before": false,
+                    "$after": true
+                  }
                 },
                 "$other": [
                   {
@@ -142003,7 +144051,16 @@
                       ]
                     }
                   ],
-                  "_delimiter": 0
+                  "_delimiter": 0,
+                  "$_flank": {
+                    "$text": "from .. import b\nf",
+                    "$span": {
+                      "start": 15,
+                      "end": 16
+                    },
+                    "$before": false,
+                    "$after": true
+                  }
                 },
                 "$other": [
                   {
@@ -142124,7 +144181,16 @@
                       ]
                     }
                   ],
-                  "_delimiter": 0
+                  "_delimiter": 0,
+                  "$_flank": {
+                    "$text": "from .a import b\nf",
+                    "$span": {
+                      "start": 15,
+                      "end": 16
+                    },
+                    "$before": false,
+                    "$after": true
+                  }
                 },
                 "$other": [
                   {
@@ -142245,7 +144311,16 @@
                       ]
                     }
                   ],
-                  "_delimiter": 0
+                  "_delimiter": 0,
+                  "$_flank": {
+                    "$text": "from ..a import b\n",
+                    "$span": {
+                      "start": 16,
+                      "end": 17
+                    },
+                    "$before": false,
+                    "$after": true
+                  }
                 },
                 "$other": [
                   {
@@ -142857,7 +144932,16 @@
                       ]
                     }
                   ],
-                  "_delimiter": 0
+                  "_delimiter": 0,
+                  "$_flank": {
+                    "$text": "from __future__ import print_statement\nf",
+                    "$span": {
+                      "start": 23,
+                      "end": 38
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
                 },
                 "$other": [
                   {
@@ -142942,7 +145026,16 @@
                       ]
                     }
                   ],
-                  "_delimiter": 0
+                  "_delimiter": 0,
+                  "$_flank": {
+                    "$text": "from __future__ import python4\nf",
+                    "$span": {
+                      "start": 23,
+                      "end": 30
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
                 },
                 "$other": [
                   {
@@ -143127,7 +145220,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "from __future__ import (absolute_import, division, print_function,\n                        unicode_literals)",
+                      "$span": {
+                        "start": 24,
+                        "end": 107
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -143463,7 +145565,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "print a\np",
+                      "$span": {
+                        "start": 6,
+                        "end": 7
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -143552,7 +145663,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "print b, c\np",
+                      "$span": {
+                        "start": 6,
+                        "end": 10
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -143697,7 +145817,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 2
+                    "_delimiter": 2,
+                    "$_flank": {
+                      "$text": "print 0 or 1, 1 or 0,\np",
+                      "$span": {
+                        "start": 6,
+                        "end": 21
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -143788,7 +145917,16 @@
                         ]
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "print 0 or 1\np",
+                      "$span": {
+                        "start": 6,
+                        "end": 12
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -143865,7 +146003,16 @@
                         ]
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "print not True\n",
+                      "$span": {
+                        "start": 6,
+                        "end": 14
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -144350,7 +146497,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "print >> a, \"b\", \"c\"\n",
+                      "$span": {
+                        "start": 10,
+                        "end": 20
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -145571,7 +147727,16 @@
                       }
                     }
                   ],
-                  "_delimiter": 0
+                  "_delimiter": 0,
+                  "$_flank": {
+                    "$text": "del a[1], b[2]\n",
+                    "$span": {
+                      "start": 4,
+                      "end": 14
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
                 },
                 "$other": [
                   {
@@ -146116,7 +148281,16 @@
                       }
                     }
                   ],
-                  "_delimiter": 0
+                  "_delimiter": 0,
+                  "$_flank": {
+                    "$text": "return a + b, c\nr",
+                    "$span": {
+                      "start": 7,
+                      "end": 15
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
                 },
                 "$other": [
                   {
@@ -148537,7 +150711,16 @@
                 }
               }
             ],
-            "_delimiter": 0
+            "_delimiter": 0,
+            "$_flank": {
+              "$text": "for line, i i",
+              "$span": {
+                "start": 4,
+                "end": 11
+              },
+              "$before": true,
+              "$after": true
+            }
           },
           "_right": {
             "$type": 1,
@@ -148591,7 +150774,16 @@
                                 }
                               }
                             ],
-                            "_delimiter": 0
+                            "_delimiter": 0,
+                            "$_flank": {
+                              "$text": "  print line\n  f",
+                              "$span": {
+                                "start": 8,
+                                "end": 12
+                              },
+                              "$before": true,
+                              "$after": true
+                            }
                           },
                           "$other": [
                             {
@@ -148667,7 +150859,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "  for character, j i",
+                      "$span": {
+                        "start": 6,
+                        "end": 18
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "_right": {
                     "$type": 1,
@@ -148721,7 +150922,16 @@
                                         }
                                       }
                                     ],
-                                    "_delimiter": 0
+                                    "_delimiter": 0,
+                                    "$_flank": {
+                                      "$text": "    print character\ne",
+                                      "$span": {
+                                        "start": 10,
+                                        "end": 19
+                                      },
+                                      "$before": true,
+                                      "$after": true
+                                    }
                                   },
                                   "$other": [
                                     {
@@ -148855,7 +151065,16 @@
                                   }
                                 }
                               ],
-                              "_delimiter": 0
+                              "_delimiter": 0,
+                              "$_flank": {
+                                "$text": "  print x\n\nf",
+                                "$span": {
+                                  "start": 8,
+                                  "end": 9
+                                },
+                                "$before": true,
+                                "$after": true
+                              }
                             },
                             "$other": [
                               {
@@ -148988,7 +151207,16 @@
                 }
               }
             ],
-            "_delimiter": 2
+            "_delimiter": 2,
+            "$_flank": {
+              "$text": "for x, i",
+              "$span": {
+                "start": 4,
+                "end": 6
+              },
+              "$before": true,
+              "$after": true
+            }
           },
           "_right": {
             "$type": 232,
@@ -149030,7 +151258,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 2
+                    "_delimiter": 2,
+                    "$_flank": {
+                      "$text": "for x, in [(1,)",
+                      "$span": {
+                        "start": 12,
+                        "end": 14
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -149084,7 +151321,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 2
+                    "_delimiter": 2,
+                    "$_flank": {
+                      "$text": "for x, in [(1,), (2,)",
+                      "$span": {
+                        "start": 18,
+                        "end": 20
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -149141,7 +151387,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 2
+                    "_delimiter": 2,
+                    "$_flank": {
+                      "$text": "for x, in [(1,), (2,), (3,)",
+                      "$span": {
+                        "start": 24,
+                        "end": 26
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -149188,7 +151443,16 @@
                   }
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "for x, in [(1,), (2,), (3,)]",
+                "$span": {
+                  "start": 11,
+                  "end": 27
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -149371,7 +151635,16 @@
                   }
                 }
               ],
-              "_delimiter": 2
+              "_delimiter": 2,
+              "$_flank": {
+                "$text": "for x, in [(1,)",
+                "$span": {
+                  "start": 12,
+                  "end": 14
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -149425,7 +151698,16 @@
                   }
                 }
               ],
-              "_delimiter": 2
+              "_delimiter": 2,
+              "$_flank": {
+                "$text": "for x, in [(1,), (2,)",
+                "$span": {
+                  "start": 18,
+                  "end": 20
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -149482,7 +151764,16 @@
                   }
                 }
               ],
-              "_delimiter": 2
+              "_delimiter": 2,
+              "$_flank": {
+                "$text": "for x, in [(1,), (2,), (3,)",
+                "$span": {
+                  "start": 24,
+                  "end": 26
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -149529,7 +151820,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "for x, in [(1,), (2,), (3,)]",
+          "$span": {
+            "start": 11,
+            "end": 27
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -149600,7 +151900,16 @@
             }
           }
         ],
-        "_delimiter": 2
+        "_delimiter": 2,
+        "$_flank": {
+          "$text": "for x, in [(1,)",
+          "$span": {
+            "start": 12,
+            "end": 14
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -149671,7 +151980,16 @@
             }
           }
         ],
-        "_delimiter": 2
+        "_delimiter": 2,
+        "$_flank": {
+          "$text": "for x, in [(1,), (2,)",
+          "$span": {
+            "start": 18,
+            "end": 20
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -149742,7 +152060,16 @@
             }
           }
         ],
-        "_delimiter": 2
+        "_delimiter": 2,
+        "$_flank": {
+          "$text": "for x, in [(1,), (2,), (3,)",
+          "$span": {
+            "start": 24,
+            "end": 26
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -150173,16 +152500,7 @@
                         "end": 52
                       }
                     }
-                  ],
-                  "$_flank": {
-                    "$text": "except g, h:",
-                    "$span": {
-                      "start": 7,
-                      "end": 11
-                    },
-                    "$before": true,
-                    "$after": true
-                  }
+                  ]
                 }
               },
               "_suite": {
@@ -154059,7 +156377,16 @@
                   }
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "async def c(d)",
+                "$span": {
+                  "start": 12,
+                  "end": 13
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -154240,7 +156567,16 @@
                   }
                 }
               ],
-              "_delimiter": 2
+              "_delimiter": 2,
+              "$_flank": {
+                "$text": "async def g(g, h,)",
+                "$span": {
+                  "start": 12,
+                  "end": 17
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -154423,7 +156759,16 @@
                   ]
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "async def c(a: str)",
+                "$span": {
+                  "start": 12,
+                  "end": 18
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -154636,7 +156981,16 @@
                   ]
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "async def c(a: b.c)",
+                "$span": {
+                  "start": 12,
+                  "end": 18
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -154885,7 +157239,16 @@
                   ]
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "async def d(a: Sequence[T])",
+                "$span": {
+                  "start": 12,
+                  "end": 26
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -155188,7 +157551,16 @@
                   }
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "async def i(a, b=c, *c, **d)",
+                "$span": {
+                  "start": 12,
+                  "end": 27
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -155371,7 +157743,16 @@
                   ]
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "async def d(a: str)",
+                "$span": {
+                  "start": 12,
+                  "end": 18
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -155685,7 +158066,16 @@
                   }
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "async def d(a:str=\"default\", b=c)",
+                "$span": {
+                  "start": 12,
+                  "end": 32
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -156000,7 +158390,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "async def c(d)",
+            "$span": {
+              "start": 12,
+              "end": 13
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -156193,7 +158592,16 @@
               }
             }
           ],
-          "_delimiter": 2
+          "_delimiter": 2,
+          "$_flank": {
+            "$text": "async def g(g, h,)",
+            "$span": {
+              "start": 12,
+              "end": 17
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -156388,7 +158796,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "async def c(a: str)",
+            "$span": {
+              "start": 12,
+              "end": 18
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -156613,7 +159030,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "async def c(a: b.c)",
+            "$span": {
+              "start": 12,
+              "end": 18
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -156874,7 +159300,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "async def d(a: Sequence[T])",
+            "$span": {
+              "start": 12,
+              "end": 26
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -157189,7 +159624,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "async def i(a, b=c, *c, **d)",
+            "$span": {
+              "start": 12,
+              "end": 27
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -157384,7 +159828,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "async def d(a: str)",
+            "$span": {
+              "start": 12,
+              "end": 18
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -157710,7 +160163,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "async def d(a:str=\"default\", b=c)",
+            "$span": {
+              "start": 12,
+              "end": 32
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -157900,7 +160362,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "async def c(d)",
+          "$span": {
+            "start": 12,
+            "end": 13
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -157993,7 +160464,16 @@
             }
           }
         ],
-        "_delimiter": 2
+        "_delimiter": 2,
+        "$_flank": {
+          "$text": "async def g(g, h,)",
+          "$span": {
+            "start": 12,
+            "end": 17
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -158088,7 +160568,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "async def c(a: str)",
+          "$span": {
+            "start": 12,
+            "end": 18
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -158213,7 +160702,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "async def c(a: b.c)",
+          "$span": {
+            "start": 12,
+            "end": 18
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -158374,7 +160872,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "async def d(a: Sequence[T])",
+          "$span": {
+            "start": 12,
+            "end": 26
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -158564,7 +161071,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "async def i(a, b=c, *c, **d)",
+          "$span": {
+            "start": 12,
+            "end": 27
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -158659,7 +161175,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "async def d(a: str)",
+          "$span": {
+            "start": 12,
+            "end": 18
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -158867,7 +161392,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "async def d(a:str=\"default\", b=c)",
+          "$span": {
+            "start": 12,
+            "end": 32
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -159147,7 +161681,16 @@
           }
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "async def c(d)",
+        "$span": {
+          "start": 12,
+          "end": 13
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "d"
   },
@@ -159215,7 +161758,16 @@
           }
         }
       ],
-      "_delimiter": 2
+      "_delimiter": 2,
+      "$_flank": {
+        "$text": "async def g(g, h,)",
+        "$span": {
+          "start": 12,
+          "end": 17
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "g, h,"
   },
@@ -159285,7 +161837,16 @@
           ]
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "async def c(a: str)",
+        "$span": {
+          "start": 12,
+          "end": 18
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "a: str"
   },
@@ -159385,7 +161946,16 @@
           ]
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "async def c(a: b.c)",
+        "$span": {
+          "start": 12,
+          "end": 18
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "a: b.c"
   },
@@ -159521,7 +162091,16 @@
           ]
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "async def d(a: Sequence[T])",
+        "$span": {
+          "start": 12,
+          "end": 26
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "a: Sequence[T]"
   },
@@ -159686,7 +162265,16 @@
           }
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "async def i(a, b=c, *c, **d)",
+        "$span": {
+          "start": 12,
+          "end": 27
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "a, b=c, *c, **d"
   },
@@ -159756,7 +162344,16 @@
           ]
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "async def d(a: str)",
+        "$span": {
+          "start": 12,
+          "end": 18
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "a: str"
   },
@@ -159939,7 +162536,16 @@
           }
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "async def d(a:str=\"default\", b=c)",
+        "$span": {
+          "start": 12,
+          "end": 32
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "a: str = \"default\", b=c"
   },
@@ -160562,7 +163168,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "def e((a,b)",
+                      "$span": {
+                        "start": 7,
+                        "end": 10
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -160586,7 +163201,16 @@
                   ]
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "def e((a,b))",
+                "$span": {
+                  "start": 6,
+                  "end": 11
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -160675,7 +163299,16 @@
                                 }
                               }
                             ],
-                            "_delimiter": 0
+                            "_delimiter": 0,
+                            "$_flank": {
+                              "$text": "  return (a,b)",
+                              "$span": {
+                                "start": 10,
+                                "end": 13
+                              },
+                              "$before": true,
+                              "$after": true
+                            }
                           },
                           "$other": [
                             {
@@ -160846,7 +163479,16 @@
                   ]
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "def e(*list: str)",
+                "$span": {
+                  "start": 6,
+                  "end": 16
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -161038,7 +163680,16 @@
                   ]
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "def e(**list: str)",
+                "$span": {
+                  "start": 6,
+                  "end": 17
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -161473,7 +164124,16 @@
                   }
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "def g(h, i, /, j, *, k=100, **kwarg)",
+                "$span": {
+                  "start": 6,
+                  "end": 35
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -161624,7 +164284,16 @@
                               }
                             }
                           ],
-                          "_delimiter": 0
+                          "_delimiter": 0,
+                          "$_flank": {
+                            "$text": "  return h,i,j,k,kwarg\n\nd",
+                            "$span": {
+                              "start": 9,
+                              "end": 22
+                            },
+                            "$before": true,
+                            "$after": true
+                          }
                         },
                         "$other": [
                           {
@@ -161744,7 +164413,16 @@
                   ]
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "def h(*a)",
+                "$span": {
+                  "start": 6,
+                  "end": 8
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -162340,7 +165018,16 @@
                     }
                   }
                 ],
-                "_delimiter": 0
+                "_delimiter": 0,
+                "$_flank": {
+                  "$text": "def e((a,b)",
+                  "$span": {
+                    "start": 7,
+                    "end": 10
+                  },
+                  "$before": true,
+                  "$after": true
+                }
               },
               "$other": [
                 {
@@ -162364,7 +165051,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "def e((a,b))",
+            "$span": {
+              "start": 6,
+              "end": 11
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -162453,7 +165149,16 @@
                             }
                           }
                         ],
-                        "_delimiter": 0
+                        "_delimiter": 0,
+                        "$_flank": {
+                          "$text": "  return (a,b)",
+                          "$span": {
+                            "start": 10,
+                            "end": 13
+                          },
+                          "$before": true,
+                          "$after": true
+                        }
                       },
                       "$other": [
                         {
@@ -162641,7 +165346,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "def e(*list: str)",
+            "$span": {
+              "start": 6,
+              "end": 16
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -162845,7 +165559,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "def e(**list: str)",
+            "$span": {
+              "start": 6,
+              "end": 17
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -163304,7 +166027,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "def g(h, i, /, j, *, k=100, **kwarg)",
+            "$span": {
+              "start": 6,
+              "end": 35
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -163455,7 +166187,16 @@
                           }
                         }
                       ],
-                      "_delimiter": 0
+                      "_delimiter": 0,
+                      "$_flank": {
+                        "$text": "  return h,i,j,k,kwarg\n\nd",
+                        "$span": {
+                          "start": 9,
+                          "end": 22
+                        },
+                        "$before": true,
+                        "$after": true
+                      }
                     },
                     "$other": [
                       {
@@ -163587,7 +166328,16 @@
               ]
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "def h(*a)",
+            "$span": {
+              "start": 6,
+              "end": 8
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -164176,7 +166926,16 @@
                   }
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "def e((a,b)",
+                "$span": {
+                  "start": 7,
+                  "end": 10
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -164200,7 +166959,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "def e((a,b))",
+          "$span": {
+            "start": 6,
+            "end": 11
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -164311,7 +167079,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "def e(*list: str)",
+          "$span": {
+            "start": 6,
+            "end": 16
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -164422,7 +167199,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "def e(**list: str)",
+          "$span": {
+            "start": 6,
+            "end": 17
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -164677,7 +167463,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "def g(h, i, /, j, *, k=100, **kwarg)",
+          "$span": {
+            "start": 6,
+            "end": 35
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -164753,7 +167548,16 @@
             ]
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "def h(*a)",
+          "$span": {
+            "start": 6,
+            "end": 8
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -164869,7 +167673,16 @@
                 }
               }
             ],
-            "_delimiter": 0
+            "_delimiter": 0,
+            "$_flank": {
+              "$text": "def e((a,b)",
+              "$span": {
+                "start": 7,
+                "end": 10
+              },
+              "$before": true,
+              "$after": true
+            }
           },
           "$other": [
             {
@@ -164893,7 +167706,16 @@
           ]
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "def e((a,b))",
+        "$span": {
+          "start": 6,
+          "end": 11
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "(a,b)"
   },
@@ -164979,7 +167801,16 @@
           ]
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "def e(*list: str)",
+        "$span": {
+          "start": 6,
+          "end": 16
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "*list: str"
   },
@@ -165065,7 +167896,16 @@
           ]
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "def e(**list: str)",
+        "$span": {
+          "start": 6,
+          "end": 17
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "**list: str"
   },
@@ -165268,7 +168108,16 @@
           }
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "def g(h, i, /, j, *, k=100, **kwarg)",
+        "$span": {
+          "start": 6,
+          "end": 35
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "h, i, /, j, *, k=100, **kwarg"
   },
@@ -165319,7 +168168,16 @@
           ]
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "def h(*a)",
+        "$span": {
+          "start": 6,
+          "end": 8
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "*a"
   },
@@ -165382,7 +168240,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "def e((a,b)",
+          "$span": {
+            "start": 7,
+            "end": 10
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -165466,7 +168333,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "  return (a,b)",
+          "$span": {
+            "start": 10,
+            "end": 13
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -166626,7 +169502,16 @@
                   }
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "def a(b, c)",
+                "$span": {
+                  "start": 6,
+                  "end": 10
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -166789,7 +169674,16 @@
                                 }
                               }
                             ],
-                            "_delimiter": 0
+                            "_delimiter": 0,
+                            "$_flank": {
+                              "$text": "  print e\n  w",
+                              "$span": {
+                                "start": 8,
+                                "end": 9
+                              },
+                              "$before": true,
+                              "$after": true
+                            }
                           },
                           "$other": [
                             {
@@ -167009,7 +169903,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "def a(b, c)",
+            "$span": {
+              "start": 6,
+              "end": 10
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -167177,7 +170080,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "def a(b, c)",
+          "$span": {
+            "start": 6,
+            "end": 10
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -167257,7 +170169,16 @@
           }
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "def a(b, c)",
+        "$span": {
+          "start": 6,
+          "end": 10
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "b, c"
   },
@@ -167411,7 +170332,16 @@
                           }
                         }
                       ],
-                      "_delimiter": 0
+                      "_delimiter": 0,
+                      "$_flank": {
+                        "$text": "  def b(self)",
+                        "$span": {
+                          "start": 8,
+                          "end": 12
+                        },
+                        "$before": true,
+                        "$after": true
+                      }
                     },
                     "$other": [
                       {
@@ -167779,7 +170709,16 @@
                           }
                         }
                       ],
-                      "_delimiter": 0
+                      "_delimiter": 0,
+                      "$_flank": {
+                        "$text": "  def method1(self)",
+                        "$span": {
+                          "start": 14,
+                          "end": 18
+                        },
+                        "$before": true,
+                        "$after": true
+                      }
                     },
                     "$other": [
                       {
@@ -168442,7 +171381,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "  def b(self)",
+            "$span": {
+              "start": 8,
+              "end": 12
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -168611,7 +171559,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "  def method1(self)",
+            "$span": {
+              "start": 14,
+              "end": 18
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -168756,7 +171713,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "  def b(self)",
+          "$span": {
+            "start": 8,
+            "end": 12
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -168816,7 +171782,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "  def method1(self)",
+          "$span": {
+            "start": 14,
+            "end": 18
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {
@@ -168872,7 +171847,16 @@
           }
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "  def b(self)",
+        "$span": {
+          "start": 8,
+          "end": 12
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "self"
   },
@@ -168907,7 +171891,16 @@
           }
         }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_flank": {
+        "$text": "  def method1(self)",
+        "$span": {
+          "start": 14,
+          "end": 18
+        },
+        "$before": true,
+        "$after": true
+      }
     },
     "expectedOutput": "self"
   },
@@ -173576,7 +176569,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "print a\n#",
+                      "$span": {
+                        "start": 6,
+                        "end": 7
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -173641,7 +176643,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "print b #",
+                      "$span": {
+                        "start": 6,
+                        "end": 7
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -173739,7 +176750,16 @@
                         }
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "print c\n",
+                      "$span": {
+                        "start": 6,
+                        "end": 7
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -175382,7 +178402,16 @@
                         ]
                       }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_flank": {
+                      "$text": "print \"a\"\n  #",
+                      "$span": {
+                        "start": 6,
+                        "end": 9
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
                   },
                   "$other": [
                     {
@@ -181029,7 +184058,16 @@
                                         }
                                       }
                                     ],
-                                    "_delimiter": 0
+                                    "_delimiter": 0,
+                                    "$_flank": {
+                                      "$text": "type IntOrStrSequence[T: (int, str)",
+                                      "$span": {
+                                        "start": 26,
+                                        "end": 34
+                                      },
+                                      "$before": true,
+                                      "$after": true
+                                    }
                                   },
                                   "$other": [
                                     {
@@ -183023,7 +186061,16 @@
                             }
                           }
                         ],
-                        "_delimiter": 0
+                        "_delimiter": 0,
+                        "$_flank": {
+                          "$text": "type IntOrStrSequence[T: (int, str)",
+                          "$span": {
+                            "start": 26,
+                            "end": 34
+                          },
+                          "$before": true,
+                          "$after": true
+                        }
                       },
                       "$other": [
                         {
@@ -183191,7 +186238,16 @@
                   }
                 }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_flank": {
+                "$text": "type IntOrStrSequence[T: (int, str)",
+                "$span": {
+                  "start": 26,
+                  "end": 34
+                },
+                "$before": true,
+                "$after": true
+              }
             },
             "$other": [
               {
@@ -183329,7 +186385,16 @@
               }
             }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_flank": {
+            "$text": "type IntOrStrSequence[T: (int, str)",
+            "$span": {
+              "start": 26,
+              "end": 34
+            },
+            "$before": true,
+            "$after": true
+          }
         },
         "$other": [
           {
@@ -183544,7 +186609,16 @@
             }
           }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_flank": {
+          "$text": "type IntOrStrSequence[T: (int, str)",
+          "$span": {
+            "start": 26,
+            "end": 34
+          },
+          "$before": true,
+          "$after": true
+        }
       },
       "$other": [
         {

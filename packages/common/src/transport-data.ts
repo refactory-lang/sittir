@@ -293,10 +293,11 @@ export interface TriviaView {
 	readonly trivia: (node: Record<string, unknown>) => unknown;
 	readonly derived: (node: Record<string, unknown>) => DerivedSides | undefined;
 	readonly isWrapper: (kindId: number) => boolean;
+	readonly isList: (kindId: number) => boolean;
 }
 
 /** The view of data whose trivia is all stored: nothing is derived. */
-export const STORED_TRIVIA: TriviaView = { trivia: (node) => node.$_trivia, derived: () => undefined, isWrapper: () => false };
+export const STORED_TRIVIA: TriviaView = { trivia: (node) => node.$_trivia, derived: () => undefined, isWrapper: () => false, isList: () => false };
 
 /** The edges of a node whose neighbour is not the one its source had there. */
 export interface ChangedEdges {
@@ -403,13 +404,11 @@ export interface SourceFlankEvidence {
 }
 
 /**
- * The items of a list node: the one array a kind a rebuild constructs around
- * existing nodes (`TriviaView.isWrapper`) holds as its only present node or
- * array storage. A group around one node holds a node, not an array, and is
- * not a list node.
+ * The items of a list node: the one array a list kind (`TriviaView.isList`)
+ * holds in its slots.
  */
 function listItemsOf(record: Record<string, unknown>, view: TriviaView): readonly Record<string, unknown>[] | undefined {
-	if (typeof record.$type !== 'number' || !view.isWrapper(record.$type)) return undefined;
+	if (typeof record.$type !== 'number' || !view.isList(record.$type)) return undefined;
 	const held = Object.keys(record).flatMap((key) => {
 		const value = record[key];
 		return isSlotKey(key) && isPresent(value) && (isRecord(value) || Array.isArray(value)) ? [value] : [];

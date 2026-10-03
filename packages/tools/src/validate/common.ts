@@ -194,7 +194,8 @@ export function triviaViewOf(engine: NativeEngine): TriviaView {
 	return {
 		trivia: (node) => readTrivia(node, engine.diagnostics.lineGapsOf),
 		derived: (node) => readDerivedSides(node, engine.diagnostics.lineGapsOf),
-		isWrapper: (kindId) => engine.trivia.rebuildWrappers.has(kindId)
+		isWrapper: (kindId) => engine.trivia.rebuildWrappers.has(kindId),
+		isList: (kindId) => engine.trivia.listKinds.has(kindId)
 	};
 }
 

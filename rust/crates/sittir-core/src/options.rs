@@ -57,7 +57,7 @@ impl SiteSpec {
     /// `arm` at this site: the default's strength when it is the default, declared otherwise.
     pub fn seam(&self, arm: u16) -> crate::slot::SeamArm {
         let strength = if arm == self.default_arm { self.strength } else { crate::spacing::SEAM_DECLARED };
-        crate::slot::SeamArm { arm, strength }
+        crate::slot::SeamArm { arm, strength, dedent: false }
     }
 }
 
@@ -73,11 +73,14 @@ impl SiteSpec {
 pub struct EdgeArm {
     pub arm: u16,
     pub strength: Option<u8>,
+    /// Close a depth before the arm (`SeamArm::dedent`). Only the native
+    /// flank fill sets it; the wire never sends it.
+    pub dedent: Option<bool>,
 }
 
 impl From<crate::slot::SeamArm> for EdgeArm {
     fn from(seam: crate::slot::SeamArm) -> Self {
-        EdgeArm { arm: seam.arm, strength: Some(seam.strength) }
+        EdgeArm { arm: seam.arm, strength: Some(seam.strength), dedent: seam.dedent.then_some(true) }
     }
 }
 
@@ -128,7 +131,7 @@ impl ResolvedOptions {
     /// declared strength even when it is the site's default: the caller chose
     /// it, so it must win a seam merge the default would lose.
     pub fn set_arm(&mut self, site: usize, arm: u16) {
-        self.spacing[site] = crate::slot::SeamArm { arm, strength: crate::spacing::SEAM_DECLARED };
+        self.spacing[site] = crate::slot::SeamArm { arm, strength: crate::spacing::SEAM_DECLARED, dedent: false };
     }
 
     /// What one side of a kind's edge writes: the stamp when one is set (at its
@@ -151,8 +154,8 @@ impl ResolvedOptions {
         }
         let site = site as usize;
         Some(match stamped {
-            Some(EdgeArm { arm, strength: Some(strength) }) => crate::slot::SeamArm { arm, strength },
-            Some(EdgeArm { arm, strength: None }) => self.sites[site].seam(arm),
+            Some(EdgeArm { arm, strength: Some(strength), dedent }) => crate::slot::SeamArm { arm, strength, dedent: dedent == Some(true) },
+            Some(EdgeArm { arm, strength: None, dedent }) => crate::slot::SeamArm { dedent: dedent == Some(true), ..self.sites[site].seam(arm) },
             None => self.spacing[site],
         })
     }

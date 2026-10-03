@@ -507,14 +507,10 @@
             "name",
             "elements"
           ],
-          "$_flank": {
-            "$text": "_ @wildcard\n\n(_) @wildcard\n\n(",
-            "$span": {
-              "start": 13,
-              "end": 26
-            },
-            "$before": true,
-            "$after": true
+          "$_trivia": {
+            "leading": [
+              28
+            ]
           }
         },
         {
@@ -574,16 +570,7 @@
                   "elements"
                 ]
               }
-            ],
-            "$_flank": {
-              "$text": "(node _ @wildcard)",
-              "$span": {
-                "start": 6,
-                "end": 17
-              },
-              "$before": false,
-              "$after": true
-            }
+            ]
           },
           "$other": [
             {
@@ -682,14 +669,10 @@
                 ]
               }
             ],
-            "$_flank": {
-              "$text": "(program\n  name: (_))",
-              "$span": {
-                "start": 11,
-                "end": 20
-              },
-              "$before": false,
-              "$after": true
+            "$_trivia": {
+              "leading": [
+                27
+              ]
             }
           },
           "$other": [
@@ -769,14 +752,10 @@
                 ]
               }
             ],
-            "$_flank": {
-              "$text": "(program\n  name: _)",
-              "$span": {
-                "start": 11,
-                "end": 18
-              },
-              "$before": false,
-              "$after": true
+            "$_trivia": {
+              "leading": [
+                27
+              ]
             }
           },
           "$other": [
@@ -815,7 +794,7 @@
         }
       ]
     },
-    "expectedOutput": "_ @wildcard\n\n( _ ) @wildcard\n\n( node _ @wildcard)\n\n( program name : ( _ ))\n\n( program name : _)\n"
+    "expectedOutput": "_ @wildcard\n\n( _ ) @wildcard\n\n( node _ @wildcard )\n\n( program\nname : ( _ ) )\n\n( program\nname : _ )\n"
   },
   {
     "kind": "roundtrip",
@@ -823,9 +802,9 @@
     "sourceIn": "\n_ @wildcard\n\n(_) @wildcard\n\n(node _ @wildcard)\n\n(program\n  name: (_))\n\n(program\n  name: _)\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "_ @wildcard\n\n( _ ) @wildcard\n\n( node _ @wildcard)\n\n( program name : ( _ ))\n\n( program name : _)\n",
+    "expectedSourceOut": "_ @wildcard\n\n( _ ) @wildcard\n\n( node _ @wildcard )\n\n( program\nname : ( _ ) )\n\n( program\nname : _ )\n",
     "expectedReparseTree": "(program definitions: (anonymous_node elements: (capture name: (identifier))) definitions: (named_node_plain elements: (capture name: (identifier))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (anonymous_node elements: (capture name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain)))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (anonymous_node)))))",
-    "wrappedText": "_ @wildcard\n\n( _ ) @wildcard\n\n( node _ @wildcard)\n\n( program name : ( _ ))\n\n( program name : _)\n",
+    "wrappedText": "_ @wildcard\n\n( _ ) @wildcard\n\n( node _ @wildcard )\n\n( program\nname : ( _ ) )\n\n( program\nname : _ )\n",
     "wrappedOffset": 0
   },
   {
@@ -912,14 +891,10 @@
                 ]
               }
             ],
-            "$_flank": {
-              "$text": "(program\n  name: (identifier))",
-              "$span": {
-                "start": 11,
-                "end": 29
-              },
-              "$before": false,
-              "$after": true
+            "$_trivia": {
+              "leading": [
+                27
+              ]
             }
           },
           "$other": [
@@ -1150,7 +1125,7 @@
         }
       ]
     },
-    "expectedOutput": "( program name : ( identifier ))\n\nname : ( identifier )\n\nname : [\n( identifier )\n( expression )\n]\n"
+    "expectedOutput": "( program\nname : ( identifier ) )\n\nname : ( identifier )\n\nname : [\n( identifier )\n( expression )\n]\n"
   },
   {
     "kind": "roundtrip",
@@ -1158,9 +1133,9 @@
     "sourceIn": "\n(program\n  name: (identifier))\n\nname: (identifier)\n\nname: [\n  (identifier)\n  (expression)\n]\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "( program name : ( identifier ))\n\nname : ( identifier )\n\nname : [\n( identifier )\n( expression )\n]\n",
+    "expectedSourceOut": "( program\nname : ( identifier ) )\n\nname : ( identifier )\n\nname : [\n( identifier )\n( expression )\n]\n",
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))))) definitions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) definitions: (field_definition name: (identifier) definition: (list definitions: (named_node_plain name: (identifier)) definitions: (named_node_plain name: (identifier)))))",
-    "wrappedText": "( program name : ( identifier ))\n\nname : ( identifier )\n\nname : [\n( identifier )\n( expression )\n]\n",
+    "wrappedText": "( program\nname : ( identifier ) )\n\nname : ( identifier )\n\nname : [\n( identifier )\n( expression )\n]\n",
     "wrappedOffset": 0
   },
   {
@@ -1309,14 +1284,10 @@
                 }
               }
             ],
-            "$_flank": {
-              "$text": "(program\n  field: (identifier) @capture\n  !negated-field)",
-              "$span": {
-                "start": 11,
-                "end": 56
-              },
-              "$before": true,
-              "$after": true
+            "$_trivia": {
+              "leading": [
+                27
+              ]
             }
           },
           "$other": [
@@ -1463,14 +1434,10 @@
                 }
               }
             ],
-            "$_flank": {
-              "$text": "(program\n  (identifier) @capture\n  !negated-field)",
-              "$span": {
-                "start": 11,
-                "end": 49
-              },
-              "$before": true,
-              "$after": true
+            "$_trivia": {
+              "leading": [
+                27
+              ]
             }
           },
           "$other": [
@@ -1509,7 +1476,7 @@
         }
       ]
     },
-    "expectedOutput": "( program\n    field : ( identifier ) @capture\n    ! negated-field)\n\n    ( program\n        ( identifier ) @capture\n        ! negated-field)\n"
+    "expectedOutput": "( program\nfield : ( identifier ) @capture\n! negated-field )\n\n( program\n( identifier ) @capture\n! negated-field )\n"
   },
   {
     "kind": "roundtrip",
@@ -1517,9 +1484,9 @@
     "sourceIn": "\n(program\n  field: (identifier) @capture\n  !negated-field)\n\n(program\n  (identifier) @capture\n  !negated-field)\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "( program\n    field : ( identifier ) @capture\n    ! negated-field)\n\n    ( program\n        ( identifier ) @capture\n        ! negated-field)\n",
+    "expectedSourceOut": "( program\nfield : ( identifier ) @capture\n! negated-field )\n\n( program\n( identifier ) @capture\n! negated-field )\n",
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier) elements: (capture name: (identifier)))) named_node_expressions: (negated_field identifier: (identifier)))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (capture name: (identifier))) named_node_expressions: (negated_field identifier: (identifier)))))",
-    "wrappedText": "( program\n    field : ( identifier ) @capture\n    ! negated-field)\n\n    ( program\n        ( identifier ) @capture\n        ! negated-field)\n",
+    "wrappedText": "( program\nfield : ( identifier ) @capture\n! negated-field )\n\n( program\n( identifier ) @capture\n! negated-field )\n",
     "wrappedOffset": 0
   },
   {
@@ -1598,14 +1565,10 @@
                 ]
               }
             ],
-            "$_flank": {
-              "$text": "(program\n  (identifier)+)",
-              "$span": {
-                "start": 11,
-                "end": 24
-              },
-              "$before": false,
-              "$after": true
+            "$_trivia": {
+              "leading": [
+                27
+              ]
             }
           },
           "$other": [
@@ -1641,7 +1604,7 @@
         }
       ]
     },
-    "expectedOutput": "( program ( identifier ) +)\n"
+    "expectedOutput": "( program\n( identifier ) + )\n"
   },
   {
     "kind": "roundtrip",
@@ -1649,9 +1612,9 @@
     "sourceIn": "\n(program\n  (identifier)+)\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "( program ( identifier ) +)\n",
+    "expectedSourceOut": "( program\n( identifier ) + )\n",
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_element_quantifier quantifier: (quantifier))))))",
-    "wrappedText": "( program ( identifier ) +)\n",
+    "wrappedText": "( program\n( identifier ) + )\n",
     "wrappedOffset": 0
   },
   {
@@ -1730,14 +1693,10 @@
                 ]
               }
             ],
-            "$_flank": {
-              "$text": "(program\n  (identifier)?)",
-              "$span": {
-                "start": 11,
-                "end": 24
-              },
-              "$before": false,
-              "$after": true
+            "$_trivia": {
+              "leading": [
+                27
+              ]
             }
           },
           "$other": [
@@ -1773,7 +1732,7 @@
         }
       ]
     },
-    "expectedOutput": "( program ( identifier ) ?)\n"
+    "expectedOutput": "( program\n( identifier ) ? )\n"
   },
   {
     "kind": "roundtrip",
@@ -1781,9 +1740,9 @@
     "sourceIn": "\n(program\n  (identifier)?)\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "( program ( identifier ) ?)\n",
+    "expectedSourceOut": "( program\n( identifier ) ? )\n",
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_element_quantifier quantifier: (quantifier))))))",
-    "wrappedText": "( program ( identifier ) ?)\n",
+    "wrappedText": "( program\n( identifier ) ? )\n",
     "wrappedOffset": 0
   },
   {
@@ -1862,14 +1821,10 @@
                 ]
               }
             ],
-            "$_flank": {
-              "$text": "(program\n  (identifier)*)",
-              "$span": {
-                "start": 11,
-                "end": 24
-              },
-              "$before": false,
-              "$after": true
+            "$_trivia": {
+              "leading": [
+                27
+              ]
             }
           },
           "$other": [
@@ -1905,7 +1860,7 @@
         }
       ]
     },
-    "expectedOutput": "( program ( identifier ) *)\n"
+    "expectedOutput": "( program\n( identifier ) * )\n"
   },
   {
     "kind": "roundtrip",
@@ -1913,9 +1868,9 @@
     "sourceIn": "\n(program\n  (identifier)*)\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "( program ( identifier ) *)\n",
+    "expectedSourceOut": "( program\n( identifier ) * )\n",
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_element_quantifier quantifier: (quantifier))))))",
-    "wrappedText": "( program ( identifier ) *)\n",
+    "wrappedText": "( program\n( identifier ) * )\n",
     "wrappedOffset": 0
   },
   {
@@ -2064,14 +2019,10 @@
                 ]
               }
             ],
-            "$_flank": {
-              "$text": "(program\n  (identifier)? @variable* @spell)",
-              "$span": {
-                "start": 11,
-                "end": 42
-              },
-              "$before": false,
-              "$after": true
+            "$_trivia": {
+              "leading": [
+                27
+              ]
             }
           },
           "$other": [
@@ -2107,7 +2058,7 @@
         }
       ]
     },
-    "expectedOutput": "( program ( identifier ) ? @variable* @spell)\n"
+    "expectedOutput": "( program\n( identifier ) ? @variable* @spell )\n"
   },
   {
     "kind": "roundtrip",
@@ -2115,9 +2066,9 @@
     "sourceIn": "\n(program\n  (identifier)? @variable* @spell)\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "( program ( identifier ) ? @variable* @spell)\n",
+    "expectedSourceOut": "( program\n( identifier ) ? @variable* @spell )\n",
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_element_quantifier quantifier: (quantifier)) elements: (capture name: (identifier)) elements: (list_element_quantifier quantifier: (quantifier)) elements: (capture name: (identifier))))))",
-    "wrappedText": "( program ( identifier ) ? @variable* @spell)\n",
+    "wrappedText": "( program\n( identifier ) ? @variable* @spell )\n",
     "wrappedOffset": 0
   },
   {
@@ -2603,14 +2554,10 @@
                 ]
               }
             ],
-            "$_flank": {
-              "$text": "(class_declaration\n  body: (class_body) @class.body @test)",
-              "$span": {
-                "start": 21,
-                "end": 57
-              },
-              "$before": false,
-              "$after": false
+            "$_trivia": {
+              "leading": [
+                27
+              ]
             }
           },
           "_elements": [
@@ -2674,7 +2621,7 @@
         }
       ]
     },
-    "expectedOutput": "( class_declaration body : ( class_body ) @class.body @test ) @blorg\n"
+    "expectedOutput": "( class_declaration\nbody : ( class_body ) @class.body @test ) @blorg\n"
   },
   {
     "kind": "roundtrip",
@@ -2682,9 +2629,9 @@
     "sourceIn": "\n(class_declaration\n  body: (class_body) @class.body @test) @blorg\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "( class_declaration body : ( class_body ) @class.body @test ) @blorg\n",
+    "expectedSourceOut": "( class_declaration\nbody : ( class_body ) @class.body @test ) @blorg\n",
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier) elements: (capture name: (identifier)) elements: (capture name: (identifier))))) elements: (capture name: (identifier))))",
-    "wrappedText": "( class_declaration body : ( class_body ) @class.body @test ) @blorg\n",
+    "wrappedText": "( class_declaration\nbody : ( class_body ) @class.body @test ) @blorg\n",
     "wrappedOffset": 0
   },
   {
@@ -3095,16 +3042,7 @@
                       "$slotOrder": [
                         "name",
                         "elements"
-                      ],
-                      "$_flank": {
-                        "$text": "    alternative: (_)?\n  ]",
-                        "$span": {
-                          "start": 17,
-                          "end": 21
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
+                      ]
                     },
                     "$slotOrder": [
                       "name",
@@ -3173,14 +3111,10 @@
                 ]
               }
             ],
-            "$_flank": {
-              "$text": "(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner)",
-              "$span": {
-                "start": 16,
-                "end": 102
-              },
-              "$before": false,
-              "$after": false
+            "$_trivia": {
+              "leading": [
+                27
+              ]
             }
           },
           "_elements": [
@@ -3247,7 +3181,7 @@
         }
       ]
     },
-    "expectedOutput": "[\n\"?\"\n\"+\"\n\"-\" ] @ops\n\n( if_statement [\ncondition : ( _ )\nconsequence : ( _ )\nalternative : ( _ ) ?\n] @conditional.inner ) @conditional.outer\n"
+    "expectedOutput": "[\n\"?\"\n\"+\"\n\"-\" ] @ops\n\n( if_statement\n[\ncondition : ( _ )\nconsequence : ( _ )\nalternative : ( _ ) ? ] @conditional.inner ) @conditional.outer\n"
   },
   {
     "kind": "roundtrip",
@@ -3255,9 +3189,9 @@
     "sourceIn": "\n[\n  \"?\"\n  \"+\"\n  \"-\"\n] @ops\n\n(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "[\n\"?\"\n\"+\"\n\"-\" ] @ops\n\n( if_statement [\ncondition : ( _ )\nconsequence : ( _ )\nalternative : ( _ ) ?\n] @conditional.inner ) @conditional.outer\n",
+    "expectedSourceOut": "[\n\"?\"\n\"+\"\n\"-\" ] @ops\n\n( if_statement\n[\ncondition : ( _ )\nconsequence : ( _ )\nalternative : ( _ ) ? ] @conditional.inner ) @conditional.outer\n",
     "expectedReparseTree": "(program definitions: (list definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) elements: (capture name: (identifier))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (list definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain elements: (list_element_quantifier quantifier: (quantifier)))) elements: (capture name: (identifier)))) elements: (capture name: (identifier))))",
-    "wrappedText": "[\n\"?\"\n\"+\"\n\"-\" ] @ops\n\n( if_statement [\ncondition : ( _ )\nconsequence : ( _ )\nalternative : ( _ ) ?\n] @conditional.inner ) @conditional.outer\n",
+    "wrappedText": "[\n\"?\"\n\"+\"\n\"-\" ] @ops\n\n( if_statement\n[\ncondition : ( _ )\nconsequence : ( _ )\nalternative : ( _ ) ? ] @conditional.inner ) @conditional.outer\n",
     "wrappedOffset": 0
   },
   {
@@ -6124,16 +6058,7 @@
             "$slotOrder": [
               "anchor",
               "named_node_expressions"
-            ],
-            "$_flank": {
-              "$text": "(array . (identifier))",
-              "$span": {
-                "start": 7,
-                "end": 21
-              },
-              "$before": false,
-              "$after": true
-            }
+            ]
           },
           "$other": [
             {
@@ -6440,16 +6365,7 @@
             "$slotOrder": [
               "anchor",
               "named_node_expressions"
-            ],
-            "$_flank": {
-              "$text": "(string . \"'\")",
-              "$span": {
-                "start": 8,
-                "end": 13
-              },
-              "$before": false,
-              "$after": true
-            }
+            ]
           },
           "$other": [
             {
@@ -6958,16 +6874,7 @@
                   "right"
                 ]
               }
-            ],
-            "$_flank": {
-              "$text": "(node (a) . \"b\" . (c))",
-              "$span": {
-                "start": 6,
-                "end": 21
-              },
-              "$before": false,
-              "$after": true
-            }
+            ]
           },
           "$other": [
             {
@@ -7185,16 +7092,7 @@
             "$slotOrder": [
               "anchor",
               "named_node_expressions"
-            ],
-            "$_flank": {
-              "$text": "(node . (a) . \"b\" . (c))",
-              "$span": {
-                "start": 6,
-                "end": 23
-              },
-              "$before": false,
-              "$after": true
-            }
+            ]
           },
           "$other": [
             {
@@ -7757,16 +7655,7 @@
             "$slotOrder": [
               "anchor",
               "named_node_expressions"
-            ],
-            "$_flank": {
-              "$text": "(node . name: (identifier))",
-              "$span": {
-                "start": 6,
-                "end": 26
-              },
-              "$before": false,
-              "$after": true
-            }
+            ]
           },
           "$other": [
             {
@@ -8157,16 +8046,7 @@
               "anchor",
               "named_node_expressions",
               "named_node_expressions"
-            ],
-            "$_flank": {
-              "$text": "(node . name: (identifier) (identifier))",
-              "$span": {
-                "start": 6,
-                "end": 39
-              },
-              "$before": false,
-              "$after": true
-            }
+            ]
           },
           "$other": [
             {
@@ -8329,16 +8209,7 @@
                   "right"
                 ]
               }
-            ],
-            "$_flank": {
-              "$text": "(node name: (identifier) . (identifier))",
-              "$span": {
-                "start": 6,
-                "end": 39
-              },
-              "$before": false,
-              "$after": true
-            }
+            ]
           },
           "$other": [
             {
@@ -8900,16 +8771,7 @@
             "$slotOrder": [
               "anchor",
               "named_node_expressions"
-            ],
-            "$_flank": {
-              "$text": "(node . name: (identifier) . another: (identifier))",
-              "$span": {
-                "start": 6,
-                "end": 50
-              },
-              "$before": false,
-              "$after": true
-            }
+            ]
           },
           "$other": [
             {
@@ -9283,16 +9145,7 @@
                   "right"
                 ]
               }
-            ],
-            "$_flank": {
-              "$text": "(node name: (identifier) . another: (identifier))",
-              "$span": {
-                "start": 6,
-                "end": 48
-              },
-              "$before": false,
-              "$after": true
-            }
+            ]
           },
           "$other": [
             {
@@ -9466,7 +9319,7 @@
         }
       ]
     },
-    "expectedOutput": "( ( comment ) . ( function_declaration ) )\n( ( identifier ) . \"and\" . ( identifier ) )\n\n( \"test\" . \"test\" )\n( ( identifier ) . \"test\" )\n( \"test\" . ( identifier ) )\n\n( ( node ) . [ ( node ) \"test\" ] . ( node ) )\n( ( node ) [ ( node ) \"test\" ] . ( node ) )\n( ( node ) . [ ( node ) \"test\" ] ( node ) )\n\n( ( node ) . [ ( node ) \"test\" ] [ ( node ) ] )\n( ( node ) . [ ( node ) \"test\" ] . [ ( node ) ] )\n\n( array . ( identifier ))\n( array ( identifier ) . )\n( array . ( identifier ) . )\n\n( string . \"'\")\n( string \"'\" . )\n( string . \"'\" . \"'\" . )\n\n( node ( a ) . \"b\" . ( c ))\n( node . ( a ) . \"b\" . ( c ))\n( node ( a ) . \"b\" . ( c ) . )\n( node . ( a ) . \"b\" . ( c ) . )\n\n( node . name : ( identifier ))\n( node name : ( identifier ) . )\n( node . name : ( identifier ) . )\n\n( node . name : ( identifier ) ( identifier ))\n( node name : ( identifier ) . ( identifier ))\n( node . name : ( identifier ) . ( identifier ) . )\n\n( node . name : ( identifier ) . another : ( identifier ) . )\n( node . name : ( identifier ) . another : ( identifier ))\n( node name : ( identifier ) . another : ( identifier ) . )\n( node name : ( identifier ) . another : ( identifier ))\n\n( trailing_anchor ( ( grouping_anchor ) . ) . )\n"
+    "expectedOutput": "( ( comment ) . ( function_declaration ) )\n( ( identifier ) . \"and\" . ( identifier ) )\n\n( \"test\" . \"test\" )\n( ( identifier ) . \"test\" )\n( \"test\" . ( identifier ) )\n\n( ( node ) . [ ( node ) \"test\" ] . ( node ) )\n( ( node ) [ ( node ) \"test\" ] . ( node ) )\n( ( node ) . [ ( node ) \"test\" ] ( node ) )\n\n( ( node ) . [ ( node ) \"test\" ] [ ( node ) ] )\n( ( node ) . [ ( node ) \"test\" ] . [ ( node ) ] )\n\n( array . ( identifier ) )\n( array ( identifier ) . )\n( array . ( identifier ) . )\n\n( string . \"'\" )\n( string \"'\" . )\n( string . \"'\" . \"'\" . )\n\n( node ( a ) . \"b\" . ( c ) )\n( node . ( a ) . \"b\" . ( c ) )\n( node ( a ) . \"b\" . ( c ) . )\n( node . ( a ) . \"b\" . ( c ) . )\n\n( node . name : ( identifier ) )\n( node name : ( identifier ) . )\n( node . name : ( identifier ) . )\n\n( node . name : ( identifier ) ( identifier ) )\n( node name : ( identifier ) . ( identifier ) )\n( node . name : ( identifier ) . ( identifier ) . )\n\n( node . name : ( identifier ) . another : ( identifier ) . )\n( node . name : ( identifier ) . another : ( identifier ) )\n( node name : ( identifier ) . another : ( identifier ) . )\n( node name : ( identifier ) . another : ( identifier ) )\n\n( trailing_anchor ( ( grouping_anchor ) . ) . )\n"
   },
   {
     "kind": "roundtrip",
@@ -9474,9 +9327,9 @@
     "sourceIn": "\n((comment) . (function_declaration))\n((identifier) . \"and\" . (identifier))\n\n(\"test\" . \"test\")\n((identifier) . \"test\")\n(\"test\" . (identifier))\n\n((node) . [(node) \"test\"] . (node))\n((node) [(node) \"test\"] . (node))\n((node) . [(node) \"test\"] (node))\n\n((node) . [(node) \"test\"] [(node)])\n((node) . [(node) \"test\"] . [(node)])\n\n(array . (identifier))\n(array (identifier) .)\n(array . (identifier) .)\n\n(string . \"'\")\n(string \"'\" .)\n(string . \"'\" . \"'\" .)\n\n(node (a) . \"b\" . (c))\n(node . (a) . \"b\" . (c))\n(node (a) . \"b\" . (c) .)\n(node . (a) . \"b\" . (c) .)\n\n(node . name: (identifier))\n(node name: (identifier) .)\n(node . name: (identifier) .)\n\n(node . name: (identifier) (identifier))\n(node name: (identifier) . (identifier))\n(node . name: (identifier) . (identifier) .)\n\n(node . name: (identifier) . another: (identifier) .)\n(node . name: (identifier) . another: (identifier))\n(node name: (identifier) . another: (identifier) .)\n(node name: (identifier) . another: (identifier))\n\n(trailing_anchor ((grouping_anchor) .) .)\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "( ( comment ) . ( function_declaration ) )\n( ( identifier ) . \"and\" . ( identifier ) )\n\n( \"test\" . \"test\" )\n( ( identifier ) . \"test\" )\n( \"test\" . ( identifier ) )\n\n( ( node ) . [ ( node ) \"test\" ] . ( node ) )\n( ( node ) [ ( node ) \"test\" ] . ( node ) )\n( ( node ) . [ ( node ) \"test\" ] ( node ) )\n\n( ( node ) . [ ( node ) \"test\" ] [ ( node ) ] )\n( ( node ) . [ ( node ) \"test\" ] . [ ( node ) ] )\n\n( array . ( identifier ))\n( array ( identifier ) . )\n( array . ( identifier ) . )\n\n( string . \"'\")\n( string \"'\" . )\n( string . \"'\" . \"'\" . )\n\n( node ( a ) . \"b\" . ( c ))\n( node . ( a ) . \"b\" . ( c ))\n( node ( a ) . \"b\" . ( c ) . )\n( node . ( a ) . \"b\" . ( c ) . )\n\n( node . name : ( identifier ))\n( node name : ( identifier ) . )\n( node . name : ( identifier ) . )\n\n( node . name : ( identifier ) ( identifier ))\n( node name : ( identifier ) . ( identifier ))\n( node . name : ( identifier ) . ( identifier ) . )\n\n( node . name : ( identifier ) . another : ( identifier ) . )\n( node . name : ( identifier ) . another : ( identifier ))\n( node name : ( identifier ) . another : ( identifier ) . )\n( node name : ( identifier ) . another : ( identifier ))\n\n( trailing_anchor ( ( grouping_anchor ) . ) . )\n",
+    "expectedSourceOut": "( ( comment ) . ( function_declaration ) )\n( ( identifier ) . \"and\" . ( identifier ) )\n\n( \"test\" . \"test\" )\n( ( identifier ) . \"test\" )\n( \"test\" . ( identifier ) )\n\n( ( node ) . [ ( node ) \"test\" ] . ( node ) )\n( ( node ) [ ( node ) \"test\" ] . ( node ) )\n( ( node ) . [ ( node ) \"test\" ] ( node ) )\n\n( ( node ) . [ ( node ) \"test\" ] [ ( node ) ] )\n( ( node ) . [ ( node ) \"test\" ] . [ ( node ) ] )\n\n( array . ( identifier ) )\n( array ( identifier ) . )\n( array . ( identifier ) . )\n\n( string . \"'\" )\n( string \"'\" . )\n( string . \"'\" . \"'\" . )\n\n( node ( a ) . \"b\" . ( c ) )\n( node . ( a ) . \"b\" . ( c ) )\n( node ( a ) . \"b\" . ( c ) . )\n( node . ( a ) . \"b\" . ( c ) . )\n\n( node . name : ( identifier ) )\n( node name : ( identifier ) . )\n( node . name : ( identifier ) . )\n\n( node . name : ( identifier ) ( identifier ) )\n( node name : ( identifier ) . ( identifier ) )\n( node . name : ( identifier ) . ( identifier ) . )\n\n( node . name : ( identifier ) . another : ( identifier ) . )\n( node . name : ( identifier ) . another : ( identifier ) )\n( node name : ( identifier ) . another : ( identifier ) . )\n( node name : ( identifier ) . another : ( identifier ) )\n\n( trailing_anchor ( ( grouping_anchor ) . ) . )\n",
     "expectedReparseTree": "(program definitions: (grouping (grouping_group (group_expression_arm left: (named_node_plain name: (identifier)) right: (named_node_plain name: (identifier))))) definitions: (grouping (grouping_group (group_expression_arm left: (group_expression_arm left: (named_node_plain name: (identifier)) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))) right: (named_node_plain name: (identifier))))) definitions: (grouping (grouping_group (group_expression_arm left: (anonymous_node name: (string string_content: (string_content (string_content_text)))) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))))) definitions: (grouping (grouping_group (group_expression_arm left: (named_node_plain name: (identifier)) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))))) definitions: (grouping (grouping_group (group_expression_arm left: (anonymous_node name: (string string_content: (string_content (string_content_text)))) right: (named_node_plain name: (identifier))))) definitions: (grouping (grouping_group (group_expression_arm left: (group_expression_arm left: (named_node_plain name: (identifier)) right: (list definitions: (named_node_plain name: (identifier)) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))))) right: (named_node_plain name: (identifier))))) definitions: (grouping (grouping_group (named_node_plain name: (identifier))) (grouping_group (group_expression_arm left: (list definitions: (named_node_plain name: (identifier)) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text))))) right: (named_node_plain name: (identifier))))) definitions: (grouping (grouping_group (group_expression_arm left: (named_node_plain name: (identifier)) right: (list definitions: (named_node_plain name: (identifier)) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text))))))) (grouping_group (named_node_plain name: (identifier)))) definitions: (grouping (grouping_group (group_expression_arm left: (named_node_plain name: (identifier)) right: (list definitions: (named_node_plain name: (identifier)) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text))))))) (grouping_group (list definitions: (named_node_plain name: (identifier))))) definitions: (grouping (grouping_group (group_expression_arm left: (group_expression_arm left: (named_node_plain name: (identifier)) right: (list definitions: (named_node_plain name: (identifier)) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))))) right: (list definitions: (named_node_plain name: (identifier)))))) definitions: (named_node_plain name: (identifier) (named_node_group_children (anchor) named_node_expressions: (named_node_plain name: (identifier)))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (named_node_plain name: (identifier)))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last (anchor) last: (named_node_plain name: (identifier)))) definitions: (named_node_plain name: (identifier) (named_node_group_children (anchor) named_node_expressions: (anonymous_node name: (string string_content: (string_content (string_content_text)))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (anonymous_node name: (string string_content: (string_content (string_content_text)))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last (anchor) last: (named_node_expression_arm left: (anonymous_node name: (string string_content: (string_content (string_content_text)))) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_expression_arm left: (named_node_expression_arm left: (named_node_plain name: (identifier)) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))) right: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_children (anchor) named_node_expressions: (named_node_expression_arm left: (named_node_expression_arm left: (named_node_plain name: (identifier)) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))) right: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (named_node_expression_arm left: (named_node_expression_arm left: (named_node_plain name: (identifier)) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))) right: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last (anchor) last: (named_node_expression_arm left: (named_node_expression_arm left: (named_node_plain name: (identifier)) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))) right: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_children (anchor) named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last (anchor) last: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_children (anchor) named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) named_node_expressions: (named_node_plain name: (identifier)))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_expression_arm left: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) right: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last (anchor) last: (named_node_expression_arm left: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) right: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last (anchor) last: (named_node_expression_arm left: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) right: (field_definition name: (identifier) definition: (named_node_plain name: (identifier)))))) definitions: (named_node_plain name: (identifier) (named_node_group_children (anchor) named_node_expressions: (named_node_expression_arm left: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) right: (field_definition name: (identifier) definition: (named_node_plain name: (identifier)))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (named_node_expression_arm left: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) right: (field_definition name: (identifier) definition: (named_node_plain name: (identifier)))))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_expression_arm left: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) right: (field_definition name: (identifier) definition: (named_node_plain name: (identifier)))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (grouping (grouping_group (named_node_plain name: (identifier)) (anchor))))))",
-    "wrappedText": "( ( comment ) . ( function_declaration ) )\n( ( identifier ) . \"and\" . ( identifier ) )\n\n( \"test\" . \"test\" )\n( ( identifier ) . \"test\" )\n( \"test\" . ( identifier ) )\n\n( ( node ) . [ ( node ) \"test\" ] . ( node ) )\n( ( node ) [ ( node ) \"test\" ] . ( node ) )\n( ( node ) . [ ( node ) \"test\" ] ( node ) )\n\n( ( node ) . [ ( node ) \"test\" ] [ ( node ) ] )\n( ( node ) . [ ( node ) \"test\" ] . [ ( node ) ] )\n\n( array . ( identifier ))\n( array ( identifier ) . )\n( array . ( identifier ) . )\n\n( string . \"'\")\n( string \"'\" . )\n( string . \"'\" . \"'\" . )\n\n( node ( a ) . \"b\" . ( c ))\n( node . ( a ) . \"b\" . ( c ))\n( node ( a ) . \"b\" . ( c ) . )\n( node . ( a ) . \"b\" . ( c ) . )\n\n( node . name : ( identifier ))\n( node name : ( identifier ) . )\n( node . name : ( identifier ) . )\n\n( node . name : ( identifier ) ( identifier ))\n( node name : ( identifier ) . ( identifier ))\n( node . name : ( identifier ) . ( identifier ) . )\n\n( node . name : ( identifier ) . another : ( identifier ) . )\n( node . name : ( identifier ) . another : ( identifier ))\n( node name : ( identifier ) . another : ( identifier ) . )\n( node name : ( identifier ) . another : ( identifier ))\n\n( trailing_anchor ( ( grouping_anchor ) . ) . )\n",
+    "wrappedText": "( ( comment ) . ( function_declaration ) )\n( ( identifier ) . \"and\" . ( identifier ) )\n\n( \"test\" . \"test\" )\n( ( identifier ) . \"test\" )\n( \"test\" . ( identifier ) )\n\n( ( node ) . [ ( node ) \"test\" ] . ( node ) )\n( ( node ) [ ( node ) \"test\" ] . ( node ) )\n( ( node ) . [ ( node ) \"test\" ] ( node ) )\n\n( ( node ) . [ ( node ) \"test\" ] [ ( node ) ] )\n( ( node ) . [ ( node ) \"test\" ] . [ ( node ) ] )\n\n( array . ( identifier ) )\n( array ( identifier ) . )\n( array . ( identifier ) . )\n\n( string . \"'\" )\n( string \"'\" . )\n( string . \"'\" . \"'\" . )\n\n( node ( a ) . \"b\" . ( c ) )\n( node . ( a ) . \"b\" . ( c ) )\n( node ( a ) . \"b\" . ( c ) . )\n( node . ( a ) . \"b\" . ( c ) . )\n\n( node . name : ( identifier ) )\n( node name : ( identifier ) . )\n( node . name : ( identifier ) . )\n\n( node . name : ( identifier ) ( identifier ) )\n( node name : ( identifier ) . ( identifier ) )\n( node . name : ( identifier ) . ( identifier ) . )\n\n( node . name : ( identifier ) . another : ( identifier ) . )\n( node . name : ( identifier ) . another : ( identifier ) )\n( node name : ( identifier ) . another : ( identifier ) . )\n( node name : ( identifier ) . another : ( identifier ) )\n\n( trailing_anchor ( ( grouping_anchor ) . ) . )\n",
     "wrappedOffset": 0
   },
   {
@@ -10412,6 +10265,7 @@
             ],
             "$_trivia": {
               "leading": [
+                27,
                 {
                   "$type": 11,
                   "$source": 0,
@@ -10425,15 +10279,6 @@
                 },
                 27
               ]
-            },
-            "$_flank": {
-              "$text": "  ; Capture the name\n  name: (string))",
-              "$span": {
-                "start": 23,
-                "end": 37
-              },
-              "$before": false,
-              "$after": true
             }
           },
           "$other": [
@@ -10530,7 +10375,7 @@
         }
       ]
     },
-    "expectedOutput": "( #match?\n@foo\n; bar\n\"foo\" )\n\n( node; Capture the name\nname : ( string ))\n\n( string\n; wild comment!\n)\n"
+    "expectedOutput": "( #match?\n@foo\n; bar\n\"foo\" )\n\n( node\n; Capture the name\nname : ( string ) )\n\n( string\n; wild comment!\n)\n"
   },
   {
     "kind": "roundtrip",
@@ -10538,9 +10383,9 @@
     "sourceIn": "\n(#match?\n @foo\n ; bar\n \"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n  )\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "( #match?\n@foo\n; bar\n\"foo\" )\n\n( node; Capture the name\nname : ( string ))\n\n( string\n; wild comment!\n)\n",
+    "expectedSourceOut": "( #match?\n@foo\n; bar\n\"foo\" )\n\n( node\n; Capture the name\nname : ( string ) )\n\n( string\n; wild comment!\n)\n",
     "expectedReparseTree": "(program definitions: (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) (comment) elements: (string string_content: (string_content (string_content_text))))) definitions: (named_node_plain name: (identifier) (comment) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (comment)))",
-    "wrappedText": "( #match?\n@foo\n; bar\n\"foo\" )\n\n( node; Capture the name\nname : ( string ))\n\n( string\n; wild comment!\n)\n",
+    "wrappedText": "( #match?\n@foo\n; bar\n\"foo\" )\n\n( node\n; Capture the name\nname : ( string ) )\n\n( string\n; wild comment!\n)\n",
     "wrappedOffset": 0
   },
   {
@@ -10710,14 +10555,10 @@
                       }
                     }
                   ],
-                  "$_flank": {
-                    "$text": "  (named_node\n    name: (identifier)\n    (supertype/subtype))",
-                    "$span": {
-                      "start": 18,
-                      "end": 60
-                    },
-                    "$before": true,
-                    "$after": true
+                  "$_trivia": {
+                    "leading": [
+                      27
+                    ]
                   }
                 },
                 "$other": [
@@ -10747,14 +10588,10 @@
                 "_elements": []
               }
             ],
-            "$_flank": {
-              "$text": "(program\n  (named_node\n    name: (identifier)\n    (supertype/subtype)))",
-              "$span": {
-                "start": 11,
-                "end": 70
-              },
-              "$before": false,
-              "$after": true
+            "$_trivia": {
+              "leading": [
+                27
+              ]
             }
           },
           "$other": [
@@ -10975,14 +10812,10 @@
                       }
                     }
                   ],
-                  "$_flank": {
-                    "$text": "  (named_node\n    name: (identifier)\n    (supertype/\"anonymous subtype\"))",
-                    "$span": {
-                      "start": 18,
-                      "end": 72
-                    },
-                    "$before": true,
-                    "$after": true
+                  "$_trivia": {
+                    "leading": [
+                      27
+                    ]
                   }
                 },
                 "$other": [
@@ -11012,14 +10845,10 @@
                 "_elements": []
               }
             ],
-            "$_flank": {
-              "$text": "(program\n  (named_node\n    name: (identifier)\n    (supertype/\"anonymous subtype\")))",
-              "$span": {
-                "start": 11,
-                "end": 82
-              },
-              "$before": false,
-              "$after": true
+            "$_trivia": {
+              "leading": [
+                27
+              ]
             }
           },
           "$other": [
@@ -11058,7 +10887,7 @@
         }
       ]
     },
-    "expectedOutput": "( program ( named_node\n    name : ( identifier )\n    ( supertype/subtype )))\n\n    ( program ( named_node\n        name : ( identifier )\n        ( supertype/\"anonymous subtype\" )))\n"
+    "expectedOutput": "( program\n( named_node\nname : ( identifier )\n( supertype/subtype ) ) )\n\n( program\n( named_node\nname : ( identifier )\n( supertype/\"anonymous subtype\" ) ) )\n"
   },
   {
     "kind": "roundtrip",
@@ -11066,9 +10895,9 @@
     "sourceIn": "\n(program\n  (named_node\n    name: (identifier)\n    (supertype/subtype)))\n\n(program\n  (named_node\n    name: (identifier)\n    (supertype/\"anonymous subtype\")))\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "( program ( named_node\n    name : ( identifier )\n    ( supertype/subtype )))\n\n    ( program ( named_node\n        name : ( identifier )\n        ( supertype/\"anonymous subtype\" )))\n",
+    "expectedSourceOut": "( program\n( named_node\nname : ( identifier )\n( supertype/subtype ) ) )\n\n( program\n( named_node\nname : ( identifier )\n( supertype/\"anonymous subtype\" ) ) )\n",
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) named_node_expressions: (named_node_supertyped supertype: (identifier) name: (identifier)))))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) named_node_expressions: (named_node_supertyped supertype: (identifier) name: (immediate_string (string_content (string_content_text)))))))))",
-    "wrappedText": "( program ( named_node\n    name : ( identifier )\n    ( supertype/subtype )))\n\n    ( program ( named_node\n        name : ( identifier )\n        ( supertype/\"anonymous subtype\" )))\n",
+    "wrappedText": "( program\n( named_node\nname : ( identifier )\n( supertype/subtype ) ) )\n\n( program\n( named_node\nname : ( identifier )\n( supertype/\"anonymous subtype\" ) ) )\n",
     "wrappedOffset": 0
   },
   {
@@ -11337,16 +11166,7 @@
                         "elements"
                       ]
                     }
-                  ],
-                  "$_flank": {
-                    "$text": "(program (named_node (MISSING identifier) @cap)",
-                    "$span": {
-                      "start": 21,
-                      "end": 46
-                    },
-                    "$before": false,
-                    "$after": true
-                  }
+                  ]
                 },
                 "$other": [
                   {
@@ -11374,16 +11194,7 @@
                 ],
                 "_elements": []
               }
-            ],
-            "$_flank": {
-              "$text": "(program (named_node (MISSING identifier) @cap))",
-              "$span": {
-                "start": 9,
-                "end": 47
-              },
-              "$before": false,
-              "$after": true
-            }
+            ]
           },
           "$other": [
             {
@@ -11421,7 +11232,7 @@
         }
       ]
     },
-    "expectedOutput": "( MISSING program ) @prog\n\n( MISSING ) @missing\n\n( program ( named_node ( MISSING identifier ) @cap))\n"
+    "expectedOutput": "( MISSING program ) @prog\n\n( MISSING ) @missing\n\n( program ( named_node ( MISSING identifier ) @cap ) )\n"
   },
   {
     "kind": "roundtrip",
@@ -11429,9 +11240,9 @@
     "sourceIn": "\n(MISSING program) @prog\n\n(MISSING) @missing\n\n(program (named_node (MISSING identifier) @cap))\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "( MISSING program ) @prog\n\n( MISSING ) @missing\n\n( program ( named_node ( MISSING identifier ) @cap))\n",
+    "expectedSourceOut": "( MISSING program ) @prog\n\n( MISSING ) @missing\n\n( program ( named_node ( MISSING identifier ) @cap ) )\n",
     "expectedReparseTree": "(program definitions: (missing_node name: (identifier) elements: (capture name: (identifier))) definitions: (missing_node elements: (capture name: (identifier))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (missing_node name: (identifier) elements: (capture name: (identifier))))))))",
-    "wrappedText": "( MISSING program ) @prog\n\n( MISSING ) @missing\n\n( program ( named_node ( MISSING identifier ) @cap))\n",
+    "wrappedText": "( MISSING program ) @prog\n\n( MISSING ) @missing\n\n( program ( named_node ( MISSING identifier ) @cap ) )\n",
     "wrappedOffset": 0
   }
 ]

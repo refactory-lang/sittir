@@ -6722,16 +6722,7 @@
                             "end": 128
                           }
                         }
-                      ],
-                      "$_flank": {
-                        "$text": "    println!(\"Got: {}\", slice);",
-                        "$span": {
-                          "start": 12,
-                          "end": 30
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
+                      ]
                     },
                     "$other": [
                       {
@@ -9297,16 +9288,7 @@
                         "end": 128
                       }
                     }
-                  ],
-                  "$_flank": {
-                    "$text": "    println!(\"Got: {}\", slice);",
-                    "$span": {
-                      "start": 12,
-                      "end": 30
-                    },
-                    "$before": true,
-                    "$after": true
-                  }
+                  ]
                 },
                 "$other": [
                   {
@@ -13026,16 +13008,7 @@
                       "end": 128
                     }
                   }
-                ],
-                "$_flank": {
-                  "$text": "    println!(\"Got: {}\", slice);",
-                  "$span": {
-                    "start": 12,
-                    "end": 30
-                  },
-                  "$before": true,
-                  "$after": true
-                }
+                ]
               },
               "$other": [
                 {
@@ -15025,16 +14998,7 @@
               "end": 128
             }
           }
-        ],
-        "$_flank": {
-          "$text": "    println!(\"Got: {}\", slice);",
-          "$span": {
-            "start": 12,
-            "end": 30
-          },
-          "$before": true,
-          "$after": true
-        }
+        ]
       },
       "$other": [
         {
@@ -15168,16 +15132,7 @@
             "end": 128
           }
         }
-      ],
-      "$_flank": {
-        "$text": "    println!(\"Got: {}\", slice);",
-        "$span": {
-          "start": 12,
-          "end": 30
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(\"Got: {}\", slice)"
   },
@@ -35726,9 +35681,9 @@
     "sourceIn": "\nstruct Proton;\nstruct Electron {}\nstruct Person {pub name: String, pub age: u32}\nstruct Point {\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub ());\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "struct Proton;\nstruct Electron {}\nstruct Person {pub name: String, pub age: u32}\nstruct Point {\n        x: i32,\n\n        #[attribute1]\n        y: i32,\n}\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub ());\n",
+    "expectedSourceOut": "struct Proton;\nstruct Electron {}\nstruct Person {pub name: String, pub age: u32}\nstruct Point {\n    x: i32,\n\n    #[attribute1]\n    y: i32,\n}\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub ());\n",
     "expectedReparseTree": "(source_file statements: (struct_item_unit name: (type_identifier)) statements: (struct_item_brace name: (type_identifier) body: (field_declaration_list)) statements: (struct_item_brace name: (type_identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (type_identifier))) item: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (primitive_type)))))) statements: (struct_item_brace name: (type_identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) item: (attributed_field_declaration (attribute_item attribute: (attribute path: (identifier))) (field_declaration name: (field_identifier) type: (primitive_type)))))) statements: (struct_item_tuple name: (type_identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field (visibility_modifier (visibility_modifier_pub)) type: (primitive_type)) item: (attributed_ordered_field type: (primitive_type)) item: (attributed_ordered_field type: (primitive_type))))) statements: (struct_item_tuple name: (type_identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (primitive_type))))) statements: (struct_item_tuple name: (type_identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field (visibility_modifier (visibility_modifier_pub)) type: (unit_type))))))",
-    "wrappedText": "struct Proton;\nstruct Electron {}\nstruct Person {pub name: String, pub age: u32}\nstruct Point {\n        x: i32,\n\n        #[attribute1]\n        y: i32,\n}\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub ());\n",
+    "wrappedText": "struct Proton;\nstruct Electron {}\nstruct Person {pub name: String, pub age: u32}\nstruct Point {\n    x: i32,\n\n    #[attribute1]\n    y: i32,\n}\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub ());\n",
     "wrappedOffset": 0
   },
   {
@@ -36593,7 +36548,7 @@
         "body"
       ]
     },
-    "expectedOutput": "struct Point {\n        x: i32,\n\n        #[attribute1]\n        y: i32,\n}"
+    "expectedOutput": "struct Point {\n    x: i32,\n\n    #[attribute1]\n    y: i32,\n}"
   },
   {
     "kind": "roundtrip",
@@ -36601,9 +36556,9 @@
     "sourceIn": "struct Point {\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}",
     "pattern": "struct_item_brace",
     "edits": [],
-    "expectedSourceOut": "struct Point {\n        x: i32,\n\n        #[attribute1]\n        y: i32,\n}",
+    "expectedSourceOut": "struct Point {\n    x: i32,\n\n    #[attribute1]\n    y: i32,\n}",
     "expectedReparseTree": "(struct_item_brace name: (type_identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) item: (attributed_field_declaration (attribute_item attribute: (attribute path: (identifier))) (field_declaration name: (field_identifier) type: (primitive_type))))))",
-    "wrappedText": "struct Point {\n        x: i32,\n\n        #[attribute1]\n        y: i32,\n}",
+    "wrappedText": "struct Point {\n    x: i32,\n\n    #[attribute1]\n    y: i32,\n}",
     "wrappedOffset": 0
   },
   {
@@ -37690,7 +37645,7 @@
         }
       ]
     },
-    "expectedOutput": "pub union in6_addr__bindgen_ty_1 {\n        pub __u6_addr8: [__uint8_t; 16usize],\n        pub __u6_addr16: [__uint16_t; 8usize],\n        pub __u6_addr32: [__uint32_t; 4usize],\n        _bindgen_union_align: [u32; 4usize],\n}\n"
+    "expectedOutput": "pub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -37698,9 +37653,9 @@
     "sourceIn": "\npub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "pub union in6_addr__bindgen_ty_1 {\n        pub __u6_addr8: [__uint8_t; 16usize],\n        pub __u6_addr16: [__uint16_t; 8usize],\n        pub __u6_addr32: [__uint32_t; 4usize],\n        _bindgen_union_align: [u32; 4usize],\n}\n",
+    "expectedSourceOut": "pub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}\n",
     "expectedReparseTree": "(source_file statements: (union_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal_decimal)))) item: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal_decimal)))) item: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal_decimal)))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (array_type element: (primitive_type) length: (integer_literal_decimal))))))))",
-    "wrappedText": "pub union in6_addr__bindgen_ty_1 {\n        pub __u6_addr8: [__uint8_t; 16usize],\n        pub __u6_addr16: [__uint16_t; 8usize],\n        pub __u6_addr32: [__uint32_t; 4usize],\n        _bindgen_union_align: [u32; 4usize],\n}\n",
+    "wrappedText": "pub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -38291,7 +38246,7 @@
         "body"
       ]
     },
-    "expectedOutput": "pub union in6_addr__bindgen_ty_1 {\n        pub __u6_addr8: [__uint8_t; 16usize],\n        pub __u6_addr16: [__uint16_t; 8usize],\n        pub __u6_addr32: [__uint32_t; 4usize],\n        _bindgen_union_align: [u32; 4usize],\n}"
+    "expectedOutput": "pub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}"
   },
   {
     "kind": "roundtrip",
@@ -38299,9 +38254,9 @@
     "sourceIn": "pub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}",
     "pattern": "union_item",
     "edits": [],
-    "expectedSourceOut": "pub union in6_addr__bindgen_ty_1 {\n        pub __u6_addr8: [__uint8_t; 16usize],\n        pub __u6_addr16: [__uint16_t; 8usize],\n        pub __u6_addr32: [__uint32_t; 4usize],\n        _bindgen_union_align: [u32; 4usize],\n}",
+    "expectedSourceOut": "pub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}",
     "expectedReparseTree": "(union_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal_decimal)))) item: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal_decimal)))) item: (attributed_field_declaration (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal_decimal)))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (array_type element: (primitive_type) length: (integer_literal_decimal)))))))",
-    "wrappedText": "pub union in6_addr__bindgen_ty_1 {\n        pub __u6_addr8: [__uint8_t; 16usize],\n        pub __u6_addr16: [__uint16_t; 8usize],\n        pub __u6_addr32: [__uint32_t; 4usize],\n        _bindgen_union_align: [u32; 4usize],\n}",
+    "wrappedText": "pub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}",
     "wrappedOffset": 0
   },
   {
@@ -42577,7 +42532,7 @@
         }
       ]
     },
-    "expectedOutput": "pub enum Option<T> {\n        None,\n        Some(T),\n}\n\npub enum Node<T: Item> {\n        Internal {\n                children: Vec<Tree<T>>,\n                height: u16\n        },\n        #[attribute1]\n        #[attribute2]\n        Leaf {\n                value: T\n        }\n}\n"
+    "expectedOutput": "pub enum Option<T> {\n    None,\n    Some(T),\n}\n\npub enum Node<T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]\n    Leaf {\n        value: T\n    }\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -42585,9 +42540,9 @@
     "sourceIn": "\npub enum Option<T> {\n    None,\n    Some(T),\n}\n\npub enum Node<T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]\n    Leaf {\n        value: T\n    }\n}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "pub enum Option<T> {\n        None,\n        Some(T),\n}\n\npub enum Node<T: Item> {\n        Internal {\n                children: Vec<Tree<T>>,\n                height: u16\n        },\n        #[attribute1]\n        #[attribute2]\n        Leaf {\n                value: T\n        }\n}\n",
+    "expectedSourceOut": "pub enum Option<T> {\n    None,\n    Some(T),\n}\n\npub enum Node<T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]\n    Leaf {\n        value: T\n    }\n}\n",
     "expectedReparseTree": "(source_file statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) body: (enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (enum_variant name: (identifier))) item: (attributed_enum_variant (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier))))))))) statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (type_identifier)))))) body: (enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))))))))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))))))) item: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier))) (attribute_item attribute: (attribute path: (identifier))) (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))))))))",
-    "wrappedText": "pub enum Option<T> {\n        None,\n        Some(T),\n}\n\npub enum Node<T: Item> {\n        Internal {\n                children: Vec<Tree<T>>,\n                height: u16\n        },\n        #[attribute1]\n        #[attribute2]\n        Leaf {\n                value: T\n        }\n}\n",
+    "wrappedText": "pub enum Option<T> {\n    None,\n    Some(T),\n}\n\npub enum Node<T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]\n    Leaf {\n        value: T\n    }\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -42890,7 +42845,7 @@
         "body"
       ]
     },
-    "expectedOutput": "pub enum Option<T> {\n        None,\n        Some(T),\n}"
+    "expectedOutput": "pub enum Option<T> {\n    None,\n    Some(T),\n}"
   },
   {
     "kind": "roundtrip",
@@ -42898,9 +42853,9 @@
     "sourceIn": "pub enum Option<T> {\n    None,\n    Some(T),\n}",
     "pattern": "enum_item",
     "edits": [],
-    "expectedSourceOut": "pub enum Option<T> {\n        None,\n        Some(T),\n}",
+    "expectedSourceOut": "pub enum Option<T> {\n    None,\n    Some(T),\n}",
     "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) body: (enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (enum_variant name: (identifier))) item: (attributed_enum_variant (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))))))",
-    "wrappedText": "pub enum Option<T> {\n        None,\n        Some(T),\n}",
+    "wrappedText": "pub enum Option<T> {\n    None,\n    Some(T),\n}",
     "wrappedOffset": 0
   },
   {
@@ -43684,7 +43639,7 @@
         "body"
       ]
     },
-    "expectedOutput": "pub enum Node<T: Item> {\n        Internal {\n                children: Vec<Tree<T>>,\n                height: u16\n        },\n        #[attribute1]\n        #[attribute2]\n        Leaf {\n                value: T\n        }\n}"
+    "expectedOutput": "pub enum Node<T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]\n    Leaf {\n        value: T\n    }\n}"
   },
   {
     "kind": "roundtrip",
@@ -43692,9 +43647,9 @@
     "sourceIn": "pub enum Node<T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]\n    Leaf {\n        value: T\n    }\n}",
     "pattern": "enum_item",
     "edits": [],
-    "expectedSourceOut": "pub enum Node<T: Item> {\n        Internal {\n                children: Vec<Tree<T>>,\n                height: u16\n        },\n        #[attribute1]\n        #[attribute2]\n        Leaf {\n                value: T\n        }\n}",
+    "expectedSourceOut": "pub enum Node<T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]\n    Leaf {\n        value: T\n    }\n}",
     "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (type_identifier)))))) body: (enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))))))))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))))))) item: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier))) (attribute_item attribute: (attribute path: (identifier))) (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier))))))))))",
-    "wrappedText": "pub enum Node<T: Item> {\n        Internal {\n                children: Vec<Tree<T>>,\n                height: u16\n        },\n        #[attribute1]\n        #[attribute2]\n        Leaf {\n                value: T\n        }\n}",
+    "wrappedText": "pub enum Node<T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]\n    Leaf {\n        value: T\n    }\n}",
     "wrappedOffset": 0
   },
   {
@@ -45020,7 +44975,7 @@
         }
       ]
     },
-    "expectedOutput": "pub enum c_style_enum {\n        val1 = 1,\n        val2 = 2\n}\n"
+    "expectedOutput": "pub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -45028,9 +44983,9 @@
     "sourceIn": "\npub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "pub enum c_style_enum {\n        val1 = 1,\n        val2 = 2\n}\n",
+    "expectedSourceOut": "pub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}\n",
     "expectedReparseTree": "(source_file statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (enum_variant name: (identifier) value: (integer_literal_decimal))) item: (attributed_enum_variant (enum_variant name: (identifier) value: (integer_literal_decimal)))))))",
-    "wrappedText": "pub enum c_style_enum {\n        val1 = 1,\n        val2 = 2\n}\n",
+    "wrappedText": "pub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -45230,7 +45185,7 @@
         "body"
       ]
     },
-    "expectedOutput": "pub enum c_style_enum {\n        val1 = 1,\n        val2 = 2\n}"
+    "expectedOutput": "pub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}"
   },
   {
     "kind": "roundtrip",
@@ -45238,9 +45193,9 @@
     "sourceIn": "pub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}",
     "pattern": "enum_item",
     "edits": [],
-    "expectedSourceOut": "pub enum c_style_enum {\n        val1 = 1,\n        val2 = 2\n}",
+    "expectedSourceOut": "pub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}",
     "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (enum_variant name: (identifier) value: (integer_literal_decimal))) item: (attributed_enum_variant (enum_variant name: (identifier) value: (integer_literal_decimal))))))",
-    "wrappedText": "pub enum c_style_enum {\n        val1 = 1,\n        val2 = 2\n}",
+    "wrappedText": "pub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}",
     "wrappedOffset": 0
   },
   {
@@ -58910,16 +58865,7 @@
                       "end": 42
                     }
                   }
-                ],
-                "$_flank": {
-                  "$text": "#[derive(Debug)]",
-                  "$span": {
-                    "start": 8,
-                    "end": 15
-                  },
-                  "$before": true,
-                  "$after": true
-                }
+                ]
               }
             },
             "$slotOrder": [
@@ -59105,16 +59051,7 @@
                       "end": 77
                     }
                   }
-                ],
-                "$_flank": {
-                  "$text": "#[derive(Debug, Eq,)]",
-                  "$span": {
-                    "start": 8,
-                    "end": 20
-                  },
-                  "$before": true,
-                  "$after": true
-                }
+                ]
               }
             },
             "$slotOrder": [
@@ -59323,16 +59260,7 @@
                       "end": 118
                     }
                   }
-                ],
-                "$_flank": {
-                  "$text": "#[cfg(target_os = \"macos\")]",
-                  "$span": {
-                    "start": 5,
-                    "end": 26
-                  },
-                  "$before": true,
-                  "$after": true
-                }
+                ]
               }
             },
             "$slotOrder": [
@@ -59505,16 +59433,7 @@
                       "end": 174
                     }
                   }
-                ],
-                "$_flank": {
-                  "$text": "#![allow(clippy::useless_transmute)]",
-                  "$span": {
-                    "start": 8,
-                    "end": 35
-                  },
-                  "$before": true,
-                  "$after": true
-                }
+                ]
               }
             },
             "$slotOrder": [
@@ -59862,16 +59781,7 @@
                   "end": 42
                 }
               }
-            ],
-            "$_flank": {
-              "$text": "#[derive(Debug)]",
-              "$span": {
-                "start": 8,
-                "end": 15
-              },
-              "$before": true,
-              "$after": true
-            }
+            ]
           }
         },
         "$slotOrder": [
@@ -60024,16 +59934,7 @@
                   "end": 77
                 }
               }
-            ],
-            "$_flank": {
-              "$text": "#[derive(Debug, Eq,)]",
-              "$span": {
-                "start": 8,
-                "end": 20
-              },
-              "$before": true,
-              "$after": true
-            }
+            ]
           }
         },
         "$slotOrder": [
@@ -60209,16 +60110,7 @@
                   "end": 118
                 }
               }
-            ],
-            "$_flank": {
-              "$text": "#[cfg(target_os = \"macos\")]",
-              "$span": {
-                "start": 5,
-                "end": 26
-              },
-              "$before": true,
-              "$after": true
-            }
+            ]
           }
         },
         "$slotOrder": [
@@ -60585,16 +60477,7 @@
             "end": 42
           }
         }
-      ],
-      "$_flank": {
-        "$text": "#[derive(Debug)]",
-        "$span": {
-          "start": 8,
-          "end": 15
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(Debug)"
   },
@@ -60689,16 +60572,7 @@
             "end": 77
           }
         }
-      ],
-      "$_flank": {
-        "$text": "#[derive(Debug, Eq,)]",
-        "$span": {
-          "start": 8,
-          "end": 20
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(Debug, Eq,)"
   },
@@ -60816,16 +60690,7 @@
             "end": 118
           }
         }
-      ],
-      "$_flank": {
-        "$text": "#[cfg(target_os = \"macos\")]",
-        "$span": {
-          "start": 5,
-          "end": 26
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(target_os = \"macos\")"
   },
@@ -60911,16 +60776,7 @@
             "end": 174
           }
         }
-      ],
-      "$_flank": {
-        "$text": "#![allow(clippy::useless_transmute)]",
-        "$span": {
-          "start": 8,
-          "end": 35
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(clippy::useless_transmute)"
   },
@@ -61377,16 +61233,7 @@
                   "end": 174
                 }
               }
-            ],
-            "$_flank": {
-              "$text": "#![allow(clippy::useless_transmute)]",
-              "$span": {
-                "start": 8,
-                "end": 35
-              },
-              "$before": true,
-              "$after": true
-            }
+            ]
           }
         },
         "$slotOrder": [
@@ -61652,16 +61499,7 @@
                             "end": 47
                           }
                         }
-                      ],
-                      "$_flank": {
-                        "$text": "  #![cfg(target_os = \"macos\")]",
-                        "$span": {
-                          "start": 8,
-                          "end": 29
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
+                      ]
                     }
                   },
                   "$slotOrder": [
@@ -61895,15 +61733,6 @@
                                     }
                                   }
                                 ],
-                                "$_flank": {
-                                  "$text": "    #![cfg_attr(all(test, exhaustive),",
-                                  "$span": {
-                                    "start": 19,
-                                    "end": 37
-                                  },
-                                  "$before": true,
-                                  "$after": true
-                                },
                                 "$_gap": {
                                   "$text": ""
                                 }
@@ -61976,15 +61805,6 @@
                                     }
                                   }
                                 ],
-                                "$_flank": {
-                                  "$text": "    #![cfg_attr(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))",
-                                  "$span": {
-                                    "start": 43,
-                                    "end": 76
-                                  },
-                                  "$before": true,
-                                  "$after": true
-                                },
                                 "$_gap": {
                                   "$text": ""
                                 }
@@ -62009,16 +61829,7 @@
                                   "end": 140
                                 }
                               }
-                            ],
-                            "$_flank": {
-                              "$text": "    #![cfg_attr(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))]",
-                              "$span": {
-                                "start": 15,
-                                "end": 77
-                              },
-                              "$before": true,
-                              "$after": true
-                            }
+                            ]
                           }
                         },
                         "$slotOrder": [
@@ -62590,16 +62401,7 @@
                         "end": 47
                       }
                     }
-                  ],
-                  "$_flank": {
-                    "$text": "  #![cfg(target_os = \"macos\")]",
-                    "$span": {
-                      "start": 8,
-                      "end": 29
-                    },
-                    "$before": true,
-                    "$after": true
-                  }
+                  ]
                 }
               },
               "$slotOrder": [
@@ -62830,16 +62632,7 @@
                   "end": 47
                 }
               }
-            ],
-            "$_flank": {
-              "$text": "  #![cfg(target_os = \"macos\")]",
-              "$span": {
-                "start": 8,
-                "end": 29
-              },
-              "$before": true,
-              "$after": true
-            }
+            ]
           }
         },
         "$slotOrder": [
@@ -63013,15 +62806,6 @@
                     }
                   }
                 ],
-                "$_flank": {
-                  "$text": "    #![cfg_attr(all(test, exhaustive),",
-                  "$span": {
-                    "start": 19,
-                    "end": 37
-                  },
-                  "$before": true,
-                  "$after": true
-                },
                 "$_gap": {
                   "$text": ""
                 }
@@ -63094,15 +62878,6 @@
                     }
                   }
                 ],
-                "$_flank": {
-                  "$text": "    #![cfg_attr(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))",
-                  "$span": {
-                    "start": 43,
-                    "end": 76
-                  },
-                  "$before": true,
-                  "$after": true
-                },
                 "$_gap": {
                   "$text": ""
                 }
@@ -63127,16 +62902,7 @@
                   "end": 140
                 }
               }
-            ],
-            "$_flank": {
-              "$text": "    #![cfg_attr(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))]",
-              "$span": {
-                "start": 15,
-                "end": 77
-              },
-              "$before": true,
-              "$after": true
-            }
+            ]
           }
         },
         "$slotOrder": [
@@ -63299,16 +63065,7 @@
             "end": 47
           }
         }
-      ],
-      "$_flank": {
-        "$text": "  #![cfg(target_os = \"macos\")]",
-        "$span": {
-          "start": 8,
-          "end": 29
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(target_os = \"macos\")"
   },
@@ -63415,15 +63172,6 @@
               }
             }
           ],
-          "$_flank": {
-            "$text": "    #![cfg_attr(all(test, exhaustive),",
-            "$span": {
-              "start": 19,
-              "end": 37
-            },
-            "$before": true,
-            "$after": true
-          },
           "$_gap": {
             "$text": ""
           }
@@ -63496,15 +63244,6 @@
               }
             }
           ],
-          "$_flank": {
-            "$text": "    #![cfg_attr(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))",
-            "$span": {
-              "start": 43,
-              "end": 76
-            },
-            "$before": true,
-            "$after": true
-          },
           "$_gap": {
             "$text": ""
           }
@@ -63529,16 +63268,7 @@
             "end": 140
           }
         }
-      ],
-      "$_flank": {
-        "$text": "    #![cfg_attr(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))]",
-        "$span": {
-          "start": 15,
-          "end": 77
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))"
   },
@@ -63624,16 +63354,7 @@
             "end": 100
           }
         }
-      ],
-      "$_flank": {
-        "$text": "    #![cfg_attr(all(test, exhaustive),",
-        "$span": {
-          "start": 19,
-          "end": 37
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(test, exhaustive)"
   },
@@ -63692,16 +63413,7 @@
             "end": 139
           }
         }
-      ],
-      "$_flank": {
-        "$text": "    #![cfg_attr(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))",
-        "$span": {
-          "start": 43,
-          "end": 76
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(non_exhaustive_omitted_patterns)"
   },
@@ -63916,15 +63628,6 @@
                               }
                             }
                           ],
-                          "$_flank": {
-                            "$text": "    #![cfg_attr(all(test, exhaustive),",
-                            "$span": {
-                              "start": 19,
-                              "end": 37
-                            },
-                            "$before": true,
-                            "$after": true
-                          },
                           "$_gap": {
                             "$text": ""
                           }
@@ -63997,15 +63700,6 @@
                               }
                             }
                           ],
-                          "$_flank": {
-                            "$text": "    #![cfg_attr(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))",
-                            "$span": {
-                              "start": 43,
-                              "end": 76
-                            },
-                            "$before": true,
-                            "$after": true
-                          },
                           "$_gap": {
                             "$text": ""
                           }
@@ -64030,16 +63724,7 @@
                             "end": 140
                           }
                         }
-                      ],
-                      "$_flank": {
-                        "$text": "    #![cfg_attr(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))]",
-                        "$span": {
-                          "start": 15,
-                          "end": 77
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
+                      ]
                     }
                   },
                   "$slotOrder": [
@@ -65350,16 +65035,7 @@
                         "end": 35
                       }
                     }
-                  ],
-                  "$_flank": {
-                    "$text": "#[doc = include_str!(\"foo-doc.md\")]",
-                    "$span": {
-                      "start": 20,
-                      "end": 34
-                    },
-                    "$before": true,
-                    "$after": true
-                  }
+                  ]
                 },
                 "$other": [
                   {
@@ -65772,16 +65448,7 @@
                     "end": 35
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "#[doc = include_str!(\"foo-doc.md\")]",
-                "$span": {
-                  "start": 20,
-                  "end": 34
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             },
             "$other": [
               {
@@ -66075,16 +65742,7 @@
               "end": 35
             }
           }
-        ],
-        "$_flank": {
-          "$text": "#[doc = include_str!(\"foo-doc.md\")]",
-          "$span": {
-            "start": 20,
-            "end": 34
-          },
-          "$before": true,
-          "$after": true
-        }
+        ]
       },
       "$other": [
         {
@@ -66191,16 +65849,7 @@
             "end": 35
           }
         }
-      ],
-      "$_flank": {
-        "$text": "#[doc = include_str!(\"foo-doc.md\")]",
-        "$span": {
-          "start": 20,
-          "end": 34
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(\"foo-doc.md\")"
   },
@@ -66702,16 +66351,7 @@
                                       "end": 35
                                     }
                                   }
-                                ],
-                                "$_flank": {
-                                  "$text": "foo(#[attr(=> arbitrary tokens <=)]",
-                                  "$span": {
-                                    "start": 10,
-                                    "end": 34
-                                  },
-                                  "$before": true,
-                                  "$after": true
-                                }
+                                ]
                               }
                             },
                             "$slotOrder": [
@@ -67150,16 +66790,7 @@
                                       "end": 110
                                     }
                                   }
-                                ],
-                                "$_flank": {
-                                  "$text": "foo(#[bar(some tokens are special in other contexts: $/';()*()+.)]",
-                                  "$span": {
-                                    "start": 9,
-                                    "end": 65
-                                  },
-                                  "$before": true,
-                                  "$after": true
-                                }
+                                ]
                               }
                             },
                             "$slotOrder": [
@@ -67417,16 +67048,7 @@
                               "end": 35
                             }
                           }
-                        ],
-                        "$_flank": {
-                          "$text": "foo(#[attr(=> arbitrary tokens <=)]",
-                          "$span": {
-                            "start": 10,
-                            "end": 34
-                          },
-                          "$before": true,
-                          "$after": true
-                        }
+                        ]
                       }
                     },
                     "$slotOrder": [
@@ -67861,16 +67483,7 @@
                               "end": 110
                             }
                           }
-                        ],
-                        "$_flank": {
-                          "$text": "foo(#[bar(some tokens are special in other contexts: $/';()*()+.)]",
-                          "$span": {
-                            "start": 9,
-                            "end": 65
-                          },
-                          "$before": true,
-                          "$after": true
-                        }
+                        ]
                       }
                     },
                     "$slotOrder": [
@@ -68091,16 +67704,7 @@
                             "end": 35
                           }
                         }
-                      ],
-                      "$_flank": {
-                        "$text": "foo(#[attr(=> arbitrary tokens <=)]",
-                        "$span": {
-                          "start": 10,
-                          "end": 34
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
+                      ]
                     }
                   },
                   "$slotOrder": [
@@ -68516,16 +68120,7 @@
                             "end": 110
                           }
                         }
-                      ],
-                      "$_flank": {
-                        "$text": "foo(#[bar(some tokens are special in other contexts: $/';()*()+.)]",
-                        "$span": {
-                          "start": 9,
-                          "end": 65
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
+                      ]
                     }
                   },
                   "$slotOrder": [
@@ -68727,16 +68322,7 @@
                   "end": 35
                 }
               }
-            ],
-            "$_flank": {
-              "$text": "foo(#[attr(=> arbitrary tokens <=)]",
-              "$span": {
-                "start": 10,
-                "end": 34
-              },
-              "$before": true,
-              "$after": true
-            }
+            ]
           }
         },
         "$slotOrder": [
@@ -69059,16 +68645,7 @@
                   "end": 110
                 }
               }
-            ],
-            "$_flank": {
-              "$text": "foo(#[bar(some tokens are special in other contexts: $/';()*()+.)]",
-              "$span": {
-                "start": 9,
-                "end": 65
-              },
-              "$before": true,
-              "$after": true
-            }
+            ]
           }
         },
         "$slotOrder": [
@@ -69199,16 +68776,7 @@
             "end": 35
           }
         }
-      ],
-      "$_flank": {
-        "$text": "foo(#[attr(=> arbitrary tokens <=)]",
-        "$span": {
-          "start": 10,
-          "end": 34
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(=> arbitrary tokens <=)"
   },
@@ -69473,16 +69041,7 @@
             "end": 110
           }
         }
-      ],
-      "$_flank": {
-        "$text": "foo(#[bar(some tokens are special in other contexts: $/';()*()+.)]",
-        "$span": {
-          "start": 9,
-          "end": 65
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(some tokens are special in other contexts: $ /';()*()+.)"
   },
@@ -69749,16 +69308,7 @@
                       "end": 156
                     }
                   }
-                ],
-                "$_flank": {
-                  "$text": "#[derive(Error, Debug)]",
-                  "$span": {
-                    "start": 8,
-                    "end": 22
-                  },
-                  "$before": true,
-                  "$after": true
-                }
+                ]
               }
             },
             "$slotOrder": [
@@ -69996,15 +69546,6 @@
                                     }
                                   }
                                 ],
-                                "$_flank": {
-                                  "$text": "    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))",
-                                  "$span": {
-                                    "start": 69,
-                                    "end": 73
-                                  },
-                                  "$before": true,
-                                  "$after": true
-                                },
                                 "$_gap": {
                                   "$text": ""
                                 }
@@ -70029,16 +69570,7 @@
                                   "end": 249
                                 }
                               }
-                            ],
-                            "$_flank": {
-                              "$text": "    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]",
-                              "$span": {
-                                "start": 11,
-                                "end": 74
-                              },
-                              "$before": true,
-                              "$after": true
-                            }
+                            ]
                           }
                         },
                         "$slotOrder": [
@@ -70394,16 +69926,7 @@
                                   "end": 369
                                 }
                               }
-                            ],
-                            "$_flank": {
-                              "$text": "    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]",
-                              "$span": {
-                                "start": 11,
-                                "end": 95
-                              },
-                              "$before": true,
-                              "$after": true
-                            }
+                            ]
                           }
                         },
                         "$slotOrder": [
@@ -70710,7 +70233,7 @@
         }
       ]
     },
-    "expectedOutput": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\n\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum Error {\n        #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n        WrongCase(String),\n        #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n        OutOfBounds { idx: usize, limits: Limits },\n}\n"
+    "expectedOutput": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\n\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -70718,9 +70241,9 @@
     "sourceIn": "\n// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\n\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\n\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum Error {\n        #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n        WrongCase(String),\n        #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n        OutOfBounds { idx: usize, limits: Limits },\n}\n",
+    "expectedSourceOut": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\n\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}\n",
     "expectedReparseTree": "(source_file (line_comment (line_comment_regular)) statements: (use_declaration argument: (scoped_identifier path: (identifier) name: (identifier))) statements: (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))) statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal_decimal))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))) item: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))) (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))))))))",
-    "wrappedText": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\n\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum Error {\n        #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n        WrongCase(String),\n        #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n        OutOfBounds { idx: usize, limits: Limits },\n}\n",
+    "wrappedText": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\n\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -70990,16 +70513,7 @@
                   "end": 156
                 }
               }
-            ],
-            "$_flank": {
-              "$text": "#[derive(Error, Debug)]",
-              "$span": {
-                "start": 8,
-                "end": 22
-              },
-              "$before": true,
-              "$after": true
-            }
+            ]
           }
         },
         "$slotOrder": [
@@ -71201,15 +70715,6 @@
                     }
                   }
                 ],
-                "$_flank": {
-                  "$text": "    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))",
-                  "$span": {
-                    "start": 69,
-                    "end": 73
-                  },
-                  "$before": true,
-                  "$after": true
-                },
                 "$_gap": {
                   "$text": ""
                 }
@@ -71234,16 +70739,7 @@
                   "end": 249
                 }
               }
-            ],
-            "$_flank": {
-              "$text": "    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]",
-              "$span": {
-                "start": 11,
-                "end": 74
-              },
-              "$before": true,
-              "$after": true
-            }
+            ]
           }
         },
         "$slotOrder": [
@@ -71518,16 +71014,7 @@
                   "end": 369
                 }
               }
-            ],
-            "$_flank": {
-              "$text": "    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]",
-              "$span": {
-                "start": 11,
-                "end": 95
-              },
-              "$before": true,
-              "$after": true
-            }
+            ]
           }
         },
         "$slotOrder": [
@@ -71649,16 +71136,7 @@
             "end": 156
           }
         }
-      ],
-      "$_flank": {
-        "$text": "#[derive(Error, Debug)]",
-        "$span": {
-          "start": 8,
-          "end": 22
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(Error, Debug)"
   },
@@ -71802,15 +71280,6 @@
               }
             }
           ],
-          "$_flank": {
-            "$text": "    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))",
-            "$span": {
-              "start": 69,
-              "end": 73
-            },
-            "$before": true,
-            "$after": true
-          },
           "$_gap": {
             "$text": ""
           }
@@ -71835,16 +71304,7 @@
             "end": 249
           }
         }
-      ],
-      "$_flank": {
-        "$text": "    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]",
-        "$span": {
-          "start": 11,
-          "end": 74
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(\"first letter must be lowercase but was {:?}\", first_char(.0))"
   },
@@ -71908,16 +71368,7 @@
             "end": 248
           }
         }
-      ],
-      "$_flank": {
-        "$text": "    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))",
-        "$span": {
-          "start": 69,
-          "end": 73
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(.0)"
   },
@@ -72134,16 +71585,7 @@
             "end": 369
           }
         }
-      ],
-      "$_flank": {
-        "$text": "    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]",
-        "$span": {
-          "start": 11,
-          "end": 95
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)"
   },
@@ -72357,15 +71799,6 @@
                                 }
                               }
                             ],
-                            "$_flank": {
-                              "$text": "    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))",
-                              "$span": {
-                                "start": 69,
-                                "end": 73
-                              },
-                              "$before": true,
-                              "$after": true
-                            },
                             "$_gap": {
                               "$text": ""
                             }
@@ -72390,16 +71823,7 @@
                               "end": 249
                             }
                           }
-                        ],
-                        "$_flank": {
-                          "$text": "    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]",
-                          "$span": {
-                            "start": 11,
-                            "end": 74
-                          },
-                          "$before": true,
-                          "$after": true
-                        }
+                        ]
                       }
                     },
                     "$slotOrder": [
@@ -72755,16 +72179,7 @@
                               "end": 369
                             }
                           }
-                        ],
-                        "$_flank": {
-                          "$text": "    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]",
-                          "$span": {
-                            "start": 11,
-                            "end": 95
-                          },
-                          "$before": true,
-                          "$after": true
-                        }
+                        ]
                       }
                     },
                     "$slotOrder": [
@@ -73061,7 +72476,7 @@
         "body"
       ]
     },
-    "expectedOutput": "pub enum Error {\n        #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n        WrongCase(String),\n        #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n        OutOfBounds { idx: usize, limits: Limits },\n}"
+    "expectedOutput": "pub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}"
   },
   {
     "kind": "roundtrip",
@@ -73069,9 +72484,9 @@
     "sourceIn": "pub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}",
     "pattern": "enum_item",
     "edits": [],
-    "expectedSourceOut": "pub enum Error {\n        #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n        WrongCase(String),\n        #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n        OutOfBounds { idx: usize, limits: Limits },\n}",
+    "expectedSourceOut": "pub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}",
     "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list elements: (enum_variant_list_elements item: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal_decimal))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (type_identifier)))))) item: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))) (enum_variant name: (identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier))))))))))",
-    "wrappedText": "pub enum Error {\n        #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n        WrongCase(String),\n        #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n        OutOfBounds { idx: usize, limits: Limits },\n}",
+    "wrappedText": "pub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}",
     "wrappedOffset": 0
   },
   {
@@ -73554,16 +72969,7 @@
                                             "end": 47
                                           }
                                         }
-                                      ],
-                                      "$_flank": {
-                                        "$text": "       #[cfg(foo = \"bar\")]",
-                                        "$span": {
-                                          "start": 12,
-                                          "end": 25
-                                        },
-                                        "$before": true,
-                                        "$after": true
-                                      }
+                                      ]
                                     }
                                   },
                                   "$slotOrder": [
@@ -74368,16 +73774,7 @@
                                         "end": 47
                                       }
                                     }
-                                  ],
-                                  "$_flank": {
-                                    "$text": "       #[cfg(foo = \"bar\")]",
-                                    "$span": {
-                                      "start": 12,
-                                      "end": 25
-                                    },
-                                    "$before": true,
-                                    "$after": true
-                                  }
+                                  ]
                                 }
                               },
                               "$slotOrder": [
@@ -75178,16 +74575,7 @@
                                       "end": 47
                                     }
                                   }
-                                ],
-                                "$_flank": {
-                                  "$text": "       #[cfg(foo = \"bar\")]",
-                                  "$span": {
-                                    "start": 12,
-                                    "end": 25
-                                  },
-                                  "$before": true,
-                                  "$after": true
-                                }
+                                ]
                               }
                             },
                             "$slotOrder": [
@@ -75931,16 +75319,7 @@
                               "end": 47
                             }
                           }
-                        ],
-                        "$_flank": {
-                          "$text": "       #[cfg(foo = \"bar\")]",
-                          "$span": {
-                            "start": 12,
-                            "end": 25
-                          },
-                          "$before": true,
-                          "$after": true
-                        }
+                        ]
                       }
                     },
                     "$slotOrder": [
@@ -76221,16 +75600,7 @@
                             "end": 47
                           }
                         }
-                      ],
-                      "$_flank": {
-                        "$text": "       #[cfg(foo = \"bar\")]",
-                        "$span": {
-                          "start": 12,
-                          "end": 25
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
+                      ]
                     }
                   },
                   "$slotOrder": [
@@ -76476,16 +75846,7 @@
                   "end": 47
                 }
               }
-            ],
-            "$_flank": {
-              "$text": "       #[cfg(foo = \"bar\")]",
-              "$span": {
-                "start": 12,
-                "end": 25
-              },
-              "$before": true,
-              "$after": true
-            }
+            ]
           }
         },
         "$slotOrder": [
@@ -76771,16 +76132,7 @@
             "end": 47
           }
         }
-      ],
-      "$_flank": {
-        "$text": "       #[cfg(foo = \"bar\")]",
-        "$span": {
-          "start": 12,
-          "end": 25
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(foo = \"bar\")"
   },
@@ -127699,7 +127051,7 @@
         }
       ]
     },
-    "expectedOutput": "struct A {\n        a: default::B,\n        b: union::C,\n}\n"
+    "expectedOutput": "struct A {\n    a: default::B,\n    b: union::C,\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -127707,9 +127059,9 @@
     "sourceIn": "\nstruct A {\n  a: default::B,\n  b: union::C,\n}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "struct A {\n        a: default::B,\n        b: union::C,\n}\n",
+    "expectedSourceOut": "struct A {\n    a: default::B,\n    b: union::C,\n}\n",
     "expectedReparseTree": "(source_file statements: (struct_item_brace name: (type_identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (scoped_type_identifier path: (identifier) name: (type_identifier)))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (scoped_type_identifier path: (identifier) name: (type_identifier))))))))",
-    "wrappedText": "struct A {\n        a: default::B,\n        b: union::C,\n}\n",
+    "wrappedText": "struct A {\n    a: default::B,\n    b: union::C,\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -127972,7 +127324,7 @@
         "body"
       ]
     },
-    "expectedOutput": "struct A {\n        a: default::B,\n        b: union::C,\n}"
+    "expectedOutput": "struct A {\n    a: default::B,\n    b: union::C,\n}"
   },
   {
     "kind": "roundtrip",
@@ -127980,9 +127332,9 @@
     "sourceIn": "struct A {\n  a: default::B,\n  b: union::C,\n}",
     "pattern": "struct_item_brace",
     "edits": [],
-    "expectedSourceOut": "struct A {\n        a: default::B,\n        b: union::C,\n}",
+    "expectedSourceOut": "struct A {\n    a: default::B,\n    b: union::C,\n}",
     "expectedReparseTree": "(struct_item_brace name: (type_identifier) body: (field_declaration_list elements: (field_declaration_list_elements item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (scoped_type_identifier path: (identifier) name: (type_identifier)))) item: (attributed_field_declaration (field_declaration name: (field_identifier) type: (scoped_type_identifier path: (identifier) name: (type_identifier)))))))",
-    "wrappedText": "struct A {\n        a: default::B,\n        b: union::C,\n}",
+    "wrappedText": "struct A {\n    a: default::B,\n    b: union::C,\n}",
     "wrappedOffset": 0
   },
   {
@@ -140875,16 +140227,7 @@
                               "end": 59
                             }
                           }
-                        ],
-                        "$_flank": {
-                          "$text": "    #[cfg(foo)]",
-                          "$span": {
-                            "start": 9,
-                            "end": 14
-                          },
-                          "$before": true,
-                          "$after": true
-                        }
+                        ]
                       }
                     },
                     "$slotOrder": [
@@ -141048,16 +140391,7 @@
                                     "end": 86
                                   }
                                 }
-                              ],
-                              "$_flank": {
-                                "$text": "    #[cfg(bar)]",
-                                "$span": {
-                                  "start": 9,
-                                  "end": 14
-                                },
-                                "$before": true,
-                                "$after": true
-                              }
+                              ]
                             }
                           },
                           "$slotOrder": [
@@ -141692,16 +141026,7 @@
                       "end": 59
                     }
                   }
-                ],
-                "$_flank": {
-                  "$text": "    #[cfg(foo)]",
-                  "$span": {
-                    "start": 9,
-                    "end": 14
-                  },
-                  "$before": true,
-                  "$after": true
-                }
+                ]
               }
             },
             "$slotOrder": [
@@ -141865,16 +141190,7 @@
                             "end": 86
                           }
                         }
-                      ],
-                      "$_flank": {
-                        "$text": "    #[cfg(bar)]",
-                        "$span": {
-                          "start": 9,
-                          "end": 14
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
+                      ]
                     }
                   },
                   "$slotOrder": [
@@ -142584,16 +141900,7 @@
                   "end": 59
                 }
               }
-            ],
-            "$_flank": {
-              "$text": "    #[cfg(foo)]",
-              "$span": {
-                "start": 9,
-                "end": 14
-              },
-              "$before": true,
-              "$after": true
-            }
+            ]
           }
         },
         "$slotOrder": [
@@ -142710,16 +142017,7 @@
                   "end": 86
                 }
               }
-            ],
-            "$_flank": {
-              "$text": "    #[cfg(bar)]",
-              "$span": {
-                "start": 9,
-                "end": 14
-              },
-              "$before": true,
-              "$after": true
-            }
+            ]
           }
         },
         "$slotOrder": [
@@ -142814,16 +142112,7 @@
             "end": 59
           }
         }
-      ],
-      "$_flank": {
-        "$text": "    #[cfg(foo)]",
-        "$span": {
-          "start": 9,
-          "end": 14
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(foo)"
   },
@@ -142882,16 +142171,7 @@
             "end": 86
           }
         }
-      ],
-      "$_flank": {
-        "$text": "    #[cfg(bar)]",
-        "$span": {
-          "start": 9,
-          "end": 14
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(bar)"
   },
@@ -154012,16 +153292,7 @@
                                 "end": 120
                               }
                             }
-                          ],
-                          "$_flank": {
-                            "$text": "    macro!(4) =",
-                            "$span": {
-                              "start": 10,
-                              "end": 13
-                            },
-                            "$before": true,
-                            "$after": true
-                          }
+                          ]
                         },
                         "$other": [
                           {
@@ -155844,16 +155115,7 @@
                           "end": 120
                         }
                       }
-                    ],
-                    "$_flank": {
-                      "$text": "    macro!(4) =",
-                      "$span": {
-                        "start": 10,
-                        "end": 13
-                      },
-                      "$before": true,
-                      "$after": true
-                    }
+                    ]
                   },
                   "$other": [
                     {
@@ -158323,16 +157585,7 @@
               "end": 120
             }
           }
-        ],
-        "$_flank": {
-          "$text": "    macro!(4) =",
-          "$span": {
-            "start": 10,
-            "end": 13
-          },
-          "$before": true,
-          "$after": true
-        }
+        ]
       },
       "$other": [
         {
@@ -158403,16 +157656,7 @@
             "end": 120
           }
         }
-      ],
-      "$_flank": {
-        "$text": "    macro!(4) =",
-        "$span": {
-          "start": 10,
-          "end": 13
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(4)"
   },
@@ -190612,16 +189856,7 @@
                       "end": 10
                     }
                   }
-                ],
-                "$_flank": {
-                  "$text": "a!(* a *);",
-                  "$span": {
-                    "start": 2,
-                    "end": 9
-                  },
-                  "$before": true,
-                  "$after": true
-                }
+                ]
               },
               "$other": [
                 {
@@ -190732,16 +189967,7 @@
                       "end": 21
                     }
                   }
-                ],
-                "$_flank": {
-                  "$text": "a!(& a &);",
-                  "$span": {
-                    "start": 2,
-                    "end": 9
-                  },
-                  "$before": true,
-                  "$after": true
-                }
+                ]
               },
               "$other": [
                 {
@@ -190857,16 +190083,7 @@
                       "end": 32
                     }
                   }
-                ],
-                "$_flank": {
-                  "$text": "a!(- a -);",
-                  "$span": {
-                    "start": 2,
-                    "end": 9
-                  },
-                  "$before": true,
-                  "$after": true
-                }
+                ]
               },
               "$other": [
                 {
@@ -191009,16 +190226,7 @@
                       "end": 47
                     }
                   }
-                ],
-                "$_flank": {
-                  "$text": "a!(b + c + +);",
-                  "$span": {
-                    "start": 2,
-                    "end": 13
-                  },
-                  "$before": true,
-                  "$after": true
-                }
+                ]
               },
               "$other": [
                 {
@@ -191135,16 +190343,7 @@
                       "end": 62
                     }
                   }
-                ],
-                "$_flank": {
-                  "$text": "a!('a'..='z');",
-                  "$span": {
-                    "start": 2,
-                    "end": 13
-                  },
-                  "$before": true,
-                  "$after": true
-                }
+                ]
               },
               "$other": [
                 {
@@ -191261,16 +190460,7 @@
                       "end": 85
                     }
                   }
-                ],
-                "$_flank": {
-                  "$text": "a!('\\u{0}'..='\\u{2}');",
-                  "$span": {
-                    "start": 2,
-                    "end": 21
-                  },
-                  "$before": true,
-                  "$after": true
-                }
+                ]
               },
               "$other": [
                 {
@@ -191380,16 +190570,7 @@
                   "end": 100
                 }
               }
-            ],
-            "$_flank": {
-              "$text": "a!('lifetime)\nd",
-              "$span": {
-                "start": 2,
-                "end": 13
-              },
-              "$before": true,
-              "$after": true
-            }
+            ]
           },
           "$other": [
             {
@@ -191465,16 +190646,7 @@
                       "end": 112
                     }
                   }
-                ],
-                "$_flank": {
-                  "$text": "default!(a);",
-                  "$span": {
-                    "start": 8,
-                    "end": 11
-                  },
-                  "$before": true,
-                  "$after": true
-                }
+                ]
               },
               "$other": [
                 {
@@ -191563,16 +190735,7 @@
                       "end": 123
                     }
                   }
-                ],
-                "$_flank": {
-                  "$text": "union!(a);",
-                  "$span": {
-                    "start": 6,
-                    "end": 9
-                  },
-                  "$before": true,
-                  "$after": true
-                }
+                ]
               },
               "$other": [
                 {
@@ -191750,16 +190913,7 @@
                       "end": 139
                     }
                   }
-                ],
-                "$_flank": {
-                  "$text": "a!($());",
-                  "$span": {
-                    "start": 2,
-                    "end": 7
-                  },
-                  "$before": true,
-                  "$after": true
-                }
+                ]
               },
               "$other": [
                 {
@@ -191859,16 +191013,7 @@
                       "end": 150
                     }
                   }
-                ],
-                "$_flank": {
-                  "$text": "a!($ a $);",
-                  "$span": {
-                    "start": 2,
-                    "end": 9
-                  },
-                  "$before": true,
-                  "$after": true
-                }
+                ]
               },
               "$other": [
                 {
@@ -191983,16 +191128,7 @@
                                   "end": 164
                                 }
                               }
-                            ],
-                            "$_flank": {
-                              "$text": "a!(${$([ a ])",
-                              "$span": {
-                                "start": 7,
-                                "end": 12
-                              },
-                              "$before": true,
-                              "$after": true
-                            }
+                            ]
                           }
                         ],
                         "$other": [
@@ -192014,16 +191150,7 @@
                               "end": 165
                             }
                           }
-                        ],
-                        "$_flank": {
-                          "$text": "a!(${$([ a ])}",
-                          "$span": {
-                            "start": 6,
-                            "end": 13
-                          },
-                          "$before": true,
-                          "$after": true
-                        }
+                        ]
                       }
                     ],
                     "$other": [
@@ -192045,16 +191172,7 @@
                           "end": 166
                         }
                       }
-                    ],
-                    "$_flank": {
-                      "$text": "a!(${$([ a ])})",
-                      "$span": {
-                        "start": 4,
-                        "end": 14
-                      },
-                      "$before": true,
-                      "$after": true
-                    }
+                    ]
                   }
                 ],
                 "$other": [
@@ -192076,16 +191194,7 @@
                       "end": 167
                     }
                   }
-                ],
-                "$_flank": {
-                  "$text": "a!(${$([ a ])});",
-                  "$span": {
-                    "start": 2,
-                    "end": 15
-                  },
-                  "$before": true,
-                  "$after": true
-                }
+                ]
               },
               "$other": [
                 {
@@ -192249,16 +191358,7 @@
                           "end": 189
                         }
                       }
-                    ],
-                    "$_flank": {
-                      "$text": "a!($a $a:ident $($a);",
-                      "$span": {
-                        "start": 16,
-                        "end": 20
-                      },
-                      "$before": true,
-                      "$after": true
-                    }
+                    ]
                   },
                   {
                     "$type": 189,
@@ -192298,16 +191398,7 @@
                       "end": 192
                     }
                   }
-                ],
-                "$_flank": {
-                  "$text": "a!($a $a:ident $($a);*);",
-                  "$span": {
-                    "start": 2,
-                    "end": 23
-                  },
-                  "$before": true,
-                  "$after": true
-                }
+                ]
               },
               "$other": [
                 {
@@ -192348,7 +191439,7 @@
         }
       ]
     },
-    "expectedOutput": "a!(* a *);\na!(& a &);\na!(- a -);\na!(b + c + +);\na!('a'..='z');\na!('\\u{0}'..='\\u{2}');\na!('lifetime)\ndefault!(a);\nunion!(a);\na!($);\na!($ ());\na!($ a $);\na!(${$([a])});\na!($ a $ a:ident $($ a);*);\n"
+    "expectedOutput": "a!(* a *);\na!(& a &);\na!(- a -);\na!(b + c + +);\na!('a'..='z');\na!('\\u{0}'..='\\u{2}');\na!('lifetime)\ndefault!(a);\nunion!(a);\na!($);\na!($ ());\na!($ a $);\na!($ {$ ([a])});\na!($ a $ a:ident $ ($ a);*);\n"
   },
   {
     "kind": "roundtrip",
@@ -192356,9 +191447,9 @@
     "sourceIn": "\na!(* a *);\na!(& a &);\na!(- a -);\na!(b + c + +);\na!('a'..='z');\na!('\\u{0}'..='\\u{2}');\na!('lifetime)\ndefault!(a);\nunion!(a);\na!($);\na!($());\na!($ a $);\na!(${$([ a ])});\na!($a $a:ident $($a);*);\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "a!(* a *);\na!(& a &);\na!(- a -);\na!(b + c + +);\na!('a'..='z');\na!('\\u{0}'..='\\u{2}');\na!('lifetime)\ndefault!(a);\nunion!(a);\na!($);\na!($ ());\na!($ a $);\na!(${$([a])});\na!($ a $ a:ident $($ a);*);\n",
+    "expectedSourceOut": "a!(* a *);\na!(& a &);\na!(- a -);\na!(b + c + +);\na!('a'..='z');\na!('\\u{0}'..='\\u{2}');\na!('lifetime)\ndefault!(a);\nunion!(a);\na!($);\na!($ ());\na!($ a $);\na!($ {$ ([a])});\na!($ a $ a:ident $ ($ a);*);\n",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (char_literal_plain)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (char_literal_plain)))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (char_literal_escaped_unicode_braced)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (char_literal_escaped_unicode_braced)))))) statements: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token) delim_tokens: (non_special_token (identifier)))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren)))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (delim_token_tree_paren))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (delim_token_tree_brace delim_tokens: (delim_token_tree_paren delim_tokens: (delim_token_tree_bracket delim_tokens: (non_special_token (identifier))))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (identifier))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)))))))",
-    "wrappedText": "a!(* a *);\na!(& a &);\na!(- a -);\na!(b + c + +);\na!('a'..='z');\na!('\\u{0}'..='\\u{2}');\na!('lifetime)\ndefault!(a);\nunion!(a);\na!($);\na!($ ());\na!($ a $);\na!(${$([a])});\na!($ a $ a:ident $($ a);*);\n",
+    "wrappedText": "a!(* a *);\na!(& a &);\na!(- a -);\na!(b + c + +);\na!('a'..='z');\na!('\\u{0}'..='\\u{2}');\na!('lifetime)\ndefault!(a);\nunion!(a);\na!($);\na!($ ());\na!($ a $);\na!($ {$ ([a])});\na!($ a $ a:ident $ ($ a);*);\n",
     "wrappedOffset": 0
   },
   {
@@ -192437,16 +191528,7 @@
               "end": 10
             }
           }
-        ],
-        "$_flank": {
-          "$text": "a!(* a *);",
-          "$span": {
-            "start": 2,
-            "end": 9
-          },
-          "$before": true,
-          "$after": true
-        }
+        ]
       },
       "$other": [
         {
@@ -192553,16 +191635,7 @@
               "end": 21
             }
           }
-        ],
-        "$_flank": {
-          "$text": "a!(& a &);",
-          "$span": {
-            "start": 2,
-            "end": 9
-          },
-          "$before": true,
-          "$after": true
-        }
+        ]
       },
       "$other": [
         {
@@ -192669,16 +191742,7 @@
               "end": 32
             }
           }
-        ],
-        "$_flank": {
-          "$text": "a!(- a -);",
-          "$span": {
-            "start": 2,
-            "end": 9
-          },
-          "$before": true,
-          "$after": true
-        }
+        ]
       },
       "$other": [
         {
@@ -192812,16 +191876,7 @@
               "end": 47
             }
           }
-        ],
-        "$_flank": {
-          "$text": "a!(b + c + +);",
-          "$span": {
-            "start": 2,
-            "end": 13
-          },
-          "$before": true,
-          "$after": true
-        }
+        ]
       },
       "$other": [
         {
@@ -192929,16 +191984,7 @@
               "end": 62
             }
           }
-        ],
-        "$_flank": {
-          "$text": "a!('a'..='z');",
-          "$span": {
-            "start": 2,
-            "end": 13
-          },
-          "$before": true,
-          "$after": true
-        }
+        ]
       },
       "$other": [
         {
@@ -193046,16 +192092,7 @@
               "end": 85
             }
           }
-        ],
-        "$_flank": {
-          "$text": "a!('\\u{0}'..='\\u{2}');",
-          "$span": {
-            "start": 2,
-            "end": 21
-          },
-          "$before": true,
-          "$after": true
-        }
+        ]
       },
       "$other": [
         {
@@ -193164,16 +192201,7 @@
               "end": 100
             }
           }
-        ],
-        "$_flank": {
-          "$text": "a!('lifetime)\nd",
-          "$span": {
-            "start": 2,
-            "end": 13
-          },
-          "$before": true,
-          "$after": true
-        }
+        ]
       },
       "$other": [
         {
@@ -193253,16 +192281,7 @@
               "end": 112
             }
           }
-        ],
-        "$_flank": {
-          "$text": "default!(a);",
-          "$span": {
-            "start": 8,
-            "end": 11
-          },
-          "$before": true,
-          "$after": true
-        }
+        ]
       },
       "$other": [
         {
@@ -193342,16 +192361,7 @@
               "end": 123
             }
           }
-        ],
-        "$_flank": {
-          "$text": "union!(a);",
-          "$span": {
-            "start": 6,
-            "end": 9
-          },
-          "$before": true,
-          "$after": true
-        }
+        ]
       },
       "$other": [
         {
@@ -193511,16 +192521,7 @@
               "end": 139
             }
           }
-        ],
-        "$_flank": {
-          "$text": "a!($());",
-          "$span": {
-            "start": 2,
-            "end": 7
-          },
-          "$before": true,
-          "$after": true
-        }
+        ]
       },
       "$other": [
         {
@@ -193611,16 +192612,7 @@
               "end": 150
             }
           }
-        ],
-        "$_flank": {
-          "$text": "a!($ a $);",
-          "$span": {
-            "start": 2,
-            "end": 9
-          },
-          "$before": true,
-          "$after": true
-        }
+        ]
       },
       "$other": [
         {
@@ -193726,16 +192718,7 @@
                           "end": 164
                         }
                       }
-                    ],
-                    "$_flank": {
-                      "$text": "a!(${$([ a ])",
-                      "$span": {
-                        "start": 7,
-                        "end": 12
-                      },
-                      "$before": true,
-                      "$after": true
-                    }
+                    ]
                   }
                 ],
                 "$other": [
@@ -193757,16 +192740,7 @@
                       "end": 165
                     }
                   }
-                ],
-                "$_flank": {
-                  "$text": "a!(${$([ a ])}",
-                  "$span": {
-                    "start": 6,
-                    "end": 13
-                  },
-                  "$before": true,
-                  "$after": true
-                }
+                ]
               }
             ],
             "$other": [
@@ -193788,16 +192762,7 @@
                   "end": 166
                 }
               }
-            ],
-            "$_flank": {
-              "$text": "a!(${$([ a ])})",
-              "$span": {
-                "start": 4,
-                "end": 14
-              },
-              "$before": true,
-              "$after": true
-            }
+            ]
           }
         ],
         "$other": [
@@ -193819,16 +192784,7 @@
               "end": 167
             }
           }
-        ],
-        "$_flank": {
-          "$text": "a!(${$([ a ])});",
-          "$span": {
-            "start": 2,
-            "end": 15
-          },
-          "$before": true,
-          "$after": true
-        }
+        ]
       },
       "$other": [
         {
@@ -193846,7 +192802,7 @@
         "arguments"
       ]
     },
-    "expectedOutput": "a!(${$([a])})"
+    "expectedOutput": "a!($ {$ ([a])})"
   },
   {
     "kind": "roundtrip",
@@ -193854,9 +192810,9 @@
     "sourceIn": "a!(${$([ a ])})",
     "pattern": "macro_invocation",
     "edits": [],
-    "expectedSourceOut": "a!(${$([a])})",
+    "expectedSourceOut": "a!($ {$ ([a])})",
     "expectedReparseTree": "(macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (delim_token_tree_brace delim_tokens: (delim_token_tree_paren delim_tokens: (delim_token_tree_bracket delim_tokens: (non_special_token (identifier)))))))",
-    "wrappedText": "a!(${$([a])})",
+    "wrappedText": "a!($ {$ ([a])})",
     "wrappedOffset": 0
   },
   {
@@ -193983,16 +192939,7 @@
                   "end": 189
                 }
               }
-            ],
-            "$_flank": {
-              "$text": "a!($a $a:ident $($a);",
-              "$span": {
-                "start": 16,
-                "end": 20
-              },
-              "$before": true,
-              "$after": true
-            }
+            ]
           },
           {
             "$type": 189,
@@ -194032,16 +192979,7 @@
               "end": 192
             }
           }
-        ],
-        "$_flank": {
-          "$text": "a!($a $a:ident $($a);*);",
-          "$span": {
-            "start": 2,
-            "end": 23
-          },
-          "$before": true,
-          "$after": true
-        }
+        ]
       },
       "$other": [
         {
@@ -194059,7 +192997,7 @@
         "arguments"
       ]
     },
-    "expectedOutput": "a!($ a $ a:ident $($ a);*)"
+    "expectedOutput": "a!($ a $ a:ident $ ($ a);*)"
   },
   {
     "kind": "roundtrip",
@@ -194067,9 +193005,9 @@
     "sourceIn": "a!($a $a:ident $($a);*)",
     "pattern": "macro_invocation",
     "edits": [],
-    "expectedSourceOut": "a!($ a $ a:ident $($ a);*)",
+    "expectedSourceOut": "a!($ a $ a:ident $ ($ a);*)",
     "expectedReparseTree": "(macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (identifier))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation))))",
-    "wrappedText": "a!($ a $ a:ident $($ a);*)",
+    "wrappedText": "a!($ a $ a:ident $ ($ a);*)",
     "wrappedOffset": 0
   },
   {
@@ -194134,16 +193072,7 @@
             "end": 10
           }
         }
-      ],
-      "$_flank": {
-        "$text": "a!(* a *);",
-        "$span": {
-          "start": 2,
-          "end": 9
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(* a *)"
   },
@@ -194220,16 +193149,7 @@
             "end": 21
           }
         }
-      ],
-      "$_flank": {
-        "$text": "a!(& a &);",
-        "$span": {
-          "start": 2,
-          "end": 9
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(& a &)"
   },
@@ -194306,16 +193226,7 @@
             "end": 32
           }
         }
-      ],
-      "$_flank": {
-        "$text": "a!(- a -);",
-        "$span": {
-          "start": 2,
-          "end": 9
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(- a -)"
   },
@@ -194419,16 +193330,7 @@
             "end": 47
           }
         }
-      ],
-      "$_flank": {
-        "$text": "a!(b + c + +);",
-        "$span": {
-          "start": 2,
-          "end": 13
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(b + c + +)"
   },
@@ -194506,16 +193408,7 @@
             "end": 62
           }
         }
-      ],
-      "$_flank": {
-        "$text": "a!('a'..='z');",
-        "$span": {
-          "start": 2,
-          "end": 13
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "('a'..='z')"
   },
@@ -194593,16 +193486,7 @@
             "end": 85
           }
         }
-      ],
-      "$_flank": {
-        "$text": "a!('\\u{0}'..='\\u{2}');",
-        "$span": {
-          "start": 2,
-          "end": 21
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "('\\u{0}'..='\\u{2}')"
   },
@@ -194681,16 +193565,7 @@
             "end": 100
           }
         }
-      ],
-      "$_flank": {
-        "$text": "a!('lifetime)\nd",
-        "$span": {
-          "start": 2,
-          "end": 13
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "('lifetime)"
   },
@@ -194749,16 +193624,7 @@
             "end": 112
           }
         }
-      ],
-      "$_flank": {
-        "$text": "default!(a);",
-        "$span": {
-          "start": 8,
-          "end": 11
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(a)"
   },
@@ -194817,16 +193683,7 @@
             "end": 123
           }
         }
-      ],
-      "$_flank": {
-        "$text": "union!(a);",
-        "$span": {
-          "start": 6,
-          "end": 9
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(a)"
   },
@@ -194926,16 +193783,7 @@
             "end": 139
           }
         }
-      ],
-      "$_flank": {
-        "$text": "a!($());",
-        "$span": {
-          "start": 2,
-          "end": 7
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "($ ())"
   },
@@ -195023,16 +193871,7 @@
             "end": 150
           }
         }
-      ],
-      "$_flank": {
-        "$text": "a!($ a $);",
-        "$span": {
-          "start": 2,
-          "end": 9
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "($ a $)"
   },
@@ -195108,16 +193947,7 @@
                         "end": 164
                       }
                     }
-                  ],
-                  "$_flank": {
-                    "$text": "a!(${$([ a ])",
-                    "$span": {
-                      "start": 7,
-                      "end": 12
-                    },
-                    "$before": true,
-                    "$after": true
-                  }
+                  ]
                 }
               ],
               "$other": [
@@ -195139,16 +193969,7 @@
                     "end": 165
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "a!(${$([ a ])}",
-                "$span": {
-                  "start": 6,
-                  "end": 13
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             }
           ],
           "$other": [
@@ -195170,16 +193991,7 @@
                 "end": 166
               }
             }
-          ],
-          "$_flank": {
-            "$text": "a!(${$([ a ])})",
-            "$span": {
-              "start": 4,
-              "end": 14
-            },
-            "$before": true,
-            "$after": true
-          }
+          ]
         }
       ],
       "$other": [
@@ -195201,18 +194013,9 @@
             "end": 167
           }
         }
-      ],
-      "$_flank": {
-        "$text": "a!(${$([ a ])});",
-        "$span": {
-          "start": 2,
-          "end": 15
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
-    "expectedOutput": "(${$([a])})"
+    "expectedOutput": "($ {$ ([a])})"
   },
   {
     "kind": "roundtrip",
@@ -195220,9 +194023,9 @@
     "sourceIn": "(${$([ a ])})",
     "pattern": "delim_token_tree_paren",
     "edits": [],
-    "expectedSourceOut": "(${$([a])})",
+    "expectedSourceOut": "($ {$ ([a])})",
     "expectedReparseTree": "(delim_token_tree_paren delim_tokens: (delim_token_tree_brace delim_tokens: (delim_token_tree_paren delim_tokens: (delim_token_tree_bracket delim_tokens: (non_special_token (identifier))))))",
-    "wrappedText": "fn _f() { mac! (${$([a])}) }",
+    "wrappedText": "fn _f() { mac! ($ {$ ([a])}) }",
     "wrappedOffset": 15
   },
   {
@@ -195274,16 +194077,7 @@
                 "end": 164
               }
             }
-          ],
-          "$_flank": {
-            "$text": "a!(${$([ a ])",
-            "$span": {
-              "start": 7,
-              "end": 12
-            },
-            "$before": true,
-            "$after": true
-          }
+          ]
         }
       ],
       "$other": [
@@ -195305,16 +194099,7 @@
             "end": 165
           }
         }
-      ],
-      "$_flank": {
-        "$text": "a!(${$([ a ])}",
-        "$span": {
-          "start": 6,
-          "end": 13
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "([a])"
   },
@@ -195439,16 +194224,7 @@
                 "end": 189
               }
             }
-          ],
-          "$_flank": {
-            "$text": "a!($a $a:ident $($a);",
-            "$span": {
-              "start": 16,
-              "end": 20
-            },
-            "$before": true,
-            "$after": true
-          }
+          ]
         },
         {
           "$type": 189,
@@ -195488,18 +194264,9 @@
             "end": 192
           }
         }
-      ],
-      "$_flank": {
-        "$text": "a!($a $a:ident $($a);*);",
-        "$span": {
-          "start": 2,
-          "end": 23
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
-    "expectedOutput": "($ a $ a:ident $($ a);*)"
+    "expectedOutput": "($ a $ a:ident $ ($ a);*)"
   },
   {
     "kind": "roundtrip",
@@ -195507,9 +194274,9 @@
     "sourceIn": "($a $a:ident $($a);*)",
     "pattern": "delim_token_tree_paren",
     "edits": [],
-    "expectedSourceOut": "($ a $ a:ident $($ a);*)",
+    "expectedSourceOut": "($ a $ a:ident $ ($ a);*)",
     "expectedReparseTree": "(delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (identifier))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)))",
-    "wrappedText": "fn _f() { mac! ($ a $ a:ident $($ a);*) }",
+    "wrappedText": "fn _f() { mac! ($ a $ a:ident $ ($ a);*) }",
     "wrappedOffset": 15
   },
   {
@@ -195557,16 +194324,7 @@
             "end": 189
           }
         }
-      ],
-      "$_flank": {
-        "$text": "a!($a $a:ident $($a);",
-        "$span": {
-          "start": 16,
-          "end": 20
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "($ a)"
   },
@@ -195728,16 +194486,7 @@
                     "end": 164
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "a!(${$([ a ])",
-                "$span": {
-                  "start": 7,
-                  "end": 12
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             }
           ],
           "$other": [
@@ -195759,16 +194508,7 @@
                 "end": 165
               }
             }
-          ],
-          "$_flank": {
-            "$text": "a!(${$([ a ])}",
-            "$span": {
-              "start": 6,
-              "end": 13
-            },
-            "$before": true,
-            "$after": true
-          }
+          ]
         }
       ],
       "$other": [
@@ -195790,18 +194530,9 @@
             "end": 166
           }
         }
-      ],
-      "$_flank": {
-        "$text": "a!(${$([ a ])})",
-        "$span": {
-          "start": 4,
-          "end": 14
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
-    "expectedOutput": "{$([a])}"
+    "expectedOutput": "{$ ([a])}"
   },
   {
     "kind": "roundtrip",
@@ -195809,9 +194540,9 @@
     "sourceIn": "{$([ a ])}",
     "pattern": "delim_token_tree_brace",
     "edits": [],
-    "expectedSourceOut": "{$([a])}",
+    "expectedSourceOut": "{$ ([a])}",
     "expectedReparseTree": "(delim_token_tree_brace delim_tokens: (delim_token_tree_paren delim_tokens: (delim_token_tree_bracket delim_tokens: (non_special_token (identifier)))))",
-    "wrappedText": "fn _f() { mac! {$([a])} }",
+    "wrappedText": "fn _f() { mac! {$ ([a])} }",
     "wrappedOffset": 15
   },
   {
@@ -195858,16 +194589,7 @@
             "end": 164
           }
         }
-      ],
-      "$_flank": {
-        "$text": "a!(${$([ a ])",
-        "$span": {
-          "start": 7,
-          "end": 12
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "[a]"
   },
@@ -196393,15 +195115,6 @@
                           }
                         }
                       ],
-                      "$_flank": {
-                        "$text": "        println!(\"Hello!\");",
-                        "$span": {
-                          "start": 16,
-                          "end": 26
-                        },
-                        "$before": true,
-                        "$after": true
-                      },
                       "$_gap": {
                         "$text": ""
                       }
@@ -196440,16 +195153,7 @@
                         "end": 71
                       }
                     }
-                  ],
-                  "$_flank": {
-                    "$text": "    () => (\n        println!(\"Hello!\");\n    )\n}",
-                    "$span": {
-                      "start": 10,
-                      "end": 45
-                    },
-                    "$before": true,
-                    "$after": true
-                  }
+                  ]
                 },
                 "$other": [
                   {
@@ -196601,16 +195305,7 @@
                         "end": 112
                       }
                     }
-                  ],
-                  "$_flank": {
-                    "$text": "    () => {1 + 3};",
-                    "$span": {
-                      "start": 10,
-                      "end": 17
-                    },
-                    "$before": true,
-                    "$after": true
-                  }
+                  ]
                 },
                 "$other": [
                   {
@@ -196792,16 +195487,7 @@
                         "end": 154
                       }
                     }
-                  ],
-                  "$_flank": {
-                    "$text": "macro_rules! foo {\n    (x => $e:expr) =",
-                    "$span": {
-                      "start": 23,
-                      "end": 37
-                    },
-                    "$before": true,
-                    "$after": true
-                  }
+                  ]
                 },
                 "_right": {
                   "$type": 408,
@@ -196923,15 +195609,6 @@
                           }
                         }
                       ],
-                      "$_flank": {
-                        "$text": "    (x => $e:expr) => (println!(\"mode X: {}\", $e))",
-                        "$span": {
-                          "start": 31,
-                          "end": 49
-                        },
-                        "$before": true,
-                        "$after": true
-                      },
                       "$_gap": {
                         "$text": ""
                       }
@@ -196956,16 +195633,7 @@
                         "end": 186
                       }
                     }
-                  ],
-                  "$_flank": {
-                    "$text": "    (x => $e:expr) => (println!(\"mode X: {}\", $e));",
-                    "$span": {
-                      "start": 22,
-                      "end": 50
-                    },
-                    "$before": true,
-                    "$after": true
-                  }
+                  ]
                 },
                 "$other": [
                   {
@@ -197066,16 +195734,7 @@
                         "end": 206
                       }
                     }
-                  ],
-                  "$_flank": {
-                    "$text": "    (x => $e:expr) => (println!(\"mode X: {}\", $e));\n    (y => $e:expr) =",
-                    "$span": {
-                      "start": 56,
-                      "end": 70
-                    },
-                    "$before": true,
-                    "$after": true
-                  }
+                  ]
                 },
                 "_right": {
                   "$type": 408,
@@ -197197,15 +195856,6 @@
                           }
                         }
                       ],
-                      "$_flank": {
-                        "$text": "    (y => $e:expr) => (println!(\"mode Y: {}\", $e))",
-                        "$span": {
-                          "start": 31,
-                          "end": 49
-                        },
-                        "$before": true,
-                        "$after": true
-                      },
                       "$_gap": {
                         "$text": ""
                       }
@@ -197230,16 +195880,7 @@
                         "end": 238
                       }
                     }
-                  ],
-                  "$_flank": {
-                    "$text": "    (y => $e:expr) => (println!(\"mode Y: {}\", $e))\n}",
-                    "$span": {
-                      "start": 22,
-                      "end": 50
-                    },
-                    "$before": true,
-                    "$after": true
-                  }
+                  ]
                 },
                 "$other": [
                   {
@@ -197498,15 +196139,6 @@
                               }
                             }
                           ],
-                          "$_flank": {
-                            "$text": "      $($x:expr; [ $( $y:expr ),* ])",
-                            "$span": {
-                              "start": 17,
-                              "end": 35
-                            },
-                            "$before": true,
-                            "$after": true
-                          },
                           "$_gap": {
                             "$text": " "
                           }
@@ -197588,16 +196220,7 @@
                         "end": 311
                       }
                     }
-                  ],
-                  "$_flank": {
-                    "$text": "macro_rules! o_O {\n    (\n      $($x:expr; [ $( $y:expr ),* ]);*\n    ) =",
-                    "$span": {
-                      "start": 23,
-                      "end": 69
-                    },
-                    "$before": true,
-                    "$after": true
-                  }
+                  ]
                 },
                 "_right": {
                   "$type": 410,
@@ -197762,16 +196385,7 @@
                         "end": 346
                       }
                     }
-                  ],
-                  "$_flank": {
-                    "$text": "    ) => {\n      $($($x + $e),*),*\n    }\n}",
-                    "$span": {
-                      "start": 9,
-                      "end": 40
-                    },
-                    "$before": true,
-                    "$after": true
-                  }
+                  ]
                 },
                 "$other": [
                   {
@@ -197967,16 +196581,7 @@
                         "end": 395
                       }
                     }
-                  ],
-                  "$_flank": {
-                    "$text": "macro_rules! zero_or_one {\n    ($($e:expr),?) =",
-                    "$span": {
-                      "start": 31,
-                      "end": 45
-                    },
-                    "$before": true,
-                    "$after": true
-                  }
+                  ]
                 },
                 "_right": {
                   "$type": 410,
@@ -198069,16 +196674,7 @@
                         "end": 422
                       }
                     }
-                  ],
-                  "$_flank": {
-                    "$text": "    ($($e:expr),?) => {\n        $($e),?\n    };",
-                    "$span": {
-                      "start": 22,
-                      "end": 45
-                    },
-                    "$before": true,
-                    "$after": true
-                  }
+                  ]
                 },
                 "$other": [
                   {
@@ -198285,7 +196881,7 @@
         }
       ]
     },
-    "expectedOutput": "macro_rules! say_hello {() => (\nprintln!(\"Hello!\");\n)\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n        (x => $e: expr) => (println!(\"mode X: {}\", $e));\n        (y => $e: expr) => (println!(\"mode Y: {}\", $e))\n    }\n\n    macro_rules! o_O {\n        (\n        $($x: expr; [$($y: expr) , *]) ; *\n        ) => {\n        $($($x + $e) , *) , *\n        }\n        }\n\n        macro_rules! zero_or_one {\n                ($($e: expr) , ?) => {\n                $($e) , ?\n                };\n            }\n\n            macro_rules! empty[\n                () => {};\n            ];\n"
+    "expectedOutput": "macro_rules! say_hello {() => (\nprintln!(\"Hello!\");\n)\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e: expr) => (println!(\"mode X: {}\", $e));\n    (y => $e: expr) => (println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {(\n$($x: expr; [$($y: expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}\n\nmacro_rules! zero_or_one {\n    ($($e: expr) , ?) => {\n    $($e) , ?\n    };\n}\n\nmacro_rules! empty[\n    () => {};\n];\n"
   },
   {
     "kind": "roundtrip",
@@ -198293,9 +196889,9 @@
     "sourceIn": "\nmacro_rules! say_hello {\n    () => (\n        println!(\"Hello!\");\n    )\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e:expr) => (println!(\"mode X: {}\", $e));\n    (y => $e:expr) => (println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {\n    (\n      $($x:expr; [ $( $y:expr ),* ]);*\n    ) => {\n      $($($x + $e),*),*\n    }\n}\n\nmacro_rules! zero_or_one {\n    ($($e:expr),?) => {\n        $($e),?\n    };\n}\n\nmacro_rules! empty [\n    () => {};\n];\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "macro_rules! say_hello {() => (\nprintln!(\"Hello!\");\n)\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n        (x => $e: expr) => (println!(\"mode X: {}\", $e));\n        (y => $e: expr) => (println!(\"mode Y: {}\", $e))\n    }\n\n    macro_rules! o_O {\n        (\n        $($x: expr; [$($y: expr) , *]) ; *\n        ) => {\n        $($($x + $e) , *) , *\n        }\n        }\n\n        macro_rules! zero_or_one {\n                ($($e: expr) , ?) => {\n                $($e) , ?\n                };\n            }\n\n            macro_rules! empty[\n                () => {};\n            ];\n",
+    "expectedSourceOut": "macro_rules! say_hello {() => (\nprintln!(\"Hello!\");\n)\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e: expr) => (println!(\"mode X: {}\", $e));\n    (y => $e: expr) => (println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {(\n$($x: expr; [$($y: expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}\n\nmacro_rules! zero_or_one {\n    ($($e: expr) , ?) => {\n    $($e) , ?\n    };\n}\n\nmacro_rules! empty[\n    () => {};\n];\n",
     "expectedReparseTree": "(source_file statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))) tokens: (non_special_token (token_tree_punctuation)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren) right: (token_tree_brace tokens: (non_special_token (integer_literal_decimal)) tokens: (non_special_token (token_tree_punctuation)) tokens: (non_special_token (integer_literal_decimal)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))) item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable) separator: (token_repetition_pattern_text)) separator: (token_repetition_pattern_text)))))) statements: (macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (metavariable) separator: (token_repetition_pattern_text)))))) statements: (macro_definition_bracket name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren) right: (token_tree_brace)))))",
-    "wrappedText": "macro_rules! say_hello {() => (\nprintln!(\"Hello!\");\n)\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n        (x => $e: expr) => (println!(\"mode X: {}\", $e));\n        (y => $e: expr) => (println!(\"mode Y: {}\", $e))\n    }\n\n    macro_rules! o_O {\n        (\n        $($x: expr; [$($y: expr) , *]) ; *\n        ) => {\n        $($($x + $e) , *) , *\n        }\n        }\n\n        macro_rules! zero_or_one {\n                ($($e: expr) , ?) => {\n                $($e) , ?\n                };\n            }\n\n            macro_rules! empty[\n                () => {};\n            ];\n",
+    "wrappedText": "macro_rules! say_hello {() => (\nprintln!(\"Hello!\");\n)\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e: expr) => (println!(\"mode X: {}\", $e));\n    (y => $e: expr) => (println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {(\n$($x: expr; [$($y: expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}\n\nmacro_rules! zero_or_one {\n    ($($e: expr) , ?) => {\n    $($e) , ?\n    };\n}\n\nmacro_rules! empty[\n    () => {};\n];\n",
     "wrappedOffset": 0
   },
   {
@@ -198438,15 +197034,6 @@
                       }
                     }
                   ],
-                  "$_flank": {
-                    "$text": "        println!(\"Hello!\");",
-                    "$span": {
-                      "start": 16,
-                      "end": 26
-                    },
-                    "$before": true,
-                    "$after": true
-                  },
                   "$_gap": {
                     "$text": ""
                   }
@@ -198485,16 +197072,7 @@
                     "end": 71
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "    () => (\n        println!(\"Hello!\");\n    )\n}",
-                "$span": {
-                  "start": 10,
-                  "end": 45
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             },
             "$other": [
               {
@@ -198663,16 +197241,7 @@
                     "end": 112
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "    () => {1 + 3};",
-                "$span": {
-                  "start": 10,
-                  "end": 17
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             },
             "$other": [
               {
@@ -198866,16 +197435,7 @@
                     "end": 154
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "macro_rules! foo {\n    (x => $e:expr) =",
-                "$span": {
-                  "start": 23,
-                  "end": 37
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             },
             "_right": {
               "$type": 408,
@@ -198997,15 +197557,6 @@
                       }
                     }
                   ],
-                  "$_flank": {
-                    "$text": "    (x => $e:expr) => (println!(\"mode X: {}\", $e))",
-                    "$span": {
-                      "start": 31,
-                      "end": 49
-                    },
-                    "$before": true,
-                    "$after": true
-                  },
                   "$_gap": {
                     "$text": ""
                   }
@@ -199030,16 +197581,7 @@
                     "end": 186
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "    (x => $e:expr) => (println!(\"mode X: {}\", $e));",
-                "$span": {
-                  "start": 22,
-                  "end": 50
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             },
             "$other": [
               {
@@ -199140,16 +197682,7 @@
                     "end": 206
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "    (x => $e:expr) => (println!(\"mode X: {}\", $e));\n    (y => $e:expr) =",
-                "$span": {
-                  "start": 56,
-                  "end": 70
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             },
             "_right": {
               "$type": 408,
@@ -199271,15 +197804,6 @@
                       }
                     }
                   ],
-                  "$_flank": {
-                    "$text": "    (y => $e:expr) => (println!(\"mode Y: {}\", $e))",
-                    "$span": {
-                      "start": 31,
-                      "end": 49
-                    },
-                    "$before": true,
-                    "$after": true
-                  },
                   "$_gap": {
                     "$text": ""
                   }
@@ -199304,16 +197828,7 @@
                     "end": 238
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "    (y => $e:expr) => (println!(\"mode Y: {}\", $e))\n}",
-                "$span": {
-                  "start": 22,
-                  "end": 50
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             },
             "$other": [
               {
@@ -199393,7 +197908,7 @@
         "macro_rules"
       ]
     },
-    "expectedOutput": "macro_rules! foo {\n        (x => $e: expr) => (println!(\"mode X: {}\", $e));\n        (y => $e: expr) => (println!(\"mode Y: {}\", $e))\n    }"
+    "expectedOutput": "macro_rules! foo {\n    (x => $e: expr) => (println!(\"mode X: {}\", $e));\n    (y => $e: expr) => (println!(\"mode Y: {}\", $e))\n}"
   },
   {
     "kind": "roundtrip",
@@ -199401,9 +197916,9 @@
     "sourceIn": "macro_rules! foo {\n    (x => $e:expr) => (println!(\"mode X: {}\", $e));\n    (y => $e:expr) => (println!(\"mode Y: {}\", $e))\n}",
     "pattern": "macro_definition_brace",
     "edits": [],
-    "expectedSourceOut": "macro_rules! foo {\n        (x => $e: expr) => (println!(\"mode X: {}\", $e));\n        (y => $e: expr) => (println!(\"mode Y: {}\", $e))\n    }",
+    "expectedSourceOut": "macro_rules! foo {\n    (x => $e: expr) => (println!(\"mode X: {}\", $e));\n    (y => $e: expr) => (println!(\"mode Y: {}\", $e))\n}",
     "expectedReparseTree": "(macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable)))) item: (macro_rule left: (token_tree_pattern_paren token_patterns: (non_special_token (identifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier))) right: (token_tree_paren tokens: (non_special_token (identifier)) tokens: (non_special_token (token_tree_punctuation)) tokens: (token_tree_paren tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable))))))",
-    "wrappedText": "macro_rules! foo {\n        (x => $e: expr) => (println!(\"mode X: {}\", $e));\n        (y => $e: expr) => (println!(\"mode Y: {}\", $e))\n    }",
+    "wrappedText": "macro_rules! foo {\n    (x => $e: expr) => (println!(\"mode X: {}\", $e));\n    (y => $e: expr) => (println!(\"mode Y: {}\", $e))\n}",
     "wrappedOffset": 0
   },
   {
@@ -199584,15 +198099,6 @@
                           }
                         }
                       ],
-                      "$_flank": {
-                        "$text": "      $($x:expr; [ $( $y:expr ),* ])",
-                        "$span": {
-                          "start": 17,
-                          "end": 35
-                        },
-                        "$before": true,
-                        "$after": true
-                      },
                       "$_gap": {
                         "$text": " "
                       }
@@ -199674,16 +198180,7 @@
                     "end": 311
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "macro_rules! o_O {\n    (\n      $($x:expr; [ $( $y:expr ),* ]);*\n    ) =",
-                "$span": {
-                  "start": 23,
-                  "end": 69
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             },
             "_right": {
               "$type": 410,
@@ -199848,16 +198345,7 @@
                     "end": 346
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "    ) => {\n      $($($x + $e),*),*\n    }\n}",
-                "$span": {
-                  "start": 9,
-                  "end": 40
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             },
             "$other": [
               {
@@ -199921,7 +198409,7 @@
         "macro_rules"
       ]
     },
-    "expectedOutput": "macro_rules! o_O {\n    (\n    $($x: expr; [$($y: expr) , *]) ; *\n    ) => {\n    $($($x + $e) , *) , *\n    }\n    }"
+    "expectedOutput": "macro_rules! o_O {(\n$($x: expr; [$($y: expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}"
   },
   {
     "kind": "roundtrip",
@@ -199929,9 +198417,9 @@
     "sourceIn": "macro_rules! o_O {\n    (\n      $($x:expr; [ $( $y:expr ),* ]);*\n    ) => {\n      $($($x + $e),*),*\n    }\n}",
     "pattern": "macro_definition_brace",
     "edits": [],
-    "expectedSourceOut": "macro_rules! o_O {\n    (\n    $($x: expr; [$($y: expr) , *]) ; *\n    ) => {\n    $($($x + $e) , *) , *\n    }\n    }",
+    "expectedSourceOut": "macro_rules! o_O {(\n$($x: expr; [$($y: expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}",
     "expectedReparseTree": "(macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) token_patterns: (non_special_token (token_tree_punctuation)) token_patterns: (token_tree_pattern_bracket token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (token_repetition tokens: (metavariable) tokens: (non_special_token (token_tree_punctuation)) tokens: (metavariable) separator: (token_repetition_pattern_text)) separator: (token_repetition_pattern_text))))))",
-    "wrappedText": "macro_rules! o_O {\n    (\n    $($x: expr; [$($y: expr) , *]) ; *\n    ) => {\n    $($($x + $e) , *) , *\n    }\n    }",
+    "wrappedText": "macro_rules! o_O {(\n$($x: expr; [$($y: expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}",
     "wrappedOffset": 0
   },
   {
@@ -200065,16 +198553,7 @@
                     "end": 395
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "macro_rules! zero_or_one {\n    ($($e:expr),?) =",
-                "$span": {
-                  "start": 31,
-                  "end": 45
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             },
             "_right": {
               "$type": 410,
@@ -200167,16 +198646,7 @@
                     "end": 422
                   }
                 }
-              ],
-              "$_flank": {
-                "$text": "    ($($e:expr),?) => {\n        $($e),?\n    };",
-                "$span": {
-                  "start": 22,
-                  "end": 45
-                },
-                "$before": true,
-                "$after": true
-              }
+              ]
             },
             "$other": [
               {
@@ -200251,7 +198721,7 @@
         "macro_rules"
       ]
     },
-    "expectedOutput": "macro_rules! zero_or_one {\n        ($($e: expr) , ?) => {\n        $($e) , ?\n        };\n    }"
+    "expectedOutput": "macro_rules! zero_or_one {\n    ($($e: expr) , ?) => {\n    $($e) , ?\n    };\n}"
   },
   {
     "kind": "roundtrip",
@@ -200259,9 +198729,9 @@
     "sourceIn": "macro_rules! zero_or_one {\n    ($($e:expr),?) => {\n        $($e),?\n    };\n}",
     "pattern": "macro_definition_brace",
     "edits": [],
-    "expectedSourceOut": "macro_rules! zero_or_one {\n        ($($e: expr) , ?) => {\n        $($e) , ?\n        };\n    }",
+    "expectedSourceOut": "macro_rules! zero_or_one {\n    ($($e: expr) , ?) => {\n    $($e) , ?\n    };\n}",
     "expectedReparseTree": "(macro_definition_brace name: (identifier) (macro_rules item: (macro_rule left: (token_tree_pattern_paren token_patterns: (token_repetition_pattern token_patterns: (token_binding_pattern name: (metavariable) type: (fragment_specifier)) separator: (token_repetition_pattern_text))) right: (token_tree_brace tokens: (token_repetition tokens: (metavariable) separator: (token_repetition_pattern_text))))))",
-    "wrappedText": "macro_rules! zero_or_one {\n        ($($e: expr) , ?) => {\n        $($e) , ?\n        };\n    }",
+    "wrappedText": "macro_rules! zero_or_one {\n    ($($e: expr) , ?) => {\n    $($e) , ?\n    };\n}",
     "wrappedOffset": 0
   },
   {
@@ -200375,15 +198845,6 @@
               }
             }
           ],
-          "$_flank": {
-            "$text": "        println!(\"Hello!\");",
-            "$span": {
-              "start": 16,
-              "end": 26
-            },
-            "$before": true,
-            "$after": true
-          },
           "$_gap": {
             "$text": ""
           }
@@ -200422,16 +198883,7 @@
             "end": 71
           }
         }
-      ],
-      "$_flank": {
-        "$text": "    () => (\n        println!(\"Hello!\");\n    )\n}",
-        "$span": {
-          "start": 10,
-          "end": 45
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(\nprintln!(\"Hello!\");\n)"
   },
@@ -200522,16 +198974,7 @@
             "end": 64
           }
         }
-      ],
-      "$_flank": {
-        "$text": "        println!(\"Hello!\");",
-        "$span": {
-          "start": 16,
-          "end": 26
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(\"Hello!\")"
   },
@@ -200670,15 +199113,6 @@
               }
             }
           ],
-          "$_flank": {
-            "$text": "    (x => $e:expr) => (println!(\"mode X: {}\", $e))",
-            "$span": {
-              "start": 31,
-              "end": 49
-            },
-            "$before": true,
-            "$after": true
-          },
           "$_gap": {
             "$text": ""
           }
@@ -200703,16 +199137,7 @@
             "end": 186
           }
         }
-      ],
-      "$_flank": {
-        "$text": "    (x => $e:expr) => (println!(\"mode X: {}\", $e));",
-        "$span": {
-          "start": 22,
-          "end": 50
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(println!(\"mode X: {}\", $e))"
   },
@@ -200821,16 +199246,7 @@
             "end": 185
           }
         }
-      ],
-      "$_flank": {
-        "$text": "    (x => $e:expr) => (println!(\"mode X: {}\", $e))",
-        "$span": {
-          "start": 31,
-          "end": 49
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(\"mode X: {}\", $e)"
   },
@@ -200969,15 +199385,6 @@
               }
             }
           ],
-          "$_flank": {
-            "$text": "    (y => $e:expr) => (println!(\"mode Y: {}\", $e))",
-            "$span": {
-              "start": 31,
-              "end": 49
-            },
-            "$before": true,
-            "$after": true
-          },
           "$_gap": {
             "$text": ""
           }
@@ -201002,16 +199409,7 @@
             "end": 238
           }
         }
-      ],
-      "$_flank": {
-        "$text": "    (y => $e:expr) => (println!(\"mode Y: {}\", $e))\n}",
-        "$span": {
-          "start": 22,
-          "end": 50
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(println!(\"mode Y: {}\", $e))"
   },
@@ -201120,16 +199518,7 @@
             "end": 237
           }
         }
-      ],
-      "$_flank": {
-        "$text": "    (y => $e:expr) => (println!(\"mode Y: {}\", $e))",
-        "$span": {
-          "start": 31,
-          "end": 49
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(\"mode Y: {}\", $e)"
   },
@@ -201384,16 +199773,7 @@
             "end": 112
           }
         }
-      ],
-      "$_flank": {
-        "$text": "    () => {1 + 3};",
-        "$span": {
-          "start": 10,
-          "end": 17
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "{1 + 3}"
   },
@@ -201575,16 +199955,7 @@
             "end": 346
           }
         }
-      ],
-      "$_flank": {
-        "$text": "    ) => {\n      $($($x + $e),*),*\n    }\n}",
-        "$span": {
-          "start": 9,
-          "end": 40
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "{\n$($($x + $e) , *) , *\n}"
   },
@@ -201694,16 +200065,7 @@
             "end": 422
           }
         }
-      ],
-      "$_flank": {
-        "$text": "    ($($e:expr),?) => {\n        $($e),?\n    };",
-        "$span": {
-          "start": 22,
-          "end": 45
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "{\n$($e) , ?\n}"
   },
@@ -205486,16 +203848,7 @@
                             "end": 187
                           }
                         }
-                      ],
-                      "$_flank": {
-                        "$text": "  Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),",
-                        "$span": {
-                          "start": 42,
-                          "end": 49
-                        },
-                        "$before": true,
-                        "$after": true
-                      }
+                      ]
                     },
                     "$other": [
                       {
@@ -206661,16 +205014,7 @@
                       "end": 187
                     }
                   }
-                ],
-                "$_flank": {
-                  "$text": "  Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),",
-                  "$span": {
-                    "start": 42,
-                    "end": 49
-                  },
-                  "$before": true,
-                  "$after": true
-                }
+                ]
               },
               "$other": [
                 {
@@ -208333,16 +206677,7 @@
               "end": 187
             }
           }
-        ],
-        "$_flank": {
-          "$text": "  Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),",
-          "$span": {
-            "start": 42,
-            "end": 49
-          },
-          "$before": true,
-          "$after": true
-        }
+        ]
       },
       "$other": [
         {
@@ -208449,16 +206784,7 @@
             "end": 187
           }
         }
-      ],
-      "$_flank": {
-        "$text": "  Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),",
-        "$span": {
-          "start": 42,
-          "end": 49
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(\"{x}\")"
   },
@@ -225505,16 +223831,7 @@
                                     "end": 103
                                   }
                                 }
-                              ],
-                              "$_flank": {
-                                "$text": "        CUBE => println!(\"three cubed\"),",
-                                "$span": {
-                                  "start": 24,
-                                  "end": 39
-                                },
-                                "$before": true,
-                                "$after": true
-                              }
+                              ]
                             },
                             "$other": [
                               {
@@ -226060,16 +224377,7 @@
                                     "end": 214
                                   }
                                 }
-                              ],
-                              "$_flank": {
-                                "$text": "        const { 3.pow(3) } => println!(\"three cubed\"),",
-                                "$span": {
-                                  "start": 38,
-                                  "end": 53
-                                },
-                                "$before": true,
-                                "$after": true
-                              }
+                              ]
                             },
                             "$other": [
                               {
@@ -226674,16 +224982,7 @@
                                 "end": 103
                               }
                             }
-                          ],
-                          "$_flank": {
-                            "$text": "        CUBE => println!(\"three cubed\"),",
-                            "$span": {
-                              "start": 24,
-                              "end": 39
-                            },
-                            "$before": true,
-                            "$after": true
-                          }
+                          ]
                         },
                         "$other": [
                           {
@@ -227246,16 +225545,7 @@
                                 "end": 214
                               }
                             }
-                          ],
-                          "$_flank": {
-                            "$text": "        const { 3.pow(3) } => println!(\"three cubed\"),",
-                            "$span": {
-                              "start": 38,
-                              "end": 53
-                            },
-                            "$before": true,
-                            "$after": true
-                          }
+                          ]
                         },
                         "$other": [
                           {
@@ -228044,16 +226334,7 @@
                               "end": 103
                             }
                           }
-                        ],
-                        "$_flank": {
-                          "$text": "        CUBE => println!(\"three cubed\"),",
-                          "$span": {
-                            "start": 24,
-                            "end": 39
-                          },
-                          "$before": true,
-                          "$after": true
-                        }
+                        ]
                       },
                       "$other": [
                         {
@@ -228530,16 +226811,7 @@
                               "end": 214
                             }
                           }
-                        ],
-                        "$_flank": {
-                          "$text": "        const { 3.pow(3) } => println!(\"three cubed\"),",
-                          "$span": {
-                            "start": 38,
-                            "end": 53
-                          },
-                          "$before": true,
-                          "$after": true
-                        }
+                        ]
                       },
                       "$other": [
                         {
@@ -229790,16 +228062,7 @@
                         "end": 103
                       }
                     }
-                  ],
-                  "$_flank": {
-                    "$text": "        CUBE => println!(\"three cubed\"),",
-                    "$span": {
-                      "start": 24,
-                      "end": 39
-                    },
-                    "$before": true,
-                    "$after": true
-                  }
+                  ]
                 },
                 "$other": [
                   {
@@ -230213,16 +228476,7 @@
                         "end": 214
                       }
                     }
-                  ],
-                  "$_flank": {
-                    "$text": "        const { 3.pow(3) } => println!(\"three cubed\"),",
-                    "$span": {
-                      "start": 38,
-                      "end": 53
-                    },
-                    "$before": true,
-                    "$after": true
-                  }
+                  ]
                 },
                 "$other": [
                   {
@@ -230458,16 +228712,7 @@
               "end": 103
             }
           }
-        ],
-        "$_flank": {
-          "$text": "        CUBE => println!(\"three cubed\"),",
-          "$span": {
-            "start": 24,
-            "end": 39
-          },
-          "$before": true,
-          "$after": true
-        }
+        ]
       },
       "$other": [
         {
@@ -230588,16 +228833,7 @@
               "end": 214
             }
           }
-        ],
-        "$_flank": {
-          "$text": "        const { 3.pow(3) } => println!(\"three cubed\"),",
-          "$span": {
-            "start": 38,
-            "end": 53
-          },
-          "$before": true,
-          "$after": true
-        }
+        ]
       },
       "$other": [
         {
@@ -230704,16 +228940,7 @@
             "end": 103
           }
         }
-      ],
-      "$_flank": {
-        "$text": "        CUBE => println!(\"three cubed\"),",
-        "$span": {
-          "start": 24,
-          "end": 39
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(\"three cubed\")"
   },
@@ -230804,16 +229031,7 @@
             "end": 214
           }
         }
-      ],
-      "$_flank": {
-        "$text": "        const { 3.pow(3) } => println!(\"three cubed\"),",
-        "$span": {
-          "start": 38,
-          "end": 53
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(\"three cubed\")"
   },
@@ -234590,16 +232808,7 @@
                       "end": 18
                     }
                   }
-                ],
-                "$_flank": {
-                  "$text": "#![feature(thing)]",
-                  "$span": {
-                    "start": 10,
-                    "end": 17
-                  },
-                  "$before": true,
-                  "$after": true
-                }
+                ]
               }
             },
             "$slotOrder": [
@@ -234782,16 +232991,7 @@
                   "end": 18
                 }
               }
-            ],
-            "$_flank": {
-              "$text": "#![feature(thing)]",
-              "$span": {
-                "start": 10,
-                "end": 17
-              },
-              "$before": true,
-              "$after": true
-            }
+            ]
           }
         },
         "$slotOrder": [
@@ -234895,16 +233095,7 @@
             "end": 18
           }
         }
-      ],
-      "$_flank": {
-        "$text": "#![feature(thing)]",
-        "$span": {
-          "start": 10,
-          "end": 17
-        },
-        "$before": true,
-        "$after": true
-      }
+      ]
     },
     "expectedOutput": "(thing)"
   },

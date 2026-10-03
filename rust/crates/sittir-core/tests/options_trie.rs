@@ -55,15 +55,15 @@ fn resolve(json: &str) -> Result<ResolvedOptions, String> {
 #[test]
 fn a_leaf_sets_every_site_it_names() {
     let table = resolve(r#"{ "a": { "x": 7 } }"#).unwrap();
-    assert_eq!(table.spacing, vec![SeamArm { arm: 7, strength: SEAM_DECLARED }; 2]);
+    assert_eq!(table.spacing, vec![SeamArm { arm: 7, strength: SEAM_DECLARED, dedent: false }; 2]);
     assert_eq!(table.delimiter, vec![0]);
 }
 
 #[test]
 fn a_value_set_to_the_default_arm_still_writes_at_declared_strength() {
     let table = resolve(r#"{ "a": { "x": 1 } }"#).unwrap();
-    assert_eq!(table.spacing, vec![SeamArm { arm: 1, strength: SEAM_DECLARED }; 2]);
-    assert_eq!(resolve("{}").unwrap().spacing, vec![SeamArm { arm: 1, strength: 0 }; 2]);
+    assert_eq!(table.spacing, vec![SeamArm { arm: 1, strength: SEAM_DECLARED, dedent: false }; 2]);
+    assert_eq!(resolve("{}").unwrap().spacing, vec![SeamArm { arm: 1, strength: 0, dedent: false }; 2]);
 }
 
 #[test]

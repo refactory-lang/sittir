@@ -152,6 +152,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for SourceFlank {
 pub struct SeamArm {
     pub arm: u16,
     pub strength: u8,
+    /// Close a depth before writing the arm: the after edge of a list whose
+    /// before flank opened a depth that its closer's line does not close.
+    pub dedent: bool,
 }
 
 /// The seams a kind writes before and after itself.
@@ -196,12 +199,12 @@ impl NodeCoordinate {
     ) -> Result<(), crate::render::RenderError> {
         if adjacent {
             w.adjacent();
-        } else if let Some(SeamArm { arm, strength }) = self.edges.and_then(|e| e.before) {
-            w.site_with(arm, strength);
+        } else if let Some(seam) = self.edges.and_then(|e| e.before) {
+            w.seam_arm(seam);
         }
         w.slice(self)?;
-        if let Some(SeamArm { arm, strength }) = self.edges.and_then(|e| e.after) {
-            w.site_with(arm, strength);
+        if let Some(seam) = self.edges.and_then(|e| e.after) {
+            w.seam_arm(seam);
         }
         w.end_lines_after(self);
         Ok(())

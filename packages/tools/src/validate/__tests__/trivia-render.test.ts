@@ -7,6 +7,7 @@ import { createEngine } from '@sittir/common';
 import { languageByName } from '../../languages.ts';
 
 const rust = await createEngine(await languageByName('rust'));
+const typescript = await createEngine(await languageByName('typescript'));
 
 describe('read trivia layout, rendered detached', () => {
 	it('keeps a same-line line comment on its line and breaks once after it', async () => {
@@ -117,5 +118,44 @@ describe('a detached copy of a read node', () => {
 
 	it('renders a copied function item with the block comment before it', async () => {
 		expect(await renderCopy(rust.parse('\n/* plain block comment */\nfn main() {}\n').statements()[0])).toBe('/* plain block comment */\nfn main() {}');
+	});
+});
+
+describe('depth is one fact per position', () => {
+	const copy = async (grammar: string, node: unknown): Promise<string> => (await loadNativeEngine(grammar)).render(materializeDetached(node)).toString();
+	const bodies = ['struct Point {\n    x: i32,\n    y: i32,\n}', 'enum E {\n    A,\n    B,\n}', 'union U {\n    a: u8,\n    b: u16,\n}'];
+	const flankBreak = 'fn f() {\n    g(\n        a,\n        b);\n    h();\n}';
+	const stringBody = "function f(): any {\n  'a';\n  'b';\n}";
+
+	it.each(bodies)('opens one depth for a body whose template and list flank both open one: %s', async (source) => {
+		const item = rust.parse(`${source}\n`).statements()[0] as never as Record<string, any>;
+		expect(await copy('rust', item)).toBe(source);
+		expect(item.$with.body(item.body().$with.elements(...item.body())).$render()).toBe(source);
+	});
+
+	it('keeps a macro body and a call whose opener opens no template depth as they are', async () => {
+		for (const source of ['macro_rules! m {\n    () => {};\n    (x) => {};\n}', 'fn f() {\n    add(\n        1i32,\n        2i32\n    );\n}']) {
+			expect(await copy('rust', rust.parse(`${source}\n`).statements()[0])).toBe(source);
+		}
+	});
+
+	it('closes the depth a list flank opens although the closer shares the last item\'s line', async () => {
+		const fn = rust.parse(`${flankBreak}\n`).statements()[0] as never as Record<string, any>;
+		expect(await copy('rust', fn)).toBe(flankBreak);
+		const [statement, next] = fn.body().statements();
+		const wrapper = statement.content();
+		const call = wrapper.expression();
+		const args = call.arguments();
+		const rebuilt = statement.$with.content(wrapper.$with.expression(call.$with.arguments(args.$with.elements(...args))));
+		expect(fn.$with.body(fn.body().$with.statements(rebuilt, next)).$render()).toBe(flankBreak);
+	});
+
+	it('gives a string no list flanks, so a body of string statements keeps its depth', async () => {
+		const fn = typescript.parse(`${stringBody}\n`).statements()[0] as never as Record<string, any>;
+		expect(await copy('typescript', fn)).toBe(`${stringBody}\n`);
+		const [first, second] = fn.body().statements();
+		const string = first.expression();
+		const rebuilt = first.$with.expression(string.$with.elements(...string.elements()));
+		expect(fn.$with.body(fn.body().$with.statements(rebuilt, second)).$render()).toBe(`${stringBody}\n`);
 	});
 });

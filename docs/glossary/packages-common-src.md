@@ -285,7 +285,7 @@ The source range a list item sends as `$_gap`: from its source predecessor's end
 
 ### `packages/common/src/transport-data.ts::listItemsOf`
 
-The items of a list node: the one array a kind a rebuild constructs around existing nodes (`TriviaView.isWrapper`) holds as its only present slot node or array. Its unslotted children (`$other`), such as the separators of a read list, are not slots and do not count. A group around one node holds a node and is not a list node; a kind holding an array beside another node (an item's attribute list beside the item) is not one either.
+The items of a list node: the one array a list kind holds in its slots. Whether a node is a list node is the model's classification, stamped per grammar as the list kind ids (`TriviaView.isList`, from `TriviaFacts.listKinds`). It is never inferred from a node's shape. A construct that holds an array between its own delimiters, such as a string around its fragments, is not a list kind, so it has no list flanks. Unslotted children (`$other`), such as a read list's separators, are not slots and are not counted.
 
 ### `packages/common/src/transport-data.ts::sourceFlankOf`
 

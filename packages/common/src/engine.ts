@@ -110,6 +110,7 @@ export interface GrammarEngineConfig<
 	templatesPath: string;
 	kindNames: ReadonlyMap<number, string>;
 	rebuildWrappers: ReadonlySet<number>;
+	listKinds: ReadonlySet<number>;
 	getActiveBackend: () => BackendStatusLike<TModule>;
 }
 
@@ -257,7 +258,8 @@ export function createNativeEngine<
 		const triviaView: TriviaView = {
 			trivia: (record) => readTrivia(record, lineGapsOf),
 			derived: (record) => readDerivedSides(record, lineGapsOf),
-			isWrapper: (kindId) => config.rebuildWrappers.has(kindId)
+			isWrapper: (kindId) => config.rebuildWrappers.has(kindId),
+			isList: (kindId) => config.listKinds.has(kindId)
 		};
 
 		function renderNativeNode(node: AnyUntypedNode | number, opts?: RenderOptions<O>): Rendered {

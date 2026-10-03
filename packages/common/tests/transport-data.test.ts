@@ -384,7 +384,8 @@ describe('sourceGapOf', () => {
 	const view: TriviaView = {
 		trivia: () => undefined,
 		derived: (node) => (node === b ? { previous: { start: 1, end: 2 }, next: null, leading: false, trailing: false } : undefined),
-		isWrapper: (kindId) => kindId === ATTRIBUTED || kindId === ALIAS_ENVELOPE
+		isWrapper: (kindId) => kindId === ATTRIBUTED || kindId === ALIAS_ENVELOPE,
+		isList: () => false
 	};
 	const gap = { $treeHandle: 0, $span: { start: 2, end: 3 } };
 

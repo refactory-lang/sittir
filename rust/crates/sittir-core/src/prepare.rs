@@ -67,21 +67,26 @@ pub fn fill_source_flanks<T: Edged + ?Sized>(
     let opened = before == Some(table.indent);
     let after = after_site.and_then(|site| {
         let arms = allowed(site);
-        if opened && arms.contains(&table.dedent) && (closes || !flank.after) {
-            Some(table.dedent)
+        let classified = || crate::classify::classify_whitespace(after_ws, arms, table);
+        if opened && arms.contains(&table.dedent) {
+            if closes || !flank.after {
+                Some((table.dedent, false))
+            } else {
+                Some((classified().unwrap_or(0), true))
+            }
         } else if flank.after {
-            crate::classify::classify_whitespace(after_ws, arms, table)
+            classified().map(|arm| (arm, false))
         } else {
             None
         }
     });
-    let seam = |arm: u16| EdgeArm::from(SeamArm { arm, strength: crate::spacing::SEAM_TRIVIA });
+    let seam = |arm: u16, dedent: bool| EdgeArm::from(SeamArm { arm, strength: crate::spacing::SEAM_TRIVIA, dedent });
     let edges = t.edges_mut();
     if let Some(arm) = before {
-        edges.before.get_or_insert(seam(arm));
+        edges.before.get_or_insert(seam(arm, false));
     }
-    if let Some(arm) = after {
-        edges.after.get_or_insert(seam(arm));
+    if let Some((arm, dedent)) = after {
+        edges.after.get_or_insert(seam(arm, dedent));
     }
 }
 
@@ -159,7 +164,7 @@ pub fn root_flanks(
             Side::Before => source.get(..coord.span.start as usize)?,
             Side::After => source.get(coord.span.end as usize..)?,
         };
-        crate::classify::classify_whitespace(bytes, allowed, table).map(|arm| EdgeArm { arm, strength: None })
+        crate::classify::classify_whitespace(bytes, allowed, table).map(|arm| EdgeArm { arm, strength: None, dedent: None })
     };
     Edges {
         before: flank(first.flatten(), Side::Before, allowed_before),
@@ -252,7 +257,7 @@ fn single_separator<'g>(gap: &'g str, token: &str) -> Option<(&'g str, &'g str)>
 }
 
 fn set_gap_edge<T: Prepare, const ADJACENT: bool>(item: &mut SlotValue<T, ADJACENT>, side: Side, arm: u16) {
-    let seam = SeamArm { arm, strength: crate::spacing::SEAM_TRIVIA };
+    let seam = SeamArm { arm, strength: crate::spacing::SEAM_TRIVIA, dedent: false };
     match item {
         SlotValue::Coord(coord) => {
             let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });
@@ -532,6 +537,11 @@ mod tests {
     }
 
     fn flanks_from(source: &str, from: crate::slot::FlankSource, span: Span, before: bool, after: bool) -> (Option<u16>, Option<u16>) {
+        let edges = flank_edges(source, from, span, before, after);
+        (edges.before.map(|edge| edge.arm), edges.after.map(|edge| edge.arm))
+    }
+
+    fn flank_edges(source: &str, from: crate::slot::FlankSource, span: Span, before: bool, after: bool) -> crate::options::Edges {
         use crate::options::{EdgeSite, SiteSpec};
         use crate::slot::SourceFlank;
         static EDGES: [EdgeSite; 1] = [EdgeSite { before: 0, after: 1 }];
@@ -554,7 +564,7 @@ mod tests {
         };
         let mut node = List(crate::options::Edges::NONE);
         super::fill_source_flanks(&mut node, Some(&flank), every_arm, &TABLE, &ctx);
-        (node.0.before.map(|edge| edge.arm), node.0.after.map(|edge| edge.arm))
+        node.0
     }
 
     const BROKEN: &str = "f(\n    a,\n    b,\n)";
@@ -593,6 +603,16 @@ mod tests {
             flanks(source, list, true, true)
         );
         assert_eq!(flanks(source, list, true, true), (Some(INDENT), Some(DEDENT)));
+    }
+
+    #[test]
+    fn a_depth_the_flank_before_opened_closes_beside_a_closer_on_the_last_items_line() {
+        let source = "g(\n    a,\n    b)";
+        let start = source.find('a').unwrap() as u32;
+        let span = Span { start, end: source.find(')').unwrap() as u32 };
+        let edges = flank_edges(source, crate::slot::FlankSource::Tree(encode_handle(3, 0)), span, true, true);
+        assert_eq!(edges.before.map(|edge| edge.arm), Some(INDENT));
+        assert_eq!(edges.after.map(|edge| (edge.arm, edge.dedent)), Some((TIGHT, Some(true))));
     }
 
     #[test]

@@ -126,6 +126,14 @@ pub trait RenderSink {
         let _ = strength;
         self.site(kind);
     }
+    /// A resolved seam: the depth it closes first (`SeamArm::dedent`), then
+    /// its arm at its strength.
+    fn seam_arm(&mut self, seam: crate::slot::SeamArm) {
+        if seam.dedent {
+            self.dedent("");
+        }
+        self.site_with(seam.arm, seam.strength);
+    }
     /// A spacing site's arm read from the resolved options this sink holds,
     /// with the site's default strength when the arm is its default. Unlike
     /// `site`, which writes a given arm, this names a site and looks it up.
@@ -177,6 +185,11 @@ pub trait RenderSink {
             self.end_line_after(kind);
         }
     }
+    /// Deepens the depth the next line is paid at. Depth is one fact per
+    /// position: an indent arriving while the one before it has had no text
+    /// written (a kind's template and a list's source flank both opening at
+    /// one seam) merges into that depth instead of stacking, and the dedent
+    /// that pairs with it unwinds the merge, not the depth.
     fn indent(&mut self);
     /// Shallows the depth and merges `seam` after it. A dedent that arrives
     /// while the indent before it has had no text written cancels that
