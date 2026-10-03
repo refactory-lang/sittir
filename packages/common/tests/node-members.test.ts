@@ -22,7 +22,8 @@ const facts = (gaps: Record<string, readonly string[]> = {}) => ({
 	kindName: (type: unknown) => (type === 9 ? 'comment' : type === 1 ? 'block' : undefined),
 	kinds: new Set(['comment']),
 	innerGaps: gaps,
-	rebuildWrappers: new Set<number>()
+	rebuildWrappers: new Set<number>(),
+	listKinds: new Set<number>()
 });
 const handleOf = (gaps?: Record<string, readonly string[]>) => liveHandle({ render: () => 'rendered', trivia: facts(gaps) });
 

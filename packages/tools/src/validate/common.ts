@@ -3,7 +3,7 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createEngine, detachCoordinates, dumpMetrics, sliceSpan } from '@sittir/common';
-import { carryRead, holdTree, readDerivedSides, readTrivia, spanOf, treeTokenOf, type TriviaView } from '@sittir/common/utils';
+import { carryRead, carrySource, holdTree, readDerivedSides, readTrivia, spanOf, treeTokenOf, type TriviaView } from '@sittir/common/utils';
 import {
 	hydrateStub,
 	isStub,
@@ -194,7 +194,8 @@ export function triviaViewOf(engine: NativeEngine): TriviaView {
 	return {
 		trivia: (node) => readTrivia(node, engine.diagnostics.lineGapsOf),
 		derived: (node) => readDerivedSides(node, engine.diagnostics.lineGapsOf),
-		isWrapper: (kindId) => engine.trivia.rebuildWrappers.has(kindId)
+		isWrapper: (kindId) => engine.trivia.rebuildWrappers.has(kindId),
+		isList: (kindId) => engine.trivia.listKinds.has(kindId)
 	};
 }
 
@@ -543,7 +544,7 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		lhs_expression: (r) => `(${r} = null);`
 	},
 	python: {
-		expression: (r) => `_ = ${r}`,
+		expression: (r) => `_ = (${r})`,
 		type: (r) => `_: ${r} = None`,
 		pattern: (r) => `for ${r} in _: pass`,
 		simple_statement: (r) => r,
@@ -1014,6 +1015,7 @@ function materializeValue(value: unknown, onAccessorThrow?: (rec: AccessorThrowR
 		}
 		materialized[key] = materializeValue(raw, onAccessorThrow);
 	}
+	carrySource(value, materialized);
 	return carryRead(value, materialized);
 }
 
