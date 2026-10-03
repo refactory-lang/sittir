@@ -8,10 +8,10 @@ export function rebuildPython4spaceLoose() {
 		stringStart: "\"\"\"",
 		content: [py.build.stringContent("Simple user management module.")],
 		stringEnd: "\"\"\"",
-	}))), py.build.simpleStatementsElements(py.build.importFromStatement({
+	}))), py.build.simpleStatements(py.build.importFromStatement({
 		moduleName: py.build.dottedName("typing"),
 		content: py.build.importList(py.build.dottedName("Optional")),
-	})), py.build.classDefinition({
+	})).$trivia.leading(py.kinds.Blankline), py.build.classDefinition({
 		name: "User",
 		body: py.build.block(py.build.functionDefinition({
 			name: "__init__",
@@ -50,8 +50,8 @@ export function rebuildPython4spaceLoose() {
 				}), py.build.stringContent("!")],
 				stringEnd: "\"",
 			})))),
-		})),
-	}), py.build.functionDefinition({
+		}).$trivia.leading(py.kinds.Blankline)),
+	}).$trivia.leading(py.kinds.DoubleBlankline), py.build.functionDefinition({
 		name: "find_user",
 		parameters: [py.build.typedParameter({
 			name: "users",
@@ -81,5 +81,5 @@ export function rebuildPython4spaceLoose() {
 				consequence: py.build.block(py.build.simpleStatementsElements(py.build.returnStatement("user"))),
 			})),
 		}), py.build.simpleStatementsElements(py.build.returnStatement(py.kinds.None))),
-	}));
+	}).$trivia.leading(py.kinds.DoubleBlankline));
 }

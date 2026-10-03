@@ -567,7 +567,11 @@ The text between a full form's `open` and `close` delimiters, over each pair of 
 
 ### `packages/tools/src/emit/factory-source.ts::triviaSuffix`
 
-The `$trivia` calls after a printed node: leading and trailing entries, then each inner gap's entries through the surface the types emitted, `.$trivia.inner(…)` or, when the grammar keys its gaps (`PrintContext.innerGapsKeyed`), `.$trivia.innerAt(gap, …)`. Whitespace entries print nowhere: no read tree carries them, since read whitespace stays with the source coordinates.
+The `$trivia` calls after a printed node: leading and trailing entries, then each inner gap's entries through the surface the types emitted, `.$trivia.inner(…)` or, when the grammar keys its gaps (`PrintContext.innerGapsKeyed`), `.$trivia.innerAt(gap, …)`. Whitespace entries print as the member they name; `seatLineGaps` decides which of them reach the print.
+
+### `packages/tools/src/emit/factory-source.ts::seatLineGaps`
+
+Seats each read node's derived trivia (`readTrivia`) as the trivia the source emitter prints. The read data is complete, but a printed call ends its line anyway, so a run of one line break would repeat what the print already says: the emitter prints a blank line and anything wider, and drops the `newline` member. A node left with nothing to print loses its trivia entirely, since an empty trivia block would stop the print collapsing a wrapper into its content.
 
 ### `packages/tools/src/emit/factory-source.ts::printedSource`
 

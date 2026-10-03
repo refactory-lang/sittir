@@ -46,6 +46,15 @@ export declare class SittirEngine {
    * the gate immune to stale env assumptions.
    */
   get buildProfile(): string
+  /**
+   * The line-break whitespace a read node owns as trivia: the node
+   * named by its `handle`, or by its tree's tag with its `span`
+   * (`[start, end]`) and stamped `kind` as a deep read leaves it.
+   * As JSON `{ leading, trailing }` of `{ kind, start }` in
+   * source order: each run classified among the grammar's
+   * whitespace members whose text holds a line break.
+   */
+  lineGapsOf(handle: number, span?: Array<number> | undefined | null, kind?: number | undefined | null): string
   findAndRead(source: string, pattern: string): string
   /**
    * Parse `source` and read its root.

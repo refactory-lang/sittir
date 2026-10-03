@@ -13,7 +13,7 @@ export function rebuildTriviaRustGenerated() {
 			name: rs.build.identifier("g"),
 			parameters: rs.build.parameters.strict(),
 			body: rs.build.block.strict({}),
-		}).$trivia.trailing(rs.build.blockComment.strict(rs.build.blockCommentRegular(" t "))), rs.build.functionItem.strict({
+		}).$trivia.leading(rs.kinds.Blankline).$trivia.trailing(rs.build.blockComment.strict(rs.build.blockCommentRegular(" t "))), rs.build.functionItem.strict({
 			name: rs.build.identifier("h"),
 			parameters: rs.build.parameters.strict(),
 			body: rs.build.block.strict({
@@ -22,6 +22,6 @@ export function rebuildTriviaRustGenerated() {
 					arguments: rs.build.arguments.strict().$trivia.inner(rs.build.blockComment.strict(rs.build.blockCommentRegular(" a "))),
 				}))],
 			}),
-		})],
+		}).$trivia.leading(rs.kinds.Blankline)],
 	});
 }

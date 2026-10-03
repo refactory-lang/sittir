@@ -3,7 +3,7 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createEngine, detachCoordinates, dumpMetrics, sliceSpan } from '@sittir/common';
-import { holdTree, treeTokenOf } from '@sittir/common/utils';
+import { carryRead, holdTree, treeTokenOf } from '@sittir/common/utils';
 import {
 	hydrateStub,
 	isStub,
@@ -1009,7 +1009,7 @@ function materializeValue(value: unknown, onAccessorThrow?: (rec: AccessorThrowR
 		}
 		materialized[key] = materializeValue(raw, onAccessorThrow);
 	}
-	return materialized;
+	return carryRead(value, materialized);
 }
 
 function resolveWrappedStorageValue(

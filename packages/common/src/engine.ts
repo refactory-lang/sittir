@@ -5,6 +5,8 @@ import type {
 	FormatRecord,
 	IndentOption,
 	LanguageAPI,
+	LineGapAddress,
+	LineGaps,
 	NativeEngineOptions,
 	NativeLanguageEngine,
 	ParsedRead,
@@ -13,7 +15,8 @@ import type {
 	Rendered
 } from '@sittir/types';
 import type { TreeHandle } from './readUntypedNode.ts';
-import { holdTree, toTransportData } from './transport-data.ts';
+import { holdReadTree, toTransportData, type TriviaView } from './transport-data.ts';
+import { readPrevious, readTrivia } from './utils.ts';
 import { mintTreeToken } from './tree-token.ts';
 
 /** The options object a grammar package types as its `Options`. */
@@ -65,6 +68,7 @@ export interface NativeEngineLike<TTransport = unknown> {
 	parseAndRead(source: string, depth?: number): string;
 	readUntypedNode(handle: number, childIndex: number, depth?: number): string;
 	readRoot(treeId: number, depth?: number): string;
+	lineGapsOf(handle: number, span?: number[], kind?: number): string;
 	render(node: TTransport, treeId?: number, options?: object): string;
 	renderToFile?(node: TTransport, path: string, treeId?: number, options?: object): void;
 	/** The binary's compile profile (`debug` | `release`); absent on a binary that predates the getter. */
@@ -243,6 +247,13 @@ export function createNativeEngine<
 			...(options?.options ? { options: options.options } : {})
 		};
 		const engine = new status.native.SittirEngine(Object.keys(nativeOptions).length > 0 ? nativeOptions : undefined);
+		const lineGapsOf = (address: LineGapAddress): LineGaps =>
+			JSON.parse(
+				'handle' in address
+					? engine.lineGapsOf(address.handle)
+					: engine.lineGapsOf(address.treeHandle, [address.span.start, address.span.end], address.kind)
+			) as LineGaps;
+		const triviaView: TriviaView = { trivia: (record) => readTrivia(record, lineGapsOf), previous: (record) => readPrevious(record, lineGapsOf) };
 
 		function renderNativeNode(node: AnyUntypedNode | number, opts?: RenderOptions<O>): Rendered {
 			const perCall = opts?.options;
@@ -257,7 +268,7 @@ export function createNativeEngine<
 			// coordinate it read in with: it crosses here, on every render
 			// path, so a caller handing over raw read data cannot slice a
 			// pre-edit span past a rebuilt slot.
-			const transport = (typeof node === 'number' ? node : toTransportData(node)) as TTransport;
+			const transport = (typeof node === 'number' ? node : toTransportData(node, triviaView)) as TTransport;
 			// The handle renders lazily, and the transport's coordinates are
 			// numbers: the tokens stayed on `node`. Both closures name `node`,
 			// so the handle holds the trees it will slice for as long as it
@@ -291,6 +302,7 @@ export function createNativeEngine<
 
 				diagnostics: {
 					buildProfile: engine.buildProfile,
+					lineGapsOf,
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
 						const json = engine.parseAndRead(source, depthOf(parseOptions));
 						const parsed = JSON.parse(json) as NativeParseResultShape;
@@ -306,7 +318,7 @@ export function createNativeEngine<
 						// something can still read from this tree or names it.
 						// Its collection is what releases the tree.
 						const liveToken = mintTreeToken(parsed.treeId);
-						holdTree(root, liveToken);
+						holdReadTree(root, liveToken);
 						treeDisposalRegistry.register(liveToken, {
 							release: status.native.disposeTree,
 							treeId: parsed.treeId
@@ -324,13 +336,13 @@ export function createNativeEngine<
 										let cached = roots.get(levels);
 										if (cached === undefined) {
 											cached = JSON.parse(engine.readRoot(parsed.treeId, depth)) as AnyUntypedNode;
-											holdTree(cached, liveToken);
+											holdReadTree(cached, liveToken);
 											roots.set(levels, cached);
 										}
 										return cached;
 									}
 									const node = JSON.parse(engine.readUntypedNode(handle, childIndex ?? 0, depth)) as AnyUntypedNode;
-									holdTree(node, liveToken);
+									holdReadTree(node, liveToken);
 									return node;
 								},
 								format: parsed.format
@@ -366,6 +378,7 @@ export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends
 			return engine.diagnostics.parseAndRead(source, options);
 		},
 		buildProfile: engine.diagnostics.buildProfile,
+		lineGapsOf: (handle) => engine.diagnostics.lineGapsOf(handle),
 		dispose() {
 			engine.dispose();
 		}

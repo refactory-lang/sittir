@@ -117,7 +117,7 @@ function assembleEngine<API extends LanguageAPI>(
 		options: options?.render,
 		trivia: hooks.trivia
 	});
-	const handle: EngineHandle = { current: identity };
+	const handle: EngineHandle = { current: identity, lineGapsOf: (address) => native.lineGapsOf(address) };
 	const build = scopedBuild(hooks.build, handle);
 	const renderNative = (target: Parameters<typeof native.render>[0], renderOptions: object | undefined): Rendered => {
 		const rendered = native.render(target, renderOptions);
@@ -144,7 +144,7 @@ function assembleEngine<API extends LanguageAPI>(
 		is: languageGuards(hooks.is, inLanguage),
 		kinds: hooks.kinds,
 		types: undefined as unknown as API['types'],
-		diagnostics: { buildProfile: native.buildProfile, parseAndRead: readAndBind },
+		diagnostics: { buildProfile: native.buildProfile, parseAndRead: readAndBind, lineGapsOf: (address) => native.lineGapsOf(address) },
 		isNode: (value): value is API['node'] => isNode(value) && inLanguage(value),
 		isParsedNode: (value): value is API['node'] => isParsedNode(value) && inLanguage(value),
 		isFactoryNode: (value): value is API['node'] => isFactoryNode(value) && inLanguage(value),
@@ -184,6 +184,7 @@ function assembleEngine<API extends LanguageAPI>(
 		},
 		dispose() {
 			handle.current = identity;
+			delete handle.lineGapsOf;
 			native.dispose();
 		}
 	};

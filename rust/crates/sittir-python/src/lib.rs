@@ -80,5 +80,7 @@ sittir_core::napi_engine!(
     render::options::Options,
     render_transport_parts,
     NATIVE_RENDER_TRANSPORT_ABI,
-    render::options::defaults
+    render::options::defaults,
+    render::options::WHITESPACE,
+    render::options::WHITESPACE_KINDS
 );

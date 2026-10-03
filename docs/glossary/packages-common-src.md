@@ -44,7 +44,7 @@ An engine's identity plus its `render`: what a node's `$render` reaches through 
 
 ### `packages/common/src/engine-scope.ts::EngineHandle`
 
-The one object an engine shares with every node it stamps. `current` is the live engine, or its identity once the engine is disposed, so swapping it detaches every node of that engine at once with no registry of nodes and no walk over them. A node holds the handle strongly, so `$render` never depends on when the collector runs.
+The one object an engine shares with every node it stamps. `current` is the live engine, or its identity once the engine is disposed, so swapping it detaches every node of that engine at once with no registry of nodes and no walk over them. A node holds the handle strongly, so `$render` never depends on when the collector runs. `lineGapsOf` is the engine's line-gap query while it lives, the one `readTrivia` derives a read node's whitespace from; dispose removes it, so a detached node reads only the trivia it stores.
 
 ### `packages/common/src/engine-scope.ts::inEngine`
 
@@ -215,7 +215,11 @@ The tree a node's handle names, whichever of `$handle` (its own), `$parentHandle
 
 ### `packages/common/src/transport-data.ts::canFold`
 
-Whether a node crosses to the render as its coordinate (its span and the tree that span slices) in place of its storage: it names its tree, carries no trivia outside its span, and nothing below it was rebuilt. Read depth plays no part: an untouched node renders its source bytes however it was read. That holds because every node a read hands back names its tree: the read's root by its own handle, a stub by its parent's, and a child the read expanded by the tree's tag. An edit detaches the coordinate of the node it rebuilds, so each untouched child below it is then the node that folds, and it must be able to name the tree itself. Below the node that folds a span is the whole requirement, since its bytes carry everything under it. A node that cannot fold (it was rebuilt, or it owns leading or trailing trivia) crosses as its stored slots, which the generated wrap keeps in model shape at every level (`storeExpanded`).
+Whether a node crosses to the render as its coordinate (its span and the tree that span slices) in place of its storage: it names its tree, carries no trivia outside its span, and nothing below it was rebuilt. Read depth plays no part: an untouched node renders its source bytes however it was read. That holds because every node a read hands back names its tree: the read's root by its own handle, a stub by its parent's, and a child the read expanded by the tree's tag. An edit detaches the coordinate of the node it rebuilds, so each untouched child below it is then the node that folds, and it must be able to name the tree itself. Below the node that folds a span is the whole requirement, since its bytes carry everything under it. The trivia it is judged by is the trivia it crosses with (`TriviaOf`), so a read node that owns a line-break run outside its span does not fold. A node that cannot fold (it was rebuilt, or it owns leading or trailing trivia) crosses as its stored slots, which the generated wrap keeps in model shape at every level (`storeExpanded`).
+
+### `packages/common/src/transport-data.ts::TriviaView`
+
+The trivia a node crosses to the render with, and the sibling its derived leading runs were measured from. The engine's render passes `readTrivia` and `readPrevious`, so an untouched child of a rebuilt parent crosses with the whitespace its parse gave it, minus the runs whose neighbour changed (`changedEdges`). With no view given, a node crosses with the trivia it stores and has no derived runs. The fold decision and the `$_trivia` an unfolded node carries both come from this one view; a node's raw `$_trivia` never crosses beside it.
 
 ### `packages/common/src/transport-data.ts::detachCoordinates`
 
@@ -253,7 +257,41 @@ What every `$with` setter runs its rebuild through. It runs the rebuild inside t
 
 ### `packages/common/src/utils.ts::triviaSide`
 
-`node.$trivia.leading(...)` and `.trailing(...)`: with items it sets that position, keeps the other and returns the node; with none it returns the entries the position holds. An item is a trivia node, a whitespace kind id, or text, which is a whitespace kind when spelled exactly so and a comment otherwise. It needs the node's engine for the grammar's trivia facts.
+`node.$trivia.leading(...)` and `.trailing(...)`: with items it sets that position, keeps the other and returns the node; with none it returns the entries the position holds. An item is a trivia node, a whitespace kind id, or text, which is a whitespace kind when spelled exactly so and a comment otherwise. It needs the node's engine for the grammar's trivia facts. A read gives the side as `readTrivia` has it, so a read node's line-break whitespace is there beside its comments; a write starts from that same view, so setting one side keeps the other side's derived entries.
+
+### `packages/common/src/utils.ts::readTrivia`
+
+A read node's trivia as its parse has it: the comment entries the reader stored, with the line-break whitespace the node owns interleaved by position (`interleaved`). The whitespace is not in the read output; it is asked of the native line-gap query (`lineGapsOf`) on the node's first trivia read and cached for the node's life, so a parse or wrap that never reads trivia pays nothing for it. What the query returns is already classified to whitespace member kind ids by the grammar's own whitespace classifier, restricted to the members whose text holds a line break, so a gap of spaces on one line yields nothing and the reader's comment ownership decides which node a run belongs to. Only an object a read produced derives (`isRead`): a copy keeps exactly the `$_trivia` it was given, even though it carries the read's address. A node whose trivia was written (`triviaWriter`'s store), a node no read gave, and a node outside a live engine read their stored trivia only.
+
+### `packages/common/src/transport-data.ts::holdReadTree`
+
+`holdTree` for the objects a read returned, the one place that records read provenance: every object it visits also counts as read (`isRead`). The engine's read sites call it; a caller that re-holds a copy calls `holdTree`, so the copy holds the tree without counting as read. Provenance lives in a weak set rather than a member, because a spread copies members: a copy built with different trivia must not inherit a fact about the object it was copied from.
+
+### `packages/common/src/transport-data.ts::carryRead`
+
+Carries read provenance from a read object to the object rebuilt from it, which is the same node in another shape. The wrap's `wrapNode` carries it to every wrapped node, and the validator's `materialize` carries it to every plain node it resolves. Every other copy is not read.
+
+### `packages/common/src/transport-data.ts::changedEdges`
+
+Which edges of a list item face a neighbour other than the one its source had there. A derived whitespace run is the gap between a node and one particular neighbour, so it holds only while that neighbour is still there; otherwise the seat decides the gap. The leading edge changed when the item before it in the rebuilt list is not the sibling its leading runs were measured from (`readPrevious`, judged by tree and span through `isSourceSibling`), or, for the list's first item, when the source had such a sibling. The trailing edge changed when the item is no longer last, since only a last item owns a closing gap. An item with no derived runs has no changed edges. The render root changes on both edges, because it has no neighbour at all.
+
+A read item whose leading edge is kept crosses with `held` on its trivia. That mark lets the run it opens with vote in its list's gap class (`classify_list_gaps`). Written trivia never carries it, so whitespace written on a built item is a spelling for that item and never evidence of how the source spaced the list.
+
+### `packages/common/src/transport-data.ts::withoutChangedEdges`
+
+Drops the whitespace runs on the changed edges of a node's trivia: on the leading side the runs before its first comment, on the trailing side the runs after its last. Comments always stay with their owner, and so does a run between a comment and its owner, because that run's neighbour is the comment. A node left with no trivia can fold to its coordinate again.
+
+### `packages/common/src/utils.ts::readPrevious`
+
+The span of the sibling owner a read node's leading line gaps separate it from, `null` for its parent's first owner child, and `undefined` when `readTrivia` derives nothing for the node. It comes from the same native query and the same cached derivation as the trivia, so the transport judges a neighbour by the fact the gaps were measured against, not by a second reading of adjacency.
+
+### `packages/common/src/utils.ts::lineGapAddressOf`
+
+How the line-gap query names a read node. A node read on its own carries its handle. A child a deep read expanded has no handle of its own, only its tree's tag, its span and its kind, and the query resolves that coordinate to the outermost node of that kind spanning exactly those bytes. A node with neither was not read and has no gaps to ask for.
+
+### `packages/common/src/utils.ts::interleaved`
+
+One side's stored comment entries and line-gap runs merged into source order. A comment entry sits at its span's start; an entry with no span (a written kind id or a detached leaf) keeps the position of the entry before it, so it never moves past a neighbour it was written beside. Gaps sit at their own start offsets. The two sources never overlap: a run is cut at every extra it touches.
 
 ### `packages/common/src/utils.ts::triviaInner`
 
