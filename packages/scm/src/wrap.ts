@@ -2032,6 +2032,8 @@ function _hydrateUnknownKindChildren(data: _UntypedNode, tree: TreeHandle): _Unt
 			out[key] = hydrateChild(value, tree);
 		}
 	}
+	const handle = currentHandle();
+	out.$engine = handle && (() => handle.current);
 	return out as unknown as _UntypedNode;
 }
 

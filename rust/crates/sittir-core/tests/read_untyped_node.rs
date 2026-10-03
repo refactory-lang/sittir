@@ -13,7 +13,8 @@
 
 use serde_json::Value;
 use sittir_core::read_untyped_node::{read_untyped_node, HandleMint, NoMint, ReadDepth, ReadModel};
-use sittir_core::types::{FieldValue, KindId, UntypedNode, NodeHandle, Source};
+use sittir_core::types::{FieldValue, KindId, UntypedNode, NodeHandle, Source, Span};
+use sittir_core::{ErrorRegion, ErrorRegionKind};
 use std::num::NonZeroU32;
 
 /// A model with no grammar facts: the reader's own rules only.
@@ -833,4 +834,42 @@ fn node_at_span_finds_the_first_node_a_pre_order_walk_meets_with_that_span_and_k
             }
         }
     }
+}
+
+#[test]
+fn a_clean_parse_has_no_error_regions() {
+    let tree = parse_tree(tree_sitter_python::LANGUAGE.into(), "def f():\n    pass\nx = 1\n");
+    assert!(sittir_core::error_regions(&tree).is_empty());
+}
+
+fn regions_of(language: tree_sitter::Language, source: &str) -> Vec<ErrorRegion> {
+    sittir_core::error_regions(&parse_tree(language, source))
+}
+
+fn region(kind: ErrorRegionKind, start: u32, end: u32) -> ErrorRegion {
+    ErrorRegion { kind, span: Span { start, end } }
+}
+
+#[test]
+fn a_token_the_parser_inserted_is_an_empty_missing_region() {
+    assert_eq!(
+        regions_of(tree_sitter_python::LANGUAGE.into(), "def f(:\n    pass\nx = 1\n"),
+        vec![region(ErrorRegionKind::Missing, 6, 6)]
+    );
+}
+
+#[test]
+fn source_error_recovery_skipped_is_an_error_region() {
+    assert_eq!(
+        regions_of(tree_sitter_rust::LANGUAGE.into(), "fn f() { let = 1; }\n"),
+        vec![region(ErrorRegionKind::Error, 13, 14)]
+    );
+}
+
+#[test]
+fn an_error_inside_an_error_is_part_of_the_outer_region() {
+    assert_eq!(
+        regions_of(tree_sitter_python::LANGUAGE.into(), "x = )\ny = (\n"),
+        vec![region(ErrorRegionKind::Error, 0, 11)]
+    );
 }

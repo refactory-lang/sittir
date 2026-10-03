@@ -14,7 +14,7 @@
 
 use crate::format::{apply_format, extract_format};
 use crate::options::ResolvedOptions;
-use crate::read_untyped_node::{read_untyped_node, HandleMint, ReadDepth, ReadModel};
+use crate::read_untyped_node::{error_regions, read_untyped_node, ErrorRegion, HandleMint, ReadDepth, ReadModel};
 use crate::render::SourceTable;
 use crate::slot::NodeCoordinate;
 use crate::types::{FormatRecord, KindId, UntypedNode, Source};
@@ -328,6 +328,11 @@ impl<G: EngineGrammar> ParsedTree<G> {
         ))
     }
 
+    /// Every ERROR and MISSING region of the parse (`error_regions`).
+    pub fn error_regions(&self) -> Vec<ErrorRegion> {
+        error_regions(&self.tree)
+    }
+
     /// Access the detected format record (if any).
     pub fn format(&self) -> Option<&FormatRecord> {
         self.format.as_ref()
@@ -396,6 +401,8 @@ pub struct ParseResult<'a> {
     /// drops the last node reading from it.
     #[serde(rename = "treeId")]
     pub tree_id: u32,
+    /// The parse's ERROR and MISSING regions; empty for a clean parse.
+    pub errors: Vec<ErrorRegion>,
 }
 
 impl<G: EngineGrammar> Engine<G> {

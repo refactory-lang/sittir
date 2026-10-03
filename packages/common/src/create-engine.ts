@@ -18,6 +18,7 @@ import type {
 } from '@sittir/types';
 import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle } from './engine-scope.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
+import { ParseErrors } from './parse-errors.ts';
 import {
 	isEmptyNode as isEmptyUntypedNode,
 	isErrorNode,
@@ -160,6 +161,7 @@ function assembleEngine<API extends LanguageAPI>(
 		}) as Engine<API>['isEmptyNode'],
 		parse(source, parseOptions) {
 			const { root, tree } = readAndBind(source, parseOptions);
+			if (parseOptions?.errors === 'throw' && root.$errors.length > 0) throw new ParseErrors(root.$errors);
 			return hooks.wrap(root, tree);
 		},
 		read() {

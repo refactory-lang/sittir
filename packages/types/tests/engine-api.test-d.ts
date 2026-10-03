@@ -1,4 +1,16 @@
-import type { ApiOf, Engine, Language, LanguageAPI, LanguageHooks, StrictSurface, Types } from '../src/index.ts';
+import type {
+	ApiOf,
+	Engine,
+	ErrorNode,
+	ErrorRegion,
+	Language,
+	LanguageAPI,
+	LanguageHooks,
+	ParsedRoot,
+	StrictSurface,
+	TriviaSetter,
+	Types
+} from '../src/index.ts';
 
 interface FakeNode {
 	readonly $type: 1;
@@ -21,7 +33,7 @@ interface FakeAPI extends LanguageAPI {
 	readonly is: { leaf(n: unknown): n is FakeNode };
 	readonly kinds: { readonly Leaf: 1 };
 	readonly types: { readonly leaf: FakeNode };
-	readonly root: FakeNode;
+	readonly root: FakeNode & ParsedRoot;
 	readonly node: FakeNode;
 	readonly options: { readonly indent?: string };
 	readonly empty: { readonly node: FakeNode; readonly empty: EmptyFake };
@@ -74,7 +86,7 @@ interface OtherAPI extends LanguageAPI {
 	readonly is: object;
 	readonly kinds: object;
 	readonly types: { readonly leaf: OtherNode };
-	readonly root: OtherNode;
+	readonly root: OtherNode & ParsedRoot;
 	readonly node: OtherNode;
 	readonly options: object;
 }
@@ -97,3 +109,16 @@ if (guardEngine.isEmptyNode(fakeNode)) fakeNode satisfies EmptyFake;
 declare const noEmptyForm: NoEmptyForm;
 // @ts-expect-error a kind the language's empty map does not name has no empty form
 guardEngine.isEmptyNode(noEmptyForm);
+
+// A parsed root always lists the regions that did not parse.
+declare const parsing: Engine<API>;
+export const parsedErrors: readonly ErrorRegion[] = parsing.parse('').$errors;
+export const thrown = parsing.parse('', { errors: 'throw' });
+// @ts-expect-error the errors option has only the throwing mode
+export const reported = parsing.parse('', { errors: 'report' });
+
+// A trivia position holds the grammar's trivia nodes and the ERROR nodes read there, and takes them back.
+declare const trivia: TriviaSetter<FakeNode, NoEmptyForm>;
+declare const errorNode: ErrorNode;
+export const triviaItems: readonly (NoEmptyForm | ErrorNode)[] = trivia.leading();
+export const reattached: FakeNode = trivia.trailing(errorNode);

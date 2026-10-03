@@ -34,7 +34,11 @@ export type {
 	TriviaEntry,
 	NativeParseResult,
 	GrammarTriviaEntry,
-	TriviaSetter
+	TriviaSetter,
+	TriviaItem,
+	ErrorKindId,
+	ErrorNode,
+	ErrorRegion
 } from './core-types.ts';
 
 // ---------------------------------------------------------------------------
@@ -1286,6 +1290,7 @@ export type {
 	NativeEngineOptions,
 	NativeLanguageEngine,
 	ParsedRead,
+	ParsedRoot,
 	NodeOfNamespaces,
 	ParseOptions,
 	Pending,

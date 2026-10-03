@@ -13489,6 +13489,10 @@ Kinds with a `reclaimsAnonymousChild` slot keep `$other`, because their wrap rea
 ### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.finalize`
 
 Assembles the wrap module. `wrapNode`, the one function every wrapped node passes through (the parsed root, each child hydrated on demand, trivia entries), runs its per-kind wrap function inside `inTreeEngine`, so a node is built under the engine that read its tree however long after the parse it is first reached. It carries read provenance (`carryRead`) from the read data to the wrapped node, so the wrapped node derives its line-gap trivia the way the read data would.
+A node of a kind with no wrap function, an ERROR node above all, read in a slot
+or as a trivia item, is hydrated by `_hydrateUnknownKindChildren`, which
+stamps the engine on it as every per-kind wrap function does, so the engine's
+guards (`isErrorNode`) recognise it wherever it surfaces.
 
 `readUntypedNode` and `readNode` take an optional level count, which reaches the native read. `hydrateSelf` reads a stub of a list owner's kind (`listViewOwners`, emitted as `_LIST_OWNER_KINDS`) two levels at once, and every other stub one level.
 
