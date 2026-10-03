@@ -65,8 +65,8 @@ describe('read trivia layout, rendered detached', () => {
 		expect(rust('fn g() {}\n/* t */\n\nfn h() {}')).toBe('fn g() {}\n/* t */\n\nfn h() {}\n');
 		expect(rust('fn g() {}\n// t\n\nfn h() {}')).toBe('fn g() {}\n// t\n\nfn h() {}\n');
 		const typescript = await detachedRenderer('typescript');
-		expect(typescript('a;\n/* c */\n\nb;')).toBe('a;\n/* c */\nb;\n');
-		expect(typescript('a;\n// c\n\nb;')).toBe('a;\n// c\nb;\n');
+		expect(typescript('a;\n/* c */\n\nb;')).toBe('a;\n/* c */\n\nb;\n');
+		expect(typescript('a;\n// c\n\nb;')).toBe('a;\n// c\n\nb;\n');
 	});
 
 	it('lays root entries one per line, since the root gap starts a line', async () => {
