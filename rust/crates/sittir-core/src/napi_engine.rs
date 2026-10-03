@@ -159,9 +159,12 @@ macro_rules! napi_engine {
             /// The line-break whitespace a read node owns as trivia: the node
             /// named by its `handle`, or by its tree's tag with its `span`
             /// (`[start, end]`) and stamped `kind` as a deep read leaves it.
-            /// As JSON `{ leading, trailing }` of `{ kind, start }` in
-            /// source order: each run classified among the grammar's
-            /// whitespace members whose text holds a line break.
+            /// As JSON `{ leading, trailing, previous }`: `leading` and
+            /// `trailing` are `{ kind, start }` runs in source order, each
+            /// classified among the grammar's whitespace members whose text
+            /// holds a line break; `previous` is the `{ start, end }` span of
+            /// the sibling the leading runs separate the node from, `null`
+            /// for its parent's first.
             #[::napi_derive::napi]
             pub fn line_gaps_of(
                 &self,
@@ -178,7 +181,11 @@ macro_rules! napi_engine {
                         u16::try_from(kind).map_err(|_| ::napi::Error::from_reason(format!("kind {kind} is not a kind id")))?,
                     )),
                     (None, None) => None,
-                    _ => return Err(::napi::Error::from_reason("a coordinate names both its span and its kind")),
+                    _ => {
+                        return Err(::napi::Error::from_reason(
+                            "a coordinate needs both a span of exactly two offsets, [start, end], and a kind",
+                        ))
+                    }
                 };
                 let allowed: Vec<u16> = $whitespace_kinds
                     .iter()
