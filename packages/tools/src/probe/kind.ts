@@ -110,7 +110,7 @@ import { load } from '../codegen-surface.ts';
 import type * as TS from 'web-tree-sitter';
 import type { AnyUntypedNode, AnyTreeNode } from '@sittir/types';
 import { sourceSpans, type ByteSpan, type SourceSpans } from '@sittir/common';
-import { isStub, readUntypedNode, toTransportData } from '@sittir/common/utils';
+import { isStub, readUntypedNode, STORED_TRIVIA, toTransportData } from '@sittir/common/utils';
 // ---------------------------------------------------------------------------
 // CLI
 // ---------------------------------------------------------------------------
@@ -1107,7 +1107,7 @@ async function renderUntypedNode(grammar: string, untypedNode: unknown): Promise
 /** @internal — the transport data the engine renders for `untypedNode`: the
  *  same projection `SittirEngine.render` applies, exposed for the trace. */
 function nativeRenderPayload(untypedNode: unknown): Record<string, unknown> {
-	return toTransportData(stripBigInts(untypedNode) as AnyUntypedNode) as unknown as Record<string, unknown>;
+	return toTransportData(stripBigInts(untypedNode) as AnyUntypedNode, STORED_TRIVIA) as unknown as Record<string, unknown>;
 }
 
 /** @internal — render via the native napi engine.

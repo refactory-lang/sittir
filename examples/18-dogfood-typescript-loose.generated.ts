@@ -45,7 +45,7 @@ export function rebuildFormatLoose() {
 						}),
 					}), {
 						terminator: ts.kinds.Semi,
-					}), ts.build.expressionStatement(ts.build.assignmentExpression({
+					}).$trivia.leading(ts.kinds.Blankline), ts.build.expressionStatement(ts.build.assignmentExpression({
 						left: "result",
 						right: ts.build.callExpression.call({
 							function: "applyBoundary",
@@ -55,12 +55,12 @@ export function rebuildFormatLoose() {
 						terminator: ts.kinds.Semi,
 					}), ts.build.returnStatement(ts.build.identifier("result"), {
 						terminator: ts.kinds.Semi,
-					})],
+					}).$trivia.leading(ts.kinds.Blankline)],
 					automaticSemicolon: true,
 				}),
 				automaticSemicolon: true,
 			}),
-		}).$trivia.leading(ts.build.comment.block("*\n * Apply a {@link FormatRecord} to a canonical render string.\n *\n * @param canonicalRender - The template-canonical rendered string.\n * @param format - The format record to apply.\n * @returns The reconstructed string with boundary, trivia, slots, and\n *   literals applied.\n *\n * @remarks\n * Steps:\n * 1. Insert `trivia` items at their recorded byte offsets (applied\n *    right-to-left to preserve earlier offsets). Offsets are\n *    canonical-relative, so trivia must be applied before boundary.\n * 2. Prepend `boundary.leading` and append `boundary.trailing`.\n * 3. `slots` and `literals` adjustments are reserved for future phases;\n *    if present they are noted but do not alter the output in Phase 1.\n ")), ts.build.functionDeclaration({
+		}).$trivia.leading(ts.kinds.Blankline, ts.build.comment.block("*\n * Apply a {@link FormatRecord} to a canonical render string.\n *\n * @param canonicalRender - The template-canonical rendered string.\n * @param format - The format record to apply.\n * @returns The reconstructed string with boundary, trivia, slots, and\n *   literals applied.\n *\n * @remarks\n * Steps:\n * 1. Insert `trivia` items at their recorded byte offsets (applied\n *    right-to-left to preserve earlier offsets). Offsets are\n *    canonical-relative, so trivia must be applied before boundary.\n * 2. Prepend `boundary.leading` and append `boundary.trailing`.\n * 3. `slots` and `literals` adjustments are reserved for future phases;\n *    if present they are noted but do not alter the output in Phase 1.\n ")), ts.build.functionDeclaration({
 			name: "applyBoundary",
 			parameters: [ts.build.requiredParameter({
 				pattern: "s",
@@ -127,7 +127,7 @@ export function rebuildFormatLoose() {
 				automaticSemicolon: true,
 			}),
 			automaticSemicolon: true,
-		}).$trivia.leading(ts.build.comment.block("* Prepend/append boundary whitespace. ")), ts.build.functionDeclaration({
+		}).$trivia.leading(ts.kinds.Blankline, ts.build.comment.block("* Prepend/append boundary whitespace. ")), ts.build.functionDeclaration({
 			name: "applyTrivia",
 			parameters: [ts.build.requiredParameter({
 				pattern: "s",
@@ -204,7 +204,7 @@ export function rebuildFormatLoose() {
 					})],
 				}, {
 					terminator: ts.kinds.Semi,
-				}), ts.build.lexicalDeclaration({
+				}).$trivia.leading(ts.kinds.Blankline), ts.build.lexicalDeclaration({
 					kind: ts.kinds.LetKeyword,
 					declarators: [ts.build.variableDeclarator.plain({
 						name: "result",
@@ -290,7 +290,7 @@ export function rebuildFormatLoose() {
 				automaticSemicolon: true,
 			}),
 			automaticSemicolon: true,
-		}).$trivia.leading(ts.build.comment.block("*\n * Insert trivia items at their recorded byte offsets.\n * Items are applied in descending offset order so earlier offsets\n * are not invalidated.\n ")), ts.build.exportStatement.default.declaration({
+		}).$trivia.leading(ts.kinds.Blankline, ts.build.comment.block("*\n * Insert trivia items at their recorded byte offsets.\n * Items are applied in descending offset order so earlier offsets\n * are not invalidated.\n ")), ts.build.exportStatement.default.declaration({
 			content: ts.build.functionDeclaration({
 				name: "rebaseTrivia",
 				parameters: [ts.build.requiredParameter({
@@ -362,7 +362,7 @@ export function rebuildFormatLoose() {
 				}),
 				automaticSemicolon: true,
 			}),
-		}).$trivia.leading(ts.build.comment.block("*\n * Shift all {@link FormatTrivia} offsets that fall at or above `editStart`\n * by `delta` bytes, returning a shallow-cloned {@link FormatRecord}.\n *\n * Offsets below `editStart` are left unchanged. Sub-records in\n * `kinds` are rebased recursively with the same parameters.\n *\n * @param format - The source format record to rebase.\n * @param editStart - Absolute byte position of the edit boundary.\n * @param delta - Signed byte delta to apply (positive = insertion, negative = deletion).\n * @returns A new `FormatRecord` with adjusted trivia offsets.\n *\n * @remarks\n * RebaseTrivia is the single derivation for trivia offset adjustment\n * after any edit. Callers must not adjust offsets manually.\n ")), ts.build.functionDeclaration({
+		}).$trivia.leading(ts.kinds.Blankline, ts.build.comment.block("*\n * Shift all {@link FormatTrivia} offsets that fall at or above `editStart`\n * by `delta` bytes, returning a shallow-cloned {@link FormatRecord}.\n *\n * Offsets below `editStart` are left unchanged. Sub-records in\n * `kinds` are rebased recursively with the same parameters.\n *\n * @param format - The source format record to rebase.\n * @param editStart - Absolute byte position of the edit boundary.\n * @param delta - Signed byte delta to apply (positive = insertion, negative = deletion).\n * @returns A new `FormatRecord` with adjusted trivia offsets.\n *\n * @remarks\n * RebaseTrivia is the single derivation for trivia offset adjustment\n * after any edit. Callers must not adjust offsets manually.\n ")), ts.build.functionDeclaration({
 			name: "rebaseTriviaItems",
 			parameters: [ts.build.requiredParameter({
 				pattern: "trivia",
@@ -457,7 +457,7 @@ export function rebuildFormatLoose() {
 				automaticSemicolon: true,
 			}),
 			automaticSemicolon: true,
-		}).$trivia.leading(ts.build.comment.block("* Rebase a trivia array, returning the adjusted array or undefined if absent. ")), ts.build.functionDeclaration({
+		}).$trivia.leading(ts.kinds.Blankline, ts.build.comment.block("* Rebase a trivia array, returning the adjusted array or undefined if absent. ")), ts.build.functionDeclaration({
 			name: "rebaseKinds",
 			parameters: [ts.build.requiredParameter({
 				pattern: "kinds",
@@ -540,6 +540,6 @@ export function rebuildFormatLoose() {
 				automaticSemicolon: true,
 			}),
 			automaticSemicolon: true,
-		}).$trivia.leading(ts.build.comment.block("* Recursively rebase all sub-records in `kinds`. "))],
+		}).$trivia.leading(ts.kinds.Blankline, ts.build.comment.block("* Recursively rebase all sub-records in `kinds`. "))],
 	});
 }

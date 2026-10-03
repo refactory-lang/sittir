@@ -91,6 +91,22 @@ pub struct TransportTrivia<T> {
     pub leading: Option<Vec<TriviaEntry<T>>>,
     pub trailing: Option<Vec<TriviaEntry<T>>>,
     pub inner: Option<BTreeMap<String, Vec<TriviaEntry<T>>>>,
+    /// The leading entries are the read's own: the gap they open with is the
+    /// one the source shows toward the item before the owner, which still
+    /// sits there. Written trivia is never held.
+    pub held: bool,
+}
+
+impl<T: Render + TriviaSeam> TransportTrivia<T> {
+    /// The whitespace run held leading entries open with, the gap the source
+    /// shows toward the item before the owner; none when the entries are not
+    /// held or open with a comment.
+    pub fn leading_seam(&self) -> Option<&str> {
+        if !self.held {
+            return None;
+        }
+        self.leading.as_ref()?.first()?.seam_text()
+    }
 }
 
 impl<T> Default for TransportTrivia<T> {
@@ -99,6 +115,7 @@ impl<T> Default for TransportTrivia<T> {
             leading: None,
             trailing: None,
             inner: None,
+            held: false,
         }
     }
 }
@@ -310,6 +327,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNap
             leading: obj.get("leading")?,
             trailing: obj.get("trailing")?,
             inner,
+            held: obj.get::<bool>("held")?.unwrap_or(false),
         })
     }
 }

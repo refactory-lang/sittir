@@ -38,9 +38,11 @@
 /// - `$render_parts` — `fn(&$render_root) -> Result<(Source, String), _>`.
 /// - `$abi` — the render transport ABI version this crate was generated against.
 /// - `$defaults` — `fn() -> ResolvedOptions`, the grammar's site table at its declared defaults.
+/// - `$whitespace` — the grammar's [`WhitespaceTable`](crate::render::WhitespaceTable).
+/// - `$whitespace_kinds` — every whitespace member of the grammar, the domain of `$whitespace`.
 #[macro_export]
 macro_rules! napi_engine {
-    ($grammar:ty, $render_root:ty, $options:ty, $render_parts:path, $abi:expr, $defaults:path) => {
+    ($grammar:ty, $render_root:ty, $options:ty, $render_parts:path, $abi:expr, $defaults:path, $whitespace:path, $whitespace_kinds:path) => {
         #[::napi_derive::napi(object, object_to_js = false)]
         pub struct EngineOptions {
             pub format: Option<String>,
@@ -152,6 +154,60 @@ macro_rules! napi_engine {
                 } else {
                     "release"
                 }
+            }
+
+            /// The line-break whitespace a read node owns as trivia: the node
+            /// named by its `handle`, or by its tree's tag with its `span`
+            /// (`[start, end]`) and stamped `kind` as a deep read leaves it.
+            /// As JSON `{ leading, trailing, previous }`: `leading` and
+            /// `trailing` are `{ kind, start }` runs in source order, each
+            /// classified among the grammar's whitespace members whose text
+            /// holds a line break; `previous` is the `{ start, end }` span of
+            /// the sibling the leading runs separate the node from, `null`
+            /// for its parent's first.
+            #[::napi_derive::napi]
+            pub fn line_gaps_of(
+                &self,
+                handle: f64,
+                span: Option<Vec<f64>>,
+                kind: Option<u32>,
+            ) -> ::napi::Result<String> {
+                let handle = $crate::napi_engine::checked_index(handle, "handle")?;
+                let (tree_id, _) = $crate::engine::decode_handle(handle);
+                let at = match (span.as_deref(), kind) {
+                    (Some([start, end]), Some(kind)) => Some((
+                        $crate::napi_engine::checked_index(*start, "span start")? as usize,
+                        $crate::napi_engine::checked_index(*end, "span end")? as usize,
+                        u16::try_from(kind).map_err(|_| ::napi::Error::from_reason(format!("kind {kind} is not a kind id")))?,
+                    )),
+                    (None, None) => None,
+                    _ => {
+                        return Err(::napi::Error::from_reason(
+                            "a coordinate needs both a span of exactly two offsets, [start, end], and a kind",
+                        ))
+                    }
+                };
+                let allowed: Vec<u16> = $whitespace_kinds
+                    .iter()
+                    .copied()
+                    .filter(|&kind| ($whitespace.text_of)(kind).contains('\n'))
+                    .collect();
+                let classify = |run: &str| $crate::classify::classify_whitespace(run, &allowed, &$whitespace);
+                LIVE_TREES.with(|trees| {
+                    let trees = trees.borrow();
+                    let parsed = trees.get(&tree_id).ok_or_else(|| {
+                        ::napi::Error::from_reason(format!(
+                            "handle {handle} names tree {tree_id}, which is not live \
+                             (never parsed on this thread, or already released)"
+                        ))
+                    })?;
+                    let gaps = match at {
+                        Some((start, end, kind)) => parsed.line_gaps_at_span(handle, start, end, kind, &classify),
+                        None => parsed.line_gaps_at(handle, &classify),
+                    }
+                    .map_err(::napi::Error::from_reason)?;
+                    ::serde_json::to_string(&gaps).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                })
             }
 
             #[::napi_derive::napi]

@@ -19,8 +19,10 @@ import type { FormatRecord, FormatTrivia } from '@sittir/types';
  */
 export function applyFormat(canonicalRender: string, format: FormatRecord): string {
 	let result = canonicalRender;
+
 	result = applyTrivia(result, format);
 	result = applyBoundary(result, format);
+
 	return result;
 }
 
@@ -41,6 +43,7 @@ function applyBoundary(s: string, format: FormatRecord): string {
 function applyTrivia(s: string, format: FormatRecord): string {
 	const { trivia } = format;
 	if (!trivia || trivia.length === 0) return s;
+
 	const sorted = [...trivia].sort((a, b) => b.offset - a.offset);
 	let result = s;
 	for (const item of sorted) {

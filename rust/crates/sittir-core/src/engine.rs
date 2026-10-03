@@ -337,6 +337,35 @@ impl<G: EngineGrammar> ParsedTree<G> {
     pub fn source(&self) -> &str {
         &self.source
     }
+
+    /// The line-break runs the node named by `handle` owns as trivia
+    /// (`read_untyped_node::line_gaps`), each classified by `classify`.
+    pub fn line_gaps_at(
+        &self,
+        handle: u64,
+        classify: &dyn Fn(&str) -> Option<u16>,
+    ) -> Result<crate::read_untyped_node::LineGaps, String> {
+        let index = self.local_index(handle)?;
+        let node = Self::resolve_handle(&self.nodes, &self.tree, index)
+            .ok_or_else(|| format!("handle {handle} not found in node table"))?;
+        Ok(crate::read_untyped_node::line_gaps(node, &self.source, &self.grammar, classify))
+    }
+
+    /// `line_gaps_at` for a node named by its coordinate (the tree's tag, its
+    /// span and its stamped kind), as a deep read leaves it.
+    pub fn line_gaps_at_span(
+        &self,
+        tree_handle: u64,
+        start: usize,
+        end: usize,
+        kind: u16,
+        classify: &dyn Fn(&str) -> Option<u16>,
+    ) -> Result<crate::read_untyped_node::LineGaps, String> {
+        self.local_index(tree_handle)?;
+        let node = crate::read_untyped_node::node_at_span(&self.tree, start, end, kind)
+            .ok_or_else(|| format!("no {kind} node spans {start}..{end} in tree {}", self.tree_id))?;
+        Ok(crate::read_untyped_node::line_gaps(node, &self.source, &self.grammar, classify))
+    }
 }
 
 // ─── Engine ──────────────────────────────────────────────────────────────────

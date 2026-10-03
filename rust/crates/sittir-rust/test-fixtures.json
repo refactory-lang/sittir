@@ -7365,7 +7365,15 @@
                 "start": 240,
                 "end": 246
               },
-              "$text": "return"
+              "$text": "return",
+              "$_trivia": {
+                "leading": [
+                  171
+                ],
+                "trailing": [
+                  171
+                ]
+              }
             },
             "$other": [
               {
@@ -9799,7 +9807,15 @@
             "start": 240,
             "end": 246
           },
-          "$text": "return"
+          "$text": "return",
+          "$_trivia": {
+            "leading": [
+              171
+            ],
+            "trailing": [
+              171
+            ]
+          }
         },
         "$other": [
           {
@@ -13044,7 +13060,15 @@
           "start": 240,
           "end": 246
         },
-        "$text": "return"
+        "$text": "return",
+        "$_trivia": {
+          "leading": [
+            171
+          ],
+          "trailing": [
+            171
+          ]
+        }
       },
       "$other": [
         {
@@ -14371,7 +14395,15 @@
         "start": 240,
         "end": 246
       },
-      "$text": "return"
+      "$text": "return",
+      "$_trivia": {
+        "leading": [
+          171
+        ],
+        "trailing": [
+          171
+        ]
+      }
     },
     "expectedOutput": "return"
   },
@@ -23548,6 +23580,10 @@
                   }
                 ]
               },
+              "$slotOrder": [
+                "function",
+                "arguments"
+              ],
               "$_trivia": {
                 "leading": [
                   {
@@ -23613,11 +23649,7 @@
                     }
                   }
                 ]
-              },
-              "$slotOrder": [
-                "function",
-                "arguments"
-              ]
+              }
             },
             "$other": [
               {
@@ -24456,6 +24488,10 @@
               }
             ]
           },
+          "$slotOrder": [
+            "function",
+            "arguments"
+          ],
           "$_trivia": {
             "leading": [
               {
@@ -24521,11 +24557,7 @@
                 }
               }
             ]
-          },
-          "$slotOrder": [
-            "function",
-            "arguments"
-          ]
+          }
         },
         "$other": [
           {
@@ -25300,6 +25332,10 @@
             }
           ]
         },
+        "$slotOrder": [
+          "function",
+          "arguments"
+        ],
         "$_trivia": {
           "leading": [
             {
@@ -25365,11 +25401,7 @@
               }
             }
           ]
-        },
-        "$slotOrder": [
-          "function",
-          "arguments"
-        ]
+        }
       },
       "$other": [
         {
@@ -25791,6 +25823,10 @@
           }
         ]
       },
+      "$slotOrder": [
+        "function",
+        "arguments"
+      ],
       "$_trivia": {
         "leading": [
           {
@@ -25856,11 +25892,7 @@
             }
           }
         ]
-      },
-      "$slotOrder": [
-        "function",
-        "arguments"
-      ]
+      }
     },
     "expectedOutput": "// CHECK: call void @llvm.va_start\nvprintf(fmt, ap.as_va_list())\n// CHECK: call void @llvm.va_end\n"
   },
@@ -33387,6 +33419,14 @@
                 "$span": {
                   "start": 20,
                   "end": 21
+                },
+                "$_trivia": {
+                  "leading": [
+                    171
+                  ],
+                  "trailing": [
+                    171
+                  ]
                 }
               },
               "$other": [
@@ -33427,6 +33467,14 @@
                   "$span": {
                     "start": 35,
                     "end": 36
+                  },
+                  "$_trivia": {
+                    "leading": [
+                      171
+                    ],
+                    "trailing": [
+                      171
+                    ]
                   }
                 },
                 "$other": [
@@ -33573,6 +33621,14 @@
             "$span": {
               "start": 20,
               "end": 21
+            },
+            "$_trivia": {
+              "leading": [
+                171
+              ],
+              "trailing": [
+                171
+              ]
             }
           },
           "$other": [
@@ -33613,6 +33669,14 @@
               "$span": {
                 "start": 35,
                 "end": 36
+              },
+              "$_trivia": {
+                "leading": [
+                  171
+                ],
+                "trailing": [
+                  171
+                ]
               }
             },
             "$other": [
@@ -33743,6 +33807,14 @@
           "$span": {
             "start": 20,
             "end": 21
+          },
+          "$_trivia": {
+            "leading": [
+              171
+            ],
+            "trailing": [
+              171
+            ]
           }
         },
         "$other": [
@@ -33783,6 +33855,14 @@
             "$span": {
               "start": 35,
               "end": 36
+            },
+            "$_trivia": {
+              "leading": [
+                171
+              ],
+              "trailing": [
+                171
+              ]
             }
           },
           "$other": [
@@ -33865,6 +33945,14 @@
         "$span": {
           "start": 20,
           "end": 21
+        },
+        "$_trivia": {
+          "leading": [
+            171
+          ],
+          "trailing": [
+            171
+          ]
         }
       },
       "$other": [
@@ -33918,6 +34006,14 @@
         "$span": {
           "start": 35,
           "end": 36
+        },
+        "$_trivia": {
+          "leading": [
+            171
+          ],
+          "trailing": [
+            171
+          ]
         }
       },
       "$other": [
@@ -69567,6 +69663,11 @@
                               "$span": {
                                 "start": 56,
                                 "end": 57
+                              },
+                              "$_trivia": {
+                                "leading": [
+                                  171
+                                ]
                               }
                             },
                             "$slotOrder": [
@@ -70064,7 +70165,7 @@
         }
       ]
     },
-    "expectedOutput": "fn foo() {\n    bar(x, #[cfg(foo = \"bar\")] y);\n    let z = [#[hello] 2, 7, 8];\n    let t = (#[hello] 2, 7, 8);\n}\n"
+    "expectedOutput": "fn foo() {\n    bar(x, #[cfg(foo = \"bar\")]\n    y);\n    let z = [#[hello] 2, 7, 8];\n    let t = (#[hello] 2, 7, 8);\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -70072,9 +70173,9 @@
     "sourceIn": "\nfn foo() {\n   bar(x,\n       #[cfg(foo = \"bar\")]\n       y);\n   let z = [#[hello] 2, 7, 8];\n   let t = (#[hello] 2, 7, 8);\n}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "fn foo() {\n    bar(x, #[cfg(foo = \"bar\")] y);\n    let z = [#[hello] 2, 7, 8];\n    let t = (#[hello] 2, 7, 8);\n}\n",
+    "expectedSourceOut": "fn foo() {\n    bar(x, #[cfg(foo = \"bar\")]\n    y);\n    let z = [#[hello] 2, 7, 8];\n    let t = (#[hello] 2, 7, 8);\n}\n",
     "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters) body: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments elements: (arguments_elements item: (attributed_argument (identifier)) item: (attributed_argument (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))) (identifier))))))) statements: (let_declaration pattern: (identifier) value: (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier))) elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)) item: (attributed_argument (integer_literal_decimal)) item: (attributed_argument (integer_literal_decimal))))) statements: (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) (expressions item: (integer_literal_decimal) item: (integer_literal_decimal) item: (integer_literal_decimal)))))))",
-    "wrappedText": "fn foo() {\n    bar(x, #[cfg(foo = \"bar\")] y);\n    let z = [#[hello] 2, 7, 8];\n    let t = (#[hello] 2, 7, 8);\n}\n",
+    "wrappedText": "fn foo() {\n    bar(x, #[cfg(foo = \"bar\")]\n    y);\n    let z = [#[hello] 2, 7, 8];\n    let t = (#[hello] 2, 7, 8);\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -70324,6 +70425,11 @@
                           "$span": {
                             "start": 56,
                             "end": 57
+                          },
+                          "$_trivia": {
+                            "leading": [
+                              171
+                            ]
                           }
                         },
                         "$slotOrder": [
@@ -70819,7 +70925,7 @@
         "body"
       ]
     },
-    "expectedOutput": "fn foo() {\n    bar(x, #[cfg(foo = \"bar\")] y);\n    let z = [#[hello] 2, 7, 8];\n    let t = (#[hello] 2, 7, 8);\n}"
+    "expectedOutput": "fn foo() {\n    bar(x, #[cfg(foo = \"bar\")]\n    y);\n    let z = [#[hello] 2, 7, 8];\n    let t = (#[hello] 2, 7, 8);\n}"
   },
   {
     "kind": "roundtrip",
@@ -70827,9 +70933,9 @@
     "sourceIn": "fn foo() {\n   bar(x,\n       #[cfg(foo = \"bar\")]\n       y);\n   let z = [#[hello] 2, 7, 8];\n   let t = (#[hello] 2, 7, 8);\n}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn foo() {\n    bar(x, #[cfg(foo = \"bar\")] y);\n    let z = [#[hello] 2, 7, 8];\n    let t = (#[hello] 2, 7, 8);\n}",
+    "expectedSourceOut": "fn foo() {\n    bar(x, #[cfg(foo = \"bar\")]\n    y);\n    let z = [#[hello] 2, 7, 8];\n    let t = (#[hello] 2, 7, 8);\n}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) body: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments elements: (arguments_elements item: (attributed_argument (identifier)) item: (attributed_argument (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))) (identifier))))))) statements: (let_declaration pattern: (identifier) value: (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier))) elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)) item: (attributed_argument (integer_literal_decimal)) item: (attributed_argument (integer_literal_decimal))))) statements: (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) (expressions item: (integer_literal_decimal) item: (integer_literal_decimal) item: (integer_literal_decimal))))))",
-    "wrappedText": "fn foo() {\n    bar(x, #[cfg(foo = \"bar\")] y);\n    let z = [#[hello] 2, 7, 8];\n    let t = (#[hello] 2, 7, 8);\n}",
+    "wrappedText": "fn foo() {\n    bar(x, #[cfg(foo = \"bar\")]\n    y);\n    let z = [#[hello] 2, 7, 8];\n    let t = (#[hello] 2, 7, 8);\n}",
     "wrappedOffset": 0
   },
   {
@@ -71082,6 +71188,11 @@
                         "$span": {
                           "start": 56,
                           "end": 57
+                        },
+                        "$_trivia": {
+                          "leading": [
+                            171
+                          ]
                         }
                       },
                       "$slotOrder": [
@@ -71560,7 +71671,7 @@
         }
       ]
     },
-    "expectedOutput": "{\n    bar(x, #[cfg(foo = \"bar\")] y);\n    let z = [#[hello] 2, 7, 8];\n    let t = (#[hello] 2, 7, 8);\n}"
+    "expectedOutput": "{\n    bar(x, #[cfg(foo = \"bar\")]\n    y);\n    let z = [#[hello] 2, 7, 8];\n    let t = (#[hello] 2, 7, 8);\n}"
   },
   {
     "kind": "roundtrip",
@@ -71568,9 +71679,9 @@
     "sourceIn": "{\n   bar(x,\n       #[cfg(foo = \"bar\")]\n       y);\n   let z = [#[hello] 2, 7, 8];\n   let t = (#[hello] 2, 7, 8);\n}",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{\n    bar(x, #[cfg(foo = \"bar\")] y);\n    let z = [#[hello] 2, 7, 8];\n    let t = (#[hello] 2, 7, 8);\n}",
+    "expectedSourceOut": "{\n    bar(x, #[cfg(foo = \"bar\")]\n    y);\n    let z = [#[hello] 2, 7, 8];\n    let t = (#[hello] 2, 7, 8);\n}",
     "expectedReparseTree": "(block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments elements: (arguments_elements item: (attributed_argument (identifier)) item: (attributed_argument (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))) (identifier))))))) statements: (let_declaration pattern: (identifier) value: (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier))) elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)) item: (attributed_argument (integer_literal_decimal)) item: (attributed_argument (integer_literal_decimal))))) statements: (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) (expressions item: (integer_literal_decimal) item: (integer_literal_decimal) item: (integer_literal_decimal)))))",
-    "wrappedText": "fn _f() { let _ = {\n    bar(x, #[cfg(foo = \"bar\")] y);\n    let z = [#[hello] 2, 7, 8];\n    let t = (#[hello] 2, 7, 8);\n}; }",
+    "wrappedText": "fn _f() { let _ = {\n    bar(x, #[cfg(foo = \"bar\")]\n    y);\n    let z = [#[hello] 2, 7, 8];\n    let t = (#[hello] 2, 7, 8);\n}; }",
     "wrappedOffset": 18
   },
   {
@@ -71783,6 +71894,11 @@
                 "$span": {
                   "start": 56,
                   "end": 57
+                },
+                "$_trivia": {
+                  "leading": [
+                    171
+                  ]
                 }
               },
               "$slotOrder": [
@@ -71830,7 +71946,7 @@
         "arguments"
       ]
     },
-    "expectedOutput": "bar(x, #[cfg(foo = \"bar\")] y)"
+    "expectedOutput": "bar(x, #[cfg(foo = \"bar\")]\ny)"
   },
   {
     "kind": "roundtrip",
@@ -71838,9 +71954,9 @@
     "sourceIn": "bar(x,\n       #[cfg(foo = \"bar\")]\n       y)",
     "pattern": "call_expression",
     "edits": [],
-    "expectedSourceOut": "bar(x, #[cfg(foo = \"bar\")] y)",
+    "expectedSourceOut": "bar(x, #[cfg(foo = \"bar\")]\ny)",
     "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments elements: (arguments_elements item: (attributed_argument (identifier)) item: (attributed_argument (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))) (identifier)))))",
-    "wrappedText": "fn _f() { let _ = bar(x, #[cfg(foo = \"bar\")] y); }",
+    "wrappedText": "fn _f() { let _ = bar(x, #[cfg(foo = \"bar\")]\ny); }",
     "wrappedOffset": 18
   },
   {
@@ -72039,6 +72155,11 @@
               "$span": {
                 "start": 56,
                 "end": 57
+              },
+              "$_trivia": {
+                "leading": [
+                  171
+                ]
               }
             },
             "$slotOrder": [
@@ -72081,7 +72202,7 @@
         }
       ]
     },
-    "expectedOutput": "(x, #[cfg(foo = \"bar\")] y)"
+    "expectedOutput": "(x, #[cfg(foo = \"bar\")]\ny)"
   },
   {
     "kind": "roundtrip",
@@ -72089,9 +72210,9 @@
     "sourceIn": "(x,\n       #[cfg(foo = \"bar\")]\n       y)",
     "pattern": "arguments",
     "edits": [],
-    "expectedSourceOut": "(x, #[cfg(foo = \"bar\")] y)",
+    "expectedSourceOut": "(x, #[cfg(foo = \"bar\")]\ny)",
     "expectedReparseTree": "(arguments elements: (arguments_elements item: (attributed_argument (identifier)) item: (attributed_argument (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))) (identifier))))",
-    "wrappedText": "f(x, #[cfg(foo = \"bar\")] y);",
+    "wrappedText": "f(x, #[cfg(foo = \"bar\")]\ny);",
     "wrappedOffset": 1
   },
   {
@@ -95165,7 +95286,12 @@
               "end": 252
             },
             "$text": "{}",
-            "_statements": []
+            "_statements": [],
+            "$_trivia": {
+              "leading": [
+                171
+              ]
+            }
           },
           "$other": [
             {
@@ -95188,7 +95314,7 @@
         }
       ]
     },
-    "expectedOutput": "pub trait Database {\n    type F<'a, D>: Future<Output = D> + 'a;\n}\n\nimpl Database for Foo {\n    type F<'a, D> = DatabaseFuture<'a, D>;\n}\n\nfn use_database1<D: Database<F<'a, TD> = F>>() {}\n\nfn use_database2<D>() where D: Database<F<'a, TD> = F>, {}\n"
+    "expectedOutput": "pub trait Database {\n    type F<'a, D>: Future<Output = D> + 'a;\n}\n\nimpl Database for Foo {\n    type F<'a, D> = DatabaseFuture<'a, D>;\n}\n\nfn use_database1<D: Database<F<'a, TD> = F>>() {}\n\nfn use_database2<D>() where D: Database<F<'a, TD> = F>,\n{}\n"
   },
   {
     "kind": "roundtrip",
@@ -95196,9 +95322,9 @@
     "sourceIn": "\npub trait Database {\n    type F<'a, D>: Future<Output = D> + 'a;\n}\n\nimpl Database for Foo {\n    type F<'a, D> = DatabaseFuture<'a, D>;\n}\n\nfn use_database1<D: Database<F<'a, TD> = F>>() {}\n\nfn use_database2<D>()\nwhere\n    D: Database<F<'a, TD> = F>,\n{}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "pub trait Database {\n    type F<'a, D>: Future<Output = D> + 'a;\n}\n\nimpl Database for Foo {\n    type F<'a, D> = DatabaseFuture<'a, D>;\n}\n\nfn use_database1<D: Database<F<'a, TD> = F>>() {}\n\nfn use_database2<D>() where D: Database<F<'a, TD> = F>, {}\n",
+    "expectedSourceOut": "pub trait Database {\n    type F<'a, D>: Future<Output = D> + 'a;\n}\n\nimpl Database for Foo {\n    type F<'a, D> = DatabaseFuture<'a, D>;\n}\n\nfn use_database1<D: Database<F<'a, TD> = F>>() {}\n\nfn use_database2<D>() where D: Database<F<'a, TD> = F>,\n{}\n",
     "expectedReparseTree": "(source_file statements: (trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (declaration_list declarations: (associated_type name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))) item: (attributed_type_parameter (type_parameter name: (type_identifier))))) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_binding name: (type_identifier) type: (type_identifier)))))) bounds: (lifetime name: (identifier)))))) statements: (impl_item_body trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (type_identifier) (declaration_list declarations: (type_item name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))) item: (attributed_type_parameter (type_parameter name: (type_identifier))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (lifetime name: (identifier))) item: (type_argument (type_identifier)))))))) statements: (function_item name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_binding name: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (lifetime name: (identifier))) item: (type_argument (type_identifier)))) type: (type_identifier))))))))))) parameters: (parameters) body: (block)) statements: (function_item name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) parameters: (parameters) where_clause: (where_clause (where_predicates item: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_binding name: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (lifetime name: (identifier))) item: (type_argument (type_identifier)))) type: (type_identifier)))))))))) body: (block)))",
-    "wrappedText": "pub trait Database {\n    type F<'a, D>: Future<Output = D> + 'a;\n}\n\nimpl Database for Foo {\n    type F<'a, D> = DatabaseFuture<'a, D>;\n}\n\nfn use_database1<D: Database<F<'a, TD> = F>>() {}\n\nfn use_database2<D>() where D: Database<F<'a, TD> = F>, {}\n",
+    "wrappedText": "pub trait Database {\n    type F<'a, D>: Future<Output = D> + 'a;\n}\n\nimpl Database for Foo {\n    type F<'a, D> = DatabaseFuture<'a, D>;\n}\n\nfn use_database1<D: Database<F<'a, TD> = F>>() {}\n\nfn use_database2<D>() where D: Database<F<'a, TD> = F>,\n{}\n",
     "wrappedOffset": 0
   },
   {
@@ -99884,7 +100010,12 @@
           "end": 252
         },
         "$text": "{}",
-        "_statements": []
+        "_statements": [],
+        "$_trivia": {
+          "leading": [
+            171
+          ]
+        }
       },
       "$other": [
         {
@@ -99905,7 +100036,7 @@
         "body"
       ]
     },
-    "expectedOutput": "fn use_database2<D>() where D: Database<F<'a, TD> = F>, {}"
+    "expectedOutput": "fn use_database2<D>() where D: Database<F<'a, TD> = F>,\n{}"
   },
   {
     "kind": "roundtrip",
@@ -99913,9 +100044,9 @@
     "sourceIn": "fn use_database2<D>()\nwhere\n    D: Database<F<'a, TD> = F>,\n{}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn use_database2<D>() where D: Database<F<'a, TD> = F>, {}",
+    "expectedSourceOut": "fn use_database2<D>() where D: Database<F<'a, TD> = F>,\n{}",
     "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) parameters: (parameters) where_clause: (where_clause (where_predicates item: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_binding name: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (lifetime name: (identifier))) item: (type_argument (type_identifier)))) type: (type_identifier)))))))))) body: (block))",
-    "wrappedText": "fn use_database2<D>() where D: Database<F<'a, TD> = F>, {}",
+    "wrappedText": "fn use_database2<D>() where D: Database<F<'a, TD> = F>,\n{}",
     "wrappedOffset": 0
   },
   {
@@ -100013,7 +100144,12 @@
         "end": 252
       },
       "$text": "{}",
-      "_statements": []
+      "_statements": [],
+      "$_trivia": {
+        "leading": [
+          171
+        ]
+      }
     },
     "expectedOutput": "{}"
   },
@@ -121526,7 +121662,12 @@
               "end": 51
             },
             "$text": "{}",
-            "_statements": []
+            "_statements": [],
+            "$_trivia": {
+              "leading": [
+                172
+              ]
+            }
           },
           "$other": [
             {
@@ -121549,7 +121690,7 @@
         }
       ]
     },
-    "expectedOutput": "fn foo<D>(val: D) where [u8; 32]: From<D>, {}\n"
+    "expectedOutput": "fn foo<D>(val: D) where [u8; 32]: From<D>,\n\n{}\n"
   },
   {
     "kind": "roundtrip",
@@ -121557,9 +121698,9 @@
     "sourceIn": "\nfn foo<D>(val: D)\nwhere\n    [u8; 32]: From<D>,\n\n{}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "fn foo<D>(val: D) where [u8; 32]: From<D>, {}\n",
+    "expectedSourceOut": "fn foo<D>(val: D) where [u8; 32]: From<D>,\n\n{}\n",
     "expectedReparseTree": "(source_file statements: (function_item name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (type_identifier))))) where_clause: (where_clause (where_predicates item: (where_predicate left: (array_type element: (primitive_type) length: (integer_literal_decimal)) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))))))) body: (block)))",
-    "wrappedText": "fn foo<D>(val: D) where [u8; 32]: From<D>, {}\n",
+    "wrappedText": "fn foo<D>(val: D) where [u8; 32]: From<D>,\n\n{}\n",
     "wrappedOffset": 0
   },
   {
@@ -121921,7 +122062,12 @@
           "end": 51
         },
         "$text": "{}",
-        "_statements": []
+        "_statements": [],
+        "$_trivia": {
+          "leading": [
+            172
+          ]
+        }
       },
       "$other": [
         {
@@ -121942,7 +122088,7 @@
         "body"
       ]
     },
-    "expectedOutput": "fn foo<D>(val: D) where [u8; 32]: From<D>, {}"
+    "expectedOutput": "fn foo<D>(val: D) where [u8; 32]: From<D>,\n\n{}"
   },
   {
     "kind": "roundtrip",
@@ -121950,9 +122096,9 @@
     "sourceIn": "fn foo<D>(val: D)\nwhere\n    [u8; 32]: From<D>,\n\n{}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn foo<D>(val: D) where [u8; 32]: From<D>, {}",
+    "expectedSourceOut": "fn foo<D>(val: D) where [u8; 32]: From<D>,\n\n{}",
     "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (type_identifier))))) where_clause: (where_clause (where_predicates item: (where_predicate left: (array_type element: (primitive_type) length: (integer_literal_decimal)) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))))))) body: (block))",
-    "wrappedText": "fn foo<D>(val: D) where [u8; 32]: From<D>, {}",
+    "wrappedText": "fn foo<D>(val: D) where [u8; 32]: From<D>,\n\n{}",
     "wrappedOffset": 0
   },
   {
@@ -122561,7 +122707,12 @@
         "end": 51
       },
       "$text": "{}",
-      "_statements": []
+      "_statements": [],
+      "$_trivia": {
+        "leading": [
+          172
+        ]
+      }
     },
     "expectedOutput": "{}"
   },
@@ -187234,6 +187385,7 @@
             "$type": 413,
             "$source": 0,
             "$named": true,
+            "_delim_tokens": [],
             "$_trivia": {
               "inner": {
                 "delim_tokens": [
@@ -187308,8 +187460,7 @@
                   }
                 ]
               }
-            },
-            "_delim_tokens": []
+            }
           },
           "$other": [
             {
@@ -187364,6 +187515,7 @@
         "$type": 413,
         "$source": 0,
         "$named": true,
+        "_delim_tokens": [],
         "$_trivia": {
           "inner": {
             "delim_tokens": [
@@ -187438,8 +187590,7 @@
               }
             ]
           }
-        },
-        "_delim_tokens": []
+        }
       },
       "$other": [
         {
@@ -187478,6 +187629,7 @@
       "$type": 413,
       "$source": 0,
       "$named": true,
+      "_delim_tokens": [],
       "$_trivia": {
         "inner": {
           "delim_tokens": [
@@ -187552,8 +187704,7 @@
             }
           ]
         }
-      },
-      "_delim_tokens": []
+      }
     },
     "expectedOutput": "{// one\n/* two */}"
   },
@@ -221106,6 +221257,7 @@
       "$type": 176,
       "$source": 0,
       "$named": true,
+      "_statements": [],
       "$_trivia": {
         "inner": {
           "statements": [
@@ -221297,8 +221449,7 @@
             }
           ]
         }
-      },
-      "_statements": []
+      }
     },
     "expectedOutput": "/*\n * Block comments\n */\n/* Comment with asterisks **/\n/** Outer block comment */\n/*! Inner block comment */\n/**/\n"
   },
@@ -221321,6 +221472,7 @@
       "$type": 176,
       "$source": 0,
       "$named": true,
+      "_statements": [],
       "$_trivia": {
         "inner": {
           "statements": [
@@ -221533,8 +221685,7 @@
             }
           ]
         }
-      },
-      "_statements": []
+      }
     },
     "expectedOutput": "/* /* double nested */ */\n// ---\n/*/*/* triple nested */*/*/\n// ---\n/****\n  /****\n    nested with extra stars which makes it a regular block comment\n    and not a block doc comment\n  ****/\n****/\n// ---\n"
   },
@@ -221557,6 +221708,7 @@
       "$type": 176,
       "$source": 0,
       "$named": true,
+      "_statements": [],
       "$_trivia": {
         "inner": {
           "statements": [
@@ -221678,8 +221830,7 @@
             }
           ]
         }
-      },
-      "_statements": []
+      }
     },
     "expectedOutput": "// Comment\n/// Outer line doc comment\n//! Inner line doc comment\n"
   },
@@ -221702,6 +221853,7 @@
       "$type": 176,
       "$source": 0,
       "$named": true,
+      "_statements": [],
       "$_trivia": {
         "inner": {
           "statements": [
@@ -221939,8 +222091,7 @@
             }
           ]
         }
-      },
-      "_statements": []
+      }
     },
     "expectedOutput": "//!  - Inner line doc\n//!! - Still an inner line doc (but with a bang at the beginning)\n//   - Only a comment\n///  - Outer line doc (exactly 3 slashes)\n///\n//// - Only a comment\n"
   },
@@ -221963,6 +222114,7 @@
       "$type": 176,
       "$source": 0,
       "$named": true,
+      "_statements": [],
       "$_trivia": {
         "inner": {
           "statements": [
@@ -222202,8 +222354,7 @@
             }
           ]
         }
-      },
-      "_statements": []
+      }
     },
     "expectedOutput": "/*!  - Inner block doc */\n/*!! - Still an inner block doc (but with a bang at the beginning) */\n/*   - Only a comment */\n/**  - Outer block doc (exactly) 2 asterisks */\n/*** - Only a comment */\n"
   },
@@ -222226,6 +222377,7 @@
       "$type": 176,
       "$source": 0,
       "$named": true,
+      "_statements": [],
       "$_trivia": {
         "inner": {
           "statements": [
@@ -222374,8 +222526,7 @@
             }
           ]
         }
-      },
-      "_statements": []
+      }
     },
     "expectedOutput": "/*   /* */  /** */  /*! */  */\n/*!  /* */  /** */  /*! */  */\n/**  /* */  /** */  /*! */  */\n"
   },
@@ -222977,6 +223128,7 @@
       "$type": 176,
       "$source": 0,
       "$named": true,
+      "_statements": [],
       "$_trivia": {
         "inner": {
           "statements": [
@@ -223025,8 +223177,7 @@
             }
           ]
         }
-      },
-      "_statements": []
+      }
     },
     "expectedOutput": "//! Doc comment\n"
   },
@@ -244991,6 +245142,11 @@
               }
             }
           ],
+          "$slotOrder": [
+            "name",
+            "parameters",
+            "body"
+          ],
           "$_trivia": {
             "leading": [
               {
@@ -245033,12 +245189,7 @@
                 }
               }
             ]
-          },
-          "$slotOrder": [
-            "name",
-            "parameters",
-            "body"
-          ]
+          }
         }
       ]
     },
@@ -245105,6 +245256,11 @@
           }
         }
       ],
+      "$slotOrder": [
+        "name",
+        "parameters",
+        "body"
+      ],
       "$_trivia": {
         "leading": [
           {
@@ -245147,12 +245303,7 @@
             }
           }
         ]
-      },
-      "$slotOrder": [
-        "name",
-        "parameters",
-        "body"
-      ]
+      }
     },
     "expectedOutput": "/* plain block comment */\nfn main() {}"
   },
