@@ -27,8 +27,7 @@ import type {
 	ChoiceRule,
 	Repeat1Rule,
 	SymbolRule,
-	StringRule,
-	RepeatRule
+	StringRule
 } from '../types/rule.ts';
 import { aliasTargetOf, storageNameOf } from '../types/rule.ts';
 import { assertNever } from '../polymorph-variant.ts';
@@ -78,7 +77,6 @@ import {
 	hiddenChoiceClass,
 	isKindChoice,
 	isNamedArmChoice,
-	rulesEqual,
 	separatedListBodyInfo,
 	separatorOf,
 	inlinesAtReference,
@@ -1975,31 +1973,6 @@ function suggestSharedName(kinds: readonly string[]): string {
 	return `_shared_${kinds.length}`;
 }
 
-export function absorbSuffixSeparatedList(members: Rule<'link'>[]): Rule<'link'>[] | null {
-	let changed = false;
-	const out: Rule<'link'>[] = [];
-	let i = 0;
-	while (i < members.length) {
-		const cur = members[i]!;
-		const next = members[i + 1];
-		if (
-			(cur.type === REPEAT || cur.type === REPEAT1) &&
-			cur.separator?.trailing === 'mandatory' &&
-			next !== undefined &&
-			next.type === OPTIONAL &&
-			rulesEqual(next.content, cur.content)
-		) {
-			out.push({ ...cur, separator: { ...cur.separator, trailing: 'optional' } });
-			i += 2;
-			changed = true;
-			continue;
-		}
-		out.push(cur);
-		i++;
-	}
-	return changed ? out : null;
-}
-
 function liftTerminatedList(seq: SeqRule<'link'>, ctx: LinkCtx): Rule<'link'> | null {
 	const info = separatedListBodyInfo(seq, ctx.sourceSymbols);
 	if (info?.form !== 'terminated') return null;
@@ -2011,72 +1984,38 @@ function liftTerminatedList(seq: SeqRule<'link'>, ctx: LinkCtx): Rule<'link'> | 
 	return { ...seq, members: [list] };
 }
 
-export function absorbTrailingSeparator(members: Rule<'link'>[]): Rule<'link'>[] | null {
-	let changed = false;
-	const out: Rule<'link'>[] = [];
-	for (let i = 0; i < members.length; i++) {
-		const cur = members[i]!;
-		const next = members[i + 1];
-		const curSep = cur.type === REPEAT || cur.type === REPEAT1 ? cur.separator : undefined;
-		const isSepRepeat = curSep !== undefined && !curSep.trailing;
-		const isOptionalSepLit = (r: Rule<'link'> | undefined, sep: { value: Rule<'link'> }): boolean => {
-			if (!r || r.type !== OPTIONAL) return false;
-			return rulesEqual(r.content, sep.value);
-		};
-		if (isSepRepeat && isOptionalSepLit(next, curSep!)) {
-			out.push({ ...(cur as RepeatRule | Repeat1Rule), separator: { ...curSep!, trailing: 'optional' } });
-			i++;
-			changed = true;
-			continue;
-		}
-		out.push(cur);
-	}
-	return changed ? out : null;
-}
-
-export function liftCommaSep(members: Rule<'link'>[]): Rule<'link'> | null {
-	if (members.length < 2 || members.length > 3) return null;
-
-	const repeatIdx = findRepeatWithSeparator(members);
-	if (repeatIdx === -1) return null;
-	const repeatNode = members[repeatIdx] as RepeatRule | Repeat1Rule;
-	const sep = repeatNode.separator!;
-	const elem = repeatNode.content;
-
-	const matchesElem = (r: Rule<'link'>): boolean => rulesEqual(r, elem);
-	const matchesOptionalSep = (r: Rule<'link'>): boolean => {
-		if (r.type !== OPTIONAL) return false;
-		return rulesEqual(r.content, sep.value);
-	};
-
-	if (members.length === 2 && repeatIdx === 1 && matchesElem(members[0]!)) {
-		return { type: REPEAT1, content: elem, separator: { ...sep, leading: undefined } };
-	}
-	if (members.length === 3 && repeatIdx === 1 && matchesElem(members[0]!) && matchesOptionalSep(members[2]!)) {
-		return { type: REPEAT1, content: elem, separator: { ...sep, leading: undefined, trailing: 'optional' } };
-	}
-	if (members.length === 3 && repeatIdx === 2 && rulesEqual(members[0]!, sep.value) && matchesElem(members[1]!)) {
-		return { type: REPEAT1, content: elem, separator: { ...sep, leading: 'mandatory' } };
-	}
-	if (repeatIdx === 1 && matchesOptionalSep(members[0]!)) {
-		if (members.length === 2) {
-			return { type: REPEAT1, content: elem, separator: { ...sep, leading: 'optional' } };
-		}
-		if (members.length === 3 && matchesOptionalSep(members[2]!)) {
-			return { type: REPEAT1, content: elem, separator: { ...sep, leading: 'optional', trailing: 'optional' } };
-		}
+function separatedListAt(seq: SeqRule<'link'>, start: number, ctx: LinkCtx): { list: Rule<'link'>; end: number; whole: boolean } | null {
+	for (let end = seq.members.length; end >= start + 2; end--) {
+		const info = separatedListBodyInfo({ type: SEQ, members: seq.members.slice(start, end) } as SeqRule<'link'>, ctx.sourceSymbols);
+		if (info === null || info.form === 'terminated' || info.repeat === undefined) continue;
+		const separator = { value: info.separatorRule, trailing: info.trailing, leading: info.leading };
+		const content = liftSeparators(info.element, ctx);
+		const whole = info.form === 'head' && start === 0 && end === seq.members.length;
+		const list = {
+			...(info.form !== 'head' ? info.repeat : info.carrier === undefined || whole ? {} : carrySeqAttrs(info.carrier as SeqRule<'link'>)),
+			...(info.form === 'head' ? { type: REPEAT1 } : {}),
+			content,
+			separator
+		} as Rule<'link'>;
+		return { list, end, whole };
 	}
 	return null;
 }
-function findRepeatWithSeparator(members: Rule<'link'>[]): number {
-	return members.findIndex((m) => (m.type === REPEAT || m.type === REPEAT1) && m.separator !== undefined);
-}
-function liftSeqMembers(seq: SeqRule<'link'>, members: Rule<'link'>[]): Rule<'link'> {
-	const lifted = liftCommaSep(members);
-	if (lifted) return { ...carrySeqAttrs(seq), ...lifted };
-	const suffixLifted = absorbSuffixSeparatedList(members);
-	const absorbed = absorbTrailingSeparator(suffixLifted ?? members);
-	return { ...seq, members: absorbed ?? suffixLifted ?? members };
+
+function liftSeq(seq: SeqRule<'link'>, ctx: LinkCtx): Rule<'link'> {
+	const members: Rule<'link'>[] = [];
+	for (let i = 0; i < seq.members.length; ) {
+		const found = separatedListAt(seq, i, ctx);
+		if (found === null) {
+			members.push(liftSeparators(seq.members[i]!, ctx));
+			i++;
+			continue;
+		}
+		if (found.whole) return { ...carrySeqAttrs(seq), ...found.list };
+		members.push(found.list);
+		i = found.end;
+	}
+	return { ...seq, members };
 }
 function carrySeqAttrs(seq: SeqRule<'link'>): Partial<SeqRule<'link'>> {
 	const { members: _members, ...rest } = seq;
@@ -2086,13 +2025,7 @@ function carrySeqAttrs(seq: SeqRule<'link'>): Partial<SeqRule<'link'>> {
 export function liftSeparators(rule: Rule<'link'>, ctx: LinkCtx): Rule<'link'> {
 	switch (rule.type) {
 		case SEQ:
-			return (
-				liftTerminatedList(rule, ctx) ??
-				liftSeqMembers(
-					rule,
-					rule.members.map((m) => liftSeparators(m, ctx))
-				)
-			);
+			return liftTerminatedList(rule, ctx) ?? liftSeq(rule, ctx);
 		case CHOICE:
 			return { ...rule, members: rule.members.map((m) => liftSeparators(m, ctx)) };
 		case REPEAT:
