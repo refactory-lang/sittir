@@ -102,9 +102,31 @@ describe('deriveVocabulary', () => {
 		expect([...(equal?.literals.keys() ?? [])]).toEqual(['operator']);
 		expect([...(d.refinements.get('declaration.method.getter')?.literals.keys() ?? [])]).toEqual(['accessor']);
 	});
-	it('assigns a container pattern captures to the kinds its element admits', () => {
+	it('lands a container pattern capture only on the kinds its element slot names directly', () => {
 		expect(levelMembers(d, 'declaration.class').get('decorators')?.grammars.has('python')).toBe(true);
-		expect(levelMembers(d, 'declaration.function').get('declare')?.grammars.has('typescript')).toBe(true);
+		expect(levelMembers(d, 'declaration.function').get('decorators')?.grammars.has('python')).toBe(true);
+		expect(levelMembers(d, 'declaration.method').get('decorators')?.grammars.has('typescript')).toBe(true);
+		for (const v of [
+			'declaration.enum_member',
+			'declaration.field',
+			'declaration.type_parameter',
+			'declaration.type_parameter.const',
+			'declaration.type_parameter.lifetime'
+		])
+			expect(d.members.get(v)?.get('attributes')?.grammars.has('rust'), v).toBe(true);
+		expect(d.members.get('declaration.parameter')?.has('attributes')).toBe(false);
+		for (const v of ['statement.block', 'declaration.function', 'declaration.class', 'declaration.variable.lexical'])
+			expect(d.members.get(v)?.has('declare') ?? false, v).toBe(false);
+		expect(d.untargeted).toEqual([]);
+	});
+	it('claims a container whose capture has no direct target as a vocabulary kind of its own', () => {
+		const ambient = d.members.get('declaration.ambient');
+		expect([...(ambient?.keys() ?? [])]).toEqual(['content']);
+		expect(ambient?.get('content')?.kinds.has('statement.block')).toBe(true);
+		expect(levelMembers(d, 'declaration.ambient').get('content')?.optional).toBe(false);
+		expect([...(d.members.get('statement.labeled')?.keys() ?? [])].sort()).toEqual(['body', 'label']);
+		for (const v of ['statement.expression', 'statement.return', 'statement.block', 'statement.if'])
+			expect(d.members.get(v)?.get('label')?.grammars.has('typescript') ?? false, v).toBe(false);
 	});
 	it('lifts a capture nested inside a container child onto the claimed kind', () => {
 		const cls = levelMembers(d, 'declaration.class');

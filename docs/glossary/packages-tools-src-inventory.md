@@ -100,9 +100,17 @@ modifier names rules, a nested member replacing the slot it routes through,
 and no layout slot ever a member; fold field-literal claims into refinements,
 each literal named by the kind's converged member (a capture on the field
 renames it) rather than by the grammar's field; assign container captures to
-every kind the element admits; collapse a namespace's leaves when the
-namespace itself is admitted; and report inclusion cycles and the unmapped
-placeholders.
+the kinds the element slot names directly; collapse a namespace's leaves when
+the namespace itself is admitted; and report inclusion cycles, the containers
+whose captures have no direct target, and the unmapped placeholders.
+
+A container's captures land only on the kinds its element slot names directly,
+by their direct claim (the first two steps of the resolution below), never on a
+kind reached through a supertype or a further container: a capture spread
+through a supertype would give every kind of a namespace a member only one
+wrapper carries. A container whose element slot names no directly claimed kind
+carries information of its own, so its captures are reported (`untargeted`)
+instead of placed, and the bindings claim the container as a vocabulary kind.
 
 A grammar kind in a slot resolves to the first of: a claim placed by the
 enclosing kinds it sits in; its own claim; nothing, when it is unclaimed; a
@@ -202,8 +210,9 @@ depth); the built node is the same.
 `--check` compiles every bindings file and reports each grammar, listing every
 problem per file (`bindingIssues`) rather than the first; the
 derivation summary always prints (kinds, prefixes, members, refinements,
-unmapped references, cycles); `--members` prints member names and kinds per
-shared kind; `--emit [dir]` emits the tree into the directory (default
-`packages/types/src/vocabulary`) and formats it
-with oxfmt. A cycle or a failed compile is a non-zero exit.
+unmapped references, cycles, container captures with no direct target);
+`--members` prints member names and kinds per shared kind; `--emit [dir]` emits
+the tree into the directory (default `packages/types/src/vocabulary`) and
+formats it with oxfmt. A cycle, a container capture with no direct target or a
+failed compile is a non-zero exit.
 ```

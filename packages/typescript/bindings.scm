@@ -42,7 +42,7 @@
 (public_field_definition "?" @optional)
 (public_field_definition "!" @definite)
 (class_body_member_declaration (_) @element)
-(class_body_member_method (decorator)* (_) @element)
+(class_body_member_method (decorator)* @decorators (_) @element)
 (class_body_member_method_sig (_) @element)
 (lexical_declaration kind: _ @keyword) @declaration.variable.lexical
 (variable_declaration) @declaration.variable.var
@@ -55,7 +55,8 @@
 (optional_parameter "?" @optional)
 (optional_parameter (accessibility_modifier) @visibility)
 (type_parameter value: (_)? @default) @declaration.type_parameter
-(ambient_declaration "declare" @declare (_) @element)
+(ambient_declaration) @declaration.ambient
+(ambient_declaration_module) @declaration.module_property
 (internal_module) @declaration.module
 (module) @declaration.module.external
 (class_static_block) @statement.block.static
@@ -82,7 +83,7 @@
 (continue_statement) @statement.continue
 (debugger_statement) @statement.debugger
 (empty_statement) @statement.empty
-(labeled_statement label: (_) @label body: (_) @element)
+(labeled_statement) @statement.labeled
 (with_statement) @statement.scope
 
 ; ── clause ─────────────────────────────────────────────────────────────────────

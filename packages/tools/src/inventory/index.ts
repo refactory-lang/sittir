@@ -106,6 +106,9 @@ export function summarize(d: Derivation): string {
 	lines.push(
 		`refinements ${d.refinements.size}, unmapped references ${total} over ${d.unmapped.size} kinds, set-inclusion cycles ${d.cycles.length === 0 ? 'none' : d.cycles.join('; ')}`
 	);
+	lines.push(
+		`container captures with no direct target ${d.untargeted.length === 0 ? 'none' : `${d.untargeted.join('; ')}: claim each container as a vocabulary kind of its own`}`
+	);
 	const top = [...d.unmapped].sort((a, b) => b[1] - a[1]).slice(0, 12);
 	if (top.length > 0) lines.push(`  ${top.map(([k, n]) => `${k.slice(1, -1)}×${n}`).join(' ')}`);
 	return lines.join('\n');
@@ -153,6 +156,6 @@ export async function run(opts: BindingsInventoryOptions): Promise<number> {
 		const written = await emitVocabulary(d, outDir);
 		process.stdout.write(`emitted ${written.length} files into ${outDir}\n`);
 	}
-	if (d.cycles.length > 0) code = 1;
+	if (d.cycles.length > 0 || d.untargeted.length > 0) code = 1;
 	return code;
 }

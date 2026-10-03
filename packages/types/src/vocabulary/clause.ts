@@ -194,33 +194,6 @@ export namespace Clause {
 			readonly kind: 'clause.import.alias';
 			readonly alias?: G['identifier'];
 			// p only
-			readonly declare?: boolean;
-			// t only
-			readonly label?:
-				| V.Identifier.Label<G>
-				| 'any'
-				| 'async'
-				| 'boolean'
-				| 'declare'
-				| 'export'
-				| 'get'
-				| 'let'
-				| 'module'
-				| 'namespace'
-				| 'new'
-				| 'number'
-				| 'object'
-				| 'override'
-				| 'private'
-				| 'protected'
-				| 'public'
-				| 'readonly'
-				| 'set'
-				| 'static'
-				| 'string'
-				| 'symbol'
-				| 'type';
-			// t only
 			readonly name: G['identifier'];
 			readonly value?: G['identifier'];
 			// t only
