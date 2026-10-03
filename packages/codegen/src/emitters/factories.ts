@@ -1742,7 +1742,7 @@ export function listOptionDefaults(
 		...(parts.hasSeparatorKindOption
 			? [{ key: 'separator', default: declaredSeparatorDefault(node, nodeMap, kindEntries) ?? 'undefined' }]
 			: []),
-		...(parts.hasDelimiterOption ? [{ key: 'delimiter', default: declaredDelimiterDefault(node) }] : [])
+		...(parts.hasDelimiterOption ? [{ key: 'delimiter', default: 'undefined' }] : [])
 	];
 }
 
@@ -2039,7 +2039,7 @@ export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly Kind
 		if (plan.elements.length > 0) names.add('elementsWith');
 		if (plan.groups.length > 0) for (const name of ['seatWith', 'groupField', 'STORED_SLOT_READERS']) names.add(name);
 		if (plan.viewPlan !== undefined) {
-			const names_ = plan.viewPlan.owner === undefined ? ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'storedElements', 'defineListIndices'] : ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'ownerView', 'ownerElements', 'listOption', 'readStubLength', 'unreadableStubItems'];
+			const names_ = plan.viewPlan.owner === undefined ? ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'storedElements', 'defineListIndices'] : ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'ownerView', 'ownerElements', 'listOption', 'refuseReadStub'];
 			for (const name of names_) names.add(name);
 		}
 	}
@@ -2135,7 +2135,7 @@ function listBuiltTypeSurface(
 		`(${[own, ...seated.map((seat) => `T.${seat.group.typeName}.${row}[0]`)].join(' | ')})`;
 	const extraMembers = [
 		...(surface.hasSeparatorKindOption ? ['  readonly _separator: number | undefined;'] : []),
-		...(surface.hasDelimiterOption ? ['  readonly _delimiter: Delimiter;'] : [])
+		...(surface.hasDelimiterOption ? ['  readonly _delimiter: Delimiter | undefined;'] : [])
 	];
 	return {
 		mainType: `T.${node.typeName}`,
@@ -2167,7 +2167,6 @@ function emitSeparatedListFactory(
 ): string | undefined {
 	if (!node.rawFactoryName) return undefined;
 	const fn = node.rawFactoryName;
-	const delimiterDefault = declaredDelimiterDefault(node);
 
 	const isMultiField = node.slots.length > 1;
 	const canonical = isMultiField ? undefined : canonicalSeparatedListField(node);
@@ -2222,7 +2221,7 @@ function emitSeparatedListFactory(
 		} else lines.push(`  const _separator = options.separator ?? ${separatorDefault};`);
 	}
 	if (hasDelimiterOption) {
-		lines.push(`  const _delimiter = options.delimiter ?? ${delimiterDefault};`);
+		lines.push('  const _delimiter = options.delimiter;');
 	}
 
 	const plan = seatPlanOf(node, nodeMap, kindEntries);

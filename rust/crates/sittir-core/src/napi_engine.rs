@@ -254,6 +254,7 @@ macro_rules! napi_engine {
                             untyped_node: &data,
                             format,
                             tree_id,
+                            errors: parsed.error_regions(),
                         })
                         .map_err(|e| {
                             ::napi::Error::from_reason(format!("serialize ParseResult failed: {e}"))

@@ -256,7 +256,7 @@ The surface of every engine-bound node, computed from a kind's main interface an
 
 ### `packages/types/src/node-surface.ts::ParsedOf`
 
-The surface of a tree-bound node: the same computation as `BoundOf` with children resolved through the id-keyed map of `.Parsed` interfaces, so a parsed node's children are parsed nodes. A seated group's slot and flattened keys are left to `FlatShapesOf`, as for `BoundOf`. It receives only the parsed map. The emitted `X.Parsed` interface adds the node methods and `$with` through `WithNode`, which takes both maps, because a slot replaced through `$with` holds a factory node until it is committed and reads as its `.Bound` surface.
+The surface of a tree-bound node: the same computation as `BoundOf` with children resolved through the id-keyed map of `.Parsed` interfaces, so a parsed node's children are parsed nodes. A seated group's slot and flattened keys are left to `FlatShapesOf`, as for `BoundOf`. It receives only the parsed map. A parsed node carries its position (`$span`, a `ByteSpan`) at run time, but the position is not part of the public node type; internal tools read it through `spanOf` in `@sittir/common/utils`. The emitted `X.Parsed` interface adds the node methods and `$with` through `WithNode`, which takes both maps, because a slot replaced through `$with` holds a factory node until it is committed and reads as its `.Bound` surface.
 
 ### `packages/types/src/node-surface.ts::AdmitLookup`
 

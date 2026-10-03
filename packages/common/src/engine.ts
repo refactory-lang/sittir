@@ -2,14 +2,15 @@ import { writeFileSync } from 'node:fs';
 import type {
 	AnyUntypedNode,
 	EngineDiagnostics,
-	FormatRecord,
 	IndentOption,
 	LanguageAPI,
 	LineGapAddress,
 	LineGaps,
 	NativeEngineOptions,
 	NativeLanguageEngine,
+	NativeParseResult,
 	ParsedRead,
+	ParsedRoot,
 	ParseOptions,
 	RenderCallOptions,
 	Rendered
@@ -176,22 +177,9 @@ export interface SittirEngine<
 	readonly diagnostics: NativeEngineDiagnostics<TRoot>;
 }
 
-/**
- * What a whole-source parse always stamps on its root: the span covering the
- * whole file. The text is the tree's, reachable as `tree.source`; every other
- * read node carries its span only.
- */
-export interface ParsedRoot {
-	readonly $span: { start: number; end: number };
-}
+export type { ParsedRoot };
 
 export type ParseAndReadResult<TRoot extends AnyUntypedNode = AnyUntypedNode> = ParsedRead<TRoot & ParsedRoot, TreeHandle>;
-
-interface NativeParseResultShape {
-	readonly untypedNode: AnyUntypedNode;
-	readonly format?: FormatRecord;
-	readonly treeId: number;
-}
 
 /**
  * Frees a native tree once JavaScript can no longer read from it.
@@ -312,11 +300,11 @@ export function createNativeEngine<
 					lineGapsOf,
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
 						const json = engine.parseAndRead(source, depthOf(parseOptions));
-						const parsed = JSON.parse(json) as NativeParseResultShape;
+						const parsed = JSON.parse(json) as NativeParseResult;
 						// Boundary assertion: the native reader returns the grammar's
-						// root kind for a whole-source parse, stamped with its span and
-						// the captured source text.
-						const root = parsed.untypedNode as TRoot & ParsedRoot;
+						// root kind for a whole-source parse, stamped with its span; the
+						// parse's error regions ride beside it and are stamped here.
+						const root = Object.assign(parsed.untypedNode, { $errors: Object.freeze(parsed.errors) }) as TRoot & ParsedRoot;
 						// One root per depth: the parse's own read seeds it, and a
 						// root asked for at another depth is read natively once.
 						const roots = new Map<number, AnyUntypedNode>([[depthOf(parseOptions) ?? 1, root]]);

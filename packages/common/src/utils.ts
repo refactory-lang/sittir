@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, LineGap, LineGapAddress, LineGaps, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, ByteSpan, ErrorNode, LineGap, LineGapAddress, LineGaps, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
 import { carryRead, carrySource, detachCoordinate, holdsSlots, isRead, isStorageKey, sourceOf, type DerivedSides } from './transport-data.ts';
 import { Source } from './source.ts';
@@ -11,6 +11,7 @@ import { spelledForm } from './interior.ts';
 export { Delimiter } from './delimiter.ts';
 export { Source };
 export { ERROR_KIND_ID, ERROR_KIND_NAME } from './error-kind.ts';
+export type { ErrorNode };
 
 type Scoped = <R>(fn: () => R) => R;
 
@@ -276,12 +277,13 @@ export function triviaInnerAt(
 	return triviaWriter(node, handle).innerAt(gap, items);
 }
 
-/** One trivia item as its entry: a trivia node or whitespace kind id as it is, a string by `textEntryOf`. */
+/** One trivia item as its entry: a trivia node, a parsed ERROR node or a whitespace kind id as it is, a string by `textEntryOf`. */
 function triviaEntryOf(item: unknown, facts: TriviaFacts): TriviaEntry {
 	if (typeof item === 'string') return textEntryOf(item, facts);
 	if (typeof item !== 'number' && !isNode(item)) {
 		throw new Error(`trivia: an entry is a node, a whitespace kind or a comment's text, not ${JSON.stringify(item)}`);
 	}
+	if (isErrorNode(item)) return item;
 	const type = typeof item === 'number' ? item : item.$type;
 	const kind = facts.kindName(type);
 	if (kind === undefined || !facts.kinds.has(kind)) throw new Error(`trivia: ${kind ?? String(type)} is not an extra`);
@@ -451,20 +453,9 @@ export function defineListIndices(node: object, count: number): void {
 	}
 }
 
-/** The items reader of an owner built over a read stub with no tree: it cannot read them, so it throws and names the stub. */
-export function unreadableStubItems(storage: string): never {
-	throw new Error(`list view: ${storage} is a read stub, which a node built without its tree cannot read`);
-}
-
-/** The `length` of an owner built over a read stub with no tree: it cannot count its items, so reading it throws. */
-export function readStubLength(node: object, storage: string): void {
-	Object.defineProperty(node, 'length', {
-		get(): never {
-			throw new Error(`list view: ${storage} is a read stub, which a node built without its tree cannot count`);
-		},
-		enumerable: false,
-		configurable: true
-	});
+/** The refusal of a list owner built over a read stub: a stub is a parsed list that cannot be counted without its tree, which a raw factory does not have, so the build names the stub as `engine.build` does. */
+export function refuseReadStub(storage: string): never {
+	throw new Error(`list view: ${storage} is a read stub, which a node built without its tree cannot hold; build it from its tree`);
 }
 
 /** The key a list node keeps its frozen items under. */
@@ -628,14 +619,14 @@ export function isFactoryNode(v: unknown): v is AnyUntypedNode {
 }
 
 /**
- * A parsed ERROR node: the source it wraps, as text over its span. Only a
- * reader produces one; there is no factory for it.
+ * The byte range of a parsed node in the source its tree was read from, or `undefined` for a node that was built. Internal: a node's position is not part of the public node surface, and the range belongs to the version of the tree the node was read from, so it says nothing about the node after an edit.
  */
-export interface ErrorNode extends AnyUntypedNode {
-	readonly $type: typeof ERROR_KIND_ID;
-	readonly $source: typeof Source.Ts | typeof Source.Sg;
-	readonly $text: string;
-	readonly $span: { start: number; end: number };
+export function spanOf(node: object): ByteSpan | undefined {
+	if (!('$span' in node)) return undefined;
+	const span = node.$span;
+	return typeof span === 'object' && span !== null && 'start' in span && 'end' in span && typeof span.start === 'number' && typeof span.end === 'number'
+		? { start: span.start, end: span.end }
+		: undefined;
 }
 
 export function isErrorNode(v: unknown): v is ErrorNode {

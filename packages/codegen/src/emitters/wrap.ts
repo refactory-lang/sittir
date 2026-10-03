@@ -1802,6 +1802,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		lines.push('      out[key] = hydrateChild(value, tree);');
 		lines.push('    }');
 		lines.push('  }');
+		lines.push('  const handle = currentHandle();');
+		lines.push('  out.$engine = handle && (() => handle.current);');
 		lines.push('  return out as unknown as _UntypedNode;');
 		lines.push('}');
 		lines.push('');

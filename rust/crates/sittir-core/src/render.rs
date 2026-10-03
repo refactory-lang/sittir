@@ -60,6 +60,15 @@ pub trait SourceTable {
         None
     }
 
+    /// The kind of the last child that is not an extra of the list spanning
+    /// `span` in the tree `handle` tags, the list's own kind being `kind`
+    /// (`read_untyped_node::last_list_child`). A table of bare sources cannot
+    /// answer and says so.
+    fn last_list_child_kind(&self, handle: u64, span: crate::types::Span, kind: KindId) -> Option<KindId> {
+        let _ = (handle, span, kind);
+        None
+    }
+
     /// Visits the kind of the node a coordinate names, then the kind of each
     /// last descendant that ends at the same byte. A line end the node's text
     /// owes belongs to whichever of these kinds ends in it. A coordinate whose

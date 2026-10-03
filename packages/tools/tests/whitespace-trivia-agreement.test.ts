@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { spanOf } from '@sittir/common/utils';
 import { createEngine } from '@sittir/common';
 import type { Engine, LanguageAPI } from '@sittir/types';
 
@@ -29,7 +30,7 @@ function nodeAt(value: unknown, start: number): Read | undefined {
 	}
 	if (value === null || typeof value !== 'object') return undefined;
 	const node = value as Read & Record<string, unknown>;
-	if (node.$span?.start === start && node.$trivia !== undefined) return node;
+	if (spanOf(node)?.start === start && node.$trivia !== undefined) return node;
 	for (const key of Object.keys(node)) {
 		if (!key.startsWith('_') || key === '_trivia') continue;
 		const found = nodeAt(node[key], start);

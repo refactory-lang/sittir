@@ -427,6 +427,59 @@ pub struct LineGaps {
     pub next: Option<Span>,
 }
 
+/// What kind of region of a source did not parse: an ERROR node error
+/// recovery wrapped source in, or a MISSING node it inserted.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
+#[serde(rename_all = "lowercase")]
+pub enum ErrorRegionKind {
+    Error,
+    Missing,
+}
+
+/// One region of a source that did not parse, with its byte span. A MISSING
+/// region is empty: it marks where the parser inserted a token.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
+pub struct ErrorRegion {
+    pub kind: ErrorRegionKind,
+    pub span: Span,
+}
+
+/// Every ERROR and MISSING region of `tree`, in source order. The walk enters
+/// only nodes that hold an error, and never an ERROR node: a region nested in
+/// another is part of it.
+pub fn error_regions(tree: &tree_sitter::Tree) -> Vec<ErrorRegion> {
+    let mut regions = Vec::new();
+    if !tree.root_node().has_error() {
+        return regions;
+    }
+    let mut cursor = tree.walk();
+    loop {
+        let node = cursor.node();
+        let kind = if node.is_error() {
+            Some(ErrorRegionKind::Error)
+        } else if node.is_missing() {
+            Some(ErrorRegionKind::Missing)
+        } else {
+            None
+        };
+        if let Some(kind) = kind {
+            let range = node.byte_range();
+            regions.push(ErrorRegion {
+                kind,
+                span: Span { start: range.start as u32, end: range.end as u32 },
+            });
+        }
+        if kind.is_none() && node.has_error() && cursor.goto_first_child() {
+            continue;
+        }
+        while !cursor.goto_next_sibling() {
+            if !cursor.goto_parent() {
+                return regions;
+            }
+        }
+    }
+}
+
 /// The whitespace a node owns as trivia, classified by `classify`, which
 /// answers the member a run of whitespace holding a line break reads as.
 ///
@@ -550,6 +603,31 @@ pub fn node_at_span<'t>(tree: &'t tree_sitter::Tree, start: usize, end: usize, k
         }
     }
     search(tree.root_node(), start, end, kind)
+}
+
+/// The last child that is not an extra of the list spanning `start..end`: of
+/// the node the read stamped `kind` at that span (`node_at_span`), or, for a
+/// list the tree holds no node of its own for, of the node holding the list's
+/// children, among the children that lie within the span. That node is the
+/// one strictly around the span, above any node spanning exactly the span.
+pub fn last_list_child(tree: &tree_sitter::Tree, start: usize, end: usize, kind: u16) -> Option<tree_sitter::Node<'_>> {
+    let holder = match node_at_span(tree, start, end, kind) {
+        Some(list) => list,
+        None => {
+            let inner = outermost_same_span(tree.root_node().descendant_for_byte_range(start, end)?);
+            if inner.start_byte() == start && inner.end_byte() == end {
+                inner.parent()?
+            } else {
+                inner
+            }
+        }
+    };
+    let mut cursor = holder.walk();
+    let last = holder
+        .children(&mut cursor)
+        .filter(|child| !child.is_extra() && child.start_byte() >= start && child.end_byte() <= end)
+        .last();
+    last
 }
 
 /// The outermost node spanning exactly the bytes `node` spans: the node

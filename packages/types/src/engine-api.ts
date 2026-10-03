@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaSetter } from './core-types.ts';
+import type { AnyUntypedNode, ErrorNode, ErrorRegion, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaItem, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
 
 /** One line-break run a read node owns as trivia: the whitespace member it reads as and the byte its run starts at. */
@@ -72,6 +72,13 @@ export interface ParseOptions {
 	 * node renders its source bytes whichever way it was read.
 	 */
 	readonly deep?: boolean;
+	/**
+	 * `'throw'` makes a parse whose source did not parse cleanly throw a
+	 * `ParseErrors` carrying the root's `$errors`, in place of returning the
+	 * root. Without it a parse always returns the root, and `$errors` lists
+	 * the regions.
+	 */
+	readonly errors?: 'throw';
 }
 
 export interface EngineIdentity<API extends LanguageAPI = LanguageAPI> {
@@ -93,12 +100,12 @@ export interface NodeMethods<Trivia = any> {
 }
 
 export interface GrammarInnerTrivia<N, Trivia> {
-	inner(): readonly Trivia[];
+	inner(): readonly TriviaItem<Trivia>[];
 	inner(...items: GrammarTriviaEntry<Trivia>[]): N;
 }
 
 export interface GrammarInnerTriviaAt<N, Trivia, Gap extends string> extends GrammarInnerTrivia<N, Trivia> {
-	innerAt(gap: Gap): readonly Trivia[];
+	innerAt(gap: Gap): readonly TriviaItem<Trivia>[];
 	innerAt(gap: Gap, ...items: GrammarTriviaEntry<Trivia>[]): N;
 }
 
@@ -108,7 +115,7 @@ export interface LanguageAPI {
 	readonly is: object;
 	readonly kinds: object;
 	readonly types: object;
-	readonly root: AnyUntypedNode;
+	readonly root: AnyUntypedNode & ParsedRoot;
 	readonly node: AnyUntypedNode;
 	readonly fixedTextKindId: number;
 	readonly options: object;
@@ -159,7 +166,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 
 export interface NativeLanguageEngine<API extends LanguageAPI> {
 	render(node: AnyUntypedNode | number, options?: API['options'] & RenderCallOptions): Rendered;
-	parseAndRead: EngineDiagnostics['parseAndRead'];
+	parseAndRead: EngineDiagnostics<AnyUntypedNode>['parseAndRead'];
 	readonly buildProfile?: EngineDiagnostics['buildProfile'];
 	lineGapsOf: EngineDiagnostics['lineGapsOf'];
 	dispose(): void;
@@ -170,9 +177,15 @@ export interface ParsedRead<TRoot = unknown, TTree extends object = object> {
 	tree: TTree;
 }
 
+/** What a whole-source parse always stamps on its root: the regions of the source that did not parse. */
+export interface ParsedRoot {
+	/** Every ERROR and MISSING region of the source, in source order; empty when the source parsed cleanly. */
+	readonly $errors: readonly ErrorRegion[];
+}
+
 export interface EngineDiagnostics<TRoot = unknown, TTree extends object = object> {
 	readonly buildProfile: string | undefined;
-	parseAndRead(source: string, options?: ParseOptions): ParsedRead<TRoot, TTree>;
+	parseAndRead(source: string, options?: ParseOptions): ParsedRead<TRoot & ParsedRoot, TTree>;
 	/**
 	 * The line-break whitespace a read node owns as trivia, on each side in
 	 * source order: the whitespace member each run reads as and the byte its
@@ -222,14 +235,22 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	readonly is: API['is'];
 	readonly kinds: API['kinds'];
 	readonly types: API['types'];
-	readonly diagnostics: EngineDiagnostics;
+	readonly diagnostics: EngineDiagnostics<AnyUntypedNode>;
 	readonly isNode: (value: unknown) => value is API['node'];
 	readonly isParsedNode: (value: unknown) => value is API['node'];
 	readonly isFactoryNode: (value: unknown) => value is API['node'];
-	readonly isErrorNode: (value: unknown) => value is API['node'];
+	/** Whether `value` is a parsed ERROR node of this engine's language, read in a slot or as a trivia item. */
+	readonly isErrorNode: (value: unknown) => value is ErrorNode;
 	readonly isEmptyNode: <N extends API['empty']['node']>(
 		node: N
 	) => node is N & Extract<API['empty'], { readonly node: N }>['empty'];
+	/**
+	 * Parses `source` and returns its root. The root's `$errors` lists every
+	 * region of the source that did not parse, and is empty for a clean parse.
+	 *
+	 * @throws `ParseErrors` when `options.errors` is `'throw'` and the source
+	 * did not parse cleanly.
+	 */
 	readonly parse: (source: string, options?: ParseOptions) => API['root'];
 	readonly read: (path: string, options?: ParseOptions) => Promise<API['root']>;
 	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, StoredInput<API> | RenderBuilder<API>>;

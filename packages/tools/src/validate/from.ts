@@ -11,7 +11,8 @@
 
 import type { AnyUntypedNode } from '@sittir/types';
 import { sliceSpan } from '@sittir/common';
-import type { TokenInterior } from '@sittir/common/utils';
+import { hydrateStub, isStub, spanOf } from '@sittir/common/utils';
+import type { TokenInterior, TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import {
 	loadStorageKindNameFromId,
@@ -366,8 +367,10 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 			}
 
 			let readData: AnyUntypedNode;
+			let readTree: TreeHandle | undefined;
 			try {
 				const handle = await buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
+				readTree = handle;
 				// Native engine Rust-heap IDs differ from WASM linear-memory IDs.
 				// Resolve via the native data tree; if the kind is an alias target
 				// the native engine emits under a different rule name, skip rather
@@ -499,7 +502,9 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
 							const childArgs = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
 							const value = camelName ? (config as Record<string, unknown>)[camelName] : childArgs[0];
-							factoryResult = (factory as (v: unknown) => AnyUntypedNode)(value);
+							factoryResult = (factory as (v: unknown) => AnyUntypedNode)(
+								readTree !== undefined && isStub(value) ? hydrateStub(value, readTree) : value
+							);
 						} else {
 							// Config-shaped factories with flank capture take `(config,
 							// options)` — factories without options ignore the extra argument.
@@ -513,7 +518,8 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 					} else if (shape === 'text') {
 						// A text-shaped factory takes the node's bytes, which its span
 						// addresses whether or not the reader captured them as `$text`.
-						const textForFactory = readData.$span ? sliceSpan(entry.source, readData.$span) : (readData.$text ?? '');
+						const span = spanOf(readData);
+						const textForFactory = span ? sliceSpan(entry.source, span) : (readData.$text ?? '');
 						factoryResult = (factory as (text: string) => AnyUntypedNode)(textForFactory);
 					} else if (shape === 'elements') {
 						// separatedList factory: spread with a LEADING optional

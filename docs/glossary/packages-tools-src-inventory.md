@@ -22,8 +22,12 @@ the member its slot selector finds, or, on an unfielded token, marks that
 token's presence; deeper inside a named top it is a nested member of the top
 kind, routed through the kinds in between. A pattern that captures
 `@unclaimed` declares each captured kind unclaimed, with the reason its
-`#set! reason` gives, and says nothing else. A pattern whose top carries no
-claim and that captures `@element` is a container. A `#match?` whose regex is
+`#set! reason` gives, and says nothing else. A pattern whose top node (the
+pattern, or the one node of a grouping that also holds the pattern's
+directives) carries no claim and that captures `@element` is a container; a
+child it captures `@dropped` is a slot the container leaves out on purpose,
+and the pattern's `#set! reason` is recorded as the reason, and a capture on a
+token keeps the token's text. A `#match?` whose regex is
 anchored and has named holes is a template. Inside a node, a field's literal
 pins that field, an unfielded and uncaptured literal is a pin candidate the
 derivation resolves by the slots' terminals, and an alternation's options take
@@ -34,7 +38,7 @@ The parse reports no errors of its own. A file is refused with `BindingsSyntaxEr
 
 ### `packages/tools/src/inventory/bindings.ts::BindingFacts`
 
-What a bindings file says, before the slot model is consulted: the claims (`ClaimFact`, with the kinds enclosing a claim made below the top), the member captures (`MemberFact`: a `rename` of the slot its selector finds, the `presence` of a token, or a `nested` member with the kinds it routes through and the selector of its slot), the containers (`ContainerFact`: the element's selector and every other capture), the templates (`TemplateFact`) and the unclaimed kinds (`UnclaimedFact`, each with its reason). Facts come in file order and, within a pattern, in pre-order, which the derivation's first-claim and rename rules rely on.
+What a bindings file says, before the slot model is consulted: the claims (`ClaimFact`, with the kinds enclosing a claim made below the top), the member captures (`MemberFact`: a `rename` of the slot its selector finds, the `presence` of a token, or a `nested` member with the kinds it routes through and the selector of its slot), the containers (`ContainerFact`: the element's selector, every other capture, the selectors of the slots it drops on purpose with the pattern's reason, and the line and text of its pattern), the templates (`TemplateFact`) and the unclaimed kinds (`UnclaimedFact`, each with its reason). Facts come in file order and, within a pattern, in pre-order, which the derivation's first-claim and rename rules rely on.
 
 ### `packages/tools/src/inventory/bindings.ts::SlotSelector`
 
@@ -42,7 +46,7 @@ How a captured node finds its slot in a model node: by its field when it has one
 
 ### `packages/tools/src/inventory/bindings.ts::bindingPatterns`
 
-Each top-level definition with the line it starts on and its source text, sliced by the node's byte span. Spans count UTF-8 bytes and the bindings files carry multibyte comment rules, so slicing and line numbers go through `sourceSpans`. The unit `bindingIssues` compiles on its own.
+Each top-level definition with the line it starts on and its source text, sliced by the node's byte span. Spans count UTF-8 bytes and the bindings files carry multibyte comment rules, so slicing and line numbers go through `sourceSpans`. It is the unit `bindingIssues` compiles on its own, and `readBindings` reads the file through it, so a container's facts record the line and text given here.
 
 ### `packages/tools/src/inventory/bindings.ts::BindingsSyntaxError`
 
@@ -100,9 +104,25 @@ modifier names rules, a nested member replacing the slot it routes through,
 and no layout slot ever a member; fold field-literal claims into refinements,
 each literal named by the kind's converged member (a capture on the field
 renames it) rather than by the grammar's field; assign container captures to
-every kind the element admits; collapse a namespace's leaves when the
-namespace itself is admitted; and report inclusion cycles and the unmapped
-placeholders.
+the kinds the element slot names directly; collapse a namespace's leaves when
+the namespace itself is admitted; and report inclusion cycles, the containers
+whose captures have no direct target, the container slots no capture names,
+and the unmapped placeholders.
+
+A container's captures land only on the kinds its element slot names directly,
+by their direct claim (the first two steps of the resolution below), never on a
+kind reached through a supertype or a further container: a capture spread
+through a supertype would give every kind of a namespace a member only one
+wrapper carries. A container whose element slot names no directly claimed kind
+carries information of its own, so its captures are reported (`untargeted`)
+instead of placed, and the bindings claim the container as a vocabulary kind.
+A container also reads as its element only when nothing else it holds is lost:
+every non-layout slot besides the element is captured (a token capture keeps
+the slot whose terminals hold its text) or dropped on purpose, and each other
+slot is reported with its pattern (`uncaptured`). A drop is on purpose only with
+a reason: a `@dropped` slot whose pattern gives no non-blank `#set! reason`, and
+a `@dropped` node that names no slot, are reported the same way. A wrapper that keeps a slot
+of its own beside its element is claimed as a kind instead.
 
 A grammar kind in a slot resolves to the first of: a claim placed by the
 enclosing kinds it sits in; its own claim; nothing, when it is unclaimed; a
@@ -202,8 +222,10 @@ depth); the built node is the same.
 `--check` compiles every bindings file and reports each grammar, listing every
 problem per file (`bindingIssues`) rather than the first; the
 derivation summary always prints (kinds, prefixes, members, refinements,
-unmapped references, cycles); `--members` prints member names and kinds per
-shared kind; `--emit [dir]` emits the tree into the directory (default
-`packages/types/src/vocabulary`) and formats it
-with oxfmt. A cycle or a failed compile is a non-zero exit.
+unmapped references, cycles, container captures with no direct target,
+container slots left uncaptured);
+`--members` prints member names and kinds per shared kind; `--emit [dir]` emits
+the tree into the directory (default `packages/types/src/vocabulary`) and
+formats it with oxfmt. A cycle, a container capture with no direct target, a
+container slot left uncaptured or a failed compile is a non-zero exit.
 ```

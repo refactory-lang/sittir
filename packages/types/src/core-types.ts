@@ -58,6 +58,12 @@ export type NodeChildValue = AnyUntypedNode | string | number;
  */
 export type NodeChildren = NodeChildValue | readonly NodeChildValue[];
 
+/** A byte range into a source string, as the reader stamps it. */
+export interface ByteSpan {
+	readonly start: number;
+	readonly end: number;
+}
+
 /**
  * Runtime node shape — grammar-agnostic. Used by @sittir/common functions
  * that accept any node regardless of grammar.
@@ -100,7 +106,7 @@ export interface AnyUntypedNode {
 	 * `sourceSpans` (or `sliceSpan`) from `@sittir/common`; never pass these
 	 * offsets to `String.prototype.slice`.
 	 */
-	$span?: { start: number; end: number };
+	$span?: ByteSpan;
 	/** This node's own handle, on a node a read returns: re-reading it reads this node. */
 	$handle?: number;
 	/** The parent's handle, beside `$childIndex`: the coordinate a stub is hydrated at. */
@@ -147,7 +153,25 @@ export interface AnyUntypedNode {
 	$trivia?: TriviaSetter;
 }
 
-export type GrammarTriviaEntry<Trivia> = Trivia | string;
+/** tree-sitter's builtin ERROR symbol id, the kind of an {@link ErrorNode}. */
+export type ErrorKindId = 65535;
+
+/**
+ * A parsed ERROR node: the source error recovery wrapped, as text. Only a
+ * read produces one; there is no factory for it. It surfaces in a slot or as
+ * a trivia item. Where it sits in the source is reported by the parsed root's
+ * `$errors`.
+ */
+export interface ErrorNode extends AnyUntypedNode {
+	readonly $type: ErrorKindId;
+	readonly $source: 0 | 1;
+	readonly $text: string;
+}
+
+/** An item a trivia position holds: one of the grammar's trivia nodes, or an ERROR node read there. */
+export type TriviaItem<Trivia> = Trivia | ErrorNode;
+
+export type GrammarTriviaEntry<Trivia> = TriviaItem<Trivia> | string;
 
 /**
  * The trivia positions of a node: `leading` and `trailing`. Called with items, a position
@@ -156,9 +180,9 @@ export type GrammarTriviaEntry<Trivia> = Trivia | string;
  * text of a comment.
  */
 export interface TriviaSetter<Self = AnyUntypedNode, Trivia = any> {
-	leading(): readonly Trivia[];
+	leading(): readonly TriviaItem<Trivia>[];
 	leading(...items: GrammarTriviaEntry<Trivia>[]): Self;
-	trailing(): readonly Trivia[];
+	trailing(): readonly TriviaItem<Trivia>[];
 	trailing(...items: GrammarTriviaEntry<Trivia>[]): Self;
 }
 
@@ -373,9 +397,23 @@ export interface AnyTreeNode {
  */
 export interface NativeParseResult {
 	/** Hydrated root node data produced by the native parser. */
-	untypedNode: AnyUntypedNode;
+	readonly untypedNode: AnyUntypedNode;
 	/** Format inferred from source layout, if inference succeeded. */
-	format?: FormatRecord;
+	readonly format?: FormatRecord;
+	/** The tree this parse produced, released once nothing reads from it. */
+	readonly treeId: number;
+	/** The parse's ERROR and MISSING regions; empty for a clean parse. */
+	readonly errors: readonly ErrorRegion[];
+}
+
+/**
+ * One region of a source that did not parse: source error recovery wrapped in
+ * an ERROR node (`'error'`), or a token the parser inserted (`'missing'`, an
+ * empty span where the token belongs). Spans are UTF-8 byte offsets.
+ */
+export interface ErrorRegion {
+	readonly kind: 'error' | 'missing';
+	readonly span: { readonly start: number; readonly end: number };
 }
 
 // ---------------------------------------------------------------------------

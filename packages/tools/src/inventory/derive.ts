@@ -1,4 +1,4 @@
-import { type BindingFacts, type SlotSelector, WILDCARD } from './bindings.ts';
+import { type BindingFacts, type ContainerCapture, type SlotSelector, WILDCARD } from './bindings.ts';
 import type { ModelNode, ModelSlot, SlotModel } from './model.ts';
 
 export interface LayoutSlot {
@@ -43,6 +43,8 @@ export interface Derivation {
 	readonly holes: Map<string, Map<string, string>>;
 	readonly members: Map<string, Map<string, MemberFacts>>;
 	readonly cycles: readonly string[];
+	readonly untargeted: readonly string[];
+	readonly uncaptured: readonly string[];
 	readonly unmapped: Map<string, number>;
 }
 
@@ -294,6 +296,8 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		}
 		return undefined;
 	};
+	const directVocab = (input: GrammarInput, k: string, context: readonly string[]): string | undefined =>
+		placed(input, k, context) ?? vocabOf(input.grammar).get(k) ?? vocabOf(input.grammar).get(k.replace(/^_+/, ''));
 
 	const isLayout = (input: GrammarInput, owner: string, slot: ModelSlot): boolean =>
 		input.layoutSlots.some((l) => (l.kind === null || l.kind === owner) && l.slot === slot.name) ||
@@ -317,7 +321,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		if (subtypes.length === 0 || seen.includes(sk)) return null;
 		const vs: (readonly string[])[] = [];
 		for (const m of subtypes) {
-			const direct = placed(input, m, context) ?? vocabOf(input.grammar).get(m);
+			const direct = directVocab(input, m, context);
 			const v =
 				direct !== undefined
 					? [direct]
@@ -371,9 +375,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 
 	const resolveKind = (input: GrammarInput, k: string, context: readonly string[]): Resolution => {
 		const g = input.grammar;
-		const positional = placed(input, k, context);
-		if (positional !== undefined) return scalarOf([positional]);
-		const direct = vocabOf(g).get(k) ?? vocabOf(g).get(k.replace(/^_+/, ''));
+		const direct = directVocab(input, k, context);
 		if (direct !== undefined) return scalarOf([direct]);
 		if (unclaimedOf.get(g)?.has(k)) return scalarOf([]);
 		const node = modelNode(input.model, k);
@@ -479,25 +481,46 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		}
 	}
 
+	const untargeted: string[] = [];
+	const uncaptured: string[] = [];
 	for (const input of inputs) {
 		for (const container of input.bindings.containers) {
 			const slots = modelNode(input.model, container.kind)?.slots ?? [];
-			const targets = new Set<string>();
-			for (const k of slotFor(slots, container.element)?.kinds ?? []) {
-				for (const v of resolveKind(input, k, [container.kind]).tokens) {
-					if (!isVocabularyKind(v)) continue;
-					if (v.includes('.')) targets.add(v);
-					else
-						for (const [p, gs] of claimers)
-							if (gs.has(input.grammar) && (p === v || p.startsWith(`${v}.`))) targets.add(p);
-				}
+			const slotOf = (capture: ContainerCapture): ModelSlot | undefined => {
+				const { token } = capture;
+				return token !== null ? slots.find((slot) => slot.terminals.includes(token)) : slotFor(slots, capture);
+			};
+			const at = `${input.grammar}:${container.pattern.line} ${container.pattern.source.replace(/\s+/g, ' ')}`;
+			const dropped = container.dropped.map((selector) => slotFor(slots, selector));
+			const unexplained = (container.reason ?? '').trim() === '';
+			for (const [i, slot] of dropped.entries()) {
+				if (slot === undefined)
+					uncaptured.push(
+						`${at} marks a @dropped node that names no slot (${container.dropped[i]?.kind ?? 'a wildcard'})`
+					);
+				else if (unexplained) uncaptured.push(`${at} drops ${slot.name} without a #set! reason`);
+			}
+			const kept = new Set([slotFor(slots, container.element), ...container.captures.map(slotOf), ...dropped]);
+			for (const slot of slots)
+				if (!kept.has(slot) && !isLayout(input, container.kind, slot))
+					uncaptured.push(`${at} leaves ${slot.name} uncaptured`);
+			if (container.captures.length === 0) continue;
+			const targets = new Set(
+				(slotFor(slots, container.element)?.kinds ?? []).flatMap((k) => {
+					const direct = directVocab(input, k, [container.kind]);
+					return direct === undefined ? [] : [direct];
+				})
+			);
+			if (targets.size === 0) {
+				untargeted.push(`${input.grammar}: ${container.kind} (${container.captures.map((c) => c.name).join(', ')})`);
+				continue;
 			}
 			for (const capture of container.captures) {
 				let kinds: string[];
 				let multiple = false;
-				if (capture.token) kinds = ['boolean'];
+				if (capture.token !== null) kinds = ['boolean'];
 				else {
-					const slot = slotFor(slots, capture);
+					const slot = slotOf(capture);
 					if (slot) {
 						const resolved = slotResolution(input, container.kind, slot);
 						kinds = [...resolved.tokens];
@@ -549,6 +572,8 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		holes,
 		members,
 		cycles,
+		untargeted: untargeted.sort(),
+		uncaptured: uncaptured.sort(),
 		unmapped
 	};
 }

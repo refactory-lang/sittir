@@ -256,7 +256,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "async fn abc() {}\n\nasync fn main() {\n    let x = futures.await ?;\n}\n"
   },
@@ -1444,7 +1445,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "futures.await;\nfutures.await ?;\nfutures.await ?.await ?;\nfutures.await ?.function().await ?;\n"
   },
@@ -2818,7 +2820,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "async {}\nasync {\n    let x = 10;\n}\nasync move {}\n"
   },
@@ -3348,7 +3351,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "let _ = async || ();\n"
   },
@@ -3598,7 +3602,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "let a = async move || async move {};\n"
   },
@@ -3895,7 +3900,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "try {}\n"
   },
@@ -4255,7 +4261,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "gen {}\ngen {\n    let x = 10;\n}\ngen {\n    yield ();\n}\ngen move {}\n"
   },
@@ -5240,7 +5247,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "mod english;\n\nmod english {}\n\nmod english {\n    mod greetings {}\n    mod farewells {}\n}\n\npub mod english;\n"
   },
@@ -5903,7 +5911,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "extern crate std;\nextern crate std as ruststd;\npub extern crate futures;\n"
   },
@@ -8681,7 +8690,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "fn main() {}\n\nfn add(x: i32, y: i32) -> i32 {\n    return x + y;\n}\n\nfn takes_slice(slice: &str) {\n    println!(\"Got: {}\", slice);\n}\n\nfn foo() -> [u32; 2] {\n    return [1, 2];\n}\n\nfn foo() -> (u32, u16) {\n    return (1, 2);\n}\n\nfn foo() {\n    return\n}\n\nfn foo(x: impl FnOnce() -> result::Result<T, E>) {}\n\nfn foo(#[attr] x: i32, #[attr] x: i64) {}\n\nfn accumulate(self) -> Machine<{\n    State::Accumulate\n}> {}\n\nfn foo(bar: impl for <'a> Baz<Quux<'a>>) {}\n"
   },
@@ -17675,7 +17685,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "const fn main() {}\n"
   },
@@ -18157,7 +18168,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "fn triples(a: impl B) -> impl Iterator<Item = (usize)> {}\n"
   },
@@ -19611,7 +19623,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "fn foo<'a>(x: impl 'a + Clone) {}\n"
   },
@@ -20970,7 +20983,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "fn capture<T>(&self) -> impl Iterator<Item = usize> + use<'_, T> {}\n"
   },
@@ -22579,7 +22593,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "fn capture(&self) -> impl Iterator<Item = usize> + use<> {}\n"
   },
@@ -23539,7 +23554,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "fn aborts() -> ! {}\n"
   },
@@ -24588,7 +24604,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "extern \"C\" fn foo() {}\nextern \"C\" fn printf(\n    * const c_char,\n    ...,\n) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}\n"
   },
@@ -30084,7 +30101,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "let x;\nlet x = 42;\nlet x: i32;\nlet x: i8 = 42;\nlet mut x = 5;\nlet y: bool = false;\nlet bool: bool = false;\nlet u32: str = \"\";\n"
   },
@@ -31675,7 +31693,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "let Foo::Bar {\n    texts,\n    values, } = foo().bar().await ? else {\n    return Err(index)\n};\n\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};\n"
   },
@@ -34858,7 +34877,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "let a = if b {\n    c\n} else {\n    d\n};\n"
   },
@@ -35472,7 +35492,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "let default = 1;\nlet union = 2;\n"
   },
@@ -37643,7 +37664,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "pub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}\n"
   },
@@ -39665,7 +39687,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "struct A<B> {}\nstruct C<'a, 'b> {}\nstruct C<'a,> {}\nstruct D<const SIZE: usize> {}\nstruct E<#[attr] T> {}\n"
   },
@@ -42530,7 +42553,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "pub enum Option<T> {\n    None,\n    Some(T),\n}\n\npub enum Node<T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]\n    Leaf {\n        value: T\n    }\n}\n"
   },
@@ -44973,7 +44997,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "pub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}\n"
   },
@@ -46024,7 +46049,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "pub fn splice<T: Into<Text>>(&mut self, old_range: Range<usize>, new_text: T) {}\npub fn uninit_array<const LEN: usize>() -> [Self; LEN] {}\n"
   },
@@ -48393,7 +48419,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "fn foo(mut x: u32) {}\n"
   },
@@ -49386,7 +49413,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "fn f1([x, y]: [u32; 2]) {}\nfn f2(&x: &Y) {}\nfn f3((x, y): (T, U)) {}\n"
   },
@@ -52055,7 +52083,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "trait Callback {\n    fn call(self: Box<Self>);\n}\n"
   },
@@ -53260,7 +53289,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "const N: i32 = 5;\n\ntrait Foo {\n    const X: u8;\n}\n"
   },
@@ -53797,7 +53827,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "static N: i32 = 5;\nstatic mut __progname: * mut::c_char;\n"
   },
@@ -54264,7 +54295,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "static ref ONE: usize = 0;\n"
   },
@@ -54953,7 +54985,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type Inch = u64;\ntype Name<T> = Vec<T>;\ntype LazyResolve = impl (FnOnce() -> Capture) + Send + Sync + UnwindSafe;\n"
   },
@@ -57553,7 +57586,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type Foo<T> where T: Copy = Box<T>;\ntype Assoc3 where = () where;\n"
   },
@@ -58520,7 +58554,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "fn main() {\n    ;\n}\n"
   },
@@ -59634,7 +59669,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "#[test]\nfn test_foo() {}\n\n#[derive(Debug)]\nstruct Baz;\n\n#[derive(Debug, Eq,)]\nstruct Foo;\n\n#[cfg(target_os = \"macos\")]\nmod macos_only {}\n\n#![allow(clippy::useless_transmute)]\n\n#[clippy::cyclomatic_complexity = \"100\"]\n"
   },
@@ -62242,7 +62278,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "mod macos_only {\n    #![cfg(target_os = \"macos\")]\n}\n\nmatch ty {\n    #![cfg_attr(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))]\n    syn::Type::Array(ty) => self.visit_type(&ty.elem),\n}\n"
   },
@@ -65321,7 +65358,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "#[doc= include_str!(\"foo-doc.md\")]\nfn foo() {}\n\n#[namespace= foo::bar]\nfn baz() {}\n"
   },
@@ -66903,7 +66941,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "foo(#[attr(=> arbitrary tokens <=)] x, y);\n\nfoo(#[bar(some tokens are special in other contexts: $ /';()*()+.)] x);\n"
   },
@@ -70231,7 +70270,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\n\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}\n"
   },
@@ -73553,7 +73593,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "fn foo() {\n    bar(x,\n    #[cfg(foo = \"bar\")]\n    y);\n    let z = [#[hello] 2, 7, 8];\n    let t = (#[hello] 2, 7, 8);\n}\n"
   },
@@ -77848,7 +77889,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "impl Person {\n    const leg_count: u32 = 2;\n\n    fn walk(self) {}\n    fn walk_mut(mut self) {}\n    fn talk(&self) {}\n    fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{\n    State::Init\n}> {}\n"
   },
@@ -80588,7 +80630,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "impl <'a> iter::Iterator for Self::Iter<'a> {}\n\nimpl ConvertTo<i64> for i32 {\n    fn convert(&self) -> i64 {\n        *self as i64\n    }\n}\n"
   },
@@ -82244,7 +82287,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "unsafe impl Foo {}\n"
   },
@@ -82447,7 +82491,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "impl !Send for Foo {}\n"
   },
@@ -82945,7 +82990,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "pub unsafe trait Trait {}\n\nunsafe impl Trait for dyn (::std::any::Any) + Send {}\n"
   },
@@ -84775,7 +84821,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "impl <K: Debug + Ord> Debug for OccupiedError<K>;\nimpl <K: Debug + Ord> Display for OccupiedError<K>;\n"
   },
@@ -86773,7 +86820,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "impl Foo {\n    const default fn bar() -> i32 {\n        // Make 'default' still works as an identifier\n        default.bar();\n    }\n}\n"
   },
@@ -88130,7 +88178,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "pub trait Item: Clone + Eq + fmt::Debug {\n    fn summarize(&self) -> Self::Summary;\n}\n\nunsafe trait Foo {}\n"
   },
@@ -89609,7 +89658,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "trait Add<RHS = Self> {\n    type Output;\n    fn add(self, rhs: RHS) -> Self::Output;\n}\n"
   },
@@ -91538,7 +91588,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "trait Foo<T: ? Sized> {}\n\nfn univariant(this: &impl ? Sized, that: &(impl LayoutCalculator + ? Sized)) {}\n"
   },
@@ -94237,7 +94288,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "impl <T: AstDeref<Target: HasNodeId>> HasNodeId for T {}\n"
   },
@@ -95633,7 +95685,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "pub trait A: B + C + D {\n    private_decl!{}\n    fn f(&self);\n}\n"
   },
@@ -96663,7 +96716,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "pub trait Graph {\n    type N: fmt::Display;\n    type E;\n}\n"
   },
@@ -97633,7 +97687,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "impl Trait for T {\n    type Associated = T where 'static: 'static;\n}\n"
   },
@@ -99949,7 +100004,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "pub trait Database {\n    type F<'a, D>: Future<Output = D> + 'a;\n}\n\nimpl Database for Foo {\n    type F<'a, D> = DatabaseFuture<'a, D>;\n}\n\nfn use_database1<D: Database<F<'a, TD> = F>>() {}\n\nfn use_database2<D>()\nwhere\n    D: Database<F<'a, TD> = F>,\n{}\n"
   },
@@ -105883,7 +105939,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "trait T: for <'a> AddAssign<&'a usize> {}\n\ntype FnObject<'b> = dyn for <'a> FnLike<&'a isize, &'a isize> +'b;\n"
   },
@@ -108829,7 +108886,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "pub fn a() {}\npub(super) fn b() {}\npub(self) fn c() {}\npub(crate) fn c() {}\npub(in crate::d) fn e() {}\n"
   },
@@ -110322,7 +110380,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "fn foo(str: * const c_char) {}\nfn bar(bool: bool) {}\n"
   },
@@ -115080,7 +115139,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "fn walk<F>(&self, it: &mut F) -> bool\nwhere F: FnMut(&Pat) -> bool\n{\n    return false\n}\n\nimpl <'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {}\n\nimpl <T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c: 'b,\n{}\n\nimpl <'a, E> Read\nwhere &'a E: Read,\n{}\n\nimpl <T> A for B<T> where (T, T, T): C, {}\n\nimpl <T> A for B<T>\nwhere for <'a> D<T>: E<'a>,\n{}\n\npub trait A<B> where B: C,\n{}\n\nfn foo<A>() where A: B + As<f64>, f64: As<A> {}\n\nimpl <A> Default for B<A> where * mut A: C + D {}\n"
   },
@@ -124771,7 +124831,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "pub extern {\n    pub fn napi_module_register(mod_: * mut napi_module);\n}\n\nextern \"C\" {}\n"
   },
@@ -126075,7 +126136,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "crate mod foo;\ncrate struct Foo(crate crate::Bar);\ncrate fn foo() {}\ncrate const X: u32 = 0;\n"
   },
@@ -127049,7 +127111,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "struct A {\n    a: default::B,\n    b: union::C,\n}\n"
   },
@@ -127965,7 +128028,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "fn foo<D>(val: D)\nwhere\n    [u8; 32]: From<D>,\n\n{}\n"
   },
@@ -129409,7 +129473,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "pub struct Loaf<T: Sized, const N: usize = 1>([T; N]);\n"
   },
@@ -130450,7 +130515,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "fn main() {\n    abc;\n}\n"
   },
@@ -130915,7 +130981,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "fn main() {\n    (r#abc as r#Def).r#ghi;\n}\n"
   },
@@ -131802,7 +131869,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "-num;\n!bits;\n*boxed_thing;\n"
   },
@@ -132230,7 +132298,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "&a;\n&mut self.name;\n&raw const b;\n&raw mut self.age;\n"
   },
@@ -132791,7 +132860,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "a.unwrap() ?;\n&a ?;\n"
   },
@@ -133752,7 +133822,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "a * b;\na / b;\na % b;\na + b;\na - b;\na >> b;\na << b;\na == b;\na && b;\na || b;\n"
   },
@@ -134427,7 +134498,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "(0);\n(2 * (3 + 4));\n"
   },
@@ -135560,7 +135632,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "1..2;\n3..;\n..4;\n..;\n1..b;\na..b;\n1..(1);\n(1)..1;\n(1)..(1);\n1..{\n    1\n};\nfor i in 1.. {}\n"
   },
@@ -136862,7 +136935,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "x = y;\n"
   },
@@ -137051,7 +137125,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "x += 1;\nx += y;\n"
   },
@@ -137539,7 +137614,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "1000 as u8;\nlet character = integer as char;\nlet size: f64 = 1.0 + -len(values) as f64 + 1.0;\n"
   },
@@ -139029,7 +139105,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "foo();\nadd(1i32, 2i32);\nadd(\n    1i32,\n    2i32,\n);\n"
   },
@@ -140565,7 +140642,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "[];\n[1, 2, 3];\n[\"a\", \"b\", \"c\"];\n[0; 128];\n[\n#[cfg(foo)]\n\"foo\",\n#[cfg(bar)]\n\"bar\",\n];\n"
   },
@@ -142543,7 +142621,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "();\n(0,);\nlet (x, y, z) = (1, 2, 3);\n"
   },
@@ -145785,7 +145864,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "let u = User {name, ..current_user()};\n"
   },
@@ -146844,7 +146924,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "fn main() {\n    if n == 1 {} else if n == 2 {} else {}\n}\n\nlet y = if x == 5 {\n    10\n} else {\n    15\n};\n\nif foo && bar {}\n\nif foo && bar || baz {}\n"
   },
@@ -149033,7 +149114,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "if let Some(a) = b && c\n&& d\n&& let Some(e) = f\n{}\n"
   },
@@ -150389,7 +150471,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "if let (\"Bacon\", b) = dish {}\n\nif let Some(\"chained\") = a && b && let (C, D) = e {}\n\nif foo && let bar = || baz && quux {}\n\nif a && let b = || c || d && e {}\n"
   },
@@ -152314,7 +152397,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "while let (\"Bacon\", b) = dish {}\n"
   },
@@ -154543,7 +154627,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "match x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    - 1 => 1,\n    - 3.14 => 3,\n\n    #[attr1]\n    3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}\n\nlet msg = match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n    if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};\n"
   },
@@ -159353,7 +159438,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "while !done {\n    done = true;\n}\n"
   },
@@ -160011,7 +160097,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "'outer: loop {\n    'inner: loop {\n        break 'outer;\n        break true;\n    }\n}\n"
   },
@@ -162063,7 +162150,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "for e in v {\n    bar(e);\n}\n\nfor i in 0..256 {\n    bar(i);\n}\n\n'outer: for x in 0..10 {\n    'inner: for y in 0..10 {\n        if x % 2 == 0 {\n            continue 'outer;\n        }\n        if y % 2 == 0 {\n            continue 'inner;\n        }\n    }\n}\n"
   },
@@ -166779,7 +166867,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "mystruct.myfield;\nfoo().x;\nvalue.0.1.iter();\n1.max(2);\n"
   },
@@ -167857,7 +167946,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "mystruct.foo();\n"
   },
@@ -168410,7 +168500,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "([1, 2, 3, 4])[0];\narr[10];\narr[n];\n"
   },
@@ -169651,7 +169742,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "a::b();\nC::<D>::e();\n::f();\n::g::h();\n"
   },
@@ -170915,7 +171007,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "<Dog as Animal>::eat(d);\n"
   },
@@ -171529,7 +171622,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "<Token![]>::foo();\n"
   },
@@ -172004,7 +172098,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "super::super::foo();\n"
   },
@@ -172532,7 +172627,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "std::sizeof::<u32>();\nfoo::<8>();\n"
   },
@@ -174107,7 +174203,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "a.map(|(b, c)| b.push(c));\nd.map(move |mut e| {\n    f(e);\n    g(e)\n});\nh(|| -> i {\n    j\n});\n"
   },
@@ -177918,7 +178015,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "a.map(|b: usize| b.push(c));\n"
   },
@@ -179361,7 +179459,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "move || {\n    while i <= n {\n        yield i;\n        i += 1;\n    }\n    return;\n};\n"
   },
@@ -180649,7 +180748,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "const a: A = unsafe {\n    foo()\n};\n"
   },
@@ -181725,7 +181825,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "const {\n    1 + 3\n}\n\n;if *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n} else {\n    x\n}\nlet three_ranges = [const {\n    (0..=5).into_inner()\n}; 3];\n"
   },
@@ -185009,7 +185110,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "0;\n0___0;\n123;\n0usize;\n123i32;\n123u32;\n123_u32;\n0xff_u8;\n0o70_i16;\n0b1111_1111_1001_0000_i32;\n1u128;\n"
   },
@@ -185508,7 +185610,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "123.123;\n2.;\n123.0f64;\n0.1f64;\n0.1f32;\n12E+99_f64;\n"
   },
@@ -186277,7 +186380,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "\"\";\n\"abc\";\nc\"foo\";\nb\"foo\\n bar\";\n\"foo\\\n    bar\";\n\"\\\"foo\\\"\";\n\"/* foo bar */ foo bar\";\n\"foo\\x42\\x43 bar\";\n\"foo \\x42  \\x43 bar\";\n"
   },
@@ -187293,7 +187397,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "r#\"abc\"#; r##\"ok\"##;\nr##\"foo #\"# bar\"##;\nr###\"foo ##\"## bar\"###;\nr######\"foo ##### bar\"######;\n"
   },
@@ -187732,7 +187837,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "br#\"abc\"#;\nbr##\"abc\"##;\n"
   },
@@ -188000,7 +188106,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "cr#\"abc\"#;\ncr##\"abc\"##;\n"
   },
@@ -188361,7 +188468,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "'a';\n'\\'';\n'\\0';\nb'x';\n'\\t';\n'\\xff';\n'\\\\';\n"
   },
@@ -188599,7 +188707,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "true;\nfalse;\n"
   },
@@ -189041,7 +189150,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "a!();\nb![];\nc!{};\nd::e!();\nf::g::h!{};\n"
   },
@@ -191437,7 +191547,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "a!(* a *);\na!(& a &);\na!(- a -);\na!(b + c + +);\na!('a'..='z');\na!('\\u{0}'..='\\u{2}');\na!('lifetime)\ndefault!(a);\nunion!(a);\na!($);\na!($ ());\na!($ a $);\na!($ {$ ([a])});\na!($ a $ a:ident $ ($ a);*);\n"
   },
@@ -194729,7 +194840,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "ok!{// one\n/* two */}\n"
   },
@@ -196879,7 +196991,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "macro_rules! say_hello {() => (\nprintln!(\"Hello!\");\n)\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e: expr) => (println!(\"mode X: {}\", $e));\n    (y => $e: expr) => (println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {(\n$($x: expr; [$($y: expr) , *]) ; *\n) => {\n$($($x + $e) , *) , *\n}\n}\n\nmacro_rules! zero_or_one {\n    ($($e: expr) , ?) => {\n    $($e) , ?\n    };\n}\n\nmacro_rules! empty[\n    () => {};\n];\n"
   },
@@ -200887,7 +201000,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "match x {\n    Some(x) => \"some\",\n    std::None() => \"none\"\n}\n"
   },
@@ -202020,7 +202134,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "match x {\n    A(ref x) => x.0,\n    ref mut y => y,\n    &mut z => z,\n}\n"
   },
@@ -203941,7 +204056,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "match x {\n    Person {name, age} if age < 5 => (\"toddler\", name),\n    Person {name: adult_name, age: _} => (\"adult\", adult_name),\n}\n\nmatch y {\n    Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}\n"
   },
@@ -207325,7 +207441,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "match x {\n    (a, ..) => a,\n    B(..) => c,\n    D::E {f: g, ..} => g\n}\n"
   },
@@ -209751,7 +209868,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "match x {\n    a @ A(_) | b @ B(..) => a,\n    a @ 1...5 => a,\n    Some(1...5) => a,\n    a @ b...c => a,\n    a @ b..=c => a,\n    d.. => a,\n    ..d => d,\n    a @..=5 => a\n}\n\nmatch name {\n    | \"IPV6_FLOWINFO\" | \"IPV6_FLOWLABEL_MGR\" | \"IPV6_FLOWINFO_SEND\" => true,\n    _ => false,\n}\n"
   },
@@ -215767,7 +215885,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "if let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}\n\nwhile let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}\n\nlet Ok(index) | Err(index) = slice.binary_search(&x);\n\nfor ref a | b in c {}\n\nlet Ok(x) | Err(x) = binary_search(x);\n\nfor A | B | C in c {}\n\n|(Ok(x) | Err(x))| expr();\n\nlet ref mut x @(A | B | C);\n\nfn foo((1 | 2 | 3): u8) {}\n\nif let x!() | y!() = () {}\n"
   },
@@ -224566,7 +224685,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "fn foo(x: i32) {\n    const CUBE: i32 = 3.pow(3);\n    match x {\n        CUBE => println!(\"three cubed\"),\n        _ => {}\n    }\n}\n\nfn foo(x: i32) {\n    match x {\n        const {\n            3.pow(3)\n        } => println!(\"three cubed\"),\n        _ => {}\n    }\n}\n"
   },
@@ -229594,7 +229714,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "match y {\n    None::<T> => 17,\n    _ => 42,\n}\n"
   },
@@ -230070,6 +230191,7 @@
       "$type": 176,
       "$source": 0,
       "$named": true,
+      "$errors": [],
       "_statements": [],
       "$_trivia": {
         "inner": {
@@ -230285,6 +230407,7 @@
       "$type": 176,
       "$source": 0,
       "$named": true,
+      "$errors": [],
       "_statements": [],
       "$_trivia": {
         "inner": {
@@ -230521,6 +230644,7 @@
       "$type": 176,
       "$source": 0,
       "$named": true,
+      "$errors": [],
       "_statements": [],
       "$_trivia": {
         "inner": {
@@ -230666,6 +230790,7 @@
       "$type": 176,
       "$source": 0,
       "$named": true,
+      "$errors": [],
       "_statements": [],
       "$_trivia": {
         "inner": {
@@ -230927,6 +231052,7 @@
       "$type": 176,
       "$source": 0,
       "$named": true,
+      "$errors": [],
       "_statements": [],
       "$_trivia": {
         "inner": {
@@ -231190,6 +231316,7 @@
       "$type": 176,
       "$source": 0,
       "$named": true,
+      "$errors": [],
       "_statements": [],
       "$_trivia": {
         "inner": {
@@ -231638,7 +231765,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "//!\n\n/*!*/\n\n//\n\n///\nlet x; // <- immediate item after an empty line doc comment\n\n/**/\n\n/***/\n"
   },
@@ -231952,6 +232080,7 @@
       "$type": 176,
       "$source": 0,
       "$named": true,
+      "$errors": [],
       "_statements": [],
       "$_trivia": {
         "inner": {
@@ -232191,7 +232320,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "const σ1: Σ = 0;\nconst ψ_2: Ψ = 1;\n"
   },
@@ -232522,6 +232652,7 @@
         "$named": true,
         "_content": "/usr/bin/env -S cargo +nightly -Zscript"
       },
+      "$errors": [],
       "_statements": []
     },
     "expectedOutput": "#!/usr/bin/env -S cargo +nightly -Zscript\n"
@@ -232608,7 +232739,8 @@
       "$slotOrder": [
         "shebang",
         "statements"
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "#!\nfn main() {}\n"
   },
@@ -232910,7 +233042,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "#![feature(thing)]\nfn main() {}\n"
   },
@@ -233301,7 +233434,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type A = ();\n"
   },
@@ -233576,7 +233710,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type A = (i32, String);\n"
   },
@@ -234212,7 +234347,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type A = &B;\ntype C = &'a str;\ntype D = &'a mut str;\n"
   },
@@ -235054,7 +235190,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type A = * mut B;\ntype C = * const str;\n"
   },
@@ -236148,7 +236285,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type A = B<C>;\ntype D = E<F, str>;\ntype G = H<'a, I>;\ntype J = H<K = L>;\n"
   },
@@ -238421,7 +238559,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type A = B::C;\ntype D = E::F::G;\ntype H = I::J<K>;\ntype L = M<N>::O;\n"
   },
@@ -240315,7 +240454,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type A = [B; 4];\ntype C = &[D];\n"
   },
@@ -242561,7 +242701,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "fn high_order1(value: i32, f: fn(i32)) -> i32 {}\n\nfn high_order2(value: i32, f: fn(i32) -> i32) -> i32 {\n    f(value)\n}\n\nfn high_order3(value: i32, f: &FnOnce(i32) -> i32) -> i32 {\n    f(value)\n}\n\ntype F = for<'a, 'b> fn(x: &'a A, y: &'a mut B<'i, 't>,) -> C;\n"
   },
@@ -249049,7 +249190,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type a = extern \"C\" fn(* mut c_void);\ntype b = unsafe extern \"C\" fn() -> * mut c_void;\n"
   },
@@ -251009,7 +251151,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type a = Box<Something +'a>;\ntype b = Rc<dyn Something>;\ntype c = A<&dyn Fn(&B) -> C>;\n"
   },
@@ -253763,7 +253906,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "a as B<C>;\nd as * mut E<<F as E>::G>;\n"
   },
@@ -255105,7 +255249,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "/* plain block comment */\nfn main() {}\n"
   },
