@@ -26,8 +26,8 @@ kind, routed through the kinds in between. A pattern that captures
 pattern, or the one node of a grouping that also holds the pattern's
 directives) carries no claim and that captures `@element` is a container; a
 child it captures `@dropped` is a slot the container leaves out on purpose,
-with its reason in a `#set! reason` beside it, and a capture on a token keeps
-the token's text. A `#match?` whose regex is
+and the pattern's `#set! reason` is recorded as the reason, and a capture on a
+token keeps the token's text. A `#match?` whose regex is
 anchored and has named holes is a template. Inside a node, a field's literal
 pins that field, an unfielded and uncaptured literal is a pin candidate the
 derivation resolves by the slots' terminals, and an alternation's options take
@@ -38,7 +38,7 @@ The parse reports no errors of its own. A file is refused with `BindingsSyntaxEr
 
 ### `packages/tools/src/inventory/bindings.ts::BindingFacts`
 
-What a bindings file says, before the slot model is consulted: the claims (`ClaimFact`, with the kinds enclosing a claim made below the top), the member captures (`MemberFact`: a `rename` of the slot its selector finds, the `presence` of a token, or a `nested` member with the kinds it routes through and the selector of its slot), the containers (`ContainerFact`: the element's selector, every other capture, the selectors of the slots it drops on purpose, and the line and text of its pattern), the templates (`TemplateFact`) and the unclaimed kinds (`UnclaimedFact`, each with its reason). Facts come in file order and, within a pattern, in pre-order, which the derivation's first-claim and rename rules rely on.
+What a bindings file says, before the slot model is consulted: the claims (`ClaimFact`, with the kinds enclosing a claim made below the top), the member captures (`MemberFact`: a `rename` of the slot its selector finds, the `presence` of a token, or a `nested` member with the kinds it routes through and the selector of its slot), the containers (`ContainerFact`: the element's selector, every other capture, the selectors of the slots it drops on purpose with the pattern's reason, and the line and text of its pattern), the templates (`TemplateFact`) and the unclaimed kinds (`UnclaimedFact`, each with its reason). Facts come in file order and, within a pattern, in pre-order, which the derivation's first-claim and rename rules rely on.
 
 ### `packages/tools/src/inventory/bindings.ts::SlotSelector`
 
@@ -119,7 +119,9 @@ instead of placed, and the bindings claim the container as a vocabulary kind.
 A container also reads as its element only when nothing else it holds is lost:
 every non-layout slot besides the element is captured (a token capture keeps
 the slot whose terminals hold its text) or dropped on purpose, and each other
-slot is reported with its pattern (`uncaptured`). A wrapper that keeps a slot
+slot is reported with its pattern (`uncaptured`). A drop is on purpose only with
+a reason: a `@dropped` slot whose pattern gives no non-blank `#set! reason`, and
+a `@dropped` node that names no slot, are reported the same way. A wrapper that keeps a slot
 of its own beside its element is claimed as a kind instead.
 
 A grammar kind in a slot resolves to the first of: a claim placed by the

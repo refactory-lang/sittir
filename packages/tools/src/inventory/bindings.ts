@@ -73,6 +73,7 @@ export interface ContainerFact {
 	readonly element: SlotSelector;
 	readonly captures: readonly ContainerCapture[];
 	readonly dropped: readonly SlotSelector[];
+	readonly reason: string | null;
 	readonly pattern: PatternOrigin;
 }
 
@@ -355,7 +356,13 @@ function memberFact(v: Visit, name: string, top: Visit, topKind: string | null):
 	return { route: 'nested', owner: topKind, name, parent: owner, multiple: quantified(v), via, ...selector(v) };
 }
 
-function containerFact(kind: string, element: Visit, nodes: readonly Visit[], pattern: PatternOrigin): ContainerFact {
+function containerFact(
+	kind: string,
+	element: Visit,
+	nodes: readonly Visit[],
+	reason: string | null,
+	pattern: PatternOrigin
+): ContainerFact {
 	return {
 		kind,
 		element: selector(element),
@@ -365,6 +372,7 @@ function containerFact(kind: string, element: Visit, nodes: readonly Visit[], pa
 				.map((name) => ({ name, token: tokenText(v), multiple: quantified(v), ...selector(v) }))
 		),
 		dropped: nodes.filter((v) => captures(v).includes(DROPPED)).map(selector),
+		reason,
 		pattern
 	};
 }
@@ -399,7 +407,7 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 		element !== undefined &&
 		!captures(owner).some((name) => isPath(name) && !isTokenClass(name))
 	) {
-		facts.containers.push(containerFact(ownerKind, element, nodes, origin));
+		facts.containers.push(containerFact(ownerKind, element, nodes, reasonOf(predicates), origin));
 		return;
 	}
 	const vocabs = nodes.flatMap((v) => captures(v).filter((name) => isPath(name) && !isTokenClass(name)));

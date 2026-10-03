@@ -37,6 +37,7 @@ describe('readBindings', () => {
 				element: { field: 'definition', kind: null, after: null },
 				captures: [{ name: 'decorators', token: null, multiple: true, field: null, kind: 'decorator', after: null }],
 				dropped: [],
+				reason: null,
 				pattern: { line: 3, source: '(decorated_definition (decorator)* @decorators definition: (_) @element)' }
 			}
 		]);
@@ -51,6 +52,7 @@ describe('readBindings', () => {
 				element: { field: null, kind: null, after: { field: null, kind: 'attribute_item', after: null } },
 				captures: [],
 				dropped: [{ field: null, kind: 'attribute_item', after: null }],
+				reason: 'the element is a supertype',
 				pattern: { line: 1, source }
 			}
 		]);

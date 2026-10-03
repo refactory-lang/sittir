@@ -490,16 +490,20 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 				const { token } = capture;
 				return token !== null ? slots.find((slot) => slot.terminals.includes(token)) : slotFor(slots, capture);
 			};
-			const kept = new Set([
-				slotFor(slots, container.element),
-				...container.captures.map(slotOf),
-				...container.dropped.map((dropped) => slotFor(slots, dropped))
-			]);
+			const at = `${input.grammar}:${container.pattern.line} ${container.pattern.source.replace(/\s+/g, ' ')}`;
+			const dropped = container.dropped.map((selector) => slotFor(slots, selector));
+			const unexplained = (container.reason ?? '').trim() === '';
+			for (const [i, slot] of dropped.entries()) {
+				if (slot === undefined)
+					uncaptured.push(
+						`${at} marks a @dropped node that names no slot (${container.dropped[i]?.kind ?? 'a wildcard'})`
+					);
+				else if (unexplained) uncaptured.push(`${at} drops ${slot.name} without a #set! reason`);
+			}
+			const kept = new Set([slotFor(slots, container.element), ...container.captures.map(slotOf), ...dropped]);
 			for (const slot of slots)
 				if (!kept.has(slot) && !isLayout(input, container.kind, slot))
-					uncaptured.push(
-						`${input.grammar}:${container.pattern.line} ${container.pattern.source.replace(/\s+/g, ' ')} leaves ${slot.name} uncaptured`
-					);
+					uncaptured.push(`${at} leaves ${slot.name} uncaptured`);
 			if (container.captures.length === 0) continue;
 			const targets = new Set(
 				(slotFor(slots, container.element)?.kinds ?? []).flatMap((k) => {
