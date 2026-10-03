@@ -62,6 +62,21 @@ import {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
+
+function aliasEnvelopesOf(nodeMap: NodeMap): AssembledAlias[] {
+	return [...nodeMap.nodes.values()].filter((node) => node instanceof AssembledAlias);
+}
+
+function aliasEnvelopeIds(envelopes: readonly AssembledAlias[]): number[] {
+	return [...new Set(envelopes.map((node) => node.aliasTypeId))].sort((a, b) => a - b);
+}
+
+export function rebuildWrapperKindIds(nodeMap: NodeMap): number[] {
+	const hoisted = [...nodeMap.nodes.values()].flatMap((node) =>
+		node instanceof AbstractAssembledCompound && node.annotations?.hoisted === true && node.kindId !== undefined ? [node.kindId] : []
+	);
+	return [...new Set([...aliasEnvelopeIds(aliasEnvelopesOf(nodeMap)), ...hoisted])].sort((a, b) => a - b);
+}
 interface SlotModel {
 	readonly name: string;
 	readonly propertyName: string;
@@ -950,8 +965,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		if (!this.#kindEntries) {
 			return [...displayOf, "function _kindOf(entry: _UntypedNode): _UntypedNode['$type'] {", '  return entry.$type;', '}', ''];
 		}
-		const envelopes = [...this.#nodeMap.nodes.values()].filter((node) => node instanceof AssembledAlias);
-		const envelopeIds = [...new Set(envelopes.map((node) => node.aliasTypeId))].sort((a, b) => a - b);
+		const envelopes = aliasEnvelopesOf(this.#nodeMap);
+		const envelopeIds = aliasEnvelopeIds(envelopes);
 		const hiddenIds =
 			envelopes.length === 0
 				? []

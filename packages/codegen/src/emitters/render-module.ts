@@ -3094,7 +3094,13 @@ function prepareStructImpl(
 	const body: string[] = ['        self.transport_trivia_data.prepare(ctx)?;'];
 	if (isCompound) {
 		body.push(...rootEdgeStamp(plan, node, fillFields));
-		if (kindEdgeSidesOf(plan, node).size > 0) body.push('        ::sittir_core::prepare::prepare_edges(self, ctx);');
+		if (kindEdgeSidesOf(plan, node).size > 0) {
+			body.push(
+				'        let flank = self.source_flank.take();',
+				'        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);',
+				'        ::sittir_core::prepare::prepare_edges(self, ctx);'
+			);
+		}
 		body.push(...listGapClassification(plan, node));
 		for (const site of synthesizedSpacingSites(plan, node)) {
 			if (!carriesPerNodeValue(site)) continue;
@@ -3454,7 +3460,8 @@ interface TransportMetadataField {
 const TRANSPORT_METADATA_FIELDS: readonly TransportMetadataField[] = [
 	{ jsName: '$_trivia', rustName: 'transport_trivia_data', rustType: 'Option<TransportTrivia>', onWire: true },
 	{ jsName: '$_edges', rustName: 'edges', rustType: 'Option<::sittir_core::options::Edges>', onWire: false },
-	{ jsName: '$_gap', rustName: 'source_gap', rustType: 'Option<::sittir_core::slot::SourceGap>', onWire: true }
+	{ jsName: '$_gap', rustName: 'source_gap', rustType: 'Option<::sittir_core::slot::SourceGap>', onWire: true },
+	{ jsName: '$_flank', rustName: 'source_flank', rustType: 'Option<::sittir_core::slot::SourceFlank>', onWire: true }
 ];
 
 function renderTransportMetadataFields(): string[] {

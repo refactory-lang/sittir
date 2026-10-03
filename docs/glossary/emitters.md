@@ -7234,6 +7234,18 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
  */
 ```
 
+### `packages/codegen/src/emitters/wrap.ts::aliasEnvelopesOf`
+
+The model's alias envelopes (`AssembledAlias`): the kinds whose read node `wrapNode` keys by its display kind (`_ALIAS_ENVELOPES`).
+
+### `packages/codegen/src/emitters/wrap.ts::aliasEnvelopeIds`
+
+The sorted, distinct alias kind ids of `envelopes`: the members of `_ALIAS_ENVELOPES`, and the alias half of `rebuildWrapperKindIds`.
+
+### `packages/codegen/src/emitters/wrap.ts::rebuildWrapperKindIds`
+
+What a rebuild constructs around an existing node, as sorted, distinct kind ids: the kinds enrich mints, which the model stamps `hoisted` (rust `_attributed_parameter` among them), and the alias envelopes (`aliasEnvelopeIds`). Such a wrapper, rebuilt, has no source of its own, so where source adjacency is judged the node it holds stands for it (`evidenceOf`). The set is derived only from those two existing stamps, with no filter by model class, and emitted once per grammar as `TriviaFacts.rebuildWrappers` (`emitTriviaFacts`). Its breadth is safe on two independent checks: `evidenceOf` looks through an instance only when it holds exactly one present node, so a list or a leaf never is, and the reader takes `previous` from the outermost node spanning exactly the child's bytes, so a rebuilt wrapper that adds tokens around a read child never reads as adjacent.
+
 ### `packages/codegen/src/emitters/wrap.ts::collectTypeImports`
 
 ```text
@@ -10872,7 +10884,8 @@ Emits `triviaFacts`, the grammar's `TriviaFacts`, which the language hooks carry
 - `kindName`, from `KIND_NAMES`;
 - `kinds`, the trivia kind names (`triviaKinds`); the runtime refuses a node or kind id of any other kind, saying it is not an extra;
 - `innerGaps` (`INNER_GAPS`);
-- `whitespace` (`whitespaceTrivia`), when the grammar has lexical extras: loose text the extras run accepts becomes the kind id of the whitespace kind spelled exactly so, and any other such text is refused.
+- `whitespace` (`whitespaceTrivia`), when the grammar has lexical extras: loose text the extras run accepts becomes the kind id of the whitespace kind spelled exactly so, and any other such text is refused;
+- `rebuildWrappers` (`rebuildWrapperKindIds`), engine plumbing: the kind ids of what a rebuild constructs around an existing node. The render engine passes the same set to `createNativeEngine` (`emitRenderEngine`), so the engine's trivia view and a tool's view built from the engine's facts answer from one emitted set.
 
 The facts carry no `comment` builder and no render or edit: a node renders and edits through the engine it belongs to. A grammar with a default trivia form passes its comment builder in the language hooks' `trivia` (`emitApi`), where `api.ts` imports the coercer.
 
@@ -15998,8 +16011,9 @@ The grammar root's prepare lines that give an edited root its source flanks, ahe
 A transport struct's `Prepare` impl. Every struct answers `source_gap` from
 its `$_gap` metadata field and `gap_edges` with its own base edges. A compound kind first fills its own
 base edges (for the grammar root, from its source flanks, `rootEdgeStamp`;
-then from its edge row, `prepare_edges`, only for a kind that owns
-kind-edge sites), then gives each repeated slot's source-adjacent gaps their source class
+then, for a kind that owns kind-edge sites, from the source flanks the
+wire carries for a list node, `fill_source_flanks`, and from its edge row,
+`prepare_edges`), then gives each repeated slot's source-adjacent gaps their source class
 (`listGapClassification`), then fills this kind's
 own facts: each spacing field that carries a per-node value
 (`carriesPerNodeValue`) takes the resolved arm when unset; the seat calls
@@ -16071,8 +16085,24 @@ that run is the gap and the transport sends no `$_gap`; the native
 classification fills only gaps that have no derived run. A same-line gap
 renders as the whitespace member its run classifies to, so a run no member
 spells exactly (two spaces where the grammar declares only a single space)
-renders as the nearest member below it. That is the limit of rule 1, not an
-inference.
+renders as the nearest member below it. That is the first limit of rule 1,
+not an inference. The second: a gap that holds a comment, or anything else
+but whitespace and the one separator, is not a spelling the whitespace
+classes can carry, so `fill_list_gaps` leaves it unset and the gap falls to
+rule 2, the seat or the list site. The comment itself still renders as the
+trivia its owner carries. The third: a list's flanks keep their source class
+with its depth (the indent arm after the opener, the dedent arm before the
+closer, where the source lines show the depth change), but the depth unit is
+the render's, from the format record or the options, never the source's
+columns. A list indented two spaces in a source rendered with four-space
+indentation renders with four.
+
+A list's flanks follow rule 1 like its item gaps: the gap between the opener
+and the first item is kept while that item is still the source's first, and
+the gap between the last item and the closer while that item is still the
+source's last (`sourceFlankOf`). A list's gaps and flanks are kept only while
+the list itself carries source identity, so a list built afresh is canonical
+throughout. A rebuilt list's trailing delimiter stays canonical.
 
 ### `packages/codegen/src/emitters/render-module.ts::synthesizedSpacingSites`
 

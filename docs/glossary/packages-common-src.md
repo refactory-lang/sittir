@@ -219,7 +219,7 @@ Whether a node crosses to the render as its coordinate (its span and the tree th
 
 ### `packages/common/src/transport-data.ts::TriviaView`
 
-The trivia a node crosses to the render with, and which of its sides the read derived (`DerivedSides`). The engine's render passes `readTrivia` and `readDerivedSides`, so an untouched child of a rebuilt parent crosses with the whitespace its parse gave it, minus the runs whose neighbour changed (`changedEdges`). Every caller names its view: data with no derived trivia (a test's hand-written nodes, a probe's detached data) passes `STORED_TRIVIA`, where a node crosses with the trivia it stores and nothing is derived. There is no default, so no caller can skip the derived view by leaving it out. The fold decision and the `$_trivia` an unfolded node carries both come from this one view; a node's raw `$_trivia` never crosses beside it.
+The trivia a node crosses to the render with, and which of its sides the read derived (`DerivedSides`). The engine's render passes `readTrivia` and `readDerivedSides`, so an untouched child of a rebuilt parent crosses with the whitespace its parse gave it, minus the runs whose neighbour changed (`changedEdges`). Every caller names its view: data with no derived trivia (a test's hand-written nodes, a probe's detached data) passes `STORED_TRIVIA`, where a node crosses with the trivia it stores and nothing is derived. There is no default, so no caller can skip the derived view by leaving it out. The fold decision and the `$_trivia` an unfolded node carries both come from this one view; a node's raw `$_trivia` never crosses beside it. The view also answers `isWrapper`: whether a kind id is one a rebuild constructs around an existing node (`TriviaFacts.rebuildWrappers`), which `evidenceOf` asks before looking through an entry. `STORED_TRIVIA` answers no for every kind, since nothing in its data is judged for source adjacency.
 
 ### `packages/common/src/transport-data.ts::detachCoordinates`
 
@@ -253,7 +253,7 @@ The text a node renders to in the engine it was built or read in. It takes the e
 
 ### `packages/common/src/utils.ts::rebuilt`
 
-What every `$with` setter runs its rebuild through. It runs the rebuild inside the node's own engine (or plainly, when the node has none) and hands the source node's trivia to the node the rebuild returns, together with what it keeps of the source node (`carryEdit`). Inner trivia can only travel to a node that is still empty: once the rebuild gives the node a child, the comment would sit beside it, so the call throws and names the kind.
+What every `$with` setter runs its rebuild through. It runs the rebuild inside the node's own engine (or plainly, when the node has none) and hands the source node's trivia to the node the rebuild returns, together with what it keeps of the source node (`carryEdit`), and gives each fresh node the rebuild minted in a slot the source node held its identity too (`carryRebuiltSlots`). Inner trivia can only travel to a node that is still empty: once the rebuild gives the node a child, the comment would sit beside it, so the call throws and names the kind.
 
 ### `packages/common/src/utils.ts::triviaSide`
 
@@ -281,19 +281,44 @@ Whether a list item still follows the sibling it followed in its source: the ite
 
 ### `packages/common/src/transport-data.ts::sourceGapOf`
 
-The source range a list item sends as `$_gap`: from its source predecessor's end to its own source start, in the tree both were read from, when the item is still source-adjacent and no derived line-gap run already spells that gap. A run the item's leading trivia opens with is the gap itself, so the native fill never classifies the same gap twice. The first item of a list sends nothing; its gap faces the parent's opener, not a list neighbour. A live render sends the range, `{ $treeHandle, $span }`, as evidence only: the gap is classified, never sliced. Data detached from its tree carries the same gap as its bytes, `{ $text }`, which only `selfContainedRenderInput` writes, and the native fill classifies both forms through one path.
+The source range a list item sends as `$_gap`: from its source predecessor's end to its own source start, in the tree both were read from, when the item is still source-adjacent and no derived line-gap run already spells that gap. A run the item's leading trivia opens with is the gap itself, so the native fill never classifies the same gap twice. Nothing is sent unless the node holding the items carries source identity (`owner`): a list built afresh, or a copy that dropped its identity, keeps none of its source layout, so its gaps and its flanks (`sourceFlankOf`) go canonical together. The first item of a list sends nothing; its gap faces the parent's opener, which is the list's flank, not a list neighbour. A live render sends the range, `{ $treeHandle, $span }`, as evidence only: the gap is classified, never sliced. Data detached from its tree carries the same gap as its bytes, `{ $text }`, which only `selfContainedRenderInput` writes, and the native fill classifies both forms through one path.
+
+### `packages/common/src/transport-data.ts::listItemsOf`
+
+The items of a list node: the one array a kind a rebuild constructs around existing nodes (`TriviaView.isWrapper`) holds as its only present node or array storage. A group around one node holds a node and is not a list node; a kind holding an array beside another node (an item's attribute list beside the item) is not one either.
+
+### `packages/common/src/transport-data.ts::sourceFlankOf`
+
+A list node's flanks as the transport sends them (`$_flank`): the tree handle and span of its source identity, and which flanks it keeps. The flank before is kept while the list's first item is still the source's first item of this list (its evidence lies inside the list's source span and has no source predecessor, `previous === null`); the flank after while its last item is still the source's last (`next === null`). Nothing for anything that is not a list node with source identity. The native fill classifies the kept flanks from the source, depth included (`fill_source_flanks`).
+
+### `packages/common/src/transport-data.ts::SourceFlankEvidence`
+
+The `$_flank` wire shape: `$treeHandle`, `$span`, `$before`, `$after`.
+
+### `packages/common/src/transport-data.ts::crossingTrivia`
+
+A node's trivia as it crosses: without the runs whose neighbour changed (`withoutChangedEdges`), and, for a list node (`listItemsOf`), without the derived whitespace runs at its two ends. Those runs are the list's flanks, which its source flanks spell instead, depth included, so each flank has one source. Comments stay.
 
 ### `packages/common/src/transport-data.ts::evidenceOf`
 
-The node whose source identity stands for a list entry. A rebuilt list mints its item wrappers afresh (a list kind's item envelope around each element), so the entry itself has no source; the one node it holds does. Slots the wrapper leaves empty do not count, so a wrapper with an optional slot it does not fill is still looked through. Adjacency is judged on these nodes on both sides of a gap.
+The node whose source identity stands for a list entry. A rebuild constructs some wrappers afresh around the one node they hold (an alias envelope, or a kind enrich mints, such as rust's `_attributed_parameter` around each parameter), so the entry itself has no source; the node it holds does. Two conditions, one per fact:
+
+- the entry's kind is one the view says a rebuild mints around one node (`TriviaView.isWrapper`), a classification stamped per grammar, never guessed from slot names;
+- the entry holds exactly one present node. Slots it leaves empty do not count, so a group whose optional slot is unfilled is still looked through; one holding two nodes is not.
+
+An entry with its own source identity is its own evidence. Adjacency is judged on these nodes on both sides of a gap.
 
 ### `packages/common/src/transport-data.ts::sourceOf`
 
-Where a node sits in its source: a read node's own tree token, tree handle, span and stamped kind, or, for a node an edit rebuilt, the identity the edit carried forward from the node it replaced. It is evidence of layout only: an edited node never folds and never slices, but it can still be found in its source (line gaps derive for it) and judged adjacent to its neighbours. The identity is kept under a private, non-enumerable symbol, so it never reaches the wire and a spread copy never inherits it; `$span` stays the public fact of a node whose text is its source's.
+Where a node sits in its source: a read node's own tree token, tree handle, span and stamped kind, or, for a node an edit rebuilt, the identity the edit carried forward from the node it replaced. A node the reader addressed by its own handle keeps that handle in its identity, and its line gaps are asked for by the handle, since its span alone may not name a tree node (the grammar root's span covers the whole source). It is evidence of layout only: an edited node never folds and never slices, but it can still be found in its source (line gaps derive for it) and judged adjacent to its neighbours. The identity is kept under a private, non-enumerable symbol, so it never reaches the wire and a spread copy never inherits it; `$span` stays the public fact of a node whose text is its source's.
 
 ### `packages/common/src/transport-data.ts::withoutChangedEdges`
 
 Drops the whitespace runs on the changed edges of a node's trivia: on the leading side the runs before its first comment, on the trailing side the runs after its last. Comments always stay with their owner, and so does a run between a comment and its owner, because that run's neighbour is the comment. A node left with no trivia can fold to its coordinate again.
+
+### `packages/common/src/utils.ts::carryRebuiltSlots`
+
+For each storage slot of a rebuilt node whose value the rebuild minted afresh, where the slot held a read node of the same kind before: the fresh node takes what the read one had (`carryEdit`). Only the kinds a rebuild constructs around existing nodes count (`TriviaFacts.rebuildWrappers`), so a list `$with` rebuilds from its items keeps the source position of the list it replaces, and its flanks can be judged (`sourceFlankOf`); a node the caller built and passed in, of another kind or already carrying source, is left as it is.
 
 ### `packages/common/src/utils.ts::carryEdit`
 
@@ -301,7 +326,7 @@ What an edited node keeps of the node it was rebuilt from (`rebuilt`, the one pl
 
 ### `packages/common/src/utils.ts::readDerivedSides`
 
-Which sides of a read node's trivia are derived from its line gaps (a side stops being derived once it is written), and the span of the sibling owner its leading line gaps separate it from, `null` for its parent's first owner child; `undefined` when `readTrivia` derives nothing for the node. It comes from the same native query and the same cached derivation as the trivia, so the transport judges a neighbour by the fact the gaps were measured against, not by a second reading of adjacency.
+Which sides of a read node's trivia are derived from its line gaps (a side stops being derived once it is written), and the spans of the sibling owners beside it, `previous` `null` for its parent's first owner child and `next` `null` for its last; `undefined` when `readTrivia` derives nothing for the node. It comes from the same native query and the same cached derivation as the trivia, so the transport judges a neighbour by the fact the gaps were measured against, not by a second reading of adjacency.
 
 ### `packages/common/src/utils.ts::lineGapAddressOf`
 

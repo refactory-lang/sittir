@@ -29375,6 +29375,8 @@ pub struct ModuleTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements"))]
     pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_separator_space"))]
@@ -29406,6 +29408,8 @@ impl ::sittir_core::prepare::Prepare for ModuleTransport {
         let last = [::sittir_core::prepare::EdgeItems::last_item(&self.statements)].into_iter().flatten().next();
         let flanks = ::sittir_core::prepare::root_flanks(first, last, options::allowed(options::SITE_MODULE_MODULE_BEFORE), options::allowed(options::SITE_MODULE_MODULE_AFTER), &options::WHITESPACE, ctx);
         ::sittir_core::prepare::fill_edges(self, flanks);
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         if let Some(gap_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_MODULE_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
         self.statements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MODULE_STATEMENTS_SEPARATOR_SPACE].arm);
@@ -29450,6 +29454,8 @@ pub struct SimpleStatementsTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: ::sittir_core::SlotValue<SimpleStatementsElementsTransport>,
 }
@@ -29475,6 +29481,8 @@ impl ::sittir_core::render::Render for SimpleStatementsTransport {
 impl ::sittir_core::prepare::Prepare for SimpleStatementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
@@ -29516,6 +29524,8 @@ pub struct ImportStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names"))]
     pub names: ::sittir_core::SlotValue<NamesTransport>,
 }
@@ -29541,6 +29551,8 @@ impl ::sittir_core::render::Render for ImportStatementTransport {
 impl ::sittir_core::prepare::Prepare for ImportStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.names.prepare(ctx)?;
         Ok(())
@@ -29578,6 +29590,7 @@ pub struct ImportPrefixTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -29620,6 +29633,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportPrefixTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -29634,6 +29648,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportPrefixTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -29641,6 +29656,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportPrefixTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -29657,10 +29673,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportPrefixTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -29705,6 +29723,8 @@ pub struct RelativeImportTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_prefix"))]
     pub prefix: ::sittir_core::SlotValue<ImportPrefixTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
@@ -29732,6 +29752,8 @@ impl ::sittir_core::render::Render for RelativeImportTransport {
 impl ::sittir_core::prepare::Prepare for RelativeImportTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.prefix.prepare(ctx)?;
         self.name.prepare(ctx)?;
@@ -29774,6 +29796,8 @@ pub struct FutureImportStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<FutureImportStatementContentTransportSlot>,
 }
@@ -29799,6 +29823,8 @@ impl ::sittir_core::render::Render for FutureImportStatementTransport {
 impl ::sittir_core::prepare::Prepare for FutureImportStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.content.prepare(ctx)?;
         Ok(())
@@ -29840,6 +29866,8 @@ pub struct ImportFromStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_module_name"))]
     pub module_name: ::sittir_core::SlotValue<ImportFromStatementModuleNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
@@ -29867,6 +29895,8 @@ impl ::sittir_core::render::Render for ImportFromStatementTransport {
 impl ::sittir_core::prepare::Prepare for ImportFromStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.module_name.prepare(ctx)?;
         self.content.prepare(ctx)?;
@@ -29909,6 +29939,8 @@ pub struct ImportListTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: Vec<::sittir_core::SlotValue<ImportListNameTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -29985,6 +30017,8 @@ pub struct AliasedImportTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<DottedNameTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
@@ -30012,6 +30046,8 @@ impl ::sittir_core::render::Render for AliasedImportTransport {
 impl ::sittir_core::prepare::Prepare for AliasedImportTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.alias.prepare(ctx)?;
@@ -30050,6 +30086,7 @@ pub struct WildcardImportTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -30092,6 +30129,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WildcardImportTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "*".to_string(),
@@ -30099,6 +30137,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WildcardImportTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "*".to_string())
             }
         };
@@ -30106,6 +30145,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WildcardImportTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -30122,10 +30162,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for WildcardImportTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -30170,6 +30212,8 @@ pub struct PrintStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<PrintStatementContentTransportSlot>,
 }
@@ -30235,6 +30279,8 @@ pub struct ChevronTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
 }
@@ -30260,6 +30306,8 @@ impl ::sittir_core::render::Render for ChevronTransport {
 impl ::sittir_core::prepare::Prepare for ChevronTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
@@ -30301,6 +30349,8 @@ pub struct AssertStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_separator_space_before"))]
@@ -30330,6 +30380,8 @@ impl ::sittir_core::render::Render for AssertStatementTransport {
 impl ::sittir_core::prepare::Prepare for AssertStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         ::sittir_core::prepare::fill_list_gaps(self.expression.iter_mut().map(Some), ",", options::allowed(options::SITE_ASSERT_STATEMENT_EXPRESSION_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ASSERT_STATEMENT_EXPRESSION_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.expression_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_SEPARATOR_SPACE_BEFORE].arm);
@@ -30375,6 +30427,8 @@ pub struct ExpressionStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ExpressionStatementContentTransportSlot>,
 }
@@ -30440,6 +30494,8 @@ pub struct NamedExpressionTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<NamedExpressionNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
@@ -30467,6 +30523,8 @@ impl ::sittir_core::render::Render for NamedExpressionTransport {
 impl ::sittir_core::prepare::Prepare for NamedExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -30509,6 +30567,8 @@ pub struct ReturnStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
     pub expressions: Option<::sittir_core::SlotValue<ReturnStatementExpressionsTransportSlot>>,
 }
@@ -30534,6 +30594,8 @@ impl ::sittir_core::render::Render for ReturnStatementTransport {
 impl ::sittir_core::prepare::Prepare for ReturnStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expressions.prepare(ctx)?;
         Ok(())
@@ -30575,6 +30637,8 @@ pub struct DeleteStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
     pub expressions: ::sittir_core::SlotValue<DeleteStatementExpressionsTransportSlot>,
 }
@@ -30600,6 +30664,8 @@ impl ::sittir_core::render::Render for DeleteStatementTransport {
 impl ::sittir_core::prepare::Prepare for DeleteStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expressions.prepare(ctx)?;
         Ok(())
@@ -30641,6 +30707,8 @@ pub struct RaiseStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_cause"))]
     pub cause: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
@@ -30668,6 +30736,8 @@ impl ::sittir_core::render::Render for RaiseStatementTransport {
 impl ::sittir_core::prepare::Prepare for RaiseStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.cause.prepare(ctx)?;
         self.expressions.prepare(ctx)?;
@@ -30706,6 +30776,7 @@ pub struct PassStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -30748,6 +30819,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PassStatementTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "pass".to_string(),
@@ -30755,6 +30827,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PassStatementTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "pass".to_string())
             }
         };
@@ -30762,6 +30835,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PassStatementTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -30778,10 +30852,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for PassStatementTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -30822,6 +30898,7 @@ pub struct BreakStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -30864,6 +30941,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakStatementTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "break".to_string(),
@@ -30871,6 +30949,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakStatementTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "break".to_string())
             }
         };
@@ -30878,6 +30957,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakStatementTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -30894,10 +30974,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakStatementTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -30938,6 +31020,7 @@ pub struct ContinueStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -30980,6 +31063,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueStatementTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "continue".to_string(),
@@ -30987,6 +31071,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueStatementTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "continue".to_string())
             }
         };
@@ -30994,6 +31079,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueStatementTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -31010,10 +31096,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueStatementTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -31058,6 +31146,8 @@ pub struct IfStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_consequence"))]
@@ -31089,6 +31179,8 @@ impl ::sittir_core::render::Render for IfStatementTransport {
 impl ::sittir_core::prepare::Prepare for IfStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         if let Some(gap_items) = self.alternative.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
         self.alternative_separator_space.get_or_insert(ctx.options.spacing[options::SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE].arm);
@@ -31135,6 +31227,8 @@ pub struct ElifClauseTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_consequence"))]
@@ -31162,6 +31256,8 @@ impl ::sittir_core::render::Render for ElifClauseTransport {
 impl ::sittir_core::prepare::Prepare for ElifClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.condition.prepare(ctx)?;
         self.consequence.prepare(ctx)?;
@@ -31204,6 +31300,8 @@ pub struct ElseClauseTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<SuiteTransport>,
 }
@@ -31229,6 +31327,8 @@ impl ::sittir_core::render::Render for ElseClauseTransport {
 impl ::sittir_core::prepare::Prepare for ElseClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
         Ok(())
@@ -31270,6 +31370,8 @@ pub struct MatchStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<MatchBlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subjects"))]
@@ -31297,6 +31399,8 @@ impl ::sittir_core::render::Render for MatchStatementTransport {
 impl ::sittir_core::prepare::Prepare for MatchStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
         self.subjects.prepare(ctx)?;
@@ -31339,6 +31443,8 @@ pub struct MatchBlockTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<MatchBlockContentTransportSlot>,
 }
@@ -31404,6 +31510,8 @@ pub struct CaseClauseTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_guard"))]
     pub guard: Option<::sittir_core::SlotValue<IfClauseTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_consequence"))]
@@ -31433,6 +31541,8 @@ impl ::sittir_core::render::Render for CaseClauseTransport {
 impl ::sittir_core::prepare::Prepare for CaseClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.guard.prepare(ctx)?;
         self.consequence.prepare(ctx)?;
@@ -31476,6 +31586,8 @@ pub struct ForStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async"))]
     pub async_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
@@ -31509,6 +31621,8 @@ impl ::sittir_core::render::Render for ForStatementTransport {
 impl ::sittir_core::prepare::Prepare for ForStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.async_.prepare(ctx)?;
         self.left.prepare(ctx)?;
@@ -31554,6 +31668,8 @@ pub struct WhileStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
@@ -31583,6 +31699,8 @@ impl ::sittir_core::render::Render for WhileStatementTransport {
 impl ::sittir_core::prepare::Prepare for WhileStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.condition.prepare(ctx)?;
         self.body.prepare(ctx)?;
@@ -31626,6 +31744,8 @@ pub struct TryStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<SuiteTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clauses"))]
@@ -31659,6 +31779,8 @@ impl ::sittir_core::render::Render for TryStatementTransport {
 impl ::sittir_core::prepare::Prepare for TryStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         if let Some(gap_items) = self.except_clauses.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
         self.except_clauses_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE].arm);
@@ -31706,6 +31828,8 @@ pub struct ExceptClauseTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_group"))]
     pub group: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exception"))]
@@ -31735,6 +31859,8 @@ impl ::sittir_core::render::Render for ExceptClauseTransport {
 impl ::sittir_core::prepare::Prepare for ExceptClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.group.prepare(ctx)?;
         self.exception.prepare(ctx)?;
@@ -31778,6 +31904,8 @@ pub struct FinallyClauseTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_block"))]
     pub block: ::sittir_core::SlotValue<SuiteTransport>,
 }
@@ -31803,6 +31931,8 @@ impl ::sittir_core::render::Render for FinallyClauseTransport {
 impl ::sittir_core::prepare::Prepare for FinallyClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.block.prepare(ctx)?;
         Ok(())
@@ -31844,6 +31974,8 @@ pub struct WithStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async"))]
     pub async_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_clause"))]
@@ -31873,6 +32005,8 @@ impl ::sittir_core::render::Render for WithStatementTransport {
 impl ::sittir_core::prepare::Prepare for WithStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.async_.prepare(ctx)?;
         self.with_clause.prepare(ctx)?;
@@ -31916,6 +32050,8 @@ pub struct WithItemTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
 }
@@ -31981,6 +32117,8 @@ pub struct FunctionDefinitionTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async"))]
     pub async_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
@@ -32016,6 +32154,8 @@ impl ::sittir_core::render::Render for FunctionDefinitionTransport {
 impl ::sittir_core::prepare::Prepare for FunctionDefinitionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.async_.prepare(ctx)?;
         self.name.prepare(ctx)?;
@@ -32062,6 +32202,8 @@ pub struct ParametersTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<::sittir_core::SlotValue<ParametersElementsTransport>>,
 }
@@ -32087,6 +32229,8 @@ impl ::sittir_core::render::Render for ParametersTransport {
 impl ::sittir_core::prepare::Prepare for ParametersTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
@@ -32128,6 +32272,8 @@ pub struct LambdaParametersTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters_elements"))]
     pub parameters_elements: ::sittir_core::SlotValue<ParametersElementsTransport>,
 }
@@ -32193,6 +32339,8 @@ pub struct ListSplatTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
 }
@@ -32218,6 +32366,8 @@ impl ::sittir_core::render::Render for ListSplatTransport {
 impl ::sittir_core::prepare::Prepare for ListSplatTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
@@ -32259,6 +32409,8 @@ pub struct DictionarySplatTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
 }
@@ -32284,6 +32436,8 @@ impl ::sittir_core::render::Render for DictionarySplatTransport {
 impl ::sittir_core::prepare::Prepare for DictionarySplatTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
@@ -32325,6 +32479,8 @@ pub struct GlobalStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names"))]
     pub names: Vec<::sittir_core::SlotValue<IdentifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names_separator_space_before"))]
@@ -32354,6 +32510,8 @@ impl ::sittir_core::render::Render for GlobalStatementTransport {
 impl ::sittir_core::prepare::Prepare for GlobalStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         ::sittir_core::prepare::fill_list_gaps(self.names.iter_mut().map(Some), ",", options::allowed(options::SITE_GLOBAL_STATEMENT_NAMES_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_GLOBAL_STATEMENT_NAMES_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.names_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_GLOBAL_STATEMENT_NAMES_SEPARATOR_SPACE_BEFORE].arm);
@@ -32398,6 +32556,8 @@ pub struct NonlocalStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names"))]
     pub names: Vec<::sittir_core::SlotValue<IdentifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names_separator_space_before"))]
@@ -32427,6 +32587,8 @@ impl ::sittir_core::render::Render for NonlocalStatementTransport {
 impl ::sittir_core::prepare::Prepare for NonlocalStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         ::sittir_core::prepare::fill_list_gaps(self.names.iter_mut().map(Some), ",", options::allowed(options::SITE_NONLOCAL_STATEMENT_NAMES_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_NONLOCAL_STATEMENT_NAMES_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.names_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_NONLOCAL_STATEMENT_NAMES_SEPARATOR_SPACE_BEFORE].arm);
@@ -32471,6 +32633,8 @@ pub struct ExecStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_code"))]
     pub code: ::sittir_core::SlotValue<ExecStatementCodeTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_clause"))]
@@ -32502,6 +32666,8 @@ impl ::sittir_core::render::Render for ExecStatementTransport {
 impl ::sittir_core::prepare::Prepare for ExecStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         if let Some(gap_items) = self.in_clause.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), ",", options::allowed(options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx); }
         self.in_clause_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_BEFORE].arm);
@@ -32548,6 +32714,8 @@ pub struct TypeAliasStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
@@ -32575,6 +32743,8 @@ impl ::sittir_core::render::Render for TypeAliasStatementTransport {
 impl ::sittir_core::prepare::Prepare for TypeAliasStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
@@ -32617,6 +32787,8 @@ pub struct ClassDefinitionTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
@@ -32648,6 +32820,8 @@ impl ::sittir_core::render::Render for ClassDefinitionTransport {
 impl ::sittir_core::prepare::Prepare for ClassDefinitionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.type_parameters.prepare(ctx)?;
@@ -32692,6 +32866,8 @@ pub struct TypeParameterTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_types"))]
     pub types: ::sittir_core::SlotValue<TypesTransport>,
 }
@@ -32717,6 +32893,8 @@ impl ::sittir_core::render::Render for TypeParameterTransport {
 impl ::sittir_core::prepare::Prepare for TypeParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.types.prepare(ctx)?;
         Ok(())
@@ -32758,6 +32936,8 @@ pub struct ParenthesizedListSplatTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<ParenthesizedListSplatContentTransportSlot>>,
 }
@@ -32783,6 +32963,8 @@ impl ::sittir_core::render::Render for ParenthesizedListSplatTransport {
 impl ::sittir_core::prepare::Prepare for ParenthesizedListSplatTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.content.prepare(ctx)?;
         Ok(())
@@ -32824,6 +33006,8 @@ pub struct ArgumentListTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
     pub arguments: Option<::sittir_core::SlotValue<ArgumentListElementsTransport>>,
 }
@@ -32849,6 +33033,8 @@ impl ::sittir_core::render::Render for ArgumentListTransport {
 impl ::sittir_core::prepare::Prepare for ArgumentListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.arguments.prepare(ctx)?;
         Ok(())
@@ -32890,6 +33076,8 @@ pub struct DecoratedDefinitionTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_definition"))]
     pub definition: ::sittir_core::SlotValue<DecoratedDefinitionDefinitionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
@@ -32919,6 +33107,8 @@ impl ::sittir_core::render::Render for DecoratedDefinitionTransport {
 impl ::sittir_core::prepare::Prepare for DecoratedDefinitionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         ::sittir_core::prepare::fill_list_gaps(self.decorator.iter_mut().map(Some), "", options::allowed(options::SITE_DECORATED_DEFINITION_DECORATOR_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.decorator_separator_space.get_or_insert(ctx.options.spacing[options::SITE_DECORATED_DEFINITION_DECORATOR_SEPARATOR_SPACE].arm);
@@ -32964,6 +33154,8 @@ pub struct DecoratorTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
 }
@@ -32989,6 +33181,8 @@ impl ::sittir_core::render::Render for DecoratorTransport {
 impl ::sittir_core::prepare::Prepare for DecoratorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
@@ -33030,6 +33224,8 @@ pub struct BlockTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements"))]
     pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_separator_space"))]
@@ -33057,6 +33253,8 @@ impl ::sittir_core::render::Render for BlockTransport {
 impl ::sittir_core::prepare::Prepare for BlockTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         if let Some(gap_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
         self.statements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE].arm);
@@ -33101,6 +33299,8 @@ pub struct ExpressionListTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -33177,6 +33377,8 @@ pub struct DottedNameTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names"))]
     pub names: Vec<::sittir_core::SlotValue<IdentifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names_separator_space_before"))]
@@ -33249,6 +33451,8 @@ pub struct CasePatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<CasePatternContentTransportSlot>>,
 }
@@ -33314,6 +33518,8 @@ pub struct SimplePatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<SimplePatternContentTransportSlot>,
 }
@@ -33379,6 +33585,8 @@ pub struct CaseAsPatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_pattern"))]
     pub case_pattern: ::sittir_core::SlotValue<Box<CasePatternTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]
@@ -33406,6 +33614,8 @@ impl ::sittir_core::render::Render for CaseAsPatternTransport {
 impl ::sittir_core::prepare::Prepare for CaseAsPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.case_pattern.prepare(ctx)?;
         self.identifier.prepare(ctx)?;
@@ -33448,6 +33658,8 @@ pub struct UnionPatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_patterns"))]
     pub patterns: Vec<::sittir_core::SlotValue<UnionPatternPatternsTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_patterns_separator_space_before"))]
@@ -33521,6 +33733,8 @@ pub struct DictPatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<::sittir_core::SlotValue<DictPatternElementsTransport>>,
 }
@@ -33546,6 +33760,8 @@ impl ::sittir_core::render::Render for DictPatternTransport {
 impl ::sittir_core::prepare::Prepare for DictPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
@@ -33587,6 +33803,8 @@ pub struct KeyValuePatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_key"))]
     pub key: ::sittir_core::SlotValue<KeyValuePatternKeyTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
@@ -33614,6 +33832,8 @@ impl ::sittir_core::render::Render for KeyValuePatternTransport {
 impl ::sittir_core::prepare::Prepare for KeyValuePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.key.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -33656,6 +33876,8 @@ pub struct KeywordPatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
@@ -33683,6 +33905,8 @@ impl ::sittir_core::render::Render for KeywordPatternTransport {
 impl ::sittir_core::prepare::Prepare for KeywordPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -33725,6 +33949,8 @@ pub struct SplatPatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
     pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
@@ -33752,6 +33978,8 @@ impl ::sittir_core::render::Render for SplatPatternTransport {
 impl ::sittir_core::prepare::Prepare for SplatPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.operator.prepare(ctx)?;
         self.name.prepare(ctx)?;
@@ -33794,6 +34022,8 @@ pub struct ClassPatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<DottedNameTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
@@ -33821,6 +34051,8 @@ impl ::sittir_core::render::Render for ClassPatternTransport {
 impl ::sittir_core::prepare::Prepare for ClassPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.arguments.prepare(ctx)?;
@@ -33863,6 +34095,8 @@ pub struct ComplexPatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sign"))]
     pub sign: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_real"))]
@@ -33894,6 +34128,8 @@ impl ::sittir_core::render::Render for ComplexPatternTransport {
 impl ::sittir_core::prepare::Prepare for ComplexPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.sign.prepare(ctx)?;
         self.real.prepare(ctx)?;
@@ -33938,6 +34174,8 @@ pub struct ParametersElementsTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<ParameterTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -34014,6 +34252,8 @@ pub struct PatternsTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<PatternTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -34090,6 +34330,8 @@ pub struct TuplePatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_patterns"))]
     pub patterns: Option<::sittir_core::SlotValue<PatternsTransport>>,
 }
@@ -34115,6 +34357,8 @@ impl ::sittir_core::render::Render for TuplePatternTransport {
 impl ::sittir_core::prepare::Prepare for TuplePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.patterns.prepare(ctx)?;
         Ok(())
@@ -34156,6 +34400,8 @@ pub struct ListPatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_patterns"))]
     pub patterns: Option<::sittir_core::SlotValue<PatternsTransport>>,
 }
@@ -34181,6 +34427,8 @@ impl ::sittir_core::render::Render for ListPatternTransport {
 impl ::sittir_core::prepare::Prepare for ListPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.patterns.prepare(ctx)?;
         Ok(())
@@ -34222,6 +34470,8 @@ pub struct DefaultParameterTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<DefaultParameterNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
@@ -34249,6 +34499,8 @@ impl ::sittir_core::render::Render for DefaultParameterTransport {
 impl ::sittir_core::prepare::Prepare for DefaultParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -34291,6 +34543,8 @@ pub struct TypedDefaultParameterTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
@@ -34320,6 +34574,8 @@ impl ::sittir_core::render::Render for TypedDefaultParameterTransport {
 impl ::sittir_core::prepare::Prepare for TypedDefaultParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.type_.prepare(ctx)?;
@@ -34363,6 +34619,8 @@ pub struct ListSplatPatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_target"))]
     pub target: ::sittir_core::SlotValue<Box<ListSplatPatternTargetTransportSlot>>,
 }
@@ -34388,6 +34646,8 @@ impl ::sittir_core::render::Render for ListSplatPatternTransport {
 impl ::sittir_core::prepare::Prepare for ListSplatPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.target.prepare(ctx)?;
         Ok(())
@@ -34429,6 +34689,8 @@ pub struct DictionarySplatPatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_target"))]
     pub target: ::sittir_core::SlotValue<DictionarySplatPatternTargetTransportSlot>,
 }
@@ -34454,6 +34716,8 @@ impl ::sittir_core::render::Render for DictionarySplatPatternTransport {
 impl ::sittir_core::prepare::Prepare for DictionarySplatPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.target.prepare(ctx)?;
         Ok(())
@@ -34495,6 +34759,8 @@ pub struct AsPatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
@@ -34522,6 +34788,8 @@ impl ::sittir_core::render::Render for AsPatternTransport {
 impl ::sittir_core::prepare::Prepare for AsPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         self.alias.prepare(ctx)?;
@@ -34564,6 +34832,8 @@ pub struct NotOperatorTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
     pub argument: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
@@ -34589,6 +34859,8 @@ impl ::sittir_core::render::Render for NotOperatorTransport {
 impl ::sittir_core::prepare::Prepare for NotOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.argument.prepare(ctx)?;
         Ok(())
@@ -34630,6 +34902,8 @@ pub struct BooleanOperatorTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
@@ -34659,6 +34933,8 @@ impl ::sittir_core::render::Render for BooleanOperatorTransport {
 impl ::sittir_core::prepare::Prepare for BooleanOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.operator.prepare(ctx)?;
@@ -34702,6 +34978,8 @@ pub struct BinaryOperatorTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
@@ -34731,6 +35009,8 @@ impl ::sittir_core::render::Render for BinaryOperatorTransport {
 impl ::sittir_core::prepare::Prepare for BinaryOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.operator.prepare(ctx)?;
@@ -34774,6 +35054,8 @@ pub struct UnaryOperatorTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
     pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
@@ -34801,6 +35083,8 @@ impl ::sittir_core::render::Render for UnaryOperatorTransport {
 impl ::sittir_core::prepare::Prepare for UnaryOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.operator.prepare(ctx)?;
         self.argument.prepare(ctx)?;
@@ -34843,6 +35127,8 @@ pub struct ComparisonOperatorTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comparators"))]
@@ -34872,6 +35158,8 @@ impl ::sittir_core::render::Render for ComparisonOperatorTransport {
 impl ::sittir_core::prepare::Prepare for ComparisonOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         ::sittir_core::prepare::fill_list_gaps(self.comparators.iter_mut().map(Some), "", options::allowed(options::SITE_COMPARISON_OPERATOR_COMPARATORS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.comparators_separator_space.get_or_insert(ctx.options.spacing[options::SITE_COMPARISON_OPERATOR_COMPARATORS_SEPARATOR_SPACE].arm);
@@ -34917,6 +35205,8 @@ pub struct LambdaTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: Option<::sittir_core::SlotValue<LambdaParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
@@ -34944,6 +35234,8 @@ impl ::sittir_core::render::Render for LambdaTransport {
 impl ::sittir_core::prepare::Prepare for LambdaTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.parameters.prepare(ctx)?;
         self.body.prepare(ctx)?;
@@ -34986,6 +35278,8 @@ pub struct LambdaWithinForInClauseTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: Option<::sittir_core::SlotValue<LambdaParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
@@ -35013,6 +35307,8 @@ impl ::sittir_core::render::Render for LambdaWithinForInClauseTransport {
 impl ::sittir_core::prepare::Prepare for LambdaWithinForInClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.parameters.prepare(ctx)?;
         self.body.prepare(ctx)?;
@@ -35055,6 +35351,8 @@ pub struct AugmentedAssignmentTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<AugmentedAssignmentLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
@@ -35084,6 +35382,8 @@ impl ::sittir_core::render::Render for AugmentedAssignmentTransport {
 impl ::sittir_core::prepare::Prepare for AugmentedAssignmentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.operator.prepare(ctx)?;
@@ -35127,6 +35427,8 @@ pub struct PatternListTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<PatternTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -35203,6 +35505,8 @@ pub struct YieldTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<::sittir_core::SlotValue<Box<YieldContentTransportSlot>>>,
 }
@@ -35228,6 +35532,8 @@ impl ::sittir_core::render::Render for YieldTransport {
 impl ::sittir_core::prepare::Prepare for YieldTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.content.prepare(ctx)?;
         Ok(())
@@ -35269,6 +35575,8 @@ pub struct AttributeTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
     pub object: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute"))]
@@ -35296,6 +35604,8 @@ impl ::sittir_core::render::Render for AttributeTransport {
 impl ::sittir_core::prepare::Prepare for AttributeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.object.prepare(ctx)?;
         self.attribute.prepare(ctx)?;
@@ -35338,6 +35648,8 @@ pub struct SubscriptTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subscripts"))]
@@ -35365,6 +35677,8 @@ impl ::sittir_core::render::Render for SubscriptTransport {
 impl ::sittir_core::prepare::Prepare for SubscriptTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.value.prepare(ctx)?;
         self.subscripts.prepare(ctx)?;
@@ -35407,6 +35721,8 @@ pub struct SliceTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_start"))]
     pub start: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_stop"))]
@@ -35436,6 +35752,8 @@ impl ::sittir_core::render::Render for SliceTransport {
 impl ::sittir_core::prepare::Prepare for SliceTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.start.prepare(ctx)?;
         self.stop.prepare(ctx)?;
@@ -35475,6 +35793,7 @@ pub struct EllipsisTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -35517,6 +35836,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "...".to_string(),
@@ -35524,6 +35844,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "...".to_string())
             }
         };
@@ -35531,6 +35852,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -35547,10 +35869,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -35595,6 +35919,8 @@ pub struct CallTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
     pub function: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
@@ -35622,6 +35948,8 @@ impl ::sittir_core::render::Render for CallTransport {
 impl ::sittir_core::prepare::Prepare for CallTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.function.prepare(ctx)?;
         self.arguments.prepare(ctx)?;
@@ -35664,6 +35992,8 @@ pub struct TypedParameterTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<TypedParameterNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
@@ -35691,6 +36021,8 @@ impl ::sittir_core::render::Render for TypedParameterTransport {
 impl ::sittir_core::prepare::Prepare for TypedParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.type_.prepare(ctx)?;
@@ -35733,6 +36065,8 @@ pub struct TypeTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<TypeContentTransportSlot>>,
 }
@@ -35798,6 +36132,8 @@ pub struct SplatTypeTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
     pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
@@ -35825,6 +36161,8 @@ impl ::sittir_core::render::Render for SplatTypeTransport {
 impl ::sittir_core::prepare::Prepare for SplatTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.operator.prepare(ctx)?;
         self.name.prepare(ctx)?;
@@ -35867,6 +36205,8 @@ pub struct GenericTypeTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<GenericTypeNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter"))]
@@ -35894,6 +36234,8 @@ impl ::sittir_core::render::Render for GenericTypeTransport {
 impl ::sittir_core::prepare::Prepare for GenericTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.type_parameter.prepare(ctx)?;
@@ -35936,6 +36278,8 @@ pub struct UnionTypeTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<Box<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
@@ -35963,6 +36307,8 @@ impl ::sittir_core::render::Render for UnionTypeTransport {
 impl ::sittir_core::prepare::Prepare for UnionTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
@@ -36005,6 +36351,8 @@ pub struct ConstrainedTypeTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_base_type"))]
     pub base_type: ::sittir_core::SlotValue<Box<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_constraint"))]
@@ -36032,6 +36380,8 @@ impl ::sittir_core::render::Render for ConstrainedTypeTransport {
 impl ::sittir_core::prepare::Prepare for ConstrainedTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.base_type.prepare(ctx)?;
         self.constraint.prepare(ctx)?;
@@ -36074,6 +36424,8 @@ pub struct MemberTypeTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_base_type"))]
     pub base_type: ::sittir_core::SlotValue<Box<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
@@ -36101,6 +36453,8 @@ impl ::sittir_core::render::Render for MemberTypeTransport {
 impl ::sittir_core::prepare::Prepare for MemberTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.base_type.prepare(ctx)?;
         self.name.prepare(ctx)?;
@@ -36143,6 +36497,8 @@ pub struct KeywordArgumentTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<KeywordArgumentNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
@@ -36170,6 +36526,8 @@ impl ::sittir_core::render::Render for KeywordArgumentTransport {
 impl ::sittir_core::prepare::Prepare for KeywordArgumentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -36212,6 +36570,8 @@ pub struct ListTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_collection_elements"))]
     pub collection_elements: Option<::sittir_core::SlotValue<CollectionElementsTransport>>,
 }
@@ -36237,6 +36597,8 @@ impl ::sittir_core::render::Render for ListTransport {
 impl ::sittir_core::prepare::Prepare for ListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.collection_elements.prepare(ctx)?;
         Ok(())
@@ -36278,6 +36640,8 @@ pub struct SetTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_collection_elements"))]
     pub collection_elements: ::sittir_core::SlotValue<CollectionElementsTransport>,
 }
@@ -36303,6 +36667,8 @@ impl ::sittir_core::render::Render for SetTransport {
 impl ::sittir_core::prepare::Prepare for SetTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.collection_elements.prepare(ctx)?;
         Ok(())
@@ -36344,6 +36710,8 @@ pub struct TupleTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<::sittir_core::SlotValue<TupleElementsTransport>>,
 }
@@ -36369,6 +36737,8 @@ impl ::sittir_core::render::Render for TupleTransport {
 impl ::sittir_core::prepare::Prepare for TupleTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
@@ -36410,6 +36780,8 @@ pub struct DictionaryTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<::sittir_core::SlotValue<DictionaryElementsTransport>>,
 }
@@ -36435,6 +36807,8 @@ impl ::sittir_core::render::Render for DictionaryTransport {
 impl ::sittir_core::prepare::Prepare for DictionaryTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
@@ -36476,6 +36850,8 @@ pub struct PairTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_key"))]
     pub key: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
@@ -36503,6 +36879,8 @@ impl ::sittir_core::render::Render for PairTransport {
 impl ::sittir_core::prepare::Prepare for PairTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.key.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -36545,6 +36923,8 @@ pub struct ListComprehensionTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comprehension_clauses"))]
@@ -36572,6 +36952,8 @@ impl ::sittir_core::render::Render for ListComprehensionTransport {
 impl ::sittir_core::prepare::Prepare for ListComprehensionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
         self.comprehension_clauses.prepare(ctx)?;
@@ -36614,6 +36996,8 @@ pub struct DictionaryComprehensionTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<PairTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comprehension_clauses"))]
@@ -36641,6 +37025,8 @@ impl ::sittir_core::render::Render for DictionaryComprehensionTransport {
 impl ::sittir_core::prepare::Prepare for DictionaryComprehensionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
         self.comprehension_clauses.prepare(ctx)?;
@@ -36683,6 +37069,8 @@ pub struct SetComprehensionTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comprehension_clauses"))]
@@ -36710,6 +37098,8 @@ impl ::sittir_core::render::Render for SetComprehensionTransport {
 impl ::sittir_core::prepare::Prepare for SetComprehensionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
         self.comprehension_clauses.prepare(ctx)?;
@@ -36752,6 +37142,8 @@ pub struct GeneratorExpressionTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comprehension_clauses"))]
@@ -36779,6 +37171,8 @@ impl ::sittir_core::render::Render for GeneratorExpressionTransport {
 impl ::sittir_core::prepare::Prepare for GeneratorExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
         self.comprehension_clauses.prepare(ctx)?;
@@ -36821,6 +37215,8 @@ pub struct ParenthesizedExpressionTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<ParenthesizedExpressionExpressionTransportSlot>>,
 }
@@ -36846,6 +37242,8 @@ impl ::sittir_core::render::Render for ParenthesizedExpressionTransport {
 impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
@@ -36887,6 +37285,8 @@ pub struct CollectionElementsTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<CollectionElementsItemTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -36963,6 +37363,8 @@ pub struct ForInClauseTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async"))]
     pub async_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
@@ -36998,6 +37400,8 @@ impl ::sittir_core::render::Render for ForInClauseTransport {
 impl ::sittir_core::prepare::Prepare for ForInClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         ::sittir_core::prepare::fill_list_gaps(self.right.iter_mut().map(Some), ",", options::allowed(options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.right_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_BEFORE].arm);
@@ -37046,6 +37450,8 @@ pub struct IfClauseTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: ::sittir_core::SlotValue<ExpressionTransport>,
 }
@@ -37071,6 +37477,8 @@ impl ::sittir_core::render::Render for IfClauseTransport {
 impl ::sittir_core::prepare::Prepare for IfClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.condition.prepare(ctx)?;
         Ok(())
@@ -37112,6 +37520,8 @@ pub struct ConditionalExpressionTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
@@ -37141,6 +37551,8 @@ impl ::sittir_core::render::Render for ConditionalExpressionTransport {
 impl ::sittir_core::prepare::Prepare for ConditionalExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
         self.condition.prepare(ctx)?;
@@ -37184,6 +37596,8 @@ pub struct ConcatenatedStringTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_string"))]
     pub string: Vec<::sittir_core::SlotValue<StringTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_string_separator_space"))]
@@ -37211,6 +37625,8 @@ impl ::sittir_core::render::Render for ConcatenatedStringTransport {
 impl ::sittir_core::prepare::Prepare for ConcatenatedStringTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         ::sittir_core::prepare::fill_list_gaps(self.string.iter_mut().map(Some), "", options::allowed(options::SITE_CONCATENATED_STRING_STRING_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.string_separator_space.get_or_insert(ctx.options.spacing[options::SITE_CONCATENATED_STRING_STRING_SEPARATOR_SPACE].arm);
@@ -37255,6 +37671,8 @@ pub struct StringTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_string_start"))]
     pub string_start: ::sittir_core::SlotValue<StringStartTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
@@ -37284,6 +37702,8 @@ impl ::sittir_core::render::Render for StringTransport {
 impl ::sittir_core::prepare::Prepare for StringTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.string_start.prepare(ctx)?;
         self.content.prepare(ctx)?;
@@ -37327,6 +37747,8 @@ pub struct StringContentTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<::sittir_core::SlotValue<StringContentContentTransportSlot, true>>>,
 }
@@ -37392,6 +37814,8 @@ pub struct InterpolationTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<InterpolationExpressionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_debug"))]
@@ -37423,6 +37847,8 @@ impl ::sittir_core::render::Render for InterpolationTransport {
 impl ::sittir_core::prepare::Prepare for InterpolationTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         self.debug.prepare(ctx)?;
@@ -37463,6 +37889,7 @@ pub struct NotEscapeSequenceTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -37505,6 +37932,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NotEscapeSequenceTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "\\".to_string(),
@@ -37512,6 +37940,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NotEscapeSequenceTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "\\".to_string())
             }
         };
@@ -37519,6 +37948,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NotEscapeSequenceTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -37535,10 +37965,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for NotEscapeSequenceTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -37583,6 +38015,8 @@ pub struct FormatSpecifierTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<Vec<::sittir_core::SlotValue<FormatSpecifierElementsTransportSlot, true>>>,
 }
@@ -37608,6 +38042,8 @@ impl ::sittir_core::render::Render for FormatSpecifierTransport {
 impl ::sittir_core::prepare::Prepare for FormatSpecifierTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
@@ -37645,6 +38081,7 @@ pub struct TypeConversionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -37687,6 +38124,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeConversionTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -37701,6 +38139,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeConversionTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -37708,6 +38147,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeConversionTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -37724,10 +38164,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeConversionTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -37768,6 +38210,7 @@ pub struct IdentifierTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -37810,6 +38253,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -37824,6 +38268,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -37831,6 +38276,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -37847,10 +38293,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -37891,6 +38339,7 @@ pub struct TrueTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -37933,6 +38382,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TrueTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "True".to_string(),
@@ -37940,6 +38390,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TrueTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "True".to_string())
             }
         };
@@ -37947,6 +38398,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TrueTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -37963,10 +38415,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for TrueTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -38007,6 +38461,7 @@ pub struct FalseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -38049,6 +38504,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FalseTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "False".to_string(),
@@ -38056,6 +38512,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FalseTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "False".to_string())
             }
         };
@@ -38063,6 +38520,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FalseTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -38079,10 +38537,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for FalseTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -38123,6 +38583,7 @@ pub struct NoneTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -38165,6 +38626,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NoneTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "None".to_string(),
@@ -38172,6 +38634,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NoneTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "None".to_string())
             }
         };
@@ -38179,6 +38642,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NoneTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -38195,10 +38659,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for NoneTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -38243,6 +38709,8 @@ pub struct AwaitTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
 }
@@ -38268,6 +38736,8 @@ impl ::sittir_core::render::Render for AwaitTransport {
 impl ::sittir_core::prepare::Prepare for AwaitTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
@@ -38309,6 +38779,8 @@ pub struct CommentTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: String,
 }
@@ -38370,6 +38842,7 @@ pub struct PositionalSeparatorTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -38412,6 +38885,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PositionalSeparatorTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "/".to_string(),
@@ -38419,6 +38893,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PositionalSeparatorTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "/".to_string())
             }
         };
@@ -38426,6 +38901,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PositionalSeparatorTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -38442,10 +38918,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for PositionalSeparatorTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -38486,6 +38964,7 @@ pub struct KeywordSeparatorTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -38528,6 +39007,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeywordSeparatorTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "*".to_string(),
@@ -38535,6 +39015,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeywordSeparatorTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "*".to_string())
             }
         };
@@ -38542,6 +39023,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeywordSeparatorTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -38558,10 +39040,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeywordSeparatorTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -38606,6 +39090,8 @@ pub struct SimpleStatementsElementsTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<SimpleStatementTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -38682,6 +39168,8 @@ pub struct SubjectsTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subject"))]
     pub subject: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -38758,6 +39246,8 @@ pub struct CasePatternsTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<CasePatternTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -38834,6 +39324,8 @@ pub struct WithClauseWithItemsTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<WithItemTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -38909,6 +39401,8 @@ pub struct TypesTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -38985,6 +39479,8 @@ pub struct ArgumentListElementsTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<ArgumentListElementsItemTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -39061,6 +39557,8 @@ pub struct ListPatternCasePatternsTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<CasePatternTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -39137,6 +39635,8 @@ pub struct DictPatternElementsTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<DictPatternElementsItemTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -39213,6 +39713,8 @@ pub struct SubscriptsTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subscript"))]
     pub subscript: Vec<::sittir_core::SlotValue<SubscriptsSubscriptTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -39289,6 +39791,8 @@ pub struct DictionaryElementsTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<DictionaryElementsItemTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -39365,6 +39869,8 @@ pub struct SliceGroupTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Option<::sittir_core::SlotValue<ExpressionTransport>>,
 }
@@ -39390,6 +39896,8 @@ impl ::sittir_core::render::Render for SliceGroupTransport {
 impl ::sittir_core::prepare::Prepare for SliceGroupTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
@@ -39427,6 +39935,7 @@ pub struct FormatSpecifierTextTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -39469,6 +39978,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FormatSpecifierTextTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -39483,6 +39993,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FormatSpecifierTextTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -39490,6 +40001,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FormatSpecifierTextTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -39506,10 +40018,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for FormatSpecifierTextTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -39554,6 +40068,8 @@ pub struct TupleElementsTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<TupleElementsItemTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -39630,6 +40146,8 @@ pub struct ExceptClauseExceptionAsTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
@@ -39657,6 +40175,8 @@ impl ::sittir_core::render::Render for ExceptClauseExceptionAsTransport {
 impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionAsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.value.prepare(ctx)?;
         self.alias.prepare(ctx)?;
@@ -39699,6 +40219,8 @@ pub struct CaseTuplePatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_list_pattern_case_patterns"))]
     pub list_pattern_case_patterns: Option<::sittir_core::SlotValue<ListPatternCasePatternsTransport>>,
 }
@@ -39724,6 +40246,8 @@ impl ::sittir_core::render::Render for CaseTuplePatternTransport {
 impl ::sittir_core::prepare::Prepare for CaseTuplePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.list_pattern_case_patterns.prepare(ctx)?;
         Ok(())
@@ -39765,6 +40289,8 @@ pub struct CaseListPatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_list_pattern_case_patterns"))]
     pub list_pattern_case_patterns: Option<::sittir_core::SlotValue<ListPatternCasePatternsTransport>>,
 }
@@ -39790,6 +40316,8 @@ impl ::sittir_core::render::Render for CaseListPatternTransport {
 impl ::sittir_core::prepare::Prepare for CaseListPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.list_pattern_case_patterns.prepare(ctx)?;
         Ok(())
@@ -39831,6 +40359,8 @@ pub struct PrintArgumentsTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
     pub argument: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -39907,6 +40437,8 @@ pub struct PrintChevronArgumentsTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
     pub argument: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -39983,6 +40515,8 @@ pub struct PrintStatementChevronTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_chevron"))]
     pub chevron: ::sittir_core::SlotValue<ChevronTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_chevron_arguments"))]
@@ -40010,6 +40544,8 @@ impl ::sittir_core::render::Render for PrintStatementChevronTransport {
 impl ::sittir_core::prepare::Prepare for PrintStatementChevronTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.chevron.prepare(ctx)?;
         self.print_chevron_arguments.prepare(ctx)?;
@@ -40052,6 +40588,8 @@ pub struct PrintStatementPlainTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_arguments"))]
     pub print_arguments: ::sittir_core::SlotValue<PrintArgumentsTransport>,
 }
@@ -40077,6 +40615,8 @@ impl ::sittir_core::render::Render for PrintStatementPlainTransport {
 impl ::sittir_core::prepare::Prepare for PrintStatementPlainTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.print_arguments.prepare(ctx)?;
         Ok(())
@@ -40114,6 +40654,7 @@ pub struct WildcardPatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -40156,6 +40697,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WildcardPatternTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "_".to_string(),
@@ -40163,6 +40705,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WildcardPatternTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "_".to_string())
             }
         };
@@ -40170,6 +40713,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WildcardPatternTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -40186,10 +40730,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for WildcardPatternTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -40234,6 +40780,8 @@ pub struct ParenthesizedImportListTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_list"))]
     pub import_list: ::sittir_core::SlotValue<ImportListTransport>,
 }
@@ -40259,6 +40807,8 @@ impl ::sittir_core::render::Render for ParenthesizedImportListTransport {
 impl ::sittir_core::prepare::Prepare for ParenthesizedImportListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.import_list.prepare(ctx)?;
         Ok(())
@@ -40300,6 +40850,8 @@ pub struct ComprehensionClausesTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<::sittir_core::SlotValue<ComprehensionClausesContentTransportSlot>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_separator_space"))]
@@ -40370,6 +40922,8 @@ pub struct IntegerHexTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_prefix"))]
     pub prefix: String,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
@@ -40438,6 +40992,8 @@ pub struct IntegerOctalTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_prefix"))]
     pub prefix: String,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
@@ -40506,6 +41062,8 @@ pub struct IntegerBinaryTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_prefix"))]
     pub prefix: String,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
@@ -40570,6 +41128,7 @@ pub struct IntegerDecimalLongTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -40612,6 +41171,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerDecimalLongTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -40626,6 +41186,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerDecimalLongTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -40633,6 +41194,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerDecimalLongTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -40649,10 +41211,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerDecimalLongTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -40693,6 +41257,7 @@ pub struct IntegerDecimalImaginaryTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -40735,6 +41300,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerDecimalImaginaryTransport
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -40749,6 +41315,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerDecimalImaginaryTransport
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -40756,6 +41323,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerDecimalImaginaryTransport
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -40772,10 +41340,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerDecimalImaginaryTransport
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -40816,6 +41386,7 @@ pub struct IntegerDecimalPlainTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -40858,6 +41429,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerDecimalPlainTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -40872,6 +41444,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerDecimalPlainTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -40879,6 +41452,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerDecimalPlainTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -40895,10 +41469,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerDecimalPlainTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -40943,6 +41519,8 @@ pub struct FloatPointTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_integer"))]
     pub integer: String,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_fraction"))]
@@ -41020,6 +41598,8 @@ pub struct FloatLeadingPointTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_integer"))]
     pub integer: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_fraction"))]
@@ -41097,6 +41677,8 @@ pub struct FloatScientificTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_integer"))]
     pub integer: String,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_marker"))]
@@ -41171,6 +41753,8 @@ pub struct EscapeSequenceUnicodeFixedTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: String,
 }
@@ -41236,6 +41820,8 @@ pub struct EscapeSequenceUnicodeWideTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: String,
 }
@@ -41301,6 +41887,8 @@ pub struct EscapeSequenceHexTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: String,
 }
@@ -41366,6 +41954,8 @@ pub struct EscapeSequenceOctalTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: String,
 }
@@ -41431,6 +42021,8 @@ pub struct EscapeSequenceLineBreakTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: String,
 }
@@ -41496,6 +42088,8 @@ pub struct EscapeSequenceSimpleTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: String,
 }
@@ -41561,6 +42155,8 @@ pub struct EscapeSequenceNamedTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: String,
 }
@@ -41622,6 +42218,7 @@ pub struct LineContinuationNewlineTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -41664,6 +42261,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationNewlineTransport
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -41678,6 +42276,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationNewlineTransport
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -41685,6 +42284,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationNewlineTransport
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -41701,10 +42301,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationNewlineTransport
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -41745,6 +42347,7 @@ pub struct LineContinuationNulTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -41787,6 +42390,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationNulTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "\\\u{0}".to_string(),
@@ -41794,6 +42398,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationNulTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "\\\u{0}".to_string())
             }
         };
@@ -41801,6 +42406,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationNulTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -41817,10 +42423,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationNulTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -41865,6 +42473,8 @@ pub struct SimplePatternNegativeTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sign"))]
     pub sign: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
@@ -41892,6 +42502,8 @@ impl ::sittir_core::render::Render for SimplePatternNegativeTransport {
 impl ::sittir_core::prepare::Prepare for SimplePatternNegativeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.sign.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -41934,6 +42546,8 @@ pub struct ExceptClauseExceptionListTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value_separator_space_before"))]
@@ -42007,6 +42621,8 @@ pub struct ExceptClauseExceptionTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ExceptClauseExceptionContentTransportSlot>,
 }
@@ -42072,6 +42688,8 @@ pub struct AssignmentEqTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<AssignmentEqLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
@@ -42099,6 +42717,8 @@ impl ::sittir_core::render::Render for AssignmentEqTransport {
 impl ::sittir_core::prepare::Prepare for AssignmentEqTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
@@ -42141,6 +42761,8 @@ pub struct AssignmentTypeTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<AssignmentTypeLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
@@ -42168,6 +42790,8 @@ impl ::sittir_core::render::Render for AssignmentTypeTransport {
 impl ::sittir_core::prepare::Prepare for AssignmentTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.type_.prepare(ctx)?;
@@ -42210,6 +42834,8 @@ pub struct AssignmentTypedTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<AssignmentTypedLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
@@ -42239,6 +42865,8 @@ impl ::sittir_core::render::Render for AssignmentTypedTransport {
 impl ::sittir_core::prepare::Prepare for AssignmentTypedTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.type_.prepare(ctx)?;
@@ -42282,6 +42910,8 @@ pub struct ExpressionStatementTupleTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -42358,6 +42988,8 @@ pub struct WithClauseBareTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_item"))]
     pub item: Vec<::sittir_core::SlotValue<WithItemTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
@@ -42433,6 +43065,8 @@ pub struct WithClauseParenTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_items"))]
     pub with_items: ::sittir_core::SlotValue<WithClauseWithItemsTransport>,
 }
@@ -42458,6 +43092,8 @@ impl ::sittir_core::render::Render for WithClauseParenTransport {
 impl ::sittir_core::prepare::Prepare for WithClauseParenTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.with_items.prepare(ctx)?;
         Ok(())
@@ -42499,6 +43135,8 @@ pub struct MatchBlockBlockTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
     pub alternative: Option<Vec<::sittir_core::SlotValue<CaseClauseTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative_separator_space"))]
@@ -42526,6 +43164,8 @@ impl ::sittir_core::render::Render for MatchBlockBlockTransport {
 impl ::sittir_core::prepare::Prepare for MatchBlockBlockTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         if let Some(gap_items) = self.alternative.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
         self.alternative_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE].arm);
@@ -42570,6 +43210,8 @@ pub struct MatchBlockEmptyTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_newline"))]
     pub newline: ::sittir_core::SlotValue<NewlineTransport>,
 }
@@ -42635,6 +43277,8 @@ pub struct SuiteInlineTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: ::sittir_core::SlotValue<SimpleStatementsElementsTransport>,
 }
@@ -42660,6 +43304,8 @@ impl ::sittir_core::render::Render for SuiteInlineTransport {
 impl ::sittir_core::prepare::Prepare for SuiteInlineTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
@@ -42701,6 +43347,8 @@ pub struct SuiteBlockTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_block"))]
     pub block: ::sittir_core::SlotValue<BlockTransport>,
 }
@@ -42726,6 +43374,8 @@ impl ::sittir_core::render::Render for SuiteBlockTransport {
 impl ::sittir_core::prepare::Prepare for SuiteBlockTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.block.prepare(ctx)?;
         Ok(())
@@ -42767,6 +43417,8 @@ pub struct SuiteEmptyTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_newline"))]
     pub newline: ::sittir_core::SlotValue<NewlineTransport>,
 }
@@ -42832,6 +43484,8 @@ pub struct ComparisonOperatorComparatorTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operators"))]
     pub operators: ::sittir_core::SlotValue<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_primary_expression"))]
@@ -42859,6 +43513,8 @@ impl ::sittir_core::render::Render for ComparisonOperatorComparatorTransport {
 impl ::sittir_core::prepare::Prepare for ComparisonOperatorComparatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.operators.prepare(ctx)?;
         self.primary_expression.prepare(ctx)?;
@@ -42901,6 +43557,8 @@ pub struct YieldFromClauseTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
@@ -42926,6 +43584,8 @@ impl ::sittir_core::render::Render for YieldFromClauseTransport {
 impl ::sittir_core::prepare::Prepare for YieldFromClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let flank = self.source_flank.take();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
@@ -42963,6 +43623,7 @@ pub struct StringStartTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -43005,6 +43666,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringStartTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -43019,6 +43681,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringStartTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -43026,6 +43689,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringStartTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -43042,10 +43706,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringStartTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -43086,6 +43752,7 @@ pub struct StringFragmentTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -43128,6 +43795,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringFragmentTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -43142,6 +43810,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringFragmentTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -43149,6 +43818,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringFragmentTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -43165,10 +43835,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringFragmentTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -43209,6 +43881,7 @@ pub struct EscapeInterpolationTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -43251,6 +43924,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EscapeInterpolationTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -43265,6 +43939,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EscapeInterpolationTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -43272,6 +43947,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EscapeInterpolationTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -43288,10 +43964,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for EscapeInterpolationTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -43332,6 +44010,7 @@ pub struct StringEndTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -43374,6 +44053,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringEndTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -43388,6 +44068,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringEndTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -43395,6 +44076,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringEndTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -43411,10 +44093,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringEndTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -43455,6 +44139,7 @@ pub struct TightTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -43497,6 +44182,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TightTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -43511,6 +44197,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TightTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -43518,6 +44205,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TightTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -43534,10 +44222,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for TightTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -43578,6 +44268,7 @@ pub struct SpaceTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -43620,6 +44311,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SpaceTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => " ".to_string(),
@@ -43627,6 +44319,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SpaceTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| " ".to_string())
             }
         };
@@ -43634,6 +44327,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SpaceTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -43650,10 +44344,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for SpaceTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -43694,6 +44390,7 @@ pub struct TabTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -43736,6 +44433,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TabTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "\t".to_string(),
@@ -43743,6 +44441,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TabTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "\t".to_string())
             }
         };
@@ -43750,6 +44449,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TabTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -43766,10 +44466,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for TabTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -43810,6 +44512,7 @@ pub struct NewlineTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -43852,6 +44555,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NewlineTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "\n".to_string(),
@@ -43859,6 +44563,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NewlineTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "\n".to_string())
             }
         };
@@ -43866,6 +44571,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NewlineTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -43882,10 +44588,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for NewlineTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -43926,6 +44634,7 @@ pub struct BlanklineTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -43968,6 +44677,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BlanklineTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "\n\n".to_string(),
@@ -43975,6 +44685,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BlanklineTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "\n\n".to_string())
             }
         };
@@ -43982,6 +44693,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BlanklineTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -43998,10 +44710,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for BlanklineTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -44042,6 +44756,7 @@ pub struct DoubleBlanklineTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -44084,6 +44799,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DoubleBlanklineTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "\n\n\n".to_string(),
@@ -44091,6 +44807,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DoubleBlanklineTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "\n\n\n".to_string())
             }
         };
@@ -44098,6 +44815,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DoubleBlanklineTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -44114,10 +44832,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for DoubleBlanklineTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -44158,6 +44878,7 @@ pub struct IndentTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -44200,6 +44921,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -44214,6 +44936,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -44221,6 +44944,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -44237,10 +44961,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -44281,6 +45007,7 @@ pub struct DedentTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -44323,6 +45050,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => {
@@ -44337,6 +45065,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -44344,6 +45073,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -44360,10 +45090,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -44408,6 +45140,8 @@ pub struct NamesTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ImportListTransport>,
 }
@@ -44473,6 +45207,8 @@ pub struct AsPatternTargetTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
@@ -44538,6 +45274,8 @@ pub struct FormatExpressionTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_gap"))]
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<InterpolationTransport>,
 }
@@ -44599,6 +45337,7 @@ pub struct ImportKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -44641,6 +45380,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "import".to_string(),
@@ -44648,6 +45388,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "import".to_string())
             }
         };
@@ -44655,6 +45396,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -44671,10 +45413,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -44715,6 +45459,7 @@ pub struct DotTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -44757,6 +45502,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => ".".to_string(),
@@ -44764,6 +45510,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| ".".to_string())
             }
         };
@@ -44771,6 +45518,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -44787,10 +45535,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -44831,6 +45581,7 @@ pub struct FromKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -44873,6 +45624,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FromKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "from".to_string(),
@@ -44880,6 +45632,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FromKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "from".to_string())
             }
         };
@@ -44887,6 +45640,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FromKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -44903,10 +45657,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for FromKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -44947,6 +45703,7 @@ pub struct FutureUKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -44983,6 +45740,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FutureUKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "__future__".to_string(),
@@ -44990,6 +45748,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FutureUKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "__future__".to_string())
             }
         };
@@ -44997,6 +45756,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FutureUKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -45013,10 +45773,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for FutureUKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -45057,6 +45819,7 @@ pub struct AsKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -45099,6 +45862,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "as".to_string(),
@@ -45106,6 +45870,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "as".to_string())
             }
         };
@@ -45113,6 +45878,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -45129,10 +45895,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -45173,6 +45941,7 @@ pub struct StarTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -45215,6 +45984,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "*".to_string(),
@@ -45222,6 +45992,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "*".to_string())
             }
         };
@@ -45229,6 +46000,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -45245,10 +46017,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -45289,6 +46063,7 @@ pub struct GtGtTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -45331,6 +46106,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => ">>".to_string(),
@@ -45338,6 +46114,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| ">>".to_string())
             }
         };
@@ -45345,6 +46122,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -45361,10 +46139,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -45405,6 +46185,7 @@ pub struct AssertKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -45447,6 +46228,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssertKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "assert".to_string(),
@@ -45454,6 +46236,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssertKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "assert".to_string())
             }
         };
@@ -45461,6 +46244,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssertKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -45477,10 +46261,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssertKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -45521,6 +46307,7 @@ pub struct PrintKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -45563,6 +46350,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "print".to_string(),
@@ -45570,6 +46358,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "print".to_string())
             }
         };
@@ -45577,6 +46366,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -45593,10 +46383,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -45637,6 +46429,7 @@ pub struct ExecKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -45679,6 +46472,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExecKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "exec".to_string(),
@@ -45686,6 +46480,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExecKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "exec".to_string())
             }
         };
@@ -45693,6 +46488,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExecKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -45709,10 +46505,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExecKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -45753,6 +46551,7 @@ pub struct AsyncKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -45795,6 +46594,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "async".to_string(),
@@ -45802,6 +46602,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "async".to_string())
             }
         };
@@ -45809,6 +46610,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -45825,10 +46627,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -45869,6 +46673,7 @@ pub struct AwaitKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -45911,6 +46716,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AwaitKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "await".to_string(),
@@ -45918,6 +46724,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AwaitKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "await".to_string())
             }
         };
@@ -45925,6 +46732,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AwaitKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -45941,10 +46749,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for AwaitKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -45985,6 +46795,7 @@ pub struct TypeKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -46027,6 +46838,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "type".to_string(),
@@ -46034,6 +46846,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "type".to_string())
             }
         };
@@ -46041,6 +46854,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -46057,10 +46871,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -46101,6 +46917,7 @@ pub struct MatchKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -46143,6 +46960,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "match".to_string(),
@@ -46150,6 +46968,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "match".to_string())
             }
         };
@@ -46157,6 +46976,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -46173,10 +46993,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -46217,6 +47039,7 @@ pub struct ColonEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -46259,6 +47082,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonEqTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => ":=".to_string(),
@@ -46266,6 +47090,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonEqTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| ":=".to_string())
             }
         };
@@ -46273,6 +47098,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonEqTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -46289,10 +47115,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonEqTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -46333,6 +47161,7 @@ pub struct ReturnKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -46375,6 +47204,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "return".to_string(),
@@ -46382,6 +47212,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "return".to_string())
             }
         };
@@ -46389,6 +47220,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -46405,10 +47237,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -46449,6 +47283,7 @@ pub struct DelKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -46491,6 +47326,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "del".to_string(),
@@ -46498,6 +47334,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "del".to_string())
             }
         };
@@ -46505,6 +47342,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -46521,10 +47359,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -46565,6 +47405,7 @@ pub struct RaiseKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -46607,6 +47448,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RaiseKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "raise".to_string(),
@@ -46614,6 +47456,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RaiseKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "raise".to_string())
             }
         };
@@ -46621,6 +47464,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RaiseKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -46637,10 +47481,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for RaiseKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -46681,6 +47527,7 @@ pub struct PassKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -46723,6 +47570,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PassKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "pass".to_string(),
@@ -46730,6 +47578,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PassKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "pass".to_string())
             }
         };
@@ -46737,6 +47586,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PassKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -46753,10 +47603,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for PassKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -46797,6 +47649,7 @@ pub struct BreakKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -46839,6 +47692,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "break".to_string(),
@@ -46846,6 +47700,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "break".to_string())
             }
         };
@@ -46853,6 +47708,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -46869,10 +47725,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -46913,6 +47771,7 @@ pub struct ContinueKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -46955,6 +47814,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "continue".to_string(),
@@ -46962,6 +47822,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "continue".to_string())
             }
         };
@@ -46969,6 +47830,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -46985,10 +47847,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -47029,6 +47893,7 @@ pub struct IfKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -47071,6 +47936,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "if".to_string(),
@@ -47078,6 +47944,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "if".to_string())
             }
         };
@@ -47085,6 +47952,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -47101,10 +47969,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -47145,6 +48015,7 @@ pub struct ColonTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -47187,6 +48058,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => ":".to_string(),
@@ -47194,6 +48066,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| ":".to_string())
             }
         };
@@ -47201,6 +48074,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -47217,10 +48091,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -47261,6 +48137,7 @@ pub struct ElifKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -47303,6 +48180,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElifKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "elif".to_string(),
@@ -47310,6 +48188,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElifKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "elif".to_string())
             }
         };
@@ -47317,6 +48196,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElifKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -47333,10 +48213,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElifKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -47377,6 +48259,7 @@ pub struct ElseKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -47419,6 +48302,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "else".to_string(),
@@ -47426,6 +48310,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "else".to_string())
             }
         };
@@ -47433,6 +48318,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -47449,10 +48335,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -47493,6 +48381,7 @@ pub struct CaseKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -47535,6 +48424,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaseKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "case".to_string(),
@@ -47542,6 +48432,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaseKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "case".to_string())
             }
         };
@@ -47549,6 +48440,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaseKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -47565,10 +48457,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaseKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -47609,6 +48503,7 @@ pub struct ForKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -47651,6 +48546,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "for".to_string(),
@@ -47658,6 +48554,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "for".to_string())
             }
         };
@@ -47665,6 +48562,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -47681,10 +48579,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -47725,6 +48625,7 @@ pub struct InKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -47767,6 +48668,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "in".to_string(),
@@ -47774,6 +48676,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "in".to_string())
             }
         };
@@ -47781,6 +48684,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -47797,10 +48701,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for InKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -47841,6 +48747,7 @@ pub struct WhileKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -47883,6 +48790,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "while".to_string(),
@@ -47890,6 +48798,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "while".to_string())
             }
         };
@@ -47897,6 +48806,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -47913,10 +48823,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -47957,6 +48869,7 @@ pub struct TryKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -47999,6 +48912,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "try".to_string(),
@@ -48006,6 +48920,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "try".to_string())
             }
         };
@@ -48013,6 +48928,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -48029,10 +48945,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -48073,6 +48991,7 @@ pub struct ExceptKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -48115,6 +49034,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExceptKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "except".to_string(),
@@ -48122,6 +49042,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExceptKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "except".to_string())
             }
         };
@@ -48129,6 +49050,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExceptKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -48145,10 +49067,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExceptKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -48189,6 +49113,7 @@ pub struct FinallyKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -48231,6 +49156,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FinallyKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "finally".to_string(),
@@ -48238,6 +49164,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FinallyKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "finally".to_string())
             }
         };
@@ -48245,6 +49172,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FinallyKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -48261,10 +49189,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for FinallyKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -48305,6 +49235,7 @@ pub struct WithKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -48347,6 +49278,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "with".to_string(),
@@ -48354,6 +49286,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "with".to_string())
             }
         };
@@ -48361,6 +49294,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -48377,10 +49311,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -48421,6 +49357,7 @@ pub struct DefKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -48463,6 +49400,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "def".to_string(),
@@ -48470,6 +49408,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "def".to_string())
             }
         };
@@ -48477,6 +49416,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -48493,10 +49433,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -48537,6 +49479,7 @@ pub struct DashGtTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -48579,6 +49522,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashGtTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "->".to_string(),
@@ -48586,6 +49530,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashGtTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "->".to_string())
             }
         };
@@ -48593,6 +49538,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashGtTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -48609,10 +49555,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashGtTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -48653,6 +49601,7 @@ pub struct LparenTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -48695,6 +49644,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "(".to_string(),
@@ -48702,6 +49652,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "(".to_string())
             }
         };
@@ -48709,6 +49660,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -48725,10 +49677,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -48769,6 +49723,7 @@ pub struct RparenTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -48811,6 +49766,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RparenTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => ")".to_string(),
@@ -48818,6 +49774,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RparenTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| ")".to_string())
             }
         };
@@ -48825,6 +49782,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RparenTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -48841,10 +49799,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for RparenTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -48885,6 +49845,7 @@ pub struct StarStarTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -48927,6 +49888,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarStarTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "**".to_string(),
@@ -48934,6 +49896,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarStarTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "**".to_string())
             }
         };
@@ -48941,6 +49904,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarStarTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -48957,10 +49921,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarStarTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -49001,6 +49967,7 @@ pub struct GlobalKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -49043,6 +50010,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GlobalKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "global".to_string(),
@@ -49050,6 +50018,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GlobalKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "global".to_string())
             }
         };
@@ -49057,6 +50026,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GlobalKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -49073,10 +50043,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for GlobalKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -49117,6 +50089,7 @@ pub struct NonlocalKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -49159,6 +50132,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonlocalKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "nonlocal".to_string(),
@@ -49166,6 +50140,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonlocalKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "nonlocal".to_string())
             }
         };
@@ -49173,6 +50148,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonlocalKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -49189,10 +50165,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonlocalKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -49233,6 +50211,7 @@ pub struct EqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -49275,6 +50254,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "=".to_string(),
@@ -49282,6 +50262,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "=".to_string())
             }
         };
@@ -49289,6 +50270,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -49305,10 +50287,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -49349,6 +50333,7 @@ pub struct ClassKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -49391,6 +50376,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "class".to_string(),
@@ -49398,6 +50384,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "class".to_string())
             }
         };
@@ -49405,6 +50392,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -49421,10 +50409,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -49465,6 +50455,7 @@ pub struct LbrackTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -49507,6 +50498,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbrackTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "[".to_string(),
@@ -49514,6 +50506,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbrackTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "[".to_string())
             }
         };
@@ -49521,6 +50514,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbrackTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -49537,10 +50531,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbrackTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -49581,6 +50577,7 @@ pub struct RbrackTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -49623,6 +50620,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbrackTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "]".to_string(),
@@ -49630,6 +50628,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbrackTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "]".to_string())
             }
         };
@@ -49637,6 +50636,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbrackTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -49653,10 +50653,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbrackTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -49697,6 +50699,7 @@ pub struct AtTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -49739,6 +50742,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "@".to_string(),
@@ -49746,6 +50750,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "@".to_string())
             }
         };
@@ -49753,6 +50758,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -49769,10 +50775,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -49813,6 +50821,7 @@ pub struct LbraceTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -49855,6 +50864,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbraceTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "{".to_string(),
@@ -49862,6 +50872,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbraceTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "{".to_string())
             }
         };
@@ -49869,6 +50880,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbraceTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -49885,10 +50897,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbraceTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -49929,6 +50943,7 @@ pub struct RbraceTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -49971,6 +50986,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbraceTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "}".to_string(),
@@ -49978,6 +50994,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbraceTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "}".to_string())
             }
         };
@@ -49985,6 +51002,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbraceTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -50001,10 +51019,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbraceTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -50045,6 +51065,7 @@ pub struct UnderscoreTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -50087,6 +51108,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnderscoreTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "_".to_string(),
@@ -50094,6 +51116,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnderscoreTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "_".to_string())
             }
         };
@@ -50101,6 +51124,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnderscoreTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -50117,10 +51141,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnderscoreTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -50161,6 +51187,7 @@ pub struct DashTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -50203,6 +51230,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "-".to_string(),
@@ -50210,6 +51238,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "-".to_string())
             }
         };
@@ -50217,6 +51246,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -50233,10 +51263,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -50277,6 +51309,7 @@ pub struct PlusTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -50319,6 +51352,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "+".to_string(),
@@ -50326,6 +51360,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "+".to_string())
             }
         };
@@ -50333,6 +51368,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -50349,10 +51385,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -50393,6 +51431,7 @@ pub struct NotKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -50435,6 +51474,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NotKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "not".to_string(),
@@ -50442,6 +51482,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NotKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "not".to_string())
             }
         };
@@ -50449,6 +51490,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NotKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -50465,10 +51507,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for NotKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -50509,6 +51553,7 @@ pub struct AndKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -50551,6 +51596,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AndKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "and".to_string(),
@@ -50558,6 +51604,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AndKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "and".to_string())
             }
         };
@@ -50565,6 +51612,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AndKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -50581,10 +51629,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for AndKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -50625,6 +51675,7 @@ pub struct OrKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -50667,6 +51718,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OrKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "or".to_string(),
@@ -50674,6 +51726,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OrKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "or".to_string())
             }
         };
@@ -50681,6 +51734,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OrKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -50697,10 +51751,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for OrKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -50741,6 +51797,7 @@ pub struct SlashTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -50783,6 +51840,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "/".to_string(),
@@ -50790,6 +51848,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "/".to_string())
             }
         };
@@ -50797,6 +51856,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -50813,10 +51873,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -50857,6 +51919,7 @@ pub struct PercentTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -50899,6 +51962,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PercentTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "%".to_string(),
@@ -50906,6 +51970,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PercentTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "%".to_string())
             }
         };
@@ -50913,6 +51978,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PercentTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -50929,10 +51995,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for PercentTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -50973,6 +52041,7 @@ pub struct SlashSlashTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -51015,6 +52084,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashSlashTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "//".to_string(),
@@ -51022,6 +52092,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashSlashTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "//".to_string())
             }
         };
@@ -51029,6 +52100,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashSlashTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -51045,10 +52117,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashSlashTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -51089,6 +52163,7 @@ pub struct PipeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -51131,6 +52206,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "|".to_string(),
@@ -51138,6 +52214,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "|".to_string())
             }
         };
@@ -51145,6 +52222,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -51161,10 +52239,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -51205,6 +52285,7 @@ pub struct AmpTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -51247,6 +52328,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "&".to_string(),
@@ -51254,6 +52336,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "&".to_string())
             }
         };
@@ -51261,6 +52344,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -51277,10 +52361,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -51321,6 +52407,7 @@ pub struct CaretTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -51363,6 +52450,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaretTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "^".to_string(),
@@ -51370,6 +52458,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaretTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "^".to_string())
             }
         };
@@ -51377,6 +52466,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaretTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -51393,10 +52483,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaretTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -51437,6 +52529,7 @@ pub struct LtLtTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -51479,6 +52572,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtLtTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "<<".to_string(),
@@ -51486,6 +52580,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtLtTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "<<".to_string())
             }
         };
@@ -51493,6 +52588,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtLtTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -51509,10 +52605,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtLtTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -51553,6 +52651,7 @@ pub struct TildeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -51595,6 +52694,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TildeTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "~".to_string(),
@@ -51602,6 +52702,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TildeTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "~".to_string())
             }
         };
@@ -51609,6 +52710,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TildeTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -51625,10 +52727,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for TildeTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -51669,6 +52773,7 @@ pub struct LambdaKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -51711,6 +52816,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LambdaKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "lambda".to_string(),
@@ -51718,6 +52824,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LambdaKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "lambda".to_string())
             }
         };
@@ -51725,6 +52832,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LambdaKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -51741,10 +52849,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for LambdaKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -51785,6 +52895,7 @@ pub struct PlusEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -51827,6 +52938,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusEqTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "+=".to_string(),
@@ -51834,6 +52946,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusEqTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "+=".to_string())
             }
         };
@@ -51841,6 +52954,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusEqTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -51857,10 +52971,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusEqTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -51901,6 +53017,7 @@ pub struct DashEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -51943,6 +53060,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashEqTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "-=".to_string(),
@@ -51950,6 +53068,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashEqTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "-=".to_string())
             }
         };
@@ -51957,6 +53076,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashEqTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -51973,10 +53093,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashEqTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -52017,6 +53139,7 @@ pub struct StarEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -52059,6 +53182,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarEqTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "*=".to_string(),
@@ -52066,6 +53190,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarEqTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "*=".to_string())
             }
         };
@@ -52073,6 +53198,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarEqTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -52089,10 +53215,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarEqTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -52133,6 +53261,7 @@ pub struct SlashEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -52175,6 +53304,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashEqTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "/=".to_string(),
@@ -52182,6 +53312,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashEqTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "/=".to_string())
             }
         };
@@ -52189,6 +53320,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashEqTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -52205,10 +53337,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashEqTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -52249,6 +53383,7 @@ pub struct AtEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -52291,6 +53426,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtEqTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "@=".to_string(),
@@ -52298,6 +53434,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtEqTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "@=".to_string())
             }
         };
@@ -52305,6 +53442,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtEqTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -52321,10 +53459,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtEqTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -52365,6 +53505,7 @@ pub struct SlashSlashEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -52407,6 +53548,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashSlashEqTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "//=".to_string(),
@@ -52414,6 +53556,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashSlashEqTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "//=".to_string())
             }
         };
@@ -52421,6 +53564,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashSlashEqTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -52437,10 +53581,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashSlashEqTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -52481,6 +53627,7 @@ pub struct PercentEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -52523,6 +53670,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PercentEqTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "%=".to_string(),
@@ -52530,6 +53678,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PercentEqTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "%=".to_string())
             }
         };
@@ -52537,6 +53686,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PercentEqTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -52553,10 +53703,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for PercentEqTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -52597,6 +53749,7 @@ pub struct StarStarEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -52639,6 +53792,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarStarEqTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "**=".to_string(),
@@ -52646,6 +53800,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarStarEqTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "**=".to_string())
             }
         };
@@ -52653,6 +53808,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarStarEqTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -52669,10 +53825,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarStarEqTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -52713,6 +53871,7 @@ pub struct GtGtEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -52755,6 +53914,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtEqTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => ">>=".to_string(),
@@ -52762,6 +53922,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtEqTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| ">>=".to_string())
             }
         };
@@ -52769,6 +53930,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtEqTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -52785,10 +53947,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtEqTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -52829,6 +53993,7 @@ pub struct LtLtEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -52871,6 +54036,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtLtEqTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "<<=".to_string(),
@@ -52878,6 +54044,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtLtEqTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "<<=".to_string())
             }
         };
@@ -52885,6 +54052,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtLtEqTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -52901,10 +54069,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtLtEqTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -52945,6 +54115,7 @@ pub struct AmpEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -52987,6 +54158,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpEqTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "&=".to_string(),
@@ -52994,6 +54166,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpEqTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "&=".to_string())
             }
         };
@@ -53001,6 +54174,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpEqTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -53017,10 +54191,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpEqTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -53061,6 +54237,7 @@ pub struct CaretEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -53103,6 +54280,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaretEqTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "^=".to_string(),
@@ -53110,6 +54288,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaretEqTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "^=".to_string())
             }
         };
@@ -53117,6 +54296,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaretEqTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -53133,10 +54313,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaretEqTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -53177,6 +54359,7 @@ pub struct PipeEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -53219,6 +54402,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeEqTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "|=".to_string(),
@@ -53226,6 +54410,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeEqTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "|=".to_string())
             }
         };
@@ -53233,6 +54418,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeEqTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -53249,10 +54435,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeEqTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -53293,6 +54481,7 @@ pub struct YieldKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -53335,6 +54524,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "yield".to_string(),
@@ -53342,6 +54532,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "yield".to_string())
             }
         };
@@ -53349,6 +54540,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -53365,10 +54557,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -53409,6 +54603,7 @@ pub struct CommaTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -53451,6 +54646,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => ",".to_string(),
@@ -53458,6 +54654,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| ",".to_string())
             }
         };
@@ -53465,6 +54662,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -53481,10 +54679,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -53525,6 +54725,7 @@ pub struct BslashTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -53567,6 +54768,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BslashTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "\\".to_string(),
@@ -53574,6 +54776,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BslashTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "\\".to_string())
             }
         };
@@ -53581,6 +54784,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BslashTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -53597,10 +54801,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for BslashTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -53641,6 +54847,7 @@ pub struct LtTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -53683,6 +54890,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "<".to_string(),
@@ -53690,6 +54898,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "<".to_string())
             }
         };
@@ -53697,6 +54906,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -53713,10 +54923,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -53757,6 +54969,7 @@ pub struct LtEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -53799,6 +55012,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtEqTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "<=".to_string(),
@@ -53806,6 +55020,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtEqTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "<=".to_string())
             }
         };
@@ -53813,6 +55028,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtEqTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -53829,10 +55045,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtEqTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -53873,6 +55091,7 @@ pub struct EqEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -53915,6 +55134,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqEqTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "==".to_string(),
@@ -53922,6 +55142,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqEqTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "==".to_string())
             }
         };
@@ -53929,6 +55150,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqEqTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -53945,10 +55167,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqEqTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -53989,6 +55213,7 @@ pub struct BangEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -54031,6 +55256,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangEqTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "!=".to_string(),
@@ -54038,6 +55264,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangEqTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "!=".to_string())
             }
         };
@@ -54045,6 +55272,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangEqTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -54061,10 +55289,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangEqTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -54105,6 +55335,7 @@ pub struct GtEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -54147,6 +55378,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtEqTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => ">=".to_string(),
@@ -54154,6 +55386,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtEqTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| ">=".to_string())
             }
         };
@@ -54161,6 +55394,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtEqTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -54177,10 +55411,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtEqTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -54221,6 +55457,7 @@ pub struct GtTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -54263,6 +55500,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => ">".to_string(),
@@ -54270,6 +55508,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| ">".to_string())
             }
         };
@@ -54277,6 +55516,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -54293,10 +55533,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -54337,6 +55579,7 @@ pub struct LtGtTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -54379,6 +55622,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtGtTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "<>".to_string(),
@@ -54386,6 +55630,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtGtTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "<>".to_string())
             }
         };
@@ -54393,6 +55638,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtGtTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -54409,10 +55655,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtGtTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -54453,6 +55701,7 @@ pub struct NotInTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -54495,6 +55744,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NotInTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "not in".to_string(),
@@ -54502,6 +55752,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NotInTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "not in".to_string())
             }
         };
@@ -54509,6 +55760,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NotInTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -54525,10 +55777,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for NotInTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -54569,6 +55823,7 @@ pub struct IsKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -54611,6 +55866,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsKeywordTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "is".to_string(),
@@ -54618,6 +55874,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsKeywordTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "is".to_string())
             }
         };
@@ -54625,6 +55882,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsKeywordTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -54641,10 +55899,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsKeywordTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }
@@ -54685,6 +55945,7 @@ pub struct IsNotTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub source_gap: Option<::sittir_core::slot::SourceGap>,
+    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     pub text: String,
 }
 
@@ -54727,6 +55988,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsNotTransport {
     ) -> ::napi::Result<Self> {
         let mut __transport_trivia_data: Option<TransportTrivia> = None;
         let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
+        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             ::napi::ValueType::Number => "is not".to_string(),
@@ -54734,6 +55996,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsNotTransport {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __transport_trivia_data = obj.get("$_trivia")?;
                 __source_gap = obj.get("$_gap")?;
+                __source_flank = obj.get("$_flank")?;
                 obj.get("$text")?.unwrap_or_else(|| "is not".to_string())
             }
         };
@@ -54741,6 +56004,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsNotTransport {
             transport_trivia_data: __transport_trivia_data,
             edges: None,
             source_gap: __source_gap,
+            source_flank: __source_flank,
             text,
         })
     }
@@ -54757,10 +56021,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsNotTransport {
         let transport_trivia_data = obj.get("$_trivia")?;
         let edges = obj.get("$_edges")?;
         let source_gap = obj.get("$_gap")?;
+        let source_flank = obj.get("$_flank")?;
         Ok(Self {
             transport_trivia_data,
             edges,
             source_gap,
+            source_flank,
             text,
         })
     }

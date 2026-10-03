@@ -12,7 +12,7 @@ import { writeSync } from 'node:fs';
 
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
 import { sourceSpans, spanSlicer, type TriviaSides } from '@sittir/common';
-import { hydrateStub, isStub, mapTriviaEntries, readDerivedSides, readTrivia, sourceGapOf, type TriviaView } from '@sittir/common/utils';
+import { crossingTrivia, hydrateStub, isStub, mapTriviaEntries, readTrivia, sourceGapOf, type TriviaView } from '@sittir/common/utils';
 import { deriveRuleKinds } from './render-bodies.ts';
 import { load } from '../codegen-surface.ts';
 
@@ -38,7 +38,8 @@ import {
 	type TypedNode,
 	type AccessorThrowRecord,
 	type ValidatorSkip,
-	loadNativeEngine
+	loadNativeEngine,
+	triviaViewOf
 } from './common.ts';
 import { nativeShownKindId } from './shown-kind.ts';
 
@@ -393,11 +394,14 @@ export function selfContainedRenderInput(
 			if (record.$sameLine !== true) return { ...kind, $text: text };
 			return { ...kind, $text: text, $sameLine: true, $tokensBetween: record.$tokensBetween };
 		});
-	const walk = (value: unknown): unknown => {
+	const walk = (value: unknown, owner?: Record<string, unknown>): unknown => {
 		if (Array.isArray(value)) {
 			return value.map((entry, index) => {
 				const out = walk(entry);
-				const gap = entry !== null && typeof entry === 'object' ? sourceGapOf(value, index, view, view.trivia(entry as Record<string, unknown>)) : undefined;
+				const gap =
+					entry !== null && typeof entry === 'object' && owner !== undefined
+						? sourceGapOf(owner, value, index, view, view.trivia(entry as Record<string, unknown>))
+						: undefined;
 				if (gap !== undefined && out !== null && typeof out === 'object') (out as Record<string, unknown>).$_gap = { $text: slice(gap.$span) };
 				return out;
 			});
@@ -408,9 +412,9 @@ export function selfContainedRenderInput(
 		for (const [key, raw] of Object.entries(record)) {
 			if (key === '$handle' || key === '$parentHandle' || key === '$treeHandle' || key === '$childIndex' || key === '$textOnly') continue;
 			if (key === '$_trivia') continue;
-			out[key] = key.startsWith('_') || key === '$other' ? walk(raw) : raw;
+			out[key] = key.startsWith('_') || key === '$other' ? walk(raw, record) : raw;
 		}
-		const trivia = view.trivia(record);
+		const trivia = crossingTrivia(record, view);
 		if (trivia != null) out.$_trivia = mapTriviaEntries(trivia as TriviaSides<unknown>, walkTrivia);
 		const shown = typeof out.$type === 'number' ? nativeShownKindId(out as { $type: number }) : undefined;
 		if (!hasStorage(out) && shown !== undefined && isLeafKind(shown) && out.$text === undefined) {
@@ -566,7 +570,7 @@ export async function validateReadRenderParse(
 	const nativeEngine = await loadNativeEngine(grammar);
 	const render = (node: AnyUntypedNode): string => nativeEngine.render(node).toString();
 	const triviaOf = (node: object): NodeTrivia | undefined => readTrivia(node, nativeEngine.diagnostics.lineGapsOf);
-	const view: TriviaView = { trivia: triviaOf, derived: (node) => readDerivedSides(node, nativeEngine.diagnostics.lineGapsOf) };
+	const view = triviaViewOf(nativeEngine);
 	// The kinds the renderer can handle are those with an emitted body.
 	const ruleKinds = deriveRuleKinds(grammar);
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);

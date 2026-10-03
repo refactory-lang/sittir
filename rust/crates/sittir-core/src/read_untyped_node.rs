@@ -414,14 +414,17 @@ pub struct LineGap {
 }
 
 /// The line-break runs a node owns, in source order on each side, and the
-/// owner before it among its siblings: the sibling owner before the outermost
-/// node spanning exactly its bytes (a list item's wrapper holds the item's
-/// neighbours, not the item), or none when that node is its parent's first.
+/// owners beside it among its siblings, taken at the outermost node spanning
+/// exactly its bytes (a list item's wrapper holds the item's neighbours, not
+/// the item): the sibling owner before it, or none when that node is its
+/// parent's first, and the sibling owner after it, or none when that node is
+/// its parent's last.
 #[derive(Debug, Clone, Default, PartialEq, Eq, serde::Serialize)]
 pub struct LineGaps {
     pub leading: Vec<LineGap>,
     pub trailing: Vec<LineGap>,
     pub previous: Option<Span>,
+    pub next: Option<Span>,
 }
 
 /// The whitespace a node owns as trivia, classified by `classify`, which
@@ -460,6 +463,11 @@ pub fn line_gaps(
         gaps.previous = extras_run(outer, |n| n.prev_sibling(), model)
             .1
             .map(|p| Span { start: p.start_byte() as u32, end: p.end_byte() as u32 });
+    }
+    if outer.parent().is_some_and(|up| up.end_byte() != outer.end_byte()) {
+        gaps.next = extras_run(outer, |n| n.next_sibling(), model)
+            .1
+            .map(|n| Span { start: n.start_byte() as u32, end: n.end_byte() as u32 });
     }
     if parent.start_byte() != node.start_byte() {
         let (before, prev) = extras_run(node, |n| n.prev_sibling(), model);

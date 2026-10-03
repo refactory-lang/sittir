@@ -83,6 +83,52 @@ impl ::napi::bindgen_prelude::ToNapiValue for SourceGap {
     }
 }
 
+/// A list node's flanks in the source it was read from: the tagged handle of
+/// its tree, the node's span there, and which flanks the transport kept, each
+/// only while the list's edge item is still the source's edge item. Evidence
+/// of layout only; nothing slices it into the output.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SourceFlank {
+    pub handle: u64,
+    pub span: Span,
+    pub before: bool,
+    pub after: bool,
+}
+
+impl SourceFlank {
+    /// The source `span` counts into, when the tree is still in `sources`.
+    pub fn source<'s>(&self, sources: &'s dyn SourceTable) -> Option<&'s str> {
+        sources.source_of(decode_handle(self.handle).0).map(|source| &**source)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for SourceFlank {
+    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
+        let handle = obj
+            .get::<f64>("$treeHandle")?
+            .ok_or_else(|| ::napi::Error::from_reason("source flanks name their tree in $treeHandle"))?;
+        let handle = crate::napi_engine::checked_index(handle, "$treeHandle")?;
+        let span: Span = obj
+            .get("$span")?
+            .ok_or_else(|| ::napi::Error::from_reason("source flanks carry no $span"))?;
+        Ok(Self {
+            handle,
+            span,
+            before: obj.get::<bool>("$before")?.unwrap_or(false),
+            after: obj.get::<bool>("$after")?.unwrap_or(false),
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SourceFlank {
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, _val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        unsafe { ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ()) }
+    }
+}
+
 /// One edge seam's resolved arm and the strength it carries into the writer.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct SeamArm {

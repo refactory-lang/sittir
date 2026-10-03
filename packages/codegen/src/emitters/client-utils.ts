@@ -2,6 +2,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import { whitespaceTrivia, type WhitespaceTrivia } from '../compiler/model/trivia.ts';
 import { compareOrdinal } from './shared.ts';
 import { grammarTypeMapName } from './engine.ts';
+import { rebuildWrapperKindIds } from './wrap.ts';
 
 export interface EmitClientUtilsConfig {
 	grammar: string;
@@ -19,18 +20,23 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 		`import { KIND_NAMES, type ${map} } from './types.js';`,
 		"import { INNER_GAPS } from './consts.js';",
 		'',
-		...emitTriviaFacts(whitespaceTrivia(config.nodeMap), config.triviaKinds ?? []),
+		...emitTriviaFacts(whitespaceTrivia(config.nodeMap), config.triviaKinds ?? [], rebuildWrapperKindIds(config.nodeMap)),
 		'',
 		`export const { isNode } = bindRuntime<${map}>();`,
 		''
 	].join('\n');
 }
 
-function emitTriviaFacts(whitespace: WhitespaceTrivia | undefined, triviaKinds: readonly string[]): string[] {
+function emitTriviaFacts(
+	whitespace: WhitespaceTrivia | undefined,
+	triviaKinds: readonly string[],
+	rebuildWrappers: readonly number[]
+): string[] {
 	const facts = [
 		"    kindName: (type: AnyUntypedNode['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type)",
 		`    kinds: new Set<string>(${JSON.stringify([...triviaKinds].sort(compareOrdinal))})`,
 		'    innerGaps: INNER_GAPS',
+		`    rebuildWrappers: new Set<number>(${JSON.stringify(rebuildWrappers)})`,
 		...(whitespace === undefined
 			? []
 			: [

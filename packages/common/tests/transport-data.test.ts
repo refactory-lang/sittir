@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { markEdited, detachCoordinates, holdReadTree, holdTree, STORED_TRIVIA, toTransportData, treeHandleOf } from '../src/transport-data.ts';
+import { markEdited, detachCoordinates, holdReadTree, holdTree, sourceGapOf, STORED_TRIVIA, toTransportData, treeHandleOf, type TriviaView } from '../src/transport-data.ts';
 import { readTrivia } from '../src/utils.ts';
 import { mintTreeToken, treeTokenOf } from '../src/tree-token.ts';
 
@@ -354,7 +354,7 @@ describe('line-gap whitespace at the render root', () => {
 });
 
 describe('readTrivia', () => {
-	const gaps = () => ({ leading: [{ kind: 9, start: 0 }], trailing: [], previous: null });
+	const gaps = () => ({ leading: [{ kind: 9, start: 0 }], trailing: [], previous: null, next: null });
 
 	it('derives the line gaps of a node a read returned', () => {
 		const read = { $type: 5, $handle: 7, $span: { start: 2, end: 3 } };
@@ -367,5 +367,50 @@ describe('readTrivia', () => {
 		holdReadTree(read, mintTreeToken(1));
 		const copy = { ...read, $_trivia: { trailing: [8] } };
 		expect(readTrivia(copy, gaps)).toEqual({ trailing: [8] });
+	});
+});
+
+describe('sourceGapOf', () => {
+	const ATTRIBUTED = 20;
+	const ALIAS_ENVELOPE = 21;
+	const OTHER = 30;
+	const token = mintTreeToken(1);
+	const a = deep(1, 2, {});
+	const b = deep(3, 4, {});
+	const owner = deep(0, 5, {});
+	holdTree(a, token);
+	holdTree(b, token);
+	holdTree(owner, token);
+	const view: TriviaView = {
+		trivia: () => undefined,
+		derived: (node) => (node === b ? { previous: { start: 1, end: 2 }, next: null, leading: false, trailing: false } : undefined),
+		isWrapper: (kindId) => kindId === ATTRIBUTED || kindId === ALIAS_ENVELOPE
+	};
+	const gap = { $treeHandle: 0, $span: { start: 2, end: 3 } };
+
+	it('judges a rebuilt group around one node by the node it holds', () => {
+		const wrapper = { $type: ATTRIBUTED, $source: 2, _attribute_item: [], _content: b };
+		expect(sourceGapOf(owner, [a, wrapper], 1, view, undefined)).toEqual(gap);
+	});
+
+	it('judges a rebuilt alias envelope by the node it holds, whatever its slot is called', () => {
+		const wrapper = { $type: ALIAS_ENVELOPE, $source: 2, _name: b };
+		expect(sourceGapOf(owner, [a, wrapper], 1, view, undefined)).toEqual(gap);
+	});
+
+	it('does not look through a kind a rebuild does not mint around one node', () => {
+		const other = { $type: OTHER, $source: 2, _content: b };
+		expect(sourceGapOf(owner, [a, other], 1, view, undefined)).toBeUndefined();
+	});
+
+	it('withholds the gap of a list whose owner carries no source', () => {
+		const built = { $type: 4, $source: 2 };
+		expect(sourceGapOf(built, [a, b], 1, view, undefined)).toBeUndefined();
+		expect(sourceGapOf(owner, [a, b], 1, view, undefined)).toEqual(gap);
+	});
+
+	it('does not look through a wrapper holding more than one node', () => {
+		const wrapper = { $type: ATTRIBUTED, $source: 2, _attribute_item: [a], _content: b };
+		expect(sourceGapOf(owner, [a, wrapper], 1, view, undefined)).toBeUndefined();
 	});
 });

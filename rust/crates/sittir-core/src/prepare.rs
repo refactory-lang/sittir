@@ -7,7 +7,7 @@
 use crate::options::{EdgeArm, Edged, Edges, ResolvedOptions, Side};
 use crate::types::KindId;
 use crate::render::{CoordinateError, SourceTable};
-use crate::slot::{SeamArm, SlotValue, SourceGap};
+use crate::slot::{SeamArm, SlotValue, SourceFlank, SourceGap};
 use crate::render::WhitespaceTable;
 
 /// Everything a render reads that is not the transport itself.
@@ -26,6 +26,81 @@ pub fn prepare_edges<T: Edged + ?Sized>(t: &mut T, ctx: &RenderContext<'_>) {
     if edges.after.is_none() {
         edges.after = ctx.options.edge_arm(kind, Side::After, None).map(EdgeArm::from);
     }
+}
+
+/// Give a list node's kept flanks their source class, before its edge row
+/// fills what is left: the whitespace between the opener and the list, and
+/// between the list and the closer, in the source the list was read from
+/// (`SourceFlank`). Each side classifies among the arms its edge site admits,
+/// at trivia strength. A flank alone of all gaps may classify to a depth arm:
+/// the side before is the indent arm when the line after the opener is deeper
+/// than the opener's line, and the side after is the dedent arm when the
+/// closer's line is shallower than the line the list ends on. The depth unit
+/// is the render's own, never the source's columns. Depth opens and closes as
+/// a pair: a list whose kept flank before opens it closes it after, even
+/// where its flank after is no longer the source's, and a flank after never
+/// closes a depth the flank before did not open.
+pub fn fill_source_flanks<T: Edged + ?Sized>(
+    t: &mut T,
+    flank: Option<&SourceFlank>,
+    allowed: fn(usize) -> &'static [u16],
+    table: &WhitespaceTable,
+    ctx: &RenderContext<'_>,
+) {
+    let Some(flank) = flank.filter(|flank| flank.before || flank.after) else { return };
+    let Some(source) = flank.source(ctx.sources) else { return };
+    let (start, end) = (flank.span.start as usize, flank.span.end as usize);
+    let (Some(head), Some(tail)) = (source.get(..start), source.get(end..)) else { return };
+    let (before_site, after_site) = ctx.options.edge_sites(t.kind_id());
+    let before_ws = &head[head.trim_end().len()..];
+    let after_ws = &tail[..tail.len() - tail.trim_start().len()];
+    let opens = before_ws.contains('\n') && line_depth(before_ws) > indent_width(line_of(head, head.len() - before_ws.len()));
+    let closes = after_ws.contains('\n') && line_depth(after_ws) < indent_width(line_of(source, end.saturating_sub(1)));
+    let before = before_site.filter(|_| flank.before).and_then(|site| {
+        let arms = allowed(site);
+        if opens && arms.contains(&table.indent) {
+            Some(table.indent)
+        } else {
+            crate::classify::classify_whitespace(before_ws, arms, table)
+        }
+    });
+    let opened = before == Some(table.indent);
+    let after = after_site.and_then(|site| {
+        let arms = allowed(site);
+        if opened && arms.contains(&table.dedent) && (closes || !flank.after) {
+            Some(table.dedent)
+        } else if flank.after {
+            crate::classify::classify_whitespace(after_ws, arms, table)
+        } else {
+            None
+        }
+    });
+    let seam = |arm: u16| EdgeArm::from(SeamArm { arm, strength: crate::spacing::SEAM_TRIVIA });
+    let edges = t.edges_mut();
+    if let Some(arm) = before {
+        edges.before.get_or_insert(seam(arm));
+    }
+    if let Some(arm) = after {
+        edges.after.get_or_insert(seam(arm));
+    }
+}
+
+/// The line of `text` that byte `at` sits on.
+fn line_of(text: &str, at: usize) -> &str {
+    let at = at.min(text.len());
+    let start = text[..at].rfind('\n').map_or(0, |i| i + 1);
+    let end = text[start..].find('\n').map_or(text.len(), |i| start + i);
+    &text[start..end]
+}
+
+/// How far a line is indented: the whitespace it starts with.
+fn indent_width(line: &str) -> usize {
+    line.len() - line.trim_start().len()
+}
+
+/// How far the last line of a whitespace run is indented: what follows its last break.
+fn line_depth(run: &str) -> usize {
+    run.rfind('\n').map_or(0, |i| run.len() - i - 1)
 }
 
 /// A child position of a root transport, read for the item at either end of
@@ -130,8 +205,12 @@ pub fn seat_site(table: &[u16], kind: KindId) -> Option<usize> {
 /// classifies among `allowed_after` onto the later item's `before` edge.
 /// With no token, the whole gap is the before side. Both edges hold at trivia
 /// strength, the strength of a source fact, so neither the list's site nor a
-/// seat replaces them. A gap holding text other than whitespace and one
-/// separator is not a gap the classes can spell, and stays the seat's.
+/// seat replaces them.
+///
+/// Two limits. A same-line run no whitespace member spells exactly takes the
+/// nearest member below it. A gap holding text other than whitespace and one
+/// separator, a comment among them, is not a gap the classes can spell: it is
+/// left unset and falls to the seat or the list site.
 pub fn fill_list_gaps<'i, T: Prepare + 'i, const ADJACENT: bool>(
     items: impl Iterator<Item = Option<&'i mut SlotValue<T, ADJACENT>>>,
     token: &str,
@@ -428,5 +507,81 @@ mod tests {
     #[test]
     fn an_item_that_carries_no_source_gap_is_left_to_the_seat() {
         assert_eq!(after_and_before("a,\nb", None), (None, None));
+    }
+
+    const INDENT: u16 = 7;
+    const DEDENT: u16 = 8;
+
+    struct List(crate::options::Edges);
+    impl crate::options::Edged for List {
+        fn kind_id(&self) -> crate::types::KindId {
+            crate::types::KindId(0)
+        }
+        fn edges(&self) -> &crate::options::Edges {
+            &self.0
+        }
+        fn edges_mut(&mut self) -> &mut crate::options::Edges {
+            &mut self.0
+        }
+    }
+
+    fn every_arm(_: usize) -> &'static [u16] {
+        &[TIGHT, NEWLINE, INDENT, DEDENT]
+    }
+
+    /// The flank arms a list spanning `list` in `source` takes, with the flanks the transport kept.
+    fn flanks(source: &str, list: &str, before: bool, after: bool) -> (Option<u16>, Option<u16>) {
+        use crate::options::{EdgeSite, SiteSpec};
+        use crate::slot::SourceFlank;
+        static EDGES: [EdgeSite; 1] = [EdgeSite { before: 0, after: 1 }];
+        static EDGE_ROWS: [u16; 1] = [0];
+        static SITES: [SiteSpec; 2] = [SiteSpec { default_arm: TIGHT, strength: 2 }, SiteSpec { default_arm: TIGHT, strength: 2 }];
+        let sources = Sources(HashMap::from([(3, Arc::from(source))]));
+        let options = ResolvedOptions {
+            spacing: ResolvedOptions::default_spacing(&SITES),
+            edges: &EDGES,
+            edge_rows: &EDGE_ROWS,
+            sites: &SITES,
+            ..ResolvedOptions::default()
+        };
+        let ctx = RenderContext { options: &options, sources: &sources };
+        let start = source.find(list).unwrap() as u32;
+        let span = Span { start, end: start + list.len() as u32 };
+        let flank = SourceFlank {
+            handle: encode_handle(3, 0),
+            span,
+            before,
+            after,
+        };
+        let mut node = List(crate::options::Edges::NONE);
+        super::fill_source_flanks(&mut node, Some(&flank), every_arm, &TABLE, &ctx);
+        (node.0.before.map(|edge| edge.arm), node.0.after.map(|edge| edge.arm))
+    }
+
+    const BROKEN: &str = "f(\n    a,\n    b,\n)";
+
+    #[test]
+    fn a_kept_list_opens_a_depth_after_its_opener_and_closes_it_before_its_closer() {
+        assert_eq!(flanks(BROKEN, "a,\n    b,", true, true), (Some(INDENT), Some(DEDENT)));
+    }
+
+    #[test]
+    fn a_depth_the_flank_before_opened_closes_although_the_flank_after_is_not_kept() {
+        assert_eq!(flanks(BROKEN, "a,\n    b,", true, false), (Some(INDENT), Some(DEDENT)));
+    }
+
+    #[test]
+    fn a_flank_after_never_closes_a_depth_the_flank_before_did_not_open() {
+        assert_eq!(flanks(BROKEN, "a,\n    b,", false, true), (None, Some(NEWLINE)));
+    }
+
+    #[test]
+    fn a_same_line_list_keeps_its_tight_flanks() {
+        assert_eq!(flanks("f(a, b)", "a, b", true, true), (Some(TIGHT), Some(TIGHT)));
+    }
+
+    #[test]
+    fn a_list_whose_flanks_were_not_kept_takes_none() {
+        assert_eq!(flanks(BROKEN, "a,\n    b,", false, false), (None, None));
     }
 }
