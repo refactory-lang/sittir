@@ -350,8 +350,8 @@ describe('render options on transports', () => {
 		expect(listFill).toContain(
 			'self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);'
 		);
-		expect(listFill).toContain(
-			'self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), &[","], ctx.options.delimiter[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM], ctx));'
+		expect(listFill).toMatch(
+			/self\.delimiter\.get_or_insert\(::sittir_core::prepare::source_trailing_delimiter\(flank\.as_ref\(\), ::sittir_core::types::KindId\(\d+\), &\[\d+\], ctx\.options\.delimiter\[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM\], ctx\)\);/
 		);
 		const ownerImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for FormalParametersTransport {'));
 		const ownerFill = ownerImpl.slice(0, ownerImpl.indexOf('\n}\n'));

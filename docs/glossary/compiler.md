@@ -2867,8 +2867,8 @@ process (a watch daemon, a test run that retries).
 The node model is serialized after the emitters' walk, not before it: the
 site-preference resolution that walk runs (`collectSitePreferences`) stamps
 each list's `resolvedDelimiterArm` on the model, and the serialized
-`defaultDelimiter` must be the stamped arm the factory bakes in, not the
-fallback an unstamped list reports.
+`defaultDelimiter` must be that stamped arm, the default the options table
+renders with, not the fallback an unstamped list reports.
 
 #### body
 

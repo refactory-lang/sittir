@@ -552,6 +552,31 @@ pub fn node_at_span<'t>(tree: &'t tree_sitter::Tree, start: usize, end: usize, k
     search(tree.root_node(), start, end, kind)
 }
 
+/// The last child that is not an extra of the list spanning `start..end`: of
+/// the node the read stamped `kind` at that span (`node_at_span`), or, for a
+/// list the tree holds no node of its own for, of the node holding the list's
+/// children, among the children that lie within the span. That node is the
+/// one strictly around the span, above any node spanning exactly the span.
+pub fn last_list_child(tree: &tree_sitter::Tree, start: usize, end: usize, kind: u16) -> Option<tree_sitter::Node<'_>> {
+    let holder = match node_at_span(tree, start, end, kind) {
+        Some(list) => list,
+        None => {
+            let inner = outermost_same_span(tree.root_node().descendant_for_byte_range(start, end)?);
+            if inner.start_byte() == start && inner.end_byte() == end {
+                inner.parent()?
+            } else {
+                inner
+            }
+        }
+    };
+    let mut cursor = holder.walk();
+    let last = holder
+        .children(&mut cursor)
+        .filter(|child| !child.is_extra() && child.start_byte() >= start && child.end_byte() <= end)
+        .last();
+    last
+}
+
 /// The outermost node spanning exactly the bytes `node` spans: the node
 /// itself unless a wrapper holds it alone.
 fn outermost_same_span(node: tree_sitter::Node<'_>) -> tree_sitter::Node<'_> {

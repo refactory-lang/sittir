@@ -7478,7 +7478,9 @@ other children, else the default the `options:` block declared for the
 list (`declaredSeparatorDefault`, reading the arm `collectSitePreferences`
 stamped on the list node): a single-member list has no token to read, and
 a rebuilt node stamps the default, so the read side stamps it too and the
-two agree. The delimiter is stamped the same way, `Delimiter.None` included.
+two agree. The delimiter is read from the source too, `Delimiter.None`
+included, but no side stamps a default for it: a list built without one
+leaves it unset, and the options table supplies it at render.
 
 ### `packages/codegen/src/emitters/wrap.ts::computeCollidedReclaimKinds`
 
@@ -7839,9 +7841,9 @@ enrich-stamped (`VariantChild.definedBy`); one hand-declared arm (a
  */
 ```
 
-`defaultDelimiter` is the `Delimiter` member the list's factory stamps when
-a caller gives none (`declaredDelimiterDefault`, the same expression the
-factory emitter prints), so a tool can tell a read delimiter that merely
+`defaultDelimiter` is the list's declared delimiter default
+(`declaredDelimiterDefault`), the value the options table renders a list
+built without one with, so a tool can tell a read delimiter that merely
 restates the default from one that must be spelled.
 
 ### `packages/codegen/src/emitters/node-model.ts::polymorphVariants`
@@ -16034,26 +16036,29 @@ A list's delimiter is filled from the table like any site, zero included:
 the table's value is the grammar's declared default or a render option, and
 the transport's own value still wins. One exception: a list whose trailing
 separator is optional takes its trailing flag from the source while its
-source flank after is kept (`sourceTrailingSeparatorTexts`).
+source flank after is kept (`sourceTrailingSeparator`).
 
 Every struct transport prepares its `transport_trivia_data` first, leaves included. A trivia entry that is a source coordinate takes its kind's edges there, as a coordinate in a slot does.
 
-### `packages/codegen/src/emitters/render-module.ts::sourceTrailingSeparatorTexts`
+### `packages/codegen/src/emitters/render-module.ts::sourceTrailingSeparator`
 
-The separator spellings a list's generated `prepare` checks at the end of its
-source flank, or none when the list's trailing separator is not optional. They
-are the multiple slot's literal separator texts and the string arms of the
-list's separator rule.
+The facts a list's generated `prepare` passes to `source_trailing_delimiter`:
+the list's own kind id and the kind ids of its separator tokens (the multiple
+slot's literal separators and the token arms of its separator rule), or
+nothing when the list's trailing separator is not optional. A separator with
+no kind id is a compile error.
 
 When a list has them, an unset `delimiter` is filled by
 `source_trailing_delimiter` instead of the plain table value. A rebuilt list
 whose last item is still the source's last keeps its source flank after
 (`sourceFlankOf`, the same evidence the trailing flank uses). For such a list
-the trailing flag follows the source: set if the flank text, trailing
-whitespace trimmed, ends in one of these spellings, clear otherwise. The
-leading flag and every list without that flank take the table value. The
-source wins both ways, so a source with no trailing separator renders none
-even where the table's default is trailing.
+the trailing flag follows the source tree: set if the source list's last
+child that is not an extra is one of these separators, clear otherwise. The
+child is read from the tree, never from the span's text, so a comment the span
+includes is not mistaken for a separator. The leading flag and every list
+without that flank take the table value. The source wins both ways, so a
+source with no trailing separator renders none even where the table's default
+is trailing.
 
 ### `packages/codegen/src/emitters/render-module.ts::optionDefaultFills`
 

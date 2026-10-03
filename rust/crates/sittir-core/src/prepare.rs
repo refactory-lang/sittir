@@ -87,26 +87,21 @@ pub fn fill_source_flanks<T: Edged + ?Sized>(
 
 /// A rebuilt list's delimiter flags with its trailing flag as its source
 /// spells it. While the flank after is kept, the list's last item is still the
-/// source's last, so the trailing flag (2) is set iff the list's source text
-/// ends with one of its `separators`. Without that flank, or with no source,
-/// the flags are `default`, the options table's. The leading flag is always
-/// `default`'s.
+/// source's last, so the trailing flag (2) is set iff the source list's last
+/// child that is not an extra is one of its `separators`
+/// (`SourceTable::last_list_child_kind`, the list's own kind being `kind`).
+/// Without that flank, or when the table cannot answer, the flags are
+/// `default`, the options table's. The leading flag is always `default`'s.
 pub fn source_trailing_delimiter(
     flank: Option<&SourceFlank>,
-    separators: &[&str],
+    kind: KindId,
+    separators: &[u16],
     default: u8,
     ctx: &RenderContext<'_>,
 ) -> u8 {
     let Some(flank) = flank.filter(|flank| flank.after) else { return default };
-    let Some(text) = flank
-        .source(ctx.sources)
-        .and_then(|source| source.get(flank.span.start as usize..flank.span.end as usize))
-    else {
-        return default;
-    };
-    let tail = text.trim_end();
-    let spelled = separators.iter().any(|separator| !separator.is_empty() && tail.ends_with(separator));
-    (default & !2) | if spelled { 2 } else { 0 }
+    let Some(last) = ctx.sources.last_list_child_kind(flank.handle, flank.span, kind) else { return default };
+    (default & !2) | if separators.contains(&last.0) { 2 } else { 0 }
 }
 
 /// The line of `text` that byte `at` sits on.
@@ -603,41 +598,55 @@ mod tests {
     fn a_list_whose_flanks_were_not_kept_takes_none() {
         assert_eq!(flanks(BROKEN, "a,\n    b,", false, false), (None, None));
     }
-    /// The delimiter a list spanning `list` in `source` takes over the options default `default`.
-    fn trailing(source: &str, list: &str, after: bool, default: u8) -> u8 {
+    const COMMA: u16 = 9;
+    const ITEM: u16 = 4;
+
+    /// A table that holds trees: the list a flank names ends in a child of kind `last`, or the table cannot answer.
+    struct ListTrees(Option<u16>);
+    impl SourceTable for ListTrees {
+        fn source_of(&self, _: u32) -> Option<&Arc<str>> {
+            None
+        }
+        fn last_list_child_kind(&self, _: u64, _: Span, _: crate::types::KindId) -> Option<crate::types::KindId> {
+            self.0.map(crate::types::KindId)
+        }
+    }
+
+    /// The delimiter a list whose source ends in a child of kind `last` takes over the options default `default`.
+    fn trailing(last: Option<u16>, after: bool, default: u8) -> u8 {
         use crate::slot::SourceFlank;
-        let sources = Sources(HashMap::from([(3, Arc::from(source))]));
+        let sources = ListTrees(last);
         let options = ResolvedOptions::default();
         let ctx = RenderContext { options: &options, sources: &sources };
-        let start = source.find(list).unwrap() as u32;
         let flank = SourceFlank {
             handle: encode_handle(3, 0),
-            span: Span { start, end: start + list.len() as u32 },
+            span: Span { start: 2, end: 7 },
             before: false,
             after,
         };
-        super::source_trailing_delimiter(Some(&flank), &[","], default, &ctx)
+        super::source_trailing_delimiter(Some(&flank), crate::types::KindId(1), &[COMMA], default, &ctx)
     }
 
     #[test]
     fn a_kept_flank_after_keeps_the_source_trailing_separator() {
-        assert_eq!(trailing("f(\n    a,\n    b,\n)", "a,\n    b,", true, 0), 2);
+        assert_eq!(trailing(Some(COMMA), true, 0), 2);
     }
 
     #[test]
     fn a_kept_flank_after_with_no_source_separator_clears_a_trailing_default() {
-        assert_eq!(trailing("f(\n    a,\n    b\n)", "a,\n    b", true, 2), 0);
+        assert_eq!(trailing(Some(ITEM), true, 2), 0);
     }
 
     #[test]
-    fn a_flank_after_not_kept_takes_the_options_default() {
-        assert_eq!(trailing("f(\n    a,\n    b,\n)", "a,\n    b,", false, 0), 0);
-        assert_eq!(trailing("f(\n    a,\n    b\n)", "a,\n    b", false, 2), 2);
+    fn a_flank_after_not_kept_or_a_table_with_no_tree_takes_the_options_default() {
+        assert_eq!(trailing(Some(COMMA), false, 0), 0);
+        assert_eq!(trailing(Some(ITEM), false, 2), 2);
+        assert_eq!(trailing(None, true, 2), 2);
     }
 
     #[test]
     fn the_leading_flag_always_comes_from_the_options_default() {
-        assert_eq!(trailing("f(\n    a,\n    b,\n)", "a,\n    b,", true, 1), 3);
-        assert_eq!(trailing("f(\n    a,\n    b\n)", "a,\n    b", true, 3), 1);
+        assert_eq!(trailing(Some(COMMA), true, 1), 3);
+        assert_eq!(trailing(Some(ITEM), true, 3), 1);
     }
 }
