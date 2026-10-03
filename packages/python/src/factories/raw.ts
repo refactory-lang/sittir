@@ -3,7 +3,7 @@
 import type * as T from '../types-internal.js';
 import { Delimiter } from '@sittir/common/utils';
 import { TSKindId } from '../types.js';
-import type { AdmitBound, NonEmptyArray, WidenNumeric } from '@sittir/types';
+import type { AdmitBound, NonEmptyArray, NumericConfig, NumericLiteral, WidenNumeric } from '@sittir/types';
 import {
 	currentHandle,
 	listSlotWith,
@@ -5906,6 +5906,10 @@ export function buildComprehensionClauses(
 	return node as unknown as T.ComprehensionClauses.Bound;
 }
 
+export function buildIntegerHex<const N extends string | number | bigint>(
+	value: AdmitBound<string | (N & NumericLiteral<N, true>), T.AdmittedNodes>,
+	options?: T.IntegerHex.Options
+): T.IntegerHex.Bound;
 export function buildIntegerHex(
 	value: AdmitBound<string | number | bigint, T.AdmittedNodes>,
 	options?: T.IntegerHex.Options
@@ -5940,6 +5944,10 @@ export function buildIntegerHex(
 	return node as unknown as T.IntegerHex.Bound;
 }
 
+export function buildIntegerOctal<const N extends string | number | bigint>(
+	value: AdmitBound<string | (N & NumericLiteral<N, true>), T.AdmittedNodes>,
+	options?: T.IntegerOctal.Options
+): T.IntegerOctal.Bound;
 export function buildIntegerOctal(
 	value: AdmitBound<string | number | bigint, T.AdmittedNodes>,
 	options?: T.IntegerOctal.Options
@@ -5974,6 +5982,10 @@ export function buildIntegerOctal(
 	return node as unknown as T.IntegerOctal.Bound;
 }
 
+export function buildIntegerBinary<const N extends string | number | bigint>(
+	value: AdmitBound<string | (N & NumericLiteral<N, true>), T.AdmittedNodes>,
+	options?: T.IntegerBinary.Options
+): T.IntegerBinary.Bound;
 export function buildIntegerBinary(
 	value: AdmitBound<string | number | bigint, T.AdmittedNodes>,
 	options?: T.IntegerBinary.Options
@@ -6048,6 +6060,9 @@ export function buildIntegerDecimalImaginary(text: string): T.IntegerDecimalImag
 	return node as unknown as T.IntegerDecimalImaginary.Bound;
 }
 
+export function buildIntegerDecimalPlain<const N extends string | number | bigint>(
+	text: N & NumericLiteral<N, true>
+): T.IntegerDecimalPlain.Bound;
 export function buildIntegerDecimalPlain(text: string | number | bigint): T.IntegerDecimalPlain.Bound {
 	text = numberText(10, '', text);
 	if (text.length === 0) throw new Error(`integer_decimal_plain: text must be non-empty`);
@@ -6069,6 +6084,22 @@ export function buildIntegerDecimalPlain(text: string | number | bigint): T.Inte
 	return node as unknown as T.IntegerDecimalPlain.Bound;
 }
 
+export function buildFloatPoint<
+	const C extends WidenNumeric<
+		T.FloatPoint.Config,
+		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+	>
+>(
+	config: C &
+		NumericConfig<
+			C,
+			{ integer: true; fraction: true; exponent: true },
+			WidenNumeric<
+				T.FloatPoint.Config,
+				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+			>
+		>
+): T.FloatPoint.Bound;
 export function buildFloatPoint(
 	config: WidenNumeric<
 		T.FloatPoint.Config,
@@ -6125,6 +6156,22 @@ export function buildFloatPoint(
 	return node as unknown as T.FloatPoint.Bound;
 }
 
+export function buildFloatLeadingPoint<
+	const C extends WidenNumeric<
+		T.FloatLeadingPoint.Config,
+		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+	>
+>(
+	config: C &
+		NumericConfig<
+			C,
+			{ integer: true; fraction: true; exponent: true },
+			WidenNumeric<
+				T.FloatLeadingPoint.Config,
+				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+			>
+		>
+): T.FloatLeadingPoint.Bound;
 export function buildFloatLeadingPoint(
 	config: WidenNumeric<
 		T.FloatLeadingPoint.Config,
@@ -6182,6 +6229,16 @@ export function buildFloatLeadingPoint(
 	return node as unknown as T.FloatLeadingPoint.Bound;
 }
 
+export function buildFloatScientific<
+	const C extends WidenNumeric<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>
+>(
+	config: C &
+		NumericConfig<
+			C,
+			{ integer: true; exponent: true },
+			WidenNumeric<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>
+		>
+): T.FloatScientific.Bound;
 export function buildFloatScientific(
 	config: WidenNumeric<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>
 ): T.FloatScientific.Bound {
@@ -6315,7 +6372,10 @@ export function buildEscapeSequenceHex(input: string, affix: boolean = true): T.
 	return node as unknown as T.EscapeSequenceHex.Bound;
 }
 
-export function buildEscapeSequenceOctal(content: string | number | bigint, affix?: true): T.EscapeSequenceOctal.Bound;
+export function buildEscapeSequenceOctal<const N extends string | number | bigint>(
+	content: N & NumericLiteral<N, true>,
+	affix?: true
+): T.EscapeSequenceOctal.Bound;
 export function buildEscapeSequenceOctal(text: `\\${string}`, affix: false): T.EscapeSequenceOctal.Bound;
 export function buildEscapeSequenceOctal(
 	input: string | number | bigint,

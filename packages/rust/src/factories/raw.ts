@@ -3,7 +3,7 @@
 import type * as T from '../types-internal.js';
 import { Delimiter } from '@sittir/common/utils';
 import { TSKindId } from '../types.js';
-import type { AdmitBound, NonEmptyArray, WidenNumeric } from '@sittir/types';
+import type { AdmitBound, NonEmptyArray, NumericConfig, NumericLiteral, WidenNumeric } from '@sittir/types';
 import {
 	currentHandle,
 	listSlotWith,
@@ -8253,6 +8253,12 @@ export function buildStringOpen(text: string): T.StringOpen.Bound {
 	return node as unknown as T.StringOpen.Bound;
 }
 
+export function buildIntegerLiteralDecimal<
+	const C extends WidenNumeric<T.IntegerLiteralDecimal.Config, { content: number | bigint }>
+>(
+	config: C &
+		NumericConfig<C, { content: true }, WidenNumeric<T.IntegerLiteralDecimal.Config, { content: number | bigint }>>
+): T.IntegerLiteralDecimal.Bound;
 export function buildIntegerLiteralDecimal(
 	config: WidenNumeric<T.IntegerLiteralDecimal.Config, { content: number | bigint }>
 ): T.IntegerLiteralDecimal.Bound {
@@ -8302,6 +8308,12 @@ export function buildIntegerLiteralDecimal(
 	return node as unknown as T.IntegerLiteralDecimal.Bound;
 }
 
+export function buildIntegerLiteralHex<
+	const C extends WidenNumeric<T.IntegerLiteralHex.Config, { content: number | bigint }>
+>(
+	config: C &
+		NumericConfig<C, { content: true }, WidenNumeric<T.IntegerLiteralHex.Config, { content: number | bigint }>>
+): T.IntegerLiteralHex.Bound;
 export function buildIntegerLiteralHex(
 	config: WidenNumeric<T.IntegerLiteralHex.Config, { content: number | bigint }>
 ): T.IntegerLiteralHex.Bound {
@@ -8351,6 +8363,12 @@ export function buildIntegerLiteralHex(
 	return node as unknown as T.IntegerLiteralHex.Bound;
 }
 
+export function buildIntegerLiteralBinary<
+	const C extends WidenNumeric<T.IntegerLiteralBinary.Config, { content: number | bigint }>
+>(
+	config: C &
+		NumericConfig<C, { content: true }, WidenNumeric<T.IntegerLiteralBinary.Config, { content: number | bigint }>>
+): T.IntegerLiteralBinary.Bound;
 export function buildIntegerLiteralBinary(
 	config: WidenNumeric<T.IntegerLiteralBinary.Config, { content: number | bigint }>
 ): T.IntegerLiteralBinary.Bound {
@@ -8400,6 +8418,12 @@ export function buildIntegerLiteralBinary(
 	return node as unknown as T.IntegerLiteralBinary.Bound;
 }
 
+export function buildIntegerLiteralOctal<
+	const C extends WidenNumeric<T.IntegerLiteralOctal.Config, { content: number | bigint }>
+>(
+	config: C &
+		NumericConfig<C, { content: true }, WidenNumeric<T.IntegerLiteralOctal.Config, { content: number | bigint }>>
+): T.IntegerLiteralOctal.Bound;
 export function buildIntegerLiteralOctal(
 	config: WidenNumeric<T.IntegerLiteralOctal.Config, { content: number | bigint }>
 ): T.IntegerLiteralOctal.Bound {
@@ -11672,6 +11696,9 @@ export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlo
 	return node as unknown as T.MatchBlockArms.Bound;
 }
 
+export function buildFloatLiteral<const N extends string | number>(
+	text: N & NumericLiteral<N, false>
+): T.FloatLiteral.Bound;
 export function buildFloatLiteral(text: string | number): T.FloatLiteral.Bound {
 	text = numberText('float', '.0', text);
 	if (text.length === 0) throw new Error(`float_literal: text must be non-empty`);

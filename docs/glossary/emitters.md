@@ -5214,6 +5214,18 @@ The base and affix arguments of the `numberText` call an emitter writes for a sh
 
 The JavaScript values a numeric text slot of this shape accepts: `number | bigint` for an integer in any base, `number` for a float (a bigint has no float spelling). The one source for every emitted numeric input type: leaf text parameters, slot element types, `WidenNumeric` keys, bare loose inputs and `LeafScalarMap`.
 
+### `packages/codegen/src/emitters/interior.ts::numericLiteralSignature`
+
+The public overload of a numeric text builder: `<const N extends string | <numberInputType>>(param: N & NumericLiteral<N, <integer?>>)`, written before the builder's implementation signature, which keeps the widened parameter. The overload refuses a literal the runtime guard refuses (negative; non-integer for an integer shape; past the safe-integer range) and accepts a text, a non-literal number and a bigint. An integer shape (`integer?` true) and a float shape differ only in the integer check.
+
+### `packages/codegen/src/emitters/interior.ts::numericConfigSlots`
+
+The numeric text slots of a node as a type-level record from config key to whether the slot is an integer (a float's digit slots are integers), or `undefined` when it has none. The one source of the `W` argument of `NumericConfig` and `NumericInput`.
+
+### `packages/codegen/src/emitters/interior.ts::numericInputRefusal`
+
+The refusal a loose coercer applies to its input `I`: `NumericInput<I, bare, slots>`, where `bare` says whether the bare number the kind accepts is an integer (`undefined` when it accepts none) and `slots` is `numericConfigSlots`. `undefined` when the kind has neither a bare number nor a numeric config slot, so a coercer of any other kind keeps its signature.
+
 ### `packages/codegen/src/emitters/interior.ts::numberInputTest`
 
 The runtime test, over the named value, that matches `numberInputType`: the guard a coercer uses to send a JavaScript value through `numberText` rather than treat it as a node or config.

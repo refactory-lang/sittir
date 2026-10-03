@@ -295,6 +295,25 @@ export function numberInputType(shape: NumberShape): string {
 	return shape.base === 'float' ? 'number' : 'number | bigint';
 }
 
+export function numericLiteralSignature(fn: string, shape: NumberShape, param: string, returns: string): string {
+	const float = shape.base === 'float';
+	return `export function ${fn}<const N extends string | ${numberInputType(shape)}>(${param}: N & NumericLiteral<N, ${float ? 'false' : 'true'}>): ${returns};`;
+}
+
+export function numericConfigSlots(node: AssembledNode): string | undefined {
+	const slots = node.slots.flatMap((slot) => {
+		const shape = numericSlotShape(slot);
+		return shape === undefined ? [] : [`${JSON.stringify(slot.configKey)}: ${shape.base === 'float' ? 'false' : 'true'}`];
+	});
+	return slots.length === 0 ? undefined : `{ ${slots.join('; ')} }`;
+}
+
+export function numericInputRefusal(node: AssembledNode, bare: NumberShape | undefined, known: string): string | undefined {
+	const slots = numericConfigSlots(node);
+	if (bare === undefined && slots === undefined) return undefined;
+	return `NumericInput<I, ${bare === undefined ? 'undefined' : bare.base === 'float' ? 'false' : 'true'}${slots === undefined ? ', {}' : `, ${slots}`}, ${known}>`;
+}
+
 export function numberInputTest(shape: NumberShape, value: string): string {
 	return shape.base === 'float' ? `(typeof ${value} === 'number')` : `(typeof ${value} === 'number' || typeof ${value} === 'bigint')`;
 }

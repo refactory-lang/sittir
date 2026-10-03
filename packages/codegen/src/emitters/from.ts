@@ -2,7 +2,7 @@ import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isBuilderTextLeaf } from '../compiler/model/node-map.ts';
-import { bareInteriorText, interiorOf, interiorSlotGuards, numberInputTest, numberInputType, numberTextArgs, numericLeafKinds, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
+import { bareInteriorText, interiorOf, interiorSlotGuards, numberInputTest, numberInputType, numberTextArgs, numericInputRefusal, numericLeafKinds, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
 	collectKindEntries,
@@ -167,7 +167,7 @@ const ARGS_HELPER = [
 ].join('\n');
 
 const TYPES_IMPORT_ALWAYS = 'AnyUntypedNode';
-const TYPES_IMPORT_OPTIONAL = ['LooseValue', 'NonEmptyArray', 'WidenNumeric', 'SiblingLeadRefusal', 'SpelledAffix', 'WithSpelling'] as const;
+const TYPES_IMPORT_OPTIONAL = ['LooseValue', 'NonEmptyArray', 'NumericInput', 'WidenNumeric', 'SiblingLeadRefusal', 'SpelledAffix', 'WithSpelling'] as const;
 
 function emitFromFieldInputType(lines: string[]): void {
 	lines.push('/** Runtime-narrowed field input bag for generated from() helpers. */');
@@ -406,15 +406,30 @@ function emitBranchFrom(
 		throw new Error(`from: '${node.kind}' has both a spelled delimiter and sibling leads; no typed form covers both`);
 	}
 	const spelledType = fullForm === undefined || spelled.length === 0 ? undefined : spelledReturnType(returnType, fullForm, spelled);
+	const bareShape = bareInteriorText(node.kind, node)?.number ?? (soleField === undefined ? undefined : numericSlotShape(soleField));
+	const numericRefusal = numericInputRefusal(node, bareShape, inputType);
+	const refused = (...parts: readonly (string | undefined)[]): string => ['I', ...parts.filter((part) => part !== undefined)].join(' & ');
 	const signature =
 		spelledType !== undefined
-			? `export function ${fn}<const I extends ${inputType}, const O extends T.${typeName}.Options = {}>(input${opt}: I, options?: O): ${spelledType} {`
+			? `export function ${fn}<const I extends ${inputType}, const O extends T.${typeName}.Options = {}>(input${opt}: ${refused(numericRefusal)}, options?: O): ${spelledType} {`
 			: refusal !== undefined
-				? `export function ${fn}<const I extends ${inputType}>(input${opt}: I & ${refusal}${optionsParam}): ${returnType} {`
+				? `export function ${fn}<const I extends ${inputType}>(input${opt}: ${refused(refusal, numericRefusal)}${optionsParam}): ${returnType} {`
 				: `export function ${fn}(input${opt}: ${inputType}${optionsParam}): ${returnType} {`;
+	const numericOverload =
+		spelledType === undefined && refusal === undefined && numericRefusal !== undefined
+			? `export function ${fn}<const I extends ${inputType}>(input${opt}: ${refused(numericRefusal)}${optionsParam}): ${returnType};`
+			: undefined;
 	const spreadTarget = canDirectFactoryCall ? listSpreadTarget(node, nodeMap, kindEntries) : null;
 	if (spreadTarget === null) {
-		lines.push(...withEmptyOverload(nodeMap, node.kind, `export function ${fn}`, [signature], signature.replace(/ \{$/, ';')));
+		lines.push(
+			...withEmptyOverload(
+				nodeMap,
+				node.kind,
+				`export function ${fn}`,
+				numericOverload === undefined ? [signature] : [numericOverload, signature],
+				numericOverload === undefined ? signature.replace(/ \{$/, ";") : undefined
+			)
+		);
 	} else {
 		if (spelledType !== undefined || refusal !== undefined) {
 			throw new Error(`from: '${node.kind}' forwards a list spread but its loose input is spelled or refuses sibling leads; no typed form covers both`);
