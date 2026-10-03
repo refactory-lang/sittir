@@ -65,9 +65,14 @@ export function treeHandleOf(node: object): number | undefined {
 	return typeof handle === 'number' ? handle : undefined;
 }
 
+/** Whether `key` names one of a node's slots (`_<name>`). */
+export function isSlotKey(key: string): boolean {
+	return key.charCodeAt(0) === 95;
+}
+
 /** Whether `key` names storage on a node: a slot (`_<name>`) or its unslotted children (`$other`). */
 export function isStorageKey(key: string): boolean {
-	return key.charCodeAt(0) === 95 || key === '$other';
+	return isSlotKey(key) || key === '$other';
 }
 
 const MEMBER_KEYS: ReadonlySet<string> = new Set(['$with', '$trivia', '$engine', '$render']);
@@ -83,7 +88,7 @@ export function isDataKey(key: string): boolean {
 
 /** Whether `node` holds storage: a slot, or unslotted children. A text leaf and a token hold none. */
 export function holdsSlots(node: object): boolean {
-	for (const key in node) if (key.charCodeAt(0) === 95) return true;
+	for (const key in node) if (isSlotKey(key)) return true;
 	return (node as { readonly $other?: unknown }).$other != null;
 }
 
@@ -261,7 +266,18 @@ export function detachCoordinate(data: object): void {
  * canonically.
  */
 export function toTransportData(node: AnyUntypedNode, view: TriviaView): AnyUntypedNode {
-	return toTransportValue(node, view, BOTH_EDGES) as AnyUntypedNode;
+	return toTransportValue(node, view, BOTH_EDGES, true) as AnyUntypedNode;
+}
+
+/**
+ * `toTransportData` for data that will leave the tree it was read from: the
+ * same trivia, gaps and flanks, judged the same way, but no node is folded to
+ * a coordinate, so every node crosses as its own storage and nothing but the
+ * layout evidence still names the tree. The caller turns that evidence into
+ * the text it names.
+ */
+export function toDetachedTransportData(node: AnyUntypedNode, view: TriviaView): AnyUntypedNode {
+	return toTransportValue(node, view, BOTH_EDGES, false) as AnyUntypedNode;
 }
 
 /** The sides of a read node's trivia derived from its line gaps, and the sibling its leading runs separate it from in its source. */
@@ -277,10 +293,11 @@ export interface TriviaView {
 	readonly trivia: (node: Record<string, unknown>) => unknown;
 	readonly derived: (node: Record<string, unknown>) => DerivedSides | undefined;
 	readonly isWrapper: (kindId: number) => boolean;
+	readonly isList: (kindId: number) => boolean;
 }
 
 /** The view of data whose trivia is all stored: nothing is derived. */
-export const STORED_TRIVIA: TriviaView = { trivia: (node) => node.$_trivia, derived: () => undefined, isWrapper: () => false };
+export const STORED_TRIVIA: TriviaView = { trivia: (node) => node.$_trivia, derived: () => undefined, isWrapper: () => false, isList: () => false };
 
 /** The edges of a node whose neighbour is not the one its source had there. */
 export interface ChangedEdges {
@@ -322,7 +339,7 @@ function isPresent(value: unknown): boolean {
  */
 function evidenceOf(entry: Record<string, unknown>, view: TriviaView): Record<string, unknown> {
 	if (sourceOf(entry) !== undefined || typeof entry.$type !== 'number' || !view.isWrapper(entry.$type)) return entry;
-	const held = Object.keys(entry).flatMap((key) => (isStorageKey(key) && isPresent(entry[key]) ? [entry[key]] : []));
+	const held = Object.keys(entry).flatMap((key) => (isSlotKey(key) && isPresent(entry[key]) ? [entry[key]] : []));
 	const [only] = held;
 	return held.length === 1 && isRecord(only) ? evidenceOf(only, view) : entry;
 }
@@ -341,7 +358,7 @@ export function sourceGapOf(
 	index: number,
 	view: TriviaView,
 	trivia: unknown
-): { readonly $treeHandle: number; readonly $span: { readonly start: number; readonly end: number } } | undefined {
+): SourceGapEvidence | undefined {
 	const entry = list[index];
 	if (index === 0 || !isRecord(entry) || sourceOf(owner) === undefined) return undefined;
 	const evidence = evidenceOf(entry, view);
@@ -372,6 +389,12 @@ function withoutChangedEdges(trivia: unknown, changed: ChangedEdges): unknown {
 	return Object.keys(kept).length === 0 ? undefined : kept;
 }
 
+/** A list item's gap toward the item before it as the transport sends it: the gap's range in its tree. */
+export interface SourceGapEvidence {
+	readonly $treeHandle: number;
+	readonly $span: { readonly start: number; readonly end: number };
+}
+
 /** A list node's flanks as the transport sends them: its source span in its tree, and which flanks it keeps. */
 export interface SourceFlankEvidence {
 	readonly $treeHandle: number;
@@ -381,16 +404,14 @@ export interface SourceFlankEvidence {
 }
 
 /**
- * The items of a list node: the one array a kind a rebuild constructs around
- * existing nodes (`TriviaView.isWrapper`) holds as its only present node or
- * array storage. A group around one node holds a node, not an array, and is
- * not a list node.
+ * The items of a list node: the one array a list kind (`TriviaView.isList`)
+ * holds in its slots.
  */
 function listItemsOf(record: Record<string, unknown>, view: TriviaView): readonly Record<string, unknown>[] | undefined {
-	if (typeof record.$type !== 'number' || !view.isWrapper(record.$type)) return undefined;
+	if (typeof record.$type !== 'number' || !view.isList(record.$type)) return undefined;
 	const held = Object.keys(record).flatMap((key) => {
 		const value = record[key];
-		return isStorageKey(key) && isPresent(value) && (isRecord(value) || Array.isArray(value)) ? [value] : [];
+		return isSlotKey(key) && isPresent(value) && (isRecord(value) || Array.isArray(value)) ? [value] : [];
 	});
 	const [only] = held;
 	return held.length === 1 && Array.isArray(only) ? only.filter(isRecord) : undefined;
@@ -439,15 +460,16 @@ function toTransportValue(
 	value: unknown,
 	view: TriviaView,
 	changed: ChangedEdges,
+	fold: boolean,
 	owner?: Record<string, unknown>,
 	bearer?: Record<string, unknown>
 ): unknown {
 	if (Array.isArray(value)) {
 		return value.map((entry, index) => {
-			if (!isRecord(entry)) return toTransportValue(entry, view, NO_EDGES);
+			if (!isRecord(entry)) return toTransportValue(entry, view, NO_EDGES, fold);
 			const evidence = evidenceOf(entry, view);
 			const changed = changedEdges(value, index, view);
-			const out = toTransportValue(entry, view, changed, undefined, evidence);
+			const out = toTransportValue(entry, view, changed, fold, undefined, evidence);
 			const gap = owner !== undefined ? sourceGapOf(owner, value, index, view, withoutChangedEdges(view.trivia(evidence), changed)) : undefined;
 			if (gap !== undefined && isRecord(out)) out.$_gap = gap;
 			return out;
@@ -456,18 +478,18 @@ function toTransportValue(
 	if (!isRecord(value)) return value;
 	const bears = bearer === undefined || bearer === value;
 	const trivia = crossingTrivia(value, view, bears ? changed : NO_EDGES);
-	if (canFold(value, trivia)) {
+	if (fold && canFold(value, trivia)) {
 		assertHoldsTree(value);
 		return foldToCoordinate(value);
 	}
 	// Trivia entries cross as they are, coordinates included.
-	if (trivia != null) forEachTriviaList(trivia as TriviaSides<unknown>, assertTriviaHoldsTree);
+	if (fold && trivia != null) forEachTriviaList(trivia as TriviaSides<unknown>, assertTriviaHoldsTree);
 	const out: Record<string, unknown> = {};
 	for (const key of Object.keys(value)) {
 		if (!isDataKey(key) || key === '$_trivia') continue;
 		const raw = value[key];
 		if (typeof raw === 'function') continue;
-		out[key] = isStorageKey(key) ? toTransportValue(raw, view, bears ? NO_EDGES : changed, value, bears ? undefined : bearer) : raw;
+		out[key] = isStorageKey(key) ? toTransportValue(raw, view, bears ? NO_EDGES : changed, fold, value, bears ? undefined : bearer) : raw;
 	}
 	if (trivia != null) out.$_trivia = trivia;
 	const flank = sourceFlankOf(value, view);

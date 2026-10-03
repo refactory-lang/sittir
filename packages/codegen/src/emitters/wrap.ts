@@ -71,6 +71,10 @@ function aliasEnvelopeIds(envelopes: readonly AssembledAlias[]): number[] {
 	return [...new Set(envelopes.map((node) => node.aliasTypeId))].sort((a, b) => a - b);
 }
 
+export function listKindIds(nodeMap: NodeMap): number[] {
+	return [...nodeMap.nodes.values()].flatMap((node) => (node instanceof AssembledList && node.kindId !== undefined ? [node.kindId] : [])).sort((a, b) => a - b);
+}
+
 export function rebuildWrapperKindIds(nodeMap: NodeMap): number[] {
 	const hoisted = [...nodeMap.nodes.values()].flatMap((node) =>
 		node instanceof AbstractAssembledCompound && node.annotations?.hoisted === true && node.kindId !== undefined ? [node.kindId] : []

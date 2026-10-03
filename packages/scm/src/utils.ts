@@ -10,6 +10,7 @@ export const triviaFacts = Object.freeze({
 	kinds: new Set<string>(['_blankline', '_double_blankline', '_newline', '_space', '_tab', 'comment']),
 	innerGaps: INNER_GAPS,
 	rebuildWrappers: new Set<number>([52, 59, 60, 61, 62]),
+	listKinds: new Set<number>([]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:\s+))+)$/u,
 		kindIdByText: Object.freeze({ ' ': 25, '\t': 26, '\n': 27, '\n\n': 28, '\n\n\n': 29 })

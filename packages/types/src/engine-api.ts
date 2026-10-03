@@ -36,6 +36,13 @@ export interface TriviaFacts {
 	 * it holds stands for it where source adjacency is judged.
 	 */
 	readonly rebuildWrappers: ReadonlySet<number>;
+	/**
+	 * Engine plumbing, not for callers: the kind ids of the grammar's list
+	 * kinds, the nodes whose one array slot holds a list's items. Only these
+	 * have list flanks; a construct that holds an array between its own
+	 * delimiters, such as a string, does not.
+	 */
+	readonly listKinds: ReadonlySet<number>;
 	readonly whitespace?: { readonly run: RegExp; readonly kindIdByText: { readonly [text: string]: number } };
 	readonly comment?: ((text: string) => AnyUntypedNode) | undefined;
 	readonly spelled?: readonly SpelledTrivia[];

@@ -7246,6 +7246,10 @@ The sorted, distinct alias kind ids of `envelopes`: the members of `_ALIAS_ENVEL
 
 What a rebuild constructs around an existing node, as sorted, distinct kind ids: the kinds enrich mints, which the model stamps `hoisted` (rust `_attributed_parameter` among them), and the alias envelopes (`aliasEnvelopeIds`). Such a wrapper, rebuilt, has no source of its own, so where source adjacency is judged the node it holds stands for it (`evidenceOf`). The set is derived only from those two existing stamps, with no filter by model class, and emitted once per grammar as `TriviaFacts.rebuildWrappers` (`emitTriviaFacts`). Its breadth is safe on two independent checks: `evidenceOf` looks through an instance only when it holds exactly one present node, so a list or a leaf never is, and the reader takes `previous` from the outermost node spanning exactly the child's bytes, so a rebuilt wrapper that adds tokens around a read child never reads as adjacent.
 
+### `packages/codegen/src/emitters/wrap.ts::listKindIds`
+
+The grammar's list kinds as sorted kind ids: every `AssembledList` the model holds with a kind id. A list node's items reach the parent's delimiters, so its source flanks are the whitespace between those delimiters and its edge items. A construct that holds an array between delimiters of its own, such as a string around its fragments, is a different model class and is not in the set. Emitted once per grammar as `TriviaFacts.listKinds` (`emitTriviaFacts`), and asked by `listItemsOf` through `TriviaView.isList`.
+
 ### `packages/codegen/src/emitters/wrap.ts::collectTypeImports`
 
 ```text
@@ -10887,7 +10891,10 @@ Emits `triviaFacts`, the grammar's `TriviaFacts`, which the language hooks carry
 - `kinds`, the trivia kind names (`triviaKinds`); the runtime refuses a node or kind id of any other kind, saying it is not an extra;
 - `innerGaps` (`INNER_GAPS`);
 - `whitespace` (`whitespaceTrivia`), when the grammar has lexical extras: loose text the extras run accepts becomes the kind id of the whitespace kind spelled exactly so, and any other such text is refused;
-- `rebuildWrappers` (`rebuildWrapperKindIds`), engine plumbing: the kind ids of what a rebuild constructs around an existing node. The render engine passes the same set to `createNativeEngine` (`emitRenderEngine`), so the engine's trivia view and a tool's view built from the engine's facts answer from one emitted set.
+- `rebuildWrappers` (`rebuildWrapperKindIds`), engine plumbing: the kind ids of what a rebuild constructs around an existing node;
+- `listKinds` (`listKindIds`), engine plumbing: the kind ids of the grammar's list kinds, the only nodes that have list flanks.
+
+The render engine passes both sets to `createNativeEngine` (`emitRenderEngine`), so the engine's trivia view and a tool's view built from the engine's facts answer from one emitted set.
 
 The facts carry no `comment` builder and no render or edit: a node renders and edits through the engine it belongs to. A grammar with a default trivia form passes its comment builder in the language hooks' `trivia` (`emitApi`), where `api.ts` imports the coercer.
 
