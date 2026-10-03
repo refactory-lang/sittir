@@ -1,3 +1,4 @@
+import type { ByteSpan } from '@sittir/common';
 import type { FactoryEntry, ReadNodeLike } from '../validate/common.ts';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
@@ -21,7 +22,7 @@ interface ExerciseCase {
 interface ParsedNode {
 	readonly $type: number;
 	readonly $named?: boolean;
-	readonly $span?: { readonly start: number; readonly end: number };
+	readonly $span?: ByteSpan;
 }
 
 interface ExerciseEngine {

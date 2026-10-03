@@ -11,8 +11,7 @@ import {
 	listOption,
 	ownerElements,
 	ownerView,
-	readStubLength,
-	unreadableStubItems
+	refuseReadStub
 } from '../src/utils.ts';
 
 const wrapperSpec = { kind: 5, content: 'content', decorations: ['_attribute'] };
@@ -49,10 +48,10 @@ const wrappedOwner = (list: object | undefined, wrapper?: typeof wrapperSpec, tr
 
 const builtOwner = (list: object | undefined, storage = '_items') => {
 	const view = ownerView(list, '_element');
-	const items = view.stored === undefined ? undefined : listItems(ownerElements(view.list, 'elements'), undefined);
-	const node: Record<PropertyKey, unknown> = { $type: 1, _items: list, length: items?.length, [LIST_ITEMS]: items, [LIST_READ]: items === undefined ? () => unreadableStubItems(storage) : undefined, ...sharedMembers(view) };
-	if (items === undefined) readStubLength(node, storage);
-	else for (let index = 0; index < items.length; index++) node[index] = items[index];
+	if (view.stored === undefined) refuseReadStub(storage);
+	const items = listItems(ownerElements(view.list, 'elements'), undefined);
+	const node: Record<PropertyKey, unknown> = { $type: 1, _items: list, length: items.length, [LIST_ITEMS]: items, ...sharedMembers(view) };
+	for (let index = 0; index < items.length; index++) node[index] = items[index];
 	return node as any;
 };
 
@@ -115,12 +114,8 @@ describe('a list owner', () => {
 		expect((node as any)[1]).toBe('b');
 	});
 
-	it('built over a read stub no tree can read, refuses to count it', () => {
-		const node = builtOwner({ $type: 9, $parentHandle: 4, $childIndex: 1 });
-		expect(() => node.length).toThrow(/read stub/);
-		expect(() => [...node]).toThrow(/read stub/);
-		expect(() => node.map((item: unknown) => item)).toThrow(/read stub/);
-		expect(node[0]).toBeUndefined();
+	it('built over a read stub no tree can read, is refused at the build', () => {
+		expect(() => builtOwner({ $type: 9, $parentHandle: 4, $childIndex: 1 })).toThrow(/read stub/);
 	});
 
 	it('reads an empty list node that carries its own handle as empty, not as a stub', () => {
