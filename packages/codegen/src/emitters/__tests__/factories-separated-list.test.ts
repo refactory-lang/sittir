@@ -125,7 +125,7 @@ describe('factories emitter — separatedList', () => {
 		expect(emitted).toContain('_member');
 		expect(emitted).toContain('_separator');
 		expect(emitted).toContain('_delimiter');
-		expect(emitted).toContain('options.delimiter ?? Delimiter.None');
+		expect(emitted).toContain('const _delimiter = options.delimiter;');
 		expect(emitted).toContain('const _separator = options.separator ?? TSKindId.Semi;');
 		expect(emitted).toContain('separator: (v: TSKindId.Comma | TSKindId.Semi) =>');
 		expect(emitted).not.toContain('Record<string, number>');
@@ -169,7 +169,7 @@ describe('factories emitter — separatedList', () => {
 		expect(emitted).toContain('delimiter?: Delimiter.None | Delimiter.Trailing');
 		expect(emitted).not.toContain('_separator');
 		expect(emitted).toContain('_delimiter');
-		expect(emitted).toContain('options.delimiter ?? Delimiter.None');
+		expect(emitted).toContain('const _delimiter = options.delimiter;');
 	});
 
 	it('literal separator with both flanks optional (mirrors object_type_content_comma/_semi): leading + trailing, no separatorKind', () => {
@@ -185,7 +185,7 @@ describe('factories emitter — separatedList', () => {
 		expect(emitted).toContain('delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both');
 		expect(emitted).not.toContain('_separator');
 		expect(emitted).toContain('_delimiter');
-		expect(emitted).toContain('options.delimiter ?? Delimiter.None');
+		expect(emitted).toContain('const _delimiter = options.delimiter;');
 	});
 
 	it('literal separator with mandatory-only (no optional flanks): no options object at all — bare elements signature', () => {

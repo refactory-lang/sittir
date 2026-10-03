@@ -189,16 +189,14 @@ function firstWhere<T>(root: unknown, accepts: (value: unknown) => value is T): 
 	throw new Error('no node the guard accepts');
 }
 
-// A rebuilt list's trailing delimiter is canonical: the list builder writes its
-// default delimiter into every list it mints, and that value wins over the source.
 describe('a rebuilt list keeps the flanks its source edge items still stand beside', () => {
 	const broken = 'add(\n    1i32,\n    2i32,\n);\n';
 
-	it('rebuilds a call\'s arguments with their source items in their source layout, but a canonical trailing delimiter', () => {
+	it('rebuilds a call\'s arguments with their source items in their source layout and trailing delimiter', () => {
 		const args = firstWhere(rust.parse(broken), (value): value is ReturnType<typeof rust.build.arguments> => rust.is.arguments(value as never));
 		const items = args.elements()?.items().map((item) => item.expression());
 		if (items === undefined) throw new Error('expected arguments');
-		expect(args.$with.elements(...items).$render()).toBe('(\n    1i32,\n    2i32\n)');
+		expect(args.$with.elements(...items).$render()).toBe('(\n    1i32,\n    2i32,\n)');
 	});
 
 	it('keeps the leading flank and the source gaps when an item is appended; the new gap and the closing flank are canonical', () => {
@@ -226,7 +224,7 @@ describe('a rebuilt list keeps the flanks its source edge items still stand besi
 		if (other === undefined || typeof other === 'number' || !rust.is.functionItem(other)) throw new Error('expected a function item');
 		const c = other.parameters().elements()?.items()[0]?.content();
 		if (c === undefined || typeof c === 'number' || !rust.is.parameter(c)) throw new Error('expected a parameter');
-		expect(parameters.$with.elements(a, c, b).$render()).toBe('(\n    a: u8, c: u16, b: i8\n)');
+		expect(parameters.$with.elements(a, c, b).$render()).toBe('(\n    a: u8, c: u16, b: i8,\n)');
 	});
 
 	it('keeps both flanks beside an edited last parameter', () => {
@@ -239,6 +237,6 @@ describe('a rebuilt list keeps the flanks its source edge items still stand besi
 		if (a === undefined || typeof a === 'number' || !rust.is.parameter(a)) throw new Error('expected a parameter');
 		if (b === undefined || typeof b === 'number' || !rust.is.parameter(b)) throw new Error('expected a parameter');
 		const edited = b.$with.type(a.type()) as typeof b;
-		expect(parameters.$with.elements(a, edited).$render()).toBe('(\n    a: u8,\n    b: u8\n)');
+		expect(parameters.$with.elements(a, edited).$render()).toBe('(\n    a: u8,\n    b: u8,\n)');
 	});
 });

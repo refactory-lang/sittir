@@ -642,6 +642,12 @@ impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
         ParsedTree::<G>::resolve_handle(&tree.nodes, &tree.tree, index).map(|node| KindId(node.kind_id()))
     }
 
+    fn last_list_child_kind(&self, handle: u64, span: crate::types::Span, kind: KindId) -> Option<KindId> {
+        let tree = self.get(&decode_handle(handle).0)?;
+        crate::read_untyped_node::last_list_child(&tree.tree, span.start as usize, span.end as usize, kind.0)
+            .map(|child| KindId(child.grammar_id()))
+    }
+
     fn for_each_kind_ending_with(&self, coord: &NodeCoordinate, f: &mut dyn FnMut(KindId)) {
         let Some(tree) = self.get(&coord.tree_id()) else {
             return;
