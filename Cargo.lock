@@ -441,6 +441,7 @@ dependencies = [
  "indexmap",
  "napi",
  "napi-derive",
+ "regex",
  "serde",
  "serde_json",
  "sha2",

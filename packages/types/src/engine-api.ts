@@ -1,5 +1,15 @@
-import type { AnyUntypedNode, ErrorNode, ErrorRegion, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaItem, TriviaSetter } from './core-types.ts';
+import type {
+	AnyUntypedNode,
+	ErrorNode,
+	ErrorRegion,
+	FormatRecord,
+	GrammarTriviaEntry,
+	RenderCallOptions,
+	TriviaItem,
+	TriviaSetter
+} from './core-types.ts';
 import type { IndentOption } from './options.ts';
+import type { QuerySlots } from './query.ts';
 
 /** One line-break run a read node owns as trivia: the whitespace member it reads as and the byte its run starts at. */
 export interface LineGap {
@@ -10,7 +20,11 @@ export interface LineGap {
 /** A read node as the line-gap query names it: its own handle, or as a deep read leaves it, its tree's tag, its span and its stamped kind. */
 export type LineGapAddress =
 	| { readonly handle: number }
-	| { readonly treeHandle: number; readonly span: { readonly start: number; readonly end: number }; readonly kind: number };
+	| {
+			readonly treeHandle: number;
+			readonly span: { readonly start: number; readonly end: number };
+			readonly kind: number;
+	  };
 
 /**
  * The line-break runs a read node owns, before it and in its closing gap, each in source order, and the spans of the
@@ -145,7 +159,9 @@ export interface Language<API extends LanguageAPI> {
 	 * @returns The engine, once the language has loaded.
 	 * @throws When an option the engine does not implement yet is set, or the language fails to load.
 	 */
-	createEngine<const R extends API['options'] = API['options']>(options?: CreateEngineOptions<API, R>): Promise<Engine<API>>;
+	createEngine<const R extends API['options'] = API['options']>(
+		options?: CreateEngineOptions<API, R>
+	): Promise<Engine<API>>;
 }
 
 export interface NativeEngineOptions<O extends object = Readonly<Record<string, unknown>>> {
@@ -160,6 +176,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	readonly is: API['is'];
 	readonly kinds: API['kinds'];
 	readonly trivia: TriviaFacts;
+	readonly querySlots: QuerySlots;
 	createNative(options?: NativeEngineOptions<API['options']>): NativeLanguageEngine<API>;
 	wrap(root: unknown, tree: unknown): API['root'];
 }
@@ -252,6 +269,14 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	 * did not parse cleanly.
 	 */
 	readonly parse: (source: string, options?: ParseOptions) => API['root'];
+	/**
+	 * The query facet of a node this engine parsed: what `node.$query()` returns. A view per slot
+	 * over the slot's items, and `$children` and `$descendants`.
+	 *
+	 * @throws When `node` holds no parsed tree (a built node, a draft, or a copy that lost its tree):
+	 * `$commit()` it first. Also when its tree's engine is disposed.
+	 */
+	readonly query: <N extends API['node'] & { readonly $query: () => unknown }>(node: N) => ReturnType<N['$query']>;
 	readonly read: (path: string, options?: ParseOptions) => Promise<API['root']>;
 	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, StoredInput<API> | RenderBuilder<API>>;
 	readonly create: (path: string, fn: (build: API['build']) => API['root']) => Pending;
@@ -296,13 +321,13 @@ export interface EngineOptions<API extends LanguageAPI, M extends ApiSurface = '
 }
 
 export interface Interceptor<API extends LanguageAPI> {
-	build?(call: { readonly path: readonly string[]; readonly args: readonly unknown[] }, next: () => API['node']): API['node'];
+	build?(
+		call: { readonly path: readonly string[]; readonly args: readonly unknown[] },
+		next: () => API['node']
+	): API['node'];
 	render?(call: { readonly node: RenderInput<API>; readonly options: API['options'] }, next: () => string): string;
 	parse?(call: { readonly source: string }, next: () => API['root']): API['root'];
-	file?(
-		change: FileChange & { readonly verb: 'create' | 'edit' | 'write' },
-		next: () => Promise<void>
-	): Promise<void>;
+	file?(change: FileChange & { readonly verb: 'create' | 'edit' | 'write' }, next: () => Promise<void>): Promise<void>;
 }
 
 export interface Project extends AsyncDisposable {

@@ -20,13 +20,8 @@ import type {
 import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle } from './engine-scope.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
 import { ParseErrors } from './parse-errors.ts';
-import {
-	isEmptyNode as isEmptyUntypedNode,
-	isErrorNode,
-	isFactoryNode,
-	isNode,
-	isParsedNode
-} from './utils.ts';
+import { queryFacet, type QueryHooks } from './query.ts';
+import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode } from './utils.ts';
 
 const loaded = new WeakMap<LanguageIdentity<LanguageAPI>, Promise<LanguageHooks<LanguageAPI>>>();
 
@@ -102,7 +97,8 @@ function scopedBuild<B>(build: B, handle: EngineHandle): B {
 function languageGuards<G extends object>(guards: G, inLanguage: (value: unknown) => boolean): Readonly<G> {
 	const entries = Object.entries(guards).map(([name, guard]): [string, unknown] => [
 		name,
-		(value: unknown, ...rest: unknown[]) => inLanguage(value) && (guard as (...args: unknown[]) => boolean)(value, ...rest)
+		(value: unknown, ...rest: unknown[]) =>
+			inLanguage(value) && (guard as (...args: unknown[]) => boolean)(value, ...rest)
 	]);
 	return Object.freeze(Object.fromEntries(entries) as G);
 }
@@ -140,13 +136,22 @@ function assembleEngine<API extends LanguageAPI>(
 		const stamp = engineOf(value);
 		return stamp !== undefined && sameLanguage(stamp, identity);
 	};
+	const queryHooks: QueryHooks = {
+		querySlots: hooks.querySlots,
+		kindName: (kind) => hooks.trivia.kindName(kind),
+		wrap: hooks.wrap
+	};
 	const engine: Engine<API> = {
 		...identity,
 		build,
 		is: languageGuards(hooks.is, inLanguage),
 		kinds: hooks.kinds,
 		types: undefined as unknown as API['types'],
-		diagnostics: { buildProfile: native.buildProfile, parseAndRead: readAndBind, lineGapsOf: (address) => native.lineGapsOf(address) },
+		diagnostics: {
+			buildProfile: native.buildProfile,
+			parseAndRead: readAndBind,
+			lineGapsOf: (address) => native.lineGapsOf(address)
+		},
 		isNode: (value): value is API['node'] => isNode(value) && inLanguage(value),
 		isParsedNode: (value): value is API['node'] => isParsedNode(value) && inLanguage(value),
 		isFactoryNode: (value): value is API['node'] => isFactoryNode(value) && inLanguage(value),
@@ -165,6 +170,15 @@ function assembleEngine<API extends LanguageAPI>(
 			if (parseOptions?.errors === 'throw' && root.$errors.length > 0) throw new ParseErrors(root.$errors);
 			return hooks.wrap(root, tree);
 		},
+		query: ((node: object) => {
+			if (handle.current !== engine)
+				throw new Error('query: engine disposed; parse the source again with a live engine');
+			const stamp = engineOf(node);
+			if (stamp !== undefined && !sameLanguage(stamp, identity)) {
+				throw new Error(`cannot query a ${stamp.language.name} node through a ${language.name} engine`);
+			}
+			return queryFacet(node, queryHooks);
+		}) as Engine<API>['query'],
 		read() {
 			return Promise.reject(unimplementedVerb('read'));
 		},

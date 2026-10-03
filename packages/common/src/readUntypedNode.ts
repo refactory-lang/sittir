@@ -16,6 +16,7 @@
  */
 
 import type { AnyUntypedNode, AnyTreeNode, FormatRecord } from '@sittir/types';
+import type { TreeQuery } from './query.ts';
 
 /**
  * A handle to the parsed tree, providing node navigation via handle + childIndex.
@@ -46,6 +47,7 @@ export interface TreeHandle {
 	 * Callers can also set this manually to apply a house-style config.
 	 */
 	format?: FormatRecord;
+	query?: TreeQuery;
 	/**
 	 * Phase D: convert a tree-sitter string kind name to the numeric
 	 * `TSKindId` value used as `$type` in `AnyUntypedNode`. Required for
@@ -112,7 +114,12 @@ function promoteAnonymousKeyword(
  * `fieldNameForChild`. That walker is kept only for those handles; fix
  * read-shape gaps in the rust reader, not here.
  */
-export function readUntypedNode(tree: TreeHandle, handle?: number, childIndex?: number, depth?: number): AnyUntypedNode {
+export function readUntypedNode(
+	tree: TreeHandle,
+	handle?: number,
+	childIndex?: number,
+	depth?: number
+): AnyUntypedNode {
 	// Native-handle dispatch: when `tree.read` is present the handle owns a
 	// Rust/napi engine that produces `AnyUntypedNode` directly (no JS-side tree
 	// walk needed). TS handles do NOT set `tree.read` so this branch is

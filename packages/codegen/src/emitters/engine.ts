@@ -44,7 +44,9 @@ function triviaHook(config: EmitEngineConfig): string {
 						.map(
 							(form) =>
 								`{ open: ${JSON.stringify(form.open)}, close: ${JSON.stringify(form.close)}, build: (text: string) => ${
-									form.spelledType === undefined ? `${form.builder}(text)` : `${form.builder}(text as ${form.spelledType}, false)`
+									form.spelledType === undefined
+										? `${form.builder}(text)`
+										: `${form.builder}(text as ${form.spelledType}, false)`
 								} }`
 						)
 						.join(', ')}])`
@@ -61,7 +63,9 @@ function triviaImports(config: EmitEngineConfig): string {
 		])
 	];
 	return (['raw', 'coerce'] as const)
-		.flatMap((module) => (names(module).length === 0 ? [] : [`import { ${names(module).join(', ')} } from './factories/${module}.js';\n`]))
+		.flatMap((module) =>
+			names(module).length === 0 ? [] : [`import { ${names(module).join(', ')} } from './factories/${module}.js';\n`]
+		)
 		.join('');
 }
 
@@ -135,7 +139,7 @@ import { ir } from './ir.js';
 import { is } from './is.js';
 import { TSKindId, type FixedTextKindId, type IrKeyOf, type NamespaceMap, type ${grammarTypePrefix(grammar)}Node, type ${grammarTypeMapName(grammar)} } from './types.js';
 import type { IndentChar, Options } from './options.js';
-import { triviaFacts } from './utils.js';
+import { querySlots, triviaFacts } from './utils.js';
 ${triviaImports(config)}import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ${rootTypeName}Root } from './render-engine.js';
 import { wrapNode, type ${rootTreeTypeName} } from './wrap.js';
@@ -161,6 +165,7 @@ export const hooks: LanguageHooks<${api}> = Object.freeze<LanguageHooks<${api}>>
 	is,
 	kinds: TSKindId,
 	trivia: ${triviaHook(config)},
+	querySlots,
 	createNative: (options) => nativeLanguageEngine<${api}, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ${rootTypeName}Root & ParsedRoot, tree as TreeHandle)
 });

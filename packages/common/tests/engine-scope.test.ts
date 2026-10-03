@@ -13,13 +13,22 @@ const identity: EngineIdentity = {
 	language: { name: 'fake', fileTypes: [], load: () => Promise.reject(new Error('type-only')) },
 	renderModuleHash: 'hash',
 	options: {},
-	trivia: { kindName: () => undefined, kinds: new Set<string>(), innerGaps: {}, rebuildWrappers: new Set<number>(), listKinds: new Set<number>() }
+	trivia: {
+		kindName: () => undefined,
+		kinds: new Set<string>(),
+		innerGaps: {},
+		rebuildWrappers: new Set<number>(),
+		listKinds: new Set<number>()
+	}
 };
 
 function handleOf(label: string): EngineHandle {
 	const live: LiveEngine = {
 		...identity,
-		render: () => Object.assign(() => label, { toString: () => label }) as never
+		render: () => Object.assign(() => label, { toString: () => label }) as never,
+		query: () => {
+			throw new Error('type-only');
+		}
 	};
 	return { current: live };
 }

@@ -10900,6 +10900,14 @@ The facts carry no `comment` builder and no render or edit: a node renders and e
 
 `triviaFacts` is frozen, with its whitespace run table.
 
+### `packages/codegen/src/emitters/client-utils.ts::querySlotRows`
+
+Each kind's slots, by stamped kind id: the accessor a node reads the slot through (`propertyName`) and the name the reader stores the slot's children under (`storageName`, the name the reader's `wire_slot` routes claim, falling back to the field or the child's kind). It walks `node.slots` as `wireSlotRows` does, so a query names a slot exactly as the reader keys it. A kind with no slots has no row. Two nodes stamped with one kind id must agree on the row, and the emitter throws when they do not.
+
+### `packages/codegen/src/emitters/client-utils.ts::emitQuerySlots`
+
+Emits `querySlots`, the `querySlotRows` table as a frozen object keyed by kind id. The language hooks carry it to the engine, where a node's query facet takes its slot names from the row of the node's kind and a `where` condition maps each accessor it reads to the slot the native plan names.
+
 ### `packages/codegen/src/emitters/emit.ts::module`
 
 ```text
@@ -16609,11 +16617,11 @@ The per-grammar runtime glue shared by every grammar package, emitted into `pack
 
 ### `packages/codegen/src/emitters/native-crate.ts::NATIVE_RENDER_TRANSPORT_ABI`
 
-The version of the wire between the JS packages and a native build: the render transport shape JS sends, the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present, which of `$handle` / `$parentHandle` / `$treeHandle` a node carries, and the error regions a parse returns beside its root), and the read calls' names and arguments (a read takes a level count). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever any of these changes, and regenerate every grammar.
+The version of the wire between the JS packages and a native build: the render transport shape JS sends, the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present, which of `$handle` / `$parentHandle` / `$treeHandle` a node carries, and the error regions a parse returns beside its root), and the read calls' names and arguments (a read takes a level count; a descendant walk takes the address it starts from, kinds, a resume path, a limit, a plan and a depth, and returns its start's own handle with each batch; a plan is evaluated over a list of addresses in one call). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever any of these changes, and regenerate every grammar.
 
 ### `packages/codegen/src/emitters/types.ts::emitNodeSurfaceInterfaces`
 
-Emits a kind's `Bound` and `Parsed` interfaces. Each declares `$type` first, then `$with` over `this`, then its own members. A kind that seats a flattened group gets its `Bound` and `Parsed` as type aliases instead, `BoundSurface & FlatShapesOf<…>` and `ParsedSurface & FlatShapesOf<…>`, because an interface cannot extend the present-or-absent union; each unexported surface interface carries the members, and its `$with` returns the alias while reading its hints from the interface itself, so a rebuilt node keeps the union without the alias referring to itself. The kind's empty form is then an alias too, whose `$trivia` names the alias where an interface would use `this`. The order matters: the checker compares a target's properties in declaration order, and a mismatched kind must fail on the `$type` discriminant before it reaches the deep `$with` and accessor members; without it every non-matching arm of a wide union is compared structurally to the checker's depth limit.
+Emits a kind's `Bound` and `Parsed` interfaces. Each declares `$type` first, then `$with` over `this`, then (on `Parsed` only) `$query`, the node's `QueryFacet`, then its own members. A draft drops `$query` with `$with` and `$trivia` (`WithSlot`), so only a node read from a parse has one. A kind that seats a flattened group gets its `Bound` and `Parsed` as type aliases instead, `BoundSurface & FlatShapesOf<…>` and `ParsedSurface & FlatShapesOf<…>`, because an interface cannot extend the present-or-absent union; each unexported surface interface carries the members, and its `$with` returns the alias while reading its hints from the interface itself, so a rebuilt node keeps the union without the alias referring to itself. The kind's empty form is then an alias too, whose `$trivia` names the alias where an interface would use `this`. The order matters: the checker compares a target's properties in declaration order, and a mismatched kind must fail on the `$type` discriminant before it reaches the deep `$with` and accessor members; without it every non-matching arm of a wide union is compared structurally to the checker's depth limit.
 
 ### `packages/codegen/src/emitters/types.ts::AdmittedNodes`
 
@@ -16697,7 +16705,7 @@ One `$with` setter of a node literal: its name, its parameter list and the rebui
 
 ### `packages/codegen/src/emitters/node-members.ts::nodeMemberLines`
 
-The member lines of a node's literal after its storage keys: the `$with` block, a reader per slot, the `$render` closure, the `$trivia` positions and `$engine`. Every closure reads the `handle` the builder captured with `currentHandle()` and the `node` the literal is assigned to, so the node needs no helper after it is built and every node of a kind has one shape. `extra` carries the lines a group seat or a list owner adds. One function writes these lines for the factories and the wraps.
+The member lines of a node's literal after its storage keys: the `$with` block, a reader per slot, the `$render` closure, the `$trivia` positions, `$query` when the literal is a parsed node's (`parsed`), and `$engine`. Every closure reads the `handle` the builder captured with `currentHandle()` and the `node` the literal is assigned to, so the node needs no helper after it is built and every node of a kind has one shape. `$query` is one closure that makes the query facet only when called (`queryOf`), so a node that is never queried pays only for the closure. `extra` carries the lines a group seat or a list owner adds. One function writes these lines for the factories and the wraps; only the wraps pass `parsed`, because a built node holds no tree to query.
 
 ### `packages/codegen/src/emitters/node-members.ts::innerPositionsOf`
 

@@ -22,7 +22,8 @@ import type {
 	AdmitLookup,
 	SupertypeSurface,
 	WithNode,
-	BoundWithNode
+	BoundWithNode,
+	QueryFacet
 } from '@sittir/types';
 import type * as T from './types.js';
 import type { ERROR_KIND_ID } from '@sittir/common/error-kind';
@@ -2122,6 +2123,7 @@ export namespace Pattern {
 	export interface Parsed extends ParsedOf<T.Pattern, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.Pattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.Pattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Pattern>;
@@ -2138,6 +2140,7 @@ export namespace Alternation {
 	export interface Parsed extends ParsedOf<T.Alternation, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.Alternation['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.Alternation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Alternation>;
@@ -2156,6 +2159,7 @@ export namespace Term {
 	export interface Parsed extends ParsedOf<T.Term, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.Term['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.Term>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Term>;
@@ -2174,6 +2178,7 @@ export namespace LookaroundAssertion {
 	export interface Parsed extends ParsedOf<T.LookaroundAssertion, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.LookaroundAssertion['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.LookaroundAssertion>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LookaroundAssertion>;
@@ -2190,6 +2195,7 @@ export namespace LookaheadAssertion {
 	export interface Parsed extends ParsedOf<T.LookaheadAssertion, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.LookaheadAssertion['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.LookaheadAssertion>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LookaheadAssertion>;
@@ -2206,6 +2212,7 @@ export namespace LookbehindAssertion {
 	export interface Parsed extends ParsedOf<T.LookbehindAssertion, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.LookbehindAssertion['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.LookbehindAssertion>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LookbehindAssertion>;
@@ -2222,6 +2229,7 @@ export namespace CharacterClass {
 	export interface Parsed extends ParsedOf<T.CharacterClass, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.CharacterClass['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.CharacterClass>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CharacterClass>;
@@ -2238,6 +2246,7 @@ export namespace PosixCharacterClass {
 	export interface Parsed extends ParsedOf<T.PosixCharacterClass, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.PosixCharacterClass['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.PosixCharacterClass>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PosixCharacterClass>;
@@ -2254,6 +2263,7 @@ export namespace ClassRange {
 	export interface Parsed extends ParsedOf<T.ClassRange, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.ClassRange['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ClassRange>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassRange>;
@@ -2270,6 +2280,7 @@ export namespace AnonymousCapturingGroup {
 	export interface Parsed extends ParsedOf<T.AnonymousCapturingGroup, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.AnonymousCapturingGroup['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.AnonymousCapturingGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AnonymousCapturingGroup>;
@@ -2288,6 +2299,7 @@ export namespace NamedCapturingGroup {
 	export interface Parsed extends ParsedOf<T.NamedCapturingGroup, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.NamedCapturingGroup['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.NamedCapturingGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NamedCapturingGroup>;
@@ -2304,6 +2316,7 @@ export namespace NonCapturingGroup {
 	export interface Parsed extends ParsedOf<T.NonCapturingGroup, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.NonCapturingGroup['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.NonCapturingGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NonCapturingGroup>;
@@ -2322,6 +2335,7 @@ export namespace CountQuantifier {
 	export interface Parsed extends ParsedOf<T.CountQuantifier, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.CountQuantifier['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.CountQuantifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CountQuantifier>;
@@ -2338,6 +2352,7 @@ export namespace BackreferenceEscape {
 	export interface Parsed extends ParsedOf<T.BackreferenceEscape, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.BackreferenceEscape['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.BackreferenceEscape>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BackreferenceEscape>;
@@ -2354,6 +2369,7 @@ export namespace NamedGroupBackreference {
 	export interface Parsed extends ParsedOf<T.NamedGroupBackreference, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.NamedGroupBackreference['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.NamedGroupBackreference>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NamedGroupBackreference>;
@@ -2370,6 +2386,7 @@ export namespace CharacterClassEscape {
 	export interface Parsed extends ParsedOf<T.CharacterClassEscape, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.CharacterClassEscape['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.CharacterClassEscape>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CharacterClassEscape>;
@@ -2391,6 +2408,7 @@ export namespace UnicodePropertyValueExpression {
 	export interface Parsed extends ParsedOf<T.UnicodePropertyValueExpression, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.UnicodePropertyValueExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.UnicodePropertyValueExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnicodePropertyValueExpression>;
@@ -2407,6 +2425,7 @@ export namespace IdentityEscape {
 	export interface Parsed extends ParsedOf<T.IdentityEscape, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.IdentityEscape['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.IdentityEscape>;
 	export type LooseConfig = LooseConfigFor<TSKindId.IdentityEscape>;
@@ -2423,6 +2442,7 @@ export namespace TermGroup {
 	export interface Parsed extends ParsedOf<T.TermGroup, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.TermGroup['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TermGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TermGroup>;
@@ -2439,6 +2459,7 @@ export namespace CountQuantifierGroup {
 	export interface Parsed extends ParsedOf<T.CountQuantifierGroup, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.CountQuantifierGroup['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.CountQuantifierGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CountQuantifierGroup>;
@@ -2455,6 +2476,7 @@ export namespace CountQuantifierArm {
 	export interface Parsed extends ParsedOf<T.CountQuantifierArm, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.CountQuantifierArm['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.CountQuantifierArm>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CountQuantifierArm>;
@@ -2471,6 +2493,7 @@ export namespace CharacterClassEscapeArm {
 	export interface Parsed extends ParsedOf<T.CharacterClassEscapeArm, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.CharacterClassEscapeArm['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.CharacterClassEscapeArm>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CharacterClassEscapeArm>;
@@ -2487,6 +2510,7 @@ export namespace UnicodePropertyValueExpressionGroup {
 	export interface Parsed extends ParsedOf<T.UnicodePropertyValueExpressionGroup, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.UnicodePropertyValueExpressionGroup['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.UnicodePropertyValueExpressionGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnicodePropertyValueExpressionGroup>;
@@ -2505,6 +2529,7 @@ export namespace InlineFlagsGroupEnable {
 	export interface Parsed extends ParsedOf<T.InlineFlagsGroupEnable, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.InlineFlagsGroupEnable['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.InlineFlagsGroupEnable>;
 	export type LooseConfig = LooseConfigFor<TSKindId.InlineFlagsGroupEnable>;
@@ -2521,6 +2546,7 @@ export namespace InlineFlagsGroupToggle {
 	export interface Parsed extends ParsedOf<T.InlineFlagsGroupToggle, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.InlineFlagsGroupToggle['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.InlineFlagsGroupToggle>;
 	export type LooseConfig = LooseConfigFor<TSKindId.InlineFlagsGroupToggle>;
@@ -2537,6 +2563,7 @@ export namespace InlineFlagsGroupDisable {
 	export interface Parsed extends ParsedOf<T.InlineFlagsGroupDisable, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.InlineFlagsGroupDisable['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.InlineFlagsGroupDisable>;
 	export type LooseConfig = LooseConfigFor<TSKindId.InlineFlagsGroupDisable>;
@@ -2554,6 +2581,7 @@ export namespace Lazy {
 	export interface Parsed extends ParsedOf<T.Lazy, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.Lazy['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.Lazy>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Lazy>;
@@ -2571,6 +2599,7 @@ export namespace UnicodePropertyName {
 	export interface Parsed extends ParsedOf<T.UnicodePropertyName, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.UnicodePropertyName['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.UnicodePropertyName>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnicodePropertyName>;

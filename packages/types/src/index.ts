@@ -263,7 +263,9 @@ export type Hoisted<B> = 'coerce' extends keyof B
 			: B;
 
 /** @internal — the callable a pair collapses to, read by key so a pair whose flavors are intersections is never compared member against member. The arity stamp is read by `hoist` and is not a route. */
-type HoistedFlavor<F, B> = (F extends AnyFlavorFn ? F : () => never) & { [K in keyof B as K extends 'arity' ? never : K]: Hoisted<B[K]> };
+type HoistedFlavor<F, B> = (F extends AnyFlavorFn ? F : () => never) & {
+	[K in keyof B as K extends 'arity' ? never : K]: Hoisted<B[K]>;
+};
 
 // ---------------------------------------------------------------------------
 // Cycle-detected recursion (visited-set pattern)
@@ -1135,7 +1137,9 @@ export interface NodeNs<
 	NsMap = {},
 	Bound = T & NodeMethods,
 	Args extends readonly unknown[] = [ConfigOf<T, NsMap>],
-	LooseArgs extends readonly unknown[] = [LooseConfigOf<T, Scalars, Strings, [], NsMap> | AdmitBound<T, NodeLookup<NsMap>>],
+	LooseArgs extends readonly unknown[] = [
+		LooseConfigOf<T, Scalars, Strings, [], NsMap> | AdmitBound<T, NodeLookup<NsMap>>
+	],
 	Bare extends string = never,
 	Kind extends number = never,
 	Parsed = Bound,
@@ -1305,12 +1309,17 @@ export type {
 	TriviaFacts,
 	Types
 } from './engine-api.ts';
+export type { Cond, QueryFacet, QueryPlan, QuerySlots, Recorder, SlotNameOf, SlotRef, View } from './query.ts';
 
 type RefusedValue<V, Integer extends boolean> = V extends number | bigint ? NumericLiteral<V, Integer> : V;
 
 type KeysOfAll<K> = K extends unknown ? keyof K : never;
 
-type SlotRefusal<C, K, Integer extends boolean> = C extends unknown ? (K extends keyof C ? RefusedValue<C[K], Integer> : never) : never;
+type SlotRefusal<C, K, Integer extends boolean> = C extends unknown
+	? K extends keyof C
+		? RefusedValue<C[K], Integer>
+		: never
+	: never;
 
 type NoExtraKeys<C, Known> = { readonly [P in Exclude<KeysOfAll<C>, KeysOfAll<Known>>]?: never };
 
@@ -1324,7 +1333,9 @@ export type NumericConfig<C, W extends Readonly<Record<string, boolean>>, Known 
 /**
  * The refusal a loose entry applies to its input `I`: a bare number or bigint literal is judged as `NumericLiteral` judges it (`Bare` says whether the bare value is an integer; `undefined` when the kind takes none), and a config literal as `NumericConfig` does, with `Known` the loose type the entry accepts.
  */
-export type NumericInput<I, Bare extends boolean | undefined, W extends Readonly<Record<string, boolean>> = {}, Known = I> = (Bare extends boolean
-	? RefusedValue<I, Bare>
-	: unknown) &
-	NumericConfig<I, W, Known>;
+export type NumericInput<
+	I,
+	Bare extends boolean | undefined,
+	W extends Readonly<Record<string, boolean>> = {},
+	Known = I
+> = (Bare extends boolean ? RefusedValue<I, Bare> : unknown) & NumericConfig<I, W, Known>;

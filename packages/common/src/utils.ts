@@ -1,6 +1,25 @@
-import type { AnyUntypedNode, ByteSpan, ErrorNode, LineGap, LineGapAddress, LineGaps, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type {
+	AnyUntypedNode,
+	ByteSpan,
+	ErrorNode,
+	LineGap,
+	LineGapAddress,
+	LineGaps,
+	NodeTrivia,
+	TriviaEntry,
+	TriviaFacts
+} from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { carryRead, carrySource, detachCoordinate, holdsSlots, isRead, isStorageKey, sourceOf, type DerivedSides } from './transport-data.ts';
+import {
+	carryRead,
+	carrySource,
+	detachCoordinate,
+	holdsSlots,
+	isRead,
+	isStorageKey,
+	sourceOf,
+	type DerivedSides
+} from './transport-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { currentHandle, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
@@ -44,6 +63,11 @@ export function renderText(handle: EngineHandle | undefined, node: object): stri
 	return handle.current.render(node as AnyUntypedNode).toString();
 }
 
+export function queryOf(handle: EngineHandle, node: object): object {
+	if (!isLive(handle.current)) throw new Error('query: engine disposed; parse the source again with a live engine');
+	return handle.current.query(node);
+}
+
 /**
  * Runs a rebuild inside the node's own engine and hands the source node's trivia on to the
  * node it returns. Inner entries can only travel to a node that is still empty: once the
@@ -55,7 +79,12 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 	if (isNode(result)) {
 		carryEdit(node, result);
 		const wrappers = handle?.current.trivia.rebuildWrappers;
-		if (wrappers !== undefined) carryRebuiltSlots(node as unknown as Record<string, unknown>, result as unknown as Record<string, unknown>, wrappers);
+		if (wrappers !== undefined)
+			carryRebuiltSlots(
+				node as unknown as Record<string, unknown>,
+				result as unknown as Record<string, unknown>,
+				wrappers
+			);
 	}
 	const trivia = node.$_trivia;
 	if (trivia === undefined || !isNode(result)) return result;
@@ -82,7 +111,8 @@ export function isEmptyNode(node: AnyUntypedNode): boolean {
 	return true;
 }
 
-const scopedBy = (handle: EngineHandle | undefined): Scoped => (handle === undefined ? (fn) => fn() : (fn) => inEngine(handle, fn));
+const scopedBy = (handle: EngineHandle | undefined): Scoped =>
+	handle === undefined ? (fn) => fn() : (fn) => inEngine(handle, fn);
 
 /**
  * The writes of a node's trivia, bound to its engine. An item is an extra kind's node, or a
@@ -100,7 +130,8 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 		scoped(() => items.map((item) => triviaEntryOf(item, facts)));
 	const gapsOf = (): readonly string[] => {
 		const gaps = facts.innerGaps[kind()] ?? [];
-		if (gaps.length === 0) throw new Error(`trivia: ${kind()} has no inner gap; attach to a child with leading/trailing`);
+		if (gaps.length === 0)
+			throw new Error(`trivia: ${kind()} has no inner gap; attach to a child with leading/trailing`);
 		return gaps;
 	};
 	const writeInner = (inner: NonNullable<NodeTrivia['inner']>): NodeTrivia['inner'] => {
@@ -120,7 +151,10 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 	const innerAt = (gap: string, items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => {
 		if (!gapsOf().includes(gap)) throw new Error(`trivia: ${kind()} has no gap '${gap}'`);
 		if (items.length === 0) return node.$_trivia?.inner?.[gap] ?? [];
-		return store({ ...node.$_trivia, inner: writeInner({ ...node.$_trivia?.inner, [gap]: entriesOf(items) }) }, 'inner');
+		return store(
+			{ ...node.$_trivia, inner: writeInner({ ...node.$_trivia?.inner, [gap]: entriesOf(items) }) },
+			'inner'
+		);
 	};
 	return {
 		side: (position: 'leading' | 'trailing', items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] =>
@@ -144,15 +178,29 @@ const composedTrivia = new WeakMap<object, NodeTrivia | undefined>();
  * were written. Its line gaps then derive from the same source position, and
  * a side the caller rewrote stays written.
  */
-function carryRebuiltSlots(read: Record<string, unknown>, result: Record<string, unknown>, wrappers: ReadonlySet<number>): void {
+function carryRebuiltSlots(
+	read: Record<string, unknown>,
+	result: Record<string, unknown>,
+	wrappers: ReadonlySet<number>
+): void {
 	for (const key of Object.keys(result)) {
 		if (!isStorageKey(key)) continue;
 		const fresh = result[key];
 		const held = read[key];
-		if (fresh === null || typeof fresh !== 'object' || Array.isArray(fresh) || held === null || typeof held !== 'object' || Array.isArray(held) || fresh === held) continue;
+		if (
+			fresh === null ||
+			typeof fresh !== 'object' ||
+			Array.isArray(fresh) ||
+			held === null ||
+			typeof held !== 'object' ||
+			Array.isArray(held) ||
+			fresh === held
+		)
+			continue;
 		const freshNode = fresh as Record<string, unknown>;
 		const heldNode = held as Record<string, unknown>;
-		if (typeof freshNode.$type !== 'number' || freshNode.$type !== heldNode.$type || !wrappers.has(freshNode.$type)) continue;
+		if (typeof freshNode.$type !== 'number' || freshNode.$type !== heldNode.$type || !wrappers.has(freshNode.$type))
+			continue;
 		if (sourceOf(freshNode) !== undefined || sourceOf(heldNode) === undefined) continue;
 		carryEdit(heldNode, freshNode);
 	}
@@ -183,7 +231,10 @@ function isDerivedSide(node: object, side: 'leading' | 'trailing'): boolean {
  * the first read; a side whose trivia was written holds what was written,
  * and the other side keeps what the read gives it.
  */
-export function readTrivia(target: object, lineGapsOf: ((address: LineGapAddress) => LineGaps) | undefined): NodeTrivia | undefined {
+export function readTrivia(
+	target: object,
+	lineGapsOf: ((address: LineGapAddress) => LineGaps) | undefined
+): NodeTrivia | undefined {
 	const node = target as AnyUntypedNode;
 	const stored = node.$_trivia;
 	const gaps = lineGapsRead(node, lineGapsOf);
@@ -208,10 +259,18 @@ export function readDerivedSides(
 ): DerivedSides | undefined {
 	const gaps = lineGapsRead(target, lineGapsOf);
 	if (gaps === undefined) return undefined;
-	return { previous: gaps.previous, next: gaps.next, leading: isDerivedSide(target, 'leading'), trailing: isDerivedSide(target, 'trailing') };
+	return {
+		previous: gaps.previous,
+		next: gaps.next,
+		leading: isDerivedSide(target, 'leading'),
+		trailing: isDerivedSide(target, 'trailing')
+	};
 }
 
-function lineGapsRead(target: object, lineGapsOf: ((address: LineGapAddress) => LineGaps) | undefined): LineGaps | undefined {
+function lineGapsRead(
+	target: object,
+	lineGapsOf: ((address: LineGapAddress) => LineGaps) | undefined
+): LineGaps | undefined {
 	const node = target as AnyUntypedNode;
 	const address = lineGapAddressOf(node);
 	if (!isRead(node) || address === undefined || lineGapsOf === undefined) return undefined;
@@ -224,22 +283,50 @@ function lineGapsRead(target: object, lineGapsOf: ((address: LineGapAddress) => 
 
 /** How the line-gap query names a read node: its handle, else its tree's tag, span and kind; `undefined` for a node no read gave. */
 function lineGapAddressOf(node: AnyUntypedNode): LineGapAddress | undefined {
-	const record = node as unknown as { readonly $handle?: unknown; readonly $treeHandle?: unknown; readonly $span?: { readonly start: number; readonly end: number } };
+	const record = node as unknown as {
+		readonly $handle?: unknown;
+		readonly $treeHandle?: unknown;
+		readonly $span?: { readonly start: number; readonly end: number };
+	};
 	if (typeof record.$handle === 'number') return { handle: record.$handle };
 	if (typeof record.$treeHandle === 'number' && record.$span !== undefined && typeof node.$type === 'number') {
 		return { treeHandle: record.$treeHandle, span: record.$span, kind: node.$type };
 	}
 	const source = sourceOf(node);
 	if (source === undefined) return undefined;
-	return source.handle === undefined ? { treeHandle: source.treeHandle, span: source.span, kind: source.kind } : { handle: source.handle };
+	return source.handle === undefined
+		? { treeHandle: source.treeHandle, span: source.span, kind: source.kind }
+		: { handle: source.handle };
+}
+
+export type NodeAddress = LineGapAddress | { readonly parent: number; readonly index: number };
+
+export function nodeAddressOf(node: AnyUntypedNode): NodeAddress | undefined {
+	const record = node as unknown as {
+		readonly $handle?: unknown;
+		readonly $parentHandle?: unknown;
+		readonly $childIndex?: unknown;
+	};
+	if (
+		typeof record.$handle !== 'number' &&
+		typeof record.$parentHandle === 'number' &&
+		typeof record.$childIndex === 'number'
+	) {
+		return { parent: record.$parentHandle, index: record.$childIndex };
+	}
+	return lineGapAddressOf(node);
 }
 
 /** Comment entries and whitespace runs of one side merged in source order; `undefined` when both are empty. */
-function interleaved(entries: readonly TriviaEntry[] | undefined, gaps: readonly LineGap[]): readonly TriviaEntry[] | undefined {
+function interleaved(
+	entries: readonly TriviaEntry[] | undefined,
+	gaps: readonly LineGap[]
+): readonly TriviaEntry[] | undefined {
 	const positioned: { readonly at: number; readonly entry: TriviaEntry }[] = [];
 	let at = -1;
 	for (const entry of entries ?? []) {
-		const start = typeof entry === 'number' ? undefined : (entry as { readonly $span?: { readonly start: number } }).$span?.start;
+		const start =
+			typeof entry === 'number' ? undefined : (entry as { readonly $span?: { readonly start: number } }).$span?.start;
 		at = start ?? at;
 		positioned.push({ at, entry });
 	}
@@ -301,8 +388,12 @@ function textEntryOf(text: string, facts: TriviaFacts): TriviaEntry {
 		if (kindId === undefined) throw new Error(`trivia: no whitespace kind is spelled ${JSON.stringify(text)}`);
 		return kindId;
 	}
-	if (!('comment' in facts)) throw new Error(`trivia: ${JSON.stringify(text)} is text, and this grammar has no ir.comment`);
-	if (facts.comment === undefined) throw new Error(`trivia: ${JSON.stringify(text)} is text, and ir.comment is bound when the factories load; import the factories`);
+	if (!('comment' in facts))
+		throw new Error(`trivia: ${JSON.stringify(text)} is text, and this grammar has no ir.comment`);
+	if (facts.comment === undefined)
+		throw new Error(
+			`trivia: ${JSON.stringify(text)} is text, and ir.comment is bound when the factories load; import the factories`
+		);
 	const spelled = facts.spelled?.find((form) => spelledForm(text, [form.open], [form.close]) !== undefined);
 	return spelled === undefined ? facts.comment(text) : spelled.build(text);
 }
@@ -361,7 +452,9 @@ const READONLY_ARRAY_METHODS = [
 ] as const satisfies readonly (keyof ReadonlyArray<unknown>)[];
 
 type ObjectMembers = 'length' | number | typeof Symbol.iterator | typeof Symbol.unscopables;
-const readonlyArrayCovered: [Exclude<keyof ReadonlyArray<unknown>, (typeof READONLY_ARRAY_METHODS)[number] | ObjectMembers>] extends [never]
+const readonlyArrayCovered: [
+	Exclude<keyof ReadonlyArray<unknown>, (typeof READONLY_ARRAY_METHODS)[number] | ObjectMembers>
+] extends [never]
 	? true
 	: false = true;
 void readonlyArrayCovered;
@@ -432,7 +525,9 @@ export function storedElements(stored: unknown): readonly unknown[] {
 /** The elements a list reads through its own reader, none for an absent list. */
 export function ownerElements(list: unknown, reader: string): readonly unknown[] {
 	if (list == null) return [];
-	const read = (list as Record<string, unknown>)[reader] as ((this: object) => readonly unknown[] | undefined) | undefined;
+	const read = (list as Record<string, unknown>)[reader] as
+		| ((this: object) => readonly unknown[] | undefined)
+		| undefined;
 	return read?.call(list) ?? [];
 }
 
@@ -455,7 +550,9 @@ export function defineListIndices(node: object, count: number): void {
 
 /** The refusal of a list owner built over a read stub: a stub is a parsed list that cannot be counted without its tree, which a raw factory does not have, so the build names the stub as `engine.build` does. */
 export function refuseReadStub(storage: string): never {
-	throw new Error(`list view: ${storage} is a read stub, which a node built without its tree cannot hold; build it from its tree`);
+	throw new Error(
+		`list view: ${storage} is a read stub, which a node built without its tree cannot hold; build it from its tree`
+	);
 }
 
 /** The key a list node keeps its frozen items under. */
@@ -497,7 +594,8 @@ export function listSlotWith(
 	const make = spec.make as (...args: unknown[]) => unknown;
 	const run = set as (...args: unknown[]) => unknown;
 	if (args.length === 0) return spec.optional ? run() : run(make());
-	const whole = args.length === 1 && (args[0] === undefined || (args[0] as { $type?: unknown } | null)?.$type === spec.kind);
+	const whole =
+		args.length === 1 && (args[0] === undefined || (args[0] as { $type?: unknown } | null)?.$type === spec.kind);
 	return run(whole ? args[0] : make(...convertElements(args, spec.element)));
 }
 
@@ -624,7 +722,12 @@ export function isFactoryNode(v: unknown): v is AnyUntypedNode {
 export function spanOf(node: object): ByteSpan | undefined {
 	if (!('$span' in node)) return undefined;
 	const span = node.$span;
-	return typeof span === 'object' && span !== null && 'start' in span && 'end' in span && typeof span.start === 'number' && typeof span.end === 'number'
+	return typeof span === 'object' &&
+		span !== null &&
+		'start' in span &&
+		'end' in span &&
+		typeof span.start === 'number' &&
+		typeof span.end === 'number'
 		? { start: span.start, end: span.end }
 		: undefined;
 }
@@ -683,7 +786,22 @@ export { hydrateStub, isStub, readUntypedNode, type Stub, type TreeHandle } from
 export { currentHandle } from './engine-scope.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toTransportData, toDetachedTransportData, STORED_TRIVIA, carrySource, type SourceGapEvidence, type SourceFlankEvidence, type TriviaView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead } from './transport-data.ts';
+export {
+	toTransportData,
+	toDetachedTransportData,
+	STORED_TRIVIA,
+	carrySource,
+	type SourceGapEvidence,
+	type SourceFlankEvidence,
+	type TriviaView,
+	markEdited,
+	treeHandleOf,
+	isStorageKey,
+	isDataKey,
+	holdsSlots,
+	holdTree,
+	carryRead
+} from './transport-data.ts';
 export { carryTree, treeTokenOf, type TreeToken } from './tree-token.ts';
 export {
 	projectInterior,

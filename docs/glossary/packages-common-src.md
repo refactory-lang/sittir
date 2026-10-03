@@ -40,7 +40,7 @@ The entry point: refuses unimplemented options, loads the language (once per des
 
 ### `packages/common/src/engine-scope.ts::LiveEngine`
 
-An engine's identity plus its `render`: what a node's `$render` reaches through its handle. The public `Engine` satisfies it structurally.
+An engine's identity plus its `render` and `query`: what a node's `$render` and `$query` reach through its handle. The public `Engine` satisfies it structurally.
 
 ### `packages/common/src/engine-scope.ts::EngineHandle`
 
@@ -61,6 +61,54 @@ The engine a value's `$engine()` returns, or `undefined` for a value with no eng
 ### `packages/common/src/engine-scope.ts::bindTree`
 
 Records the engine handle that read a tree, so the wrap layer can find it from the tree alone.
+
+### `packages/common/src/tree-token.ts::registerTree`
+
+Records the tree handle a parse made under the tree's token, so anything holding the token reaches the handle (`treeOf`). A weak entry: the handle lives exactly as long as the token, which every node of the tree holds.
+
+### `packages/common/src/tree-token.ts::treeOf`
+
+The tree handle of the parse a node was read from, through the token the node holds; `undefined` for a node that holds no tree (a built node, a draft, a copy that lost its token).
+
+### `packages/common/src/query.ts::queryFacet`
+
+Makes a parsed node's query facet: a Proxy over the node, its address, its kind and its tree, with one handler shared by every facet (`FACET`). It refuses a node that holds no tree or has no address, pointing at `$commit()`. The facet answers `$children`, `$descendants` and the accessor names in the kind's `querySlots` row, each with a new lazy view, and refuses any other string key; a symbol key reads as `undefined`, and the facet cannot be written.
+
+### `packages/common/src/query.ts::TreeQuery`
+
+The two native query calls a tree handle carries: a batch of a descendant walk, and a plan evaluated over a list of addresses. `createNativeEngine` fills it on each parse's tree handle.
+
+### `packages/common/src/query.ts::BATCH_LIMITS`
+
+The limits a walk's successive batches take: 1, 4, 16, 64, then 256 for every batch after. The first result costs one minimal call, a full walk reaches large batches after four calls, and a terminal that stops early leaves at most one batch unused.
+
+### `packages/common/src/query.ts::splitPlan`
+
+Splits a view's steps into those the source runs before any node is hydrated (`early`) and those after (`late`). Declarative steps (`ofType`, `where`, `slice`) are early until the first opaque step (`filter`, `map`, `flatMap`). After it, `ofType` and `where` still move early while every late step so far is a `filter`: a filter keeps elements unchanged, so a kind test or a slot condition selects the same elements before or after it. Neither moves past a `map` or `flatMap`, which change what the next step sees, and `slice` never moves, since its positions depend on what precedes it.
+
+### `packages/common/src/query.ts::View`
+
+A lazy sequence: a source (a slot's items, or a walk under a node to a depth) and its steps. Operators return a new view; iteration splits the plan, runs the early steps over entries (a kind, an address and a way to hydrate) and hydrates only what survives them, then runs the late steps over nodes. Terminals stop pulling as soon as they have their answer. On a walk, the leading run of `ofType` and `where` steps goes into the native call: kinds intersected (an empty intersection yields nothing without a call), plans joined by `and`. A `where` goes native only when every kind its elements can have compiles it to the same plan; otherwise it runs over each batch's entries through `planHolds`, one call per kind. A slot's items are already read with their node, so its steps run over them in memory, with `where` again one native call per kind.
+
+### `packages/common/src/query.ts::whereHolds`
+
+Keeps the entries of a batch whose slots satisfy a `where` condition: entries are grouped by kind, the condition is compiled for each kind (`compileFor`) and evaluated natively over the group's addresses in one call. An entry that is not a parsed node has no slots to read and is refused.
+
+### `packages/common/src/query.ts::compileFor`
+
+The plan a `where` callback records for elements of one kind, cached per callback and kind. The callback runs against that kind's recorder, so each accessor maps to the slot the reader stores it under; a kind lacking a slot the callback reads is refused there.
+
+### `packages/common/src/query.ts::recorder`
+
+What a `where` callback receives: a Proxy whose members are the accessors of a kind, each a slot reference with `eq` and `match`. Any other key, an assignment and a call are refused. A view whose element kinds are not yet known checks the callback at the `where` call against every accessor of the grammar, so its shape is refused early and each kind's slots when it runs. A pattern crosses as its source; a flag has no native equivalent and is refused rather than dropped.
+
+### `packages/common/src/query.ts::sameOccurrence`
+
+How `includes` compares: the same object, or two parsed nodes of the same tree (the same token) with the same kind and span, which `node_at_span` would resolve to one node. A built node compares by identity only.
+
+### `packages/common/src/query.ts::holds`
+
+The JavaScript evaluation of a plan over a node's slot texts. It is the oracle the native evaluator is tested against, never an evaluator of its own.
 
 ### `packages/common/src/engine-scope.ts::inTreeEngine`
 
@@ -251,6 +299,10 @@ The guard every generated list setter passes its rest arguments through. A list 
 
 The text a node renders to in the engine it was built or read in. It takes the engine handle the node captured when it was built, so a node built with no engine in scope refuses with `node has no engine`, and a node whose engine was disposed refuses with its own message.
 
+### `packages/common/src/utils.ts::queryOf`
+
+What a parsed node's `$query` runs: the query facet its engine makes for it. It takes the engine handle the node captured when it was wrapped, and refuses once that engine is disposed, since the tree's reads go through the engine that parsed it.
+
 ### `packages/common/src/utils.ts::rebuilt`
 
 What every `$with` setter runs its rebuild through. It runs the rebuild inside the node's own engine (or plainly, when the node has none) and hands the source node's trivia to the node the rebuild returns, together with what it keeps of the source node (`carryEdit`), and gives each fresh node the rebuild minted in a slot the source node held its identity too (`carryRebuiltSlots`). Inner trivia can only travel to a node that is still empty: once the rebuild gives the node a child, the comment would sit beside it, so the call throws and names the kind.
@@ -335,6 +387,14 @@ Which sides of a read node's trivia are derived from its line gaps (a side stops
 ### `packages/common/src/utils.ts::lineGapAddressOf`
 
 How the line-gap query names a read node. A node read on its own carries its handle. A child a deep read expanded has no handle of its own, only its tree's tag, its span and its kind, and the query resolves that coordinate to the outermost node of that kind spanning exactly those bytes. A node with neither was not read and has no gaps to ask for.
+
+### `packages/common/src/utils.ts::NodeAddress`
+
+How a query names a parsed node to the native side: as the line-gap query does (`lineGapAddressOf`), or by the parent handle and child index a stub carries. The native `query::Address` accepts exactly these shapes.
+
+### `packages/common/src/utils.ts::nodeAddressOf`
+
+A node's `NodeAddress`: the parent handle and child index of a stub, which has no handle of its own, else what `lineGapAddressOf` names it by. `undefined` for a node no read gave.
 
 ### `packages/common/src/utils.ts::interleaved`
 

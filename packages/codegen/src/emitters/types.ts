@@ -7,7 +7,14 @@ import { isWordOrBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compil
 import { isFixedTextLeaf, isKindIdStored, kindIdText } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { assertNever } from '../polymorph-variant.ts';
-import { bareInteriorText, numberInputType, numericLeafInputTypes, numericLeafShape, numericSlotShape, widenNumericSlots } from './interior.ts';
+import {
+	bareInteriorText,
+	numberInputType,
+	numericLeafInputTypes,
+	numericLeafShape,
+	numericSlotShape,
+	widenNumericSlots
+} from './interior.ts';
 import {
 	collectKindEntries,
 	collectCatalogKinds,
@@ -56,11 +63,14 @@ function kindDiscriminantOrLiteral(
 	if (!hasEntry) return JSON.stringify(kind);
 	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
 }
-import type {
-	AssembledNode,
-	AssembledNonterminal
+import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
+import {
+	AssembledAlias,
+	AssembledList,
+	AssembledEnum,
+	fixedTextOfKind,
+	snakeToCamel
 } from '../compiler/model/node-map.ts';
-import { AssembledAlias, AssembledList, AssembledEnum, fixedTextOfKind, snakeToCamel } from '../compiler/model/node-map.ts';
 import {
 	DELIMITER_IMPORT,
 	isRequired,
@@ -191,13 +201,19 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	lines.push('');
 
 	if (kindEntries) emitKindIdEnumAndLookups(lines, kindEntries, nodeMap);
-	const arms = kindEntries === undefined || config.sites === undefined ? undefined : armAliasesOf(nodeMap, kindEntries, config.sites);
+	const arms =
+		kindEntries === undefined || config.sites === undefined
+			? undefined
+			: armAliasesOf(nodeMap, kindEntries, config.sites);
 	if (arms !== undefined) {
 		lines.push(`export type SpacingArm = ${arms.spacingType};`);
 		lines.push(`export type WhitespaceArm = ${arms.whitespaceType};`);
 		lines.push('');
 	}
-	const hints = kindEntries !== undefined && config.addresses !== undefined ? hintEmitterOf(config.addresses, kindEntries, arms, displayedKinds(nodeMap)) : undefined;
+	const hints =
+		kindEntries !== undefined && config.addresses !== undefined
+			? hintEmitterOf(config.addresses, kindEntries, arms, displayedKinds(nodeMap))
+			: undefined;
 
 	if (supertypes.length > 0) {
 		lines.push('// Scoped enums per supertype');
@@ -229,14 +245,7 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	for (const node of structNodes) {
 		generatedTypes.add(node.typeName);
 
-		emitInterface(
-			lines,
-			node,
-			nodeMap,
-			lookupUnion,
-			stampedDiscriminant(node.kind, nodeMap, kindEntries),
-			kindEntries
-		);
+		emitInterface(lines, node, nodeMap, lookupUnion, stampedDiscriminant(node.kind, nodeMap, kindEntries), kindEntries);
 	}
 	lines.push('');
 
@@ -261,7 +270,14 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	lines.push(`export type ${grammarPrefix}Node = NodeOfNamespaces<NamespaceMap>;`);
 	lines.push('');
 
-	emitOptionsHints(lines, internalLines, [...allKinds.map((kind) => ({ kind, typeName: nodeMap.nodes.get(kind)?.typeName })), ...emittedSupertypes], generatedTypes, hints, nodeMap);
+	emitOptionsHints(
+		lines,
+		internalLines,
+		[...allKinds.map((kind) => ({ kind, typeName: nodeMap.nodes.get(kind)?.typeName })), ...emittedSupertypes],
+		generatedTypes,
+		hints,
+		nodeMap
+	);
 
 	assertNoCamelCaseCollisions(nodeKinds);
 
@@ -335,7 +351,8 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	lines.push('export interface EmptyByKindId {');
 	for (const kind of surfaceKinds) {
 		const empty = emptyForms(nodeMap).get(kind);
-		if (empty !== undefined) lines.push(`  [${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)}]: ${empty.typeName};`);
+		if (empty !== undefined)
+			lines.push(`  [${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)}]: ${empty.typeName};`);
 	}
 	lines.push('}');
 	lines.push('');
@@ -347,7 +364,9 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 			.filter(([kind, node]) => kindIdText(node) !== undefined && hasKindId(kind, kindEntries))
 			.map(([kind]) => kindDiscriminantExpr(kind, nodeMap, kindEntries))
 	);
-	lines.push(`export type FixedTextKindId = ${fixedTextKindIds.size > 0 ? [...fixedTextKindIds].join(' | ') : 'never'};`);
+	lines.push(
+		`export type FixedTextKindId = ${fixedTextKindIds.size > 0 ? [...fixedTextKindIds].join(' | ') : 'never'};`
+	);
 	lines.push('');
 
 	lines.push('export interface IrKeyOf {');
@@ -439,8 +458,8 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 		lines.splice(sittirImportIndex + 1, 0, `import type * as T from './types.js';`);
 	}
 	const bodyText = lines.slice(sittirImportIndex + 1).join('\n');
-	const internalNames = [...new Set(emittedSupertypes.filter((st) => st.internal).map((st) => st.typeName))].filter((name) =>
-		new RegExp(`(?<![.\\w])${name}\\b(?!\\s*=\\s*\\d)`).test(bodyText)
+	const internalNames = [...new Set(emittedSupertypes.filter((st) => st.internal).map((st) => st.typeName))].filter(
+		(name) => new RegExp(`(?<![.\\w])${name}\\b(?!\\s*=\\s*\\d)`).test(bodyText)
 	);
 	if (internalNames.length > 0) {
 		lines.splice(sittirImportIndex + 1, 0, `import type { ${internalNames.join(', ')} } from './types-internal.js';`);
@@ -458,12 +477,20 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 
 	const types = pruneUnusedImports(lines, ['Delimiter', ...VOCABULARY_IMPORTS.map(importLocalName)]).join('\n');
 	const internalAliases = new Set(emittedSupertypes.filter((st) => st.internal).map((st) => st.typeName));
-	return { types, internal: internalModule(internalLines, [...generatedTypes].filter((name) => !internalAliases.has(name))) };
+	return {
+		types,
+		internal: internalModule(
+			internalLines,
+			[...generatedTypes].filter((name) => !internalAliases.has(name))
+		)
+	};
 }
 
 function internalModule(internalLines: readonly string[], publicTypeNames: readonly string[]): string {
 	const body = internalLines.join('\n');
-	const used = [...publicTypeNames, 'TSKindId'].filter((name) => new RegExp(`(?<![.\\w])${name}\\b(?!\\s*=)`).test(body));
+	const used = [...publicTypeNames, 'TSKindId'].filter((name) =>
+		new RegExp(`(?<![.\\w])${name}\\b(?!\\s*=)`).test(body)
+	);
 	return [
 		'// Auto-generated by @sittir/codegen — do not edit',
 		'',
@@ -509,10 +536,16 @@ const VOCABULARY_IMPORTS = [
 	'SupertypeSurface',
 	'NodeLookup',
 	'WithNode',
-	'BoundWithNode'
+	'BoundWithNode',
+	'QueryFacet'
 ];
 
-function emitGrammarTypeMap(grammar: string, nodeMap: NodeMap, triviaKinds: readonly string[], keyed: boolean): string[] {
+function emitGrammarTypeMap(
+	grammar: string,
+	nodeMap: NodeMap,
+	triviaKinds: readonly string[],
+	keyed: boolean
+): string[] {
 	const map = grammarTypeMapName(grammar);
 	const trivia = `${map}['trivia']`;
 	const empties = [...emptyForms(nodeMap)].map(
@@ -742,10 +775,12 @@ function emitOptionsHints(
 		if (prior !== undefined && ownsItsDisplay(prior.kind, nodeMap) === ownsItsDisplay(kind, nodeMap)) {
 			throw new Error(`types emitter: options root '${root.name}' names both '${prior.kind}' and '${kind}'`);
 		}
-		if (prior === undefined || ownsItsDisplay(kind, nodeMap)) homes.set(root.name, { kind, typeName, root, internal: internal === true });
+		if (prior === undefined || ownsItsDisplay(kind, nodeMap))
+			homes.set(root.name, { kind, typeName, root, internal: internal === true });
 	}
 	const homeless = [...kindRoots.keys()].filter((name) => !homes.has(name));
-	if (homeless.length > 0) throw new Error(`types emitter: options roots with no declared type to carry their hint: ${homeless.join(', ')}`);
+	if (homeless.length > 0)
+		throw new Error(`types emitter: options roots with no declared type to carry their hint: ${homeless.join(', ')}`);
 	lines.push('export interface OptionsHintMap {');
 	for (const { typeName, root } of homes.values()) lines.push(`  ${root.key}: ${typeName}.Hints;`);
 	lines.push('}');
@@ -933,6 +968,8 @@ function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, i
 			lines.push(
 				`${indent}  readonly $with: ${name.startsWith('Bound') ? 'BoundWithNode' : 'WithNode'}<${self}, BoundByKindId, ParsedByKindId${self === 'this' ? '' : `, ${name}`}>;`
 			);
+		if (withNode && name.startsWith('Parsed'))
+			lines.push(`${indent}  readonly $query: () => QueryFacet<${self}, ParsedByKindId>;`);
 		for (const member of surface.members) lines.push(`${indent}${member}`);
 		lines.push(`${indent}}`);
 	};
@@ -959,7 +996,11 @@ function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, i
 
 type LookupUnion = (parts: readonly string[]) => string | undefined;
 
-function aliasContentTypeExpr(node: AssembledNode, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string | undefined {
+function aliasContentTypeExpr(
+	node: AssembledNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string | undefined {
 	if (!(node instanceof AssembledAlias) || node.slots.length !== 1) return undefined;
 	const content = node.slots[0]!;
 	const storage = storageFieldTypeExpr(content, nodeMap, fieldTypeExpr(content, nodeMap), kindEntries);
@@ -1045,14 +1086,19 @@ function emitSlotHints(
 	if (view !== undefined) lines.push(`    readonly $listView: ListViewHint<${view.element}, ${view.options}>;`);
 	if (groupSeats.length > 0) {
 		const flat = groupSeats.map((seat) => {
-			const keys = seat.keys.map((key) => `readonly ${JSON.stringify(key.name)}: ${JSON.stringify(key.field)}`).join('; ');
+			const keys = seat.keys
+				.map((key) => `readonly ${JSON.stringify(key.name)}: ${JSON.stringify(key.field)}`)
+				.join('; ');
 			return `FlatHint<${JSON.stringify(seat.slot)}, T.${seat.group}, { ${keys} }, ${seat.optional}, ${JSON.stringify(seat.stored)}>`;
 		});
 		lines.push(`    readonly $flat: ${flat.join(' | ')};`);
 	}
 	if (listSlots.length > 0) {
 		lines.push('    readonly $listSlots: {');
-		for (const hint of listSlots) lines.push(`      readonly ${hint.slot}: ListSlotHint<${hint.element}, ${hint.options}${hint.config === 'never' ? '' : `, ${hint.config}`}>;`);
+		for (const hint of listSlots)
+			lines.push(
+				`      readonly ${hint.slot}: ListSlotHint<${hint.element}, ${hint.options}${hint.config === 'never' ? '' : `, ${hint.config}`}>;`
+			);
 		lines.push('    };');
 	}
 	lines.push('  };');
@@ -1334,7 +1380,8 @@ function emitNamespaceSugarBlock(
 	const surface = emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries })
 		? builtTypeSurfaceOf(node, nodeMap, kindEntries)
 		: undefined;
-	if (surface !== undefined) emitNodeSurfaceInterfaces(lines, surface, '  ', groupSeatHints(node, nodeMap, kindEntries).length > 0);
+	if (surface !== undefined)
+		emitNodeSurfaceInterfaces(lines, surface, '  ', groupSeatHints(node, nodeMap, kindEntries).length > 0);
 	else {
 		lines.push(`  export type Bound = BoundFor<${nsKey}>;`);
 		lines.push(`  export type Parsed = BoundFor<${nsKey}>;`);
@@ -1345,8 +1392,13 @@ function emitNamespaceSugarBlock(
 	const bareInterior = bareInteriorText(kind, node);
 	const bareText = bareInterior === undefined ? '' : ' | string';
 	const bareContent = lexedContentSlot(node);
-	const bareShape = (bareContent === undefined ? undefined : numericSlotShape(bareContent)) ?? numericLeafShape(kind, node) ?? bareInterior?.number;
-	lines.push(`  export type Loose = ${omitRegistered(`LooseFor<${nsKey}>`, node)}${looseWidened}${bareText}${bareShape === undefined ? '' : ` | ${numberInputType(bareShape)}`};`);
+	const bareShape =
+		(bareContent === undefined ? undefined : numericSlotShape(bareContent)) ??
+		numericLeafShape(kind, node) ??
+		bareInterior?.number;
+	lines.push(
+		`  export type Loose = ${omitRegistered(`LooseFor<${nsKey}>`, node)}${looseWidened}${bareText}${bareShape === undefined ? '' : ` | ${numberInputType(bareShape)}`};`
+	);
 	lines.push(`  export type LooseConfig = ${widenedLooseConfig};`);
 	if (surface !== undefined) {
 		const rows = seatedRowsOf(node, wires, surface) ?? surface;

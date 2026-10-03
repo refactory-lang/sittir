@@ -13,7 +13,7 @@ import {
 	type ScmTypeMap
 } from './types.js';
 import type { IndentChar, Options } from './options.js';
-import { triviaFacts } from './utils.js';
+import { querySlots, triviaFacts } from './utils.js';
 import { coerceToComment } from './factories/coerce.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ProgramRoot } from './render-engine.js';
@@ -40,6 +40,7 @@ export const hooks: LanguageHooks<ScmAPI> = Object.freeze<LanguageHooks<ScmAPI>>
 	is,
 	kinds: TSKindId,
 	trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),
+	querySlots,
 	createNative: (options) => nativeLanguageEngine<ScmAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ProgramRoot & ParsedRoot, tree as TreeHandle)
 });
