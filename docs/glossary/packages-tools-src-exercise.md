@@ -60,7 +60,7 @@ A node's `$span`, when it carries one.
 
 ### `packages/tools/src/exercise/default-diff.ts::run`
 
-`sittir tool default-diff`: for each source file of one grammar, rebuilds the file through the builders (the strict factory source `emitFactorySourceText` prints) and renders it with default options only, then lists every gap between two tokens that the render spells differently from the source. The files are the evidence: an idiomatic source, formatted with the language's own formatter first (rustfmt, a prettier-compatible formatter, black), so the target is the idiom and not whatever the file happened to be. `packages/tools/tests/idiomatic/<grammar>/*.sample` holds the corpus the defaults were measured on; the `.sample` suffix keeps repo formatters, linters and the type-check off it. The per-file reports are aggregated by site, with the sites ranked by fixed gaps minus broken ones. A file the rebuild cannot print or build is reported as failed and the rest still run: such a failure is a builder or emitter defect, not a default.
+`sittir tool default-diff`: for each source file of one grammar, rebuilds the file through the builders (the strict factory source `emitFactorySourceText` prints) and renders it with default options only, then lists every gap between two tokens that the render spells differently from the source. The files are the evidence: an idiomatic source, formatted with the language's own formatter first (rustfmt, a prettier-compatible formatter, black), so the target is the idiom and not whatever the file happened to be. `packages/tools/tests/idiomatic/<grammar>/*.sample` holds the corpus the defaults were measured on; the `.sample` suffix keeps repo formatters, linters and the type-check off it. The per-file reports are aggregated by site, with the sites ranked by fixed gaps minus broken ones. A file the rebuild cannot print or build is reported as failed and the rest still run: such a failure is a builder or emitter defect, not a default. Three options shape a run: `noAttribute` skips the attribution experiments and reports only the differing gaps (the fast pass), `renderedDir` writes each file's rendered text to `<name>.rendered` there so the output can be read beside the source, and an `onProgress` callback fires after each site and arm is tried.
 
 ### `packages/tools/src/exercise/default-diff.ts::defaultDiff`
 
@@ -88,7 +88,7 @@ Pairs the tokens two texts share, in order. On a mismatch it looks for the neare
 
 ### `packages/tools/src/exercise/default-diff.ts::differences`
 
-The gaps the source and the render spell differently, over the aligned tokens. Only two tokens adjacent in both texts have a gap to compare.
+The gaps the source and the render spell differently, over the aligned tokens. Only two tokens adjacent in both texts have a gap to compare. The result is the gaps of the source that the rendered text spells differently, over the tokens both texts share in order.
 
 ### `packages/tools/src/exercise/default-diff.ts::aggregate`
 

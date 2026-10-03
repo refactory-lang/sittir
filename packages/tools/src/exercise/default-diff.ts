@@ -118,7 +118,6 @@ export function alignTokens(a: readonly Token[], b: readonly Token[]): { readonl
 	return { pairs, mismatches };
 }
 
-/** The gaps of the source that the rendered text spells differently, over the tokens both texts share in order. */
 export function differences(
 	sourceTokens: readonly Token[],
 	source: string,
@@ -157,7 +156,6 @@ const BRANCH = /AddressNode::Branch \{ key: "(\w+)", path: "(?:[^"\\]|\\.)*", ch
 const LEAF = /AddressNode::(?:Spacing|Delimiter) \{ key: "(\w+)", sites: &\[(.*)\] \},?$/;
 const SITE_PATH = /path: "((?:[^"\\]|\\.)*)"/;
 
-/** The sites of a grammar's render options, read from its generated address table. */
 export function sitesOf(grammar: string): Site[] {
 	const file = join(REPO_ROOT, 'rust', 'crates', `sittir-${grammar}`, 'src', 'render', 'options.rs');
 	const sites: Site[] = [];
@@ -196,9 +194,7 @@ export function optionsOf(site: Site, arm: number): Record<string, unknown> {
 }
 
 export interface DefaultDiffOptions {
-	/** Skip the attribution experiments: report the differing gaps only. */
 	readonly attribute?: boolean;
-	/** Called after each site and arm is tried. */
 	readonly onTrial?: (site: Site, arm: GapClass, fixed: number, broken: number) => void;
 }
 
@@ -291,7 +287,6 @@ export interface DefaultDiffRun {
 	readonly files: readonly string[];
 	readonly json: boolean;
 	readonly noAttribute: boolean;
-	/** A directory to write each file's rendered text into, as `<name>.rendered`. */
 	readonly renderedDir?: string;
 }
 
