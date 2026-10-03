@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { markEdited, detachCoordinates, holdReadTree, holdTree, toTransportData, treeHandleOf } from '../src/transport-data.ts';
+import { markEdited, detachCoordinates, holdReadTree, holdTree, STORED_TRIVIA, toTransportData, treeHandleOf } from '../src/transport-data.ts';
 import { readTrivia } from '../src/utils.ts';
 import { mintTreeToken, treeTokenOf } from '../src/tree-token.ts';
 
@@ -9,7 +9,7 @@ import { mintTreeToken, treeTokenOf } from '../src/tree-token.ts';
 const project = (node: never): ReturnType<typeof toTransportData> => {
 	const held = structuredClone(node);
 	holdTree(held, mintTreeToken(1));
-	return toTransportData(held);
+	return toTransportData(held, STORED_TRIVIA);
 };
 
 const leaf = (text: string, start: number) => ({
@@ -283,10 +283,10 @@ describe('the tree token a parsed object holds', () => {
 	});
 
 	it('does not cross: a folded coordinate, a rebuilt node and a kept leaf all drop it', () => {
-		const folded = toTransportData(held({ $type: 5, $span: { start: 1, end: 2 }, $handle: 9 }) as never);
+		const folded = toTransportData(held({ $type: 5, $span: { start: 1, end: 2 }, $handle: 9 }) as never, STORED_TRIVIA);
 		expect(folded).toEqual({ $type: 5, $span: { start: 1, end: 2 }, $treeHandle: 9 });
 		expect(treeTokenOf(folded)).toBeUndefined();
-		const rebuilt = toTransportData(held({ $type: 1, _child: { $type: 5, $text: 'x' } }) as never) as never as { _child: object };
+		const rebuilt = toTransportData(held({ $type: 1, _child: { $type: 5, $text: 'x' } }) as never, STORED_TRIVIA) as never as { _child: object };
 		expect(rebuilt).toEqual({ $type: 1, _child: { $type: 5, $text: 'x' } });
 		expect(treeTokenOf(rebuilt)).toBeUndefined();
 		expect(treeTokenOf(rebuilt._child)).toBeUndefined();
@@ -320,21 +320,21 @@ describe('the tree token a parsed object holds', () => {
 	it('is required of a coordinate: one that holds no tree is refused, as a node, as a child and as a trivia entry', () => {
 		const refusal = /does not hold that tree.*parse the source here/;
 		const coordinate = { $type: 5, $span: { start: 1, end: 2 }, $handle: 9 };
-		expect(() => toTransportData(coordinate as never)).toThrow(refusal);
-		expect(() => toTransportData({ $type: 1, _child: coordinate } as never)).toThrow(refusal);
+		expect(() => toTransportData(coordinate as never, STORED_TRIVIA)).toThrow(refusal);
+		expect(() => toTransportData({ $type: 1, _child: coordinate } as never, STORED_TRIVIA)).toThrow(refusal);
 		const comment = { $type: 7, $span: { start: 0, end: 1 }, $treeHandle: 9 };
-		expect(() => toTransportData({ $type: 1, _a: 1, $_trivia: { inner: { gap: [comment] } } } as never)).toThrow(refusal);
-		expect(() => toTransportData(structuredClone(held({ ...coordinate })) as never)).toThrow(refusal);
+		expect(() => toTransportData({ $type: 1, _a: 1, $_trivia: { inner: { gap: [comment] } } } as never, STORED_TRIVIA)).toThrow(refusal);
+		expect(() => toTransportData(structuredClone(held({ ...coordinate })) as never, STORED_TRIVIA)).toThrow(refusal);
 	});
 
 	it('is not required of built data, which names no tree', () => {
 		const built = { $type: 1, _child: { $type: 5, $text: 'x' } };
-		expect(toTransportData(built as never)).toEqual(built);
+		expect(toTransportData(built as never, STORED_TRIVIA)).toEqual(built);
 	});
 
 	it('passes with a spread copy made on this thread', () => {
 		const coordinate = held({ $type: 5, $span: { start: 1, end: 2 }, $handle: 9 });
-		expect(toTransportData({ ...coordinate } as never)).toEqual({ $type: 5, $span: { start: 1, end: 2 }, $treeHandle: 9 });
+		expect(toTransportData({ ...coordinate } as never, STORED_TRIVIA)).toEqual({ $type: 5, $span: { start: 1, end: 2 }, $treeHandle: 9 });
 	});
 });
 
@@ -343,13 +343,13 @@ describe('line-gap whitespace at the render root', () => {
 
 	it('leaves out the whitespace at the root edges and keeps what sits between its comment and the root', () => {
 		const node = { $type: 5, $source: 0, $named: true, $text: 'b', $_trivia: { leading: [9, comment, 8], trailing: [8] } };
-		expect(toTransportData(node as never)).toEqual({ $type: 5, $source: 0, $named: true, $text: 'b', $_trivia: { leading: [comment, 8] } });
+		expect(toTransportData(node as never, STORED_TRIVIA)).toEqual({ $type: 5, $source: 0, $named: true, $text: 'b', $_trivia: { leading: [comment, 8] } });
 	});
 
 	it('keeps every entry below the root', () => {
 		const child = { $type: 5, $source: 0, $named: true, $text: 'b', $_trivia: { leading: [9], trailing: [8] } };
 		const root = { $type: 6, $source: 0, $named: true, _body: child, $_trivia: { leading: [9] } };
-		expect(toTransportData(root as never)).toEqual({ $type: 6, $source: 0, $named: true, _body: child });
+		expect(toTransportData(root as never, STORED_TRIVIA)).toEqual({ $type: 6, $source: 0, $named: true, _body: child });
 	});
 });
 

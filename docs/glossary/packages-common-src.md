@@ -219,7 +219,7 @@ Whether a node crosses to the render as its coordinate (its span and the tree th
 
 ### `packages/common/src/transport-data.ts::TriviaView`
 
-The trivia a node crosses to the render with, and the sibling its derived leading runs were measured from. The engine's render passes `readTrivia` and `readPrevious`, so an untouched child of a rebuilt parent crosses with the whitespace its parse gave it, minus the runs whose neighbour changed (`changedEdges`). With no view given, a node crosses with the trivia it stores and has no derived runs. The fold decision and the `$_trivia` an unfolded node carries both come from this one view; a node's raw `$_trivia` never crosses beside it.
+The trivia a node crosses to the render with, and which of its sides the read derived (`DerivedSides`). The engine's render passes `readTrivia` and `readDerivedSides`, so an untouched child of a rebuilt parent crosses with the whitespace its parse gave it, minus the runs whose neighbour changed (`changedEdges`). Every caller names its view: data with no derived trivia (a test's hand-written nodes, a probe's detached data) passes `STORED_TRIVIA`, where a node crosses with the trivia it stores and nothing is derived. There is no default, so no caller can skip the derived view by leaving it out. The fold decision and the `$_trivia` an unfolded node carries both come from this one view; a node's raw `$_trivia` never crosses beside it.
 
 ### `packages/common/src/transport-data.ts::detachCoordinates`
 
@@ -261,7 +261,7 @@ What every `$with` setter runs its rebuild through. It runs the rebuild inside t
 
 ### `packages/common/src/utils.ts::readTrivia`
 
-A read node's trivia as its parse has it: the comment entries the reader stored, with the line-break whitespace the node owns interleaved by position (`interleaved`). The whitespace is not in the read output; it is asked of the native line-gap query (`lineGapsOf`) on the node's first trivia read and cached for the node's life, so a parse or wrap that never reads trivia pays nothing for it. What the query returns is already classified to whitespace member kind ids by the grammar's own whitespace classifier, restricted to the members whose text holds a line break, so a gap of spaces on one line yields nothing and the reader's comment ownership decides which node a run belongs to. Only an object a read produced derives (`isRead`): a copy keeps exactly the `$_trivia` it was given, even though it carries the read's address. A node whose trivia was written (`triviaWriter`'s store), a node no read gave, and a node outside a live engine read their stored trivia only.
+A read node's trivia as its parse has it: the comment entries the reader stored, with the line-break whitespace the node owns interleaved by position (`interleaved`). The whitespace is not in the read output; it is asked of the native line-gap query (`lineGapsOf`) on the node's first trivia read and cached for the node's life, so a parse or wrap that never reads trivia pays nothing for it. What the query returns is already classified to whitespace member kind ids by the grammar's own whitespace classifier, restricted to the members whose text holds a line break, so a gap of spaces on one line yields nothing and the reader's comment ownership decides which node a run belongs to. Only an object a read produced derives (`isRead`): a copy keeps exactly the `$_trivia` it was given, even though it carries the read's address. Writing is per side: a side whose trivia was written (`triviaWriter`'s store marks just that side) holds what was written, while the other side keeps deriving, so it is still subject to the neighbour rule and still votes. A write stores from the node's stored trivia, never from the derived view, so derived runs never become written ones. A node no read gave and a node outside a live engine read their stored trivia only.
 
 ### `packages/common/src/transport-data.ts::holdReadTree`
 
@@ -273,17 +273,17 @@ Carries read provenance from a read object to the object rebuilt from it, which 
 
 ### `packages/common/src/transport-data.ts::changedEdges`
 
-Which edges of a list item face a neighbour other than the one its source had there. A derived whitespace run is the gap between a node and one particular neighbour, so it holds only while that neighbour is still there; otherwise the seat decides the gap. The leading edge changed when the item before it in the rebuilt list is not the sibling its leading runs were measured from (`readPrevious`, judged by tree and span through `isSourceSibling`), or, for the list's first item, when the source had such a sibling. The trailing edge changed when the item is no longer last, since only a last item owns a closing gap. An item with no derived runs has no changed edges. The render root changes on both edges, because it has no neighbour at all.
+Which edges of a list item face a neighbour other than the one its source had there. A derived whitespace run is the gap between a node and one particular neighbour, so it holds only while that neighbour is still there; otherwise the seat decides the gap. The leading edge changed when the item before it in the rebuilt list is not the sibling its leading runs were measured from (`readDerivedSides`, judged by tree and span through `isSourceSibling`), or, for the list's first item, when the source had such a sibling. The trailing edge changed when the item is no longer last, since only a last item owns a closing gap. Only a derived side can change: a side whose trivia was written keeps what was written. An item with no derived runs has no changed edges. The render root changes on both edges, because it has no neighbour at all.
 
-A read item whose leading edge is kept crosses with `held` on its trivia. That mark lets the run it opens with vote in its list's gap class (`classify_list_gaps`). Written trivia never carries it, so whitespace written on a built item is a spelling for that item and never evidence of how the source spaced the list.
+A read item whose leading side is derived and whose leading edge is kept crosses with `held` on its trivia. That mark lets the run it opens with vote in its list's gap class (`classify_list_gaps`). Written trivia never carries it, so whitespace written on a built item is a spelling for that item and never evidence of how the source spaced the list.
 
 ### `packages/common/src/transport-data.ts::withoutChangedEdges`
 
 Drops the whitespace runs on the changed edges of a node's trivia: on the leading side the runs before its first comment, on the trailing side the runs after its last. Comments always stay with their owner, and so does a run between a comment and its owner, because that run's neighbour is the comment. A node left with no trivia can fold to its coordinate again.
 
-### `packages/common/src/utils.ts::readPrevious`
+### `packages/common/src/utils.ts::readDerivedSides`
 
-The span of the sibling owner a read node's leading line gaps separate it from, `null` for its parent's first owner child, and `undefined` when `readTrivia` derives nothing for the node. It comes from the same native query and the same cached derivation as the trivia, so the transport judges a neighbour by the fact the gaps were measured against, not by a second reading of adjacency.
+Which sides of a read node's trivia are derived from its line gaps (a side stops being derived once it is written), and the span of the sibling owner its leading line gaps separate it from, `null` for its parent's first owner child; `undefined` when `readTrivia` derives nothing for the node. It comes from the same native query and the same cached derivation as the trivia, so the transport judges a neighbour by the fact the gaps were measured against, not by a second reading of adjacency.
 
 ### `packages/common/src/utils.ts::lineGapAddressOf`
 

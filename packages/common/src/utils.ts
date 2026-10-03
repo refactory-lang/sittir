@@ -1,6 +1,6 @@
 import type { AnyUntypedNode, LineGap, LineGapAddress, LineGaps, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { detachCoordinate, holdsSlots, isRead } from './transport-data.ts';
+import { detachCoordinate, holdsSlots, isRead, type DerivedSides } from './transport-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { currentHandle, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
@@ -106,63 +106,86 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 		detachCoordinate(node);
 		return inner;
 	};
-	const store = (trivia: NodeTrivia): AnyUntypedNode => {
-		writtenTrivia.add(node);
+	const store = (trivia: NodeTrivia, side: TriviaSideName): AnyUntypedNode => {
+		markWritten(node, side);
 		setTriviaData(node, trivia);
 		return node;
 	};
 	const innerAt = (gap: string, items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => {
 		if (!gapsOf().includes(gap)) throw new Error(`trivia: ${kind()} has no gap '${gap}'`);
 		if (items.length === 0) return node.$_trivia?.inner?.[gap] ?? [];
-		return store({ ...node.$_trivia, inner: writeInner({ ...node.$_trivia?.inner, [gap]: entriesOf(items) }) });
+		return store({ ...node.$_trivia, inner: writeInner({ ...node.$_trivia?.inner, [gap]: entriesOf(items) }) }, 'inner');
 	};
 	return {
 		side: (position: 'leading' | 'trailing', items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] =>
 			items.length === 0
 				? (readTrivia(node, handle.lineGapsOf)?.[position] ?? [])
-				: store({ ...readTrivia(node, handle.lineGapsOf), [position]: entriesOf(items) }),
+				: store({ ...node.$_trivia, [position]: entriesOf(items) }, position),
 		inner: (items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => innerAt(gapsOf()[0]!, items),
 		innerAt
 	};
 }
 
-const writtenTrivia = new WeakSet<object>();
-const derivedLineGaps = new WeakMap<object, { readonly trivia: NodeTrivia | undefined; readonly previous: LineGaps['previous'] }>();
+type TriviaSideName = 'leading' | 'trailing' | 'inner';
+
+const writtenSides = new WeakMap<object, Set<TriviaSideName>>();
+const readLineGaps = new WeakMap<object, LineGaps>();
+const composedTrivia = new WeakMap<object, NodeTrivia | undefined>();
+
+function markWritten(node: object, side: TriviaSideName): void {
+	const sides = writtenSides.get(node) ?? new Set<TriviaSideName>();
+	sides.add(side);
+	writtenSides.set(node, sides);
+	composedTrivia.delete(node);
+}
+
+function isDerivedSide(node: object, side: 'leading' | 'trailing'): boolean {
+	return writtenSides.get(node)?.has(side) !== true;
+}
 
 /**
  * A read node's trivia as its parse has it: the comment entries the reader
  * gave it, with the line-break whitespace it owns before it and in its
- * closing gap interleaved by position. Derived once, on the first read; a node
- * whose trivia was written holds what was written.
+ * closing gap interleaved by position. The line gaps are asked for once, on
+ * the first read; a side whose trivia was written holds what was written,
+ * and the other side keeps what the read gives it.
  */
 export function readTrivia(target: object, lineGapsOf: ((address: LineGapAddress) => LineGaps) | undefined): NodeTrivia | undefined {
-	const derived = lineGapsRead(target, lineGapsOf);
-	return derived === undefined ? (target as AnyUntypedNode).$_trivia : derived.trivia;
+	const node = target as AnyUntypedNode;
+	const stored = node.$_trivia;
+	const gaps = lineGapsRead(node, lineGapsOf);
+	if (gaps === undefined || (gaps.leading.length === 0 && gaps.trailing.length === 0)) return stored;
+	if (composedTrivia.has(node)) return composedTrivia.get(node);
+	const leading = isDerivedSide(node, 'leading') ? interleaved(stored?.leading, gaps.leading) : stored?.leading;
+	const trailing = isDerivedSide(node, 'trailing') ? interleaved(stored?.trailing, gaps.trailing) : stored?.trailing;
+	const trivia = { ...stored, leading, trailing };
+	composedTrivia.set(node, trivia);
+	return trivia;
 }
 
-/** The span of the sibling a read node's leading line gaps separate it from (`null` for its parent's first); `undefined` when `readTrivia` derives nothing for it. */
-export function readPrevious(target: object, lineGapsOf: ((address: LineGapAddress) => LineGaps) | undefined): LineGaps['previous'] | undefined {
-	return lineGapsRead(target, lineGapsOf)?.previous;
-}
-
-function lineGapsRead(
+/**
+ * Which sides of a read node's trivia are derived from its line gaps, and the
+ * span of the sibling its leading runs separate it from (`null` for its
+ * parent's first); `undefined` when `readTrivia` derives nothing for it.
+ */
+export function readDerivedSides(
 	target: object,
 	lineGapsOf: ((address: LineGapAddress) => LineGaps) | undefined
-): { readonly trivia: NodeTrivia | undefined; readonly previous: LineGaps['previous'] } | undefined {
+): DerivedSides | undefined {
+	const gaps = lineGapsRead(target, lineGapsOf);
+	if (gaps === undefined) return undefined;
+	return { previous: gaps.previous, leading: isDerivedSide(target, 'leading'), trailing: isDerivedSide(target, 'trailing') };
+}
+
+function lineGapsRead(target: object, lineGapsOf: ((address: LineGapAddress) => LineGaps) | undefined): LineGaps | undefined {
 	const node = target as AnyUntypedNode;
 	const address = lineGapAddressOf(node);
-	if (writtenTrivia.has(node) || !isRead(node) || address === undefined || lineGapsOf === undefined) return undefined;
-	const cached = derivedLineGaps.get(node);
+	if (!isRead(node) || address === undefined || lineGapsOf === undefined) return undefined;
+	const cached = readLineGaps.get(node);
 	if (cached !== undefined) return cached;
-	const stored = node.$_trivia;
 	const gaps = lineGapsOf(address);
-	const trivia =
-		gaps.leading.length === 0 && gaps.trailing.length === 0
-			? stored
-			: { ...stored, leading: interleaved(stored?.leading, gaps.leading), trailing: interleaved(stored?.trailing, gaps.trailing) };
-	const derived = { trivia, previous: gaps.previous };
-	derivedLineGaps.set(node, derived);
-	return derived;
+	readLineGaps.set(node, gaps);
+	return gaps;
 }
 
 /** How the line-gap query names a read node: its handle, else its tree's tag, span and kind; `undefined` for a node no read gave. */
@@ -634,7 +657,7 @@ export { hydrateStub, isStub, readUntypedNode, type Stub, type TreeHandle } from
 export { currentHandle } from './engine-scope.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toTransportData, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead } from './transport-data.ts';
+export { toTransportData, STORED_TRIVIA, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead } from './transport-data.ts';
 export { carryTree, treeTokenOf, type TreeToken } from './tree-token.ts';
 export {
 	projectInterior,

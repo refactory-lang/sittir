@@ -14,7 +14,7 @@ import { nativeShownKindId } from '../validate/shown-kind.ts';
 import type { FactoryShape, PolymorphVariantMap } from '../codegen-surface.ts';
 import type { NodeTrivia as ReadTrivia, TriviaFacts } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
-import { mapTriviaEntries, readTrivia } from '@sittir/common/utils';
+import { isStorageKey, mapTriviaEntries, readTrivia } from '@sittir/common/utils';
 import type { LineGapAddress, LineGaps } from '@sittir/types';
 
 export type Surface = 'strict' | 'loose';
@@ -881,7 +881,7 @@ function seatLineGaps(node: unknown, lineGapsOf: (address: LineGapAddress) => Li
 	}
 	if (!isPlainObject(node)) return;
 	for (const [key, value] of Object.entries(node)) {
-		if (key.startsWith('_')) seatLineGaps(value, lineGapsOf, newline, depth + 1);
+		if (isStorageKey(key)) seatLineGaps(value, lineGapsOf, newline, depth + 1);
 	}
 	const trivia = readTrivia(node, lineGapsOf);
 	if (trivia === undefined) return;

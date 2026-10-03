@@ -222,17 +222,25 @@ export function detachCoordinate(data: object): void {
  * untouched subtree's original bytes while its rebuilt siblings render
  * canonically.
  */
-export function toTransportData(node: AnyUntypedNode, view: TriviaView = storedView): AnyUntypedNode {
+export function toTransportData(node: AnyUntypedNode, view: TriviaView): AnyUntypedNode {
 	return toTransportValue(node, view, BOTH_EDGES) as AnyUntypedNode;
 }
 
-/** How a node's trivia crosses: the entries it carries, and the sibling its leading line gaps separate it from in its source. */
-export interface TriviaView {
-	readonly trivia: (node: Record<string, unknown>) => unknown;
-	readonly previous: (node: Record<string, unknown>) => { readonly start: number; readonly end: number } | null | undefined;
+/** The sides of a read node's trivia derived from its line gaps, and the sibling its leading runs separate it from in its source. */
+export interface DerivedSides {
+	readonly previous: { readonly start: number; readonly end: number } | null;
+	readonly leading: boolean;
+	readonly trailing: boolean;
 }
 
-const storedView: TriviaView = { trivia: (node) => node.$_trivia, previous: () => undefined };
+/** How a node's trivia crosses: the entries it carries, and which of them its read derived. */
+export interface TriviaView {
+	readonly trivia: (node: Record<string, unknown>) => unknown;
+	readonly derived: (node: Record<string, unknown>) => DerivedSides | undefined;
+}
+
+/** The view of data whose trivia is all stored: nothing is derived. */
+export const STORED_TRIVIA: TriviaView = { trivia: (node) => node.$_trivia, derived: () => undefined };
 
 /** The edges of a node whose neighbour is not the one its source had there. */
 interface ChangedEdges {
@@ -246,12 +254,15 @@ const BOTH_EDGES: ChangedEdges = { leading: true, trailing: true };
 function changedEdges(list: readonly unknown[], index: number, view: TriviaView): ChangedEdges {
 	const entry = list[index];
 	if (!isRecord(entry)) return NO_EDGES;
-	const previous = view.previous(entry);
-	if (previous === undefined) return NO_EDGES;
+	const derived = view.derived(entry);
+	if (derived === undefined) return NO_EDGES;
+	const { previous } = derived;
 	const before = list[index - 1];
 	return {
-		leading: index === 0 ? previous !== null : previous === null || !(isRecord(before) && isSourceSibling(before, entry, previous)),
-		trailing: index < list.length - 1
+		leading:
+			derived.leading &&
+			(index === 0 ? previous !== null : previous === null || !(isRecord(before) && isSourceSibling(before, entry, previous))),
+		trailing: derived.trailing && index < list.length - 1
 	};
 }
 
@@ -281,7 +292,7 @@ function toTransportValue(value: unknown, view: TriviaView, changed: ChangedEdge
 	if (Array.isArray(value)) return value.map((entry, index) => toTransportValue(entry, view, changedEdges(value, index, view)));
 	if (!isRecord(value)) return value;
 	const trivia = withoutChangedEdges(view.trivia(value), changed);
-	const held = !changed.leading && view.previous(value) !== undefined;
+	const held = !changed.leading && view.derived(value)?.leading === true;
 	if (canFold(value, trivia)) {
 		assertHoldsTree(value);
 		return foldToCoordinate(value);

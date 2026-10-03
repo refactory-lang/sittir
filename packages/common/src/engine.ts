@@ -16,7 +16,7 @@ import type {
 } from '@sittir/types';
 import type { TreeHandle } from './readUntypedNode.ts';
 import { holdReadTree, toTransportData, type TriviaView } from './transport-data.ts';
-import { readPrevious, readTrivia } from './utils.ts';
+import { readDerivedSides, readTrivia } from './utils.ts';
 import { mintTreeToken } from './tree-token.ts';
 
 /** The options object a grammar package types as its `Options`. */
@@ -253,7 +253,7 @@ export function createNativeEngine<
 					? engine.lineGapsOf(address.handle)
 					: engine.lineGapsOf(address.treeHandle, [address.span.start, address.span.end], address.kind)
 			) as LineGaps;
-		const triviaView: TriviaView = { trivia: (record) => readTrivia(record, lineGapsOf), previous: (record) => readPrevious(record, lineGapsOf) };
+		const triviaView: TriviaView = { trivia: (record) => readTrivia(record, lineGapsOf), derived: (record) => readDerivedSides(record, lineGapsOf) };
 
 		function renderNativeNode(node: AnyUntypedNode | number, opts?: RenderOptions<O>): Rendered {
 			const perCall = opts?.options;
