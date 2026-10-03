@@ -1,4 +1,4 @@
-import { type BindingFacts, type SlotSelector, WILDCARD } from './bindings.ts';
+import { type BindingFacts, type ContainerCapture, type SlotSelector, WILDCARD } from './bindings.ts';
 import type { ModelNode, ModelSlot, SlotModel } from './model.ts';
 
 export interface LayoutSlot {
@@ -44,6 +44,7 @@ export interface Derivation {
 	readonly members: Map<string, Map<string, MemberFacts>>;
 	readonly cycles: readonly string[];
 	readonly untargeted: readonly string[];
+	readonly uncaptured: readonly string[];
 	readonly unmapped: Map<string, number>;
 }
 
@@ -481,10 +482,25 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 	}
 
 	const untargeted: string[] = [];
+	const uncaptured: string[] = [];
 	for (const input of inputs) {
 		for (const container of input.bindings.containers) {
-			if (container.captures.length === 0) continue;
 			const slots = modelNode(input.model, container.kind)?.slots ?? [];
+			const slotOf = (capture: ContainerCapture): ModelSlot | undefined => {
+				const { token } = capture;
+				return token !== null ? slots.find((slot) => slot.terminals.includes(token)) : slotFor(slots, capture);
+			};
+			const kept = new Set([
+				slotFor(slots, container.element),
+				...container.captures.map(slotOf),
+				...container.dropped.map((dropped) => slotFor(slots, dropped))
+			]);
+			for (const slot of slots)
+				if (!kept.has(slot) && !isLayout(input, container.kind, slot))
+					uncaptured.push(
+						`${input.grammar}:${container.pattern.line} ${container.pattern.source.replace(/\s+/g, ' ')} leaves ${slot.name} uncaptured`
+					);
+			if (container.captures.length === 0) continue;
 			const targets = new Set(
 				(slotFor(slots, container.element)?.kinds ?? []).flatMap((k) => {
 					const direct = directVocab(input, k, [container.kind]);
@@ -498,9 +514,9 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 			for (const capture of container.captures) {
 				let kinds: string[];
 				let multiple = false;
-				if (capture.token) kinds = ['boolean'];
+				if (capture.token !== null) kinds = ['boolean'];
 				else {
-					const slot = slotFor(slots, capture);
+					const slot = slotOf(capture);
 					if (slot) {
 						const resolved = slotResolution(input, container.kind, slot);
 						kinds = [...resolved.tokens];
@@ -553,6 +569,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		members,
 		cycles,
 		untargeted: untargeted.sort(),
+		uncaptured: uncaptured.sort(),
 		unmapped
 	};
 }

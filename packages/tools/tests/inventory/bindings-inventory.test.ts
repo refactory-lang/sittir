@@ -118,6 +118,7 @@ describe('deriveVocabulary', () => {
 		for (const v of ['statement.block', 'declaration.function', 'declaration.class', 'declaration.variable.lexical'])
 			expect(d.members.get(v)?.has('declare') ?? false, v).toBe(false);
 		expect(d.untargeted).toEqual([]);
+		expect(d.uncaptured).toEqual([]);
 	});
 	it('keeps the bounds of a type argument (`Iterator<Item: Copy>`), a wrapper claimed as a kind of its own', () => {
 		const argument = d.members.get('element.type_argument');

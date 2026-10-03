@@ -44,7 +44,7 @@
 (self_parameter (mutable_specifier) @mutable)
 (variadic_parameter) @declaration.parameter.variadic
 (closure_parameters (_) @declaration.parameter)
-(attributed_parameter (attribute_item)? (_) @element)
+((attributed_parameter (attribute_item)? @dropped (_) @element) (#set! reason "the element admits the _type supertype, so an attributes capture would reach only some of the kinds it holds"))
 (type_parameter bounds: (_)? @constraint default_type: (_)? @default) @declaration.type_parameter
 (const_parameter) @declaration.type_parameter.const
 (lifetime_parameter) @declaration.type_parameter.lifetime
@@ -85,7 +85,7 @@
 
 ; ── argument (pieces of a call that are not expressions) ───────────────────────
 ; none: every Rust argument is an expression
-(attributed_argument (attribute_item)* (_) @element)
+((attributed_argument (attribute_item)* @dropped (_) @element) (#set! reason "the element is the _expression supertype, so an attributes capture would have no direct target"))
 
 ; ── element (pieces of a composite expression that are not expressions) ────────
 (field_initializer) @element.struct.field

@@ -13,6 +13,16 @@ const slot = (name: string, kinds: readonly string[], multiple = false): ModelSl
 	terminals: []
 });
 
+const flag = (name: string, text: string): ModelSlot => ({
+	name,
+	propertyName: name,
+	required: false,
+	multiple: false,
+	storage: 'boolean',
+	kinds: [],
+	terminals: [text]
+});
+
 const node = (kind: string, slots: readonly ModelSlot[] = [], subtypes: readonly string[] = []): ModelNode => ({
 	kind,
 	modelType: 'branch',
@@ -31,6 +41,8 @@ const grammar = (bindings: string): GrammarInput => ({
 		[
 			node('decorated', [slot('decorators', ['decorator'], true), slot('body', ['_definition', 'leaf_b'])]),
 			node('declared', [slot('content', ['_definition'])]),
+			node('marked', [slot('marks', ['mark'], true), flag('async', 'async'), slot('body', ['leaf_b'])]),
+			node('mark'),
 			node('_definition', [], ['leaf_a']),
 			node('leaf_a'),
 			node('leaf_b'),
@@ -56,6 +68,24 @@ describe('container captures', () => {
 		const d = derive([grammar([...CLAIMS, '(declared "declare" @declare (_) @element)'].join('\n'))]);
 		expect(d.untargeted).toEqual(['g: declared (declare)']);
 		for (const [v, members] of d.members) expect(members.has('declare'), v).toBe(false);
+	});
+
+	it('leave no slot of the container behind unless the pattern drops it on purpose', () => {
+		const silent = derive([grammar([...CLAIMS, '(marked body: (_) @element)'].join('\n'))]);
+		expect(silent.uncaptured).toEqual([
+			'g:4 (marked body: (_) @element) leaves async uncaptured',
+			'g:4 (marked body: (_) @element) leaves marks uncaptured'
+		]);
+		const marked = derive([
+			grammar(
+				[
+					...CLAIMS,
+					'((marked (mark)* @dropped "async" @async body: (_) @element) (#set! reason "marks carry nothing portable"))'
+				].join('\n')
+			)
+		]);
+		expect(marked.uncaptured).toEqual([]);
+		expect(marked.members.get('declaration.b')?.get('async')?.kinds).toEqual(new Set(['boolean']));
 	});
 
 	it('leave a claimed wrapper to its own members', () => {
