@@ -162,6 +162,13 @@ impl ResolvedOptions {
         self.kind_flags.get(kind.0 as usize).is_some_and(|flags| flags & flag != 0)
     }
 
+    /// The spacing sites of `kind`'s edge row, before and after it: `None` on a
+    /// side the row has no site, or when the kind owns no edge row.
+    pub fn edge_sites(&self, kind: crate::types::KindId) -> (Option<usize>, Option<usize>) {
+        let site = |site: u16| (site != NO_SITE).then_some(site as usize);
+        self.edge_row(kind).map_or((None, None), |row| (site(row.before), site(row.after)))
+    }
+
     fn edge_row(&self, kind: crate::types::KindId) -> Option<&EdgeSite> {
         match self.edge_rows.get(kind.0 as usize) {
             Some(&row) if row != NO_SITE => Some(&self.edges[row as usize]),

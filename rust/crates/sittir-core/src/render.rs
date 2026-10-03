@@ -140,6 +140,12 @@ pub trait RenderSink {
     /// the kind's edge row (`ResolvedOptions::edge_arm`). A kind with no edge
     /// site on that side writes nothing.
     fn edge(&mut self, kind: KindId, side: crate::options::Side, stamped: Option<crate::options::EdgeArm>);
+    /// One side of a node's stamped edge, written around the node itself when
+    /// its kind has no edge site on that side, so that no stamp goes unwritten.
+    /// A kind with an edge site writes its stamp through `edge`, from its
+    /// template, and this writes nothing. Only a stamp carrying its strength
+    /// is written: one set by a list gap's source class or a seat.
+    fn unsited_edge(&mut self, _kind: KindId, _side: crate::options::Side, _stamped: Option<crate::options::EdgeArm>) {}
     fn seam(&mut self, text: &str);
     fn token_seam(&mut self, text: &str);
     /// A whitespace trivia entry: its text replaces whatever seam the gap it

@@ -13,20 +13,29 @@ export type LineGapAddress =
 	| { readonly treeHandle: number; readonly span: { readonly start: number; readonly end: number }; readonly kind: number };
 
 /**
- * The line-break runs a read node owns, before it and in its closing gap, each in source order, and the span of the
- * sibling its leading runs separate it from (`null` when it is its parent's first). A run holds only while that sibling
- * is still the node's neighbour.
+ * The line-break runs a read node owns, before it and in its closing gap, each in source order, and the spans of the
+ * sibling owners beside it: before and after the outermost node spanning exactly its bytes, so a list item wrapped in
+ * an item node reports the items beside it (`null` when that node is its parent's first, or its last). A run holds
+ * only while that sibling is still the node's neighbour.
  */
 export interface LineGaps {
 	readonly leading: readonly LineGap[];
 	readonly trailing: readonly LineGap[];
 	readonly previous: { readonly start: number; readonly end: number } | null;
+	readonly next: { readonly start: number; readonly end: number } | null;
 }
 
 export interface TriviaFacts {
 	readonly kindName: (type: AnyUntypedNode['$type']) => string | undefined;
 	readonly kinds: ReadonlySet<string>;
 	readonly innerGaps: { readonly [kind: string]: readonly string[] };
+	/**
+	 * Engine plumbing, not for callers: the kind ids of what a rebuild
+	 * constructs around an existing node, the kinds enrich mints (hoisted) and
+	 * the alias envelopes. Such a wrapper has no source of its own, so the node
+	 * it holds stands for it where source adjacency is judged.
+	 */
+	readonly rebuildWrappers: ReadonlySet<number>;
 	readonly whitespace?: { readonly run: RegExp; readonly kindIdByText: { readonly [text: string]: number } };
 	readonly comment?: ((text: string) => AnyUntypedNode) | undefined;
 	readonly spelled?: readonly SpelledTrivia[];

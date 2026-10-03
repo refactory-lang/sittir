@@ -451,27 +451,21 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(body).toContain(`${tokenId} => Ok(Self::DefaultKeyword(`);
 	});
 
-	it('classifies a rebuilt list from the gaps between its coordinates before the table fills it', async () => {
+	it('gives each source-adjacent list gap its source class before the list site and the seats fill it', async () => {
 		const transportRs = await getRustTemplatesRs();
 		const from = transportRs.indexOf('impl ::sittir_core::prepare::Prepare for ArgumentsElementsTransport {');
 		expect(from).toBeGreaterThan(-1);
 		const body = transportRs.slice(from, transportRs.indexOf('\n}\n', from));
-		expect(body).toContain('held: ::sittir_core::prepare::Prepare::leading_seam(item) }');
-		expect(body).toContain('::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ","');
-		expect(body).toContain('&options::WHITESPACE)');
-		// The class taken from the source beats the table and loses to the wire:
-		// the classification precedes every `get_or_insert` fill of the same site.
-		expect(body.indexOf('classify_list_gaps')).toBeLessThan(body.indexOf('.get_or_insert(ctx.options.spacing['));
 		expect(body).toContain(
-			'if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }'
+			'::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);'
 		);
-		expect(body).toContain(
-			'if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }'
-		);
-		// The seat loop reads the same per-pair classification: a pair is left
-		// to the source only when its gap classified.
-		expect(body).toContain('let separated_item = {');
-		expect(body).toContain('options::SEATS_ARGUMENTS_ELEMENTS_ITEM, &separated_item, ctx);');
+		// The source class is set first: the list site and the seats fill only the gaps it left unset.
+		expect(body.indexOf('fill_list_gaps')).toBeLessThan(body.indexOf('.get_or_insert(ctx.options.spacing['));
+		expect(body.indexOf('fill_list_gaps')).toBeLessThan(body.indexOf('fill_seated_gaps'));
+		expect(body).toContain('fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {');
+		expect(transportRs).not.toContain('classify_list_gaps');
+		expect(transportRs).not.toContain('leading_seam');
+		expect(transportRs).not.toMatch(/let separated_\w+ = \{/);
 	});
 	it('renders through the typed sink and writes no mark character', async () => {
 		const transportRs = await getRustTemplatesRs();
@@ -555,7 +549,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(cells.filter((c) => c !== 'NO_SITE').length).toBeGreaterThan(0);
 		expect(cells.every((c) => c === 'NO_SITE' || /^\d+$/.test(c))).toBe(true);
 		expect(transportRs).toContain(
-			'if let Some(seated_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_SOURCE_FILE_STATEMENTS, &separated_statements, ctx); }'
+			'if let Some(seated_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_SOURCE_FILE_STATEMENTS, ctx); }'
 		);
 		expect(transportRs).not.toContain('let seated_last');
 		expect(transportRs).not.toContain('edges_mut().after.get_or_insert');

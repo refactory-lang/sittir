@@ -50,12 +50,13 @@ export declare class SittirEngine {
    * The line-break whitespace a read node owns as trivia: the node
    * named by its `handle`, or by its tree's tag with its `span`
    * (`[start, end]`) and stamped `kind` as a deep read leaves it.
-   * As JSON `{ leading, trailing, previous }`: `leading` and
+   * As JSON `{ leading, trailing, previous, next }`: `leading` and
    * `trailing` are `{ kind, start }` runs in source order, each
    * classified among the grammar's whitespace members whose text
-   * holds a line break; `previous` is the `{ start, end }` span of
-   * the sibling the leading runs separate the node from, `null`
-   * for its parent's first.
+   * holds a line break; `previous` and `next` are the `{ start, end }`
+   * spans of the sibling owners before and after the outermost node
+   * spanning exactly the node's bytes, `null` when that node is its
+   * parent's first or last.
    */
   lineGapsOf(handle: number, span?: Array<number> | undefined | null, kind?: number | undefined | null): string
   findAndRead(source: string, pattern: string): string
@@ -105,6 +106,8 @@ export declare class SittirEngine {
 export interface AlternationTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _terms: Array<SlotValue<TermTransport> | undefined | null>
   _terms_separator_space_before?: number
   _terms_separator_space_after?: number
@@ -113,18 +116,24 @@ export interface AlternationTransport {
 export interface AnonymousCapturingGroupTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _pattern: SlotValue<PatternTransport>
 }
 
 export interface BackreferenceEscapeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _group_name: SlotValue<GroupNameTransport>
 }
 
 export interface CharacterClassEscapeArmTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _unicode_property_value_expression: SlotValue<UnicodePropertyValueExpressionTransport>
   _character_class_escape_text2: SlotValue<CharacterClassEscapeText2Transport>
 }
@@ -132,12 +141,16 @@ export interface CharacterClassEscapeArmTransport {
 export interface CharacterClassEscapeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: SlotValue<CharacterClassEscapeContentTransportSlot>
 }
 
 export interface CharacterClassTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _leading?: boolean
   _class_atoms?: Array<SlotValue<CharacterClassClassAtomsTransportSlot>>
   _trailing?: boolean
@@ -147,6 +160,8 @@ export interface CharacterClassTransport {
 export interface ClassRangeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _start: SlotValue<ClassRangeStartTransportSlot>
   _end: SlotValue<ClassRangeEndTransportSlot>
 }
@@ -154,6 +169,8 @@ export interface ClassRangeTransport {
 export interface CountQuantifierArmTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _decimal_digits: SlotValue<DecimalDigitsTransport>
   _count_quantifier_group?: SlotValue<CountQuantifierGroupTransport>
 }
@@ -161,12 +178,16 @@ export interface CountQuantifierArmTransport {
 export interface CountQuantifierGroupTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _decimal_digits?: SlotValue<DecimalDigitsTransport>
 }
 
 export interface CountQuantifierTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: SlotValue<CountQuantifierContentTransportSlot>
   _lazy?: boolean
 }
@@ -193,12 +214,16 @@ export interface EngineOptions {
 export interface IdentityEscapeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: string
 }
 
 export interface InlineFlagsGroupDisableTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _disabled: SlotValue<FlagsTransport>
   _pattern?: SlotValue<PatternTransport>
 }
@@ -206,6 +231,8 @@ export interface InlineFlagsGroupDisableTransport {
 export interface InlineFlagsGroupEnableTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _enabled: SlotValue<FlagsTransport>
   _pattern?: SlotValue<PatternTransport>
 }
@@ -213,6 +240,8 @@ export interface InlineFlagsGroupEnableTransport {
 export interface InlineFlagsGroupToggleTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _enabled: SlotValue<FlagsTransport>
   _disabled: SlotValue<FlagsTransport>
   _pattern?: SlotValue<PatternTransport>
@@ -221,6 +250,8 @@ export interface InlineFlagsGroupToggleTransport {
 export interface LazyTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: SlotValue<Box<AnyTransport>>
 }
 
@@ -234,6 +265,8 @@ export declare function liveTreeCount(): number
 export interface LookaheadAssertionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: SlotValue<Box<AnyTransport>>
   _pattern: SlotValue<PatternTransport>
 }
@@ -241,12 +274,16 @@ export interface LookaheadAssertionTransport {
 export interface LookaroundAssertionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: SlotValue<LookaroundAssertionContentTransportSlot>
 }
 
 export interface LookbehindAssertionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: SlotValue<Box<AnyTransport>>
   _pattern: SlotValue<PatternTransport>
 }
@@ -254,6 +291,8 @@ export interface LookbehindAssertionTransport {
 export interface NamedCapturingGroupTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _group_name: SlotValue<GroupNameTransport>
   _pattern: SlotValue<PatternTransport>
   _content: SlotValue<Box<AnyTransport>>
@@ -262,30 +301,40 @@ export interface NamedCapturingGroupTransport {
 export interface NamedGroupBackreferenceTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _group_name: SlotValue<GroupNameTransport>
 }
 
 export interface NonCapturingGroupTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _pattern: SlotValue<PatternTransport>
 }
 
 export interface PatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: SlotValue<PatternContentTransportSlot>
 }
 
 export interface PosixCharacterClassTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _posix_class_name: SlotValue<PosixClassNameTransport>
 }
 
 export interface TermGroupTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _quantifier?: SlotValue<TermGroupQuantifierTransportSlot>
   _content: SlotValue<TermGroupContentTransportSlot>
 }
@@ -293,6 +342,8 @@ export interface TermGroupTransport {
 export interface TermTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _term_group: Array<SlotValue<TermGroupTransport>>
   _term_group_separator_space?: number
 }
@@ -300,18 +351,24 @@ export interface TermTransport {
 export interface UnicodePropertyNameTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: SlotValue<UnicodePropertyValueTransport>
 }
 
 export interface UnicodePropertyValueExpressionGroupTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _unicode_property_name: SlotValue<UnicodePropertyNameTransport>
 }
 
 export interface UnicodePropertyValueExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _unicode_property_value_expression_group?: SlotValue<UnicodePropertyValueExpressionGroupTransport>
   _unicode_property_value: SlotValue<UnicodePropertyValueTransport>
 }

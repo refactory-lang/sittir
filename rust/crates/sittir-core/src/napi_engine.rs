@@ -159,12 +159,13 @@ macro_rules! napi_engine {
             /// The line-break whitespace a read node owns as trivia: the node
             /// named by its `handle`, or by its tree's tag with its `span`
             /// (`[start, end]`) and stamped `kind` as a deep read leaves it.
-            /// As JSON `{ leading, trailing, previous }`: `leading` and
+            /// As JSON `{ leading, trailing, previous, next }`: `leading` and
             /// `trailing` are `{ kind, start }` runs in source order, each
             /// classified among the grammar's whitespace members whose text
-            /// holds a line break; `previous` is the `{ start, end }` span of
-            /// the sibling the leading runs separate the node from, `null`
-            /// for its parent's first.
+            /// holds a line break; `previous` and `next` are the `{ start, end }`
+            /// spans of the sibling owners before and after the outermost node
+            /// spanning exactly the node's bytes, `null` when that node is its
+            /// parent's first or last.
             #[::napi_derive::napi]
             pub fn line_gaps_of(
                 &self,

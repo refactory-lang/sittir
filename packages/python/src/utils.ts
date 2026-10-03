@@ -19,6 +19,10 @@ export const triviaFacts = Object.freeze({
 		'line_continuation_nul'
 	]),
 	innerGaps: INNER_GAPS,
+	rebuildWrappers: new Set<number>([
+		90, 91, 92, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269,
+		282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 333, 334, 335
+	]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:[\s\f\uFEFF\u2060\u200B]|\r?\n))+)$/u,
 		kindIdByText: Object.freeze({ ' ': 123, '\t': 124, '\n': 115, '\n\n': 125, '\n\n\n': 126 })

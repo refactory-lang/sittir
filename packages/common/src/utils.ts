@@ -1,6 +1,6 @@
 import type { AnyUntypedNode, LineGap, LineGapAddress, LineGaps, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { detachCoordinate, holdsSlots, isRead, type DerivedSides } from './transport-data.ts';
+import { carryRead, carrySource, detachCoordinate, holdsSlots, isRead, isStorageKey, sourceOf, type DerivedSides } from './transport-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { currentHandle, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
@@ -51,6 +51,11 @@ export function renderText(handle: EngineHandle | undefined, node: object): stri
 export function rebuilt<R>(source: object, handle: EngineHandle | undefined, build: () => R): R {
 	const node = source as AnyUntypedNode;
 	const result = handle === undefined ? build() : inEngine(handle, build);
+	if (isNode(result)) {
+		carryEdit(node, result);
+		const wrappers = handle?.current.trivia.rebuildWrappers;
+		if (wrappers !== undefined) carryRebuiltSlots(node as unknown as Record<string, unknown>, result as unknown as Record<string, unknown>, wrappers);
+	}
 	const trivia = node.$_trivia;
 	if (trivia === undefined || !isNode(result)) return result;
 	if (Object.values(trivia.inner ?? {}).some((entries) => (entries?.length ?? 0) > 0) && !isEmptyNode(result)) {
@@ -132,6 +137,33 @@ const writtenSides = new WeakMap<object, Set<TriviaSideName>>();
 const readLineGaps = new WeakMap<object, LineGaps>();
 const composedTrivia = new WeakMap<object, NodeTrivia | undefined>();
 
+/**
+ * Hand an edited node what it keeps of the node it was rebuilt from: that
+ * the read produced it, where it sits in the source, and which trivia sides
+ * were written. Its line gaps then derive from the same source position, and
+ * a side the caller rewrote stays written.
+ */
+function carryRebuiltSlots(read: Record<string, unknown>, result: Record<string, unknown>, wrappers: ReadonlySet<number>): void {
+	for (const key of Object.keys(result)) {
+		if (!isStorageKey(key)) continue;
+		const fresh = result[key];
+		const held = read[key];
+		if (fresh === null || typeof fresh !== 'object' || Array.isArray(fresh) || held === null || typeof held !== 'object' || Array.isArray(held) || fresh === held) continue;
+		const freshNode = fresh as Record<string, unknown>;
+		const heldNode = held as Record<string, unknown>;
+		if (typeof freshNode.$type !== 'number' || freshNode.$type !== heldNode.$type || !wrappers.has(freshNode.$type)) continue;
+		if (sourceOf(freshNode) !== undefined || sourceOf(heldNode) === undefined) continue;
+		carryEdit(heldNode, freshNode);
+	}
+}
+
+function carryEdit(from: object, to: object): void {
+	carryRead(from, to);
+	carrySource(from, to);
+	const written = writtenSides.get(from);
+	if (written !== undefined) writtenSides.set(to, new Set(written));
+}
+
 function markWritten(node: object, side: TriviaSideName): void {
 	const sides = writtenSides.get(node) ?? new Set<TriviaSideName>();
 	sides.add(side);
@@ -165,8 +197,9 @@ export function readTrivia(target: object, lineGapsOf: ((address: LineGapAddress
 
 /**
  * Which sides of a read node's trivia are derived from its line gaps, and the
- * span of the sibling its leading runs separate it from (`null` for its
- * parent's first); `undefined` when `readTrivia` derives nothing for it.
+ * spans of the siblings beside it in the source (`previous` `null` for its
+ * parent's first, `next` `null` for its last); `undefined` when `readTrivia`
+ * derives nothing for it.
  */
 export function readDerivedSides(
 	target: object,
@@ -174,7 +207,7 @@ export function readDerivedSides(
 ): DerivedSides | undefined {
 	const gaps = lineGapsRead(target, lineGapsOf);
 	if (gaps === undefined) return undefined;
-	return { previous: gaps.previous, leading: isDerivedSide(target, 'leading'), trailing: isDerivedSide(target, 'trailing') };
+	return { previous: gaps.previous, next: gaps.next, leading: isDerivedSide(target, 'leading'), trailing: isDerivedSide(target, 'trailing') };
 }
 
 function lineGapsRead(target: object, lineGapsOf: ((address: LineGapAddress) => LineGaps) | undefined): LineGaps | undefined {
@@ -195,7 +228,9 @@ function lineGapAddressOf(node: AnyUntypedNode): LineGapAddress | undefined {
 	if (typeof record.$treeHandle === 'number' && record.$span !== undefined && typeof node.$type === 'number') {
 		return { treeHandle: record.$treeHandle, span: record.$span, kind: node.$type };
 	}
-	return undefined;
+	const source = sourceOf(node);
+	if (source === undefined) return undefined;
+	return source.handle === undefined ? { treeHandle: source.treeHandle, span: source.span, kind: source.kind } : { handle: source.handle };
 }
 
 /** Comment entries and whitespace runs of one side merged in source order; `undefined` when both are empty. */
@@ -657,7 +692,7 @@ export { hydrateStub, isStub, readUntypedNode, type Stub, type TreeHandle } from
 export { currentHandle } from './engine-scope.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toTransportData, STORED_TRIVIA, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead } from './transport-data.ts';
+export { toTransportData, STORED_TRIVIA, sourceGapOf, sourceFlankOf, crossingTrivia, carrySource, type TriviaView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead } from './transport-data.ts';
 export { carryTree, treeTokenOf, type TreeToken } from './tree-token.ts';
 export {
 	projectInterior,

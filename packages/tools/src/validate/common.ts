@@ -3,7 +3,7 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createEngine, detachCoordinates, dumpMetrics, sliceSpan } from '@sittir/common';
-import { carryRead, holdTree, treeTokenOf } from '@sittir/common/utils';
+import { carryRead, holdTree, readDerivedSides, readTrivia, treeTokenOf, type TriviaView } from '@sittir/common/utils';
 import {
 	hydrateStub,
 	isStub,
@@ -189,6 +189,14 @@ export function treeHandle(
 }
 
 export type NativeEngine = Engine<LanguageAPI>;
+
+export function triviaViewOf(engine: NativeEngine): TriviaView {
+	return {
+		trivia: (node) => readTrivia(node, engine.diagnostics.lineGapsOf),
+		derived: (node) => readDerivedSides(node, engine.diagnostics.lineGapsOf),
+		isWrapper: (kindId) => engine.trivia.rebuildWrappers.has(kindId)
+	};
+}
 
 const cachedNativeEngines = new Map<
 	string,

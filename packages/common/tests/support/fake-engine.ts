@@ -6,6 +6,7 @@ export function triviaFacts(comment?: (text: string) => AnyUntypedNode): TriviaF
 		kindName: (type) => (type === 9 ? 'comment' : undefined),
 		kinds: new Set(['comment']),
 		innerGaps: {},
+		rebuildWrappers: new Set<number>(),
 		...(comment === undefined ? {} : { comment })
 	};
 }

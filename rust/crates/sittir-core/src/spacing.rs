@@ -587,6 +587,16 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.site_mark(kind, strength, false);
     }
 
+    fn unsited_edge(&mut self, kind: crate::types::KindId, side: crate::options::Side, stamped: Option<crate::options::EdgeArm>) {
+        let Some(crate::options::EdgeArm { arm, strength: Some(strength) }) = stamped else {
+            return;
+        };
+        if self.options.is_some_and(|options| options.edge_arm(kind, side, None).is_some()) {
+            return;
+        }
+        self.site_with(arm, strength);
+    }
+
     fn flank_at(&mut self, site: usize) {
         self.option_site(site, true);
     }

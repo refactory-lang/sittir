@@ -83,6 +83,7 @@ import { KIND_NAMES, type ${rootTypeName} } from './types.js';
 import type { IndentChar, Options } from './options.js';
 import type { IndentOption, NativeEngineOptions, UntypedNodeOf } from '@sittir/types';
 import { getActiveBackend } from './backend.js';
+import { triviaFacts } from './utils.js';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -105,6 +106,7 @@ export function createRenderEngine<const I extends string = string>(
 		{
 			templatesPath: join(__dirname, '..', 'templates'),
 			kindNames: KIND_NAMES,
+			rebuildWrappers: triviaFacts.rebuildWrappers,
 			getActiveBackend,
 		},
 		options

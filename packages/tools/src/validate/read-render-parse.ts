@@ -12,7 +12,7 @@ import { writeSync } from 'node:fs';
 
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
 import { sourceSpans, spanSlicer, type TriviaSides } from '@sittir/common';
-import { hydrateStub, isStub, mapTriviaEntries, readTrivia } from '@sittir/common/utils';
+import { crossingTrivia, hydrateStub, isStub, mapTriviaEntries, readTrivia, type TriviaView } from '@sittir/common/utils';
 import { deriveRuleKinds } from './render-bodies.ts';
 import { load } from '../codegen-surface.ts';
 
@@ -38,7 +38,8 @@ import {
 	type TypedNode,
 	type AccessorThrowRecord,
 	type ValidatorSkip,
-	loadNativeEngine
+	loadNativeEngine,
+	triviaViewOf
 } from './common.ts';
 import { nativeShownKindId } from './shown-kind.ts';
 
@@ -363,14 +364,14 @@ export function leadingTriviaRenderedWidth(
  * empty slots, and a storage-less trivia entry becomes its text with the
  * kind the reader stamped on it, `{ $type, $text }`, plus `$sameLine` and
  * `$tokensBetween` when it shares its owner's row. Each node's trivia is
- * taken through `triviaOf`, the view the render read, so the input carries the
+ * taken through `view`, the view the render read, so the input carries the
  * line-gap whitespace the validated render printed.
  */
 export function selfContainedRenderInput(
 	data: unknown,
 	source: string,
 	isLeafKind: (kindId: number) => boolean,
-	triviaOf: (node: object) => NodeTrivia | undefined
+	view: TriviaView
 ): unknown {
 	const slice = spanSlicer(source);
 	const textOf = (record: Record<string, unknown>): string | undefined => {
@@ -401,7 +402,7 @@ export function selfContainedRenderInput(
 			if (key === '$_trivia') continue;
 			out[key] = key.startsWith('_') || key === '$other' ? walk(raw) : raw;
 		}
-		const trivia = triviaOf(record);
+		const trivia = crossingTrivia(record, view);
 		if (trivia != null) out.$_trivia = mapTriviaEntries(trivia as TriviaSides<unknown>, walkTrivia);
 		const shown = typeof out.$type === 'number' ? nativeShownKindId(out as { $type: number }) : undefined;
 		if (!hasStorage(out) && shown !== undefined && isLeafKind(shown) && out.$text === undefined) {
@@ -557,6 +558,7 @@ export async function validateReadRenderParse(
 	const nativeEngine = await loadNativeEngine(grammar);
 	const render = (node: AnyUntypedNode): string => nativeEngine.render(node).toString();
 	const triviaOf = (node: object): NodeTrivia | undefined => readTrivia(node, nativeEngine.diagnostics.lineGapsOf);
+	const view = triviaViewOf(nativeEngine);
 	// The kinds the renderer can handle are those with an emitted body.
 	const ruleKinds = deriveRuleKinds(grammar);
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
@@ -903,7 +905,7 @@ export async function validateReadRenderParse(
 									kind: 'render',
 									grammar,
 									pattern: renderedKind,
-									input: selfContainedRenderInput(data, entry.source, isLeafKind, triviaOf),
+									input: selfContainedRenderInput(data, entry.source, isLeafKind, view),
 									expectedOutput: rendered
 								});
 								options.onFixture({

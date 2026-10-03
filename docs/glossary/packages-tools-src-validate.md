@@ -160,6 +160,10 @@ would otherwise report a passing 0/0 run.
 
 The public engine a validator reads and renders through, typed for any grammar: `Engine<LanguageAPI>`. One engine per grammar per process, because a coordinate names the tree by the tag its engine minted.
 
+### `packages/tools/src/validate/common.ts::triviaViewOf`
+
+The trivia view a validator renders through, built from the engine it loaded: `readTrivia` and `readDerivedSides` over the engine's `lineGapsOf`, and the engine's `rebuildWrappers` for `isWrapper`. It is the view the engine's own render uses, so the detached input `selfContainedRenderInput` builds carries the trivia and the source gaps the validated render printed.
+
 ### `packages/tools/src/validate/common.ts::loadNativeEngine`
 
 ```text

@@ -50,12 +50,13 @@ export declare class SittirEngine {
    * The line-break whitespace a read node owns as trivia: the node
    * named by its `handle`, or by its tree's tag with its `span`
    * (`[start, end]`) and stamped `kind` as a deep read leaves it.
-   * As JSON `{ leading, trailing, previous }`: `leading` and
+   * As JSON `{ leading, trailing, previous, next }`: `leading` and
    * `trailing` are `{ kind, start }` runs in source order, each
    * classified among the grammar's whitespace members whose text
-   * holds a line break; `previous` is the `{ start, end }` span of
-   * the sibling the leading runs separate the node from, `null`
-   * for its parent's first.
+   * holds a line break; `previous` and `next` are the `{ start, end }`
+   * spans of the sibling owners before and after the outermost node
+   * spanning exactly the node's bytes, `null` when that node is its
+   * parent's first or last.
    */
   lineGapsOf(handle: number, span?: Array<number> | undefined | null, kind?: number | undefined | null): string
   findAndRead(source: string, pattern: string): string
@@ -105,6 +106,8 @@ export declare class SittirEngine {
 export interface AliasedImportTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _name: SlotValue<DottedNameTransport>
   _alias: SlotValue<IdentifierTransport>
 }
@@ -112,6 +115,8 @@ export interface AliasedImportTransport {
 export interface ArgumentListElementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _item: Array<SlotValue<ArgumentListElementsItemTransportSlot>>
   _delimiter?: number
   _item_separator_space_before?: number
@@ -121,18 +126,24 @@ export interface ArgumentListElementsTransport {
 export interface ArgumentListTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _arguments?: SlotValue<ArgumentListElementsTransport>
 }
 
 export interface AsPatternTargetTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: SlotValue<Box<ExpressionTransport>>
 }
 
 export interface AsPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _expression: SlotValue<Box<ExpressionTransport>>
   _alias: SlotValue<Box<AsPatternTargetTransport>>
 }
@@ -140,6 +151,8 @@ export interface AsPatternTransport {
 export interface AssertStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _expression: Array<SlotValue<ExpressionTransport>>
   _expression_separator_space_before?: number
   _expression_separator_space_after?: number
@@ -148,6 +161,8 @@ export interface AssertStatementTransport {
 export interface AssignmentEqTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _left: SlotValue<AssignmentEqLeftTransportSlot>
   _right: SlotValue<Box<AssignmentEqRightTransportSlot>>
 }
@@ -155,6 +170,8 @@ export interface AssignmentEqTransport {
 export interface AssignmentTypedTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _left: SlotValue<AssignmentTypedLeftTransportSlot>
   _type: SlotValue<TypeTransport>
   _right: SlotValue<Box<AssignmentTypedRightTransportSlot>>
@@ -163,6 +180,8 @@ export interface AssignmentTypedTransport {
 export interface AssignmentTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _left: SlotValue<AssignmentTypeLeftTransportSlot>
   _type: SlotValue<TypeTransport>
 }
@@ -170,6 +189,8 @@ export interface AssignmentTypeTransport {
 export interface AttributeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _object: SlotValue<Box<PrimaryExpressionTransport>>
   _attribute: SlotValue<IdentifierTransport>
 }
@@ -177,6 +198,8 @@ export interface AttributeTransport {
 export interface AugmentedAssignmentTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _left: SlotValue<AugmentedAssignmentLeftTransportSlot>
   _operator: SlotValue<Box<AnyTransport>>
   _right: SlotValue<Box<AugmentedAssignmentRightTransportSlot>>
@@ -185,12 +208,16 @@ export interface AugmentedAssignmentTransport {
 export interface AwaitTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _expression: SlotValue<Box<PrimaryExpressionTransport>>
 }
 
 export interface BinaryOperatorTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _left: SlotValue<Box<PrimaryExpressionTransport>>
   _operator: SlotValue<Box<AnyTransport>>
   _right: SlotValue<Box<PrimaryExpressionTransport>>
@@ -199,6 +226,8 @@ export interface BinaryOperatorTransport {
 export interface BlockTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _statements?: Array<SlotValue<StatementTransport>>
   _statements_separator_space?: number
 }
@@ -206,6 +235,8 @@ export interface BlockTransport {
 export interface BooleanOperatorTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _left: SlotValue<Box<ExpressionTransport>>
   _operator: SlotValue<Box<AnyTransport>>
   _right: SlotValue<Box<ExpressionTransport>>
@@ -214,6 +245,8 @@ export interface BooleanOperatorTransport {
 export interface CallTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _function: SlotValue<Box<PrimaryExpressionTransport>>
   _arguments: SlotValue<Box<CallArgumentsTransportSlot>>
 }
@@ -221,6 +254,8 @@ export interface CallTransport {
 export interface CaseAsPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _case_pattern: SlotValue<Box<CasePatternTransport>>
   _identifier: SlotValue<IdentifierTransport>
 }
@@ -228,6 +263,8 @@ export interface CaseAsPatternTransport {
 export interface CaseClauseTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _guard?: SlotValue<IfClauseTransport>
   _consequence: SlotValue<SuiteTransport>
   _case_patterns: SlotValue<CasePatternsTransport>
@@ -236,12 +273,16 @@ export interface CaseClauseTransport {
 export interface CaseListPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _list_pattern_case_patterns?: SlotValue<ListPatternCasePatternsTransport>
 }
 
 export interface CasePatternsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _item: Array<SlotValue<CasePatternTransport>>
   _delimiter?: number
   _item_separator_space_before?: number
@@ -251,24 +292,32 @@ export interface CasePatternsTransport {
 export interface CasePatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: SlotValue<Box<CasePatternContentTransportSlot>>
 }
 
 export interface CaseTuplePatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _list_pattern_case_patterns?: SlotValue<ListPatternCasePatternsTransport>
 }
 
 export interface ChevronTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _expression: SlotValue<ExpressionTransport>
 }
 
 export interface ClassDefinitionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _name: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParameterTransport>
   _superclasses?: SlotValue<ArgumentListTransport>
@@ -278,6 +327,8 @@ export interface ClassDefinitionTransport {
 export interface ClassPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _name: SlotValue<DottedNameTransport>
   _arguments?: SlotValue<ListPatternCasePatternsTransport>
 }
@@ -285,6 +336,8 @@ export interface ClassPatternTransport {
 export interface CollectionElementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _item: Array<SlotValue<CollectionElementsItemTransportSlot>>
   _delimiter?: number
   _item_separator_space_before?: number
@@ -294,12 +347,16 @@ export interface CollectionElementsTransport {
 export interface CommentTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: string
 }
 
 export interface ComparisonOperatorComparatorTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _operators: SlotValue<Box<AnyTransport>>
   _primary_expression: SlotValue<PrimaryExpressionTransport>
 }
@@ -307,6 +364,8 @@ export interface ComparisonOperatorComparatorTransport {
 export interface ComparisonOperatorTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _left: SlotValue<Box<PrimaryExpressionTransport>>
   _comparators: Array<SlotValue<ComparisonOperatorComparatorTransport>>
   _comparators_separator_space?: number
@@ -315,6 +374,8 @@ export interface ComparisonOperatorTransport {
 export interface ComplexPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _sign?: boolean
   _real: SlotValue<ComplexPatternRealTransportSlot>
   _operator: SlotValue<Box<AnyTransport>>
@@ -324,6 +385,8 @@ export interface ComplexPatternTransport {
 export interface ComprehensionClausesTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content?: Array<SlotValue<ComprehensionClausesContentTransportSlot>>
   _content_separator_space?: number
 }
@@ -331,6 +394,8 @@ export interface ComprehensionClausesTransport {
 export interface ConcatenatedStringTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _string: Array<SlotValue<StringTransport>>
   _string_separator_space?: number
 }
@@ -338,6 +403,8 @@ export interface ConcatenatedStringTransport {
 export interface ConditionalExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _body: SlotValue<Box<ExpressionTransport>>
   _condition: SlotValue<Box<ExpressionTransport>>
   _alternative: SlotValue<Box<ExpressionTransport>>
@@ -346,6 +413,8 @@ export interface ConditionalExpressionTransport {
 export interface ConstrainedTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _base_type: SlotValue<Box<TypeTransport>>
   _constraint: SlotValue<Box<TypeTransport>>
 }
@@ -353,6 +422,8 @@ export interface ConstrainedTypeTransport {
 export interface DecoratedDefinitionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _definition: SlotValue<DecoratedDefinitionDefinitionTransportSlot>
   _decorator: Array<SlotValue<DecoratorTransport>>
   _decorator_separator_space?: number
@@ -361,12 +432,16 @@ export interface DecoratedDefinitionTransport {
 export interface DecoratorTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _expression: SlotValue<ExpressionTransport>
 }
 
 export interface DefaultParameterTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _name: SlotValue<DefaultParameterNameTransportSlot>
   _value: SlotValue<ExpressionTransport>
 }
@@ -374,12 +449,16 @@ export interface DefaultParameterTransport {
 export interface DeleteStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _expressions: SlotValue<DeleteStatementExpressionsTransportSlot>
 }
 
 export interface DictionaryComprehensionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _body: SlotValue<Box<PairTransport>>
   _comprehension_clauses: SlotValue<ComprehensionClausesTransport>
 }
@@ -387,6 +466,8 @@ export interface DictionaryComprehensionTransport {
 export interface DictionaryElementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _item: Array<SlotValue<DictionaryElementsItemTransportSlot>>
   _delimiter?: number
   _item_separator_space_before?: number
@@ -396,24 +477,32 @@ export interface DictionaryElementsTransport {
 export interface DictionarySplatPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _target: SlotValue<DictionarySplatPatternTargetTransportSlot>
 }
 
 export interface DictionarySplatTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _expression: SlotValue<ExpressionTransport>
 }
 
 export interface DictionaryTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _elements?: SlotValue<DictionaryElementsTransport>
 }
 
 export interface DictPatternElementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _item: Array<SlotValue<DictPatternElementsItemTransportSlot>>
   _delimiter?: number
   _item_separator_space_before?: number
@@ -423,6 +512,8 @@ export interface DictPatternElementsTransport {
 export interface DictPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _elements?: SlotValue<DictPatternElementsTransport>
 }
 
@@ -437,6 +528,8 @@ export declare function disposeTree(treeId: number): void
 export interface DottedNameTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _names: Array<SlotValue<IdentifierTransport>>
   _names_separator_space_before?: number
   _names_separator_space_after?: number
@@ -445,6 +538,8 @@ export interface DottedNameTransport {
 export interface ElifClauseTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _condition: SlotValue<ExpressionTransport>
   _consequence: SlotValue<SuiteTransport>
 }
@@ -452,6 +547,8 @@ export interface ElifClauseTransport {
 export interface ElseClauseTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _body: SlotValue<SuiteTransport>
 }
 
@@ -469,48 +566,64 @@ export interface EngineOptions {
 export interface EscapeSequenceHexTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: string
 }
 
 export interface EscapeSequenceLineBreakTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: string
 }
 
 export interface EscapeSequenceNamedTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: string
 }
 
 export interface EscapeSequenceOctalTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: string
 }
 
 export interface EscapeSequenceSimpleTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: string
 }
 
 export interface EscapeSequenceUnicodeFixedTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: string
 }
 
 export interface EscapeSequenceUnicodeWideTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: string
 }
 
 export interface ExceptClauseExceptionAsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _value: SlotValue<ExpressionTransport>
   _alias?: SlotValue<ExpressionTransport>
 }
@@ -518,6 +631,8 @@ export interface ExceptClauseExceptionAsTransport {
 export interface ExceptClauseExceptionListTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _value: Array<SlotValue<ExpressionTransport>>
   _value_separator_space_before?: number
   _value_separator_space_after?: number
@@ -526,12 +641,16 @@ export interface ExceptClauseExceptionListTransport {
 export interface ExceptClauseExceptionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: SlotValue<ExceptClauseExceptionContentTransportSlot>
 }
 
 export interface ExceptClauseTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _group?: boolean
   _exception?: SlotValue<ExceptClauseExceptionTransport>
   _suite: SlotValue<SuiteTransport>
@@ -540,6 +659,8 @@ export interface ExceptClauseTransport {
 export interface ExecStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _code: SlotValue<ExecStatementCodeTransportSlot>
   _in_clause?: Array<SlotValue<ExpressionTransport>>
   _in_clause_separator_space_before?: number
@@ -549,6 +670,8 @@ export interface ExecStatementTransport {
 export interface ExpressionListTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _item: Array<SlotValue<ExpressionTransport>>
   _delimiter?: number
   _item_separator_space_before?: number
@@ -558,12 +681,16 @@ export interface ExpressionListTransport {
 export interface ExpressionStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: SlotValue<ExpressionStatementContentTransportSlot>
 }
 
 export interface ExpressionStatementTupleTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _item: Array<SlotValue<ExpressionTransport>>
   _delimiter?: number
   _item_separator_space_before?: number
@@ -573,12 +700,16 @@ export interface ExpressionStatementTupleTransport {
 export interface FinallyClauseTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _block: SlotValue<SuiteTransport>
 }
 
 export interface FloatLeadingPointTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _integer?: string
   _fraction: string
   _marker?: string
@@ -589,6 +720,8 @@ export interface FloatLeadingPointTransport {
 export interface FloatPointTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _integer: string
   _fraction?: string
   _marker?: string
@@ -599,6 +732,8 @@ export interface FloatPointTransport {
 export interface FloatScientificTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _integer: string
   _marker: string
   _exponent: string
@@ -608,6 +743,8 @@ export interface FloatScientificTransport {
 export interface ForInClauseTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _async?: boolean
   _left: SlotValue<ForInClauseLeftTransportSlot>
   _right: Array<SlotValue<ForInClauseRightTransportSlot>>
@@ -619,18 +756,24 @@ export interface ForInClauseTransport {
 export interface FormatExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: SlotValue<InterpolationTransport>
 }
 
 export interface FormatSpecifierTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _elements?: Array<SlotValue<FormatSpecifierElementsTransportSlot, true>>
 }
 
 export interface ForStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _async?: boolean
   _left: SlotValue<ForStatementLeftTransportSlot>
   _right: SlotValue<ForStatementRightTransportSlot>
@@ -641,6 +784,8 @@ export interface ForStatementTransport {
 export interface FunctionDefinitionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _async?: boolean
   _name: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParameterTransport>
@@ -652,12 +797,16 @@ export interface FunctionDefinitionTransport {
 export interface FutureImportStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: SlotValue<FutureImportStatementContentTransportSlot>
 }
 
 export interface GeneratorExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _body: SlotValue<Box<ExpressionTransport>>
   _comprehension_clauses: SlotValue<ComprehensionClausesTransport>
 }
@@ -665,6 +814,8 @@ export interface GeneratorExpressionTransport {
 export interface GenericTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _name: SlotValue<GenericTypeNameTransportSlot>
   _type_parameter: SlotValue<TypeParameterTransport>
 }
@@ -672,6 +823,8 @@ export interface GenericTypeTransport {
 export interface GlobalStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _names: Array<SlotValue<IdentifierTransport>>
   _names_separator_space_before?: number
   _names_separator_space_after?: number
@@ -680,12 +833,16 @@ export interface GlobalStatementTransport {
 export interface IfClauseTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _condition: SlotValue<ExpressionTransport>
 }
 
 export interface IfStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _condition: SlotValue<ExpressionTransport>
   _consequence: SlotValue<SuiteTransport>
   _alternative?: Array<SlotValue<IfStatementAlternativeTransportSlot>>
@@ -695,6 +852,8 @@ export interface IfStatementTransport {
 export interface ImportFromStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _module_name: SlotValue<ImportFromStatementModuleNameTransportSlot>
   _content: SlotValue<ImportFromStatementContentTransportSlot>
 }
@@ -702,6 +861,8 @@ export interface ImportFromStatementTransport {
 export interface ImportListTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _name: Array<SlotValue<ImportListNameTransportSlot>>
   _delimiter?: number
   _name_separator_space_before?: number
@@ -711,12 +872,16 @@ export interface ImportListTransport {
 export interface ImportStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _names: SlotValue<NamesTransport>
 }
 
 export interface IntegerBinaryTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _prefix: string
   _content: string
 }
@@ -724,6 +889,8 @@ export interface IntegerBinaryTransport {
 export interface IntegerHexTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _prefix: string
   _content: string
 }
@@ -731,6 +898,8 @@ export interface IntegerHexTransport {
 export interface IntegerOctalTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _prefix: string
   _content: string
 }
@@ -738,6 +907,8 @@ export interface IntegerOctalTransport {
 export interface InterpolationTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _expression: SlotValue<InterpolationExpressionTransportSlot>
   _debug?: boolean
   _type_conversion?: SlotValue<TypeConversionTransport>
@@ -747,6 +918,8 @@ export interface InterpolationTransport {
 export interface KeyValuePatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _key: SlotValue<KeyValuePatternKeyTransportSlot>
   _value: SlotValue<CasePatternTransport>
 }
@@ -754,6 +927,8 @@ export interface KeyValuePatternTransport {
 export interface KeywordArgumentTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _name: SlotValue<KeywordArgumentNameTransportSlot>
   _value: SlotValue<ExpressionTransport>
 }
@@ -761,6 +936,8 @@ export interface KeywordArgumentTransport {
 export interface KeywordPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _name: SlotValue<IdentifierTransport>
   _value: SlotValue<KeywordPatternValueTransportSlot>
 }
@@ -768,12 +945,16 @@ export interface KeywordPatternTransport {
 export interface LambdaParametersTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _parameters_elements: SlotValue<ParametersElementsTransport>
 }
 
 export interface LambdaTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _parameters?: SlotValue<LambdaParametersTransport>
   _body: SlotValue<Box<ExpressionTransport>>
 }
@@ -781,6 +962,8 @@ export interface LambdaTransport {
 export interface LambdaWithinForInClauseTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _parameters?: SlotValue<LambdaParametersTransport>
   _body: SlotValue<Box<LambdaWithinForInClauseBodyTransportSlot>>
 }
@@ -788,6 +971,8 @@ export interface LambdaWithinForInClauseTransport {
 export interface ListComprehensionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _body: SlotValue<Box<ExpressionTransport>>
   _comprehension_clauses: SlotValue<ComprehensionClausesTransport>
 }
@@ -795,6 +980,8 @@ export interface ListComprehensionTransport {
 export interface ListPatternCasePatternsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _item: Array<SlotValue<CasePatternTransport>>
   _delimiter?: number
   _item_separator_space_before?: number
@@ -804,24 +991,32 @@ export interface ListPatternCasePatternsTransport {
 export interface ListPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _patterns?: SlotValue<PatternsTransport>
 }
 
 export interface ListSplatPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _target: SlotValue<Box<ListSplatPatternTargetTransportSlot>>
 }
 
 export interface ListSplatTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _expression: SlotValue<ExpressionTransport>
 }
 
 export interface ListTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _collection_elements?: SlotValue<CollectionElementsTransport>
 }
 
@@ -835,6 +1030,8 @@ export declare function liveTreeCount(): number
 export interface MatchBlockBlockTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _alternative?: Array<SlotValue<CaseClauseTransport>>
   _alternative_separator_space?: number
 }
@@ -842,18 +1039,24 @@ export interface MatchBlockBlockTransport {
 export interface MatchBlockEmptyTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _newline: SlotValue<NewlineTransport>
 }
 
 export interface MatchBlockTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: SlotValue<MatchBlockContentTransportSlot>
 }
 
 export interface MatchStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _body: SlotValue<MatchBlockTransport>
   _subjects: SlotValue<SubjectsTransport>
 }
@@ -861,6 +1064,8 @@ export interface MatchStatementTransport {
 export interface MemberTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _base_type: SlotValue<Box<TypeTransport>>
   _name: SlotValue<IdentifierTransport>
 }
@@ -868,6 +1073,8 @@ export interface MemberTypeTransport {
 export interface ModuleTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _statements?: Array<SlotValue<StatementTransport>>
   _statements_separator_space?: number
 }
@@ -875,6 +1082,8 @@ export interface ModuleTransport {
 export interface NamedExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _name: SlotValue<NamedExpressionNameTransportSlot>
   _value: SlotValue<Box<ExpressionTransport>>
 }
@@ -882,12 +1091,16 @@ export interface NamedExpressionTransport {
 export interface NamesTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: SlotValue<ImportListTransport>
 }
 
 export interface NonlocalStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _names: Array<SlotValue<IdentifierTransport>>
   _names_separator_space_before?: number
   _names_separator_space_after?: number
@@ -896,12 +1109,16 @@ export interface NonlocalStatementTransport {
 export interface NotOperatorTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _argument: SlotValue<Box<ExpressionTransport>>
 }
 
 export interface PairTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _key: SlotValue<Box<ExpressionTransport>>
   _value: SlotValue<Box<ExpressionTransport>>
 }
@@ -909,6 +1126,8 @@ export interface PairTransport {
 export interface ParametersElementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _item: Array<SlotValue<ParameterTransport>>
   _delimiter?: number
   _item_separator_space_before?: number
@@ -918,30 +1137,40 @@ export interface ParametersElementsTransport {
 export interface ParametersTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _elements?: SlotValue<ParametersElementsTransport>
 }
 
 export interface ParenthesizedExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _expression: SlotValue<Box<ParenthesizedExpressionExpressionTransportSlot>>
 }
 
 export interface ParenthesizedImportListTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _import_list: SlotValue<ImportListTransport>
 }
 
 export interface ParenthesizedListSplatTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: SlotValue<Box<ParenthesizedListSplatContentTransportSlot>>
 }
 
 export interface PatternListTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _item: Array<SlotValue<PatternTransport>>
   _delimiter?: number
   _item_separator_space_before?: number
@@ -951,6 +1180,8 @@ export interface PatternListTransport {
 export interface PatternsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _item: Array<SlotValue<PatternTransport>>
   _delimiter?: number
   _item_separator_space_before?: number
@@ -960,6 +1191,8 @@ export interface PatternsTransport {
 export interface PrintArgumentsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _argument: Array<SlotValue<ExpressionTransport>>
   _delimiter?: number
   _argument_separator_space_before?: number
@@ -969,6 +1202,8 @@ export interface PrintArgumentsTransport {
 export interface PrintChevronArgumentsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _argument: Array<SlotValue<ExpressionTransport>>
   _delimiter?: number
   _argument_separator_space_before?: number
@@ -978,6 +1213,8 @@ export interface PrintChevronArgumentsTransport {
 export interface PrintStatementChevronTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _chevron: SlotValue<ChevronTransport>
   _print_chevron_arguments?: SlotValue<PrintStatementChevronPrintChevronArgumentsTransportSlot>
 }
@@ -985,18 +1222,24 @@ export interface PrintStatementChevronTransport {
 export interface PrintStatementPlainTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _print_arguments: SlotValue<PrintArgumentsTransport>
 }
 
 export interface PrintStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: SlotValue<PrintStatementContentTransportSlot>
 }
 
 export interface RaiseStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _cause?: SlotValue<ExpressionTransport>
   _expressions?: SlotValue<RaiseStatementExpressionsTransportSlot>
 }
@@ -1004,6 +1247,8 @@ export interface RaiseStatementTransport {
 export interface RelativeImportTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _prefix: SlotValue<ImportPrefixTransport>
   _name?: SlotValue<DottedNameTransport>
 }
@@ -1011,12 +1256,16 @@ export interface RelativeImportTransport {
 export interface ReturnStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _expressions?: SlotValue<ReturnStatementExpressionsTransportSlot>
 }
 
 export interface SetComprehensionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _body: SlotValue<Box<ExpressionTransport>>
   _comprehension_clauses: SlotValue<ComprehensionClausesTransport>
 }
@@ -1024,12 +1273,16 @@ export interface SetComprehensionTransport {
 export interface SetTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _collection_elements: SlotValue<CollectionElementsTransport>
 }
 
 export interface SimplePatternNegativeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _sign?: boolean
   _value: SlotValue<SimplePatternNegativeValueTransportSlot>
 }
@@ -1037,12 +1290,16 @@ export interface SimplePatternNegativeTransport {
 export interface SimplePatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: SlotValue<SimplePatternContentTransportSlot>
 }
 
 export interface SimpleStatementsElementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _item: Array<SlotValue<SimpleStatementTransport>>
   _delimiter?: number
   _item_separator_space_before?: number
@@ -1052,18 +1309,24 @@ export interface SimpleStatementsElementsTransport {
 export interface SimpleStatementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _elements: SlotValue<SimpleStatementsElementsTransport>
 }
 
 export interface SliceGroupTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _expression?: SlotValue<ExpressionTransport>
 }
 
 export interface SliceTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _start?: SlotValue<ExpressionTransport>
   _stop?: SlotValue<ExpressionTransport>
   _step?: SlotValue<SliceGroupTransport>
@@ -1072,6 +1335,8 @@ export interface SliceTransport {
 export interface SplatPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _operator: SlotValue<Box<AnyTransport>>
   _name: SlotValue<SplatPatternNameTransportSlot>
 }
@@ -1079,6 +1344,8 @@ export interface SplatPatternTransport {
 export interface SplatTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _operator: SlotValue<Box<AnyTransport>>
   _name: SlotValue<IdentifierTransport>
 }
@@ -1086,12 +1353,16 @@ export interface SplatTypeTransport {
 export interface StringContentTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content?: Array<SlotValue<StringContentContentTransportSlot, true>>
 }
 
 export interface StringTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _string_start: SlotValue<StringStartTransport>
   _content?: Array<SlotValue<StringContentTransportSlot>>
   _string_end: SlotValue<StringEndTransport, true>
@@ -1100,6 +1371,8 @@ export interface StringTransport {
 export interface SubjectsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _subject: Array<SlotValue<ExpressionTransport>>
   _delimiter?: number
   _subject_separator_space_before?: number
@@ -1109,6 +1382,8 @@ export interface SubjectsTransport {
 export interface SubscriptsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _subscript: Array<SlotValue<SubscriptsSubscriptTransportSlot>>
   _delimiter?: number
   _subscript_separator_space_before?: number
@@ -1118,6 +1393,8 @@ export interface SubscriptsTransport {
 export interface SubscriptTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _value: SlotValue<Box<PrimaryExpressionTransport>>
   _subscripts: SlotValue<SubscriptsTransport>
 }
@@ -1125,24 +1402,32 @@ export interface SubscriptTransport {
 export interface SuiteBlockTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _block: SlotValue<BlockTransport>
 }
 
 export interface SuiteEmptyTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _newline: SlotValue<NewlineTransport>
 }
 
 export interface SuiteInlineTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _elements: SlotValue<SimpleStatementsElementsTransport>
 }
 
 export interface TryStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _body: SlotValue<SuiteTransport>
   _except_clauses?: Array<SlotValue<ExceptClauseTransport>>
   _else_clause?: SlotValue<ElseClauseTransport>
@@ -1153,6 +1438,8 @@ export interface TryStatementTransport {
 export interface TupleElementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _item: Array<SlotValue<TupleElementsItemTransportSlot>>
   _delimiter?: number
   _item_separator_space_before?: number
@@ -1162,18 +1449,24 @@ export interface TupleElementsTransport {
 export interface TuplePatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _patterns?: SlotValue<PatternsTransport>
 }
 
 export interface TupleTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _elements?: SlotValue<TupleElementsTransport>
 }
 
 export interface TypeAliasStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _left: SlotValue<TypeTransport>
   _right: SlotValue<TypeTransport>
 }
@@ -1181,6 +1474,8 @@ export interface TypeAliasStatementTransport {
 export interface TypedDefaultParameterTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _name: SlotValue<IdentifierTransport>
   _type: SlotValue<TypeTransport>
   _value: SlotValue<ExpressionTransport>
@@ -1189,6 +1484,8 @@ export interface TypedDefaultParameterTransport {
 export interface TypedParameterTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _name: SlotValue<TypedParameterNameTransportSlot>
   _type: SlotValue<TypeTransport>
 }
@@ -1196,12 +1493,16 @@ export interface TypedParameterTransport {
 export interface TypeParameterTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _types: SlotValue<TypesTransport>
 }
 
 export interface TypesTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _item: Array<SlotValue<TypeTransport>>
   _delimiter?: number
   _item_separator_space_before?: number
@@ -1211,12 +1512,16 @@ export interface TypesTransport {
 export interface TypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content: SlotValue<Box<TypeContentTransportSlot>>
 }
 
 export interface UnaryOperatorTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _operator: SlotValue<Box<AnyTransport>>
   _argument: SlotValue<Box<PrimaryExpressionTransport>>
 }
@@ -1224,6 +1529,8 @@ export interface UnaryOperatorTransport {
 export interface UnionPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _patterns: Array<SlotValue<UnionPatternPatternsTransportSlot>>
   _patterns_separator_space_before?: number
   _patterns_separator_space_after?: number
@@ -1232,6 +1539,8 @@ export interface UnionPatternTransport {
 export interface UnionTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _left: SlotValue<Box<TypeTransport>>
   _right: SlotValue<Box<TypeTransport>>
 }
@@ -1239,6 +1548,8 @@ export interface UnionTypeTransport {
 export interface WhileStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _condition: SlotValue<ExpressionTransport>
   _body: SlotValue<SuiteTransport>
   _alternative?: SlotValue<ElseClauseTransport>
@@ -1247,6 +1558,8 @@ export interface WhileStatementTransport {
 export interface WithClauseBareTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _item: Array<SlotValue<WithItemTransport>>
   _delimiter?: number
   _item_separator_space_before?: number
@@ -1256,12 +1569,16 @@ export interface WithClauseBareTransport {
 export interface WithClauseParenTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _with_items: SlotValue<WithClauseWithItemsTransport>
 }
 
 export interface WithClauseWithItemsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _item: Array<SlotValue<WithItemTransport>>
   _delimiter?: number
   _item_separator_space_before?: number
@@ -1271,12 +1588,16 @@ export interface WithClauseWithItemsTransport {
 export interface WithItemTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _value: SlotValue<ExpressionTransport>
 }
 
 export interface WithStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _async?: boolean
   _with_clause: SlotValue<WithClauseTransport>
   _body: SlotValue<SuiteTransport>
@@ -1285,11 +1606,15 @@ export interface WithStatementTransport {
 export interface YieldFromClauseTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _expression: SlotValue<Box<ExpressionTransport>>
 }
 
 export interface YieldTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  '$_gap'?: SourceGap
+  '$_flank'?: SourceFlank
   _content?: SlotValue<Box<YieldContentTransportSlot>>
 }

@@ -285,27 +285,16 @@ which makes "a sibling gap belongs to the child before it" literally true:
 an element is seated only when a present element follows it. The seating happens in the parent's prepare, not in
 the element's, because only the parent knows an element's position.
 
-A coordinate followed by a coordinate is left to the source only when its
-pair's gap classified as a source separator, and the call reads that from
-the slot's `listGapClassification` (`&separated_<slot>`), never from a second
-adjacency test: a kept pair whose source gap holds a removed item's text did
-not classify, so the first item takes its seat. A seated slot with no
-classification (no single separator token to split on) passes `&[]`, so
-every coordinate in it takes its seat.
+The seat fills an `after` edge only when nothing set it first. The slot's
+`listGapClassification` runs before it, so a gap whose two items are still
+adjacent in the source already holds its source class and keeps it; every
+other gap takes the seat of the kind before it.
 
 ### `packages/codegen/src/emitters/render-module.ts::seatedListFields`
 
 The repeat slots of a kind that take seats: named, multiple, with a seat
 table (`SEATS_<KIND>_<SLOT>`), and with elements that can reach a seat
-(`slotElementsReach`). `seatLoops` emits a call for each of them, and
-`listGapClassification` binds its per-pair classification only for them, so
-the two agree on which slots carry the flags.
-
-### `packages/codegen/src/emitters/render-module.ts::separatedLocal`
-
-The name of the local that holds a seated slot's per-pair classification,
-`separated_<slot>`, written by `listGapClassification` and read by
-`seatLoops`.
+(`slotElementsReach`). `seatLoops` emits a call for each of them.
 
 ### `packages/codegen/src/emitters/render-module.ts::SeatReach`
 
@@ -4177,18 +4166,13 @@ accepts a bare string, because the root of a render is never free text.
  */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::declareLeafTriviaCapture`
+### `packages/codegen/src/emitters/render-module.ts::leafCaptureLocal`
 
-```text
-/**
- * Declares and initializes the release-mode leaf `__trivia` capture local.
- * A leaf sent as a bare string/number/boolean carries no metadata object to
- * read trivia from, so `__trivia` only gets populated in the object fallback
- * branch (a factory-attached comment on a leaf node always arrives as an
- * object — a `$trivia` write forces the trivia-bearing owner off the bare-
- * primitive fast path).
- */
-```
+The release-mode leaf decoder's local for one metadata field, named after the field.
+
+### `packages/codegen/src/emitters/render-module.ts::declareLeafMetadataCapture`
+
+Declares the release-mode leaf decoder's capture locals, one per metadata field the wire carries (`onWire`): trivia and the source gap. Edges are filled natively and never arrive on the wire, so they start empty. A leaf sent as a bare string, number or boolean carries no metadata object to read them from, so the locals are populated only in the object fallback branch. A factory-attached comment on a leaf, or a list gap kept from the source, always arrives as an object, since a `$trivia` or `$_gap` write forces the owner off the bare-primitive fast path.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderLeafTransportNapiImpls`
 
@@ -7249,6 +7233,18 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
  *     reapplied on top of the main Config).
  */
 ```
+
+### `packages/codegen/src/emitters/wrap.ts::aliasEnvelopesOf`
+
+The model's alias envelopes (`AssembledAlias`): the kinds whose read node `wrapNode` keys by its display kind (`_ALIAS_ENVELOPES`).
+
+### `packages/codegen/src/emitters/wrap.ts::aliasEnvelopeIds`
+
+The sorted, distinct alias kind ids of `envelopes`: the members of `_ALIAS_ENVELOPES`, and the alias half of `rebuildWrapperKindIds`.
+
+### `packages/codegen/src/emitters/wrap.ts::rebuildWrapperKindIds`
+
+What a rebuild constructs around an existing node, as sorted, distinct kind ids: the kinds enrich mints, which the model stamps `hoisted` (rust `_attributed_parameter` among them), and the alias envelopes (`aliasEnvelopeIds`). Such a wrapper, rebuilt, has no source of its own, so where source adjacency is judged the node it holds stands for it (`evidenceOf`). The set is derived only from those two existing stamps, with no filter by model class, and emitted once per grammar as `TriviaFacts.rebuildWrappers` (`emitTriviaFacts`). Its breadth is safe on two independent checks: `evidenceOf` looks through an instance only when it holds exactly one present node, so a list or a leaf never is, and the reader takes `previous` from the outermost node spanning exactly the child's bytes, so a rebuilt wrapper that adds tokens around a read child never reads as adjacent.
 
 ### `packages/codegen/src/emitters/wrap.ts::collectTypeImports`
 
@@ -10888,7 +10884,8 @@ Emits `triviaFacts`, the grammar's `TriviaFacts`, which the language hooks carry
 - `kindName`, from `KIND_NAMES`;
 - `kinds`, the trivia kind names (`triviaKinds`); the runtime refuses a node or kind id of any other kind, saying it is not an extra;
 - `innerGaps` (`INNER_GAPS`);
-- `whitespace` (`whitespaceTrivia`), when the grammar has lexical extras: loose text the extras run accepts becomes the kind id of the whitespace kind spelled exactly so, and any other such text is refused.
+- `whitespace` (`whitespaceTrivia`), when the grammar has lexical extras: loose text the extras run accepts becomes the kind id of the whitespace kind spelled exactly so, and any other such text is refused;
+- `rebuildWrappers` (`rebuildWrapperKindIds`), engine plumbing: the kind ids of what a rebuild constructs around an existing node. The render engine passes the same set to `createNativeEngine` (`emitRenderEngine`), so the engine's trivia view and a tool's view built from the engine's facts answer from one emitted set.
 
 The facts carry no `comment` builder and no render or edit: a node renders and edits through the engine it belongs to. A grammar with a default trivia form passes its comment builder in the language hooks' `trivia` (`emitApi`), where `api.ts` imports the coercer.
 
@@ -15978,8 +15975,8 @@ before and after edge, either absent when the kind owns no seam on that side.
 A `Prepare` impl for a generated enum: payload variants delegate to the
 payload's `prepare(ctx)`, unit variants (literals) are `Ok(())`. The match
 is the tail expression, so the impl's result is whichever arm ran. An enum
-with payloads also delegates `leading_seam`, so a list vote reaches the
-leading trivia of whichever kind the item is.
+with payloads also delegates `source_gap` and `gap_edges`, so a list's gap
+fill reaches the gap and the edges of whichever kind the item is.
 
 ### `packages/codegen/src/emitters/render-module.ts::PREPARE_MOD`
 
@@ -16011,13 +16008,13 @@ The grammar root's prepare lines that give an edited root its source flanks, ahe
 
 ### `packages/codegen/src/emitters/render-module.ts::prepareStructImpl`
 
-A transport struct's `Prepare` impl. Every struct answers `leading_seam`
-from its own trivia (`TransportTrivia::leading_seam`). A compound kind first fills its own
+A transport struct's `Prepare` impl. Every struct answers `source_gap` from
+its `$_gap` metadata field and `gap_edges` with its own base edges. A compound kind first fills its own
 base edges (for the grammar root, from its source flanks, `rootEdgeStamp`;
-then from its edge row, `prepare_edges`, only for a kind that owns
-kind-edge sites), then lets the source speak for its repeated slots
-(`listGapClassification`: the gaps between items that are still coordinates
-become the site value when the wire left it empty), then fills this kind's
+then, for a kind that owns kind-edge sites, from the source flanks the
+wire carries for a list node, `fill_source_flanks`, and from its edge row,
+`prepare_edges`), then gives each repeated slot's source-adjacent gaps their source class
+(`listGapClassification`), then fills this kind's
 own facts: each spacing field that carries a per-node value
 (`carriesPerNodeValue`) takes the resolved arm when unset; the seat calls
 (`seatLoops`) write each seated element's gap into that element's own base
@@ -16067,31 +16064,45 @@ wrap drop expression use.
 
 ### `packages/codegen/src/emitters/render-module.ts::listGapClassification`
 
-The block a generated `prepare` runs before it fills any site from the
-option table: for every repeated slot with a gap site, collect each item's
-coordinate (`SlotValue::coord`, `None` for an item that crossed as a
-transport) and the whitespace run its leading trivia opens with
-(`Prepare::leading_seam`, the line-gap run a read item keeps toward an
-unchanged predecessor, answered only when the transport marked its trivia
-`held`), and let `sittir_core::classify::classify_list_gaps`
-take one vote per source gap, then take the majority class per side into the
-site field only when the wire left it empty. A gap votes either through the
-coordinate pair around it or through the run the item after it carries,
-never both: when a comment splits the gap, the run that votes is the one
-facing the predecessor, the edge the transport's neighbour rule tests. So an
-item that kept its run keeps its exact gap, and only an item without one (a
-new item) takes the majority. Precedence for a list site is
-therefore: the value the wire carried, the class of the source gaps, the
-engine's option table, the grammar's default. The block precedes the
-`get_or_insert` fills because a fill would make the class unreachable; it
-does not wait for the children's `prepare` (the seats must run before the
-children, and the classifier resolves the coordinates it measures itself).
+The call a generated `prepare` makes for every repeated slot with a gap
+site, before the seats and the option fills: `fill_list_gaps` over the
+slot's items, with the slot's separator token and the arms its sites admit.
+Every gap in a rebuilt list follows one of two rules:
 
-For a seated slot (`seatedListFields`) the block is bound as
-`separated_<slot>` and yields `gaps.separated`: for each item, whether the
-gap from it to the next coordinate split on the token and classified on each
-side that has a site. `seatLoops` reads that result, so whether a pair keeps
-its source gap and which arm the site takes are one measurement.
+1. A gap between two items that were adjacent in the source keeps its source
+   spelling. The transport decides adjacency with the neighbour rule's own
+   test and sends the gap's source range on the later item (`$_gap`), for an
+   edited item as much as an untouched one. `fill_list_gaps` classifies that
+   range, split at the one separator, onto the earlier item's `after` edge
+   and, past the token, the later item's `before` edge, at trivia strength.
+2. Every other gap is canonical: the seat of the kind before it
+   (`seatLoops`, which fills only an edge nothing set), or the list site,
+   which comes from the option table or the caller and never from the source.
+
+One source per gap. Where the later item's derived line-gap run spells the
+gap (the leading run its read gave it, already split around its comments),
+that run is the gap and the transport sends no `$_gap`; the native
+classification fills only gaps that have no derived run. A same-line gap
+renders as the whitespace member its run classifies to, so a run no member
+spells exactly (two spaces where the grammar declares only a single space)
+renders as the nearest member below it. That is the first limit of rule 1,
+not an inference. The second: a gap that holds a comment, or anything else
+but whitespace and the one separator, is not a spelling the whitespace
+classes can carry, so `fill_list_gaps` leaves it unset and the gap falls to
+rule 2, the seat or the list site. The comment itself still renders as the
+trivia its owner carries. The third: a list's flanks keep their source class
+with its depth (the indent arm after the opener, the dedent arm before the
+closer, where the source lines show the depth change), but the depth unit is
+the render's, from the format record or the options, never the source's
+columns. A list indented two spaces in a source rendered with four-space
+indentation renders with four.
+
+A list's flanks follow rule 1 like its item gaps: the gap between the opener
+and the first item is kept while that item is still the source's first, and
+the gap between the last item and the closer while that item is still the
+source's last (`sourceFlankOf`). A list's gaps and flanks are kept only while
+the list itself carries source identity, so a list built afresh is canonical
+throughout. A rebuilt list's trailing delimiter stays canonical.
 
 ### `packages/codegen/src/emitters/render-module.ts::synthesizedSpacingSites`
 
