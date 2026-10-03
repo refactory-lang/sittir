@@ -6,6 +6,7 @@
  */
 
 import typescript from '../src/index.ts';
+import type * as T from '../src/types.ts';
 import { createEngine } from '@sittir/common';
 
 const engine = await createEngine(typescript);
@@ -14,3 +15,8 @@ const engine = await createEngine(typescript);
 engine.build.identifier('a').$trivia.inner();
 
 engine.build.identifier('a').$trivia.leading();
+
+declare const parsedArgs: T.Arguments.Parsed;
+// @ts-expect-error an edited node is never typed as an empty form, so it has no inner position
+parsedArgs.$with.elements().$trivia.inner();
+parsedArgs.$with.elements().$trivia.leading();

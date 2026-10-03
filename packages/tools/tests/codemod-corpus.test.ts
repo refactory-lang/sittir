@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CODEMOD_CORPUS, rewriteWithInline, runCodemodCorpus } from '../../packages/tools/src/exercise/codemod-corpus.ts';
+import { CODEMOD_CORPUS, rewriteWithInline, runCodemodCorpus } from '../src/exercise/codemod-corpus.ts';
 
 describe('codemod-corpus selection', () => {
 	it('leaves a function that already carries an outer #[inline]', async () => {

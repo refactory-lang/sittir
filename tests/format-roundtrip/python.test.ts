@@ -63,7 +63,7 @@ describe('US2 — edit isolation (python)', () => {
 		const at = source.indexOf('def find_user(') + 'def '.length;
 		expect(source.indexOf('def find_user(', at)).toBe(-1);
 		const expected = `${source.slice(0, at)}lookup_user${source.slice(at + 'find_user'.length)}`;
-		statements[index] = named.$with.name(engine.build.identifier('lookup_user'));
-		expect(root.$with.statements(...statements).$render()).toBe(expected);
+		const renamed = named.$with.name(engine.build.identifier('lookup_user'));
+		expect(root.$with.statements(...statements.map((statement, at) => (at === index ? renamed : statement))).$render()).toBe(expected);
 	});
 });
