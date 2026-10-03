@@ -2,6 +2,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createEngine } from '@sittir/common';
+import { spanOf } from '@sittir/common/utils';
 import { languageByName } from '../languages.ts';
 
 const REPO_ROOT = fileURLToPath(new URL('../../../..', import.meta.url));
@@ -57,10 +58,6 @@ function sliceBytes(source: Buffer, span: { readonly start: number; readonly end
 	return source.subarray(span.start, span.end).toString('utf8');
 }
 
-function spanOf(node: unknown): { readonly start: number; readonly end: number } | undefined {
-	return (node as { readonly $span?: { readonly start: number; readonly end: number } }).$span;
-}
-
 export async function rewriteWithInline(source: string): Promise<{ readonly output: string; readonly insertions: number }> {
 	const rs = await createEngine(await languageByName('rust'));
 	const bytes = Buffer.from(source, 'utf8');
@@ -71,7 +68,7 @@ export async function rewriteWithInline(source: string): Promise<{ readonly outp
 	}
 	const statements = [...root.statements()];
 	const textOf = (node: unknown): string => {
-		const span = spanOf(node);
+		const span = typeof node === 'object' && node !== null ? spanOf(node) : undefined;
 		return span === undefined ? '' : sliceBytes(bytes, span);
 	};
 	const isNode = (node: unknown): node is Exclude<(typeof statements)[number], number | undefined> => node !== undefined && typeof node !== 'number';

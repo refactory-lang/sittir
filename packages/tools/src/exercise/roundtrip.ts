@@ -1,4 +1,4 @@
-import type { ByteSpan } from '@sittir/common';
+import { spanOf } from '@sittir/common/utils';
 import type { FactoryEntry, ReadNodeLike } from '../validate/common.ts';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
@@ -22,7 +22,6 @@ interface ExerciseCase {
 interface ParsedNode {
 	readonly $type: number;
 	readonly $named?: boolean;
-	readonly $span?: ByteSpan;
 }
 
 interface ExerciseEngine {
@@ -146,7 +145,7 @@ function findFirstOfKind(
 }
 
 function sourceOf(node: ParsedNode, source: string): string {
-	const span = node.$span;
+	const span = spanOf(node);
 	if (span === undefined) throw new Error('parsed node carries no span');
 	return Buffer.from(source, 'utf8').subarray(span.start, span.end).toString('utf8');
 }

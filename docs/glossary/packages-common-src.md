@@ -412,6 +412,10 @@ Defines the index positions of a wrapped list or list owner: one getter per posi
 
 The refusal of a raw factory given a list owner's storage that is a read stub, a parsed list that cannot be counted without its tree. A factory has no tree, and `engine.build` already refuses a bare stub, so the build throws naming the stub rather than carrying a node whose `length` or items cannot be read. A built owner's `length` is always plain data, so it keeps its fast shape.
 
+### `packages/common/src/utils.ts::spanOf`
+
+The byte range of a parsed node in the source its tree was read from, or `undefined` for a node that was built. Internal: a node's position is not part of the public node type (`ParsedOf` declares no `$span`), and the range belongs to the version of the tree the node was read from, so after an edit it says nothing about the rebuilt node. Tools that slice source or report a line read it here; the bindings reader slices a pattern's source text by this range, so a definition keeps the exact bytes of its leading comments, and also reports the line from it.
+
 ### `packages/common/src/utils.ts::groupField`
 
 The value a seated key reads: the group's own reader of that field, or `undefined` while the group is absent.

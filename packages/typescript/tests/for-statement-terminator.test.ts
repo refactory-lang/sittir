@@ -5,6 +5,7 @@
 // kind the slot holds — an expression takes one, an `empty_statement`
 // already is one.
 import { sliceSpan } from '@sittir/common';
+import { spanOf } from '@sittir/common/utils';
 import { describe, expect, it } from 'vitest';
 import typescript from '../src/index.ts';
 import { createEngine } from '@sittir/common';
@@ -22,7 +23,7 @@ describe('for_statement.condition', () => {
 		expect(Array.isArray(condition)).toBe(false);
 		const node = condition as Read;
 		expect(node.$type).toBe(ts.kinds.BinaryExpression);
-		expect(sliceSpan(SOURCE, node.$span)).toBe('i < 3');
+		expect(sliceSpan(SOURCE, spanOf(node)!)).toBe('i < 3');
 	});
 
 	it('orders its slots without the dropped `;`', () => {

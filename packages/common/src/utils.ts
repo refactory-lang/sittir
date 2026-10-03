@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, ErrorNode, LineGap, LineGapAddress, LineGaps, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, ByteSpan, ErrorNode, LineGap, LineGapAddress, LineGaps, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
 import { carryRead, carrySource, detachCoordinate, holdsSlots, isRead, isStorageKey, sourceOf, type DerivedSides } from './transport-data.ts';
 import { Source } from './source.ts';
@@ -616,6 +616,17 @@ export function isParsedNode(v: unknown): v is AnyUntypedNode {
 
 export function isFactoryNode(v: unknown): v is AnyUntypedNode {
 	return isNode(v) && !isParsedNode(v);
+}
+
+/**
+ * The byte range of a parsed node in the source its tree was read from, or `undefined` for a node that was built. Internal: a node's position is not part of the public node surface, and the range belongs to the version of the tree the node was read from, so it says nothing about the node after an edit.
+ */
+export function spanOf(node: object): ByteSpan | undefined {
+	if (!('$span' in node)) return undefined;
+	const span = node.$span;
+	return typeof span === 'object' && span !== null && 'start' in span && 'end' in span && typeof span.start === 'number' && typeof span.end === 'number'
+		? { start: span.start, end: span.end }
+		: undefined;
 }
 
 export function isErrorNode(v: unknown): v is ErrorNode {
