@@ -19,7 +19,7 @@ import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
 import type { AnyUntypedNode, AnyTreeNode, Engine, LanguageAPI, NodeTrivia, ParseOptions } from '@sittir/types';
-import type { TriviaSides } from '@sittir/common';
+import type { ByteSpan, TriviaSides } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
 import { load } from '../codegen-surface.ts';
 import { languageByName } from '../languages.ts';
@@ -440,7 +440,7 @@ export function walkNativeForKind(
 	const isKind = (d: AnyUntypedNode): boolean => nativeNodeIsKind(d, kind, kindNameFromId);
 
 	function spanOf(d: AnyUntypedNode): { start: number; end: number } | undefined {
-		return (d as unknown as Record<string, unknown>).$span as { start: number; end: number } | undefined;
+		return (d as unknown as Record<string, unknown>).$span as ByteSpan | undefined;
 	}
 
 	if (isKind(root)) {
@@ -1210,7 +1210,7 @@ export interface NodeToConfigOpts {
 export interface ReadNodeLike {
 	readonly $type?: string | number;
 	readonly $text?: string;
-	readonly $span?: { readonly start: number; readonly end: number };
+	readonly $span?: ByteSpan;
 	readonly $parentHandle?: number;
 	readonly $childIndex?: number;
 	readonly $other?: unknown | readonly unknown[];

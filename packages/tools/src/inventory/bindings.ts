@@ -135,19 +135,6 @@ function stringValue(node: QueryString.Parsed | ImmediateString.Parsed): string 
 		.join('');
 }
 
-const isByteSpan = (value: unknown): value is ByteSpan =>
-	typeof value === 'object' &&
-	value !== null &&
-	'start' in value &&
-	'end' in value &&
-	typeof value.start === 'number' &&
-	typeof value.end === 'number';
-
-function spanOf(node: object): ByteSpan {
-	if ('$span' in node && isByteSpan(node.$span)) return node.$span;
-	throw new Error('bindings.scm: a parsed node carries no span');
-}
-
 function lineOf(text: string, spans: SourceSpans, offset: number): number {
 	const index = spans.toIndices({ start: offset, end: offset }).start;
 	let line = 1;
@@ -155,13 +142,16 @@ function lineOf(text: string, spans: SourceSpans, offset: number): number {
 	return line;
 }
 
+interface ErrorItem {
+	readonly $span: ByteSpan;
+}
+
+const isErrorItem = (item: unknown): item is ErrorItem =>
+	typeof item === 'object' && item !== null && '$type' in item && item.$type === ERROR_KIND_ID && '$span' in item;
+
 function unparsed(node: NodeMethodsOf): number[] {
 	const trivia: readonly unknown[] = [...node.$trivia.leading(), ...node.$trivia.trailing()];
-	return trivia.flatMap((item) =>
-		typeof item === 'object' && item !== null && '$type' in item && item.$type === ERROR_KIND_ID
-			? [spanOf(item).start]
-			: []
-	);
+	return trivia.flatMap((item) => (isErrorItem(item) ? [item.$span.start] : []));
 }
 
 function definitionsOf(text: string): readonly Definition.Parsed[] {
@@ -171,7 +161,7 @@ function definitionsOf(text: string): readonly Definition.Parsed[] {
 export function bindingPatterns(text: string): BindingPattern[] {
 	const spans = sourceSpans(text);
 	return definitionsOf(text).map((definition) => {
-		const span = spanOf(definition);
+		const span = definition.$span;
 		return { line: lineOf(text, spans, span.start), source: spans.slice(span), definition };
 	});
 }

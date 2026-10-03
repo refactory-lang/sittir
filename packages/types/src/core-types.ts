@@ -58,6 +58,12 @@ export type NodeChildValue = AnyUntypedNode | string | number;
  */
 export type NodeChildren = NodeChildValue | readonly NodeChildValue[];
 
+/** A byte range into a source string, as the reader stamps it. */
+export interface ByteSpan {
+	readonly start: number;
+	readonly end: number;
+}
+
 /**
  * Runtime node shape — grammar-agnostic. Used by @sittir/common functions
  * that accept any node regardless of grammar.
@@ -100,7 +106,7 @@ export interface AnyUntypedNode {
 	 * `sourceSpans` (or `sliceSpan`) from `@sittir/common`; never pass these
 	 * offsets to `String.prototype.slice`.
 	 */
-	$span?: { start: number; end: number };
+	$span?: ByteSpan;
 	/** This node's own handle, on a node a read returns: re-reading it reads this node. */
 	$handle?: number;
 	/** The parent's handle, beside `$childIndex`: the coordinate a stub is hydrated at. */

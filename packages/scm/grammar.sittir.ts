@@ -25,7 +25,10 @@ export default sittirGrammar(base, {
 		},
 		predicate: { '1/0/0': field('prefix') }
 	},
-	options: { indent: preference('    ') },
+	options: {
+		indent: preference('    '),
+		named_node: { '"("/after': preference('tight'), '")"/before': preference('tight') }
+	},
 	expectDiagnostics: {
 		'unclassifiable-shape': ['predicate']
 	}
