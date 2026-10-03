@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, EngineIdentity, Rendered } from '@sittir/types';
+import type { AnyUntypedNode, EngineIdentity, LineGapAddress, LineGaps, Rendered } from '@sittir/types';
 
 export interface LiveEngine extends EngineIdentity {
 	render(node: AnyUntypedNode | number, options?: object): Rendered;
@@ -6,6 +6,7 @@ export interface LiveEngine extends EngineIdentity {
 
 export interface EngineHandle {
 	current: LiveEngine | EngineIdentity;
+	lineGapsOf?: (address: LineGapAddress) => LineGaps;
 }
 
 export function sameLanguage(a: EngineIdentity, b: EngineIdentity): boolean {

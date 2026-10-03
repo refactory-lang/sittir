@@ -1,5 +1,5 @@
 import type { AnyUntypedNode } from '@sittir/types';
-import { assertHoldsTree, holdTreeOn, releaseTreeOn, type TreeToken } from './tree-token.ts';
+import { assertHoldsTree, holdTreeOn, releaseTreeOn, treeTokenOf, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -18,16 +18,41 @@ const COORDINATE_KEYS = [...HANDLE_KEYS, '$span', '$childIndex', '$textOnly'] as
  * can cross as a coordinate on its own.
  */
 export function holdTree(value: unknown, token: TreeToken): void {
+	forEachParsedObject(value, (node) => holdTreeOn(node, token));
+}
+
+/** `holdTree` for what a read returned: each object also records that a read produced it (`isRead`). */
+export function holdReadTree(value: unknown, token: TreeToken): void {
+	forEachParsedObject(value, (node) => {
+		holdTreeOn(node, token);
+		readObjects.add(node);
+	});
+}
+
+const readObjects = new WeakSet<object>();
+
+/** Whether a read produced `node`, or rebuilt it from one that did (`carryRead`). A copy made any other way is not. */
+export function isRead(node: object): boolean {
+	return readObjects.has(node);
+}
+
+/** Make `to` count as read when `from` does, and return `to`: for a read node a wrap or a materialization rebuilds. */
+export function carryRead<T>(from: object, to: T): T {
+	if (readObjects.has(from) && to !== null && typeof to === 'object') readObjects.add(to);
+	return to;
+}
+
+function forEachParsedObject(value: unknown, visit: (node: Record<string, unknown>) => void): void {
 	if (Array.isArray(value)) {
-		for (const entry of value) holdTree(entry, token);
+		for (const entry of value) forEachParsedObject(entry, visit);
 		return;
 	}
 	if (!isRecord(value)) return;
-	if (typeof value.$type === 'number') holdTreeOn(value, token);
+	if (typeof value.$type === 'number') visit(value);
 	for (const key in value) {
-		if (isStorageKey(key)) holdTree(value[key], token);
+		if (isStorageKey(key)) forEachParsedObject(value[key], visit);
 	}
-	if (value.$_trivia != null) forEachTriviaList(value.$_trivia as TriviaSides<unknown>, (entries) => holdTree(entries, token));
+	if (value.$_trivia != null) forEachTriviaList(value.$_trivia as TriviaSides<unknown>, (entries) => forEachParsedObject(entries, visit));
 }
 
 /**
@@ -113,9 +138,9 @@ function isUntouchedBelow(value: unknown): boolean {
  * coordinate of the node it rebuilds and each untouched child below then
  * folds on its own.
  */
-function canFold(record: Record<string, unknown>): boolean {
+function canFold(record: Record<string, unknown>, trivia: unknown): boolean {
 	if (treeHandleOf(record) === undefined || !isRecord(record.$span)) return false;
-	if (hasOutsideTrivia(record.$_trivia)) return false;
+	if (hasOutsideTrivia(trivia)) return false;
 	return isUntouchedBelow(record);
 }
 
@@ -197,30 +222,91 @@ export function detachCoordinate(data: object): void {
  * untouched subtree's original bytes while its rebuilt siblings render
  * canonically.
  */
-export function toTransportData(node: AnyUntypedNode): AnyUntypedNode {
-	return toTransportValue(node) as AnyUntypedNode;
+export function toTransportData(node: AnyUntypedNode, view: TriviaView): AnyUntypedNode {
+	return toTransportValue(node, view, BOTH_EDGES) as AnyUntypedNode;
+}
+
+/** The sides of a read node's trivia derived from its line gaps, and the sibling its leading runs separate it from in its source. */
+export interface DerivedSides {
+	readonly previous: { readonly start: number; readonly end: number } | null;
+	readonly leading: boolean;
+	readonly trailing: boolean;
+}
+
+/** How a node's trivia crosses: the entries it carries, and which of them its read derived. */
+export interface TriviaView {
+	readonly trivia: (node: Record<string, unknown>) => unknown;
+	readonly derived: (node: Record<string, unknown>) => DerivedSides | undefined;
+}
+
+/** The view of data whose trivia is all stored: nothing is derived. */
+export const STORED_TRIVIA: TriviaView = { trivia: (node) => node.$_trivia, derived: () => undefined };
+
+/** The edges of a node whose neighbour is not the one its source had there. */
+interface ChangedEdges {
+	readonly leading: boolean;
+	readonly trailing: boolean;
+}
+
+const NO_EDGES: ChangedEdges = { leading: false, trailing: false };
+const BOTH_EDGES: ChangedEdges = { leading: true, trailing: true };
+
+function changedEdges(list: readonly unknown[], index: number, view: TriviaView): ChangedEdges {
+	const entry = list[index];
+	if (!isRecord(entry)) return NO_EDGES;
+	const derived = view.derived(entry);
+	if (derived === undefined) return NO_EDGES;
+	const { previous } = derived;
+	const before = list[index - 1];
+	return {
+		leading:
+			derived.leading &&
+			(index === 0 ? previous !== null : previous === null || !(isRecord(before) && isSourceSibling(before, entry, previous))),
+		trailing: derived.trailing && index < list.length - 1
+	};
+}
+
+function isSourceSibling(candidate: Record<string, unknown>, node: Record<string, unknown>, span: { readonly start: number; readonly end: number }): boolean {
+	const own = candidate.$span as { readonly start?: unknown; readonly end?: unknown } | undefined;
+	return treeTokenOf(candidate) === treeTokenOf(node) && own?.start === span.start && own?.end === span.end;
+}
+
+function withoutChangedEdges(trivia: unknown, changed: ChangedEdges): unknown {
+	if (!isRecord(trivia) || (!changed.leading && !changed.trailing)) return trivia;
+	const leading = trivia.leading as readonly unknown[] | undefined;
+	const trailing = trivia.trailing as readonly unknown[] | undefined;
+	const first = leading?.findIndex((entry) => typeof entry !== 'number') ?? -1;
+	const last = trailing?.findLastIndex((entry) => typeof entry !== 'number') ?? -1;
+	const kept: Record<string, unknown> = { ...trivia };
+	if (changed.leading) kept.leading = first < 0 ? undefined : leading!.slice(first);
+	if (changed.trailing) kept.trailing = last < 0 ? undefined : trailing!.slice(0, last + 1);
+	for (const side of ['leading', 'trailing'] as const) if (kept[side] === undefined) delete kept[side];
+	return Object.keys(kept).length === 0 ? undefined : kept;
 }
 
 function assertTriviaHoldsTree(entries: readonly unknown[]): void {
 	for (const entry of entries) if (isRecord(entry) && treeHandleOf(entry) !== undefined) assertHoldsTree(entry);
 }
 
-function toTransportValue(value: unknown): unknown {
-	if (Array.isArray(value)) return value.map(toTransportValue);
+function toTransportValue(value: unknown, view: TriviaView, changed: ChangedEdges): unknown {
+	if (Array.isArray(value)) return value.map((entry, index) => toTransportValue(entry, view, changedEdges(value, index, view)));
 	if (!isRecord(value)) return value;
-	if (canFold(value)) {
+	const trivia = withoutChangedEdges(view.trivia(value), changed);
+	const held = !changed.leading && view.derived(value)?.leading === true;
+	if (canFold(value, trivia)) {
 		assertHoldsTree(value);
 		return foldToCoordinate(value);
 	}
 	// Trivia entries cross as they are, coordinates included.
-	if (value.$_trivia != null) forEachTriviaList(value.$_trivia as TriviaSides<unknown>, assertTriviaHoldsTree);
+	if (trivia != null) forEachTriviaList(trivia as TriviaSides<unknown>, assertTriviaHoldsTree);
 	const out: Record<string, unknown> = {};
 	for (const key of Object.keys(value)) {
-		if (!isDataKey(key)) continue;
+		if (!isDataKey(key) || key === '$_trivia') continue;
 		const raw = value[key];
 		if (typeof raw === 'function') continue;
-		out[key] = isStorageKey(key) ? toTransportValue(raw) : raw;
+		out[key] = isStorageKey(key) ? toTransportValue(raw, view, NO_EDGES) : raw;
 	}
+	if (trivia != null) out.$_trivia = held ? { ...trivia, held } : trivia;
 	// Past the fold, nothing is a coordinate: a leaf that kept its trivia
 	// crosses as itself, and a storage-bearing node rebuilds from its slots
 	// with neither its pre-edit text nor the span that would slice it.

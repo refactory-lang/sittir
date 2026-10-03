@@ -1,6 +1,6 @@
 import { NATIVE_TARGETS, grammarDisplayName, nativeBinaryName, type GrammarName } from '../grammars.ts';
 
-export const NATIVE_RENDER_TRANSPORT_ABI = 8;
+export const NATIVE_RENDER_TRANSPORT_ABI = 9;
 
 export interface NativeCrateFile {
 	readonly path: string;
@@ -230,7 +230,9 @@ sittir_core::napi_engine!(
     render::options::Options,
     render_transport_parts,
     NATIVE_RENDER_TRANSPORT_ABI,
-    render::options::defaults
+    render::options::defaults,
+    render::options::WHITESPACE,
+    render::options::WHITESPACE_KINDS
 );
 `
 		}

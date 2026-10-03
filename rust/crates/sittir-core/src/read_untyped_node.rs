@@ -405,6 +405,136 @@ fn node_trivia(
     })
 }
 
+/// One line-break run of a node's leading or closing gap: the whitespace
+/// member it reads as and the byte its run starts at.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
+pub struct LineGap {
+    pub kind: u16,
+    pub start: usize,
+}
+
+/// The line-break runs a node owns, in source order on each side, and the
+/// owner the leading runs separate it from: the sibling owner before it, or
+/// none when it is its parent's first.
+#[derive(Debug, Clone, Default, PartialEq, Eq, serde::Serialize)]
+pub struct LineGaps {
+    pub leading: Vec<LineGap>,
+    pub trailing: Vec<LineGap>,
+    pub previous: Option<Span>,
+}
+
+/// The whitespace a node owns as trivia, classified by `classify`, which
+/// answers the member a run of whitespace holding a line break reads as.
+///
+/// The leading gap is the bytes between the node and the sibling before it,
+/// unless the parent starts where the node does. The closing gap is the bytes
+/// between the node and its parent's closing token when no owner follows the
+/// node, unless the parent ends where the node does. A gap is split at the
+/// extras in it; the scan keeps to the extras the node owns by the rules of
+/// `node_trivia` and stops at one it does not, so each run is owned by the
+/// same node as the comments beside it.
+pub fn line_gaps(
+    node: tree_sitter::Node<'_>,
+    source: &str,
+    model: &dyn ReadModel,
+    classify: &dyn Fn(&str) -> Option<u16>,
+) -> LineGaps {
+    let mut gaps = LineGaps::default();
+    if !is_owner(&node, model) {
+        return gaps;
+    }
+    let Some(parent) = node.parent() else {
+        return gaps;
+    };
+    let push = |side: &mut Vec<LineGap>, start: usize, end: usize| {
+        let Some(run) = source.get(start..end) else { return };
+        if run.contains('\n') && run.chars().all(char::is_whitespace) {
+            if let Some(kind) = classify(run) {
+                side.push(LineGap { kind, start });
+            }
+        }
+    };
+    if parent.start_byte() != node.start_byte() {
+        let (before, prev) = extras_run(node, |n| n.prev_sibling(), model);
+        gaps.previous = prev.map(|p| Span { start: p.start_byte() as u32, end: p.end_byte() as u32 });
+        let bound = prev_end(node, parent);
+        let mut start = bound;
+        let mut owned = Vec::new();
+        for (extra, _) in before.into_iter().rev().filter(|(extra, _)| extra.start_byte() >= bound) {
+            let trails_prev = prev.is_some_and(|p| end_row(&p) == extra.start_position().row);
+            if trails_prev {
+                start = extra.end_byte();
+                owned.clear();
+            } else {
+                owned.push(extra);
+            }
+        }
+        for extra in owned {
+            push(&mut gaps.leading, start, extra.start_byte());
+            start = extra.end_byte();
+        }
+        push(&mut gaps.leading, start, node.start_byte());
+    }
+    if parent.end_byte() != node.end_byte() {
+        let (after, next) = extras_run(node, |n| n.next_sibling(), model);
+        if next.is_none() {
+            let end = next_start(node, parent);
+            let mut start = node.end_byte();
+            for (extra, _) in after.into_iter().filter(|(extra, _)| extra.end_byte() <= end) {
+                push(&mut gaps.trailing, start, extra.start_byte());
+                start = extra.end_byte();
+            }
+            push(&mut gaps.trailing, start, end);
+        }
+    }
+    gaps
+}
+
+/// The node a coordinate names: of the nodes spanning exactly `start..end`,
+/// the outermost the read stamped `kind`. The search descends from the root
+/// through every node whose range contains the span, so a zero-width node is
+/// found beside a sibling that ends or starts at the same byte.
+pub fn node_at_span<'t>(tree: &'t tree_sitter::Tree, start: usize, end: usize, kind: u16) -> Option<tree_sitter::Node<'t>> {
+    fn search<'t>(node: tree_sitter::Node<'t>, start: usize, end: usize, kind: u16) -> Option<tree_sitter::Node<'t>> {
+        if node.start_byte() == start && node.end_byte() == end && stamped_kind(&node).0 == kind {
+            return Some(node);
+        }
+        let mut cursor = node.walk();
+        let found = node
+            .children(&mut cursor)
+            .filter(|child| child.start_byte() <= start && end <= child.end_byte())
+            .find_map(|child| search(child, start, end, kind));
+        found
+    }
+    search(tree.root_node(), start, end, kind)
+}
+
+/// Where the bytes before a node's leading gap end: its previous sibling that
+/// is not trivia, else its parent's start.
+fn prev_end(node: tree_sitter::Node<'_>, parent: tree_sitter::Node<'_>) -> usize {
+    let mut cursor = node.prev_sibling();
+    while let Some(sibling) = cursor {
+        if !is_trivia(&sibling) {
+            return sibling.end_byte();
+        }
+        cursor = sibling.prev_sibling();
+    }
+    parent.start_byte()
+}
+
+/// Where a node's closing gap ends: the next sibling that is not trivia, else
+/// its parent's end.
+fn next_start(node: tree_sitter::Node<'_>, parent: tree_sitter::Node<'_>) -> usize {
+    let mut cursor = node.next_sibling();
+    while let Some(sibling) = cursor {
+        if !is_trivia(&sibling) {
+            return sibling.start_byte();
+        }
+        cursor = sibling.next_sibling();
+    }
+    parent.end_byte()
+}
+
 /// Whether a node is seated as trivia rather than read as a child: an extra,
 /// or an ERROR wherever the parser left it. Error recovery builds most ERRORs
 /// as extras, but the one that wraps unparsable input at the end of a file is

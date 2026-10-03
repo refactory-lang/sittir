@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use sittir_core::classify::{classify_list_gaps, classify_whitespace, majority, split_gap, ListGaps};
+use sittir_core::classify::{classify_list_gaps, classify_whitespace, majority, split_gap, GapItem, ListGaps};
 
 fn sides(gaps: ListGaps) -> (Option<u16>, Option<u16>) {
     (gaps.before, gaps.after)
@@ -43,6 +43,14 @@ impl SourceTable for Sources {
 
 fn coord(tree: u32, start: u32, end: u32) -> NodeCoordinate {
     NodeCoordinate::new(encode_handle(tree, 0), Span { start, end })
+}
+
+fn at<'a>(coords: &[Option<&'a NodeCoordinate>]) -> Vec<GapItem<'a>> {
+    coords.iter().map(|&coord| GapItem { coord, held: None }).collect()
+}
+
+fn held(run: &str) -> GapItem<'_> {
+    GapItem { coord: None, held: Some(run) }
 }
 
 #[test]
@@ -106,7 +114,7 @@ fn a_comma_list_takes_the_majority_of_its_gaps_per_side() {
     // gaps: ", " -> ("", " ") | ", " -> ("", " ") | " ," -> (" ", "")
     // before: [TIGHT, TIGHT, SPACE] -> TIGHT ; after: [SPACE, SPACE, TIGHT] -> SPACE
     assert_eq!(
-        sides(classify_list_gaps(&items, &sources, ",", ALL, ALL, &TABLE)),
+        sides(classify_list_gaps(&at(&items), &sources, ",", ALL, ALL, &TABLE)),
         (Some(TIGHT), Some(SPACE))
     );
 }
@@ -120,7 +128,7 @@ fn a_replaced_item_is_measured_across_by_its_surviving_neighbours() {
     // `b` was replaced, so it carries no coordinate.
     let items = [Some(&a), None, Some(&c)];
     assert_eq!(
-        sides(classify_list_gaps(&items, &sources, ",", ALL, ALL, &TABLE)),
+        sides(classify_list_gaps(&at(&items), &sources, ",", ALL, ALL, &TABLE)),
         (Some(TIGHT), Some(TIGHT))
     );
 }
@@ -134,7 +142,7 @@ fn an_unseparated_repeat_classifies_the_whole_gap_on_one_side() {
     let items = [Some(&a), Some(&b), Some(&c)];
     // gaps: "\n\n  " -> BLANKLINE | "\n  " -> NEWLINE ; tie broken by first seen
     assert_eq!(
-        sides(classify_list_gaps(&items, &sources, "", ALL, &[], &TABLE)),
+        sides(classify_list_gaps(&at(&items), &sources, "", ALL, &[], &TABLE)),
         (Some(BLANKLINE), None)
     );
 }
@@ -147,19 +155,19 @@ fn a_pair_that_is_not_two_ordered_coordinates_of_one_tree_contributes_nothing() 
     ]));
     let (a, b, x) = (coord(1, 0, 1), coord(1, 3, 4), coord(2, 0, 1));
     assert_eq!(
-        sides(classify_list_gaps(&[Some(&b), Some(&a)], &sources, ",", ALL, ALL, &TABLE)),
+        sides(classify_list_gaps(&at(&[Some(&b), Some(&a)]), &sources, ",", ALL, ALL, &TABLE)),
         (None, None)
     );
     assert_eq!(
-        sides(classify_list_gaps(&[Some(&a), Some(&x)], &sources, ",", ALL, ALL, &TABLE)),
+        sides(classify_list_gaps(&at(&[Some(&a), Some(&x)]), &sources, ",", ALL, ALL, &TABLE)),
         (None, None)
     );
     assert_eq!(
-        sides(classify_list_gaps(&[Some(&a)], &sources, ",", ALL, ALL, &TABLE)),
+        sides(classify_list_gaps(&at(&[Some(&a)]), &sources, ",", ALL, ALL, &TABLE)),
         (None, None)
     );
     assert_eq!(
-        sides(classify_list_gaps(&[], &sources, ",", ALL, ALL, &TABLE)),
+        sides(classify_list_gaps(&at(&[]), &sources, ",", ALL, ALL, &TABLE)),
         (None, None)
     );
 }
@@ -171,17 +179,47 @@ fn a_pair_is_separated_only_when_its_source_gap_classifies() {
     let sources = Sources(HashMap::from([(1, Arc::from(source))]));
     let (x, f, y) = (coord(1, 0, 6), coord(1, 7, 16), coord(1, 17, 23));
     assert_eq!(
-        classify_list_gaps(&[Some(&x), Some(&f), Some(&y)], &sources, "", ALL, &[], &TABLE).separated,
+        classify_list_gaps(&at(&[Some(&x), Some(&f), Some(&y)]), &sources, "", ALL, &[], &TABLE).separated,
         vec![true, true, false]
     );
     // `fn f() {}` was removed: the gap between the kept items holds its text.
     assert_eq!(
-        classify_list_gaps(&[Some(&x), Some(&y)], &sources, "", ALL, &[], &TABLE).separated,
+        classify_list_gaps(&at(&[Some(&x), Some(&y)]), &sources, "", ALL, &[], &TABLE).separated,
         vec![false, false]
     );
     // A rebuilt item between two adjacent coordinates keeps the index of the left one.
     assert_eq!(
-        classify_list_gaps(&[Some(&x), None, Some(&f)], &sources, "", ALL, &[], &TABLE).separated,
+        classify_list_gaps(&at(&[Some(&x), None, Some(&f)]), &sources, "", ALL, &[], &TABLE).separated,
         vec![true, false, false]
     );
+}
+
+#[test]
+fn a_held_run_votes_for_the_gap_before_its_item_but_never_on_the_first_item() {
+    let sources = Sources(HashMap::new());
+    // The first item's run faces its parent's opener, not a list neighbour.
+    assert_eq!(
+        sides(classify_list_gaps(&[held("\n"), held("\n\n")], &sources, "", ALL, &[], &TABLE)),
+        (Some(BLANKLINE), None)
+    );
+}
+
+#[test]
+fn a_held_run_in_a_separated_list_votes_on_the_side_after_the_separator() {
+    let source = "a,\nb";
+    let sources = Sources(HashMap::from([(1, Arc::from(source))]));
+    let a = coord(1, 0, 1);
+    assert_eq!(
+        sides(classify_list_gaps(&[GapItem { coord: Some(&a), held: None }, held("\n")], &sources, ",", ALL, ALL, &TABLE)),
+        (None, Some(NEWLINE))
+    );
+}
+
+#[test]
+fn a_gap_a_held_run_carries_is_never_also_read_across_as_a_coordinate_pair() {
+    let source = "a,\n\nb, c";
+    let sources = Sources(HashMap::from([(1, Arc::from(source))]));
+    let (a, c) = (coord(1, 0, 1), coord(1, 7, 8));
+    let items = [GapItem { coord: Some(&a), held: None }, held("\n\n"), GapItem { coord: Some(&c), held: None }];
+    assert_eq!(sides(classify_list_gaps(&items, &sources, ",", ALL, ALL, &TABLE)), (None, Some(BLANKLINE)));
 }

@@ -28,7 +28,7 @@ use sittir_core::engine::EngineGrammar;
 use render::{render_transport_parts, RenderRoot, RENDER_MODULE_HASH};
 
 #[cfg(feature = "napi-bindings")]
-const NATIVE_RENDER_TRANSPORT_ABI: u32 = 8;
+const NATIVE_RENDER_TRANSPORT_ABI: u32 = 9;
 
 #[derive(Clone, Copy, Default)]
 pub struct PythonGrammar;
@@ -80,5 +80,7 @@ sittir_core::napi_engine!(
     render::options::Options,
     render_transport_parts,
     NATIVE_RENDER_TRANSPORT_ABI,
-    render::options::defaults
+    render::options::defaults,
+    render::options::WHITESPACE,
+    render::options::WHITESPACE_KINDS
 );

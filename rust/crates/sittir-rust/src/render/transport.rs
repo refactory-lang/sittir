@@ -1093,6 +1093,542 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Verbatim(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            AnyTransport::SourceFile(t) => t.leading_seam(),
+            AnyTransport::EmptyStatement(t) => t.leading_seam(),
+            AnyTransport::ExpressionStatement(t) => t.leading_seam(),
+            AnyTransport::MacroRule(t) => t.leading_seam(),
+            AnyTransport::TokenBindingPattern(t) => t.leading_seam(),
+            AnyTransport::TokenRepetitionPattern(t) => t.leading_seam(),
+            AnyTransport::FragmentSpecifier(t) => t.leading_seam(),
+            AnyTransport::TokenRepetition(t) => t.leading_seam(),
+            AnyTransport::NonSpecialToken(t) => t.leading_seam(),
+            AnyTransport::AttributeItem(t) => t.leading_seam(),
+            AnyTransport::InnerAttributeItem(t) => t.leading_seam(),
+            AnyTransport::Attribute(t) => t.leading_seam(),
+            AnyTransport::DeclarationList(t) => t.leading_seam(),
+            AnyTransport::UnionItem(t) => t.leading_seam(),
+            AnyTransport::EnumItem(t) => t.leading_seam(),
+            AnyTransport::EnumVariantList(t) => t.leading_seam(),
+            AnyTransport::EnumVariant(t) => t.leading_seam(),
+            AnyTransport::FieldDeclarationList(t) => t.leading_seam(),
+            AnyTransport::FieldDeclaration(t) => t.leading_seam(),
+            AnyTransport::OrderedFieldDeclarationList(t) => t.leading_seam(),
+            AnyTransport::ExternCrateDeclaration(t) => t.leading_seam(),
+            AnyTransport::ConstItem(t) => t.leading_seam(),
+            AnyTransport::StaticItem(t) => t.leading_seam(),
+            AnyTransport::TypeItem(t) => t.leading_seam(),
+            AnyTransport::FunctionItem(t) => t.leading_seam(),
+            AnyTransport::FunctionSignatureItem(t) => t.leading_seam(),
+            AnyTransport::FunctionModifiers(t) => t.leading_seam(),
+            AnyTransport::WhereClause(t) => t.leading_seam(),
+            AnyTransport::WherePredicate(t) => t.leading_seam(),
+            AnyTransport::TraitItem(t) => t.leading_seam(),
+            AnyTransport::AssociatedType(t) => t.leading_seam(),
+            AnyTransport::TraitBounds(t) => t.leading_seam(),
+            AnyTransport::HigherRankedTraitBound(t) => t.leading_seam(),
+            AnyTransport::RemovedTraitBound(t) => t.leading_seam(),
+            AnyTransport::TypeParameters(t) => t.leading_seam(),
+            AnyTransport::ConstParameter(t) => t.leading_seam(),
+            AnyTransport::TypeParameter(t) => t.leading_seam(),
+            AnyTransport::LifetimeParameter(t) => t.leading_seam(),
+            AnyTransport::LetDeclaration(t) => t.leading_seam(),
+            AnyTransport::UseDeclaration(t) => t.leading_seam(),
+            AnyTransport::ScopedUseList(t) => t.leading_seam(),
+            AnyTransport::UseList(t) => t.leading_seam(),
+            AnyTransport::UseAsClause(t) => t.leading_seam(),
+            AnyTransport::UseWildcard(t) => t.leading_seam(),
+            AnyTransport::Parameters(t) => t.leading_seam(),
+            AnyTransport::SelfParameter(t) => t.leading_seam(),
+            AnyTransport::VariadicParameter(t) => t.leading_seam(),
+            AnyTransport::Parameter(t) => t.leading_seam(),
+            AnyTransport::ExternModifier(t) => t.leading_seam(),
+            AnyTransport::VisibilityModifier(t) => t.leading_seam(),
+            AnyTransport::BracketedType(t) => t.leading_seam(),
+            AnyTransport::QualifiedType(t) => t.leading_seam(),
+            AnyTransport::Lifetime(t) => t.leading_seam(),
+            AnyTransport::ArrayType(t) => t.leading_seam(),
+            AnyTransport::ForLifetimes(t) => t.leading_seam(),
+            AnyTransport::FunctionType(t) => t.leading_seam(),
+            AnyTransport::TupleType(t) => t.leading_seam(),
+            AnyTransport::UnitType(t) => t.leading_seam(),
+            AnyTransport::GenericFunction(t) => t.leading_seam(),
+            AnyTransport::GenericType(t) => t.leading_seam(),
+            AnyTransport::GenericTypeWithTurbofish(t) => t.leading_seam(),
+            AnyTransport::BoundedType(t) => t.leading_seam(),
+            AnyTransport::UseBounds(t) => t.leading_seam(),
+            AnyTransport::TypeArguments(t) => t.leading_seam(),
+            AnyTransport::TypeBinding(t) => t.leading_seam(),
+            AnyTransport::ReferenceType(t) => t.leading_seam(),
+            AnyTransport::NeverType(t) => t.leading_seam(),
+            AnyTransport::AbstractType(t) => t.leading_seam(),
+            AnyTransport::DynamicType(t) => t.leading_seam(),
+            AnyTransport::MutableSpecifier(t) => t.leading_seam(),
+            AnyTransport::MacroInvocation(t) => t.leading_seam(),
+            AnyTransport::ScopedIdentifier(t) => t.leading_seam(),
+            AnyTransport::ScopedTypeIdentifierInExpressionPosition(t) => t.leading_seam(),
+            AnyTransport::ScopedTypeIdentifier(t) => t.leading_seam(),
+            AnyTransport::UnaryExpression(t) => t.leading_seam(),
+            AnyTransport::TryExpression(t) => t.leading_seam(),
+            AnyTransport::BinaryExpression(t) => t.leading_seam(),
+            AnyTransport::AssignmentExpression(t) => t.leading_seam(),
+            AnyTransport::CompoundAssignmentExpr(t) => t.leading_seam(),
+            AnyTransport::TypeCastExpression(t) => t.leading_seam(),
+            AnyTransport::ReturnExpression(t) => t.leading_seam(),
+            AnyTransport::YieldExpression(t) => t.leading_seam(),
+            AnyTransport::CallExpression(t) => t.leading_seam(),
+            AnyTransport::Arguments(t) => t.leading_seam(),
+            AnyTransport::ParenthesizedExpression(t) => t.leading_seam(),
+            AnyTransport::TupleExpression(t) => t.leading_seam(),
+            AnyTransport::UnitExpression(t) => t.leading_seam(),
+            AnyTransport::StructExpression(t) => t.leading_seam(),
+            AnyTransport::FieldInitializerList(t) => t.leading_seam(),
+            AnyTransport::ShorthandFieldInitializer(t) => t.leading_seam(),
+            AnyTransport::FieldInitializer(t) => t.leading_seam(),
+            AnyTransport::BaseFieldInitializer(t) => t.leading_seam(),
+            AnyTransport::IfExpression(t) => t.leading_seam(),
+            AnyTransport::LetCondition(t) => t.leading_seam(),
+            AnyTransport::LetChain(t) => t.leading_seam(),
+            AnyTransport::ElseClause(t) => t.leading_seam(),
+            AnyTransport::MatchExpression(t) => t.leading_seam(),
+            AnyTransport::MatchBlock(t) => t.leading_seam(),
+            AnyTransport::LastMatchArm(t) => t.leading_seam(),
+            AnyTransport::MatchPattern(t) => t.leading_seam(),
+            AnyTransport::WhileExpression(t) => t.leading_seam(),
+            AnyTransport::LoopExpression(t) => t.leading_seam(),
+            AnyTransport::ForExpression(t) => t.leading_seam(),
+            AnyTransport::ConstBlock(t) => t.leading_seam(),
+            AnyTransport::ClosureParameters(t) => t.leading_seam(),
+            AnyTransport::Label(t) => t.leading_seam(),
+            AnyTransport::BreakExpression(t) => t.leading_seam(),
+            AnyTransport::ContinueExpression(t) => t.leading_seam(),
+            AnyTransport::IndexExpression(t) => t.leading_seam(),
+            AnyTransport::AwaitExpression(t) => t.leading_seam(),
+            AnyTransport::FieldExpression(t) => t.leading_seam(),
+            AnyTransport::UnsafeBlock(t) => t.leading_seam(),
+            AnyTransport::AsyncBlock(t) => t.leading_seam(),
+            AnyTransport::GenBlock(t) => t.leading_seam(),
+            AnyTransport::TryBlock(t) => t.leading_seam(),
+            AnyTransport::Block(t) => t.leading_seam(),
+            AnyTransport::GenericPattern(t) => t.leading_seam(),
+            AnyTransport::TuplePattern(t) => t.leading_seam(),
+            AnyTransport::SlicePattern(t) => t.leading_seam(),
+            AnyTransport::TupleStructPattern(t) => t.leading_seam(),
+            AnyTransport::StructPattern(t) => t.leading_seam(),
+            AnyTransport::RemainingFieldPattern(t) => t.leading_seam(),
+            AnyTransport::MutPattern(t) => t.leading_seam(),
+            AnyTransport::RefPattern(t) => t.leading_seam(),
+            AnyTransport::CapturedPattern(t) => t.leading_seam(),
+            AnyTransport::ReferencePattern(t) => t.leading_seam(),
+            AnyTransport::NegativeLiteral(t) => t.leading_seam(),
+            AnyTransport::StringLiteral(t) => t.leading_seam(),
+            AnyTransport::RawStringLiteral(t) => t.leading_seam(),
+            AnyTransport::BooleanLiteral(t) => t.leading_seam(),
+            AnyTransport::LineComment(t) => t.leading_seam(),
+            AnyTransport::InnerLineDocCommentMarker(t) => t.leading_seam(),
+            AnyTransport::OuterLineDocCommentMarker(t) => t.leading_seam(),
+            AnyTransport::BlockComment(t) => t.leading_seam(),
+            AnyTransport::Identifier(t) => t.leading_seam(),
+            AnyTransport::Shebang(t) => t.leading_seam(),
+            AnyTransport::Self_(t) => t.leading_seam(),
+            AnyTransport::Super(t) => t.leading_seam(),
+            AnyTransport::Crate(t) => t.leading_seam(),
+            AnyTransport::Metavariable(t) => t.leading_seam(),
+            AnyTransport::PrimitiveType(t) => t.leading_seam(),
+            AnyTransport::MacroRules(t) => t.leading_seam(),
+            AnyTransport::EnumVariantListElements(t) => t.leading_seam(),
+            AnyTransport::FieldDeclarationListElements(t) => t.leading_seam(),
+            AnyTransport::OrderedFieldDeclarationListElements(t) => t.leading_seam(),
+            AnyTransport::WherePredicates(t) => t.leading_seam(),
+            AnyTransport::TypeParametersElements(t) => t.leading_seam(),
+            AnyTransport::UseClauses(t) => t.leading_seam(),
+            AnyTransport::ParametersElements(t) => t.leading_seam(),
+            AnyTransport::Lifetimes(t) => t.leading_seam(),
+            AnyTransport::Types(t) => t.leading_seam(),
+            AnyTransport::UseBoundsElements(t) => t.leading_seam(),
+            AnyTransport::TypeArgumentsElements(t) => t.leading_seam(),
+            AnyTransport::ArgumentsElements(t) => t.leading_seam(),
+            AnyTransport::Expressions(t) => t.leading_seam(),
+            AnyTransport::FieldInitializerListElements(t) => t.leading_seam(),
+            AnyTransport::TuplePatternElements(t) => t.leading_seam(),
+            AnyTransport::Patterns(t) => t.leading_seam(),
+            AnyTransport::StructPatternElements(t) => t.leading_seam(),
+            AnyTransport::UseWildcardGroup(t) => t.leading_seam(),
+            AnyTransport::TokenRepetitionPatternText(t) => t.leading_seam(),
+            AnyTransport::StringOpen(t) => t.leading_seam(),
+            AnyTransport::TokenTreePunctuation(t) => t.leading_seam(),
+            AnyTransport::TokenKeywords(t) => t.leading_seam(),
+            AnyTransport::_RangeExpressionBare(t) => t.leading_seam(),
+            AnyTransport::ImplItemUnsafeMarker(t) => t.leading_seam(),
+            AnyTransport::IntegerLiteralDecimal(t) => t.leading_seam(),
+            AnyTransport::IntegerLiteralHex(t) => t.leading_seam(),
+            AnyTransport::IntegerLiteralBinary(t) => t.leading_seam(),
+            AnyTransport::IntegerLiteralOctal(t) => t.leading_seam(),
+            AnyTransport::CharLiteralPlain(t) => t.leading_seam(),
+            AnyTransport::CharLiteralEmpty(t) => t.leading_seam(),
+            AnyTransport::CharLiteralEscapedSimple(t) => t.leading_seam(),
+            AnyTransport::CharLiteralEscapedUnicodeFixed(t) => t.leading_seam(),
+            AnyTransport::CharLiteralEscapedUnicodeBraced(t) => t.leading_seam(),
+            AnyTransport::CharLiteralEscapedHex(t) => t.leading_seam(),
+            AnyTransport::EscapeSequenceSimple(t) => t.leading_seam(),
+            AnyTransport::EscapeSequenceUnicodeFixed(t) => t.leading_seam(),
+            AnyTransport::EscapeSequenceUnicodeBraced(t) => t.leading_seam(),
+            AnyTransport::EscapeSequenceHex(t) => t.leading_seam(),
+            AnyTransport::ArrayExpressionSemi(t) => t.leading_seam(),
+            AnyTransport::ArrayExpressionList(t) => t.leading_seam(),
+            AnyTransport::AttributeInput(t) => t.leading_seam(),
+            AnyTransport::ClosureExpressionBlock(t) => t.leading_seam(),
+            AnyTransport::ClosureExpressionExpr(t) => t.leading_seam(),
+            AnyTransport::ReferenceExpressionRawConst(t) => t.leading_seam(),
+            AnyTransport::ReferenceExpressionRawMut(t) => t.leading_seam(),
+            AnyTransport::ReferenceExpressionMut(t) => t.leading_seam(),
+            AnyTransport::ReferenceExpressionBare(t) => t.leading_seam(),
+            AnyTransport::ImplItemPositiveClause(t) => t.leading_seam(),
+            AnyTransport::ImplItemNegativeClause(t) => t.leading_seam(),
+            AnyTransport::ImplItemBody(t) => t.leading_seam(),
+            AnyTransport::ImplItemSemi(t) => t.leading_seam(),
+            AnyTransport::VisibilityModifierPubScopeInPath(t) => t.leading_seam(),
+            AnyTransport::VisibilityModifierPubScope(t) => t.leading_seam(),
+            AnyTransport::VisibilityModifierPub(t) => t.leading_seam(),
+            AnyTransport::FunctionTypeTraitForm(t) => t.leading_seam(),
+            AnyTransport::FunctionTypeFnForm(t) => t.leading_seam(),
+            AnyTransport::ModItemExternal(t) => t.leading_seam(),
+            AnyTransport::ModItemInline(t) => t.leading_seam(),
+            AnyTransport::OrPatternBinary(t) => t.leading_seam(),
+            AnyTransport::OrPatternPrefix(t) => t.leading_seam(),
+            AnyTransport::PointerTypeConst(t) => t.leading_seam(),
+            AnyTransport::PointerTypeMut(t) => t.leading_seam(),
+            AnyTransport::RangeExpressionBinary(t) => t.leading_seam(),
+            AnyTransport::RangeExpressionPostfix(t) => t.leading_seam(),
+            AnyTransport::RangeExpressionPrefix(t) => t.leading_seam(),
+            AnyTransport::RangeExpressionBare(t) => t.leading_seam(),
+            AnyTransport::ExpressionStatementWithSemi(t) => t.leading_seam(),
+            AnyTransport::ForeignModItemSemi(t) => t.leading_seam(),
+            AnyTransport::ForeignModItemBody(t) => t.leading_seam(),
+            AnyTransport::MatchArmWithComma(t) => t.leading_seam(),
+            AnyTransport::MatchArmBlockEnding(t) => t.leading_seam(),
+            AnyTransport::LineCommentExtraSlashes(t) => t.leading_seam(),
+            AnyTransport::LineCommentDocOuter(t) => t.leading_seam(),
+            AnyTransport::LineCommentDocInner(t) => t.leading_seam(),
+            AnyTransport::LineCommentRegular(t) => t.leading_seam(),
+            AnyTransport::BlockCommentDocOuter(t) => t.leading_seam(),
+            AnyTransport::BlockCommentDocInner(t) => t.leading_seam(),
+            AnyTransport::BlockCommentRegular(t) => t.leading_seam(),
+            AnyTransport::TokenTreePatternParen(t) => t.leading_seam(),
+            AnyTransport::TokenTreePatternBracket(t) => t.leading_seam(),
+            AnyTransport::TokenTreePatternBrace(t) => t.leading_seam(),
+            AnyTransport::TokenTreeParen(t) => t.leading_seam(),
+            AnyTransport::TokenTreeBracket(t) => t.leading_seam(),
+            AnyTransport::TokenTreeBrace(t) => t.leading_seam(),
+            AnyTransport::DelimTokenTreeParen(t) => t.leading_seam(),
+            AnyTransport::DelimTokenTreeBracket(t) => t.leading_seam(),
+            AnyTransport::DelimTokenTreeBrace(t) => t.leading_seam(),
+            AnyTransport::FieldPatternShorthand(t) => t.leading_seam(),
+            AnyTransport::FieldPatternNamed(t) => t.leading_seam(),
+            AnyTransport::MacroDefinitionParen(t) => t.leading_seam(),
+            AnyTransport::MacroDefinitionBracket(t) => t.leading_seam(),
+            AnyTransport::MacroDefinitionBrace(t) => t.leading_seam(),
+            AnyTransport::RangePatternPrefix(t) => t.leading_seam(),
+            AnyTransport::RangePatternWithLeftWithRight(t) => t.leading_seam(),
+            AnyTransport::RangePatternWithLeftBare(t) => t.leading_seam(),
+            AnyTransport::RangePatternWithLeft(t) => t.leading_seam(),
+            AnyTransport::StructItemBrace(t) => t.leading_seam(),
+            AnyTransport::StructItemTuple(t) => t.leading_seam(),
+            AnyTransport::StructItemUnit(t) => t.leading_seam(),
+            AnyTransport::WildcardPattern(t) => t.leading_seam(),
+            AnyTransport::AttributedFieldDeclaration(t) => t.leading_seam(),
+            AnyTransport::AttributedEnumVariant(t) => t.leading_seam(),
+            AnyTransport::AttributedParameter(t) => t.leading_seam(),
+            AnyTransport::AttributedTypeParameter(t) => t.leading_seam(),
+            AnyTransport::AttributedArgument(t) => t.leading_seam(),
+            AnyTransport::AttributedOrderedField(t) => t.leading_seam(),
+            AnyTransport::TypeArgument(t) => t.leading_seam(),
+            AnyTransport::MatchBlockArms(t) => t.leading_seam(),
+            AnyTransport::FloatLiteral(t) => t.leading_seam(),
+            AnyTransport::StringContent(t) => t.leading_seam(),
+            AnyTransport::RawStringLiteralContent(t) => t.leading_seam(),
+            AnyTransport::OuterDocCommentMarker(t) => t.leading_seam(),
+            AnyTransport::InnerDocCommentMarker(t) => t.leading_seam(),
+            AnyTransport::RawStringLiteralStart(t) => t.leading_seam(),
+            AnyTransport::RawStringLiteralEnd(t) => t.leading_seam(),
+            AnyTransport::DocComment(t) => t.leading_seam(),
+            AnyTransport::BlockCommentContent(t) => t.leading_seam(),
+            AnyTransport::Tight(t) => t.leading_seam(),
+            AnyTransport::Space(t) => t.leading_seam(),
+            AnyTransport::Tab(t) => t.leading_seam(),
+            AnyTransport::Newline(t) => t.leading_seam(),
+            AnyTransport::Blankline(t) => t.leading_seam(),
+            AnyTransport::DoubleBlankline(t) => t.leading_seam(),
+            AnyTransport::Indent(t) => t.leading_seam(),
+            AnyTransport::Dedent(t) => t.leading_seam(),
+            AnyTransport::ErrorSentinel(t) => t.leading_seam(),
+            AnyTransport::TypeIdentifier(t) => t.leading_seam(),
+            AnyTransport::FieldIdentifier(t) => t.leading_seam(),
+            AnyTransport::ShorthandFieldIdentifier(t) => t.leading_seam(),
+            AnyTransport::Semi(t) => t.leading_seam(),
+            AnyTransport::EqGt(t) => t.leading_seam(),
+            AnyTransport::Colon(t) => t.leading_seam(),
+            AnyTransport::Dollar(t) => t.leading_seam(),
+            AnyTransport::Lparen(t) => t.leading_seam(),
+            AnyTransport::Rparen(t) => t.leading_seam(),
+            AnyTransport::Plus(t) => t.leading_seam(),
+            AnyTransport::Star(t) => t.leading_seam(),
+            AnyTransport::Qmark(t) => t.leading_seam(),
+            AnyTransport::BlockKeyword(t) => t.leading_seam(),
+            AnyTransport::ExprKeyword(t) => t.leading_seam(),
+            AnyTransport::Expr2021Keyword(t) => t.leading_seam(),
+            AnyTransport::IdentKeyword(t) => t.leading_seam(),
+            AnyTransport::ItemKeyword(t) => t.leading_seam(),
+            AnyTransport::LifetimeKeyword(t) => t.leading_seam(),
+            AnyTransport::LiteralKeyword(t) => t.leading_seam(),
+            AnyTransport::MetaKeyword(t) => t.leading_seam(),
+            AnyTransport::PatKeyword(t) => t.leading_seam(),
+            AnyTransport::PatParamKeyword(t) => t.leading_seam(),
+            AnyTransport::PathKeyword(t) => t.leading_seam(),
+            AnyTransport::StmtKeyword(t) => t.leading_seam(),
+            AnyTransport::TtKeyword(t) => t.leading_seam(),
+            AnyTransport::TyKeyword(t) => t.leading_seam(),
+            AnyTransport::VisKeyword(t) => t.leading_seam(),
+            AnyTransport::Pound(t) => t.leading_seam(),
+            AnyTransport::Lbrack(t) => t.leading_seam(),
+            AnyTransport::Rbrack(t) => t.leading_seam(),
+            AnyTransport::Bang(t) => t.leading_seam(),
+            AnyTransport::U8Keyword(t) => t.leading_seam(),
+            AnyTransport::I8Keyword(t) => t.leading_seam(),
+            AnyTransport::U16Keyword(t) => t.leading_seam(),
+            AnyTransport::I16Keyword(t) => t.leading_seam(),
+            AnyTransport::U32Keyword(t) => t.leading_seam(),
+            AnyTransport::I32Keyword(t) => t.leading_seam(),
+            AnyTransport::U64Keyword(t) => t.leading_seam(),
+            AnyTransport::I64Keyword(t) => t.leading_seam(),
+            AnyTransport::U128Keyword(t) => t.leading_seam(),
+            AnyTransport::I128Keyword(t) => t.leading_seam(),
+            AnyTransport::IsizeKeyword(t) => t.leading_seam(),
+            AnyTransport::UsizeKeyword(t) => t.leading_seam(),
+            AnyTransport::F32Keyword(t) => t.leading_seam(),
+            AnyTransport::F64Keyword(t) => t.leading_seam(),
+            AnyTransport::BoolKeyword(t) => t.leading_seam(),
+            AnyTransport::StrKeyword(t) => t.leading_seam(),
+            AnyTransport::CharKeyword(t) => t.leading_seam(),
+            AnyTransport::DefaultKeyword(t) => t.leading_seam(),
+            AnyTransport::UnionKeyword(t) => t.leading_seam(),
+            AnyTransport::GenKeyword(t) => t.leading_seam(),
+            AnyTransport::Lbrace(t) => t.leading_seam(),
+            AnyTransport::Rbrace(t) => t.leading_seam(),
+            AnyTransport::EnumKeyword(t) => t.leading_seam(),
+            AnyTransport::Eq(t) => t.leading_seam(),
+            AnyTransport::ExternKeyword(t) => t.leading_seam(),
+            AnyTransport::AsKeyword(t) => t.leading_seam(),
+            AnyTransport::ConstKeyword(t) => t.leading_seam(),
+            AnyTransport::StaticKeyword(t) => t.leading_seam(),
+            AnyTransport::RefKeyword(t) => t.leading_seam(),
+            AnyTransport::TypeKeyword(t) => t.leading_seam(),
+            AnyTransport::FnKeyword(t) => t.leading_seam(),
+            AnyTransport::DashGt(t) => t.leading_seam(),
+            AnyTransport::AsyncKeyword(t) => t.leading_seam(),
+            AnyTransport::UnsafeKeyword(t) => t.leading_seam(),
+            AnyTransport::WhereKeyword(t) => t.leading_seam(),
+            AnyTransport::TraitKeyword(t) => t.leading_seam(),
+            AnyTransport::ForKeyword(t) => t.leading_seam(),
+            AnyTransport::Lt(t) => t.leading_seam(),
+            AnyTransport::Gt(t) => t.leading_seam(),
+            AnyTransport::LetKeyword(t) => t.leading_seam(),
+            AnyTransport::ElseKeyword(t) => t.leading_seam(),
+            AnyTransport::UseKeyword(t) => t.leading_seam(),
+            AnyTransport::ColonColon(t) => t.leading_seam(),
+            AnyTransport::Amp(t) => t.leading_seam(),
+            AnyTransport::DotDotDot(t) => t.leading_seam(),
+            AnyTransport::Squote(t) => t.leading_seam(),
+            AnyTransport::ImplKeyword(t) => t.leading_seam(),
+            AnyTransport::DynKeyword(t) => t.leading_seam(),
+            AnyTransport::Dash(t) => t.leading_seam(),
+            AnyTransport::AmpAmp(t) => t.leading_seam(),
+            AnyTransport::PipePipe(t) => t.leading_seam(),
+            AnyTransport::Pipe(t) => t.leading_seam(),
+            AnyTransport::Caret(t) => t.leading_seam(),
+            AnyTransport::EqEq(t) => t.leading_seam(),
+            AnyTransport::BangEq(t) => t.leading_seam(),
+            AnyTransport::LtEq(t) => t.leading_seam(),
+            AnyTransport::GtEq(t) => t.leading_seam(),
+            AnyTransport::LtLt(t) => t.leading_seam(),
+            AnyTransport::GtGt(t) => t.leading_seam(),
+            AnyTransport::Slash(t) => t.leading_seam(),
+            AnyTransport::Percent(t) => t.leading_seam(),
+            AnyTransport::PlusEq(t) => t.leading_seam(),
+            AnyTransport::DashEq(t) => t.leading_seam(),
+            AnyTransport::StarEq(t) => t.leading_seam(),
+            AnyTransport::SlashEq(t) => t.leading_seam(),
+            AnyTransport::PercentEq(t) => t.leading_seam(),
+            AnyTransport::AmpEq(t) => t.leading_seam(),
+            AnyTransport::PipeEq(t) => t.leading_seam(),
+            AnyTransport::CaretEq(t) => t.leading_seam(),
+            AnyTransport::LtLtEq(t) => t.leading_seam(),
+            AnyTransport::GtGtEq(t) => t.leading_seam(),
+            AnyTransport::ReturnKeyword(t) => t.leading_seam(),
+            AnyTransport::YieldKeyword(t) => t.leading_seam(),
+            AnyTransport::DotDot(t) => t.leading_seam(),
+            AnyTransport::IfKeyword(t) => t.leading_seam(),
+            AnyTransport::MatchKeyword(t) => t.leading_seam(),
+            AnyTransport::Comma(t) => t.leading_seam(),
+            AnyTransport::WhileKeyword(t) => t.leading_seam(),
+            AnyTransport::LoopKeyword(t) => t.leading_seam(),
+            AnyTransport::InKeyword(t) => t.leading_seam(),
+            AnyTransport::BreakKeyword(t) => t.leading_seam(),
+            AnyTransport::ContinueKeyword(t) => t.leading_seam(),
+            AnyTransport::Dot(t) => t.leading_seam(),
+            AnyTransport::AwaitKeyword(t) => t.leading_seam(),
+            AnyTransport::MoveKeyword(t) => t.leading_seam(),
+            AnyTransport::TryKeyword(t) => t.leading_seam(),
+            AnyTransport::At(t) => t.leading_seam(),
+            AnyTransport::Dquote(t) => t.leading_seam(),
+            AnyTransport::TrueKeyword(t) => t.leading_seam(),
+            AnyTransport::FalseKeyword(t) => t.leading_seam(),
+            AnyTransport::SlashSlash(t) => t.leading_seam(),
+            AnyTransport::SlashStar(t) => t.leading_seam(),
+            AnyTransport::StarSlash(t) => t.leading_seam(),
+            AnyTransport::Underscore(t) => t.leading_seam(),
+            AnyTransport::DotDotEq(t) => t.leading_seam(),
+            AnyTransport::ModKeyword(t) => t.leading_seam(),
+            AnyTransport::PubKeyword(t) => t.leading_seam(),
+            AnyTransport::StructKeyword(t) => t.leading_seam(),
+            AnyTransport::RawKeyword(t) => t.leading_seam(),
+            AnyTransport::MacroRulesBang(t) => t.leading_seam(),
+            AnyTransport::Literal0_62_6c_6f_63_6b_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal1_65_78_70_72_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal2_65_78_70_72_5f_32_30_32_31_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal3_69_64_65_6e_74_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal4_69_74_65_6d_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal5_6c_69_66_65_74_69_6d_65_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal6_6c_69_74_65_72_61_6c_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal7_6d_65_74_61_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal8_70_61_74_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal9_70_61_74_5f_70_61_72_61_6d_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal10_70_61_74_68_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal11_73_74_6d_74_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal12_74_74_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal13_74_79_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal14_76_69_73_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal15_70_6c_75_73 => None,
+            AnyTransport::Literal16_73_74_61_72 => None,
+            AnyTransport::Literal17_71_6d_61_72_6b => None,
+            AnyTransport::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => None,
+            AnyTransport::Literal19_73_65_6c_66 => None,
+            AnyTransport::Literal20_73_75_70_65_72 => None,
+            AnyTransport::Literal21_63_72_61_74_65 => None,
+            AnyTransport::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal39_64_61_73_68 => None,
+            AnyTransport::Literal40_73_6c_61_73_68 => None,
+            AnyTransport::Literal41_70_65_72_63_65_6e_74 => None,
+            AnyTransport::Literal42_63_61_72_65_74 => None,
+            AnyTransport::Literal43_62_61_6e_67 => None,
+            AnyTransport::Literal44_61_6d_70 => None,
+            AnyTransport::Literal45_70_69_70_65 => None,
+            AnyTransport::Literal46_61_6d_70_5f_61_6d_70 => None,
+            AnyTransport::Literal47_70_69_70_65_5f_70_69_70_65 => None,
+            AnyTransport::Literal48_6c_74_5f_6c_74 => None,
+            AnyTransport::Literal49_67_74_5f_67_74 => None,
+            AnyTransport::Literal50_70_6c_75_73_5f_65_71 => None,
+            AnyTransport::Literal51_64_61_73_68_5f_65_71 => None,
+            AnyTransport::Literal52_73_74_61_72_5f_65_71 => None,
+            AnyTransport::Literal53_73_6c_61_73_68_5f_65_71 => None,
+            AnyTransport::Literal54_70_65_72_63_65_6e_74_5f_65_71 => None,
+            AnyTransport::Literal55_63_61_72_65_74_5f_65_71 => None,
+            AnyTransport::Literal56_61_6d_70_5f_65_71 => None,
+            AnyTransport::Literal57_70_69_70_65_5f_65_71 => None,
+            AnyTransport::Literal58_6c_74_5f_6c_74_5f_65_71 => None,
+            AnyTransport::Literal59_67_74_5f_67_74_5f_65_71 => None,
+            AnyTransport::Literal60_65_71 => None,
+            AnyTransport::Literal61_65_71_5f_65_71 => None,
+            AnyTransport::Literal62_62_61_6e_67_5f_65_71 => None,
+            AnyTransport::Literal63_67_74 => None,
+            AnyTransport::Literal64_6c_74 => None,
+            AnyTransport::Literal65_67_74_5f_65_71 => None,
+            AnyTransport::Literal66_6c_74_5f_65_71 => None,
+            AnyTransport::Literal67_61_74 => None,
+            AnyTransport::Literal68_75_6e_64_65_72_73_63_6f_72_65 => None,
+            AnyTransport::Literal69_64_6f_74 => None,
+            AnyTransport::Literal70_64_6f_74_5f_64_6f_74 => None,
+            AnyTransport::Literal71_64_6f_74_5f_64_6f_74_5f_64_6f_74 => None,
+            AnyTransport::Literal72_64_6f_74_5f_64_6f_74_5f_65_71 => None,
+            AnyTransport::Literal73_63_6f_6d_6d_61 => None,
+            AnyTransport::Literal74_73_65_6d_69 => None,
+            AnyTransport::Literal75_63_6f_6c_6f_6e => None,
+            AnyTransport::Literal76_63_6f_6c_6f_6e_5f_63_6f_6c_6f_6e => None,
+            AnyTransport::Literal77_64_61_73_68_5f_67_74 => None,
+            AnyTransport::Literal78_65_71_5f_67_74 => None,
+            AnyTransport::Literal79_70_6f_75_6e_64 => None,
+            AnyTransport::Literal80_73_71_75_6f_74_65 => None,
+            AnyTransport::Literal81_61_73_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal82_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal83_61_77_61_69_74_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal84_62_72_65_61_6b_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal85_63_6f_6e_73_74_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal86_63_6f_6e_74_69_6e_75_65_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal88_65_6e_75_6d_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal89_66_6e_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal90_66_6f_72_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal92_69_66_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal93_69_6d_70_6c_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal94_6c_65_74_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal95_6c_6f_6f_70_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal96_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal97_6d_6f_64_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal98_70_75_62_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal99_72_65_74_75_72_6e_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal100_73_74_61_74_69_63_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal101_73_74_72_75_63_74_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal102_74_72_61_69_74_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal103_74_79_70_65_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal105_75_6e_73_61_66_65_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal106_75_73_65_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal107_77_68_65_72_65_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal108_77_68_69_6c_65_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal109_72_65_66_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal110_75_6e_69_74_5f_65_78_70_72_65_73_73_69_6f_6e => None,
+            AnyTransport::Literal111_6d_6f_76_65_5f_6b_65_79_77_6f_72_64 => None,
+            AnyTransport::Literal112_72_65_6d_61_69_6e_69_6e_67_5f_66_69_65_6c_64_5f_70_61_74_74_65_72_6e => None,
+            AnyTransport::Literal113_75_38 => None,
+            AnyTransport::Literal114_69_38 => None,
+            AnyTransport::Literal115_75_31_36 => None,
+            AnyTransport::Literal116_69_31_36 => None,
+            AnyTransport::Literal117_75_33_32 => None,
+            AnyTransport::Literal118_69_33_32 => None,
+            AnyTransport::Literal119_75_36_34 => None,
+            AnyTransport::Literal120_69_36_34 => None,
+            AnyTransport::Literal121_75_31_32_38 => None,
+            AnyTransport::Literal122_69_31_32_38 => None,
+            AnyTransport::Literal123_69_73_69_7a_65 => None,
+            AnyTransport::Literal124_75_73_69_7a_65 => None,
+            AnyTransport::Literal125_66_33_32 => None,
+            AnyTransport::Literal126_66_36_34 => None,
+            AnyTransport::Literal127_62 => None,
+            AnyTransport::Literal128_5f_69_6d_70_6c_5f_69_74_65_6d_5f_75_6e_73_61_66_65_5f_6d_61_72_6b_65_72 => None,
+            AnyTransport::Literal129_5f_72_61_6e_67_65_5f_65_78_70_72_65_73_73_69_6f_6e_5f_62_61_72_65 => None,
+            AnyTransport::Literal130_64_6f_6c_6c_61_72 => None,
+            AnyTransport::Literal131_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65 => None,
+            AnyTransport::Verbatim(t) => t.leading_seam(),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -2774,6 +3310,19 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::Text(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            TriviaTransport::LineComment(t) => t.leading_seam(),
+            TriviaTransport::BlockComment(t) => t.leading_seam(),
+            TriviaTransport::Space(t) => t.leading_seam(),
+            TriviaTransport::Tab(t) => t.leading_seam(),
+            TriviaTransport::Newline(t) => t.leading_seam(),
+            TriviaTransport::Blankline(t) => t.leading_seam(),
+            TriviaTransport::DoubleBlankline(t) => t.leading_seam(),
+            TriviaTransport::Verbatim(t) => t.leading_seam(),
+            TriviaTransport::Text(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::render::Render for TriviaTransport {
@@ -2942,6 +3491,33 @@ impl ::sittir_core::prepare::Prepare for StatementTransport {
             StatementTransport::UseDeclaration(t) => t.prepare(ctx),
             StatementTransport::ExternCrateDeclaration(t) => t.prepare(ctx),
             StatementTransport::StaticItem(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            StatementTransport::ExpressionStatement(t) => t.leading_seam(),
+            StatementTransport::DeclarationStatement(t) => t.leading_seam(),
+            StatementTransport::ConstItem(t) => t.leading_seam(),
+            StatementTransport::MacroInvocation(t) => t.leading_seam(),
+            StatementTransport::MacroDefinition(t) => t.leading_seam(),
+            StatementTransport::EmptyStatement(t) => t.leading_seam(),
+            StatementTransport::AttributeItem(t) => t.leading_seam(),
+            StatementTransport::InnerAttributeItem(t) => t.leading_seam(),
+            StatementTransport::ModItem(t) => t.leading_seam(),
+            StatementTransport::ForeignModItem(t) => t.leading_seam(),
+            StatementTransport::StructItem(t) => t.leading_seam(),
+            StatementTransport::UnionItem(t) => t.leading_seam(),
+            StatementTransport::EnumItem(t) => t.leading_seam(),
+            StatementTransport::TypeItem(t) => t.leading_seam(),
+            StatementTransport::FunctionItem(t) => t.leading_seam(),
+            StatementTransport::FunctionSignatureItem(t) => t.leading_seam(),
+            StatementTransport::ImplItem(t) => t.leading_seam(),
+            StatementTransport::TraitItem(t) => t.leading_seam(),
+            StatementTransport::AssociatedType(t) => t.leading_seam(),
+            StatementTransport::LetDeclaration(t) => t.leading_seam(),
+            StatementTransport::UseDeclaration(t) => t.leading_seam(),
+            StatementTransport::ExternCrateDeclaration(t) => t.leading_seam(),
+            StatementTransport::StaticItem(t) => t.leading_seam(),
         }
     }
 }
@@ -3441,6 +4017,31 @@ impl ::sittir_core::prepare::Prepare for DeclarationStatementTransport {
             DeclarationStatementTransport::StaticItem(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            DeclarationStatementTransport::ConstItem(t) => t.leading_seam(),
+            DeclarationStatementTransport::MacroInvocation(t) => t.leading_seam(),
+            DeclarationStatementTransport::MacroDefinition(t) => t.leading_seam(),
+            DeclarationStatementTransport::EmptyStatement(t) => t.leading_seam(),
+            DeclarationStatementTransport::AttributeItem(t) => t.leading_seam(),
+            DeclarationStatementTransport::InnerAttributeItem(t) => t.leading_seam(),
+            DeclarationStatementTransport::ModItem(t) => t.leading_seam(),
+            DeclarationStatementTransport::ForeignModItem(t) => t.leading_seam(),
+            DeclarationStatementTransport::StructItem(t) => t.leading_seam(),
+            DeclarationStatementTransport::UnionItem(t) => t.leading_seam(),
+            DeclarationStatementTransport::EnumItem(t) => t.leading_seam(),
+            DeclarationStatementTransport::TypeItem(t) => t.leading_seam(),
+            DeclarationStatementTransport::FunctionItem(t) => t.leading_seam(),
+            DeclarationStatementTransport::FunctionSignatureItem(t) => t.leading_seam(),
+            DeclarationStatementTransport::ImplItem(t) => t.leading_seam(),
+            DeclarationStatementTransport::TraitItem(t) => t.leading_seam(),
+            DeclarationStatementTransport::AssociatedType(t) => t.leading_seam(),
+            DeclarationStatementTransport::LetDeclaration(t) => t.leading_seam(),
+            DeclarationStatementTransport::UseDeclaration(t) => t.leading_seam(),
+            DeclarationStatementTransport::ExternCrateDeclaration(t) => t.leading_seam(),
+            DeclarationStatementTransport::StaticItem(t) => t.leading_seam(),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -3776,6 +4377,13 @@ impl ::sittir_core::prepare::Prepare for MacroDefinitionTransport {
             MacroDefinitionTransport::MacroDefinitionBrace(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            MacroDefinitionTransport::MacroDefinitionParen(t) => t.leading_seam(),
+            MacroDefinitionTransport::MacroDefinitionBracket(t) => t.leading_seam(),
+            MacroDefinitionTransport::MacroDefinitionBrace(t) => t.leading_seam(),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -3919,6 +4527,13 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternTransport {
             TokenTreePatternTransport::TokenTreePatternBrace(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            TokenTreePatternTransport::TokenTreePatternParen(t) => t.leading_seam(),
+            TokenTreePatternTransport::TokenTreePatternBracket(t) => t.leading_seam(),
+            TokenTreePatternTransport::TokenTreePatternBrace(t) => t.leading_seam(),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -4054,6 +4669,13 @@ impl ::sittir_core::prepare::Prepare for TokenTreeTransport {
             TokenTreeTransport::TokenTreeBrace(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            TokenTreeTransport::TokenTreeParen(t) => t.leading_seam(),
+            TokenTreeTransport::TokenTreeBracket(t) => t.leading_seam(),
+            TokenTreeTransport::TokenTreeBrace(t) => t.leading_seam(),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -4187,6 +4809,12 @@ impl ::sittir_core::prepare::Prepare for ModItemTransport {
             ModItemTransport::ModItemInline(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            ModItemTransport::ModItemExternal(t) => t.leading_seam(),
+            ModItemTransport::ModItemInline(t) => t.leading_seam(),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -4312,6 +4940,12 @@ impl ::sittir_core::prepare::Prepare for ForeignModItemTransport {
         match self {
             ForeignModItemTransport::ForeignModItemSemi(t) => t.prepare(ctx),
             ForeignModItemTransport::ForeignModItemBody(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            ForeignModItemTransport::ForeignModItemSemi(t) => t.leading_seam(),
+            ForeignModItemTransport::ForeignModItemBody(t) => t.leading_seam(),
         }
     }
 }
@@ -4441,6 +5075,13 @@ impl ::sittir_core::prepare::Prepare for StructItemTransport {
             StructItemTransport::StructItemBrace(t) => t.prepare(ctx),
             StructItemTransport::StructItemTuple(t) => t.prepare(ctx),
             StructItemTransport::StructItemUnit(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            StructItemTransport::StructItemBrace(t) => t.leading_seam(),
+            StructItemTransport::StructItemTuple(t) => t.leading_seam(),
+            StructItemTransport::StructItemUnit(t) => t.leading_seam(),
         }
     }
 }
@@ -4582,6 +5223,12 @@ impl ::sittir_core::prepare::Prepare for ImplItemTransport {
         match self {
             ImplItemTransport::ImplItemBody(t) => t.prepare(ctx),
             ImplItemTransport::ImplItemSemi(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            ImplItemTransport::ImplItemBody(t) => t.leading_seam(),
+            ImplItemTransport::ImplItemSemi(t) => t.leading_seam(),
         }
     }
 }
@@ -4739,6 +5386,27 @@ impl ::sittir_core::prepare::Prepare for TypeTransport {
             TypeTransport::BoundedType(t) => t.prepare(ctx),
             TypeTransport::RemovedTraitBound(t) => t.prepare(ctx),
             TypeTransport::PrimitiveType(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            TypeTransport::AbstractType(t) => t.leading_seam(),
+            TypeTransport::ReferenceType(t) => t.leading_seam(),
+            TypeTransport::Metavariable(t) => t.leading_seam(),
+            TypeTransport::PointerType(t) => t.leading_seam(),
+            TypeTransport::GenericType(t) => t.leading_seam(),
+            TypeTransport::ScopedTypeIdentifier(t) => t.leading_seam(),
+            TypeTransport::TupleType(t) => t.leading_seam(),
+            TypeTransport::UnitType(t) => t.leading_seam(),
+            TypeTransport::ArrayType(t) => t.leading_seam(),
+            TypeTransport::FunctionType(t) => t.leading_seam(),
+            TypeTransport::TypeIdentifier(t) => t.leading_seam(),
+            TypeTransport::MacroInvocation(t) => t.leading_seam(),
+            TypeTransport::NeverType(t) => t.leading_seam(),
+            TypeTransport::DynamicType(t) => t.leading_seam(),
+            TypeTransport::BoundedType(t) => t.leading_seam(),
+            TypeTransport::RemovedTraitBound(t) => t.leading_seam(),
+            TypeTransport::PrimitiveType(t) => t.leading_seam(),
         }
     }
 }
@@ -5170,6 +5838,12 @@ impl ::sittir_core::prepare::Prepare for PointerTypeTransport {
             PointerTypeTransport::PointerTypeMut(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            PointerTypeTransport::PointerTypeConst(t) => t.leading_seam(),
+            PointerTypeTransport::PointerTypeMut(t) => t.leading_seam(),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -5423,6 +6097,76 @@ impl ::sittir_core::prepare::Prepare for ExpressionTransport {
             ExpressionTransport::ConstBlock(t) => t.prepare(ctx),
             ExpressionTransport::RangeExpression(t) => t.prepare(ctx),
             ExpressionTransport::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            ExpressionTransport::UnaryExpression(t) => t.leading_seam(),
+            ExpressionTransport::ReferenceExpression(t) => t.leading_seam(),
+            ExpressionTransport::TryExpression(t) => t.leading_seam(),
+            ExpressionTransport::BinaryExpression(t) => t.leading_seam(),
+            ExpressionTransport::AssignmentExpression(t) => t.leading_seam(),
+            ExpressionTransport::CompoundAssignmentExpr(t) => t.leading_seam(),
+            ExpressionTransport::TypeCastExpression(t) => t.leading_seam(),
+            ExpressionTransport::CallExpression(t) => t.leading_seam(),
+            ExpressionTransport::ReturnExpression(t) => t.leading_seam(),
+            ExpressionTransport::YieldExpression(t) => t.leading_seam(),
+            ExpressionTransport::StringLiteral(t) => t.leading_seam(),
+            ExpressionTransport::RawStringLiteral(t) => t.leading_seam(),
+            ExpressionTransport::CharLiteral(t) => t.leading_seam(),
+            ExpressionTransport::BooleanLiteral(t) => t.leading_seam(),
+            ExpressionTransport::IntegerLiteral(t) => t.leading_seam(),
+            ExpressionTransport::FloatLiteral(t) => t.leading_seam(),
+            ExpressionTransport::Identifier(t) => t.leading_seam(),
+            ExpressionTransport::U8Keyword(t) => t.leading_seam(),
+            ExpressionTransport::I8Keyword(t) => t.leading_seam(),
+            ExpressionTransport::U16Keyword(t) => t.leading_seam(),
+            ExpressionTransport::I16Keyword(t) => t.leading_seam(),
+            ExpressionTransport::U32Keyword(t) => t.leading_seam(),
+            ExpressionTransport::I32Keyword(t) => t.leading_seam(),
+            ExpressionTransport::U64Keyword(t) => t.leading_seam(),
+            ExpressionTransport::I64Keyword(t) => t.leading_seam(),
+            ExpressionTransport::U128Keyword(t) => t.leading_seam(),
+            ExpressionTransport::I128Keyword(t) => t.leading_seam(),
+            ExpressionTransport::IsizeKeyword(t) => t.leading_seam(),
+            ExpressionTransport::UsizeKeyword(t) => t.leading_seam(),
+            ExpressionTransport::F32Keyword(t) => t.leading_seam(),
+            ExpressionTransport::F64Keyword(t) => t.leading_seam(),
+            ExpressionTransport::BoolKeyword(t) => t.leading_seam(),
+            ExpressionTransport::StrKeyword(t) => t.leading_seam(),
+            ExpressionTransport::CharKeyword(t) => t.leading_seam(),
+            ExpressionTransport::DefaultKeyword(t) => t.leading_seam(),
+            ExpressionTransport::UnionKeyword(t) => t.leading_seam(),
+            ExpressionTransport::GenKeyword(t) => t.leading_seam(),
+            ExpressionTransport::Self_(t) => t.leading_seam(),
+            ExpressionTransport::ScopedIdentifier(t) => t.leading_seam(),
+            ExpressionTransport::GenericFunction(t) => t.leading_seam(),
+            ExpressionTransport::AwaitExpression(t) => t.leading_seam(),
+            ExpressionTransport::FieldExpression(t) => t.leading_seam(),
+            ExpressionTransport::ArrayExpression(t) => t.leading_seam(),
+            ExpressionTransport::TupleExpression(t) => t.leading_seam(),
+            ExpressionTransport::MacroInvocation(t) => t.leading_seam(),
+            ExpressionTransport::UnitExpression(t) => t.leading_seam(),
+            ExpressionTransport::BreakExpression(t) => t.leading_seam(),
+            ExpressionTransport::ContinueExpression(t) => t.leading_seam(),
+            ExpressionTransport::IndexExpression(t) => t.leading_seam(),
+            ExpressionTransport::Metavariable(t) => t.leading_seam(),
+            ExpressionTransport::ClosureExpression(t) => t.leading_seam(),
+            ExpressionTransport::ParenthesizedExpression(t) => t.leading_seam(),
+            ExpressionTransport::StructExpression(t) => t.leading_seam(),
+            ExpressionTransport::UnsafeBlock(t) => t.leading_seam(),
+            ExpressionTransport::AsyncBlock(t) => t.leading_seam(),
+            ExpressionTransport::GenBlock(t) => t.leading_seam(),
+            ExpressionTransport::TryBlock(t) => t.leading_seam(),
+            ExpressionTransport::Block(t) => t.leading_seam(),
+            ExpressionTransport::IfExpression(t) => t.leading_seam(),
+            ExpressionTransport::MatchExpression(t) => t.leading_seam(),
+            ExpressionTransport::WhileExpression(t) => t.leading_seam(),
+            ExpressionTransport::LoopExpression(t) => t.leading_seam(),
+            ExpressionTransport::ForExpression(t) => t.leading_seam(),
+            ExpressionTransport::ConstBlock(t) => t.leading_seam(),
+            ExpressionTransport::RangeExpression(t) => t.leading_seam(),
+            ExpressionTransport::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -6917,6 +7661,13 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeTransport {
             DelimTokenTreeTransport::DelimTokenTreeBrace(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            DelimTokenTreeTransport::DelimTokenTreeParen(t) => t.leading_seam(),
+            DelimTokenTreeTransport::DelimTokenTreeBracket(t) => t.leading_seam(),
+            DelimTokenTreeTransport::DelimTokenTreeBrace(t) => t.leading_seam(),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -7052,6 +7803,14 @@ impl ::sittir_core::prepare::Prepare for RangeExpressionTransport {
             RangeExpressionTransport::RangeExpressionPostfix(t) => t.prepare(ctx),
             RangeExpressionTransport::RangeExpressionPrefix(t) => t.prepare(ctx),
             RangeExpressionTransport::RangeExpressionBare(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            RangeExpressionTransport::RangeExpressionBinary(t) => t.leading_seam(),
+            RangeExpressionTransport::RangeExpressionPostfix(t) => t.leading_seam(),
+            RangeExpressionTransport::RangeExpressionPrefix(t) => t.leading_seam(),
+            RangeExpressionTransport::RangeExpressionBare(t) => t.leading_seam(),
         }
     }
 }
@@ -7213,6 +7972,14 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionTransport {
             ReferenceExpressionTransport::ReferenceExpressionBare(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            ReferenceExpressionTransport::ReferenceExpressionRawConst(t) => t.leading_seam(),
+            ReferenceExpressionTransport::ReferenceExpressionRawMut(t) => t.leading_seam(),
+            ReferenceExpressionTransport::ReferenceExpressionMut(t) => t.leading_seam(),
+            ReferenceExpressionTransport::ReferenceExpressionBare(t) => t.leading_seam(),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -7368,6 +8135,12 @@ impl ::sittir_core::prepare::Prepare for ArrayExpressionTransport {
             ArrayExpressionTransport::ArrayExpressionList(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            ArrayExpressionTransport::ArrayExpressionSemi(t) => t.leading_seam(),
+            ArrayExpressionTransport::ArrayExpressionList(t) => t.leading_seam(),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -7495,6 +8268,12 @@ impl ::sittir_core::prepare::Prepare for MatchArmTransport {
             MatchArmTransport::MatchArmBlockEnding(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            MatchArmTransport::MatchArmWithComma(t) => t.leading_seam(),
+            MatchArmTransport::MatchArmBlockEnding(t) => t.leading_seam(),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -7613,6 +8392,12 @@ impl ::sittir_core::prepare::Prepare for ClosureExpressionTransport {
         match self {
             ClosureExpressionTransport::ClosureExpressionBlock(t) => t.prepare(ctx),
             ClosureExpressionTransport::ClosureExpressionExpr(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            ClosureExpressionTransport::ClosureExpressionBlock(t) => t.leading_seam(),
+            ClosureExpressionTransport::ClosureExpressionExpr(t) => t.leading_seam(),
         }
     }
 }
@@ -7814,6 +8599,49 @@ impl ::sittir_core::prepare::Prepare for PatternTransport {
             PatternTransport::MacroInvocation(t) => t.prepare(ctx),
             PatternTransport::WildcardPattern(t) => t.prepare(ctx),
             PatternTransport::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            PatternTransport::LiteralPattern(t) => t.leading_seam(),
+            PatternTransport::U8Keyword(t) => t.leading_seam(),
+            PatternTransport::I8Keyword(t) => t.leading_seam(),
+            PatternTransport::U16Keyword(t) => t.leading_seam(),
+            PatternTransport::I16Keyword(t) => t.leading_seam(),
+            PatternTransport::U32Keyword(t) => t.leading_seam(),
+            PatternTransport::I32Keyword(t) => t.leading_seam(),
+            PatternTransport::U64Keyword(t) => t.leading_seam(),
+            PatternTransport::I64Keyword(t) => t.leading_seam(),
+            PatternTransport::U128Keyword(t) => t.leading_seam(),
+            PatternTransport::I128Keyword(t) => t.leading_seam(),
+            PatternTransport::IsizeKeyword(t) => t.leading_seam(),
+            PatternTransport::UsizeKeyword(t) => t.leading_seam(),
+            PatternTransport::F32Keyword(t) => t.leading_seam(),
+            PatternTransport::F64Keyword(t) => t.leading_seam(),
+            PatternTransport::BoolKeyword(t) => t.leading_seam(),
+            PatternTransport::StrKeyword(t) => t.leading_seam(),
+            PatternTransport::CharKeyword(t) => t.leading_seam(),
+            PatternTransport::Identifier(t) => t.leading_seam(),
+            PatternTransport::ScopedIdentifier(t) => t.leading_seam(),
+            PatternTransport::GenericPattern(t) => t.leading_seam(),
+            PatternTransport::TuplePattern(t) => t.leading_seam(),
+            PatternTransport::TupleStructPattern(t) => t.leading_seam(),
+            PatternTransport::StructPattern(t) => t.leading_seam(),
+            PatternTransport::DefaultKeyword(t) => t.leading_seam(),
+            PatternTransport::UnionKeyword(t) => t.leading_seam(),
+            PatternTransport::GenKeyword(t) => t.leading_seam(),
+            PatternTransport::RefPattern(t) => t.leading_seam(),
+            PatternTransport::SlicePattern(t) => t.leading_seam(),
+            PatternTransport::CapturedPattern(t) => t.leading_seam(),
+            PatternTransport::ReferencePattern(t) => t.leading_seam(),
+            PatternTransport::RemainingFieldPattern(t) => t.leading_seam(),
+            PatternTransport::MutPattern(t) => t.leading_seam(),
+            PatternTransport::RangePattern(t) => t.leading_seam(),
+            PatternTransport::OrPattern(t) => t.leading_seam(),
+            PatternTransport::ConstBlock(t) => t.leading_seam(),
+            PatternTransport::MacroInvocation(t) => t.leading_seam(),
+            PatternTransport::WildcardPattern(t) => t.leading_seam(),
+            PatternTransport::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -8547,6 +9375,12 @@ impl ::sittir_core::prepare::Prepare for RangePatternTransport {
             RangePatternTransport::RangePatternPrefix(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            RangePatternTransport::RangePatternWithLeft(t) => t.leading_seam(),
+            RangePatternTransport::RangePatternPrefix(t) => t.leading_seam(),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -8672,6 +9506,12 @@ impl ::sittir_core::prepare::Prepare for OrPatternTransport {
         match self {
             OrPatternTransport::OrPatternBinary(t) => t.prepare(ctx),
             OrPatternTransport::OrPatternPrefix(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            OrPatternTransport::OrPatternBinary(t) => t.leading_seam(),
+            OrPatternTransport::OrPatternPrefix(t) => t.leading_seam(),
         }
     }
 }
@@ -8811,6 +9651,18 @@ impl ::sittir_core::prepare::Prepare for LiteralPatternTransport {
             LiteralPatternTransport::FloatLiteral(t) => t.prepare(ctx),
             LiteralPatternTransport::NegativeLiteral(t) => t.prepare(ctx),
             LiteralPatternTransport::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            LiteralPatternTransport::StringLiteral(t) => t.leading_seam(),
+            LiteralPatternTransport::RawStringLiteral(t) => t.leading_seam(),
+            LiteralPatternTransport::CharLiteral(t) => t.leading_seam(),
+            LiteralPatternTransport::BooleanLiteral(t) => t.leading_seam(),
+            LiteralPatternTransport::IntegerLiteral(t) => t.leading_seam(),
+            LiteralPatternTransport::FloatLiteral(t) => t.leading_seam(),
+            LiteralPatternTransport::NegativeLiteral(t) => t.leading_seam(),
+            LiteralPatternTransport::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -9098,6 +9950,14 @@ impl ::sittir_core::prepare::Prepare for IntegerLiteralTransport {
             IntegerLiteralTransport::IntegerLiteralOctal(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            IntegerLiteralTransport::IntegerLiteralDecimal(t) => t.leading_seam(),
+            IntegerLiteralTransport::IntegerLiteralHex(t) => t.leading_seam(),
+            IntegerLiteralTransport::IntegerLiteralBinary(t) => t.leading_seam(),
+            IntegerLiteralTransport::IntegerLiteralOctal(t) => t.leading_seam(),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -9255,6 +10115,14 @@ impl ::sittir_core::prepare::Prepare for CharLiteralTransport {
             CharLiteralTransport::CharLiteralPlain(t) => t.prepare(ctx),
             CharLiteralTransport::CharLiteralEmpty(t) => t.prepare(ctx),
             CharLiteralTransport::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            CharLiteralTransport::CharLiteralEscaped(t) => t.leading_seam(),
+            CharLiteralTransport::CharLiteralPlain(t) => t.leading_seam(),
+            CharLiteralTransport::CharLiteralEmpty(t) => t.leading_seam(),
+            CharLiteralTransport::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -9432,6 +10300,14 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEscapedTransport {
             CharLiteralEscapedTransport::CharLiteralEscapedHex(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            CharLiteralEscapedTransport::CharLiteralEscapedSimple(t) => t.leading_seam(),
+            CharLiteralEscapedTransport::CharLiteralEscapedUnicodeFixed(t) => t.leading_seam(),
+            CharLiteralEscapedTransport::CharLiteralEscapedUnicodeBraced(t) => t.leading_seam(),
+            CharLiteralEscapedTransport::CharLiteralEscapedHex(t) => t.leading_seam(),
+        }
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -9606,6 +10482,22 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementContentTransportSlot
             ExpressionStatementContentTransportSlot::LoopExpression(t) => t.prepare(ctx),
             ExpressionStatementContentTransportSlot::ForExpression(t) => t.prepare(ctx),
             ExpressionStatementContentTransportSlot::ConstBlock(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            ExpressionStatementContentTransportSlot::ExpressionStatementWithSemi(t) => t.leading_seam(),
+            ExpressionStatementContentTransportSlot::UnsafeBlock(t) => t.leading_seam(),
+            ExpressionStatementContentTransportSlot::AsyncBlock(t) => t.leading_seam(),
+            ExpressionStatementContentTransportSlot::GenBlock(t) => t.leading_seam(),
+            ExpressionStatementContentTransportSlot::TryBlock(t) => t.leading_seam(),
+            ExpressionStatementContentTransportSlot::Block(t) => t.leading_seam(),
+            ExpressionStatementContentTransportSlot::IfExpression(t) => t.leading_seam(),
+            ExpressionStatementContentTransportSlot::MatchExpression(t) => t.leading_seam(),
+            ExpressionStatementContentTransportSlot::WhileExpression(t) => t.leading_seam(),
+            ExpressionStatementContentTransportSlot::LoopExpression(t) => t.leading_seam(),
+            ExpressionStatementContentTransportSlot::ForExpression(t) => t.leading_seam(),
+            ExpressionStatementContentTransportSlot::ConstBlock(t) => t.leading_seam(),
         }
     }
 }
@@ -10015,6 +10907,17 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionPatternTokenPatternsTran
             TokenRepetitionPatternTokenPatternsTransportSlot::NonSpecialToken(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            TokenRepetitionPatternTokenPatternsTransportSlot::TokenTreePatternParen(t) => t.leading_seam(),
+            TokenRepetitionPatternTokenPatternsTransportSlot::TokenTreePatternBracket(t) => t.leading_seam(),
+            TokenRepetitionPatternTokenPatternsTransportSlot::TokenTreePatternBrace(t) => t.leading_seam(),
+            TokenRepetitionPatternTokenPatternsTransportSlot::TokenRepetitionPattern(t) => t.leading_seam(),
+            TokenRepetitionPatternTokenPatternsTransportSlot::TokenBindingPattern(t) => t.leading_seam(),
+            TokenRepetitionPatternTokenPatternsTransportSlot::Metavariable(t) => t.leading_seam(),
+            TokenRepetitionPatternTokenPatternsTransportSlot::NonSpecialToken(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for TokenRepetitionPatternTokenPatternsTransportSlot {
@@ -10289,6 +11192,16 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionTokensTransportSlot {
             TokenRepetitionTokensTransportSlot::TokenRepetition(t) => t.prepare(ctx),
             TokenRepetitionTokensTransportSlot::Metavariable(t) => t.prepare(ctx),
             TokenRepetitionTokensTransportSlot::NonSpecialToken(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            TokenRepetitionTokensTransportSlot::TokenTreeParen(t) => t.leading_seam(),
+            TokenRepetitionTokensTransportSlot::TokenTreeBracket(t) => t.leading_seam(),
+            TokenRepetitionTokensTransportSlot::TokenTreeBrace(t) => t.leading_seam(),
+            TokenRepetitionTokensTransportSlot::TokenRepetition(t) => t.leading_seam(),
+            TokenRepetitionTokensTransportSlot::Metavariable(t) => t.leading_seam(),
+            TokenRepetitionTokensTransportSlot::NonSpecialToken(t) => t.leading_seam(),
         }
     }
 }
@@ -10764,6 +11677,120 @@ impl ::sittir_core::prepare::Prepare for NonSpecialTokenContentTransportSlot {
             NonSpecialTokenContentTransportSlot::Literal107_77_68_65_72_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
             NonSpecialTokenContentTransportSlot::Literal108_77_68_69_6c_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
             NonSpecialTokenContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            NonSpecialTokenContentTransportSlot::StringLiteral(t) => t.leading_seam(),
+            NonSpecialTokenContentTransportSlot::RawStringLiteral(t) => t.leading_seam(),
+            NonSpecialTokenContentTransportSlot::CharLiteralEscapedSimple(t) => t.leading_seam(),
+            NonSpecialTokenContentTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.leading_seam(),
+            NonSpecialTokenContentTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.leading_seam(),
+            NonSpecialTokenContentTransportSlot::CharLiteralEscapedHex(t) => t.leading_seam(),
+            NonSpecialTokenContentTransportSlot::CharLiteralPlain(t) => t.leading_seam(),
+            NonSpecialTokenContentTransportSlot::CharLiteralEmpty(t) => t.leading_seam(),
+            NonSpecialTokenContentTransportSlot::BooleanLiteral(t) => t.leading_seam(),
+            NonSpecialTokenContentTransportSlot::IntegerLiteralDecimal(t) => t.leading_seam(),
+            NonSpecialTokenContentTransportSlot::IntegerLiteralHex(t) => t.leading_seam(),
+            NonSpecialTokenContentTransportSlot::IntegerLiteralBinary(t) => t.leading_seam(),
+            NonSpecialTokenContentTransportSlot::IntegerLiteralOctal(t) => t.leading_seam(),
+            NonSpecialTokenContentTransportSlot::FloatLiteral(t) => t.leading_seam(),
+            NonSpecialTokenContentTransportSlot::Identifier(t) => t.leading_seam(),
+            NonSpecialTokenContentTransportSlot::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72 => None,
+            NonSpecialTokenContentTransportSlot::Literal19_73_65_6c_66 => None,
+            NonSpecialTokenContentTransportSlot::Literal20_73_75_70_65_72 => None,
+            NonSpecialTokenContentTransportSlot::Literal21_63_72_61_74_65 => None,
+            NonSpecialTokenContentTransportSlot::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal15_70_6c_75_73 => None,
+            NonSpecialTokenContentTransportSlot::Literal39_64_61_73_68 => None,
+            NonSpecialTokenContentTransportSlot::Literal16_73_74_61_72 => None,
+            NonSpecialTokenContentTransportSlot::Literal40_73_6c_61_73_68 => None,
+            NonSpecialTokenContentTransportSlot::Literal41_70_65_72_63_65_6e_74 => None,
+            NonSpecialTokenContentTransportSlot::Literal42_63_61_72_65_74 => None,
+            NonSpecialTokenContentTransportSlot::Literal43_62_61_6e_67 => None,
+            NonSpecialTokenContentTransportSlot::Literal44_61_6d_70 => None,
+            NonSpecialTokenContentTransportSlot::Literal45_70_69_70_65 => None,
+            NonSpecialTokenContentTransportSlot::Literal46_61_6d_70_5f_61_6d_70 => None,
+            NonSpecialTokenContentTransportSlot::Literal47_70_69_70_65_5f_70_69_70_65 => None,
+            NonSpecialTokenContentTransportSlot::Literal48_6c_74_5f_6c_74 => None,
+            NonSpecialTokenContentTransportSlot::Literal49_67_74_5f_67_74 => None,
+            NonSpecialTokenContentTransportSlot::Literal50_70_6c_75_73_5f_65_71 => None,
+            NonSpecialTokenContentTransportSlot::Literal51_64_61_73_68_5f_65_71 => None,
+            NonSpecialTokenContentTransportSlot::Literal52_73_74_61_72_5f_65_71 => None,
+            NonSpecialTokenContentTransportSlot::Literal53_73_6c_61_73_68_5f_65_71 => None,
+            NonSpecialTokenContentTransportSlot::Literal54_70_65_72_63_65_6e_74_5f_65_71 => None,
+            NonSpecialTokenContentTransportSlot::Literal55_63_61_72_65_74_5f_65_71 => None,
+            NonSpecialTokenContentTransportSlot::Literal56_61_6d_70_5f_65_71 => None,
+            NonSpecialTokenContentTransportSlot::Literal57_70_69_70_65_5f_65_71 => None,
+            NonSpecialTokenContentTransportSlot::Literal58_6c_74_5f_6c_74_5f_65_71 => None,
+            NonSpecialTokenContentTransportSlot::Literal59_67_74_5f_67_74_5f_65_71 => None,
+            NonSpecialTokenContentTransportSlot::Literal60_65_71 => None,
+            NonSpecialTokenContentTransportSlot::Literal61_65_71_5f_65_71 => None,
+            NonSpecialTokenContentTransportSlot::Literal62_62_61_6e_67_5f_65_71 => None,
+            NonSpecialTokenContentTransportSlot::Literal63_67_74 => None,
+            NonSpecialTokenContentTransportSlot::Literal64_6c_74 => None,
+            NonSpecialTokenContentTransportSlot::Literal65_67_74_5f_65_71 => None,
+            NonSpecialTokenContentTransportSlot::Literal66_6c_74_5f_65_71 => None,
+            NonSpecialTokenContentTransportSlot::Literal67_61_74 => None,
+            NonSpecialTokenContentTransportSlot::Literal68_75_6e_64_65_72_73_63_6f_72_65 => None,
+            NonSpecialTokenContentTransportSlot::Literal69_64_6f_74 => None,
+            NonSpecialTokenContentTransportSlot::Literal70_64_6f_74_5f_64_6f_74 => None,
+            NonSpecialTokenContentTransportSlot::Literal71_64_6f_74_5f_64_6f_74_5f_64_6f_74 => None,
+            NonSpecialTokenContentTransportSlot::Literal72_64_6f_74_5f_64_6f_74_5f_65_71 => None,
+            NonSpecialTokenContentTransportSlot::Literal73_63_6f_6d_6d_61 => None,
+            NonSpecialTokenContentTransportSlot::Literal74_73_65_6d_69 => None,
+            NonSpecialTokenContentTransportSlot::Literal75_63_6f_6c_6f_6e => None,
+            NonSpecialTokenContentTransportSlot::Literal76_63_6f_6c_6f_6e_5f_63_6f_6c_6f_6e => None,
+            NonSpecialTokenContentTransportSlot::Literal77_64_61_73_68_5f_67_74 => None,
+            NonSpecialTokenContentTransportSlot::Literal78_65_71_5f_67_74 => None,
+            NonSpecialTokenContentTransportSlot::Literal79_70_6f_75_6e_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal17_71_6d_61_72_6b => None,
+            NonSpecialTokenContentTransportSlot::Literal80_73_71_75_6f_74_65 => None,
+            NonSpecialTokenContentTransportSlot::Literal81_61_73_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal82_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal83_61_77_61_69_74_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal84_62_72_65_61_6b_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal85_63_6f_6e_73_74_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal86_63_6f_6e_74_69_6e_75_65_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal88_65_6e_75_6d_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal89_66_6e_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal90_66_6f_72_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal92_69_66_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal93_69_6d_70_6c_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal94_6c_65_74_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal95_6c_6f_6f_70_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal96_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal97_6d_6f_64_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal98_70_75_62_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal99_72_65_74_75_72_6e_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal100_73_74_61_74_69_63_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal101_73_74_72_75_63_74_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal102_74_72_61_69_74_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal103_74_79_70_65_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal105_75_6e_73_61_66_65_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal106_75_73_65_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal107_77_68_65_72_65_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Literal108_77_68_69_6c_65_5f_6b_65_79_77_6f_72_64 => None,
+            NonSpecialTokenContentTransportSlot::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -11972,6 +12999,37 @@ impl ::sittir_core::prepare::Prepare for AttributePathTransportSlot {
             AttributePathTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            AttributePathTransportSlot::Metavariable(t) => t.leading_seam(),
+            AttributePathTransportSlot::Identifier(t) => t.leading_seam(),
+            AttributePathTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            AttributePathTransportSlot::Literal19_73_65_6c_66 => None,
+            AttributePathTransportSlot::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => None,
+            AttributePathTransportSlot::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => None,
+            AttributePathTransportSlot::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            AttributePathTransportSlot::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            AttributePathTransportSlot::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            AttributePathTransportSlot::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            AttributePathTransportSlot::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            AttributePathTransportSlot::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            AttributePathTransportSlot::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            AttributePathTransportSlot::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            AttributePathTransportSlot::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            AttributePathTransportSlot::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            AttributePathTransportSlot::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            AttributePathTransportSlot::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            AttributePathTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => None,
+            AttributePathTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => None,
+            AttributePathTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => None,
+            AttributePathTransportSlot::Literal20_73_75_70_65_72 => None,
+            AttributePathTransportSlot::Literal21_63_72_61_74_65 => None,
+            AttributePathTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => None,
+            AttributePathTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => None,
+            AttributePathTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => None,
+            AttributePathTransportSlot::Verbatim(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for AttributePathTransportSlot {
@@ -12213,6 +13271,12 @@ impl ::sittir_core::prepare::Prepare for EnumVariantBodyTransportSlot {
         match self {
             EnumVariantBodyTransportSlot::FieldDeclarationList(t) => t.prepare(ctx),
             EnumVariantBodyTransportSlot::OrderedFieldDeclarationList(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            EnumVariantBodyTransportSlot::FieldDeclarationList(t) => t.leading_seam(),
+            EnumVariantBodyTransportSlot::OrderedFieldDeclarationList(t) => t.leading_seam(),
         }
     }
 }
@@ -12523,6 +13587,13 @@ impl ::sittir_core::prepare::Prepare for FunctionItemNameTransportSlot {
             FunctionItemNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            FunctionItemNameTransportSlot::Identifier(t) => t.leading_seam(),
+            FunctionItemNameTransportSlot::Metavariable(t) => t.leading_seam(),
+            FunctionItemNameTransportSlot::Verbatim(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for FunctionItemNameTransportSlot {
@@ -12762,6 +13833,13 @@ impl ::sittir_core::prepare::Prepare for FunctionSignatureItemNameTransportSlot 
             FunctionSignatureItemNameTransportSlot::Identifier(t) => t.prepare(ctx),
             FunctionSignatureItemNameTransportSlot::Metavariable(t) => t.prepare(ctx),
             FunctionSignatureItemNameTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            FunctionSignatureItemNameTransportSlot::Identifier(t) => t.leading_seam(),
+            FunctionSignatureItemNameTransportSlot::Metavariable(t) => t.leading_seam(),
+            FunctionSignatureItemNameTransportSlot::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -13009,6 +14087,15 @@ impl ::sittir_core::prepare::Prepare for FunctionModifiersModifierTransportSlot 
             FunctionModifiersModifierTransportSlot::Literal105_75_6e_73_61_66_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            FunctionModifiersModifierTransportSlot::ExternModifier(t) => t.leading_seam(),
+            FunctionModifiersModifierTransportSlot::Literal82_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => None,
+            FunctionModifiersModifierTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => None,
+            FunctionModifiersModifierTransportSlot::Literal85_63_6f_6e_73_74_5f_6b_65_79_77_6f_72_64 => None,
+            FunctionModifiersModifierTransportSlot::Literal105_75_6e_73_61_66_65_5f_6b_65_79_77_6f_72_64 => None,
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for FunctionModifiersModifierTransportSlot {
@@ -13180,6 +14267,37 @@ impl ::sittir_core::prepare::Prepare for WherePredicateLeftTransportSlot {
             WherePredicateLeftTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => Ok(()),
             WherePredicateLeftTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => Ok(()),
             WherePredicateLeftTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => Ok(()),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            WherePredicateLeftTransportSlot::Lifetime(t) => t.leading_seam(),
+            WherePredicateLeftTransportSlot::TypeIdentifier(t) => t.leading_seam(),
+            WherePredicateLeftTransportSlot::ScopedTypeIdentifier(t) => t.leading_seam(),
+            WherePredicateLeftTransportSlot::GenericType(t) => t.leading_seam(),
+            WherePredicateLeftTransportSlot::ReferenceType(t) => t.leading_seam(),
+            WherePredicateLeftTransportSlot::PointerTypeConst(t) => t.leading_seam(),
+            WherePredicateLeftTransportSlot::PointerTypeMut(t) => t.leading_seam(),
+            WherePredicateLeftTransportSlot::TupleType(t) => t.leading_seam(),
+            WherePredicateLeftTransportSlot::ArrayType(t) => t.leading_seam(),
+            WherePredicateLeftTransportSlot::HigherRankedTraitBound(t) => t.leading_seam(),
+            WherePredicateLeftTransportSlot::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => None,
+            WherePredicateLeftTransportSlot::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => None,
+            WherePredicateLeftTransportSlot::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            WherePredicateLeftTransportSlot::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            WherePredicateLeftTransportSlot::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            WherePredicateLeftTransportSlot::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            WherePredicateLeftTransportSlot::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            WherePredicateLeftTransportSlot::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            WherePredicateLeftTransportSlot::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            WherePredicateLeftTransportSlot::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            WherePredicateLeftTransportSlot::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            WherePredicateLeftTransportSlot::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            WherePredicateLeftTransportSlot::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            WherePredicateLeftTransportSlot::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            WherePredicateLeftTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => None,
+            WherePredicateLeftTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => None,
+            WherePredicateLeftTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => None,
         }
     }
 }
@@ -13582,6 +14700,30 @@ impl ::sittir_core::prepare::Prepare for TraitBoundsBoundsTransportSlot {
             TraitBoundsBoundsTransportSlot::PrimitiveType(t) => t.prepare(ctx),
             TraitBoundsBoundsTransportSlot::Lifetime(t) => t.prepare(ctx),
             TraitBoundsBoundsTransportSlot::HigherRankedTraitBound(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            TraitBoundsBoundsTransportSlot::AbstractType(t) => t.leading_seam(),
+            TraitBoundsBoundsTransportSlot::ReferenceType(t) => t.leading_seam(),
+            TraitBoundsBoundsTransportSlot::Metavariable(t) => t.leading_seam(),
+            TraitBoundsBoundsTransportSlot::PointerTypeConst(t) => t.leading_seam(),
+            TraitBoundsBoundsTransportSlot::PointerTypeMut(t) => t.leading_seam(),
+            TraitBoundsBoundsTransportSlot::GenericType(t) => t.leading_seam(),
+            TraitBoundsBoundsTransportSlot::ScopedTypeIdentifier(t) => t.leading_seam(),
+            TraitBoundsBoundsTransportSlot::TupleType(t) => t.leading_seam(),
+            TraitBoundsBoundsTransportSlot::UnitType(t) => t.leading_seam(),
+            TraitBoundsBoundsTransportSlot::ArrayType(t) => t.leading_seam(),
+            TraitBoundsBoundsTransportSlot::FunctionType(t) => t.leading_seam(),
+            TraitBoundsBoundsTransportSlot::TypeIdentifier(t) => t.leading_seam(),
+            TraitBoundsBoundsTransportSlot::MacroInvocation(t) => t.leading_seam(),
+            TraitBoundsBoundsTransportSlot::NeverType(t) => t.leading_seam(),
+            TraitBoundsBoundsTransportSlot::DynamicType(t) => t.leading_seam(),
+            TraitBoundsBoundsTransportSlot::BoundedType(t) => t.leading_seam(),
+            TraitBoundsBoundsTransportSlot::RemovedTraitBound(t) => t.leading_seam(),
+            TraitBoundsBoundsTransportSlot::PrimitiveType(t) => t.leading_seam(),
+            TraitBoundsBoundsTransportSlot::Lifetime(t) => t.leading_seam(),
+            TraitBoundsBoundsTransportSlot::HigherRankedTraitBound(t) => t.leading_seam(),
         }
     }
 }
@@ -13990,6 +15132,28 @@ impl ::sittir_core::prepare::Prepare for ConstParameterValueTransportSlot {
             ConstParameterValueTransportSlot::FloatLiteral(t) => t.prepare(ctx),
             ConstParameterValueTransportSlot::NegativeLiteral(t) => t.prepare(ctx),
             ConstParameterValueTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            ConstParameterValueTransportSlot::Block(t) => t.leading_seam(),
+            ConstParameterValueTransportSlot::Identifier(t) => t.leading_seam(),
+            ConstParameterValueTransportSlot::StringLiteral(t) => t.leading_seam(),
+            ConstParameterValueTransportSlot::RawStringLiteral(t) => t.leading_seam(),
+            ConstParameterValueTransportSlot::CharLiteralEscapedSimple(t) => t.leading_seam(),
+            ConstParameterValueTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.leading_seam(),
+            ConstParameterValueTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.leading_seam(),
+            ConstParameterValueTransportSlot::CharLiteralEscapedHex(t) => t.leading_seam(),
+            ConstParameterValueTransportSlot::CharLiteralPlain(t) => t.leading_seam(),
+            ConstParameterValueTransportSlot::CharLiteralEmpty(t) => t.leading_seam(),
+            ConstParameterValueTransportSlot::BooleanLiteral(t) => t.leading_seam(),
+            ConstParameterValueTransportSlot::IntegerLiteralDecimal(t) => t.leading_seam(),
+            ConstParameterValueTransportSlot::IntegerLiteralHex(t) => t.leading_seam(),
+            ConstParameterValueTransportSlot::IntegerLiteralBinary(t) => t.leading_seam(),
+            ConstParameterValueTransportSlot::IntegerLiteralOctal(t) => t.leading_seam(),
+            ConstParameterValueTransportSlot::FloatLiteral(t) => t.leading_seam(),
+            ConstParameterValueTransportSlot::NegativeLiteral(t) => t.leading_seam(),
+            ConstParameterValueTransportSlot::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -14533,6 +15697,41 @@ impl ::sittir_core::prepare::Prepare for UseDeclarationArgumentTransportSlot {
             UseDeclarationArgumentTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            UseDeclarationArgumentTransportSlot::Metavariable(t) => t.leading_seam(),
+            UseDeclarationArgumentTransportSlot::Identifier(t) => t.leading_seam(),
+            UseDeclarationArgumentTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            UseDeclarationArgumentTransportSlot::UseAsClause(t) => t.leading_seam(),
+            UseDeclarationArgumentTransportSlot::UseList(t) => t.leading_seam(),
+            UseDeclarationArgumentTransportSlot::ScopedUseList(t) => t.leading_seam(),
+            UseDeclarationArgumentTransportSlot::UseWildcard(t) => t.leading_seam(),
+            UseDeclarationArgumentTransportSlot::Literal19_73_65_6c_66 => None,
+            UseDeclarationArgumentTransportSlot::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => None,
+            UseDeclarationArgumentTransportSlot::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => None,
+            UseDeclarationArgumentTransportSlot::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            UseDeclarationArgumentTransportSlot::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            UseDeclarationArgumentTransportSlot::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            UseDeclarationArgumentTransportSlot::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            UseDeclarationArgumentTransportSlot::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            UseDeclarationArgumentTransportSlot::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            UseDeclarationArgumentTransportSlot::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            UseDeclarationArgumentTransportSlot::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            UseDeclarationArgumentTransportSlot::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            UseDeclarationArgumentTransportSlot::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            UseDeclarationArgumentTransportSlot::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            UseDeclarationArgumentTransportSlot::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            UseDeclarationArgumentTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => None,
+            UseDeclarationArgumentTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => None,
+            UseDeclarationArgumentTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => None,
+            UseDeclarationArgumentTransportSlot::Literal20_73_75_70_65_72 => None,
+            UseDeclarationArgumentTransportSlot::Literal21_63_72_61_74_65 => None,
+            UseDeclarationArgumentTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => None,
+            UseDeclarationArgumentTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => None,
+            UseDeclarationArgumentTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => None,
+            UseDeclarationArgumentTransportSlot::Verbatim(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for UseDeclarationArgumentTransportSlot {
@@ -14862,6 +16061,37 @@ impl ::sittir_core::prepare::Prepare for ScopedUseListPathTransportSlot {
             ScopedUseListPathTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            ScopedUseListPathTransportSlot::Metavariable(t) => t.leading_seam(),
+            ScopedUseListPathTransportSlot::Identifier(t) => t.leading_seam(),
+            ScopedUseListPathTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            ScopedUseListPathTransportSlot::Literal19_73_65_6c_66 => None,
+            ScopedUseListPathTransportSlot::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedUseListPathTransportSlot::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedUseListPathTransportSlot::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedUseListPathTransportSlot::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedUseListPathTransportSlot::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedUseListPathTransportSlot::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedUseListPathTransportSlot::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedUseListPathTransportSlot::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedUseListPathTransportSlot::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedUseListPathTransportSlot::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedUseListPathTransportSlot::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedUseListPathTransportSlot::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedUseListPathTransportSlot::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedUseListPathTransportSlot::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedUseListPathTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedUseListPathTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedUseListPathTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedUseListPathTransportSlot::Literal20_73_75_70_65_72 => None,
+            ScopedUseListPathTransportSlot::Literal21_63_72_61_74_65 => None,
+            ScopedUseListPathTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedUseListPathTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedUseListPathTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedUseListPathTransportSlot::Verbatim(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for ScopedUseListPathTransportSlot {
@@ -15153,6 +16383,37 @@ impl ::sittir_core::prepare::Prepare for UseAsClausePathTransportSlot {
             UseAsClausePathTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             UseAsClausePathTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             UseAsClausePathTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            UseAsClausePathTransportSlot::Metavariable(t) => t.leading_seam(),
+            UseAsClausePathTransportSlot::Identifier(t) => t.leading_seam(),
+            UseAsClausePathTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            UseAsClausePathTransportSlot::Literal19_73_65_6c_66 => None,
+            UseAsClausePathTransportSlot::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => None,
+            UseAsClausePathTransportSlot::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => None,
+            UseAsClausePathTransportSlot::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            UseAsClausePathTransportSlot::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            UseAsClausePathTransportSlot::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            UseAsClausePathTransportSlot::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            UseAsClausePathTransportSlot::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            UseAsClausePathTransportSlot::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            UseAsClausePathTransportSlot::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            UseAsClausePathTransportSlot::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            UseAsClausePathTransportSlot::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            UseAsClausePathTransportSlot::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            UseAsClausePathTransportSlot::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            UseAsClausePathTransportSlot::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            UseAsClausePathTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => None,
+            UseAsClausePathTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => None,
+            UseAsClausePathTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => None,
+            UseAsClausePathTransportSlot::Literal20_73_75_70_65_72 => None,
+            UseAsClausePathTransportSlot::Literal21_63_72_61_74_65 => None,
+            UseAsClausePathTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => None,
+            UseAsClausePathTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => None,
+            UseAsClausePathTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => None,
+            UseAsClausePathTransportSlot::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -15894,6 +17155,66 @@ impl ::sittir_core::prepare::Prepare for ParameterNameTransportSlot {
             ParameterNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            ParameterNameTransportSlot::StringLiteral(t) => t.leading_seam(),
+            ParameterNameTransportSlot::RawStringLiteral(t) => t.leading_seam(),
+            ParameterNameTransportSlot::CharLiteralEscapedSimple(t) => t.leading_seam(),
+            ParameterNameTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.leading_seam(),
+            ParameterNameTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.leading_seam(),
+            ParameterNameTransportSlot::CharLiteralEscapedHex(t) => t.leading_seam(),
+            ParameterNameTransportSlot::CharLiteralPlain(t) => t.leading_seam(),
+            ParameterNameTransportSlot::CharLiteralEmpty(t) => t.leading_seam(),
+            ParameterNameTransportSlot::BooleanLiteral(t) => t.leading_seam(),
+            ParameterNameTransportSlot::IntegerLiteralDecimal(t) => t.leading_seam(),
+            ParameterNameTransportSlot::IntegerLiteralHex(t) => t.leading_seam(),
+            ParameterNameTransportSlot::IntegerLiteralBinary(t) => t.leading_seam(),
+            ParameterNameTransportSlot::IntegerLiteralOctal(t) => t.leading_seam(),
+            ParameterNameTransportSlot::FloatLiteral(t) => t.leading_seam(),
+            ParameterNameTransportSlot::NegativeLiteral(t) => t.leading_seam(),
+            ParameterNameTransportSlot::U8Keyword(t) => t.leading_seam(),
+            ParameterNameTransportSlot::I8Keyword(t) => t.leading_seam(),
+            ParameterNameTransportSlot::U16Keyword(t) => t.leading_seam(),
+            ParameterNameTransportSlot::I16Keyword(t) => t.leading_seam(),
+            ParameterNameTransportSlot::U32Keyword(t) => t.leading_seam(),
+            ParameterNameTransportSlot::I32Keyword(t) => t.leading_seam(),
+            ParameterNameTransportSlot::U64Keyword(t) => t.leading_seam(),
+            ParameterNameTransportSlot::I64Keyword(t) => t.leading_seam(),
+            ParameterNameTransportSlot::U128Keyword(t) => t.leading_seam(),
+            ParameterNameTransportSlot::I128Keyword(t) => t.leading_seam(),
+            ParameterNameTransportSlot::IsizeKeyword(t) => t.leading_seam(),
+            ParameterNameTransportSlot::UsizeKeyword(t) => t.leading_seam(),
+            ParameterNameTransportSlot::F32Keyword(t) => t.leading_seam(),
+            ParameterNameTransportSlot::F64Keyword(t) => t.leading_seam(),
+            ParameterNameTransportSlot::BoolKeyword(t) => t.leading_seam(),
+            ParameterNameTransportSlot::StrKeyword(t) => t.leading_seam(),
+            ParameterNameTransportSlot::CharKeyword(t) => t.leading_seam(),
+            ParameterNameTransportSlot::Identifier(t) => t.leading_seam(),
+            ParameterNameTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            ParameterNameTransportSlot::GenericPattern(t) => t.leading_seam(),
+            ParameterNameTransportSlot::TuplePattern(t) => t.leading_seam(),
+            ParameterNameTransportSlot::TupleStructPattern(t) => t.leading_seam(),
+            ParameterNameTransportSlot::StructPattern(t) => t.leading_seam(),
+            ParameterNameTransportSlot::DefaultKeyword(t) => t.leading_seam(),
+            ParameterNameTransportSlot::UnionKeyword(t) => t.leading_seam(),
+            ParameterNameTransportSlot::GenKeyword(t) => t.leading_seam(),
+            ParameterNameTransportSlot::RefPattern(t) => t.leading_seam(),
+            ParameterNameTransportSlot::SlicePattern(t) => t.leading_seam(),
+            ParameterNameTransportSlot::CapturedPattern(t) => t.leading_seam(),
+            ParameterNameTransportSlot::ReferencePattern(t) => t.leading_seam(),
+            ParameterNameTransportSlot::RemainingFieldPattern(t) => t.leading_seam(),
+            ParameterNameTransportSlot::MutPattern(t) => t.leading_seam(),
+            ParameterNameTransportSlot::RangePatternWithLeft(t) => t.leading_seam(),
+            ParameterNameTransportSlot::RangePatternPrefix(t) => t.leading_seam(),
+            ParameterNameTransportSlot::OrPatternBinary(t) => t.leading_seam(),
+            ParameterNameTransportSlot::OrPatternPrefix(t) => t.leading_seam(),
+            ParameterNameTransportSlot::ConstBlock(t) => t.leading_seam(),
+            ParameterNameTransportSlot::MacroInvocation(t) => t.leading_seam(),
+            ParameterNameTransportSlot::WildcardPattern(t) => t.leading_seam(),
+            ParameterNameTransportSlot::Literal19_73_65_6c_66 => None,
+            ParameterNameTransportSlot::Verbatim(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for ParameterNameTransportSlot {
@@ -16498,6 +17819,12 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierContentTransportSlot 
             VisibilityModifierContentTransportSlot::Literal21_63_72_61_74_65 => Ok(()),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            VisibilityModifierContentTransportSlot::VisibilityModifierPub(t) => t.leading_seam(),
+            VisibilityModifierContentTransportSlot::Literal21_63_72_61_74_65 => None,
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for VisibilityModifierContentTransportSlot {
@@ -16638,6 +17965,29 @@ impl ::sittir_core::prepare::Prepare for BracketedTypeTypeTransportSlot {
             BracketedTypeTypeTransportSlot::RemovedTraitBound(t) => t.prepare(ctx),
             BracketedTypeTypeTransportSlot::PrimitiveType(t) => t.prepare(ctx),
             BracketedTypeTypeTransportSlot::QualifiedType(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            BracketedTypeTypeTransportSlot::AbstractType(t) => t.leading_seam(),
+            BracketedTypeTypeTransportSlot::ReferenceType(t) => t.leading_seam(),
+            BracketedTypeTypeTransportSlot::Metavariable(t) => t.leading_seam(),
+            BracketedTypeTypeTransportSlot::PointerTypeConst(t) => t.leading_seam(),
+            BracketedTypeTypeTransportSlot::PointerTypeMut(t) => t.leading_seam(),
+            BracketedTypeTypeTransportSlot::GenericType(t) => t.leading_seam(),
+            BracketedTypeTypeTransportSlot::ScopedTypeIdentifier(t) => t.leading_seam(),
+            BracketedTypeTypeTransportSlot::TupleType(t) => t.leading_seam(),
+            BracketedTypeTypeTransportSlot::UnitType(t) => t.leading_seam(),
+            BracketedTypeTypeTransportSlot::ArrayType(t) => t.leading_seam(),
+            BracketedTypeTypeTransportSlot::FunctionType(t) => t.leading_seam(),
+            BracketedTypeTypeTransportSlot::TypeIdentifier(t) => t.leading_seam(),
+            BracketedTypeTypeTransportSlot::MacroInvocation(t) => t.leading_seam(),
+            BracketedTypeTypeTransportSlot::NeverType(t) => t.leading_seam(),
+            BracketedTypeTypeTransportSlot::DynamicType(t) => t.leading_seam(),
+            BracketedTypeTypeTransportSlot::BoundedType(t) => t.leading_seam(),
+            BracketedTypeTypeTransportSlot::RemovedTraitBound(t) => t.leading_seam(),
+            BracketedTypeTypeTransportSlot::PrimitiveType(t) => t.leading_seam(),
+            BracketedTypeTypeTransportSlot::QualifiedType(t) => t.leading_seam(),
         }
     }
 }
@@ -17007,6 +18357,12 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeContentTransportSlot {
             FunctionTypeContentTransportSlot::FunctionTypeFnForm(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            FunctionTypeContentTransportSlot::FunctionTypeTraitForm(t) => t.leading_seam(),
+            FunctionTypeContentTransportSlot::FunctionTypeFnForm(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for FunctionTypeContentTransportSlot {
@@ -17121,6 +18477,14 @@ impl ::sittir_core::prepare::Prepare for GenericFunctionFunctionTransportSlot {
             GenericFunctionFunctionTransportSlot::ScopedIdentifier(t) => t.prepare(ctx),
             GenericFunctionFunctionTransportSlot::FieldExpression(t) => t.prepare(ctx),
             GenericFunctionFunctionTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            GenericFunctionFunctionTransportSlot::Identifier(t) => t.leading_seam(),
+            GenericFunctionFunctionTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            GenericFunctionFunctionTransportSlot::FieldExpression(t) => t.leading_seam(),
+            GenericFunctionFunctionTransportSlot::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -17377,6 +18741,15 @@ impl ::sittir_core::prepare::Prepare for GenericTypeTypeTransportSlot {
             GenericTypeTypeTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            GenericTypeTypeTransportSlot::TypeIdentifier(t) => t.leading_seam(),
+            GenericTypeTypeTransportSlot::ScopedTypeIdentifier(t) => t.leading_seam(),
+            GenericTypeTypeTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => None,
+            GenericTypeTypeTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => None,
+            GenericTypeTypeTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => None,
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for GenericTypeTypeTransportSlot {
@@ -17502,6 +18875,12 @@ impl ::sittir_core::prepare::Prepare for GenericTypeWithTurbofishTypeTransportSl
         match self {
             GenericTypeWithTurbofishTypeTransportSlot::TypeIdentifier(t) => t.prepare(ctx),
             GenericTypeWithTurbofishTypeTransportSlot::ScopedIdentifier(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            GenericTypeWithTurbofishTypeTransportSlot::TypeIdentifier(t) => t.leading_seam(),
+            GenericTypeWithTurbofishTypeTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
         }
     }
 }
@@ -17650,6 +19029,30 @@ impl ::sittir_core::prepare::Prepare for BoundedTypeLeftTransportSlot {
             BoundedTypeLeftTransportSlot::RemovedTraitBound(t) => t.prepare(ctx),
             BoundedTypeLeftTransportSlot::PrimitiveType(t) => t.prepare(ctx),
             BoundedTypeLeftTransportSlot::UseBounds(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            BoundedTypeLeftTransportSlot::Lifetime(t) => t.leading_seam(),
+            BoundedTypeLeftTransportSlot::AbstractType(t) => t.leading_seam(),
+            BoundedTypeLeftTransportSlot::ReferenceType(t) => t.leading_seam(),
+            BoundedTypeLeftTransportSlot::Metavariable(t) => t.leading_seam(),
+            BoundedTypeLeftTransportSlot::PointerTypeConst(t) => t.leading_seam(),
+            BoundedTypeLeftTransportSlot::PointerTypeMut(t) => t.leading_seam(),
+            BoundedTypeLeftTransportSlot::GenericType(t) => t.leading_seam(),
+            BoundedTypeLeftTransportSlot::ScopedTypeIdentifier(t) => t.leading_seam(),
+            BoundedTypeLeftTransportSlot::TupleType(t) => t.leading_seam(),
+            BoundedTypeLeftTransportSlot::UnitType(t) => t.leading_seam(),
+            BoundedTypeLeftTransportSlot::ArrayType(t) => t.leading_seam(),
+            BoundedTypeLeftTransportSlot::FunctionType(t) => t.leading_seam(),
+            BoundedTypeLeftTransportSlot::TypeIdentifier(t) => t.leading_seam(),
+            BoundedTypeLeftTransportSlot::MacroInvocation(t) => t.leading_seam(),
+            BoundedTypeLeftTransportSlot::NeverType(t) => t.leading_seam(),
+            BoundedTypeLeftTransportSlot::DynamicType(t) => t.leading_seam(),
+            BoundedTypeLeftTransportSlot::BoundedType(t) => t.leading_seam(),
+            BoundedTypeLeftTransportSlot::RemovedTraitBound(t) => t.leading_seam(),
+            BoundedTypeLeftTransportSlot::PrimitiveType(t) => t.leading_seam(),
+            BoundedTypeLeftTransportSlot::UseBounds(t) => t.leading_seam(),
         }
     }
 }
@@ -18062,6 +19465,30 @@ impl ::sittir_core::prepare::Prepare for BoundedTypeRightTransportSlot {
             BoundedTypeRightTransportSlot::RemovedTraitBound(t) => t.prepare(ctx),
             BoundedTypeRightTransportSlot::PrimitiveType(t) => t.prepare(ctx),
             BoundedTypeRightTransportSlot::UseBounds(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            BoundedTypeRightTransportSlot::Lifetime(t) => t.leading_seam(),
+            BoundedTypeRightTransportSlot::AbstractType(t) => t.leading_seam(),
+            BoundedTypeRightTransportSlot::ReferenceType(t) => t.leading_seam(),
+            BoundedTypeRightTransportSlot::Metavariable(t) => t.leading_seam(),
+            BoundedTypeRightTransportSlot::PointerTypeConst(t) => t.leading_seam(),
+            BoundedTypeRightTransportSlot::PointerTypeMut(t) => t.leading_seam(),
+            BoundedTypeRightTransportSlot::GenericType(t) => t.leading_seam(),
+            BoundedTypeRightTransportSlot::ScopedTypeIdentifier(t) => t.leading_seam(),
+            BoundedTypeRightTransportSlot::TupleType(t) => t.leading_seam(),
+            BoundedTypeRightTransportSlot::UnitType(t) => t.leading_seam(),
+            BoundedTypeRightTransportSlot::ArrayType(t) => t.leading_seam(),
+            BoundedTypeRightTransportSlot::FunctionType(t) => t.leading_seam(),
+            BoundedTypeRightTransportSlot::TypeIdentifier(t) => t.leading_seam(),
+            BoundedTypeRightTransportSlot::MacroInvocation(t) => t.leading_seam(),
+            BoundedTypeRightTransportSlot::NeverType(t) => t.leading_seam(),
+            BoundedTypeRightTransportSlot::DynamicType(t) => t.leading_seam(),
+            BoundedTypeRightTransportSlot::BoundedType(t) => t.leading_seam(),
+            BoundedTypeRightTransportSlot::RemovedTraitBound(t) => t.leading_seam(),
+            BoundedTypeRightTransportSlot::PrimitiveType(t) => t.leading_seam(),
+            BoundedTypeRightTransportSlot::UseBounds(t) => t.leading_seam(),
         }
     }
 }
@@ -18547,6 +19974,17 @@ impl ::sittir_core::prepare::Prepare for AbstractTypeTraitTransportSlot {
             AbstractTypeTraitTransportSlot::BoundedType(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            AbstractTypeTraitTransportSlot::TypeIdentifier(t) => t.leading_seam(),
+            AbstractTypeTraitTransportSlot::ScopedTypeIdentifier(t) => t.leading_seam(),
+            AbstractTypeTraitTransportSlot::RemovedTraitBound(t) => t.leading_seam(),
+            AbstractTypeTraitTransportSlot::GenericType(t) => t.leading_seam(),
+            AbstractTypeTraitTransportSlot::FunctionType(t) => t.leading_seam(),
+            AbstractTypeTraitTransportSlot::TupleType(t) => t.leading_seam(),
+            AbstractTypeTraitTransportSlot::BoundedType(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for AbstractTypeTraitTransportSlot {
@@ -18712,6 +20150,16 @@ impl ::sittir_core::prepare::Prepare for DynamicTypeTraitTransportSlot {
             DynamicTypeTraitTransportSlot::TupleType(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            DynamicTypeTraitTransportSlot::HigherRankedTraitBound(t) => t.leading_seam(),
+            DynamicTypeTraitTransportSlot::TypeIdentifier(t) => t.leading_seam(),
+            DynamicTypeTraitTransportSlot::ScopedTypeIdentifier(t) => t.leading_seam(),
+            DynamicTypeTraitTransportSlot::GenericType(t) => t.leading_seam(),
+            DynamicTypeTraitTransportSlot::FunctionType(t) => t.leading_seam(),
+            DynamicTypeTraitTransportSlot::TupleType(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for DynamicTypeTraitTransportSlot {
@@ -18866,6 +20314,16 @@ impl ::sittir_core::prepare::Prepare for MacroInvocationMacroTransportSlot {
             MacroInvocationMacroTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             MacroInvocationMacroTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             MacroInvocationMacroTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            MacroInvocationMacroTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            MacroInvocationMacroTransportSlot::Identifier(t) => t.leading_seam(),
+            MacroInvocationMacroTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => None,
+            MacroInvocationMacroTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => None,
+            MacroInvocationMacroTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => None,
+            MacroInvocationMacroTransportSlot::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -19158,6 +20616,39 @@ impl ::sittir_core::prepare::Prepare for ScopedIdentifierPathTransportSlot {
             ScopedIdentifierPathTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            ScopedIdentifierPathTransportSlot::Metavariable(t) => t.leading_seam(),
+            ScopedIdentifierPathTransportSlot::Identifier(t) => t.leading_seam(),
+            ScopedIdentifierPathTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            ScopedIdentifierPathTransportSlot::BracketedType(t) => t.leading_seam(),
+            ScopedIdentifierPathTransportSlot::GenericTypeWithTurbofish(t) => t.leading_seam(),
+            ScopedIdentifierPathTransportSlot::Literal19_73_65_6c_66 => None,
+            ScopedIdentifierPathTransportSlot::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedIdentifierPathTransportSlot::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedIdentifierPathTransportSlot::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedIdentifierPathTransportSlot::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedIdentifierPathTransportSlot::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedIdentifierPathTransportSlot::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedIdentifierPathTransportSlot::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedIdentifierPathTransportSlot::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedIdentifierPathTransportSlot::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedIdentifierPathTransportSlot::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedIdentifierPathTransportSlot::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedIdentifierPathTransportSlot::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedIdentifierPathTransportSlot::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedIdentifierPathTransportSlot::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedIdentifierPathTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedIdentifierPathTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedIdentifierPathTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedIdentifierPathTransportSlot::Literal20_73_75_70_65_72 => None,
+            ScopedIdentifierPathTransportSlot::Literal21_63_72_61_74_65 => None,
+            ScopedIdentifierPathTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedIdentifierPathTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedIdentifierPathTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedIdentifierPathTransportSlot::Verbatim(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for ScopedIdentifierPathTransportSlot {
@@ -19419,6 +20910,13 @@ impl ::sittir_core::prepare::Prepare for ScopedIdentifierNameTransportSlot {
             ScopedIdentifierNameTransportSlot::Identifier(t) => t.prepare(ctx),
             ScopedIdentifierNameTransportSlot::Literal20_73_75_70_65_72 => Ok(()),
             ScopedIdentifierNameTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            ScopedIdentifierNameTransportSlot::Identifier(t) => t.leading_seam(),
+            ScopedIdentifierNameTransportSlot::Literal20_73_75_70_65_72 => None,
+            ScopedIdentifierNameTransportSlot::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -19706,6 +21204,38 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierInExpressionPositio
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Metavariable(t) => t.leading_seam(),
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Identifier(t) => t.leading_seam(),
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::GenericTypeWithTurbofish(t) => t.leading_seam(),
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal19_73_65_6c_66 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal20_73_75_70_65_72 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal21_63_72_61_74_65 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -20014,6 +21544,40 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierPathTransportSlot {
             ScopedTypeIdentifierPathTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             ScopedTypeIdentifierPathTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             ScopedTypeIdentifierPathTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            ScopedTypeIdentifierPathTransportSlot::Metavariable(t) => t.leading_seam(),
+            ScopedTypeIdentifierPathTransportSlot::Identifier(t) => t.leading_seam(),
+            ScopedTypeIdentifierPathTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            ScopedTypeIdentifierPathTransportSlot::GenericTypeWithTurbofish(t) => t.leading_seam(),
+            ScopedTypeIdentifierPathTransportSlot::BracketedType(t) => t.leading_seam(),
+            ScopedTypeIdentifierPathTransportSlot::GenericType(t) => t.leading_seam(),
+            ScopedTypeIdentifierPathTransportSlot::Literal19_73_65_6c_66 => None,
+            ScopedTypeIdentifierPathTransportSlot::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierPathTransportSlot::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierPathTransportSlot::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierPathTransportSlot::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierPathTransportSlot::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierPathTransportSlot::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierPathTransportSlot::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierPathTransportSlot::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierPathTransportSlot::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierPathTransportSlot::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierPathTransportSlot::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierPathTransportSlot::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierPathTransportSlot::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierPathTransportSlot::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierPathTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierPathTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierPathTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierPathTransportSlot::Literal20_73_75_70_65_72 => None,
+            ScopedTypeIdentifierPathTransportSlot::Literal21_63_72_61_74_65 => None,
+            ScopedTypeIdentifierPathTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierPathTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierPathTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => None,
+            ScopedTypeIdentifierPathTransportSlot::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -20925,6 +22489,88 @@ impl ::sittir_core::prepare::Prepare for CallExpressionFunctionTransportSlot {
             CallExpressionFunctionTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            CallExpressionFunctionTransportSlot::UnaryExpression(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::ReferenceExpressionRawConst(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::ReferenceExpressionRawMut(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::ReferenceExpressionMut(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::ReferenceExpressionBare(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::TryExpression(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::BinaryExpression(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::AssignmentExpression(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::CompoundAssignmentExpr(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::TypeCastExpression(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::CallExpression(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::ReturnExpression(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::YieldExpression(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::StringLiteral(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::RawStringLiteral(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::CharLiteralEscapedSimple(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::CharLiteralEscapedHex(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::CharLiteralPlain(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::CharLiteralEmpty(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::BooleanLiteral(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::IntegerLiteralDecimal(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::IntegerLiteralHex(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::IntegerLiteralBinary(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::IntegerLiteralOctal(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::FloatLiteral(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::Identifier(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::GenericFunction(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::AwaitExpression(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::FieldExpression(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::ArrayExpressionSemi(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::ArrayExpressionList(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::TupleExpression(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::MacroInvocation(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::BreakExpression(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::ContinueExpression(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::IndexExpression(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::Metavariable(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::ClosureExpressionBlock(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::ClosureExpressionExpr(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::ParenthesizedExpression(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::StructExpression(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::UnsafeBlock(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::AsyncBlock(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::GenBlock(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::TryBlock(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::Block(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::IfExpression(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::MatchExpression(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::WhileExpression(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::LoopExpression(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::ForExpression(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::ConstBlock(t) => t.leading_seam(),
+            CallExpressionFunctionTransportSlot::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => None,
+            CallExpressionFunctionTransportSlot::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => None,
+            CallExpressionFunctionTransportSlot::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            CallExpressionFunctionTransportSlot::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            CallExpressionFunctionTransportSlot::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            CallExpressionFunctionTransportSlot::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            CallExpressionFunctionTransportSlot::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            CallExpressionFunctionTransportSlot::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            CallExpressionFunctionTransportSlot::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            CallExpressionFunctionTransportSlot::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            CallExpressionFunctionTransportSlot::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            CallExpressionFunctionTransportSlot::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            CallExpressionFunctionTransportSlot::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            CallExpressionFunctionTransportSlot::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            CallExpressionFunctionTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => None,
+            CallExpressionFunctionTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => None,
+            CallExpressionFunctionTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => None,
+            CallExpressionFunctionTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => None,
+            CallExpressionFunctionTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => None,
+            CallExpressionFunctionTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => None,
+            CallExpressionFunctionTransportSlot::Literal19_73_65_6c_66 => None,
+            CallExpressionFunctionTransportSlot::Literal110_75_6e_69_74_5f_65_78_70_72_65_73_73_69_6f_6e => None,
+            CallExpressionFunctionTransportSlot::Verbatim(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for CallExpressionFunctionTransportSlot {
@@ -21645,6 +23291,13 @@ impl ::sittir_core::prepare::Prepare for StructExpressionNameTransportSlot {
             StructExpressionNameTransportSlot::GenericTypeWithTurbofish(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            StructExpressionNameTransportSlot::TypeIdentifier(t) => t.leading_seam(),
+            StructExpressionNameTransportSlot::ScopedTypeIdentifierInExpressionPosition(t) => t.leading_seam(),
+            StructExpressionNameTransportSlot::GenericTypeWithTurbofish(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for StructExpressionNameTransportSlot {
@@ -21770,6 +23423,15 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerFieldTransportSlot {
             FieldInitializerFieldTransportSlot::IntegerLiteralHex(t) => t.prepare(ctx),
             FieldInitializerFieldTransportSlot::IntegerLiteralBinary(t) => t.prepare(ctx),
             FieldInitializerFieldTransportSlot::IntegerLiteralOctal(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            FieldInitializerFieldTransportSlot::FieldIdentifier(t) => t.leading_seam(),
+            FieldInitializerFieldTransportSlot::IntegerLiteralDecimal(t) => t.leading_seam(),
+            FieldInitializerFieldTransportSlot::IntegerLiteralHex(t) => t.leading_seam(),
+            FieldInitializerFieldTransportSlot::IntegerLiteralBinary(t) => t.leading_seam(),
+            FieldInitializerFieldTransportSlot::IntegerLiteralOctal(t) => t.leading_seam(),
         }
     }
 }
@@ -22073,6 +23735,94 @@ impl ::sittir_core::prepare::Prepare for IfExpressionConditionTransportSlot {
             IfExpressionConditionTransportSlot::LetCondition(t) => t.prepare(ctx),
             IfExpressionConditionTransportSlot::LetChain(t) => t.prepare(ctx),
             IfExpressionConditionTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            IfExpressionConditionTransportSlot::UnaryExpression(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::ReferenceExpressionRawConst(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::ReferenceExpressionRawMut(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::ReferenceExpressionMut(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::ReferenceExpressionBare(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::TryExpression(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::BinaryExpression(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::AssignmentExpression(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::CompoundAssignmentExpr(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::TypeCastExpression(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::CallExpression(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::ReturnExpression(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::YieldExpression(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::StringLiteral(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::RawStringLiteral(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::CharLiteralEscapedSimple(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::CharLiteralEscapedHex(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::CharLiteralPlain(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::CharLiteralEmpty(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::BooleanLiteral(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::IntegerLiteralDecimal(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::IntegerLiteralHex(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::IntegerLiteralBinary(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::IntegerLiteralOctal(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::FloatLiteral(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::Identifier(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::U8Keyword(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::I8Keyword(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::U16Keyword(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::I16Keyword(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::U32Keyword(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::I32Keyword(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::U64Keyword(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::I64Keyword(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::U128Keyword(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::I128Keyword(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::IsizeKeyword(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::UsizeKeyword(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::F32Keyword(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::F64Keyword(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::BoolKeyword(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::StrKeyword(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::CharKeyword(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::DefaultKeyword(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::UnionKeyword(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::GenKeyword(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::Self_(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::GenericFunction(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::AwaitExpression(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::FieldExpression(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::ArrayExpressionSemi(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::ArrayExpressionList(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::TupleExpression(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::MacroInvocation(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::UnitExpression(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::BreakExpression(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::ContinueExpression(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::IndexExpression(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::Metavariable(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::ClosureExpressionBlock(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::ClosureExpressionExpr(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::ParenthesizedExpression(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::StructExpression(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::UnsafeBlock(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::AsyncBlock(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::GenBlock(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::TryBlock(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::Block(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::IfExpression(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::MatchExpression(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::WhileExpression(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::LoopExpression(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::ForExpression(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::ConstBlock(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::RangeExpressionBinary(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::RangeExpressionPostfix(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::RangeExpressionPrefix(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::RangeExpressionBare(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::LetCondition(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::LetChain(t) => t.leading_seam(),
+            IfExpressionConditionTransportSlot::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -23105,6 +24855,94 @@ impl ::sittir_core::prepare::Prepare for LetChainLeftTransportSlot {
             LetChainLeftTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            LetChainLeftTransportSlot::LetChain(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::LetCondition(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::UnaryExpression(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::ReferenceExpressionRawConst(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::ReferenceExpressionRawMut(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::ReferenceExpressionMut(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::ReferenceExpressionBare(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::TryExpression(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::BinaryExpression(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::AssignmentExpression(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::CompoundAssignmentExpr(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::TypeCastExpression(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::CallExpression(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::ReturnExpression(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::YieldExpression(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::StringLiteral(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::RawStringLiteral(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::CharLiteralEscapedSimple(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::CharLiteralEscapedHex(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::CharLiteralPlain(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::CharLiteralEmpty(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::BooleanLiteral(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::IntegerLiteralDecimal(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::IntegerLiteralHex(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::IntegerLiteralBinary(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::IntegerLiteralOctal(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::FloatLiteral(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::Identifier(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::U8Keyword(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::I8Keyword(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::U16Keyword(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::I16Keyword(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::U32Keyword(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::I32Keyword(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::U64Keyword(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::I64Keyword(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::U128Keyword(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::I128Keyword(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::IsizeKeyword(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::UsizeKeyword(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::F32Keyword(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::F64Keyword(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::BoolKeyword(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::StrKeyword(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::CharKeyword(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::DefaultKeyword(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::UnionKeyword(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::GenKeyword(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::Self_(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::GenericFunction(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::AwaitExpression(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::FieldExpression(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::ArrayExpressionSemi(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::ArrayExpressionList(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::TupleExpression(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::MacroInvocation(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::UnitExpression(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::BreakExpression(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::ContinueExpression(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::IndexExpression(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::Metavariable(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::ClosureExpressionBlock(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::ClosureExpressionExpr(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::ParenthesizedExpression(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::StructExpression(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::UnsafeBlock(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::AsyncBlock(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::GenBlock(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::TryBlock(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::Block(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::IfExpression(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::MatchExpression(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::WhileExpression(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::LoopExpression(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::ForExpression(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::ConstBlock(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::RangeExpressionBinary(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::RangeExpressionPostfix(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::RangeExpressionPrefix(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::RangeExpressionBare(t) => t.leading_seam(),
+            LetChainLeftTransportSlot::Verbatim(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for LetChainLeftTransportSlot {
@@ -24127,6 +25965,93 @@ impl ::sittir_core::prepare::Prepare for LetChainRightTransportSlot {
             LetChainRightTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            LetChainRightTransportSlot::LetCondition(t) => t.leading_seam(),
+            LetChainRightTransportSlot::UnaryExpression(t) => t.leading_seam(),
+            LetChainRightTransportSlot::ReferenceExpressionRawConst(t) => t.leading_seam(),
+            LetChainRightTransportSlot::ReferenceExpressionRawMut(t) => t.leading_seam(),
+            LetChainRightTransportSlot::ReferenceExpressionMut(t) => t.leading_seam(),
+            LetChainRightTransportSlot::ReferenceExpressionBare(t) => t.leading_seam(),
+            LetChainRightTransportSlot::TryExpression(t) => t.leading_seam(),
+            LetChainRightTransportSlot::BinaryExpression(t) => t.leading_seam(),
+            LetChainRightTransportSlot::AssignmentExpression(t) => t.leading_seam(),
+            LetChainRightTransportSlot::CompoundAssignmentExpr(t) => t.leading_seam(),
+            LetChainRightTransportSlot::TypeCastExpression(t) => t.leading_seam(),
+            LetChainRightTransportSlot::CallExpression(t) => t.leading_seam(),
+            LetChainRightTransportSlot::ReturnExpression(t) => t.leading_seam(),
+            LetChainRightTransportSlot::YieldExpression(t) => t.leading_seam(),
+            LetChainRightTransportSlot::StringLiteral(t) => t.leading_seam(),
+            LetChainRightTransportSlot::RawStringLiteral(t) => t.leading_seam(),
+            LetChainRightTransportSlot::CharLiteralEscapedSimple(t) => t.leading_seam(),
+            LetChainRightTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.leading_seam(),
+            LetChainRightTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.leading_seam(),
+            LetChainRightTransportSlot::CharLiteralEscapedHex(t) => t.leading_seam(),
+            LetChainRightTransportSlot::CharLiteralPlain(t) => t.leading_seam(),
+            LetChainRightTransportSlot::CharLiteralEmpty(t) => t.leading_seam(),
+            LetChainRightTransportSlot::BooleanLiteral(t) => t.leading_seam(),
+            LetChainRightTransportSlot::IntegerLiteralDecimal(t) => t.leading_seam(),
+            LetChainRightTransportSlot::IntegerLiteralHex(t) => t.leading_seam(),
+            LetChainRightTransportSlot::IntegerLiteralBinary(t) => t.leading_seam(),
+            LetChainRightTransportSlot::IntegerLiteralOctal(t) => t.leading_seam(),
+            LetChainRightTransportSlot::FloatLiteral(t) => t.leading_seam(),
+            LetChainRightTransportSlot::Identifier(t) => t.leading_seam(),
+            LetChainRightTransportSlot::U8Keyword(t) => t.leading_seam(),
+            LetChainRightTransportSlot::I8Keyword(t) => t.leading_seam(),
+            LetChainRightTransportSlot::U16Keyword(t) => t.leading_seam(),
+            LetChainRightTransportSlot::I16Keyword(t) => t.leading_seam(),
+            LetChainRightTransportSlot::U32Keyword(t) => t.leading_seam(),
+            LetChainRightTransportSlot::I32Keyword(t) => t.leading_seam(),
+            LetChainRightTransportSlot::U64Keyword(t) => t.leading_seam(),
+            LetChainRightTransportSlot::I64Keyword(t) => t.leading_seam(),
+            LetChainRightTransportSlot::U128Keyword(t) => t.leading_seam(),
+            LetChainRightTransportSlot::I128Keyword(t) => t.leading_seam(),
+            LetChainRightTransportSlot::IsizeKeyword(t) => t.leading_seam(),
+            LetChainRightTransportSlot::UsizeKeyword(t) => t.leading_seam(),
+            LetChainRightTransportSlot::F32Keyword(t) => t.leading_seam(),
+            LetChainRightTransportSlot::F64Keyword(t) => t.leading_seam(),
+            LetChainRightTransportSlot::BoolKeyword(t) => t.leading_seam(),
+            LetChainRightTransportSlot::StrKeyword(t) => t.leading_seam(),
+            LetChainRightTransportSlot::CharKeyword(t) => t.leading_seam(),
+            LetChainRightTransportSlot::DefaultKeyword(t) => t.leading_seam(),
+            LetChainRightTransportSlot::UnionKeyword(t) => t.leading_seam(),
+            LetChainRightTransportSlot::GenKeyword(t) => t.leading_seam(),
+            LetChainRightTransportSlot::Self_(t) => t.leading_seam(),
+            LetChainRightTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            LetChainRightTransportSlot::GenericFunction(t) => t.leading_seam(),
+            LetChainRightTransportSlot::AwaitExpression(t) => t.leading_seam(),
+            LetChainRightTransportSlot::FieldExpression(t) => t.leading_seam(),
+            LetChainRightTransportSlot::ArrayExpressionSemi(t) => t.leading_seam(),
+            LetChainRightTransportSlot::ArrayExpressionList(t) => t.leading_seam(),
+            LetChainRightTransportSlot::TupleExpression(t) => t.leading_seam(),
+            LetChainRightTransportSlot::MacroInvocation(t) => t.leading_seam(),
+            LetChainRightTransportSlot::UnitExpression(t) => t.leading_seam(),
+            LetChainRightTransportSlot::BreakExpression(t) => t.leading_seam(),
+            LetChainRightTransportSlot::ContinueExpression(t) => t.leading_seam(),
+            LetChainRightTransportSlot::IndexExpression(t) => t.leading_seam(),
+            LetChainRightTransportSlot::Metavariable(t) => t.leading_seam(),
+            LetChainRightTransportSlot::ClosureExpressionBlock(t) => t.leading_seam(),
+            LetChainRightTransportSlot::ClosureExpressionExpr(t) => t.leading_seam(),
+            LetChainRightTransportSlot::ParenthesizedExpression(t) => t.leading_seam(),
+            LetChainRightTransportSlot::StructExpression(t) => t.leading_seam(),
+            LetChainRightTransportSlot::UnsafeBlock(t) => t.leading_seam(),
+            LetChainRightTransportSlot::AsyncBlock(t) => t.leading_seam(),
+            LetChainRightTransportSlot::GenBlock(t) => t.leading_seam(),
+            LetChainRightTransportSlot::TryBlock(t) => t.leading_seam(),
+            LetChainRightTransportSlot::Block(t) => t.leading_seam(),
+            LetChainRightTransportSlot::IfExpression(t) => t.leading_seam(),
+            LetChainRightTransportSlot::MatchExpression(t) => t.leading_seam(),
+            LetChainRightTransportSlot::WhileExpression(t) => t.leading_seam(),
+            LetChainRightTransportSlot::LoopExpression(t) => t.leading_seam(),
+            LetChainRightTransportSlot::ForExpression(t) => t.leading_seam(),
+            LetChainRightTransportSlot::ConstBlock(t) => t.leading_seam(),
+            LetChainRightTransportSlot::RangeExpressionBinary(t) => t.leading_seam(),
+            LetChainRightTransportSlot::RangeExpressionPostfix(t) => t.leading_seam(),
+            LetChainRightTransportSlot::RangeExpressionPrefix(t) => t.leading_seam(),
+            LetChainRightTransportSlot::RangeExpressionBare(t) => t.leading_seam(),
+            LetChainRightTransportSlot::Verbatim(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for LetChainRightTransportSlot {
@@ -24978,6 +26903,12 @@ impl ::sittir_core::prepare::Prepare for ElseClauseBodyTransportSlot {
             ElseClauseBodyTransportSlot::IfExpression(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            ElseClauseBodyTransportSlot::Block(t) => t.leading_seam(),
+            ElseClauseBodyTransportSlot::IfExpression(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for ElseClauseBodyTransportSlot {
@@ -25088,6 +27019,12 @@ impl ::sittir_core::prepare::Prepare for LastMatchArmAttributesTransportSlot {
         match self {
             LastMatchArmAttributesTransportSlot::AttributeItem(t) => t.prepare(ctx),
             LastMatchArmAttributesTransportSlot::InnerAttributeItem(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            LastMatchArmAttributesTransportSlot::AttributeItem(t) => t.leading_seam(),
+            LastMatchArmAttributesTransportSlot::InnerAttributeItem(t) => t.leading_seam(),
         }
     }
 }
@@ -25466,6 +27403,94 @@ impl ::sittir_core::prepare::Prepare for MatchPatternConditionTransportSlot {
             MatchPatternConditionTransportSlot::LetCondition(t) => t.prepare(ctx),
             MatchPatternConditionTransportSlot::LetChain(t) => t.prepare(ctx),
             MatchPatternConditionTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            MatchPatternConditionTransportSlot::UnaryExpression(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::ReferenceExpressionRawConst(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::ReferenceExpressionRawMut(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::ReferenceExpressionMut(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::ReferenceExpressionBare(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::TryExpression(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::BinaryExpression(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::AssignmentExpression(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::CompoundAssignmentExpr(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::TypeCastExpression(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::CallExpression(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::ReturnExpression(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::YieldExpression(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::StringLiteral(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::RawStringLiteral(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::CharLiteralEscapedSimple(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::CharLiteralEscapedHex(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::CharLiteralPlain(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::CharLiteralEmpty(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::BooleanLiteral(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::IntegerLiteralDecimal(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::IntegerLiteralHex(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::IntegerLiteralBinary(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::IntegerLiteralOctal(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::FloatLiteral(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::Identifier(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::U8Keyword(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::I8Keyword(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::U16Keyword(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::I16Keyword(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::U32Keyword(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::I32Keyword(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::U64Keyword(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::I64Keyword(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::U128Keyword(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::I128Keyword(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::IsizeKeyword(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::UsizeKeyword(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::F32Keyword(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::F64Keyword(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::BoolKeyword(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::StrKeyword(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::CharKeyword(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::DefaultKeyword(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::UnionKeyword(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::GenKeyword(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::Self_(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::GenericFunction(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::AwaitExpression(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::FieldExpression(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::ArrayExpressionSemi(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::ArrayExpressionList(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::TupleExpression(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::MacroInvocation(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::UnitExpression(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::BreakExpression(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::ContinueExpression(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::IndexExpression(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::Metavariable(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::ClosureExpressionBlock(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::ClosureExpressionExpr(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::ParenthesizedExpression(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::StructExpression(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::UnsafeBlock(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::AsyncBlock(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::GenBlock(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::TryBlock(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::Block(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::IfExpression(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::MatchExpression(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::WhileExpression(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::LoopExpression(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::ForExpression(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::ConstBlock(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::RangeExpressionBinary(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::RangeExpressionPostfix(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::RangeExpressionPrefix(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::RangeExpressionBare(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::LetCondition(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::LetChain(t) => t.leading_seam(),
+            MatchPatternConditionTransportSlot::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -26498,6 +28523,94 @@ impl ::sittir_core::prepare::Prepare for WhileExpressionConditionTransportSlot {
             WhileExpressionConditionTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            WhileExpressionConditionTransportSlot::UnaryExpression(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::ReferenceExpressionRawConst(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::ReferenceExpressionRawMut(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::ReferenceExpressionMut(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::ReferenceExpressionBare(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::TryExpression(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::BinaryExpression(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::AssignmentExpression(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::CompoundAssignmentExpr(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::TypeCastExpression(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::CallExpression(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::ReturnExpression(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::YieldExpression(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::StringLiteral(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::RawStringLiteral(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::CharLiteralEscapedSimple(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::CharLiteralEscapedHex(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::CharLiteralPlain(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::CharLiteralEmpty(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::BooleanLiteral(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::IntegerLiteralDecimal(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::IntegerLiteralHex(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::IntegerLiteralBinary(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::IntegerLiteralOctal(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::FloatLiteral(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::Identifier(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::U8Keyword(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::I8Keyword(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::U16Keyword(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::I16Keyword(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::U32Keyword(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::I32Keyword(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::U64Keyword(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::I64Keyword(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::U128Keyword(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::I128Keyword(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::IsizeKeyword(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::UsizeKeyword(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::F32Keyword(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::F64Keyword(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::BoolKeyword(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::StrKeyword(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::CharKeyword(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::DefaultKeyword(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::UnionKeyword(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::GenKeyword(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::Self_(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::GenericFunction(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::AwaitExpression(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::FieldExpression(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::ArrayExpressionSemi(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::ArrayExpressionList(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::TupleExpression(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::MacroInvocation(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::UnitExpression(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::BreakExpression(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::ContinueExpression(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::IndexExpression(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::Metavariable(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::ClosureExpressionBlock(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::ClosureExpressionExpr(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::ParenthesizedExpression(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::StructExpression(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::UnsafeBlock(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::AsyncBlock(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::GenBlock(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::TryBlock(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::Block(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::IfExpression(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::MatchExpression(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::WhileExpression(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::LoopExpression(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::ForExpression(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::ConstBlock(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::RangeExpressionBinary(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::RangeExpressionPostfix(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::RangeExpressionPrefix(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::RangeExpressionBare(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::LetCondition(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::LetChain(t) => t.leading_seam(),
+            WhileExpressionConditionTransportSlot::Verbatim(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for WhileExpressionConditionTransportSlot {
@@ -27472,6 +29585,66 @@ impl ::sittir_core::prepare::Prepare for ClosureParametersParametersTransportSlo
             ClosureParametersParametersTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            ClosureParametersParametersTransportSlot::StringLiteral(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::RawStringLiteral(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::CharLiteralEscapedSimple(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::CharLiteralEscapedHex(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::CharLiteralPlain(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::CharLiteralEmpty(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::BooleanLiteral(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::IntegerLiteralDecimal(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::IntegerLiteralHex(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::IntegerLiteralBinary(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::IntegerLiteralOctal(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::FloatLiteral(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::NegativeLiteral(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::U8Keyword(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::I8Keyword(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::U16Keyword(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::I16Keyword(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::U32Keyword(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::I32Keyword(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::U64Keyword(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::I64Keyword(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::U128Keyword(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::I128Keyword(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::IsizeKeyword(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::UsizeKeyword(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::F32Keyword(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::F64Keyword(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::BoolKeyword(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::StrKeyword(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::CharKeyword(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::Identifier(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::GenericPattern(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::TuplePattern(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::TupleStructPattern(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::StructPattern(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::DefaultKeyword(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::UnionKeyword(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::GenKeyword(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::RefPattern(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::SlicePattern(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::CapturedPattern(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::ReferencePattern(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::RemainingFieldPattern(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::MutPattern(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::RangePatternWithLeft(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::RangePatternPrefix(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::OrPatternBinary(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::OrPatternPrefix(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::ConstBlock(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::MacroInvocation(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::WildcardPattern(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::Parameter(t) => t.leading_seam(),
+            ClosureParametersParametersTransportSlot::Verbatim(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for ClosureParametersParametersTransportSlot {
@@ -28086,6 +30259,15 @@ impl ::sittir_core::prepare::Prepare for FieldExpressionFieldTransportSlot {
             FieldExpressionFieldTransportSlot::IntegerLiteralOctal(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            FieldExpressionFieldTransportSlot::FieldIdentifier(t) => t.leading_seam(),
+            FieldExpressionFieldTransportSlot::IntegerLiteralDecimal(t) => t.leading_seam(),
+            FieldExpressionFieldTransportSlot::IntegerLiteralHex(t) => t.leading_seam(),
+            FieldExpressionFieldTransportSlot::IntegerLiteralBinary(t) => t.leading_seam(),
+            FieldExpressionFieldTransportSlot::IntegerLiteralOctal(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for FieldExpressionFieldTransportSlot {
@@ -28421,6 +30603,13 @@ impl ::sittir_core::prepare::Prepare for GenericPatternNameTransportSlot {
             GenericPatternNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            GenericPatternNameTransportSlot::Identifier(t) => t.leading_seam(),
+            GenericPatternNameTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            GenericPatternNameTransportSlot::Verbatim(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for GenericPatternNameTransportSlot {
@@ -28662,6 +30851,14 @@ impl ::sittir_core::prepare::Prepare for TupleStructPatternTypeTransportSlot {
             TupleStructPatternTypeTransportSlot::ScopedIdentifier(t) => t.prepare(ctx),
             TupleStructPatternTypeTransportSlot::GenericTypeWithTurbofish(t) => t.prepare(ctx),
             TupleStructPatternTypeTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            TupleStructPatternTypeTransportSlot::Identifier(t) => t.leading_seam(),
+            TupleStructPatternTypeTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            TupleStructPatternTypeTransportSlot::GenericTypeWithTurbofish(t) => t.leading_seam(),
+            TupleStructPatternTypeTransportSlot::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -28912,6 +31109,12 @@ impl ::sittir_core::prepare::Prepare for StructPatternTypeTransportSlot {
             StructPatternTypeTransportSlot::ScopedTypeIdentifier(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            StructPatternTypeTransportSlot::TypeIdentifier(t) => t.leading_seam(),
+            StructPatternTypeTransportSlot::ScopedTypeIdentifier(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for StructPatternTypeTransportSlot {
@@ -29129,6 +31332,16 @@ impl ::sittir_core::prepare::Prepare for NegativeLiteralValueTransportSlot {
             NegativeLiteralValueTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            NegativeLiteralValueTransportSlot::IntegerLiteralDecimal(t) => t.leading_seam(),
+            NegativeLiteralValueTransportSlot::IntegerLiteralHex(t) => t.leading_seam(),
+            NegativeLiteralValueTransportSlot::IntegerLiteralBinary(t) => t.leading_seam(),
+            NegativeLiteralValueTransportSlot::IntegerLiteralOctal(t) => t.leading_seam(),
+            NegativeLiteralValueTransportSlot::FloatLiteral(t) => t.leading_seam(),
+            NegativeLiteralValueTransportSlot::Verbatim(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for NegativeLiteralValueTransportSlot {
@@ -29283,6 +31496,16 @@ impl ::sittir_core::prepare::Prepare for StringLiteralElementsTransportSlot {
             StringLiteralElementsTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            StringLiteralElementsTransportSlot::EscapeSequenceSimple(t) => t.leading_seam(),
+            StringLiteralElementsTransportSlot::EscapeSequenceUnicodeFixed(t) => t.leading_seam(),
+            StringLiteralElementsTransportSlot::EscapeSequenceUnicodeBraced(t) => t.leading_seam(),
+            StringLiteralElementsTransportSlot::EscapeSequenceHex(t) => t.leading_seam(),
+            StringLiteralElementsTransportSlot::StringContent(t) => t.leading_seam(),
+            StringLiteralElementsTransportSlot::Verbatim(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for StringLiteralElementsTransportSlot {
@@ -29435,6 +31658,15 @@ impl ::sittir_core::prepare::Prepare for LineCommentContentTransportSlot {
             LineCommentContentTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            LineCommentContentTransportSlot::LineCommentExtraSlashes(t) => t.leading_seam(),
+            LineCommentContentTransportSlot::LineCommentDocOuter(t) => t.leading_seam(),
+            LineCommentContentTransportSlot::LineCommentDocInner(t) => t.leading_seam(),
+            LineCommentContentTransportSlot::LineCommentRegular(t) => t.leading_seam(),
+            LineCommentContentTransportSlot::Verbatim(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for LineCommentContentTransportSlot {
@@ -29574,6 +31806,14 @@ impl ::sittir_core::prepare::Prepare for BlockCommentContentTransportSlot {
             BlockCommentContentTransportSlot::BlockCommentDocInner(t) => t.prepare(ctx),
             BlockCommentContentTransportSlot::BlockCommentRegular(t) => t.prepare(ctx),
             BlockCommentContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            BlockCommentContentTransportSlot::BlockCommentDocOuter(t) => t.leading_seam(),
+            BlockCommentContentTransportSlot::BlockCommentDocInner(t) => t.leading_seam(),
+            BlockCommentContentTransportSlot::BlockCommentRegular(t) => t.leading_seam(),
+            BlockCommentContentTransportSlot::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -29760,6 +32000,41 @@ impl ::sittir_core::prepare::Prepare for UseClausesItemTransportSlot {
             UseClausesItemTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             UseClausesItemTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             UseClausesItemTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            UseClausesItemTransportSlot::Metavariable(t) => t.leading_seam(),
+            UseClausesItemTransportSlot::Identifier(t) => t.leading_seam(),
+            UseClausesItemTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            UseClausesItemTransportSlot::UseAsClause(t) => t.leading_seam(),
+            UseClausesItemTransportSlot::UseList(t) => t.leading_seam(),
+            UseClausesItemTransportSlot::ScopedUseList(t) => t.leading_seam(),
+            UseClausesItemTransportSlot::UseWildcard(t) => t.leading_seam(),
+            UseClausesItemTransportSlot::Literal19_73_65_6c_66 => None,
+            UseClausesItemTransportSlot::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => None,
+            UseClausesItemTransportSlot::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => None,
+            UseClausesItemTransportSlot::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            UseClausesItemTransportSlot::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            UseClausesItemTransportSlot::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            UseClausesItemTransportSlot::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            UseClausesItemTransportSlot::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            UseClausesItemTransportSlot::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            UseClausesItemTransportSlot::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            UseClausesItemTransportSlot::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            UseClausesItemTransportSlot::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            UseClausesItemTransportSlot::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            UseClausesItemTransportSlot::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            UseClausesItemTransportSlot::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            UseClausesItemTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => None,
+            UseClausesItemTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => None,
+            UseClausesItemTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => None,
+            UseClausesItemTransportSlot::Literal20_73_75_70_65_72 => None,
+            UseClausesItemTransportSlot::Literal21_63_72_61_74_65 => None,
+            UseClausesItemTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => None,
+            UseClausesItemTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => None,
+            UseClausesItemTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => None,
+            UseClausesItemTransportSlot::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -30041,6 +32316,12 @@ impl ::sittir_core::prepare::Prepare for UseBoundsElementsItemTransportSlot {
             UseBoundsElementsItemTransportSlot::TypeIdentifier(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            UseBoundsElementsItemTransportSlot::Lifetime(t) => t.leading_seam(),
+            UseBoundsElementsItemTransportSlot::TypeIdentifier(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for UseBoundsElementsItemTransportSlot {
@@ -30153,6 +32434,13 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerListElementsItemTranspo
             FieldInitializerListElementsItemTransportSlot::ShorthandFieldInitializer(t) => t.prepare(ctx),
             FieldInitializerListElementsItemTransportSlot::FieldInitializer(t) => t.prepare(ctx),
             FieldInitializerListElementsItemTransportSlot::BaseFieldInitializer(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            FieldInitializerListElementsItemTransportSlot::ShorthandFieldInitializer(t) => t.leading_seam(),
+            FieldInitializerListElementsItemTransportSlot::FieldInitializer(t) => t.leading_seam(),
+            FieldInitializerListElementsItemTransportSlot::BaseFieldInitializer(t) => t.leading_seam(),
         }
     }
 }
@@ -30384,6 +32672,67 @@ impl ::sittir_core::prepare::Prepare for TuplePatternElementsItemTransportSlot {
             TuplePatternElementsItemTransportSlot::ClosureExpressionBlock(t) => t.prepare(ctx),
             TuplePatternElementsItemTransportSlot::ClosureExpressionExpr(t) => t.prepare(ctx),
             TuplePatternElementsItemTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            TuplePatternElementsItemTransportSlot::StringLiteral(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::RawStringLiteral(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::CharLiteralEscapedSimple(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::CharLiteralEscapedHex(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::CharLiteralPlain(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::CharLiteralEmpty(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::BooleanLiteral(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::IntegerLiteralDecimal(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::IntegerLiteralHex(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::IntegerLiteralBinary(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::IntegerLiteralOctal(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::FloatLiteral(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::NegativeLiteral(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::U8Keyword(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::I8Keyword(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::U16Keyword(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::I16Keyword(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::U32Keyword(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::I32Keyword(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::U64Keyword(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::I64Keyword(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::U128Keyword(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::I128Keyword(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::IsizeKeyword(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::UsizeKeyword(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::F32Keyword(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::F64Keyword(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::BoolKeyword(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::StrKeyword(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::CharKeyword(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::Identifier(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::GenericPattern(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::TuplePattern(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::TupleStructPattern(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::StructPattern(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::DefaultKeyword(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::UnionKeyword(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::GenKeyword(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::RefPattern(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::SlicePattern(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::CapturedPattern(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::ReferencePattern(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::RemainingFieldPattern(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::MutPattern(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::RangePatternWithLeft(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::RangePatternPrefix(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::OrPatternBinary(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::OrPatternPrefix(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::ConstBlock(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::MacroInvocation(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::WildcardPattern(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::ClosureExpressionBlock(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::ClosureExpressionExpr(t) => t.leading_seam(),
+            TuplePatternElementsItemTransportSlot::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -31005,6 +33354,13 @@ impl ::sittir_core::prepare::Prepare for StructPatternElementsItemTransportSlot 
             StructPatternElementsItemTransportSlot::Literal112_72_65_6d_61_69_6e_69_6e_67_5f_66_69_65_6c_64_5f_70_61_74_74_65_72_6e => Ok(()),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            StructPatternElementsItemTransportSlot::FieldPatternShorthand(t) => t.leading_seam(),
+            StructPatternElementsItemTransportSlot::FieldPatternNamed(t) => t.leading_seam(),
+            StructPatternElementsItemTransportSlot::Literal112_72_65_6d_61_69_6e_69_6e_67_5f_66_69_65_6c_64_5f_70_61_74_74_65_72_6e => None,
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for StructPatternElementsItemTransportSlot {
@@ -31170,6 +33526,37 @@ impl ::sittir_core::prepare::Prepare for UseWildcardGroupPathTransportSlot {
             UseWildcardGroupPathTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             UseWildcardGroupPathTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             UseWildcardGroupPathTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            UseWildcardGroupPathTransportSlot::Metavariable(t) => t.leading_seam(),
+            UseWildcardGroupPathTransportSlot::Identifier(t) => t.leading_seam(),
+            UseWildcardGroupPathTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            UseWildcardGroupPathTransportSlot::Literal19_73_65_6c_66 => None,
+            UseWildcardGroupPathTransportSlot::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => None,
+            UseWildcardGroupPathTransportSlot::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => None,
+            UseWildcardGroupPathTransportSlot::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            UseWildcardGroupPathTransportSlot::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            UseWildcardGroupPathTransportSlot::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            UseWildcardGroupPathTransportSlot::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            UseWildcardGroupPathTransportSlot::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            UseWildcardGroupPathTransportSlot::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            UseWildcardGroupPathTransportSlot::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            UseWildcardGroupPathTransportSlot::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            UseWildcardGroupPathTransportSlot::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            UseWildcardGroupPathTransportSlot::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            UseWildcardGroupPathTransportSlot::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            UseWildcardGroupPathTransportSlot::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            UseWildcardGroupPathTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => None,
+            UseWildcardGroupPathTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => None,
+            UseWildcardGroupPathTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => None,
+            UseWildcardGroupPathTransportSlot::Literal20_73_75_70_65_72 => None,
+            UseWildcardGroupPathTransportSlot::Literal21_63_72_61_74_65 => None,
+            UseWildcardGroupPathTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => None,
+            UseWildcardGroupPathTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => None,
+            UseWildcardGroupPathTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => None,
+            UseWildcardGroupPathTransportSlot::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -33274,6 +35661,93 @@ impl ::sittir_core::prepare::Prepare for ClosureExpressionExprBodyTransportSlot 
             ClosureExpressionExprBodyTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            ClosureExpressionExprBodyTransportSlot::UnaryExpression(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::ReferenceExpressionRawConst(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::ReferenceExpressionRawMut(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::ReferenceExpressionMut(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::ReferenceExpressionBare(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::TryExpression(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::BinaryExpression(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::AssignmentExpression(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::CompoundAssignmentExpr(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::TypeCastExpression(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::CallExpression(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::ReturnExpression(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::YieldExpression(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::StringLiteral(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::RawStringLiteral(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::CharLiteralEscapedSimple(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::CharLiteralEscapedHex(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::CharLiteralPlain(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::CharLiteralEmpty(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::BooleanLiteral(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::IntegerLiteralDecimal(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::IntegerLiteralHex(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::IntegerLiteralBinary(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::IntegerLiteralOctal(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::FloatLiteral(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::Identifier(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::U8Keyword(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::I8Keyword(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::U16Keyword(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::I16Keyword(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::U32Keyword(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::I32Keyword(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::U64Keyword(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::I64Keyword(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::U128Keyword(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::I128Keyword(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::IsizeKeyword(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::UsizeKeyword(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::F32Keyword(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::F64Keyword(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::BoolKeyword(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::StrKeyword(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::CharKeyword(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::DefaultKeyword(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::UnionKeyword(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::GenKeyword(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::Self_(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::GenericFunction(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::AwaitExpression(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::FieldExpression(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::ArrayExpressionSemi(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::ArrayExpressionList(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::TupleExpression(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::MacroInvocation(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::UnitExpression(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::BreakExpression(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::ContinueExpression(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::IndexExpression(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::Metavariable(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::ClosureExpressionBlock(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::ClosureExpressionExpr(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::ParenthesizedExpression(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::StructExpression(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::UnsafeBlock(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::AsyncBlock(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::GenBlock(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::TryBlock(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::Block(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::IfExpression(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::MatchExpression(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::WhileExpression(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::LoopExpression(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::ForExpression(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::ConstBlock(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::RangeExpressionBinary(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::RangeExpressionPostfix(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::RangeExpressionPrefix(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::RangeExpressionBare(t) => t.leading_seam(),
+            ClosureExpressionExprBodyTransportSlot::Literal68_75_6e_64_65_72_73_63_6f_72_65 => None,
+            ClosureExpressionExprBodyTransportSlot::Verbatim(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for ClosureExpressionExprBodyTransportSlot {
@@ -34128,6 +36602,13 @@ impl ::sittir_core::prepare::Prepare for ImplItemPositiveClauseTraitTransportSlo
             ImplItemPositiveClauseTraitTransportSlot::GenericType(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            ImplItemPositiveClauseTraitTransportSlot::TypeIdentifier(t) => t.leading_seam(),
+            ImplItemPositiveClauseTraitTransportSlot::ScopedTypeIdentifier(t) => t.leading_seam(),
+            ImplItemPositiveClauseTraitTransportSlot::GenericType(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for ImplItemPositiveClauseTraitTransportSlot {
@@ -34249,6 +36730,13 @@ impl ::sittir_core::prepare::Prepare for ImplItemNegativeClauseTraitTransportSlo
             ImplItemNegativeClauseTraitTransportSlot::TypeIdentifier(t) => t.prepare(ctx),
             ImplItemNegativeClauseTraitTransportSlot::ScopedTypeIdentifier(t) => t.prepare(ctx),
             ImplItemNegativeClauseTraitTransportSlot::GenericType(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            ImplItemNegativeClauseTraitTransportSlot::TypeIdentifier(t) => t.leading_seam(),
+            ImplItemNegativeClauseTraitTransportSlot::ScopedTypeIdentifier(t) => t.leading_seam(),
+            ImplItemNegativeClauseTraitTransportSlot::GenericType(t) => t.leading_seam(),
         }
     }
 }
@@ -34469,6 +36957,12 @@ impl ::sittir_core::prepare::Prepare for ImplItemBodyTraitClauseTransportSlot {
             ImplItemBodyTraitClauseTransportSlot::ImplItemNegativeClause(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            ImplItemBodyTraitClauseTransportSlot::ImplItemPositiveClause(t) => t.leading_seam(),
+            ImplItemBodyTraitClauseTransportSlot::ImplItemNegativeClause(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for ImplItemBodyTraitClauseTransportSlot {
@@ -34678,6 +37172,12 @@ impl ::sittir_core::prepare::Prepare for ImplItemSemiTraitClauseTransportSlot {
             ImplItemSemiTraitClauseTransportSlot::ImplItemNegativeClause(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            ImplItemSemiTraitClauseTransportSlot::ImplItemPositiveClause(t) => t.leading_seam(),
+            ImplItemSemiTraitClauseTransportSlot::ImplItemNegativeClause(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for ImplItemSemiTraitClauseTransportSlot {
@@ -34838,6 +37338,37 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierPubScopeInPathPathTra
             VisibilityModifierPubScopeInPathPathTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             VisibilityModifierPubScopeInPathPathTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             VisibilityModifierPubScopeInPathPathTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            VisibilityModifierPubScopeInPathPathTransportSlot::Metavariable(t) => t.leading_seam(),
+            VisibilityModifierPubScopeInPathPathTransportSlot::Identifier(t) => t.leading_seam(),
+            VisibilityModifierPubScopeInPathPathTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal19_73_65_6c_66 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal20_73_75_70_65_72 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal21_63_72_61_74_65 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => None,
+            VisibilityModifierPubScopeInPathPathTransportSlot::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -35087,6 +37618,14 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierPubScopeContentTransp
             VisibilityModifierPubScopeContentTransportSlot::Literal21_63_72_61_74_65 => Ok(()),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            VisibilityModifierPubScopeContentTransportSlot::VisibilityModifierPubScopeInPath(t) => t.leading_seam(),
+            VisibilityModifierPubScopeContentTransportSlot::Literal19_73_65_6c_66 => None,
+            VisibilityModifierPubScopeContentTransportSlot::Literal20_73_75_70_65_72 => None,
+            VisibilityModifierPubScopeContentTransportSlot::Literal21_63_72_61_74_65 => None,
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for VisibilityModifierPubScopeContentTransportSlot {
@@ -35203,6 +37742,12 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeTraitFormTraitTransportSlot
         match self {
             FunctionTypeTraitFormTraitTransportSlot::TypeIdentifier(t) => t.prepare(ctx),
             FunctionTypeTraitFormTraitTransportSlot::ScopedTypeIdentifier(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            FunctionTypeTraitFormTraitTransportSlot::TypeIdentifier(t) => t.leading_seam(),
+            FunctionTypeTraitFormTraitTransportSlot::ScopedTypeIdentifier(t) => t.leading_seam(),
         }
     }
 }
@@ -35525,6 +38070,12 @@ impl ::sittir_core::prepare::Prepare for MatchArmWithCommaAttributesTransportSlo
             MatchArmWithCommaAttributesTransportSlot::InnerAttributeItem(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            MatchArmWithCommaAttributesTransportSlot::AttributeItem(t) => t.leading_seam(),
+            MatchArmWithCommaAttributesTransportSlot::InnerAttributeItem(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for MatchArmWithCommaAttributesTransportSlot {
@@ -35635,6 +38186,12 @@ impl ::sittir_core::prepare::Prepare for MatchArmBlockEndingAttributesTransportS
         match self {
             MatchArmBlockEndingAttributesTransportSlot::AttributeItem(t) => t.prepare(ctx),
             MatchArmBlockEndingAttributesTransportSlot::InnerAttributeItem(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            MatchArmBlockEndingAttributesTransportSlot::AttributeItem(t) => t.leading_seam(),
+            MatchArmBlockEndingAttributesTransportSlot::InnerAttributeItem(t) => t.leading_seam(),
         }
     }
 }
@@ -35765,6 +38322,21 @@ impl ::sittir_core::prepare::Prepare for MatchArmBlockEndingValueTransportSlot {
             MatchArmBlockEndingValueTransportSlot::LoopExpression(t) => t.prepare(ctx),
             MatchArmBlockEndingValueTransportSlot::ForExpression(t) => t.prepare(ctx),
             MatchArmBlockEndingValueTransportSlot::ConstBlock(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            MatchArmBlockEndingValueTransportSlot::UnsafeBlock(t) => t.leading_seam(),
+            MatchArmBlockEndingValueTransportSlot::AsyncBlock(t) => t.leading_seam(),
+            MatchArmBlockEndingValueTransportSlot::GenBlock(t) => t.leading_seam(),
+            MatchArmBlockEndingValueTransportSlot::TryBlock(t) => t.leading_seam(),
+            MatchArmBlockEndingValueTransportSlot::Block(t) => t.leading_seam(),
+            MatchArmBlockEndingValueTransportSlot::IfExpression(t) => t.leading_seam(),
+            MatchArmBlockEndingValueTransportSlot::MatchExpression(t) => t.leading_seam(),
+            MatchArmBlockEndingValueTransportSlot::WhileExpression(t) => t.leading_seam(),
+            MatchArmBlockEndingValueTransportSlot::LoopExpression(t) => t.leading_seam(),
+            MatchArmBlockEndingValueTransportSlot::ForExpression(t) => t.leading_seam(),
+            MatchArmBlockEndingValueTransportSlot::ConstBlock(t) => t.leading_seam(),
         }
     }
 }
@@ -35970,6 +38542,17 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternParenTokenPatternsTrans
             TokenTreePatternParenTokenPatternsTransportSlot::NonSpecialToken(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            TokenTreePatternParenTokenPatternsTransportSlot::TokenTreePatternParen(t) => t.leading_seam(),
+            TokenTreePatternParenTokenPatternsTransportSlot::TokenTreePatternBracket(t) => t.leading_seam(),
+            TokenTreePatternParenTokenPatternsTransportSlot::TokenTreePatternBrace(t) => t.leading_seam(),
+            TokenTreePatternParenTokenPatternsTransportSlot::TokenRepetitionPattern(t) => t.leading_seam(),
+            TokenTreePatternParenTokenPatternsTransportSlot::TokenBindingPattern(t) => t.leading_seam(),
+            TokenTreePatternParenTokenPatternsTransportSlot::Metavariable(t) => t.leading_seam(),
+            TokenTreePatternParenTokenPatternsTransportSlot::NonSpecialToken(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for TokenTreePatternParenTokenPatternsTransportSlot {
@@ -36135,6 +38718,17 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternBracketTokenPatternsTra
             TokenTreePatternBracketTokenPatternsTransportSlot::TokenBindingPattern(t) => t.prepare(ctx),
             TokenTreePatternBracketTokenPatternsTransportSlot::Metavariable(t) => t.prepare(ctx),
             TokenTreePatternBracketTokenPatternsTransportSlot::NonSpecialToken(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            TokenTreePatternBracketTokenPatternsTransportSlot::TokenTreePatternParen(t) => t.leading_seam(),
+            TokenTreePatternBracketTokenPatternsTransportSlot::TokenTreePatternBracket(t) => t.leading_seam(),
+            TokenTreePatternBracketTokenPatternsTransportSlot::TokenTreePatternBrace(t) => t.leading_seam(),
+            TokenTreePatternBracketTokenPatternsTransportSlot::TokenRepetitionPattern(t) => t.leading_seam(),
+            TokenTreePatternBracketTokenPatternsTransportSlot::TokenBindingPattern(t) => t.leading_seam(),
+            TokenTreePatternBracketTokenPatternsTransportSlot::Metavariable(t) => t.leading_seam(),
+            TokenTreePatternBracketTokenPatternsTransportSlot::NonSpecialToken(t) => t.leading_seam(),
         }
     }
 }
@@ -36304,6 +38898,17 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternBraceTokenPatternsTrans
             TokenTreePatternBraceTokenPatternsTransportSlot::NonSpecialToken(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            TokenTreePatternBraceTokenPatternsTransportSlot::TokenTreePatternParen(t) => t.leading_seam(),
+            TokenTreePatternBraceTokenPatternsTransportSlot::TokenTreePatternBracket(t) => t.leading_seam(),
+            TokenTreePatternBraceTokenPatternsTransportSlot::TokenTreePatternBrace(t) => t.leading_seam(),
+            TokenTreePatternBraceTokenPatternsTransportSlot::TokenRepetitionPattern(t) => t.leading_seam(),
+            TokenTreePatternBraceTokenPatternsTransportSlot::TokenBindingPattern(t) => t.leading_seam(),
+            TokenTreePatternBraceTokenPatternsTransportSlot::Metavariable(t) => t.leading_seam(),
+            TokenTreePatternBraceTokenPatternsTransportSlot::NonSpecialToken(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for TokenTreePatternBraceTokenPatternsTransportSlot {
@@ -36469,6 +39074,16 @@ impl ::sittir_core::prepare::Prepare for TokenTreeParenTokensTransportSlot {
             TokenTreeParenTokensTransportSlot::NonSpecialToken(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            TokenTreeParenTokensTransportSlot::TokenTreeParen(t) => t.leading_seam(),
+            TokenTreeParenTokensTransportSlot::TokenTreeBracket(t) => t.leading_seam(),
+            TokenTreeParenTokensTransportSlot::TokenTreeBrace(t) => t.leading_seam(),
+            TokenTreeParenTokensTransportSlot::TokenRepetition(t) => t.leading_seam(),
+            TokenTreeParenTokensTransportSlot::Metavariable(t) => t.leading_seam(),
+            TokenTreeParenTokensTransportSlot::NonSpecialToken(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for TokenTreeParenTokensTransportSlot {
@@ -36623,6 +39238,16 @@ impl ::sittir_core::prepare::Prepare for TokenTreeBracketTokensTransportSlot {
             TokenTreeBracketTokensTransportSlot::TokenRepetition(t) => t.prepare(ctx),
             TokenTreeBracketTokensTransportSlot::Metavariable(t) => t.prepare(ctx),
             TokenTreeBracketTokensTransportSlot::NonSpecialToken(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            TokenTreeBracketTokensTransportSlot::TokenTreeParen(t) => t.leading_seam(),
+            TokenTreeBracketTokensTransportSlot::TokenTreeBracket(t) => t.leading_seam(),
+            TokenTreeBracketTokensTransportSlot::TokenTreeBrace(t) => t.leading_seam(),
+            TokenTreeBracketTokensTransportSlot::TokenRepetition(t) => t.leading_seam(),
+            TokenTreeBracketTokensTransportSlot::Metavariable(t) => t.leading_seam(),
+            TokenTreeBracketTokensTransportSlot::NonSpecialToken(t) => t.leading_seam(),
         }
     }
 }
@@ -36781,6 +39406,16 @@ impl ::sittir_core::prepare::Prepare for TokenTreeBraceTokensTransportSlot {
             TokenTreeBraceTokensTransportSlot::NonSpecialToken(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            TokenTreeBraceTokensTransportSlot::TokenTreeParen(t) => t.leading_seam(),
+            TokenTreeBraceTokensTransportSlot::TokenTreeBracket(t) => t.leading_seam(),
+            TokenTreeBraceTokensTransportSlot::TokenTreeBrace(t) => t.leading_seam(),
+            TokenTreeBraceTokensTransportSlot::TokenRepetition(t) => t.leading_seam(),
+            TokenTreeBraceTokensTransportSlot::Metavariable(t) => t.leading_seam(),
+            TokenTreeBraceTokensTransportSlot::NonSpecialToken(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for TokenTreeBraceTokensTransportSlot {
@@ -36935,6 +39570,15 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeParenDelimTokensTransport
             DelimTokenTreeParenDelimTokensTransportSlot::Literal130_64_6f_6c_6c_61_72 => Ok(()),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            DelimTokenTreeParenDelimTokensTransportSlot::NonSpecialToken(t) => t.leading_seam(),
+            DelimTokenTreeParenDelimTokensTransportSlot::DelimTokenTreeParen(t) => t.leading_seam(),
+            DelimTokenTreeParenDelimTokensTransportSlot::DelimTokenTreeBracket(t) => t.leading_seam(),
+            DelimTokenTreeParenDelimTokensTransportSlot::DelimTokenTreeBrace(t) => t.leading_seam(),
+            DelimTokenTreeParenDelimTokensTransportSlot::Literal130_64_6f_6c_6c_61_72 => None,
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for DelimTokenTreeParenDelimTokensTransportSlot {
@@ -37076,6 +39720,15 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeBracketDelimTokensTranspo
             DelimTokenTreeBracketDelimTokensTransportSlot::Literal130_64_6f_6c_6c_61_72 => Ok(()),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            DelimTokenTreeBracketDelimTokensTransportSlot::NonSpecialToken(t) => t.leading_seam(),
+            DelimTokenTreeBracketDelimTokensTransportSlot::DelimTokenTreeParen(t) => t.leading_seam(),
+            DelimTokenTreeBracketDelimTokensTransportSlot::DelimTokenTreeBracket(t) => t.leading_seam(),
+            DelimTokenTreeBracketDelimTokensTransportSlot::DelimTokenTreeBrace(t) => t.leading_seam(),
+            DelimTokenTreeBracketDelimTokensTransportSlot::Literal130_64_6f_6c_6c_61_72 => None,
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for DelimTokenTreeBracketDelimTokensTransportSlot {
@@ -37215,6 +39868,15 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeBraceDelimTokensTransport
             DelimTokenTreeBraceDelimTokensTransportSlot::DelimTokenTreeBracket(t) => t.prepare(ctx),
             DelimTokenTreeBraceDelimTokensTransportSlot::DelimTokenTreeBrace(t) => t.prepare(ctx),
             DelimTokenTreeBraceDelimTokensTransportSlot::Literal130_64_6f_6c_6c_61_72 => Ok(()),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            DelimTokenTreeBraceDelimTokensTransportSlot::NonSpecialToken(t) => t.leading_seam(),
+            DelimTokenTreeBraceDelimTokensTransportSlot::DelimTokenTreeParen(t) => t.leading_seam(),
+            DelimTokenTreeBraceDelimTokensTransportSlot::DelimTokenTreeBracket(t) => t.leading_seam(),
+            DelimTokenTreeBraceDelimTokensTransportSlot::DelimTokenTreeBrace(t) => t.leading_seam(),
+            DelimTokenTreeBraceDelimTokensTransportSlot::Literal130_64_6f_6c_6c_61_72 => None,
         }
     }
 }
@@ -37746,6 +40408,15 @@ impl ::sittir_core::prepare::Prepare for MacroDefinitionParenNameTransportSlot {
             MacroDefinitionParenNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            MacroDefinitionParenNameTransportSlot::Identifier(t) => t.leading_seam(),
+            MacroDefinitionParenNameTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => None,
+            MacroDefinitionParenNameTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => None,
+            MacroDefinitionParenNameTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => None,
+            MacroDefinitionParenNameTransportSlot::Verbatim(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for MacroDefinitionParenNameTransportSlot {
@@ -37979,6 +40650,15 @@ impl ::sittir_core::prepare::Prepare for MacroDefinitionBracketNameTransportSlot
             MacroDefinitionBracketNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            MacroDefinitionBracketNameTransportSlot::Identifier(t) => t.leading_seam(),
+            MacroDefinitionBracketNameTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => None,
+            MacroDefinitionBracketNameTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => None,
+            MacroDefinitionBracketNameTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => None,
+            MacroDefinitionBracketNameTransportSlot::Verbatim(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for MacroDefinitionBracketNameTransportSlot {
@@ -38210,6 +40890,15 @@ impl ::sittir_core::prepare::Prepare for MacroDefinitionBraceNameTransportSlot {
             MacroDefinitionBraceNameTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             MacroDefinitionBraceNameTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             MacroDefinitionBraceNameTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            MacroDefinitionBraceNameTransportSlot::Identifier(t) => t.leading_seam(),
+            MacroDefinitionBraceNameTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => None,
+            MacroDefinitionBraceNameTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => None,
+            MacroDefinitionBraceNameTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => None,
+            MacroDefinitionBraceNameTransportSlot::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -38517,6 +41206,52 @@ impl ::sittir_core::prepare::Prepare for RangePatternPrefixRightTransportSlot {
             RangePatternPrefixRightTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             RangePatternPrefixRightTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             RangePatternPrefixRightTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            RangePatternPrefixRightTransportSlot::StringLiteral(t) => t.leading_seam(),
+            RangePatternPrefixRightTransportSlot::RawStringLiteral(t) => t.leading_seam(),
+            RangePatternPrefixRightTransportSlot::CharLiteralEscapedSimple(t) => t.leading_seam(),
+            RangePatternPrefixRightTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.leading_seam(),
+            RangePatternPrefixRightTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.leading_seam(),
+            RangePatternPrefixRightTransportSlot::CharLiteralEscapedHex(t) => t.leading_seam(),
+            RangePatternPrefixRightTransportSlot::CharLiteralPlain(t) => t.leading_seam(),
+            RangePatternPrefixRightTransportSlot::CharLiteralEmpty(t) => t.leading_seam(),
+            RangePatternPrefixRightTransportSlot::BooleanLiteral(t) => t.leading_seam(),
+            RangePatternPrefixRightTransportSlot::IntegerLiteralDecimal(t) => t.leading_seam(),
+            RangePatternPrefixRightTransportSlot::IntegerLiteralHex(t) => t.leading_seam(),
+            RangePatternPrefixRightTransportSlot::IntegerLiteralBinary(t) => t.leading_seam(),
+            RangePatternPrefixRightTransportSlot::IntegerLiteralOctal(t) => t.leading_seam(),
+            RangePatternPrefixRightTransportSlot::FloatLiteral(t) => t.leading_seam(),
+            RangePatternPrefixRightTransportSlot::NegativeLiteral(t) => t.leading_seam(),
+            RangePatternPrefixRightTransportSlot::Metavariable(t) => t.leading_seam(),
+            RangePatternPrefixRightTransportSlot::Identifier(t) => t.leading_seam(),
+            RangePatternPrefixRightTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            RangePatternPrefixRightTransportSlot::Literal19_73_65_6c_66 => None,
+            RangePatternPrefixRightTransportSlot::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternPrefixRightTransportSlot::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternPrefixRightTransportSlot::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternPrefixRightTransportSlot::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternPrefixRightTransportSlot::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternPrefixRightTransportSlot::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternPrefixRightTransportSlot::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternPrefixRightTransportSlot::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternPrefixRightTransportSlot::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternPrefixRightTransportSlot::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternPrefixRightTransportSlot::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternPrefixRightTransportSlot::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternPrefixRightTransportSlot::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternPrefixRightTransportSlot::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternPrefixRightTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternPrefixRightTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternPrefixRightTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternPrefixRightTransportSlot::Literal20_73_75_70_65_72 => None,
+            RangePatternPrefixRightTransportSlot::Literal21_63_72_61_74_65 => None,
+            RangePatternPrefixRightTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternPrefixRightTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternPrefixRightTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternPrefixRightTransportSlot::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -39101,6 +41836,52 @@ impl ::sittir_core::prepare::Prepare for RangePatternWithLeftWithRightRightTrans
             RangePatternWithLeftWithRightRightTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             RangePatternWithLeftWithRightRightTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             RangePatternWithLeftWithRightRightTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            RangePatternWithLeftWithRightRightTransportSlot::StringLiteral(t) => t.leading_seam(),
+            RangePatternWithLeftWithRightRightTransportSlot::RawStringLiteral(t) => t.leading_seam(),
+            RangePatternWithLeftWithRightRightTransportSlot::CharLiteralEscapedSimple(t) => t.leading_seam(),
+            RangePatternWithLeftWithRightRightTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.leading_seam(),
+            RangePatternWithLeftWithRightRightTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.leading_seam(),
+            RangePatternWithLeftWithRightRightTransportSlot::CharLiteralEscapedHex(t) => t.leading_seam(),
+            RangePatternWithLeftWithRightRightTransportSlot::CharLiteralPlain(t) => t.leading_seam(),
+            RangePatternWithLeftWithRightRightTransportSlot::CharLiteralEmpty(t) => t.leading_seam(),
+            RangePatternWithLeftWithRightRightTransportSlot::BooleanLiteral(t) => t.leading_seam(),
+            RangePatternWithLeftWithRightRightTransportSlot::IntegerLiteralDecimal(t) => t.leading_seam(),
+            RangePatternWithLeftWithRightRightTransportSlot::IntegerLiteralHex(t) => t.leading_seam(),
+            RangePatternWithLeftWithRightRightTransportSlot::IntegerLiteralBinary(t) => t.leading_seam(),
+            RangePatternWithLeftWithRightRightTransportSlot::IntegerLiteralOctal(t) => t.leading_seam(),
+            RangePatternWithLeftWithRightRightTransportSlot::FloatLiteral(t) => t.leading_seam(),
+            RangePatternWithLeftWithRightRightTransportSlot::NegativeLiteral(t) => t.leading_seam(),
+            RangePatternWithLeftWithRightRightTransportSlot::Metavariable(t) => t.leading_seam(),
+            RangePatternWithLeftWithRightRightTransportSlot::Identifier(t) => t.leading_seam(),
+            RangePatternWithLeftWithRightRightTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            RangePatternWithLeftWithRightRightTransportSlot::Literal19_73_65_6c_66 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Literal20_73_75_70_65_72 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Literal21_63_72_61_74_65 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftWithRightRightTransportSlot::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -39699,6 +42480,52 @@ impl ::sittir_core::prepare::Prepare for RangePatternWithLeftLeftTransportSlot {
             RangePatternWithLeftLeftTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            RangePatternWithLeftLeftTransportSlot::StringLiteral(t) => t.leading_seam(),
+            RangePatternWithLeftLeftTransportSlot::RawStringLiteral(t) => t.leading_seam(),
+            RangePatternWithLeftLeftTransportSlot::CharLiteralEscapedSimple(t) => t.leading_seam(),
+            RangePatternWithLeftLeftTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.leading_seam(),
+            RangePatternWithLeftLeftTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.leading_seam(),
+            RangePatternWithLeftLeftTransportSlot::CharLiteralEscapedHex(t) => t.leading_seam(),
+            RangePatternWithLeftLeftTransportSlot::CharLiteralPlain(t) => t.leading_seam(),
+            RangePatternWithLeftLeftTransportSlot::CharLiteralEmpty(t) => t.leading_seam(),
+            RangePatternWithLeftLeftTransportSlot::BooleanLiteral(t) => t.leading_seam(),
+            RangePatternWithLeftLeftTransportSlot::IntegerLiteralDecimal(t) => t.leading_seam(),
+            RangePatternWithLeftLeftTransportSlot::IntegerLiteralHex(t) => t.leading_seam(),
+            RangePatternWithLeftLeftTransportSlot::IntegerLiteralBinary(t) => t.leading_seam(),
+            RangePatternWithLeftLeftTransportSlot::IntegerLiteralOctal(t) => t.leading_seam(),
+            RangePatternWithLeftLeftTransportSlot::FloatLiteral(t) => t.leading_seam(),
+            RangePatternWithLeftLeftTransportSlot::NegativeLiteral(t) => t.leading_seam(),
+            RangePatternWithLeftLeftTransportSlot::Metavariable(t) => t.leading_seam(),
+            RangePatternWithLeftLeftTransportSlot::Identifier(t) => t.leading_seam(),
+            RangePatternWithLeftLeftTransportSlot::ScopedIdentifier(t) => t.leading_seam(),
+            RangePatternWithLeftLeftTransportSlot::Literal19_73_65_6c_66 => None,
+            RangePatternWithLeftLeftTransportSlot::Literal22_75_38_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftLeftTransportSlot::Literal23_69_38_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftLeftTransportSlot::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftLeftTransportSlot::Literal25_69_31_36_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftLeftTransportSlot::Literal26_75_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftLeftTransportSlot::Literal27_69_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftLeftTransportSlot::Literal28_75_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftLeftTransportSlot::Literal29_69_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftLeftTransportSlot::Literal30_75_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftLeftTransportSlot::Literal31_69_31_32_38_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftLeftTransportSlot::Literal32_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftLeftTransportSlot::Literal33_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftLeftTransportSlot::Literal34_66_33_32_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftLeftTransportSlot::Literal35_66_36_34_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftLeftTransportSlot::Literal36_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftLeftTransportSlot::Literal37_73_74_72_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftLeftTransportSlot::Literal38_63_68_61_72_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftLeftTransportSlot::Literal20_73_75_70_65_72 => None,
+            RangePatternWithLeftLeftTransportSlot::Literal21_63_72_61_74_65 => None,
+            RangePatternWithLeftLeftTransportSlot::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftLeftTransportSlot::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftLeftTransportSlot::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64 => None,
+            RangePatternWithLeftLeftTransportSlot::Verbatim(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for RangePatternWithLeftLeftTransportSlot {
@@ -40089,6 +42916,12 @@ impl ::sittir_core::prepare::Prepare for RangePatternWithLeftContentTransportSlo
             RangePatternWithLeftContentTransportSlot::Literal131_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65 => Ok(()),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            RangePatternWithLeftContentTransportSlot::RangePatternWithLeftWithRight(t) => t.leading_seam(),
+            RangePatternWithLeftContentTransportSlot::Literal131_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65 => None,
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for RangePatternWithLeftContentTransportSlot {
@@ -40240,6 +43073,32 @@ impl ::sittir_core::prepare::Prepare for AttributedParameterContentTransportSlot
             AttributedParameterContentTransportSlot::RemovedTraitBound(t) => t.prepare(ctx),
             AttributedParameterContentTransportSlot::PrimitiveType(t) => t.prepare(ctx),
             AttributedParameterContentTransportSlot::Literal68_75_6e_64_65_72_73_63_6f_72_65 => Ok(()),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            AttributedParameterContentTransportSlot::Parameter(t) => t.leading_seam(),
+            AttributedParameterContentTransportSlot::SelfParameter(t) => t.leading_seam(),
+            AttributedParameterContentTransportSlot::VariadicParameter(t) => t.leading_seam(),
+            AttributedParameterContentTransportSlot::AbstractType(t) => t.leading_seam(),
+            AttributedParameterContentTransportSlot::ReferenceType(t) => t.leading_seam(),
+            AttributedParameterContentTransportSlot::Metavariable(t) => t.leading_seam(),
+            AttributedParameterContentTransportSlot::PointerTypeConst(t) => t.leading_seam(),
+            AttributedParameterContentTransportSlot::PointerTypeMut(t) => t.leading_seam(),
+            AttributedParameterContentTransportSlot::GenericType(t) => t.leading_seam(),
+            AttributedParameterContentTransportSlot::ScopedTypeIdentifier(t) => t.leading_seam(),
+            AttributedParameterContentTransportSlot::TupleType(t) => t.leading_seam(),
+            AttributedParameterContentTransportSlot::UnitType(t) => t.leading_seam(),
+            AttributedParameterContentTransportSlot::ArrayType(t) => t.leading_seam(),
+            AttributedParameterContentTransportSlot::FunctionType(t) => t.leading_seam(),
+            AttributedParameterContentTransportSlot::TypeIdentifier(t) => t.leading_seam(),
+            AttributedParameterContentTransportSlot::MacroInvocation(t) => t.leading_seam(),
+            AttributedParameterContentTransportSlot::NeverType(t) => t.leading_seam(),
+            AttributedParameterContentTransportSlot::DynamicType(t) => t.leading_seam(),
+            AttributedParameterContentTransportSlot::BoundedType(t) => t.leading_seam(),
+            AttributedParameterContentTransportSlot::RemovedTraitBound(t) => t.leading_seam(),
+            AttributedParameterContentTransportSlot::PrimitiveType(t) => t.leading_seam(),
+            AttributedParameterContentTransportSlot::Literal68_75_6e_64_65_72_73_63_6f_72_65 => None,
         }
     }
 }
@@ -40641,6 +43500,14 @@ impl ::sittir_core::prepare::Prepare for AttributedTypeParameterContentTransport
             AttributedTypeParameterContentTransportSlot::ConstParameter(t) => t.prepare(ctx),
         }
     }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            AttributedTypeParameterContentTransportSlot::Metavariable(t) => t.leading_seam(),
+            AttributedTypeParameterContentTransportSlot::TypeParameter(t) => t.leading_seam(),
+            AttributedTypeParameterContentTransportSlot::LifetimeParameter(t) => t.leading_seam(),
+            AttributedTypeParameterContentTransportSlot::ConstParameter(t) => t.leading_seam(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for AttributedTypeParameterContentTransportSlot {
@@ -40837,6 +43704,46 @@ impl ::sittir_core::prepare::Prepare for TypeArgumentContentTransportSlot {
             TypeArgumentContentTransportSlot::FloatLiteral(t) => t.prepare(ctx),
             TypeArgumentContentTransportSlot::Block(t) => t.prepare(ctx),
             TypeArgumentContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            TypeArgumentContentTransportSlot::AbstractType(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::ReferenceType(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::Metavariable(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::PointerTypeConst(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::PointerTypeMut(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::GenericType(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::ScopedTypeIdentifier(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::TupleType(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::UnitType(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::ArrayType(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::FunctionType(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::TypeIdentifier(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::MacroInvocation(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::NeverType(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::DynamicType(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::BoundedType(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::RemovedTraitBound(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::PrimitiveType(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::TypeBinding(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::Lifetime(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::StringLiteral(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::RawStringLiteral(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::CharLiteralEscapedSimple(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::CharLiteralEscapedHex(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::CharLiteralPlain(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::CharLiteralEmpty(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::BooleanLiteral(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::IntegerLiteralDecimal(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::IntegerLiteralHex(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::IntegerLiteralBinary(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::IntegerLiteralOctal(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::FloatLiteral(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::Block(t) => t.leading_seam(),
+            TypeArgumentContentTransportSlot::Verbatim(t) => t.leading_seam(),
         }
     }
 }
@@ -41399,8 +44306,8 @@ impl ::sittir_core::prepare::Prepare for SourceFileTransport {
         ::sittir_core::prepare::fill_edges(self, flanks);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_statements = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.statements.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_SOURCE_FILE_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.statements.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_SOURCE_FILE_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.statements_separator_space.is_none() { self.statements_separator_space = gaps.before; }
             gaps.separated
         };
@@ -41409,6 +44316,9 @@ impl ::sittir_core::prepare::Prepare for SourceFileTransport {
         self.shebang.prepare(ctx)?;
         self.statements.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -41461,6 +44371,9 @@ impl ::sittir_core::prepare::Prepare for EmptyStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -41571,6 +44484,9 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -41632,6 +44548,9 @@ impl ::sittir_core::prepare::Prepare for MacroRuleTransport {
         self.right.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -41692,6 +44611,9 @@ impl ::sittir_core::prepare::Prepare for TokenBindingPatternTransport {
         self.name.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -41755,8 +44677,8 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionPatternTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_token_patterns = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.token_patterns.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.token_patterns.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.token_patterns_separator_space.is_none() { self.token_patterns_separator_space = gaps.before; }
             gaps.separated
         };
@@ -41766,6 +44688,9 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionPatternTransport {
         self.separator.prepare(ctx)?;
         self.operator.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -42021,8 +44946,8 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_tokens = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.tokens.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_TOKEN_REPETITION_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.tokens.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_TOKEN_REPETITION_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.tokens_separator_space.is_none() { self.tokens_separator_space = gaps.before; }
             gaps.separated
         };
@@ -42032,6 +44957,9 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionTransport {
         self.separator.prepare(ctx)?;
         self.operator.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -42089,6 +45017,9 @@ impl ::sittir_core::prepare::Prepare for NonSpecialTokenTransport {
         self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -42148,6 +45079,9 @@ impl ::sittir_core::prepare::Prepare for AttributeItemTransport {
         self.attribute.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -42205,6 +45139,9 @@ impl ::sittir_core::prepare::Prepare for InnerAttributeItemTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.attribute.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -42267,6 +45204,9 @@ impl ::sittir_core::prepare::Prepare for AttributeTransport {
         self.input.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -42325,8 +45265,8 @@ impl ::sittir_core::prepare::Prepare for DeclarationListTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_declarations = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.declarations.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_DECLARATION_LIST_DECLARATIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.declarations.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_DECLARATION_LIST_DECLARATIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.declarations_separator_space.is_none() { self.declarations_separator_space = gaps.before; }
             gaps.separated
         };
@@ -42334,6 +45274,9 @@ impl ::sittir_core::prepare::Prepare for DeclarationListTransport {
         if let Some(seated_items) = self.declarations.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_DECLARATION_LIST_DECLARATIONS, &separated_declarations, ctx); }
         self.declarations.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -42405,6 +45348,9 @@ impl ::sittir_core::prepare::Prepare for UnionItemTransport {
         self.body.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -42475,6 +45421,9 @@ impl ::sittir_core::prepare::Prepare for EnumItemTransport {
         self.body.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -42532,6 +45481,9 @@ impl ::sittir_core::prepare::Prepare for EnumVariantListTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -42600,6 +45552,9 @@ impl ::sittir_core::prepare::Prepare for EnumVariantTransport {
         self.value.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -42657,6 +45612,9 @@ impl ::sittir_core::prepare::Prepare for FieldDeclarationListTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -42722,6 +45680,9 @@ impl ::sittir_core::prepare::Prepare for FieldDeclarationTransport {
         self.type_.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -42779,6 +45740,9 @@ impl ::sittir_core::prepare::Prepare for OrderedFieldDeclarationListTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.attributes.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -42843,6 +45807,9 @@ impl ::sittir_core::prepare::Prepare for ExternCrateDeclarationTransport {
         self.name.prepare(ctx)?;
         self.alias.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -42910,6 +45877,9 @@ impl ::sittir_core::prepare::Prepare for ConstItemTransport {
         self.type_.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -42984,6 +45954,9 @@ impl ::sittir_core::prepare::Prepare for StaticItemTransport {
         self.value.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -43056,6 +46029,9 @@ impl ::sittir_core::prepare::Prepare for TypeItemTransport {
         self.type_.prepare(ctx)?;
         self.trailing_where_clause.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -43136,6 +46112,9 @@ impl ::sittir_core::prepare::Prepare for FunctionItemTransport {
         self.body.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -43212,6 +46191,9 @@ impl ::sittir_core::prepare::Prepare for FunctionSignatureItemTransport {
         self.where_clause.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -43270,8 +46252,8 @@ impl ::sittir_core::prepare::Prepare for FunctionModifiersTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_modifier = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.modifier.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_FUNCTION_MODIFIERS_MODIFIER_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.modifier.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_FUNCTION_MODIFIERS_MODIFIER_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.modifier_separator_space.is_none() { self.modifier_separator_space = gaps.before; }
             gaps.separated
         };
@@ -43279,6 +46261,9 @@ impl ::sittir_core::prepare::Prepare for FunctionModifiersTransport {
         ::sittir_core::prepare::fill_seated_gaps(self.modifier.iter_mut().map(Some), options::SEATS_FUNCTION_MODIFIERS_MODIFIER, &separated_modifier, ctx);
         self.modifier.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -43337,6 +46322,9 @@ impl ::sittir_core::prepare::Prepare for WhereClauseTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.where_predicates.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -43398,6 +46386,9 @@ impl ::sittir_core::prepare::Prepare for WherePredicateTransport {
         self.left.prepare(ctx)?;
         self.bounds.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -43475,6 +46466,9 @@ impl ::sittir_core::prepare::Prepare for TraitItemTransport {
         self.body.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -43542,6 +46536,9 @@ impl ::sittir_core::prepare::Prepare for AssociatedTypeTransport {
         self.where_clause.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -43602,8 +46599,8 @@ impl ::sittir_core::prepare::Prepare for TraitBoundsTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_bounds = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.bounds.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "+", options::allowed(options::SITE_TRAIT_BOUNDS_BOUNDS_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TRAIT_BOUNDS_BOUNDS_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.bounds.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "+", options::allowed(options::SITE_TRAIT_BOUNDS_BOUNDS_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TRAIT_BOUNDS_BOUNDS_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
             if self.bounds_separator_space_before.is_none() { self.bounds_separator_space_before = gaps.before; }
             if self.bounds_separator_space_after.is_none() { self.bounds_separator_space_after = gaps.after; }
             gaps.separated
@@ -43613,6 +46610,9 @@ impl ::sittir_core::prepare::Prepare for TraitBoundsTransport {
         ::sittir_core::prepare::fill_seated_gaps(self.bounds.iter_mut().map(Some), options::SEATS_TRAIT_BOUNDS_BOUNDS, &separated_bounds, ctx);
         self.bounds.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -43675,6 +46675,9 @@ impl ::sittir_core::prepare::Prepare for HigherRankedTraitBoundTransport {
         self.type_.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -43733,6 +46736,9 @@ impl ::sittir_core::prepare::Prepare for RemovedTraitBoundTransport {
         self.type_.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -43790,6 +46796,9 @@ impl ::sittir_core::prepare::Prepare for TypeParametersTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -43855,6 +46864,9 @@ impl ::sittir_core::prepare::Prepare for ConstParameterTransport {
         self.value.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -43919,6 +46931,9 @@ impl ::sittir_core::prepare::Prepare for TypeParameterTransport {
         self.default_type.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -43979,6 +46994,9 @@ impl ::sittir_core::prepare::Prepare for LifetimeParameterTransport {
         self.name.prepare(ctx)?;
         self.bounds.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -44050,6 +47068,9 @@ impl ::sittir_core::prepare::Prepare for LetDeclarationTransport {
         self.alternative.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -44110,6 +47131,9 @@ impl ::sittir_core::prepare::Prepare for UseDeclarationTransport {
         self.visibility_modifier.prepare(ctx)?;
         self.argument.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -44172,6 +47196,9 @@ impl ::sittir_core::prepare::Prepare for ScopedUseListTransport {
         self.list.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -44229,6 +47256,9 @@ impl ::sittir_core::prepare::Prepare for UseListTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.use_clauses.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -44291,6 +47321,9 @@ impl ::sittir_core::prepare::Prepare for UseAsClauseTransport {
         self.alias.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -44349,6 +47382,9 @@ impl ::sittir_core::prepare::Prepare for UseWildcardTransport {
         self.use_wildcard_group.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -44406,6 +47442,9 @@ impl ::sittir_core::prepare::Prepare for ParametersTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -44471,6 +47510,9 @@ impl ::sittir_core::prepare::Prepare for SelfParameterTransport {
         self.mutable.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -44531,6 +47573,9 @@ impl ::sittir_core::prepare::Prepare for VariadicParameterTransport {
         self.mutable.prepare(ctx)?;
         self.pattern.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -44596,6 +47641,9 @@ impl ::sittir_core::prepare::Prepare for ParameterTransport {
         self.type_.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -44654,6 +47702,9 @@ impl ::sittir_core::prepare::Prepare for ExternModifierTransport {
         self.abi.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -44710,6 +47761,9 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierTransport {
         self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -44768,6 +47822,9 @@ impl ::sittir_core::prepare::Prepare for BracketedTypeTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.type_.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -44830,6 +47887,9 @@ impl ::sittir_core::prepare::Prepare for QualifiedTypeTransport {
         self.alias.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -44887,6 +47947,9 @@ impl ::sittir_core::prepare::Prepare for LifetimeTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -44949,6 +48012,9 @@ impl ::sittir_core::prepare::Prepare for ArrayTypeTransport {
         self.length.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -45006,6 +48072,9 @@ impl ::sittir_core::prepare::Prepare for ForLifetimesTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.lifetimes.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -45074,6 +48143,9 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -45132,6 +48204,9 @@ impl ::sittir_core::prepare::Prepare for TupleTypeTransport {
         self.types.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -45183,6 +48258,9 @@ impl ::sittir_core::prepare::Prepare for UnitTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -45297,6 +48375,9 @@ impl ::sittir_core::prepare::Prepare for GenericFunctionTransport {
         self.type_arguments.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -45357,6 +48438,9 @@ impl ::sittir_core::prepare::Prepare for GenericTypeTransport {
         self.type_.prepare(ctx)?;
         self.type_arguments.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -45419,6 +48503,9 @@ impl ::sittir_core::prepare::Prepare for GenericTypeWithTurbofishTransport {
         self.type_arguments.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -45480,6 +48567,9 @@ impl ::sittir_core::prepare::Prepare for BoundedTypeTransport {
         self.right.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -45538,6 +48628,9 @@ impl ::sittir_core::prepare::Prepare for UseBoundsTransport {
         self.bounds.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -45595,6 +48688,9 @@ impl ::sittir_core::prepare::Prepare for TypeArgumentsTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -45660,6 +48756,9 @@ impl ::sittir_core::prepare::Prepare for TypeBindingTransport {
         self.type_.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -45724,6 +48823,9 @@ impl ::sittir_core::prepare::Prepare for ReferenceTypeTransport {
         self.type_.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -45775,6 +48877,9 @@ impl ::sittir_core::prepare::Prepare for NeverTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -45889,6 +48994,9 @@ impl ::sittir_core::prepare::Prepare for AbstractTypeTransport {
         self.trait_.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -45947,6 +49055,9 @@ impl ::sittir_core::prepare::Prepare for DynamicTypeTransport {
         self.trait_.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -45998,6 +49109,9 @@ impl ::sittir_core::prepare::Prepare for MutableSpecifierTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -46139,6 +49253,9 @@ impl ::sittir_core::prepare::Prepare for MacroInvocationTransport {
         self.arguments.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -46199,6 +49316,9 @@ impl ::sittir_core::prepare::Prepare for ScopedIdentifierTransport {
         self.path.prepare(ctx)?;
         self.name.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -46261,6 +49381,9 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierInExpressionPositio
         self.name.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -46321,6 +49444,9 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierTransport {
         self.path.prepare(ctx)?;
         self.name.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -46383,6 +49509,9 @@ impl ::sittir_core::prepare::Prepare for UnaryExpressionTransport {
         self.operand.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -46440,6 +49569,9 @@ impl ::sittir_core::prepare::Prepare for TryExpressionTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.value.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -46505,6 +49637,9 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionTransport {
         self.right.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -46565,6 +49700,9 @@ impl ::sittir_core::prepare::Prepare for AssignmentExpressionTransport {
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -46630,6 +49768,9 @@ impl ::sittir_core::prepare::Prepare for CompoundAssignmentExprTransport {
         self.right.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -46691,6 +49832,9 @@ impl ::sittir_core::prepare::Prepare for TypeCastExpressionTransport {
         self.type_.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -46749,6 +49893,9 @@ impl ::sittir_core::prepare::Prepare for ReturnExpressionTransport {
         self.expression.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -46806,6 +49953,9 @@ impl ::sittir_core::prepare::Prepare for YieldExpressionTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -46868,6 +50018,9 @@ impl ::sittir_core::prepare::Prepare for CallExpressionTransport {
         self.arguments.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -46926,6 +50079,9 @@ impl ::sittir_core::prepare::Prepare for ArgumentsTransport {
         self.elements.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -46983,6 +50139,9 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -47044,8 +50203,8 @@ impl ::sittir_core::prepare::Prepare for TupleExpressionTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_attributes = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attributes.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_TUPLE_EXPRESSION_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.attributes.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_TUPLE_EXPRESSION_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.attributes_separator_space.is_none() { self.attributes_separator_space = gaps.before; }
             gaps.separated
         };
@@ -47054,6 +50213,9 @@ impl ::sittir_core::prepare::Prepare for TupleExpressionTransport {
         self.attributes.prepare(ctx)?;
         self.expressions.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -47106,6 +50268,9 @@ impl ::sittir_core::prepare::Prepare for UnitExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -47220,6 +50385,9 @@ impl ::sittir_core::prepare::Prepare for StructExpressionTransport {
         self.body.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -47277,6 +50445,9 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerListTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.initializers.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -47338,8 +50509,8 @@ impl ::sittir_core::prepare::Prepare for ShorthandFieldInitializerTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_attributes = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attributes.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.attributes.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.attributes_separator_space.is_none() { self.attributes_separator_space = gaps.before; }
             gaps.separated
         };
@@ -47348,6 +50519,9 @@ impl ::sittir_core::prepare::Prepare for ShorthandFieldInitializerTransport {
         self.attributes.prepare(ctx)?;
         self.name.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -47411,8 +50585,8 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_attribute_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attribute_item.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.attribute_item.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.attribute_item_separator_space.is_none() { self.attribute_item_separator_space = gaps.before; }
             gaps.separated
         };
@@ -47422,6 +50596,9 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerTransport {
         self.value.prepare(ctx)?;
         self.attribute_item.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -47480,6 +50657,9 @@ impl ::sittir_core::prepare::Prepare for BaseFieldInitializerTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.value.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -47545,6 +50725,9 @@ impl ::sittir_core::prepare::Prepare for IfExpressionTransport {
         self.alternative.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -47605,6 +50788,9 @@ impl ::sittir_core::prepare::Prepare for LetConditionTransport {
         self.pattern.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -47667,8 +50853,8 @@ impl ::sittir_core::prepare::Prepare for LetChainTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         let separated_right = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.right.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "&&", options::allowed(options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.right.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "&&", options::allowed(options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
             if self.right_separator_space_before.is_none() { self.right_separator_space_before = gaps.before; }
             if self.right_separator_space_after.is_none() { self.right_separator_space_after = gaps.after; }
             gaps.separated
@@ -47679,6 +50865,9 @@ impl ::sittir_core::prepare::Prepare for LetChainTransport {
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -47737,6 +50926,9 @@ impl ::sittir_core::prepare::Prepare for ElseClauseTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -47799,6 +50991,9 @@ impl ::sittir_core::prepare::Prepare for MatchExpressionTransport {
         self.body.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -47856,6 +51051,9 @@ impl ::sittir_core::prepare::Prepare for MatchBlockTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.match_block_arms.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -47921,8 +51119,8 @@ impl ::sittir_core::prepare::Prepare for LastMatchArmTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_attributes = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attributes.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_LAST_MATCH_ARM_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.attributes.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_LAST_MATCH_ARM_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.attributes_separator_space.is_none() { self.attributes_separator_space = gaps.before; }
             gaps.separated
         };
@@ -47933,6 +51131,9 @@ impl ::sittir_core::prepare::Prepare for LastMatchArmTransport {
         self.value.prepare(ctx)?;
         self.comma.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -47994,6 +51195,9 @@ impl ::sittir_core::prepare::Prepare for MatchPatternTransport {
         self.pattern.prepare(ctx)?;
         self.condition.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -48059,6 +51263,9 @@ impl ::sittir_core::prepare::Prepare for WhileExpressionTransport {
         self.body.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -48119,6 +51326,9 @@ impl ::sittir_core::prepare::Prepare for LoopExpressionTransport {
         self.label.prepare(ctx)?;
         self.body.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -48187,6 +51397,9 @@ impl ::sittir_core::prepare::Prepare for ForExpressionTransport {
         self.body.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -48244,6 +51457,9 @@ impl ::sittir_core::prepare::Prepare for ConstBlockTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -48305,8 +51521,8 @@ impl ::sittir_core::prepare::Prepare for ClosureParametersTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_parameters = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.parameters.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.parameters.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ",", options::allowed(options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
             if self.parameters_separator_space_before.is_none() { self.parameters_separator_space_before = gaps.before; }
             if self.parameters_separator_space_after.is_none() { self.parameters_separator_space_after = gaps.after; }
             gaps.separated
@@ -48316,6 +51532,9 @@ impl ::sittir_core::prepare::Prepare for ClosureParametersTransport {
         if let Some(seated_items) = self.parameters.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_CLOSURE_PARAMETERS_PARAMETERS, &separated_parameters, ctx); }
         self.parameters.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -48374,6 +51593,9 @@ impl ::sittir_core::prepare::Prepare for LabelTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -48436,6 +51658,9 @@ impl ::sittir_core::prepare::Prepare for BreakExpressionTransport {
         self.expression.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -48493,6 +51718,9 @@ impl ::sittir_core::prepare::Prepare for ContinueExpressionTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.label.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -48555,6 +51783,9 @@ impl ::sittir_core::prepare::Prepare for IndexExpressionTransport {
         self.index.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -48612,6 +51843,9 @@ impl ::sittir_core::prepare::Prepare for AwaitExpressionTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -48674,6 +51908,9 @@ impl ::sittir_core::prepare::Prepare for FieldExpressionTransport {
         self.field.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -48731,6 +51968,9 @@ impl ::sittir_core::prepare::Prepare for UnsafeBlockTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -48793,6 +52033,9 @@ impl ::sittir_core::prepare::Prepare for AsyncBlockTransport {
         self.body.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -48854,6 +52097,9 @@ impl ::sittir_core::prepare::Prepare for GenBlockTransport {
         self.body.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -48911,6 +52157,9 @@ impl ::sittir_core::prepare::Prepare for TryBlockTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -48974,8 +52223,8 @@ impl ::sittir_core::prepare::Prepare for BlockTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_statements = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.statements.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.statements.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.statements_separator_space.is_none() { self.statements_separator_space = gaps.before; }
             gaps.separated
         };
@@ -48985,6 +52234,9 @@ impl ::sittir_core::prepare::Prepare for BlockTransport {
         self.statements.prepare(ctx)?;
         self.trailing_expression.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -49047,6 +52299,9 @@ impl ::sittir_core::prepare::Prepare for GenericPatternTransport {
         self.type_arguments.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -49105,6 +52360,9 @@ impl ::sittir_core::prepare::Prepare for TuplePatternTransport {
         self.elements.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -49162,6 +52420,9 @@ impl ::sittir_core::prepare::Prepare for SlicePatternTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.patterns.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -49224,6 +52485,9 @@ impl ::sittir_core::prepare::Prepare for TupleStructPatternTransport {
         self.patterns.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -49285,6 +52549,9 @@ impl ::sittir_core::prepare::Prepare for StructPatternTransport {
         self.fields.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -49336,6 +52603,9 @@ impl ::sittir_core::prepare::Prepare for RemainingFieldPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -49447,6 +52717,9 @@ impl ::sittir_core::prepare::Prepare for MutPatternTransport {
         self.pattern.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -49504,6 +52777,9 @@ impl ::sittir_core::prepare::Prepare for RefPatternTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.pattern.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -49566,6 +52842,9 @@ impl ::sittir_core::prepare::Prepare for CapturedPatternTransport {
         self.pattern.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -49627,6 +52906,9 @@ impl ::sittir_core::prepare::Prepare for ReferencePatternTransport {
         self.pattern.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -49684,6 +52966,9 @@ impl ::sittir_core::prepare::Prepare for NegativeLiteralTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.value.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -49745,6 +53030,9 @@ impl ::sittir_core::prepare::Prepare for StringLiteralTransport {
         self.string_open.prepare(ctx)?;
         self.elements.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -49809,6 +53097,9 @@ impl ::sittir_core::prepare::Prepare for RawStringLiteralTransport {
         self.string_content.prepare(ctx)?;
         self.raw_string_literal_end.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -49956,6 +53247,9 @@ impl ::sittir_core::prepare::Prepare for LineCommentTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -50007,6 +53301,9 @@ impl ::sittir_core::prepare::Prepare for InnerLineDocCommentMarkerTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -50111,6 +53408,9 @@ impl ::sittir_core::prepare::Prepare for OuterLineDocCommentMarkerTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -50222,6 +53522,9 @@ impl ::sittir_core::prepare::Prepare for BlockCommentTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -50273,6 +53576,9 @@ impl ::sittir_core::prepare::Prepare for IdentifierTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -50390,6 +53696,9 @@ impl ::sittir_core::prepare::Prepare for ShebangTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -50441,6 +53750,9 @@ impl ::sittir_core::prepare::Prepare for Self_Transport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -50546,6 +53858,9 @@ impl ::sittir_core::prepare::Prepare for SuperTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -50649,6 +53964,9 @@ impl ::sittir_core::prepare::Prepare for CrateTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -50758,6 +54076,9 @@ impl ::sittir_core::prepare::Prepare for MetavariableTransport {
         self.transport_trivia_data.prepare(ctx)?;
         self.name.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -51029,8 +54350,8 @@ impl ::sittir_core::prepare::Prepare for MacroRulesTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ";", options::allowed(options::SITE_MACRO_RULES_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_MACRO_RULES_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.item.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ";", options::allowed(options::SITE_MACRO_RULES_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_MACRO_RULES_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
             if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
             if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
@@ -51041,6 +54362,9 @@ impl ::sittir_core::prepare::Prepare for MacroRulesTransport {
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_MACRO_RULES_ITEM]);
         self.item.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -51104,8 +54428,8 @@ impl ::sittir_core::prepare::Prepare for EnumVariantListElementsTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.item.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ",", options::allowed(options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
             if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
             if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
@@ -51116,6 +54440,9 @@ impl ::sittir_core::prepare::Prepare for EnumVariantListElementsTransport {
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_ENUM_VARIANT_LIST_ELEMENTS_ITEM]);
         self.item.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -51179,8 +54506,8 @@ impl ::sittir_core::prepare::Prepare for FieldDeclarationListElementsTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.item.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ",", options::allowed(options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
             if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
             if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
@@ -51191,6 +54518,9 @@ impl ::sittir_core::prepare::Prepare for FieldDeclarationListElementsTransport {
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_FIELD_DECLARATION_LIST_ELEMENTS_ITEM]);
         self.item.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -51254,8 +54584,8 @@ impl ::sittir_core::prepare::Prepare for OrderedFieldDeclarationListElementsTran
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.item.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ",", options::allowed(options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
             if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
             if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
@@ -51266,6 +54596,9 @@ impl ::sittir_core::prepare::Prepare for OrderedFieldDeclarationListElementsTran
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ITEM]);
         self.item.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -51329,8 +54662,8 @@ impl ::sittir_core::prepare::Prepare for WherePredicatesTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_WHERE_PREDICATES_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_WHERE_PREDICATES_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.item.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ",", options::allowed(options::SITE_WHERE_PREDICATES_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_WHERE_PREDICATES_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
             if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
             if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
@@ -51341,6 +54674,9 @@ impl ::sittir_core::prepare::Prepare for WherePredicatesTransport {
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_WHERE_PREDICATES_ITEM]);
         self.item.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -51404,8 +54740,8 @@ impl ::sittir_core::prepare::Prepare for TypeParametersElementsTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.item.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ",", options::allowed(options::SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
             if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
             if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
@@ -51416,6 +54752,9 @@ impl ::sittir_core::prepare::Prepare for TypeParametersElementsTransport {
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_TYPE_PARAMETERS_ELEMENTS_ITEM]);
         self.item.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -51479,8 +54818,8 @@ impl ::sittir_core::prepare::Prepare for UseClausesTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_USE_CLAUSES_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_USE_CLAUSES_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.item.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ",", options::allowed(options::SITE_USE_CLAUSES_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_USE_CLAUSES_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
             if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
             if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
@@ -51491,6 +54830,9 @@ impl ::sittir_core::prepare::Prepare for UseClausesTransport {
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_USE_CLAUSES_ITEM]);
         self.item.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -51554,8 +54896,8 @@ impl ::sittir_core::prepare::Prepare for ParametersElementsTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.item.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ",", options::allowed(options::SITE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
             if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
             if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
@@ -51566,6 +54908,9 @@ impl ::sittir_core::prepare::Prepare for ParametersElementsTransport {
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_PARAMETERS_ELEMENTS_ITEM]);
         self.item.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -51629,8 +54974,8 @@ impl ::sittir_core::prepare::Prepare for LifetimesTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_LIFETIMES_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_LIFETIMES_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.item.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ",", options::allowed(options::SITE_LIFETIMES_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_LIFETIMES_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
             if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
             if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
@@ -51641,6 +54986,9 @@ impl ::sittir_core::prepare::Prepare for LifetimesTransport {
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_LIFETIMES_ITEM]);
         self.item.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -51704,8 +55052,8 @@ impl ::sittir_core::prepare::Prepare for TypesTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TYPES_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TYPES_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.item.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ",", options::allowed(options::SITE_TYPES_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TYPES_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
             if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
             if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
@@ -51716,6 +55064,9 @@ impl ::sittir_core::prepare::Prepare for TypesTransport {
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_TYPES_ITEM]);
         self.item.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -51779,8 +55130,8 @@ impl ::sittir_core::prepare::Prepare for UseBoundsElementsTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_USE_BOUNDS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_USE_BOUNDS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.item.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ",", options::allowed(options::SITE_USE_BOUNDS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_USE_BOUNDS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
             if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
             if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
@@ -51791,6 +55142,9 @@ impl ::sittir_core::prepare::Prepare for UseBoundsElementsTransport {
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_USE_BOUNDS_ELEMENTS_ITEM]);
         self.item.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -51854,8 +55208,8 @@ impl ::sittir_core::prepare::Prepare for TypeArgumentsElementsTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TYPE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TYPE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.item.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ",", options::allowed(options::SITE_TYPE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TYPE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
             if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
             if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
@@ -51866,6 +55220,9 @@ impl ::sittir_core::prepare::Prepare for TypeArgumentsElementsTransport {
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_TYPE_ARGUMENTS_ELEMENTS_ITEM]);
         self.item.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -51929,8 +55286,8 @@ impl ::sittir_core::prepare::Prepare for ArgumentsElementsTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.item.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ",", options::allowed(options::SITE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
             if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
             if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
@@ -51941,6 +55298,9 @@ impl ::sittir_core::prepare::Prepare for ArgumentsElementsTransport {
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_ARGUMENTS_ELEMENTS_ITEM]);
         self.item.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -52004,8 +55364,8 @@ impl ::sittir_core::prepare::Prepare for ExpressionsTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_EXPRESSIONS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXPRESSIONS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.item.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ",", options::allowed(options::SITE_EXPRESSIONS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXPRESSIONS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
             if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
             if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
@@ -52016,6 +55376,9 @@ impl ::sittir_core::prepare::Prepare for ExpressionsTransport {
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_EXPRESSIONS_ITEM]);
         self.item.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -52079,8 +55442,8 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerListElementsTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.item.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ",", options::allowed(options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
             if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
             if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
@@ -52091,6 +55454,9 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerListElementsTransport {
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_FIELD_INITIALIZER_LIST_ELEMENTS_ITEM]);
         self.item.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -52154,8 +55520,8 @@ impl ::sittir_core::prepare::Prepare for TuplePatternElementsTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.item.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ",", options::allowed(options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
             if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
             if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
@@ -52166,6 +55532,9 @@ impl ::sittir_core::prepare::Prepare for TuplePatternElementsTransport {
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_TUPLE_PATTERN_ELEMENTS_ITEM]);
         self.item.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -52229,8 +55598,8 @@ impl ::sittir_core::prepare::Prepare for PatternsTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.item.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ",", options::allowed(options::SITE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
             if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
             if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
@@ -52241,6 +55610,9 @@ impl ::sittir_core::prepare::Prepare for PatternsTransport {
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_PATTERNS_ITEM]);
         self.item.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -52304,8 +55676,8 @@ impl ::sittir_core::prepare::Prepare for StructPatternElementsTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.item.iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_STRUCT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_STRUCT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.item.iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ",", options::allowed(options::SITE_STRUCT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_STRUCT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
             if self.item_separator_space_before.is_none() { self.item_separator_space_before = gaps.before; }
             if self.item_separator_space_after.is_none() { self.item_separator_space_after = gaps.after; }
             gaps.separated
@@ -52316,6 +55688,9 @@ impl ::sittir_core::prepare::Prepare for StructPatternElementsTransport {
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_STRUCT_PATTERN_ELEMENTS_ITEM]);
         self.item.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -52375,6 +55750,9 @@ impl ::sittir_core::prepare::Prepare for UseWildcardGroupTransport {
         self.path.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -52426,6 +55804,9 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionPatternTextTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -52537,6 +55918,9 @@ impl ::sittir_core::prepare::Prepare for StringOpenTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -53377,6 +56761,9 @@ impl ::sittir_core::prepare::Prepare for _RangeExpressionBareTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -53480,6 +56867,9 @@ impl ::sittir_core::prepare::Prepare for ImplItemUnsafeMarkerTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -53620,6 +57010,9 @@ impl ::sittir_core::prepare::Prepare for IntegerLiteralDecimalTransport {
         self.suffix.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -53679,6 +57072,9 @@ impl ::sittir_core::prepare::Prepare for IntegerLiteralHexTransport {
         self.content.prepare(ctx)?;
         self.suffix.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -53740,6 +57136,9 @@ impl ::sittir_core::prepare::Prepare for IntegerLiteralBinaryTransport {
         self.suffix.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -53799,6 +57198,9 @@ impl ::sittir_core::prepare::Prepare for IntegerLiteralOctalTransport {
         self.content.prepare(ctx)?;
         self.suffix.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -53860,6 +57262,9 @@ impl ::sittir_core::prepare::Prepare for CharLiteralPlainTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -53911,6 +57316,9 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEmptyTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -54031,6 +57439,9 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEscapedSimpleTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -54090,6 +57501,9 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEscapedUnicodeFixedTransport
         self.b.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -54151,6 +57565,9 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEscapedUnicodeBracedTranspor
         self.content.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -54211,6 +57628,9 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEscapedHexTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -54267,6 +57687,9 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceSimpleTransport {
         self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -54325,6 +57748,9 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeFixedTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -54382,6 +57808,9 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeBracedTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -54438,6 +57867,9 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceHexTransport {
         self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -54501,8 +57933,8 @@ impl ::sittir_core::prepare::Prepare for ArrayExpressionSemiTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_attributes = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attributes.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_ARRAY_EXPRESSION_SEMI_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.attributes.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_ARRAY_EXPRESSION_SEMI_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.attributes_separator_space.is_none() { self.attributes_separator_space = gaps.before; }
             gaps.separated
         };
@@ -54512,6 +57944,9 @@ impl ::sittir_core::prepare::Prepare for ArrayExpressionSemiTransport {
         self.element.prepare(ctx)?;
         self.length.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -54573,8 +58008,8 @@ impl ::sittir_core::prepare::Prepare for ArrayExpressionListTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_attributes = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attributes.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_ARRAY_EXPRESSION_LIST_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.attributes.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_ARRAY_EXPRESSION_LIST_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.attributes_separator_space.is_none() { self.attributes_separator_space = gaps.before; }
             gaps.separated
         };
@@ -54583,6 +58018,9 @@ impl ::sittir_core::prepare::Prepare for ArrayExpressionListTransport {
         self.attributes.prepare(ctx)?;
         self.elements.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -54643,6 +58081,9 @@ impl ::sittir_core::prepare::Prepare for AttributeInputTransport {
         self.value.prepare(ctx)?;
         self.arguments.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -54717,6 +58158,9 @@ impl ::sittir_core::prepare::Prepare for ClosureExpressionBlockTransport {
         self.body.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -54787,6 +58231,9 @@ impl ::sittir_core::prepare::Prepare for ClosureExpressionExprTransport {
         self.body.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -54844,6 +58291,9 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionRawConstTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.value.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -54903,6 +58353,9 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionRawMutTransport {
         self.value.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -54960,6 +58413,9 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionMutTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.value.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -55019,6 +58475,9 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionBareTransport {
         self.value.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -55077,6 +58536,9 @@ impl ::sittir_core::prepare::Prepare for ImplItemPositiveClauseTransport {
         self.trait_.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -55134,6 +58596,9 @@ impl ::sittir_core::prepare::Prepare for ImplItemNegativeClauseTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.trait_.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -55208,6 +58673,9 @@ impl ::sittir_core::prepare::Prepare for ImplItemBodyTransport {
         self.declaration_list.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -55278,6 +58746,9 @@ impl ::sittir_core::prepare::Prepare for ImplItemSemiTransport {
         self.where_clause.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -55335,6 +58806,9 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierPubScopeInPathTranspo
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.path.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -55394,6 +58868,9 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierPubScopeTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -55452,6 +58929,9 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierPubTransport {
         self.visibility_modifier_pub_scope.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -55508,6 +58988,9 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeTraitFormTransport {
         self.transport_trivia_data.prepare(ctx)?;
         self.trait_.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -55566,6 +59049,9 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeFnFormTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.function_modifiers.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -55627,6 +59113,9 @@ impl ::sittir_core::prepare::Prepare for ModItemExternalTransport {
         self.visibility_modifier.prepare(ctx)?;
         self.name.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -55692,6 +59181,9 @@ impl ::sittir_core::prepare::Prepare for ModItemInlineTransport {
         self.body.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -55753,6 +59245,9 @@ impl ::sittir_core::prepare::Prepare for OrPatternBinaryTransport {
         self.right.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -55810,6 +59305,9 @@ impl ::sittir_core::prepare::Prepare for OrPatternPrefixTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.right.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -55869,6 +59367,9 @@ impl ::sittir_core::prepare::Prepare for PointerTypeConstTransport {
         self.type_.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -55926,6 +59427,9 @@ impl ::sittir_core::prepare::Prepare for PointerTypeMutTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.type_.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -55991,6 +59495,9 @@ impl ::sittir_core::prepare::Prepare for RangeExpressionBinaryTransport {
         self.end.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -56048,6 +59555,9 @@ impl ::sittir_core::prepare::Prepare for RangeExpressionPostfixTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.start.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -56107,6 +59617,9 @@ impl ::sittir_core::prepare::Prepare for RangeExpressionPrefixTransport {
         self.end.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -56163,6 +59676,9 @@ impl ::sittir_core::prepare::Prepare for RangeExpressionBareTransport {
         self.transport_trivia_data.prepare(ctx)?;
         self.range_expression_bare.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -56221,6 +59737,9 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementWithSemiTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -56282,6 +59801,9 @@ impl ::sittir_core::prepare::Prepare for ForeignModItemSemiTransport {
         self.visibility_modifier.prepare(ctx)?;
         self.extern_modifier.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -56347,6 +59869,9 @@ impl ::sittir_core::prepare::Prepare for ForeignModItemBodyTransport {
         self.body.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -56409,8 +59934,8 @@ impl ::sittir_core::prepare::Prepare for MatchArmWithCommaTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_attributes = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attributes.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_MATCH_ARM_WITH_COMMA_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.attributes.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_MATCH_ARM_WITH_COMMA_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.attributes_separator_space.is_none() { self.attributes_separator_space = gaps.before; }
             gaps.separated
         };
@@ -56420,6 +59945,9 @@ impl ::sittir_core::prepare::Prepare for MatchArmWithCommaTransport {
         self.pattern.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -56483,8 +60011,8 @@ impl ::sittir_core::prepare::Prepare for MatchArmBlockEndingTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_attributes = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attributes.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.attributes.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.attributes_separator_space.is_none() { self.attributes_separator_space = gaps.before; }
             gaps.separated
         };
@@ -56494,6 +60022,9 @@ impl ::sittir_core::prepare::Prepare for MatchArmBlockEndingTransport {
         self.pattern.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -56546,6 +60077,9 @@ impl ::sittir_core::prepare::Prepare for LineCommentExtraSlashesTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -56663,6 +60197,9 @@ impl ::sittir_core::prepare::Prepare for LineCommentDocOuterTransport {
         self.doc.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -56720,6 +60257,9 @@ impl ::sittir_core::prepare::Prepare for LineCommentDocInnerTransport {
         self.doc.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -56771,6 +60311,9 @@ impl ::sittir_core::prepare::Prepare for LineCommentRegularTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -56888,6 +60431,9 @@ impl ::sittir_core::prepare::Prepare for BlockCommentDocOuterTransport {
         self.doc.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -56945,6 +60491,9 @@ impl ::sittir_core::prepare::Prepare for BlockCommentDocInnerTransport {
         self.doc.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -56996,6 +60545,9 @@ impl ::sittir_core::prepare::Prepare for BlockCommentRegularTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -57114,8 +60666,8 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternParenTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_token_patterns = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.token_patterns.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.token_patterns.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.token_patterns_separator_space.is_none() { self.token_patterns_separator_space = gaps.before; }
             gaps.separated
         };
@@ -57123,6 +60675,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternParenTransport {
         if let Some(seated_items) = self.token_patterns.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS, &separated_token_patterns, ctx); }
         self.token_patterns.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -57182,8 +60737,8 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternBracketTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_token_patterns = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.token_patterns.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.token_patterns.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.token_patterns_separator_space.is_none() { self.token_patterns_separator_space = gaps.before; }
             gaps.separated
         };
@@ -57191,6 +60746,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternBracketTransport {
         if let Some(seated_items) = self.token_patterns.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS, &separated_token_patterns, ctx); }
         self.token_patterns.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -57250,8 +60808,8 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternBraceTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_token_patterns = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.token_patterns.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.token_patterns.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.token_patterns_separator_space.is_none() { self.token_patterns_separator_space = gaps.before; }
             gaps.separated
         };
@@ -57259,6 +60817,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternBraceTransport {
         if let Some(seated_items) = self.token_patterns.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS, &separated_token_patterns, ctx); }
         self.token_patterns.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -57318,8 +60879,8 @@ impl ::sittir_core::prepare::Prepare for TokenTreeParenTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_tokens = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.tokens.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_TOKEN_TREE_PAREN_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.tokens.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_TOKEN_TREE_PAREN_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.tokens_separator_space.is_none() { self.tokens_separator_space = gaps.before; }
             gaps.separated
         };
@@ -57327,6 +60888,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreeParenTransport {
         if let Some(seated_items) = self.tokens.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TOKEN_TREE_PAREN_TOKENS, &separated_tokens, ctx); }
         self.tokens.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -57386,8 +60950,8 @@ impl ::sittir_core::prepare::Prepare for TokenTreeBracketTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_tokens = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.tokens.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_TOKEN_TREE_BRACKET_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.tokens.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_TOKEN_TREE_BRACKET_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.tokens_separator_space.is_none() { self.tokens_separator_space = gaps.before; }
             gaps.separated
         };
@@ -57395,6 +60959,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreeBracketTransport {
         if let Some(seated_items) = self.tokens.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TOKEN_TREE_BRACKET_TOKENS, &separated_tokens, ctx); }
         self.tokens.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -57454,8 +61021,8 @@ impl ::sittir_core::prepare::Prepare for TokenTreeBraceTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_tokens = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.tokens.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_TOKEN_TREE_BRACE_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.tokens.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_TOKEN_TREE_BRACE_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.tokens_separator_space.is_none() { self.tokens_separator_space = gaps.before; }
             gaps.separated
         };
@@ -57463,6 +61030,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreeBraceTransport {
         if let Some(seated_items) = self.tokens.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TOKEN_TREE_BRACE_TOKENS, &separated_tokens, ctx); }
         self.tokens.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -57522,8 +61092,8 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeParenTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_delim_tokens = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.delim_tokens.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.delim_tokens.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.delim_tokens_separator_space.is_none() { self.delim_tokens_separator_space = gaps.before; }
             gaps.separated
         };
@@ -57531,6 +61101,9 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeParenTransport {
         if let Some(seated_items) = self.delim_tokens.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS, &separated_delim_tokens, ctx); }
         self.delim_tokens.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -57590,8 +61163,8 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeBracketTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_delim_tokens = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.delim_tokens.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.delim_tokens.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.delim_tokens_separator_space.is_none() { self.delim_tokens_separator_space = gaps.before; }
             gaps.separated
         };
@@ -57599,6 +61172,9 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeBracketTransport {
         if let Some(seated_items) = self.delim_tokens.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS, &separated_delim_tokens, ctx); }
         self.delim_tokens.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -57658,8 +61234,8 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeBraceTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_delim_tokens = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.delim_tokens.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.delim_tokens.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.delim_tokens_separator_space.is_none() { self.delim_tokens_separator_space = gaps.before; }
             gaps.separated
         };
@@ -57667,6 +61243,9 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeBraceTransport {
         if let Some(seated_items) = self.delim_tokens.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS, &separated_delim_tokens, ctx); }
         self.delim_tokens.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -57731,6 +61310,9 @@ impl ::sittir_core::prepare::Prepare for FieldPatternShorthandTransport {
         self.mutable.prepare(ctx)?;
         self.name.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -57799,6 +61381,9 @@ impl ::sittir_core::prepare::Prepare for FieldPatternNamedTransport {
         self.pattern.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -57859,6 +61444,9 @@ impl ::sittir_core::prepare::Prepare for MacroDefinitionParenTransport {
         self.name.prepare(ctx)?;
         self.macro_rules.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -57921,6 +61509,9 @@ impl ::sittir_core::prepare::Prepare for MacroDefinitionBracketTransport {
         self.macro_rules.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -57981,6 +61572,9 @@ impl ::sittir_core::prepare::Prepare for MacroDefinitionBraceTransport {
         self.name.prepare(ctx)?;
         self.macro_rules.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -58043,6 +61637,9 @@ impl ::sittir_core::prepare::Prepare for RangePatternPrefixTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -58104,6 +61701,9 @@ impl ::sittir_core::prepare::Prepare for RangePatternWithLeftWithRightTransport 
         self.content.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -58155,6 +61755,9 @@ impl ::sittir_core::prepare::Prepare for RangePatternWithLeftBareTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -58269,6 +61872,9 @@ impl ::sittir_core::prepare::Prepare for RangePatternWithLeftTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -58338,6 +61944,9 @@ impl ::sittir_core::prepare::Prepare for StructItemBraceTransport {
         self.body.prepare(ctx)?;
         self.where_clause.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -58409,6 +62018,9 @@ impl ::sittir_core::prepare::Prepare for StructItemTupleTransport {
         self.where_clause.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -58473,6 +62085,9 @@ impl ::sittir_core::prepare::Prepare for StructItemUnitTransport {
         self.type_parameters.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -58524,6 +62139,9 @@ impl ::sittir_core::prepare::Prepare for WildcardPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -58637,8 +62255,8 @@ impl ::sittir_core::prepare::Prepare for AttributedFieldDeclarationTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_attribute_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attribute_item.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.attribute_item.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.attribute_item_separator_space.is_none() { self.attribute_item_separator_space = gaps.before; }
             gaps.separated
         };
@@ -58647,6 +62265,9 @@ impl ::sittir_core::prepare::Prepare for AttributedFieldDeclarationTransport {
         self.attribute_item.prepare(ctx)?;
         self.field_declaration.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -58708,8 +62329,8 @@ impl ::sittir_core::prepare::Prepare for AttributedEnumVariantTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_attribute_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attribute_item.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.attribute_item.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.attribute_item_separator_space.is_none() { self.attribute_item_separator_space = gaps.before; }
             gaps.separated
         };
@@ -58718,6 +62339,9 @@ impl ::sittir_core::prepare::Prepare for AttributedEnumVariantTransport {
         self.attribute_item.prepare(ctx)?;
         self.enum_variant.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -58780,6 +62404,9 @@ impl ::sittir_core::prepare::Prepare for AttributedParameterTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -58840,8 +62467,8 @@ impl ::sittir_core::prepare::Prepare for AttributedTypeParameterTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_attribute_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attribute_item.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.attribute_item.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.attribute_item_separator_space.is_none() { self.attribute_item_separator_space = gaps.before; }
             gaps.separated
         };
@@ -58850,6 +62477,9 @@ impl ::sittir_core::prepare::Prepare for AttributedTypeParameterTransport {
         self.attribute_item.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -58911,8 +62541,8 @@ impl ::sittir_core::prepare::Prepare for AttributedArgumentTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_attribute_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attribute_item.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.attribute_item.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.attribute_item_separator_space.is_none() { self.attribute_item_separator_space = gaps.before; }
             gaps.separated
         };
@@ -58921,6 +62551,9 @@ impl ::sittir_core::prepare::Prepare for AttributedArgumentTransport {
         self.attribute_item.prepare(ctx)?;
         self.expression.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -58984,8 +62617,8 @@ impl ::sittir_core::prepare::Prepare for AttributedOrderedFieldTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_attribute_item = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attribute_item.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.attribute_item.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.attribute_item_separator_space.is_none() { self.attribute_item_separator_space = gaps.before; }
             gaps.separated
         };
@@ -58995,6 +62628,9 @@ impl ::sittir_core::prepare::Prepare for AttributedOrderedFieldTransport {
         self.attribute_item.prepare(ctx)?;
         self.visibility_modifier.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -59057,6 +62693,9 @@ impl ::sittir_core::prepare::Prepare for TypeArgumentTransport {
         self.trait_bounds.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -59117,8 +62756,8 @@ impl ::sittir_core::prepare::Prepare for MatchBlockArmsTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         let separated_match_arm = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.match_arm.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_MATCH_BLOCK_ARMS_MATCH_ARM_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = self.match_arm.as_deref().unwrap_or(&[]).iter().map(|item| ::sittir_core::classify::GapItem { coord: item.coord(), held: ::sittir_core::prepare::Prepare::leading_seam(item) }).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, "", options::allowed(options::SITE_MATCH_BLOCK_ARMS_MATCH_ARM_SEPARATOR_SPACE), &[], &options::WHITESPACE);
             if self.match_arm_separator_space.is_none() { self.match_arm_separator_space = gaps.before; }
             gaps.separated
         };
@@ -59127,6 +62766,9 @@ impl ::sittir_core::prepare::Prepare for MatchBlockArmsTransport {
         self.last_arm.prepare(ctx)?;
         self.match_arm.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -59179,6 +62821,9 @@ impl ::sittir_core::prepare::Prepare for FloatLiteralTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -59291,6 +62936,9 @@ impl ::sittir_core::prepare::Prepare for StringContentTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -59401,6 +63049,9 @@ impl ::sittir_core::prepare::Prepare for RawStringLiteralContentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -59513,6 +63164,9 @@ impl ::sittir_core::prepare::Prepare for OuterDocCommentMarkerTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -59617,6 +63271,9 @@ impl ::sittir_core::prepare::Prepare for InnerDocCommentMarkerTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -59720,6 +63377,9 @@ impl ::sittir_core::prepare::Prepare for RawStringLiteralStartTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -59832,6 +63492,9 @@ impl ::sittir_core::prepare::Prepare for RawStringLiteralEndTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -59942,6 +63605,9 @@ impl ::sittir_core::prepare::Prepare for DocCommentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -60054,6 +63720,9 @@ impl ::sittir_core::prepare::Prepare for BlockCommentContentTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -60164,6 +63833,9 @@ impl ::sittir_core::prepare::Prepare for TightTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -60276,6 +63948,9 @@ impl ::sittir_core::prepare::Prepare for SpaceTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -60379,6 +64054,9 @@ impl ::sittir_core::prepare::Prepare for TabTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -60484,6 +64162,9 @@ impl ::sittir_core::prepare::Prepare for NewlineTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -60587,6 +64268,9 @@ impl ::sittir_core::prepare::Prepare for BlanklineTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -60692,6 +64376,9 @@ impl ::sittir_core::prepare::Prepare for DoubleBlanklineTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -60795,6 +64482,9 @@ impl ::sittir_core::prepare::Prepare for IndentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -60907,6 +64597,9 @@ impl ::sittir_core::prepare::Prepare for DedentTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -61017,6 +64710,9 @@ impl ::sittir_core::prepare::Prepare for ErrorSentinelTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -61134,6 +64830,9 @@ impl ::sittir_core::prepare::Prepare for TypeIdentifierTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -61190,6 +64889,9 @@ impl ::sittir_core::prepare::Prepare for FieldIdentifierTransport {
         self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -61248,6 +64950,9 @@ impl ::sittir_core::prepare::Prepare for ShorthandFieldIdentifierTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -61299,6 +65004,9 @@ impl ::sittir_core::prepare::Prepare for SemiTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -61404,6 +65112,9 @@ impl ::sittir_core::prepare::Prepare for EqGtTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -61507,6 +65218,9 @@ impl ::sittir_core::prepare::Prepare for ColonTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -61612,6 +65326,9 @@ impl ::sittir_core::prepare::Prepare for DollarTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -61715,6 +65432,9 @@ impl ::sittir_core::prepare::Prepare for LparenTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -61820,6 +65540,9 @@ impl ::sittir_core::prepare::Prepare for RparenTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -61923,6 +65646,9 @@ impl ::sittir_core::prepare::Prepare for PlusTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -62028,6 +65754,9 @@ impl ::sittir_core::prepare::Prepare for StarTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -62131,6 +65860,9 @@ impl ::sittir_core::prepare::Prepare for QmarkTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -62236,6 +65968,9 @@ impl ::sittir_core::prepare::Prepare for BlockKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -62339,6 +66074,9 @@ impl ::sittir_core::prepare::Prepare for ExprKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -62444,6 +66182,9 @@ impl ::sittir_core::prepare::Prepare for Expr2021KeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -62547,6 +66288,9 @@ impl ::sittir_core::prepare::Prepare for IdentKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -62652,6 +66396,9 @@ impl ::sittir_core::prepare::Prepare for ItemKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -62755,6 +66502,9 @@ impl ::sittir_core::prepare::Prepare for LifetimeKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -62860,6 +66610,9 @@ impl ::sittir_core::prepare::Prepare for LiteralKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -62963,6 +66716,9 @@ impl ::sittir_core::prepare::Prepare for MetaKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -63068,6 +66824,9 @@ impl ::sittir_core::prepare::Prepare for PatKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -63171,6 +66930,9 @@ impl ::sittir_core::prepare::Prepare for PatParamKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -63276,6 +67038,9 @@ impl ::sittir_core::prepare::Prepare for PathKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -63379,6 +67144,9 @@ impl ::sittir_core::prepare::Prepare for StmtKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -63484,6 +67252,9 @@ impl ::sittir_core::prepare::Prepare for TtKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -63587,6 +67358,9 @@ impl ::sittir_core::prepare::Prepare for TyKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -63692,6 +67466,9 @@ impl ::sittir_core::prepare::Prepare for VisKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -63795,6 +67572,9 @@ impl ::sittir_core::prepare::Prepare for PoundTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -63900,6 +67680,9 @@ impl ::sittir_core::prepare::Prepare for LbrackTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -64003,6 +67786,9 @@ impl ::sittir_core::prepare::Prepare for RbrackTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -64108,6 +67894,9 @@ impl ::sittir_core::prepare::Prepare for BangTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -64211,6 +68000,9 @@ impl ::sittir_core::prepare::Prepare for U8KeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -64316,6 +68108,9 @@ impl ::sittir_core::prepare::Prepare for I8KeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -64419,6 +68214,9 @@ impl ::sittir_core::prepare::Prepare for U16KeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -64524,6 +68322,9 @@ impl ::sittir_core::prepare::Prepare for I16KeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -64627,6 +68428,9 @@ impl ::sittir_core::prepare::Prepare for U32KeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -64732,6 +68536,9 @@ impl ::sittir_core::prepare::Prepare for I32KeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -64835,6 +68642,9 @@ impl ::sittir_core::prepare::Prepare for U64KeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -64940,6 +68750,9 @@ impl ::sittir_core::prepare::Prepare for I64KeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -65043,6 +68856,9 @@ impl ::sittir_core::prepare::Prepare for U128KeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -65148,6 +68964,9 @@ impl ::sittir_core::prepare::Prepare for I128KeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -65251,6 +69070,9 @@ impl ::sittir_core::prepare::Prepare for IsizeKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -65356,6 +69178,9 @@ impl ::sittir_core::prepare::Prepare for UsizeKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -65459,6 +69284,9 @@ impl ::sittir_core::prepare::Prepare for F32KeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -65564,6 +69392,9 @@ impl ::sittir_core::prepare::Prepare for F64KeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -65667,6 +69498,9 @@ impl ::sittir_core::prepare::Prepare for BoolKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -65772,6 +69606,9 @@ impl ::sittir_core::prepare::Prepare for StrKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -65875,6 +69712,9 @@ impl ::sittir_core::prepare::Prepare for CharKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -65980,6 +69820,9 @@ impl ::sittir_core::prepare::Prepare for DefaultKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -66083,6 +69926,9 @@ impl ::sittir_core::prepare::Prepare for UnionKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -66188,6 +70034,9 @@ impl ::sittir_core::prepare::Prepare for GenKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -66291,6 +70140,9 @@ impl ::sittir_core::prepare::Prepare for LbraceTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -66396,6 +70248,9 @@ impl ::sittir_core::prepare::Prepare for RbraceTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -66499,6 +70354,9 @@ impl ::sittir_core::prepare::Prepare for EnumKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -66604,6 +70462,9 @@ impl ::sittir_core::prepare::Prepare for EqTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -66707,6 +70568,9 @@ impl ::sittir_core::prepare::Prepare for ExternKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -66812,6 +70676,9 @@ impl ::sittir_core::prepare::Prepare for AsKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -66915,6 +70782,9 @@ impl ::sittir_core::prepare::Prepare for ConstKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -67020,6 +70890,9 @@ impl ::sittir_core::prepare::Prepare for StaticKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -67123,6 +70996,9 @@ impl ::sittir_core::prepare::Prepare for RefKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -67228,6 +71104,9 @@ impl ::sittir_core::prepare::Prepare for TypeKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -67331,6 +71210,9 @@ impl ::sittir_core::prepare::Prepare for FnKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -67436,6 +71318,9 @@ impl ::sittir_core::prepare::Prepare for DashGtTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -67539,6 +71424,9 @@ impl ::sittir_core::prepare::Prepare for AsyncKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -67644,6 +71532,9 @@ impl ::sittir_core::prepare::Prepare for UnsafeKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -67747,6 +71638,9 @@ impl ::sittir_core::prepare::Prepare for WhereKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -67852,6 +71746,9 @@ impl ::sittir_core::prepare::Prepare for TraitKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -67955,6 +71852,9 @@ impl ::sittir_core::prepare::Prepare for ForKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -68060,6 +71960,9 @@ impl ::sittir_core::prepare::Prepare for LtTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -68163,6 +72066,9 @@ impl ::sittir_core::prepare::Prepare for GtTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -68268,6 +72174,9 @@ impl ::sittir_core::prepare::Prepare for LetKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -68371,6 +72280,9 @@ impl ::sittir_core::prepare::Prepare for ElseKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -68476,6 +72388,9 @@ impl ::sittir_core::prepare::Prepare for UseKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -68579,6 +72494,9 @@ impl ::sittir_core::prepare::Prepare for ColonColonTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -68684,6 +72602,9 @@ impl ::sittir_core::prepare::Prepare for AmpTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -68787,6 +72708,9 @@ impl ::sittir_core::prepare::Prepare for DotDotDotTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -68892,6 +72816,9 @@ impl ::sittir_core::prepare::Prepare for SquoteTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -68995,6 +72922,9 @@ impl ::sittir_core::prepare::Prepare for ImplKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -69100,6 +73030,9 @@ impl ::sittir_core::prepare::Prepare for DynKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -69203,6 +73136,9 @@ impl ::sittir_core::prepare::Prepare for DashTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -69308,6 +73244,9 @@ impl ::sittir_core::prepare::Prepare for AmpAmpTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -69411,6 +73350,9 @@ impl ::sittir_core::prepare::Prepare for PipePipeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -69516,6 +73458,9 @@ impl ::sittir_core::prepare::Prepare for PipeTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -69619,6 +73564,9 @@ impl ::sittir_core::prepare::Prepare for CaretTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -69724,6 +73672,9 @@ impl ::sittir_core::prepare::Prepare for EqEqTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -69827,6 +73778,9 @@ impl ::sittir_core::prepare::Prepare for BangEqTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -69932,6 +73886,9 @@ impl ::sittir_core::prepare::Prepare for LtEqTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -70035,6 +73992,9 @@ impl ::sittir_core::prepare::Prepare for GtEqTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -70140,6 +74100,9 @@ impl ::sittir_core::prepare::Prepare for LtLtTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -70243,6 +74206,9 @@ impl ::sittir_core::prepare::Prepare for GtGtTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -70348,6 +74314,9 @@ impl ::sittir_core::prepare::Prepare for SlashTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -70451,6 +74420,9 @@ impl ::sittir_core::prepare::Prepare for PercentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -70556,6 +74528,9 @@ impl ::sittir_core::prepare::Prepare for PlusEqTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -70659,6 +74634,9 @@ impl ::sittir_core::prepare::Prepare for DashEqTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -70764,6 +74742,9 @@ impl ::sittir_core::prepare::Prepare for StarEqTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -70867,6 +74848,9 @@ impl ::sittir_core::prepare::Prepare for SlashEqTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -70972,6 +74956,9 @@ impl ::sittir_core::prepare::Prepare for PercentEqTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -71075,6 +75062,9 @@ impl ::sittir_core::prepare::Prepare for AmpEqTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -71180,6 +75170,9 @@ impl ::sittir_core::prepare::Prepare for PipeEqTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -71283,6 +75276,9 @@ impl ::sittir_core::prepare::Prepare for CaretEqTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -71388,6 +75384,9 @@ impl ::sittir_core::prepare::Prepare for LtLtEqTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -71491,6 +75490,9 @@ impl ::sittir_core::prepare::Prepare for GtGtEqTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -71596,6 +75598,9 @@ impl ::sittir_core::prepare::Prepare for ReturnKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -71699,6 +75704,9 @@ impl ::sittir_core::prepare::Prepare for YieldKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -71804,6 +75812,9 @@ impl ::sittir_core::prepare::Prepare for DotDotTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -71907,6 +75918,9 @@ impl ::sittir_core::prepare::Prepare for IfKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -72012,6 +76026,9 @@ impl ::sittir_core::prepare::Prepare for MatchKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -72115,6 +76132,9 @@ impl ::sittir_core::prepare::Prepare for CommaTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -72220,6 +76240,9 @@ impl ::sittir_core::prepare::Prepare for WhileKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -72323,6 +76346,9 @@ impl ::sittir_core::prepare::Prepare for LoopKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -72428,6 +76454,9 @@ impl ::sittir_core::prepare::Prepare for InKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -72531,6 +76560,9 @@ impl ::sittir_core::prepare::Prepare for BreakKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -72636,6 +76668,9 @@ impl ::sittir_core::prepare::Prepare for ContinueKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -72739,6 +76774,9 @@ impl ::sittir_core::prepare::Prepare for DotTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -72844,6 +76882,9 @@ impl ::sittir_core::prepare::Prepare for AwaitKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -72947,6 +76988,9 @@ impl ::sittir_core::prepare::Prepare for MoveKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -73052,6 +77096,9 @@ impl ::sittir_core::prepare::Prepare for TryKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -73155,6 +77202,9 @@ impl ::sittir_core::prepare::Prepare for AtTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -73260,6 +77310,9 @@ impl ::sittir_core::prepare::Prepare for DquoteTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -73363,6 +77416,9 @@ impl ::sittir_core::prepare::Prepare for TrueKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -73468,6 +77524,9 @@ impl ::sittir_core::prepare::Prepare for FalseKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -73571,6 +77630,9 @@ impl ::sittir_core::prepare::Prepare for SlashSlashTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -73676,6 +77738,9 @@ impl ::sittir_core::prepare::Prepare for SlashStarTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -73779,6 +77844,9 @@ impl ::sittir_core::prepare::Prepare for StarSlashTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -73884,6 +77952,9 @@ impl ::sittir_core::prepare::Prepare for UnderscoreTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -73987,6 +78058,9 @@ impl ::sittir_core::prepare::Prepare for DotDotEqTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -74092,6 +78166,9 @@ impl ::sittir_core::prepare::Prepare for ModKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -74195,6 +78272,9 @@ impl ::sittir_core::prepare::Prepare for PubKeywordTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
@@ -74300,6 +78380,9 @@ impl ::sittir_core::prepare::Prepare for StructKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -74404,6 +78487,9 @@ impl ::sittir_core::prepare::Prepare for RawKeywordTransport {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
+    }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
@@ -74507,6 +78593,9 @@ impl ::sittir_core::prepare::Prepare for MacroRulesBangTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
+    }
+    fn leading_seam(&self) -> Option<&str> {
+        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())
     }
 }
 
