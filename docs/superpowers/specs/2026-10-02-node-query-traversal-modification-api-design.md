@@ -47,30 +47,31 @@ Not in this design: mutable nodes, edit transactions, `using`/disposal commits, 
 
 `fn.parameters` is a callable view: calling it materializes (`fn.parameters()` above), and its verbs (§4) build and run a plan over the slot's items. A singular slot's view has the same verbs over zero or one item.
 
-The view is made when the slot is read. What it costs depends on where the node carries the getter that makes it (`slot-accessor`, per node with three repeated slots; Node 26, Apple silicon):
+Nodes are instances of a class per kind (#610). `x.slot` is a getter on the class prototype. On the slot's first read it makes the view as one closure over the node and the slot, and keeps it in a private field the class declares. The table below measures that against today's method in the literal and the alternatives (`cached-view`: 200,000 nodes with three repeated slots, one shape per process; Node 26, Apple silicon):
 
-| Shape | Build | `x.slot.filter(p)` | `x.slot()` | Heap per node | Allocated per access | Nodes in fast mode |
+| Shape | Build | Heap per node | First `x.slot` | Held per viewed slot | `x.slot()` | Allocated per `x.slot()` |
 |---|---|---|---|---|---|---|
-| today: a method per slot in the literal | 74 ns | none | 11 ns | 464 B | 0 B | 1,000 of 1,000 |
-| a getter in the literal, a new view per read | 435 ns | 525 ns | 334 ns | 936 B | 616 B | 0 of 1,000 |
-| a getter in the literal, the view kept | 417 ns | 375 ns | 133 ns | 936 B | 32 B | 1 of 1,000 |
-| the view made at wrap time, in the literal | 1,019 ns | 307 ns | 72 ns | 1,984 B | 0 B | 1,000 of 1,000 |
-| **a getter on the kind's shared prototype, a new view per read** | **114 ns** | **377 ns** | **234 ns** | **272 B** | **616 B** | **1,000 of 1,000** |
-| a getter on the shared prototype, the view kept in a `WeakMap` | 115 ns | 509 ns | 395 ns | 272 B | 40–64 B | 1,000 of 1,000 |
+| today: a method per slot in the literal | 17–36 ns | 464 B | — | — | 8 ns | 0 B |
+| `__proto__` in the literal, a new view per read: closures for the items and the plan, an own property, `setPrototypeOf` | 74–77 ns | 272 B | — | — | 229–250 ns | 616 B |
+| `__proto__` in the literal, a new view per read, one closure | 74–77 ns | 272 B | — | — | 55 ns | 96 B |
+| `__proto__` in the literal, the view kept in a declared field | 73–79 ns | 296 B | 64–74 ns | 104 B | 8–9 ns | 0 B |
+| **a class per kind, the view kept in a private field** | **13–15 ns** | **296 B** | **66 ns** | **104 B** | **9–10 ns** | **0 B** |
+| a class per kind, a bound view kept | 14 ns | 296 B | 66 ns | 48 B | 22 ns | 32 B |
 
-The `filter` column includes building the one-step plan (about 0.2 µs in every shape).
+Every shape keeps 1,000 of 1,000 nodes in fast mode. A node whose views were made shares its map with a node never read.
 
-- **A getter in the node's literal puts every node in dictionary mode.** V8 gives each literal evaluation its own accessor pair, so no two nodes share a shape: 0 of 1,000 nodes stay fast, and the heap per node doubles. #534 removed exactly this (the `$trivia` getter) from every node, so a getter in the literal is excluded, for the views and for `$edit` alike.
-- **A view made at wrap time** keeps the node fast but costs every read node 0.9 µs and 1.5 KB, queried or not.
-- **The callable is the cost.** A bare closure costs 88 B per read and a plain (non-callable) view object 32 B. The verbs need the view's prototype, and `Object.setPrototypeOf` on a fresh function is most of the 616 B. A view bound from one shared function (a bound function inherits its target's prototype) halves it to 320 B but leaves V8's fast bind path.
+- **A getter in the node's literal puts every node in dictionary mode** (`slot-accessor`). V8 gives each literal evaluation its own accessor pair, so no two nodes share a shape: 0 of 1,000 nodes stay fast, and a node takes 936 B. #534 removed exactly this (the `$trivia` getter) from every node, so a getter in the literal is excluded, for the views and for `$edit` alike.
+- **Filling a declared field keeps the shape.** That is why a kept view costs nothing after the first read. A private field costs the same as a symbol-keyed one, and no key listing, spread or `Object.assign` sees it.
+- **A class constructor builds a node in 13–15 ns.** `__proto__` in a literal costs 73–79 ns, and 76–233 ns at a polymorphic site with computed symbol keys. The class also drops today's per-node member closures: 296 B per node against 464 B.
+- **One closure is the cheapest callable to call.** A bound function inherits its target's prototype, so it needs no `setPrototypeOf`, and it holds 48 B instead of 104 B. But V8 does not inline a call through it, so `x.slot()` costs 22 ns and allocates 32 B per call.
 
-**Decision:** the views, and `$edit` (§8), are getters on a prototype shared by every node of a kind, set as the literal's `__proto__`. Nodes stay fast and lighter, since the per-slot method closures leave the literal. Each access makes one view, 0.23 µs and 616 B. `x.slot()` goes through the getter too, so it costs 0.23 µs where today's method costs 0.01 µs. Against a node read of 9–15 µs (§5.1) that is under 3%, and a caller that reads a slot repeatedly keeps the view (`const ps = fn.parameters`). Keeping views per node lost to making them per read: a `WeakMap` lookup costs more than the allocation it saves.
+**Decision:** the views and `$edit` (§8) are getters on the prototype of the node's class (#610). Each view is one closure, made on the slot's first read and kept in a private field the class declares. After that first read (66 ns, 104 B held), `x.slot()` costs 9–10 ns, where today's method costs 8 ns. A kind declares one field per slot, at 8 B per slot per node. A kind with many slots may instead declare one field holding a record of its views: 8 B per node, but 26 ns per `x.slot()`.
 
 The prototype's methods reach the node's tree through the tree token the node already holds (the private symbol `holdReadTree` stamps), not through a closure.
 
 ### 3.3 `$with` replaces a slot's whole value
 
-`fn.$with.name(newName)` and `fn.$with.parameters(p1, p2)` build a new parent with that value. It stays in the literal, as today.
+`fn.$with.name(newName)` and `fn.$with.parameters(p1, p2)` build a new parent with that value, as today. Like the readers, `$with` is a member on the prototype of the node's class (#610).
 
 ### 3.4 `$edit` transforms a slot
 
@@ -209,7 +210,7 @@ Operations are generated from the same finalized slot model as the accessors and
 
 ### 8.2 Where `$edit` lives
 
-`$edit` is a getter on the kind's shared prototype (§3.2) and builds the editing facade when it is read. The logic of every operation is one function in common, and each facade only names the slot. The ruling placed `$edit` in the node literal beside `$with` and `$trivia`. A getter there puts every node in dictionary mode (§3.2), which is why it moves to the prototype; §12 records the choice.
+`$edit` is a getter on the prototype of the node's class (§3.2, #610) and builds the editing facade when it is read. The logic of every operation is one function in common, and each facade only names the slot.
 
 ### 8.3 Results are drafts
 
@@ -247,16 +248,16 @@ There is no engine or project ownership check. A node renders by its tree handle
 
 ## 11. Beside the shared-arena draft
 
-The arena draft makes a parsed node a view: an object holding its tree and its row, with its kind's accessors and methods on a per-kind prototype (its first open ruling, recommended there). That is the prototype §3.2 puts the slot getters and `$edit` on, so both designs ask for the same change to how a node is built.
+The arena draft makes a parsed node a view: an object holding its tree and its row, with its kind's accessors and methods on a per-kind prototype (its first open ruling, recommended there). That is the prototype of the class #610 makes every node an instance of, where §3.2 puts the slot getters and `$edit`. Both designs ask for the same change to how a node is built.
 
 Under the arena, a stub becomes a row and a batch becomes a range of rows, so the native walk returns rows rather than JSON stubs. The JavaScript half of a node read (§5.1: `JSON.parse`, `holdReadTree` and most of the wrap) is the cost the arena removes. The arena replaces `wire_slot` with routes stamped at generation. The `where` evaluator then reads those routes, so it still shares one routing with the accessors. The plan, the batch limits and the `where` surface do not change.
 
-## 12. Choices for the maintainer
+## 12. Rulings
 
-1. **Where the getters live (§3.2, §8.2).** The ruling put `$edit` in the literal as a getter. Measured, a getter in the literal makes every node a dictionary-mode object (0 of 1,000 fast, double heap), which #534 removed. Recommended: getters on a prototype shared per kind, for `$edit` and the slot views, which is also where the arena draft puts a parsed view's accessors (§11). The alternative that keeps the literal free of getters is making every view at wrap time, at 0.9 µs and 1.5 KB per read node.
-2. **`x.slot()` costs 0.23 µs instead of 0.01 µs (§3.2).** This is the price of `x.slot` being a view, under either placement. The alternative is a materializing accessor under another name, which the view ruling rejects.
-3. **`includes` compares occurrences (§4).** Until value equality is settled, a parsed node is its coordinate and a built node its identity.
-4. **`where` moves ahead of an opaque `filter` (§5.3).** The ruling said this of `ofType`. `where` is a predicate of the same kind, so the same reordering is applied to it.
+1. **Where the getters live (§3.2, §8.2): #610.** Every node is an instance of a class per kind. The slot views and `$edit` are getters on its prototype, and each view is kept per node in a private field the class declares. A getter in the literal is excluded.
+2. **What `x.slot()` costs (§3.2): #610.** It costs 9–10 ns after the slot's first read (66 ns), against 8 ns for today's method.
+3. **`includes` compares occurrences (§4).** A parsed node is its coordinate and a built node its identity, until value equality is settled with `remove(value)` (§8).
+4. **`where` moves ahead of an opaque `filter` (§5.3), as `ofType` does.** Both are declarative and pure. Neither moves ahead of a `map`.
 
 ## 13. Laws
 
@@ -287,12 +288,12 @@ Under the arena, a stub becomes a row and a batch becomes a range of rows, so th
 11. `$edit` on a slot holding a hoisted list kind edits the list's items.
 12. Add, insert, remove and move render each gap by §9: source bytes between items adjacent in the source, the seat everywhere else.
 13. Original nodes are unchanged after any edit; views and facades stay bound to the node they were read from.
-14. Every node a read returns is a fast-mode object (`%HasFastProperties`).
+14. Every node a read returns is a fast-mode object (`%HasFastProperties`), and making its views keeps its map.
 15. A slot may hold a node another engine of the same language parsed, and the result renders.
 
 ## 15. Implementation direction
 
-- **Generation:** the slot views, `$edit` facades and the recorder's slot map come from the finalized slot model that already drives the accessors and `$with`. The kind's shared prototype carries the slot getters and `$edit`. The node literal keeps data, `$type`, `$with`, `$trivia`, `$render` and `$engine`, and sets `__proto__`.
+- **Generation:** every node is an instance of a class per kind (#610). Its prototype carries the readers, `$with`, `$trivia`, `$render`, `$engine`, the slot views and `$edit`. The class declares the node's data fields and one private field per slot view. The views, the `$edit` facades and the recorder's slot map come from the finalized slot model that already drives the accessors and `$with`.
 - **Native:** one walk (`descendants`, in the prototype patch): a pre-order cursor walk from a handle with a kind filter, an optional `where` plan, a batch limit and a resume path, minting a handle only for the parents of the stubs it returns. The reader and the plan evaluator share `child_slot`.
 - **JavaScript runtime:** source, plan, terminal and edit primitive are separate pieces in common. The plan splitter moves `ofType` and `where` ahead of opaque filters, sends the declarative prefix to the walk, and pulls geometric batches.
 
@@ -312,6 +313,9 @@ The probes live in `scratchpad/node-query/` in the main checkout. Its README say
 |---|---|
 | `read-cost.mts` | where a node read's time goes: native call, `JSON.parse`, `holdReadTree`, `wrapNode` (§5.1) |
 | `batch-walk.mts` | the native walk's cost per stub and first-batch latency for each batch limit, and that stubs hydrate correctly (§5.4) |
-| `slot-accessor.mts` | build, read, call, heap, allocation and V8 fast mode of each view shape (§3.2) |
+| `slot-accessor.mts` | build, read, call, heap, allocation and V8 fast mode of a getter in the literal and of views made per read (§3.2) |
+| `cached-view.mts` | a view kept per node in a declared field against one made per read, by callable (closure, bound function) and by how the prototype is given (`__proto__` in the literal, a class per kind): build, reads, calls, heap, allocation, fast mode and map sharing (§3.2, #610) |
+| `list-owner-shape.mts` | whether list owners stay in fast mode by how `length` and their indices are defined, and the cost of a parsed list's first read (#611, #612) |
+| `list-index.mts` | a list index's cost by where it lives: an own accessor, own data, data a class writes, an accessor on a shared prototype (#611) |
 | `where.ts`, `where-cost.mts`, `where-types.ts` | the `where` prototype, its run-time and compile-time soundness checks, and its cost against a JavaScript filter (§7) |
 | `prototype-descendants.patch` | the native walk, the `where` plan evaluator and the shared `child_slot` the batch and `where` probes run against |
