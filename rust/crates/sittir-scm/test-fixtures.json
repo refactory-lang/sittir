@@ -9821,6 +9821,7 @@
             },
             "$_trivia": {
               "trailing": [
+                27,
                 {
                   "$type": 11,
                   "$source": 0,
@@ -9831,7 +9832,8 @@
                     "end": 103
                   },
                   "_content": " wild comment!"
-                }
+                },
+                27
               ]
             }
           },

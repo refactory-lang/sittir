@@ -503,7 +503,7 @@ not immediate.
  * it the trailing separator strands as a standalone member → wrapper-deletion
  * makes it a phantom `nonterminal:true` slot, and for visible (inline-unsafe)
  * groups it is permanently split from its list across the hoisted-compound
- * boundary. evaluate's `liftCommaSep` then absorbs the folded `optional(sep)`
+ * boundary. link's `liftSeq` then absorbs the folded `optional(sep)`
  * into the group's `repeat1` as `trailing: true`.
  */
 ```
@@ -2812,7 +2812,7 @@ lift/mint/rename branches and `replaceInBodyRt`'s group substitution.
  * `trailing: true` marks `sepBy` shapes where the final separator is
  * optional (e.g. rust's `{ a, b, }`). `leading: true` marks the
  * mirror shape `sep, x, (sep x)*` (rust's or_pattern `| a | b`, if
- * written as a single repeat). Evaluate's `liftCommaSep` captures
+ * written as a single repeat). Link's `liftSeq` captures
  * both from their canonical seq patterns. Render reads each flag via
  * the `joinByTrailing` / `joinByLeading` template hints to know
  * whether to probe for a flanking anon-separator token when emitting
@@ -3513,7 +3513,7 @@ The rules a grammar object offers when it is used as a base: its `.rules`, throu
 // a single multi-valued slot.
 //
 // tree-sitter grammars author `sepBy1`/`commaSep1` lists in shapes that
-// `liftCommaSep` (evaluate) does not always collapse — notably when a choice
+// link's `liftSeq` does not always collapse — notably when a choice
 // arm is an alias (`argument_list`) or the trailing separator lives in a
 // choice (`pattern_list`). After wrapper-deletion those survive as a HEAD
 // element (single) plus a REPEAT of the same element (array). Two idioms
@@ -4130,19 +4130,21 @@ its own for this form.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::sameElementRule`
 
-Whether two element positions of a `terminated` list admit the same rule: the
-rules are structurally equal once a `field` wrapper is taken off each. A field
-changes no language, so a fielded and an unfielded position still match; a
-shared field name over different rules does not, and neither do `item` and
-`_item`. The lift replaces every position with the repeat's element, so it is
-sound only when the positions really are the same rule. The `head`, `leading`
-and `tail` forms use the looser `sameListElement`.
+Whether two element positions of a separated list admit the same rule: the
+rules are structurally equal once a `field` wrapper is taken off each, and the
+two positions are not fielded with different names. A field changes no
+language, so a fielded and an unfielded position still match. Two different
+field names are two slots, so they never match, even over the same rule; a
+shared field name over different rules does not match either, and neither do
+`item` and `_item`. The lift replaces every position with the repeat's
+element, so it is sound only when the positions really are the same rule.
+Every form compares its positions this way.
 
-### `packages/codegen/src/dsl/rule-patterns.ts::sameListElement`
+### `packages/codegen/src/dsl/rule-patterns.ts::SeparatorFlank`
 
-Whether two rules are the same list element: the same element name
-(`separatedListElementName`, which reads a field's name or a symbol's), or the
-same rule structurally when neither has a name.
+How a separator stands at one end of a separated list: `mandatory` when the
+grammar writes it bare, `optional` when it is wrapped in `optional`. An end
+with no separator has no flank.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::separatedListBodyInfo`
 
@@ -4159,6 +4161,20 @@ same rule structurally when neither has a name.
  * `optional`. Returns null when the body is not a single separated list.
  */
 ```
+
+A member beside the list counts as a flank only when it is the separator: the
+separator itself, one of its arms when it is a choice, or a choice that shares
+an arm with a choice separator. Any other token beside the list (an
+`optional('.')` next to a `,`/`;` list) is not part of the list, so a body
+holding one is not a single list.
+
+Besides the form, the result carries what a consumer needs to build the list
+without matching the shape again: `repeat` (the grammar's repeat member),
+`leading` and `trailing` (whether a separator stands before the first element
+or after the last, and whether it is `mandatory` or `optional`), and `carrier`
+(the nested seq the list was written as, when it was). Link builds its
+canonical repeat from these (`separatedListAt`); the `terminated` form sets
+none of them.
 
 #### body
 

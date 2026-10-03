@@ -160,6 +160,13 @@ pub fn fill_seated_gaps<'i, T: SeatTarget + 'i, const ADJACENT: bool>(
 
 pub trait Prepare {
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError>;
+
+    /// The whitespace run this value's leading trivia opens with: the gap it
+    /// keeps toward the item before it. None for a coordinate, and for a
+    /// value whose leading trivia is empty or opens with a comment.
+    fn leading_seam(&self) -> Option<&str> {
+        None
+    }
 }
 
 impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
@@ -180,6 +187,13 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
             SlotValue::Transport(t) => t.prepare(ctx),
         }
     }
+
+    fn leading_seam(&self) -> Option<&str> {
+        match self {
+            SlotValue::Transport(t) => t.leading_seam(),
+            SlotValue::Coord(_) => None,
+        }
+    }
 }
 
 impl<T: Prepare> Prepare for Vec<T> {
@@ -195,11 +209,19 @@ impl<T: Prepare> Prepare for Option<T> {
             None => Ok(()),
         }
     }
+
+    fn leading_seam(&self) -> Option<&str> {
+        self.as_ref()?.leading_seam()
+    }
 }
 
 impl<T: Prepare + ?Sized> Prepare for Box<T> {
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
         (**self).prepare(ctx)
+    }
+
+    fn leading_seam(&self) -> Option<&str> {
+        (**self).leading_seam()
     }
 }
 
@@ -283,7 +305,7 @@ mod tests {
         let first = coordinate(0, 1, false);
         let second = coordinate(2, 3, second_text_only);
         classify_list_gaps(
-            &[Some(&first), Some(&second)],
+            &[crate::classify::GapItem { coord: Some(&first), held: None }, crate::classify::GapItem { coord: Some(&second), held: None }],
             &sources,
             ",",
             &[TIGHT],

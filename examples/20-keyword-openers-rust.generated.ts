@@ -173,17 +173,17 @@ export function rebuildKeywordOpenersRustGenerated() {
 			name: rs.build.identifier("g"),
 			parameters: rs.build.parameters.strict(),
 			body: rs.build.block.strict({}),
-		}), rs.build.functionItem.strict({
+		}).$trivia.leading(rs.kinds.Blankline), rs.build.functionItem.strict({
 			visibilityModifier: rs.build.visibilityModifier.pub.strict(),
 			name: rs.build.identifier("h"),
 			parameters: rs.build.parameters.strict(),
 			body: rs.build.block.strict({}),
-		}), rs.build.structItem.unit.strict({
+		}).$trivia.leading(rs.kinds.Blankline), rs.build.structItem.unit.strict({
 			visibilityModifier: rs.build.visibilityModifier.pub.scope.inPath.strict(rs.build.scopedIdentifier.strict({
 				path: rs.kinds.Crate,
 				name: rs.build.identifier("x"),
 			})),
 			name: rs.build.identifier("S"),
-		})],
+		}).$trivia.leading(rs.kinds.Blankline)],
 	});
 }

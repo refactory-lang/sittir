@@ -3051,7 +3051,7 @@ all read it.
 	 * Leading/trailing flank state — a direct passthrough of
 	 * `RuleBase.separator`'s own `leading`/`trailing` (`DelimiterMode`,
 	 * types/rule.ts): `'mandatory'`/`'optional'` when link.ts's
-	 * `liftCommaSep`/`absorbTrailingSeparator` absorbed a bare vs.
+	 * `liftSeq` absorbed a bare vs.
 	 * `optional(sepLit)`-wrapped flank member into the repeat, `'none'` when
 	 * the field is absent (no flank at all). `'mandatory'` and `'none'` are
 	 * identical from wrap/factory/from's point of view (neither needs

@@ -131,6 +131,7 @@ mod trivia_macro_tests {
                 leading: entries(leading, false),
                 trailing: entries(trailing, same_line),
                 inner: None,
+                held: false,
             }),
         }
     }
