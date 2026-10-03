@@ -11,7 +11,6 @@ export interface GrammarContext {
 	readonly element: unknown;
 	readonly expression: unknown;
 	readonly identifier: unknown;
-	readonly keyword: unknown;
 	readonly literal: unknown;
 	readonly modifier: unknown;
 	readonly module: unknown;
@@ -35,7 +34,6 @@ export interface BaseContext extends GrammarContext {
 	readonly element: V.Element.Any<BaseContext>;
 	readonly expression: V.Expression.Any<BaseContext>;
 	readonly identifier: V.Identifier.Any<BaseContext>;
-	readonly keyword: V.Keyword.Any<BaseContext>;
 	readonly literal: V.Literal.Any<BaseContext>;
 	readonly modifier: V.Modifier.Any<BaseContext>;
 	readonly module: V.Module.Any<BaseContext>;

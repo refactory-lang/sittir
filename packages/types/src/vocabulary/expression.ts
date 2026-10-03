@@ -16,7 +16,6 @@ export namespace Expression {
 		// claimed by prt
 		readonly kind: 'expression.assignment';
 		readonly left:
-			| V.Unmapped<'typescript:lhs_expression'>
 			| G['expression']
 			| G['identifier']
 			| G['literal']
@@ -48,7 +47,6 @@ export namespace Expression {
 			| 'string'
 			| 'symbol'
 			| 'type';
-		// unmapped: <typescript:lhs_expression>
 		readonly right: G['declaration'] | G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | G['statement'];
 		readonly using?: boolean;
 	}
@@ -593,11 +591,24 @@ export namespace Expression {
 		// claimed by prt
 		readonly kind: 'expression.call';
 		readonly arguments?:
-			| (G['expression'] | G['element'] | G['argument'])[]
-			| (G['expression'] | G['element'])[]
-			| V.Element.Macro.TokenTree.Delimited<G>
-			| V.Expression.Comprehension.Generator<G>
-			| V.Literal.Template<G>;
+			| V.Argument.Keyword<G>
+			| V.Declaration.Module<G>
+			| G['element']
+			| G['expression']
+			| G['identifier']
+			| G['literal']
+			| G['pattern']
+			| G['statement']
+			| (
+					| V.Argument.Keyword<G>
+					| V.Declaration.Module<G>
+					| G['element']
+					| G['expression']
+					| G['identifier']
+					| G['literal']
+					| G['pattern']
+					| G['statement']
+			  )[];
 		readonly function?:
 			| V.Declaration.Module<G>
 			| G['expression']
@@ -625,7 +636,7 @@ export namespace Expression {
 			| 'u8'
 			| 'union'
 			| 'usize';
-		readonly typeArguments?: G['type'][];
+		readonly typeArguments?: (G['identifier'] | G['type'])[];
 		// t only
 	}
 	export namespace Call {
@@ -643,9 +654,24 @@ export namespace Expression {
 			// claimed by prt
 			readonly kind: 'expression.call.member';
 			readonly arguments:
-				| (G['expression'] | G['element'] | G['argument'])[]
-				| (G['expression'] | G['element'])[]
-				| V.Expression.Comprehension.Generator<G>;
+				| V.Argument.Keyword<G>
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| V.Element.Splat.Any<G>
+				| G['statement']
+				| (
+						| V.Argument.Keyword<G>
+						| V.Declaration.Module<G>
+						| G['expression']
+						| G['identifier']
+						| G['literal']
+						| G['pattern']
+						| V.Element.Splat.Any<G>
+						| G['statement']
+				  )[];
 			readonly function:
 				| G['expression']
 				| G['identifier']
@@ -672,20 +698,26 @@ export namespace Expression {
 				| 'u8'
 				| 'union'
 				| 'usize';
-			readonly typeArguments?: G['type'][];
+			readonly typeArguments?: (G['identifier'] | G['type'])[];
 			// t only
 		}
 		export interface New<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Call<G>>> {
 			// claimed by t
 			readonly kind: 'expression.call.new';
-			readonly arguments?: (G['expression'] | G['element'])[];
+			readonly arguments?: (
+				| V.Declaration.Module<G>
+				| V.Element.Splat<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+			)[];
 			readonly function: G['expression'] | G['identifier'] | G['literal'];
-			readonly typeArguments?: G['type'][];
+			readonly typeArguments?: (G['identifier'] | G['type'])[];
 		}
 		export interface Path<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Call<G>>> {
 			// claimed by r
 			readonly kind: 'expression.call.path';
-			readonly arguments: (G['expression'] | G['element'])[];
+			readonly arguments: (G['expression'] | G['identifier'] | G['literal'] | G['statement'])[];
 			readonly function:
 				| G['expression']
 				| G['identifier']
@@ -749,7 +781,7 @@ export namespace Expression {
 			// claimed by t
 			readonly kind: 'expression.cast.assertion';
 			readonly expression: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
-			readonly typeArguments: G['type'][];
+			readonly typeArguments: (G['identifier'] | G['type'])[];
 		}
 		export interface NonNull<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Cast<G>>> {
 			// claimed by t
@@ -771,7 +803,7 @@ export namespace Expression {
 	export interface Class<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression<G>>> {
 		// claimed by t
 		readonly kind: 'expression.class';
-		readonly body: G['declaration'][];
+		readonly body: (G['declaration'] | V.Statement.Block.Static<G>)[];
 		readonly decorators?: V.Attribute.Decorator<G>[];
 		readonly extends?: V.Clause.Extends<G>;
 		readonly implements?: (G['identifier'] | G['type'])[];
@@ -785,15 +817,19 @@ export namespace Expression {
 		export interface Dictionary<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Collection<G>>> {
 			// claimed by p
 			readonly kind: 'expression.collection.dictionary';
-			readonly elements?: V.Unmapped<'python:dictionary_elements'>;
-			// unmapped: <python:dictionary_elements>
+			readonly elements?: G['element'][];
 		}
 		export interface List<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Collection<G>>> {
 			// claimed by prt
 			readonly kind: 'expression.collection.list';
-			readonly collectionElements?: V.Unmapped<'python:collection_elements'>;
+			readonly collectionElements?: (
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| V.Element.Splat.Any<G>
+			)[];
 			// p only
-			// unmapped: <python:collection_elements>
 			readonly elements?: (
 				| V.Declaration.Module<G>
 				| V.Element.Splat<G>
@@ -837,14 +873,18 @@ export namespace Expression {
 		export interface Set<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Collection<G>>> {
 			// claimed by p
 			readonly kind: 'expression.collection.set';
-			readonly collectionElements: V.Unmapped<'python:collection_elements'>;
-			// unmapped: <python:collection_elements>
+			readonly collectionElements: (
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| V.Element.Splat.Any<G>
+			)[];
 		}
 		export interface Struct<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Collection<G>>> {
 			// claimed by r
 			readonly kind: 'expression.collection.struct';
-			readonly body: V.Unmapped<'rust:field_initializer_list'>;
-			// unmapped: <rust:field_initializer_list>
+			readonly body: V.Element.Struct.Any<G>[];
 			readonly name: V.Identifier.Type<G> | G['type'];
 		}
 		export interface Tuple<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Collection<G>>> {
@@ -852,12 +892,10 @@ export namespace Expression {
 			readonly kind: 'expression.collection.tuple';
 			readonly attributes?: G['attribute'][];
 			// r only
-			readonly elements?: V.Unmapped<'python:tuple_elements'>;
+			readonly elements?: (G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | V.Element.Splat.Any<G>)[];
 			// p only
-			// unmapped: <python:tuple_elements>
-			readonly expressions?: V.Unmapped<'rust:expressions'>;
+			readonly expressions?: (G['expression'] | G['identifier'] | G['literal'] | G['statement'])[];
 			// r only
-			// unmapped: <rust:expressions>
 		}
 		export namespace Tuple {
 			export interface Bare<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Collection.Tuple<G>>> {
@@ -928,8 +966,8 @@ export namespace Expression {
 		readonly async?: boolean;
 		readonly body: V.Statement.Block<G>;
 		readonly name?: G['identifier'];
-		readonly parameters: V.Declaration.Parameter<G>[];
-		readonly returnType?: V.Type.Predicate.Asserts<G> | G['type'] | V.Type.Predicate<G>;
+		readonly parameters: V.Declaration.Parameter.Any<G>[];
+		readonly returnType?: G['identifier'] | G['type'];
 		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 	}
 	export namespace Function {
@@ -940,8 +978,8 @@ export namespace Expression {
 			readonly body: V.Statement.Block<G>;
 			readonly generator?: boolean;
 			readonly name?: G['identifier'];
-			readonly parameters: V.Declaration.Parameter<G>[];
-			readonly returnType?: V.Type.Predicate.Asserts<G> | G['type'] | V.Type.Predicate<G>;
+			readonly parameters: V.Declaration.Parameter.Any<G>[];
+			readonly returnType?: G['identifier'] | G['type'];
 			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 		}
 		export type Any<G extends GrammarContext> = V.Expression.Function<G> | V.Expression.Function.Generator<G>;
@@ -953,7 +991,15 @@ export namespace Expression {
 		// t only
 		readonly function?: V.Expression.Member<G> | G['identifier'];
 		// r only
-		readonly typeArguments: G['type'][];
+		readonly typeArguments: (
+			| V.Clause.Bounds.Removed<G>
+			| V.Element.TypeBinding<G>
+			| V.Expression.Call.Macro<G>
+			| G['identifier']
+			| G['literal']
+			| V.Statement.Block<G>
+			| G['type']
+		)[];
 	}
 	export interface Interpolation<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression<G>>> {
 		// claimed by pt
@@ -974,8 +1020,7 @@ export namespace Expression {
 		export interface Format<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Interpolation<G>>> {
 			// claimed by p
 			readonly kind: 'expression.interpolation.format';
-			readonly elements?: (V.Unmapped<'python:format_expression'> | '[^{}\\n]+')[];
-			// unmapped: <python:format_expression>
+			readonly elements?: (V.Expression.Interpolation<G> | '[^{}\\n]+')[];
 		}
 		export type Any<G extends GrammarContext> =
 			| V.Expression.Interpolation<G>
@@ -995,7 +1040,11 @@ export namespace Expression {
 			| G['pattern']
 			| V.Statement.Block<G>;
 		// pt only
-		readonly parameters?: V.Declaration.Parameter<G>[] | G['identifier'];
+		readonly parameters?:
+			| G['identifier']
+			| G['pattern']
+			| V.Declaration.Parameter.Any<G>
+			| (G['identifier'] | G['pattern'] | V.Declaration.Parameter.Any<G>)[];
 		// pt only
 	}
 	export interface Member<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression<G>>> {
@@ -1037,8 +1086,7 @@ export namespace Expression {
 		// claimed by p
 		readonly kind: 'expression.slice';
 		readonly start?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
-		readonly step?: V.Unmapped<'python:slice_group'>;
-		// unmapped: <python:slice_group>
+		readonly step?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 		readonly stop?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 	}
 	export interface Subscript<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression<G>>> {
@@ -1064,13 +1112,18 @@ export namespace Expression {
 	export interface Try<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression<G>>> {
 		// claimed by r
 		readonly kind: 'expression.try';
-		readonly value: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
+		readonly argument: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
 	}
 	export interface Unary<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression<G>>> {
 		// claimed by prt
 		readonly kind: 'expression.unary';
-		readonly argument?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | V.Pattern.Splat<G>;
-		readonly operand?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
+		readonly argument:
+			| V.Declaration.Module<G>
+			| G['expression']
+			| G['identifier']
+			| G['literal']
+			| V.Pattern.Splat<G>
+			| G['statement'];
 		readonly operator: '!' | '*' | '+' | '-' | 'delete' | 'typeof' | 'void' | '~';
 	}
 	export namespace Unary {
@@ -1144,14 +1197,8 @@ export namespace Expression {
 	export interface Yield<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression<G>>> {
 		// claimed by prt
 		readonly kind: 'expression.yield';
-		readonly content?:
-			| V.Unmapped<'python:yield_from_clause'>
-			| G['expression']
-			| G['identifier']
-			| G['literal']
-			| G['pattern'];
+		readonly content?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 		// p only
-		// unmapped: <python:yield_from_clause>
 		readonly expression?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement'];
 		// rt only
 	}

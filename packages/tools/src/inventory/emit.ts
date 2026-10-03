@@ -2,191 +2,129 @@ import typescript from '@sittir/typescript';
 import { createEngine } from '@sittir/common';
 import { Delimiter } from '@sittir/common/utils';
 import type {
+	Identifier,
+	ImportStatement,
+	InternalModule,
+	NestedTypeIdentifier,
 	PrimaryType,
-	TypeIdentifier,
-	Statement as TsStatement,
+	Program,
+	PropertySignature,
+	Statement,
+	StatementBlock,
 	TemplateChars,
 	TemplateType,
 	Type,
-	NestedTypeIdentifier,
-	Identifier,
-	InternalModule,
-	PropertySignature,
-	StatementBlock
+	TypeIdentifier
 } from '@sittir/typescript';
 import { type Derivation, type MemberFacts, camel, childrenOf, commonPrefix, levelMembers, tsname } from './derive.ts';
 
 const engine = await createEngine(typescript);
 const { build: ir, kinds: TSKindId } = engine;
 
-export type TypeExpr =
-	| { readonly k: 'ident'; readonly name: string }
-	| { readonly k: 'ref'; readonly path: readonly string[]; readonly generic: boolean }
-	| { readonly k: 'lookup'; readonly ns: string }
-	| { readonly k: 'unmapped'; readonly name: string }
-	| { readonly k: 'lit'; readonly text: string }
-	| { readonly k: 'kw'; readonly name: 'string' | 'boolean' | 'number' | 'unknown' | 'never' }
-	| { readonly k: 'array'; readonly of: TypeExpr }
-	| { readonly k: 'union'; readonly of: readonly TypeExpr[] }
-	| { readonly k: 'template'; readonly text: string }
-	| { readonly k: 'subkind'; readonly of: TypeExpr };
-
-export interface Member {
-	readonly name: string;
-	readonly optional: boolean;
-	readonly type: TypeExpr;
-	readonly trailing: readonly Comment[];
-}
-
-export interface Interface {
-	readonly k: 'interface';
-	readonly name: string;
-	readonly extendsType: TypeExpr | null;
-	readonly members: readonly Member[];
-	readonly bodyLeading: readonly Comment[];
-	readonly trailing: readonly Comment[];
-	readonly generic: boolean;
-	readonly keyParam: boolean;
-	readonly leading: readonly Comment[];
-}
-
-export interface TypeAlias {
-	readonly k: 'alias';
-	readonly name: string;
-	readonly value: TypeExpr;
-}
-
-export interface Namespace {
-	readonly k: 'namespace';
-	readonly name: string;
-	readonly statements: readonly Statement[];
-}
-
-export type Statement = Interface | TypeAlias | Namespace;
-
-type LineCommentText = `//${string}`;
-type BlockCommentText = `/*${string}*/`;
-
-export type Comment =
-	| { readonly block: false; readonly text: LineCommentText }
-	| { readonly block: true; readonly text: BlockCommentText };
-
-const lineComment = (text: LineCommentText): Comment => ({ block: false, text });
-const blockComment = (text: BlockCommentText): Comment => ({ block: true, text });
+type TypeNode = Type.Bound | TypeIdentifier.Types;
+type Arm = PrimaryType.Bound | TypeIdentifier.Types;
+type Name = Identifier.Bound | NestedTypeIdentifier.Bound;
+type Heritage = Name | ReturnType<typeof ir.genericType>;
+type CommentNode = ReturnType<typeof ir.comment.line> | ReturnType<typeof ir.comment.block>;
+type ExportNode = ReturnType<typeof ir.exportStatement.default.declaration>;
+type Context = 'G' | 'BaseContext';
 
 export interface VocabularyFile {
 	readonly name: string;
-	readonly leading: readonly Comment[];
-	readonly imports: readonly {
-		readonly names: readonly string[] | null;
-		readonly namespace: string | null;
-		readonly from: string;
-	}[];
-	readonly statements: readonly Statement[];
+	readonly program: Program.Bound;
 }
 
-const CONTAINER_ELEMENTS: Record<string, TypeExpr> = {
-	parameters: { k: 'array', of: { k: 'ref', path: ['Declaration', 'Parameter'], generic: true } },
-	formal_parameters: { k: 'array', of: { k: 'ref', path: ['Declaration', 'Parameter'], generic: true } },
-	lambda_parameters: { k: 'array', of: { k: 'ref', path: ['Declaration', 'Parameter'], generic: true } },
-	closure_parameters: { k: 'array', of: { k: 'ref', path: ['Declaration', 'Parameter'], generic: true } },
-	type_parameters: { k: 'array', of: { k: 'ref', path: ['Declaration', 'TypeParameter'], generic: true } },
-	type_arguments: { k: 'array', of: { k: 'lookup', ns: 'type' } },
-	arguments: {
-		k: 'array',
-		of: {
-			k: 'union',
-			of: [
-				{ k: 'lookup', ns: 'expression' },
-				{ k: 'lookup', ns: 'element' }
-			]
-		}
-	},
-	argument_list: {
-		k: 'array',
-		of: {
-			k: 'union',
-			of: [
-				{ k: 'lookup', ns: 'expression' },
-				{ k: 'lookup', ns: 'element' },
-				{ k: 'lookup', ns: 'argument' }
-			]
-		}
-	},
-	class_body: { k: 'array', of: { k: 'lookup', ns: 'declaration' } },
-	declaration_list: { k: 'array', of: { k: 'lookup', ns: 'declaration' } },
-	enum_body: { k: 'array', of: { k: 'ref', path: ['Declaration', 'EnumMember'], generic: true } },
-	enum_variant_list: { k: 'array', of: { k: 'ref', path: ['Declaration', 'EnumMember'], generic: true } },
-	field_declaration_list: { k: 'array', of: { k: 'ref', path: ['Declaration', 'Field'], generic: true } },
-	suite_block: { k: 'ref', path: ['Statement', 'Block'], generic: true },
-	simple_statements: { k: 'ref', path: ['Statement', 'Block'], generic: true },
-	block: { k: 'ref', path: ['Statement', 'Block'], generic: true },
-	type_annotation: { k: 'lookup', ns: 'type' },
-	type_predicate_annotation: { k: 'ref', path: ['Type', 'Predicate'], generic: true },
-	asserts_annotation: { k: 'ref', path: ['Type', 'Predicate', 'Asserts'], generic: true },
-	omitting_type_annotation: { k: 'lookup', ns: 'type' },
-	adding_type_annotation: { k: 'lookup', ns: 'type' },
-	opting_type_annotation: { k: 'lookup', ns: 'type' },
-	decorated_definition: { k: 'lookup', ns: 'declaration' },
-	ambient_declaration: { k: 'lookup', ns: 'declaration' },
-	labeled_statement: { k: 'lookup', ns: 'statement' },
-	class_heritage: {
-		k: 'array',
-		of: {
-			k: 'union',
-			of: [
-				{ k: 'lookup', ns: 'type' },
-				{ k: 'lookup', ns: 'expression' }
-			]
-		}
-	},
-	switch_body: { k: 'array', of: { k: 'ref', path: ['Clause', 'Case'], generic: true } }
+interface Scope {
+	readonly context: Context;
+	subKind: boolean;
+}
+
+const KEYWORDS = {
+	string: TSKindId.StringKeyword,
+	boolean: TSKindId.BooleanKeyword,
+	number: TSKindId.NumberKeyword
+} as const;
+
+const ESCAPED_CONTENT: Record<string, string> = { '\\': '\\', "'": "'", '\n': 'n', '\r': 'r', '\t': 't' };
+const str = (text: string) =>
+	ir.string.single(
+		...text
+			.split(/([\\'\n\r\t])/)
+			.filter((piece) => piece !== '')
+			.map((piece) =>
+				piece in ESCAPED_CONTENT ? ir.escapeSequence(ESCAPED_CONTENT[piece]!) : ir.unescapedSingleStringFragment(piece)
+			)
+	);
+
+const lineComment = (text: `//${string}`): CommentNode => ir.comment.line(text, false);
+const blockComment = (text: `/*${string}*/`): CommentNode => ir.comment.block(text, false);
+
+type Triviable<N> = {
+	readonly $trivia: { leading(...items: CommentNode[]): N; trailing(...items: CommentNode[]): N };
 };
 
-const LAYOUT = new Set([
-	'terminator',
-	'automaticSemicolon',
-	'separator',
-	'stringStart',
-	'stringEnd',
-	'stringOpen',
-	'stringClose',
-	'newline',
-	'hashBangLine',
-	'shebang'
-]);
+function withTrivia<N extends Triviable<N>>(
+	node: N,
+	leading: readonly CommentNode[],
+	trailing: readonly CommentNode[]
+): N {
+	const led = leading.length > 0 ? node.$trivia.leading(...leading) : node;
+	return trailing.length > 0 ? led.$trivia.trailing(...trailing) : led;
+}
 
-const literalUnion = (texts: readonly string[]): TypeExpr => {
-	const sorted = [...texts].sort();
-	const first = sorted[0] ?? '';
-	return sorted.length === 1
-		? { k: 'lit', text: first }
-		: { k: 'union', of: sorted.map((t) => ({ k: 'lit', text: t }) as TypeExpr) };
-};
-const kindMember = (paths: readonly string[]): Member => ({
-	name: 'kind',
-	optional: false,
-	type: literalUnion(paths),
-	trailing: []
-});
+function typeName(path: readonly string[]): Name {
+	const [head, ...rest] = path.slice(0, -1);
+	const last = ir.identifier(path.at(-1) ?? '');
+	if (head === undefined) return last;
+	let module: Identifier.Bound | ReturnType<typeof ir.nestedIdentifier> = ir.identifier(head);
+	for (const seg of rest) module = ir.nestedIdentifier({ object: module, property: ir.identifier(seg) });
+	return ir.nestedTypeIdentifier({ module, name: last });
+}
+
+const generic = (name: Name, argument: Arm | TypeNode) =>
+	ir.genericType({ name, typeArguments: ir.typeArguments(argument) });
+
+const pathOf = (vocab: string): string[] => vocab.split('.').map(tsname);
+const vocabRef = (path: readonly string[], scope: Scope) =>
+	generic(typeName(['V', ...path]), ir.identifier(scope.context));
+const lookup = (ns: string): Arm => ir.lookupType({ type: ir.identifier('G'), indexType: ir.literalType(str(ns)) });
+const literal = (text: string): Arm => ir.literalType(str(text));
+
+function unionOf(arms: readonly (Arm | TypeNode)[]): TypeNode {
+	const [first, ...rest] = arms;
+	if (first === undefined) return TSKindId.UnknownKeyword;
+	let acc: TypeNode = first;
+	for (const arm of rest) acc = ir.unionType({ left: acc, right: arm });
+	return acc;
+}
+
+const primary = (arm: Arm): Arm => (typeof arm === 'number' ? ir.parenthesizedType(arm) : arm);
+
+function listOf(arms: readonly Arm[]): Arm {
+	const [only] = arms;
+	return ir.arrayType(arms.length === 1 && only !== undefined ? primary(only) : ir.parenthesizedType(unionOf(arms)));
+}
+
+const literalUnion = (texts: Iterable<string>): TypeNode => unionOf([...texts].sort().map(literal));
+
+function subKindOf(path: string, scope: Scope): Heritage {
+	scope.subKind = true;
+	return generic(ir.identifier('Simplify'), generic(ir.identifier('SubKindOf'), vocabRef(pathOf(path), scope)));
+}
+
+function elementArm(element: string, scope: Scope): { readonly key: string; readonly arm: Arm } {
+	return element.includes('.')
+		? { key: `ref:${pathOf(element).join('.')}`, arm: vocabRef(pathOf(element), scope) }
+		: { key: `lookup:${element}`, arm: lookup(element) };
+}
+
 function kindsBeneath(d: Derivation, v: string): string[] {
 	const byPath = [...d.allvocab].filter((o) => o === v || o.startsWith(`${v}.`));
 	const byClaim = [...d.refinements].filter(([, r]) => r.parent === v || r.parent.startsWith(`${v}.`)).map(([o]) => o);
 	return [...new Set([...byPath, ...byClaim])].sort();
 }
-const refOf = (path: string): TypeExpr => ({ k: 'ref', path: path.split('.').map(tsname), generic: true });
-/** What a sub-kind's interface extends: its parent with `kind` narrowed to the dotted sub-kind pattern. */
-const subKindOf = (path: string): TypeExpr => ({ k: 'subkind', of: refOf(path) });
-const setOf = (path: string): TypeExpr => ({
-	k: 'ref',
-	path: [...path.split('.').map(tsname), 'Any'],
-	generic: true
-});
 
-function typeOfMember(
-	d: Derivation,
-	kinds: ReadonlySet<string>
-): { readonly type: TypeExpr; readonly dropped: readonly string[] } {
+function collapsedKinds(d: Derivation, kinds: ReadonlySet<string>): string[] {
 	const byns = new Map<string, Set<string>>();
 	for (const k of kinds) {
 		if (k.includes('.') && !k.startsWith('text:') && !k.startsWith('literal:') && !k.startsWith('<')) {
@@ -211,34 +149,35 @@ function typeOfMember(
 			remaining.add(`set:${prefix}`);
 		}
 	}
-	const out: TypeExpr[] = [];
+	return [...remaining].sort();
+}
+
+function memberArms(d: Derivation, kinds: ReadonlySet<string>, scope: Scope): { arms: Arm[]; dropped: string[] } {
+	const arms: Arm[] = [];
 	const dropped: string[] = [];
 	const seen = new Set<string>();
-	const add = (_key: string, t: TypeExpr): void => {
-		const key = JSON.stringify(t);
+	const add = (key: string, arm: Arm): void => {
 		if (seen.has(key)) return;
 		seen.add(key);
-		out.push(t);
+		arms.push(arm);
 	};
-	for (const k of [...remaining].sort()) {
-		if (k === 'boolean' || k === 'string' || k === 'number') add(k, { k: 'kw', name: k });
-		else if (k.startsWith('text:')) add(k, { k: 'lit', text: k.slice(5) });
+	for (const k of collapsedKinds(d, kinds)) {
+		if (k === 'boolean' || k === 'string' || k === 'number') add(`kw:${k}`, KEYWORDS[k]);
+		else if (k.startsWith('text:')) add(`lit:${k.slice(5)}`, literal(k.slice(5)));
 		else if (k.startsWith('literal:')) dropped.push(k);
 		else if (k.startsWith('<')) {
-			const gk = k.slice(1, -1).split(':', 2)[1] ?? '';
-			const container = CONTAINER_ELEMENTS[gk];
-			if (container) add(gk, container);
-			else {
-				add(k, { k: 'unmapped', name: k.slice(1, -1) });
-				dropped.push(k);
-			}
-		} else if (k.startsWith('set:')) add(k, setOf(k.slice(4)));
-		else if (!k.includes('.')) add(k, { k: 'lookup', ns: k });
-		else add(k, refOf(k));
+			const name = k.slice(1, -1);
+			add(`unmapped:${name}`, generic(typeName(['V', 'Unmapped']), literal(name)));
+			dropped.push(k);
+		} else if (k.startsWith('set:')) {
+			const path = [...pathOf(k.slice(4)), 'Any'];
+			add(`ref:${path.join('.')}`, vocabRef(path, scope));
+		} else {
+			const { key, arm } = elementArm(k, scope);
+			add(key, arm);
+		}
 	}
-	if (out.length === 0) return { type: { k: 'kw', name: 'unknown' }, dropped };
-	const first = out[0];
-	return { type: out.length === 1 && first ? first : { k: 'union', of: out }, dropped };
+	return { arms, dropped };
 }
 
 const grammarTag = (gs: ReadonlySet<string> | undefined): string =>
@@ -247,318 +186,55 @@ const grammarTag = (gs: ReadonlySet<string> | undefined): string =>
 		.sort()
 		.join('');
 
-function memberDecl(d: Derivation, v: string, name: string, f: MemberFacts): Member {
-	const { type, dropped } = typeOfMember(d, f.kinds);
-	let t: TypeExpr = type;
-	if (f.multiple && t.k !== 'array') {
-		const arr: TypeExpr = { k: 'array', of: t };
-		t = f.scalar ? { k: 'union', of: [t, arr] } : arr;
-	}
-	const trailing: Comment[] = [];
+function signature(
+	name: string,
+	type: TypeNode,
+	optional: boolean,
+	trailing: readonly CommentNode[] = []
+): PropertySignature.Bound {
+	const built = ir.propertySignature({
+		readonly: true,
+		name,
+		...(optional ? { optional: true } : {}),
+		type: ir.typeAnnotation(type)
+	});
+	return withTrivia(built, [], trailing);
+}
+
+const kindSignature = (v: string): PropertySignature.Bound => signature('kind', literal(v), false);
+
+function memberSignature(
+	d: Derivation,
+	v: string,
+	name: string,
+	f: MemberFacts,
+	scope: Scope
+): PropertySignature.Bound | null {
+	const { arms, dropped } = memberArms(d, f.kinds, scope);
+	const [only] = arms;
+	const single = arms.length === 1 && only !== undefined;
+	let type: TypeNode = unionOf(arms);
+	if (f.multiple && !(single && typeof only !== 'number' && only.$type === TSKindId.ArrayType)) {
+		const list = listOf(arms.length === 0 ? [TSKindId.UnknownKeyword] : arms);
+		type = f.scalar ? ir.unionType({ left: type, right: list }) : list;
+	} else if (arms.length === 0) return null;
+	const trailing: CommentNode[] = [];
 	const claimers = d.claimers.get(v);
 	if (claimers === undefined || [...f.grammars].sort().join() !== [...claimers].sort().join())
 		trailing.push(lineComment(`// ${grammarTag(f.grammars)} only`));
 	if (dropped.length > 0) trailing.push(lineComment(`// unmapped: ${dropped.join(' ')}`));
-	return { name, optional: f.optional, type: t, trailing };
+	return signature(name, type, f.optional, trailing);
 }
 
-function emitLevel(d: Derivation, v: string): Statement[] {
-	const seg = v.split('.').at(-1) ?? v;
-	const name = tsname(seg);
-	const parentPath = v.split('.').slice(0, -1).join('.');
-	const sameTop = parentPath !== '' && parentPath.split('.')[0] === v.split('.')[0];
-	const out: Statement[] = [];
-	const kids = childrenOf(d, v);
-	const claimedBy = grammarTag(d.claimers.get(v));
-	const holes = d.holes.get(v);
-	const refinement = d.refinements.get(v);
-	if (holes && !refinement) {
-		const ext =
-			parentPath !== '' && (d.allvocab.has(parentPath) || d.prefixes.has(parentPath)) ? subKindOf(parentPath) : null;
-		out.push({
-			k: 'interface',
-			name,
-			extendsType: ext,
-			members: [...holes]
-				.sort(([a], [b]) => a.localeCompare(b))
-				.map(([m, t]) => ({
-					name: m,
-					optional: false,
-					type: t === 'string' ? { k: 'kw', name: 'string' } : { k: 'template', text: t.slice(1, -1) },
-					trailing: []
-				})),
-			bodyLeading: [],
-			trailing: [lineComment(`// claimed by ${claimedBy} content-derived`)],
-			generic: true,
-			keyParam: false,
-			leading: []
-		});
-		if (kids.length === 0) return out;
-	} else if (refinement) {
-		const base = d.allvocab.has(parentPath) ? parentPath : refinement.parent;
-		out.push({
-			k: 'interface',
-			name,
-			extendsType: subKindOf(base),
-			members: [
-				kindMember([v]),
-				...[...refinement.literals].map(([f, ts]) => ({
-					name: camel(f),
-					optional: false,
-					type: literalUnion([...ts]),
-					trailing: []
-				}))
-			],
-			bodyLeading: [],
-			trailing: [],
-			generic: true,
-			keyParam: false,
-			leading: []
-		});
-	} else {
-		const mems = levelMembers(d, v);
-		const ext = sameTop ? subKindOf(parentPath) : null;
-		const paths = kindsBeneath(d, v);
-		const members: Member[] = paths.length > 0 ? [kindMember([v])] : [];
-		for (const [cm, f] of [...mems].sort(([a], [b]) => a.localeCompare(b))) {
-			if (LAYOUT.has(cm)) continue;
-			const decl = memberDecl(d, v, cm, f);
-			if (decl.type.k === 'kw' && decl.type.name === 'unknown') continue;
-			members.push(decl);
-		}
-		out.push({
-			k: 'interface',
-			name,
-			extendsType: ext,
-			members,
-			bodyLeading: claimedBy !== '' && members.length > 0 ? [lineComment(`// claimed by ${claimedBy}`)] : [],
-			trailing: claimedBy !== '' && members.length === 0 ? [lineComment(`// claimed by ${claimedBy}`)] : [],
-			generic: true,
-			keyParam: false,
-			leading: []
-		});
-	}
-	if (kids.length > 0) {
-		const statements: Statement[] = kids.flatMap((k) => emitLevel(d, k));
-		const claimed = [...d.allvocab].filter((o) => o === v || o.startsWith(`${v}.`)).sort();
-		statements.push({
-			k: 'alias',
-			name: 'Any',
-			value:
-				claimed.length === 0
-					? { k: 'kw', name: 'never' }
-					: claimed.length === 1
-						? refOf(claimed[0] ?? v)
-						: { k: 'union', of: claimed.map(refOf) }
-		});
-		out.push({ k: 'namespace', name, statements });
-	}
-	return out;
-}
-
-function extendsSubKind(s: Statement): boolean {
-	if (s.k === 'interface') return s.extendsType?.k === 'subkind';
-	return s.k === 'namespace' && s.statements.some(extendsSubKind);
-}
-
-export function vocabularyFiles(d: Derivation): VocabularyFile[] {
-	const tops = [...new Set([...d.allvocab].map((v) => v.split('.')[0] ?? v))].sort();
-	const files: VocabularyFile[] = [];
-	for (const top of tops) {
-		const statements = emitLevel(d, top);
-		if (![...d.allvocab, ...d.prefixes].some((o) => o.startsWith(`${top}.`))) {
-			statements.push({
-				k: 'namespace',
-				name: tsname(top),
-				statements: [{ k: 'alias', name: 'Any', value: refOf(top) }]
-			});
-		}
-		files.push({
-			name: top,
-			leading: [lineComment("// Generated from the grammars' bindings.scm and slot models. Do not edit.")],
-			imports: [
-				{ names: ['GrammarContext'], namespace: null, from: './context.ts' },
-				...(statements.some(extendsSubKind)
-					? [
-							{ names: ['Simplify'], namespace: null, from: 'type-fest' },
-							{ names: ['SubKindOf'], namespace: null, from: './utils.ts' }
-						]
-					: []),
-				{ names: null, namespace: 'V', from: './index.ts' }
-			],
-			statements
-		});
-	}
-	const contextMembers = (value: (t: string) => TypeExpr): Member[] =>
-		tops.map((t) => ({ name: t, optional: false, type: value(t), trailing: [] }));
-	files.push({
-		name: 'context',
-		leading: [lineComment("// Generated from the grammars' bindings.scm. Do not edit.")],
-		imports: [{ names: null, namespace: 'V', from: './index.ts' }],
-		statements: [
-			{
-				k: 'interface',
-				name: 'GrammarContext',
-				extendsType: null,
-				members: contextMembers(() => ({ k: 'kw', name: 'unknown' })),
-				bodyLeading: [],
-				trailing: [],
-				generic: false,
-				keyParam: false,
-				leading: [
-					blockComment(
-						"/** The typemap: one key per top-level namespace, projecting to that namespace's kind-set for a grammar. */"
-					)
-				]
-			},
-			{
-				k: 'interface',
-				name: 'Unmapped',
-				extendsType: null,
-				members: [{ name: '$unmapped', optional: false, type: { k: 'ident', name: 'K' }, trailing: [] }],
-				bodyLeading: [],
-				trailing: [],
-				generic: false,
-				keyParam: true,
-				leading: [blockComment('/** A grammar kind a member admits that no binding claims yet; the name says which. */')]
-			},
-			{
-				k: 'interface',
-				name: 'BaseContext',
-				extendsType: { k: 'ident', name: 'GrammarContext' },
-				members: contextMembers((t) => ({ k: 'ref', path: [tsname(t), 'Any'], generic: true })),
-				bodyLeading: [],
-				trailing: [],
-				generic: false,
-				keyParam: false,
-				leading: [blockComment("/** The permissive closure: every namespace's full kind-set. */")]
-			}
-		]
-	});
-	return files;
-}
-
-const ESCAPED_CONTENT: Record<string, string> = { '\\': '\\', "'": "'", '\n': 'n', '\r': 'r', '\t': 't' };
-const str = (text: string) =>
-	ir.string.single(
-		...text
-			.split(/([\\'\n\r\t])/)
-			.filter((piece) => piece !== '')
-			.map((piece) =>
-				piece in ESCAPED_CONTENT ? ir.escapeSequence(ESCAPED_CONTENT[piece]!) : ir.unescapedSingleStringFragment(piece)
-			)
-	);
-
-function nestedName(path: readonly string[]): Identifier.Bound | ReturnType<typeof ir.nestedIdentifier> {
-	const [head, ...rest] = path;
-	let acc: Identifier.Bound | ReturnType<typeof ir.nestedIdentifier> = ir.identifier(head ?? '');
-	for (const seg of rest) acc = ir.nestedIdentifier({ object: acc, property: ir.identifier(seg) });
-	return acc;
-}
-
-function extendsIr(
-	t: TypeExpr,
-	base: boolean
-): Identifier.Bound | NestedTypeIdentifier.Bound | ReturnType<typeof ir.genericType> {
-	if (t.k === 'ident') return ir.identifier(t.name);
-	if (t.k === 'subkind') {
-		const applied = (name: string, arg: ReturnType<typeof extendsIr>) =>
-			ir.genericType({
-				name: ir.identifier(name),
-				typeArguments: ir.typeArguments(arg)
-			});
-		return applied('Simplify', applied('SubKindOf', extendsIr(t.of, base)));
-	}
-	if (t.k === 'ref') {
-		const name = typeName(['V', ...t.path]);
-		return t.generic
-			? ir.genericType({
-					name,
-					typeArguments: ir.typeArguments(
-						ir.identifier(base ? 'BaseContext' : 'G')
-					)
-				})
-			: name;
-	}
-	throw new Error(`bindings-inventory: an interface extends a name, not a ${t.k}`);
-}
-
-function typeName(path: readonly string[]): Identifier.Bound | NestedTypeIdentifier.Bound {
-	const last = path.at(-1) ?? '';
-	const module = path.slice(0, -1);
-	return module.length === 0
-		? ir.identifier(last)
-		: ir.nestedTypeIdentifier({ module: nestedName(module), name: ir.identifier(last) });
-}
-
-const KEYWORDS = {
-	string: TSKindId.StringKeyword,
-	boolean: TSKindId.BooleanKeyword,
-	number: TSKindId.NumberKeyword,
-	unknown: TSKindId.UnknownKeyword,
-	never: TSKindId.NeverKeyword
-} as const;
-
-function toPrimary(t: TypeExpr, base: boolean): PrimaryType.Bound | TypeIdentifier.Types {
-	switch (t.k) {
-		case 'ident':
-			return ir.identifier(t.name);
-		case 'kw':
-			return ir.parenthesizedType(KEYWORDS[t.name]);
-		case 'lit':
-			return ir.literalType(str(t.text));
-		case 'lookup':
-			return ir.lookupType({ type: ir.identifier('G'), indexType: ir.literalType(str(t.ns)) });
-		case 'unmapped':
-			return ir.genericType({
-				name: ir.nestedTypeIdentifier({ module: ir.identifier('V'), name: ir.identifier('Unmapped') }),
-				typeArguments: ir.typeArguments(ir.literalType(str(t.name)))
-			});
-		case 'ref': {
-			const name = typeName(['V', ...t.path]);
-			if (!t.generic) return name;
-			return ir.genericType({
-				name,
-				typeArguments: ir.typeArguments(ir.identifier(base ? 'BaseContext' : 'G'))
-			});
-		}
-		case 'subkind':
-			return extendsIr(t, base);
-		case 'array':
-			return ir.arrayType(
-				t.of.k === 'union' ? ir.parenthesizedType(toIr(t.of, base)) : toPrimary(t.of, base)
-			);
-		case 'union':
-			return ir.parenthesizedType(toIr(t, base));
-		case 'template': {
-			const chunks = t.text.split('${string}');
-			const parts: (TemplateChars.Bound | TemplateType.Bound)[] = [];
-			chunks.forEach((c, i) => {
-				if (c !== '') parts.push(ir.templateChars(c));
-				if (i < chunks.length - 1) parts.push(ir.templateType(TSKindId.StringKeyword));
-			});
-			return ir.templateLiteralType(...parts);
-		}
-	}
-}
-
-function toIr(t: TypeExpr, base: boolean): Type.Bound | TypeIdentifier.Types {
-	if (t.k === 'kw') return KEYWORDS[t.name];
-	if (t.k !== 'union') return toPrimary(t, base);
-	const parts = t.of.map((p) => toIr(p, base));
-	let acc: Type.Bound | TypeIdentifier.Types = parts[0] ?? KEYWORDS.never;
-	for (const p of parts.slice(1)) acc = ir.unionType({ left: acc, right: p });
-	return acc;
-}
-
-const typeParams = () =>
+const typeParameters = () =>
 	ir.typeParameters(
 		ir.typeParameter({
 			name: 'G',
 			constraint: { type: 'GrammarContext', content: TSKindId.ExtendsKeyword }
 		})
 	);
-const keyParams = () =>
+
+const keyParameters = () =>
 	ir.typeParameters(
 		ir.typeParameter({
 			name: ir.identifier('K'),
@@ -566,106 +242,242 @@ const keyParams = () =>
 		})
 	);
 
-type CommentNode = ReturnType<typeof ir.comment.line> | ReturnType<typeof ir.comment.block>;
-
-type Triviable<N> = {
-	readonly $trivia: { leading(...items: CommentNode[]): N; trailing(...items: CommentNode[]): N };
-};
-
-const commentIr = (c: Comment): CommentNode => (c.block ? ir.comment.block(c.text, false) : ir.comment.line(c.text, false));
-
-function withTrivia<N extends Triviable<N>>(node: N, leading: readonly Comment[], trailing: readonly Comment[]): N {
-	const led = leading.length > 0 ? node.$trivia.leading(...leading.map(commentIr)) : node;
-	return trailing.length > 0 ? led.$trivia.trailing(...trailing.map(commentIr)) : led;
+interface InterfaceSpec {
+	readonly name: string;
+	readonly typeParameters?: ReturnType<typeof typeParameters>;
+	readonly heritage?: Heritage | null;
+	readonly members: readonly PropertySignature.Bound[];
+	readonly bodyLeading?: readonly CommentNode[];
+	readonly leading?: readonly CommentNode[];
+	readonly trailing?: readonly CommentNode[];
 }
 
-function memberIr(m: Member, base: boolean, leading: readonly Comment[]): PropertySignature.Bound {
-	const built = ir.propertySignature({
-		readonly: true,
-		name: m.name,
-		...(m.optional ? { optional: true } : {}),
-		type: ir.typeAnnotation(toIr(m.type, base))
-	});
-	return withTrivia(built, leading, m.trailing);
-}
-
-type ExportIr = ReturnType<typeof ir.exportStatement.default.declaration>;
-
-function interfaceIr(s: Interface, base: boolean): ExportIr {
-	const [first, ...rest] = s.members;
-	const members = first
-		? ir.objectTypeContent(
-				{ delimiter: Delimiter.Trailing, separator: TSKindId.Semi },
-				memberIr(first, base, s.bodyLeading),
-				...rest.map((m) => memberIr(m, base, []))
-			)
-		: undefined;
+function exportInterface(spec: InterfaceSpec): ExportNode {
+	const [first, ...rest] = spec.members;
+	const members =
+		first === undefined
+			? undefined
+			: ir.objectTypeContent(
+					{ delimiter: Delimiter.Trailing, separator: TSKindId.Semi },
+					withTrivia(first, spec.bodyLeading ?? [], []),
+					...rest
+				);
 	const decl = ir.interfaceDeclaration({
-		name: ir.identifier(s.name),
-		...(s.generic ? { typeParameters: typeParams() } : s.keyParam ? { typeParameters: keyParams() } : {}),
-		...(s.extendsType ? { extendsTypeClause: ir.extendsTypeClause(extendsIr(s.extendsType, base)) } : {}),
+		name: ir.identifier(spec.name),
+		...(spec.typeParameters ? { typeParameters: spec.typeParameters } : {}),
+		...(spec.heritage ? { extendsTypeClause: ir.extendsTypeClause(spec.heritage) } : {}),
 		body: ir.objectType({ opening: TSKindId.Lbrace, ...(members ? { members } : {}), closing: TSKindId.Rbrace })
 	});
-	const built = ir.exportStatement.default.declaration({ content: decl });
-	return withTrivia(built, s.leading, s.trailing);
+	return withTrivia(ir.exportStatement.default.declaration({ content: decl }), spec.leading ?? [], spec.trailing ?? []);
 }
 
-function statementIr(s: Statement, base: boolean): ExportIr {
-	switch (s.k) {
-		case 'interface':
-			return interfaceIr(s, base);
-		case 'alias':
-			return ir.exportStatement.default.declaration({
-				content: ir.typeAliasDeclaration(
-					{
-						name: ir.identifier(s.name),
-						typeParameters: typeParams(),
-						value: toIr(s.value, base)
-					},
-					{ terminator: TSKindId.Semi }
-				)
-			});
-		case 'namespace': {
-			const body: StatementBlock.Bound = ir.statementBlock().$with.statements(...s.statements.map((x) => statementIr(x, base)));
-			const module: InternalModule.Bound = ir.internalModule({ name: ir.identifier(s.name), body });
-			return ir.exportStatement.default.declaration({ content: module });
+const exportAlias = (name: string, value: TypeNode): ExportNode =>
+	ir.exportStatement.default.declaration({
+		content: ir.typeAliasDeclaration(
+			{ name: ir.identifier(name), typeParameters: typeParameters(), value },
+			{ terminator: TSKindId.Semi }
+		)
+	});
+
+function exportNamespace(name: string, statements: readonly ExportNode[]): ExportNode {
+	const body: StatementBlock.Bound = ir.statementBlock().$with.statements(...statements);
+	const module: InternalModule.Bound = ir.internalModule({ name: ir.identifier(name), body });
+	return ir.exportStatement.default.declaration({ content: module });
+}
+
+function emitLevel(d: Derivation, v: string, scope: Scope): ExportNode[] {
+	const name = tsname(v.split('.').at(-1) ?? v);
+	const parentPath = v.split('.').slice(0, -1).join('.');
+	const sameTop = parentPath !== '' && parentPath.split('.')[0] === v.split('.')[0];
+	const out: ExportNode[] = [];
+	const kids = childrenOf(d, v);
+	const claimedBy = grammarTag(d.claimers.get(v));
+	const holes = d.holes.get(v);
+	const refinement = d.refinements.get(v);
+	if (holes && !refinement) {
+		const extendsParent = parentPath !== '' && (d.allvocab.has(parentPath) || d.prefixes.has(parentPath));
+		out.push(
+			exportInterface({
+				name,
+				typeParameters: typeParameters(),
+				heritage: extendsParent ? subKindOf(parentPath, scope) : null,
+				members: [...holes]
+					.sort(([a], [b]) => a.localeCompare(b))
+					.map(([m, t]) => signature(m, t === 'string' ? KEYWORDS.string : templateType(t.slice(1, -1)), false)),
+				trailing: [lineComment(`// claimed by ${claimedBy} content-derived`)]
+			})
+		);
+		if (kids.length === 0) return out;
+	} else if (refinement) {
+		out.push(
+			exportInterface({
+				name,
+				typeParameters: typeParameters(),
+				heritage: subKindOf(d.allvocab.has(parentPath) ? parentPath : refinement.parent, scope),
+				members: [
+					kindSignature(v),
+					...[...refinement.literals].map(([f, texts]) => signature(camel(f), literalUnion(texts), false))
+				]
+			})
+		);
+	} else {
+		const heritage = sameTop ? subKindOf(parentPath, scope) : null;
+		const members = kindsBeneath(d, v).length > 0 ? [kindSignature(v)] : [];
+		for (const [member, f] of [...levelMembers(d, v)].sort(([a], [b]) => a.localeCompare(b))) {
+			const built = memberSignature(d, v, member, f, scope);
+			if (built !== null) members.push(built);
 		}
+		const claim = claimedBy === '' ? [] : [lineComment(`// claimed by ${claimedBy}`)];
+		out.push(
+			exportInterface({
+				name,
+				typeParameters: typeParameters(),
+				heritage,
+				members,
+				bodyLeading: members.length > 0 ? claim : [],
+				trailing: members.length === 0 ? claim : []
+			})
+		);
 	}
+	if (kids.length > 0) {
+		const statements = kids.flatMap((k) => emitLevel(d, k, scope));
+		const claimed = [...d.allvocab].filter((o) => o === v || o.startsWith(`${v}.`)).sort();
+		statements.push(
+			exportAlias(
+				'Any',
+				claimed.length === 0 ? TSKindId.NeverKeyword : unionOf(claimed.map((c) => vocabRef(pathOf(c), scope)))
+			)
+		);
+		out.push(exportNamespace(name, statements));
+	}
+	return out;
 }
 
-function importIr(imp: VocabularyFile['imports'][number], leading: readonly Comment[]): TsStatement.Bound {
-	const [first, ...rest] = (imp.names ?? []).map((n) => ir.importSpecifier.name({ name: ir.identifier(n) }));
-	const clause =
-		imp.namespace !== null
-			? ir.importClause.namespaceImport(imp.namespace)
-			: ir.importClause(
-					first ? ir.namedImports(first, ...rest) : ir.namedImports()
-				);
-	const built = ir.importStatement
-		.clauseFrom({
-			importClause: TSKindId.TypeKeyword,
-			fromClause: { importClause: clause, source: str(imp.from) }
-		})
+function templateType(text: string): Arm {
+	const chunks = text.split('${string}');
+	const parts: (TemplateChars.Bound | TemplateType.Bound)[] = [];
+	chunks.forEach((chunk, i) => {
+		if (chunk !== '') parts.push(ir.templateChars(chunk));
+		if (i < chunks.length - 1) parts.push(ir.templateType(TSKindId.StringKeyword));
+	});
+	return ir.templateLiteralType(...parts);
+}
+
+function importNames(names: readonly string[], from: string): ImportStatement.Bound {
+	const [first, ...rest] = names.map((n) => ir.importSpecifier.name({ name: ir.identifier(n) }));
+	const clause = ir.importClause(first ? ir.namedImports(first, ...rest) : ir.namedImports());
+	return ir.importStatement
+		.clauseFrom({ importClause: TSKindId.TypeKeyword, fromClause: { importClause: clause, source: str(from) } })
 		.$with.terminator(TSKindId.Semi);
-	return withTrivia(built, leading, []);
 }
 
-export async function renderVocabularyFile(file: VocabularyFile): Promise<string> {
-	const base = file.name === 'context';
-	const statements: TsStatement.Bound[] = [
-		...file.imports.map((imp, i) => importIr(imp, i === 0 ? file.leading : [])),
-		...file.statements.map((s) => statementIr(s, base))
+function importNamespace(alias: string, from: string): ImportStatement.Bound {
+	const clause = ir.importClause.namespaceImport(alias);
+	return ir.importStatement
+		.clauseFrom({ importClause: TSKindId.TypeKeyword, fromClause: { importClause: clause, source: str(from) } })
+		.$with.terminator(TSKindId.Semi);
+}
+
+function program(
+	header: `//${string}`,
+	imports: readonly ImportStatement.Bound[],
+	statements: readonly Statement.Bound[]
+): Program.Bound {
+	const [first, ...rest] = imports;
+	const all: Statement.Bound[] = [
+		...(first === undefined ? [] : [withTrivia(first, [lineComment(header)], []), ...rest]),
+		...statements
 	];
-	const program = ir.program({ statements });
-	return engine.render(program).toString();
+	return ir.program({ statements: all });
 }
 
-export function renderIndexFile(files: readonly VocabularyFile[]): string {
-	const tops = files.filter((f) => f.name !== 'context').map((f) => f.name);
-	return [
-		"// Generated from the grammars' bindings.scm. Do not edit.",
-		...tops.map((t) => `export * from './${t}.ts';`),
-		"export type { GrammarContext, BaseContext, Unmapped } from './context.ts';",
-		''
-	].join('\n');
+function namespaceFile(d: Derivation, top: string): VocabularyFile {
+	const scope: Scope = { context: 'G', subKind: false };
+	const statements = emitLevel(d, top, scope);
+	if (![...d.allvocab, ...d.prefixes].some((o) => o.startsWith(`${top}.`)))
+		statements.push(exportNamespace(tsname(top), [exportAlias('Any', vocabRef(pathOf(top), scope))]));
+	const imports = [
+		importNames(['GrammarContext'], './context.ts'),
+		...(scope.subKind ? [importNames(['Simplify'], 'type-fest'), importNames(['SubKindOf'], './utils.ts')] : []),
+		importNamespace('V', './index.ts')
+	];
+	return {
+		name: top,
+		program: program("// Generated from the grammars' bindings.scm and slot models. Do not edit.", imports, statements)
+	};
+}
+
+function contextFile(tops: readonly string[]): VocabularyFile {
+	const scope: Scope = { context: 'BaseContext', subKind: false };
+	const statements = [
+		exportInterface({
+			name: 'GrammarContext',
+			members: tops.map((t) => signature(t, TSKindId.UnknownKeyword, false)),
+			leading: [
+				blockComment(
+					"/** The typemap: one key per top-level namespace, projecting to that namespace's kind-set for a grammar. */"
+				)
+			]
+		}),
+		exportInterface({
+			name: 'Unmapped',
+			typeParameters: keyParameters(),
+			members: [signature('$unmapped', ir.identifier('K'), false)],
+			leading: [blockComment('/** A grammar kind a member admits that no binding claims yet; the name says which. */')]
+		}),
+		exportInterface({
+			name: 'BaseContext',
+			heritage: ir.identifier('GrammarContext'),
+			members: tops.map((t) => signature(t, vocabRef([tsname(t), 'Any'], scope), false)),
+			leading: [blockComment("/** The permissive closure: every namespace's full kind-set. */")]
+		})
+	];
+	return {
+		name: 'context',
+		program: program(
+			"// Generated from the grammars' bindings.scm. Do not edit.",
+			[importNamespace('V', './index.ts')],
+			statements
+		)
+	};
+}
+
+export function vocabularyFiles(d: Derivation): VocabularyFile[] {
+	const tops = [...new Set([...d.allvocab].map((v) => v.split('.')[0] ?? v))].sort();
+	return [...tops.map((top) => namespaceFile(d, top)), contextFile(tops)];
+}
+
+export function indexFile(files: readonly VocabularyFile[]): VocabularyFile {
+	const reexports = files
+		.filter((f) => f.name !== 'context')
+		.map((f) =>
+			ir.exportStatement.default.from.starFrom(str(`./${f.name}.ts`)).$with.automaticSemicolon(TSKindId.Semi)
+		);
+	const context = ir.exportStatement.typeExport(
+		{
+			exportClause: ['GrammarContext', 'BaseContext', 'Unmapped'].map((n) =>
+				ir.exportSpecifier({ name: ir.identifier(n) })
+			),
+			source: str('./context.ts')
+		},
+		{ terminator: TSKindId.Semi }
+	);
+	const [first, ...rest] = reexports;
+	const statements =
+		first === undefined
+			? [context]
+			: [
+					withTrivia(first, [lineComment("// Generated from the grammars' bindings.scm. Do not edit.")], []),
+					...rest,
+					context
+				];
+	return { name: 'index', program: ir.program({ statements }) };
+}
+
+const RENDER_OPTIONS = {
+	program: { statements: { exportStatementDefaultFrom: { after: TSKindId.Newline } } }
+} as const;
+
+export function renderVocabularyFile(file: VocabularyFile): string {
+	return engine.render(file.program, RENDER_OPTIONS).toString();
 }

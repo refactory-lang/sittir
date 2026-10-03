@@ -15,21 +15,18 @@ export namespace Pattern {
 	export interface Array<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern<G>>> {
 		// claimed by t
 		readonly kind: 'pattern.array';
-		readonly elements?: (V.Unmapped<'typescript:pattern'> | V.Pattern.Assignment<G>)[];
-		// unmapped: <typescript:pattern>
+		readonly elements?: (G['expression'] | G['identifier'] | V.Literal.Null.Undefined<G> | G['pattern'])[];
 	}
 	export interface As<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern<G>>> {
 		// claimed by p
 		readonly kind: 'pattern.as';
-		readonly alias: V.Unmapped<'python:as_pattern_target'>;
-		// unmapped: <python:as_pattern_target>
+		readonly alias: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 		readonly expression: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 	}
 	export interface Assignment<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern<G>>> {
 		// claimed by t
 		readonly kind: 'pattern.assignment';
-		readonly left: V.Unmapped<'typescript:pattern'>;
-		// unmapped: <typescript:pattern>
+		readonly left: G['expression'] | G['identifier'] | V.Literal.Null.Undefined<G> | G['pattern'];
 		readonly right: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
 	}
 	export interface Captured<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern<G>>> {
@@ -42,8 +39,12 @@ export namespace Pattern {
 	export interface Case<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern<G>>> {
 		// claimed by p
 		readonly kind: 'pattern.case';
-		readonly content?: V.Unmapped<'python:simple_pattern'> | V.Pattern.Case.Any<G>;
-		// unmapped: <python:simple_pattern>
+		readonly content?:
+			| V.Unmapped<'python:simple_pattern_negative'>
+			| V.Identifier.Dotted<G>
+			| G['literal']
+			| V.Pattern.Case.Any<G>;
+		// unmapped: <python:simple_pattern_negative> literal:wildcard_pattern
 	}
 	export namespace Case {
 		export interface As<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Case<G>>> {
@@ -55,8 +56,7 @@ export namespace Pattern {
 		export interface Class<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Case<G>>> {
 			// claimed by p
 			readonly kind: 'pattern.case.class';
-			readonly arguments?: V.Unmapped<'python:list_pattern_case_patterns'>;
-			// unmapped: <python:list_pattern_case_patterns>
+			readonly arguments?: V.Pattern.Case<G>[];
 			readonly name: V.Identifier.Dotted<G>;
 		}
 		export interface Complex<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Case<G>>> {
@@ -70,8 +70,8 @@ export namespace Pattern {
 		export interface Dictionary<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Case<G>>> {
 			// claimed by p
 			readonly kind: 'pattern.case.dictionary';
-			readonly elements?: V.Unmapped<'python:dict_pattern_elements'>;
-			// unmapped: <python:dict_pattern_elements>
+			readonly elements?: (V.Unmapped<'python:key_value_pattern'> | V.Pattern.Case.Splat<G>)[];
+			// unmapped: <python:key_value_pattern>
 		}
 		export interface Keyword<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Case<G>>> {
 			// claimed by p
@@ -87,8 +87,7 @@ export namespace Pattern {
 		export interface List<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Case<G>>> {
 			// claimed by p
 			readonly kind: 'pattern.case.list';
-			readonly listPatternCasePatterns?: V.Unmapped<'python:list_pattern_case_patterns'>;
-			// unmapped: <python:list_pattern_case_patterns>
+			readonly listPatternCasePatterns?: V.Pattern.Case<G>[];
 		}
 		export interface Or<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Case<G>>> {
 			// claimed by p
@@ -110,8 +109,7 @@ export namespace Pattern {
 		export interface Tuple<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Case<G>>> {
 			// claimed by p
 			readonly kind: 'pattern.case.tuple';
-			readonly listPatternCasePatterns?: V.Unmapped<'python:list_pattern_case_patterns'>;
-			// unmapped: <python:list_pattern_case_patterns>
+			readonly listPatternCasePatterns?: V.Pattern.Case<G>[];
 		}
 		export type Any<G extends GrammarContext> =
 			| V.Pattern.Case<G>
@@ -129,13 +127,20 @@ export namespace Pattern {
 		// claimed by r
 		readonly kind: 'pattern.generic';
 		readonly name: G['identifier'];
-		readonly typeArguments: G['type'][];
+		readonly typeArguments: (
+			| V.Clause.Bounds.Removed<G>
+			| V.Element.TypeBinding<G>
+			| V.Expression.Call.Macro<G>
+			| G['identifier']
+			| G['literal']
+			| V.Statement.Block<G>
+			| G['type']
+		)[];
 	}
 	export interface List<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern<G>>> {
 		// claimed by p
 		readonly kind: 'pattern.list';
-		readonly patterns?: V.Unmapped<'python:patterns'>;
-		// unmapped: <python:patterns>
+		readonly patterns?: (G['expression'] | G['identifier'] | G['pattern'])[];
 	}
 	export interface Match<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern<G>>> {
 		// claimed by r
@@ -154,7 +159,7 @@ export namespace Pattern {
 		// claimed by t
 		readonly kind: 'pattern.object';
 		readonly properties?: (
-			| V.Unmapped<'typescript:shorthand_property_identifier_pattern'>
+			| G['identifier']
 			| G['pattern']
 			| 'any'
 			| 'async'
@@ -179,14 +184,13 @@ export namespace Pattern {
 			| 'symbol'
 			| 'type'
 		)[];
-		// unmapped: <typescript:shorthand_property_identifier_pattern>
 	}
 	export namespace Object {
 		export interface Assignment<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Object<G>>> {
 			// claimed by t
 			readonly kind: 'pattern.object.assignment';
 			readonly left:
-				| V.Unmapped<'typescript:shorthand_property_identifier_pattern'>
+				| G['identifier']
 				| G['pattern']
 				| 'any'
 				| 'async'
@@ -210,7 +214,6 @@ export namespace Pattern {
 				| 'string'
 				| 'symbol'
 				| 'type';
-			// unmapped: <typescript:shorthand_property_identifier_pattern>
 			readonly right: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
 		}
 		export interface Pair<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Object<G>>> {
@@ -241,8 +244,7 @@ export namespace Pattern {
 				| 'string'
 				| 'symbol'
 				| 'type';
-			readonly value: V.Unmapped<'typescript:pattern'> | V.Pattern.Assignment<G>;
-			// unmapped: <typescript:pattern>
+			readonly value: G['expression'] | G['identifier'] | V.Literal.Null.Undefined<G> | G['pattern'];
 		}
 		export type Any<G extends GrammarContext> =
 			| V.Pattern.Object<G>
@@ -307,8 +309,8 @@ export namespace Pattern {
 	export interface Slice<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern<G>>> {
 		// claimed by r
 		readonly kind: 'pattern.slice';
-		readonly patterns?: V.Unmapped<'rust:patterns'>;
-		// unmapped: <rust:patterns>
+		readonly patterns?: V.Unmapped<'rust:pattern'>[];
+		// unmapped: <rust:pattern>
 	}
 	export interface Splat<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern<G>>> {
 		// claimed by p
@@ -326,8 +328,7 @@ export namespace Pattern {
 	export interface Struct<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern<G>>> {
 		// claimed by r
 		readonly kind: 'pattern.struct';
-		readonly fields?: V.Unmapped<'rust:struct_pattern_elements'>;
-		// unmapped: <rust:struct_pattern_elements>
+		readonly fields?: V.Pattern.Struct.Any<G>[];
 		readonly type?: V.Identifier.Type<G> | V.Type.Path<G>;
 	}
 	export namespace Struct {
@@ -347,11 +348,11 @@ export namespace Pattern {
 	export interface Tuple<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern<G>>> {
 		// claimed by pr
 		readonly kind: 'pattern.tuple';
-		readonly elements?: V.Unmapped<'rust:tuple_pattern_elements'>;
+		readonly elements?: (V.Unmapped<'rust:pattern'> | V.Expression.Lambda<G>)[];
 		// r only
-		// unmapped: <rust:tuple_pattern_elements>
-		readonly patterns?: V.Unmapped<'python:patterns'> | V.Unmapped<'rust:patterns'>;
-		// unmapped: <python:patterns> <rust:patterns>
+		// unmapped: <rust:pattern>
+		readonly patterns?: (V.Unmapped<'rust:pattern'> | G['expression'] | G['identifier'] | G['pattern'])[];
+		// unmapped: <rust:pattern>
 	}
 	export namespace Tuple {
 		export interface Bare<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Tuple<G>>> {
@@ -361,8 +362,8 @@ export namespace Pattern {
 		export interface Struct<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Tuple<G>>> {
 			// claimed by r
 			readonly kind: 'pattern.tuple.struct';
-			readonly patterns?: V.Unmapped<'rust:patterns'>;
-			// unmapped: <rust:patterns>
+			readonly patterns?: V.Unmapped<'rust:pattern'>[];
+			// unmapped: <rust:pattern>
 			readonly type: G['identifier'] | V.Type.Generic.Turbofish<G>;
 		}
 		export type Any<G extends GrammarContext> =
