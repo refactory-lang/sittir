@@ -7478,7 +7478,9 @@ other children, else the default the `options:` block declared for the
 list (`declaredSeparatorDefault`, reading the arm `collectSitePreferences`
 stamped on the list node): a single-member list has no token to read, and
 a rebuilt node stamps the default, so the read side stamps it too and the
-two agree. The delimiter is stamped the same way, `Delimiter.None` included.
+two agree. The delimiter is read from the source too, `Delimiter.None`
+included, but no side stamps a default for it: a list built without one
+leaves it unset, and the options table supplies it at render.
 
 ### `packages/codegen/src/emitters/wrap.ts::computeCollidedReclaimKinds`
 
@@ -7839,9 +7841,9 @@ enrich-stamped (`VariantChild.definedBy`); one hand-declared arm (a
  */
 ```
 
-`defaultDelimiter` is the `Delimiter` member the list's factory stamps when
-a caller gives none (`declaredDelimiterDefault`, the same expression the
-factory emitter prints), so a tool can tell a read delimiter that merely
+`defaultDelimiter` is the list's declared delimiter default
+(`declaredDelimiterDefault`), the value the options table renders a list
+built without one with, so a tool can tell a read delimiter that merely
 restates the default from one that must be spelled.
 
 ### `packages/codegen/src/emitters/node-model.ts::polymorphVariants`
@@ -11387,12 +11389,13 @@ A slot's value expression with its omission filled: `(<value> ?? [])` for a mult
 
 ### `packages/codegen/src/emitters/factories.ts::declaredDelimiterDefault`
 
-The `Delimiter` member a separated-list factory stamps when the caller
-gives none: the grammar's declared default for that list's `<slot>_delimiter`
-site, else `Delimiter.None`. The factory overlays declared preferences at
-construction, so this is the same fact the render table's default is made
-from; a transport always arrives with the field set, and the two sides
-agree.
+The grammar's declared default for a separated list's `<slot>_delimiter`
+site, else `Delimiter.None`, as a `Delimiter` member. It is the same fact the
+render table's default is made from. A list factory does not stamp it: a list
+built without a delimiter leaves `_delimiter` unset, and the render takes the
+default from the options table, the one channel for preference defaults. The
+node model records it for tools that compare a list's delimiter with its
+default.
 
 ### `packages/codegen/src/emitters/factories.ts::declaredSeparatorDefault`
 
@@ -13432,11 +13435,10 @@ normalization; a node that already carries slot storage (built or edited) is lef
 ```text
 /** The exported alias naming the wrapped root surface, once `finalize()`
 	 *  has run. `undefined` when no root kind was configured. The alias is the
-	 *  root kind's wrap-table row intersected with `@sittir/common`'s
-	 *  `ParsedRoot`: the reader stamps `$span` and the captured `$text` on a
-	 *  whole-source parse's root (required there, optional on every other read
-	 *  node), and `wrapNode`'s typed overload keeps whichever of those members
-	 *  its input declares — the wrap spreads the data it is given — so
+	 *  root kind's wrap-table row intersected with `ParsedRoot`: a
+	 *  whole-source parse's root carries the parse's error regions
+	 *  (`$errors`), and `wrapNode`'s typed overload keeps whichever of those
+	 *  members its input declares — the wrap spreads the data it is given — so
 	 *  `engine.parse()` reaches this alias without a cast. */
 ```
 
@@ -13489,6 +13491,10 @@ Kinds with a `reclaimsAnonymousChild` slot keep `$other`, because their wrap rea
 ### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.finalize`
 
 Assembles the wrap module. `wrapNode`, the one function every wrapped node passes through (the parsed root, each child hydrated on demand, trivia entries), runs its per-kind wrap function inside `inTreeEngine`, so a node is built under the engine that read its tree however long after the parse it is first reached. It carries read provenance (`carryRead`) from the read data to the wrapped node, so the wrapped node derives its line-gap trivia the way the read data would.
+A node of a kind with no wrap function, an ERROR node above all, read in a slot
+or as a trivia item, is hydrated by `_hydrateUnknownKindChildren`, which
+stamps the engine on it as every per-kind wrap function does, so the engine's
+guards (`isErrorNode`) recognise it wherever it surfaces.
 
 `readUntypedNode` and `readNode` take an optional level count, which reaches the native read. `hydrateSelf` reads a stub of a list owner's kind (`listViewOwners`, emitted as `_LIST_OWNER_KINDS`) two levels at once, and every other stub one level.
 
@@ -16031,9 +16037,31 @@ error, not the render's.
 
 A list's delimiter is filled from the table like any site, zero included:
 the table's value is the grammar's declared default or a render option, and
-the transport's own value still wins.
+the transport's own value still wins. One exception: a list whose trailing
+separator is optional takes its trailing flag from the source while its
+source flank after is kept (`sourceTrailingSeparator`).
 
 Every struct transport prepares its `transport_trivia_data` first, leaves included. A trivia entry that is a source coordinate takes its kind's edges there, as a coordinate in a slot does.
+
+### `packages/codegen/src/emitters/render-module.ts::sourceTrailingSeparator`
+
+The facts a list's generated `prepare` passes to `source_trailing_delimiter`:
+the list's own kind id and the kind ids of its separator tokens (the multiple
+slot's literal separators and the token arms of its separator rule), or
+nothing when the list's trailing separator is not optional. A separator with
+no kind id is a compile error.
+
+When a list has them, an unset `delimiter` is filled by
+`source_trailing_delimiter` instead of the plain table value. A rebuilt list
+whose last item is still the source's last keeps its source flank after
+(`sourceFlankOf`, the same evidence the trailing flank uses). For such a list
+the trailing flag follows the source tree: set if the source list's last
+child that is not an extra is one of these separators, clear otherwise. The
+child is read from the tree, never from the span's text, so a comment the span
+includes is not mistaken for a separator. The leading flag and every list
+without that flank take the table value. The source wins both ways, so a
+source with no trailing separator renders none even where the table's default
+is trailing.
 
 ### `packages/codegen/src/emitters/render-module.ts::optionDefaultFills`
 
@@ -16574,7 +16602,7 @@ The per-grammar runtime glue shared by every grammar package, emitted into `pack
 
 ### `packages/codegen/src/emitters/native-crate.ts::NATIVE_RENDER_TRANSPORT_ABI`
 
-The version of the wire between the JS packages and a native build: the render transport shape JS sends, the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present, which of `$handle` / `$parentHandle` / `$treeHandle` a node carries), and the read calls' names and arguments (a read takes a level count). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever any of these changes, and regenerate every grammar.
+The version of the wire between the JS packages and a native build: the render transport shape JS sends, the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present, which of `$handle` / `$parentHandle` / `$treeHandle` a node carries, and the error regions a parse returns beside its root), and the read calls' names and arguments (a read takes a level count). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever any of these changes, and regenerate every grammar.
 
 ### `packages/codegen/src/emitters/types.ts::emitNodeSurfaceInterfaces`
 
@@ -16594,7 +16622,7 @@ The emitted `_keywordOr(input, keywords, () => resolved)` that replaces `_keywor
 
 ### `packages/codegen/src/emitters/factories.ts::listOptionDefaults`
 
-The options a separated list's factory takes, each with the expression the factory falls back to when the option is not passed: the delimiter's resolved arm (`Delimiter.None` when the list declares none) and the separator's declared arm (`undefined` when there is none). It reads the same option flags as the options type and the same default derivations as the list factory, so a list owner's getters report exactly what the factory would build.
+The options a separated list's factory takes, each with the expression a list owner's getter falls back to when the list does not hold it: `undefined` for the delimiter, which a list built without one leaves unset (its default is the options table's, applied at render), and the separator's declared arm (`undefined` when there is none). It reads the same option flags as the options type, so a list owner's getters report what the list holds.
 
 ### `packages/codegen/src/emitters/factories.ts::listSlotTargets`
 

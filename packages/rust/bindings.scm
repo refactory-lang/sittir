@@ -25,7 +25,7 @@
 (enum_variant) @declaration.enum_member
 (enum_variant body: (ordered_field_declaration_list)) @declaration.enum_member.tuple
 (enum_variant body: (field_declaration_list)) @declaration.enum_member.struct
-(attributed_enum_variant (attribute_item)* (_) @element)
+(attributed_enum_variant (attribute_item)* @attributes (_) @element)
 (union_item) @declaration.union
 (type_item type: (_) @value) @declaration.type_alias
 (associated_type) @declaration.type_alias.associated
@@ -36,7 +36,7 @@
 (static_item) @declaration.variable.static
 (let_declaration pattern: (_) @name) @declaration.variable
 (field_declaration) @declaration.field
-(attributed_field_declaration (attribute_item)* (_) @element)
+(attributed_field_declaration (attribute_item)* @attributes (_) @element)
 (macro_definition) @declaration.macro
 (parameter name: (_) @name) @declaration.parameter
 (parameter (mutable_specifier) @mutable)
@@ -44,11 +44,11 @@
 (self_parameter (mutable_specifier) @mutable)
 (variadic_parameter) @declaration.parameter.variadic
 (closure_parameters (_) @declaration.parameter)
-(attributed_parameter (attribute_item)? (_) @element)
+((attributed_parameter (attribute_item)? @dropped (_) @element) (#set! reason "the element admits the _type supertype, so an attributes capture would reach only some of the kinds it holds"))
 (type_parameter bounds: (_)? @constraint default_type: (_)? @default) @declaration.type_parameter
 (const_parameter) @declaration.type_parameter.const
 (lifetime_parameter) @declaration.type_parameter.lifetime
-(attributed_type_parameter (attribute_item)* (_) @element)
+(attributed_type_parameter (attribute_item)* @attributes (_) @element)
 
 ; ── statement ──────────────────────────────────────────────────────────────────
 (block) @statement.block
@@ -85,7 +85,7 @@
 
 ; ── argument (pieces of a call that are not expressions) ───────────────────────
 ; none: every Rust argument is an expression
-(attributed_argument (attribute_item)* (_) @element)
+((attributed_argument (attribute_item)* @dropped (_) @element) (#set! reason "the element is the _expression supertype, so an attributes capture would have no direct target"))
 
 ; ── element (pieces of a composite expression that are not expressions) ────────
 (field_initializer) @element.struct.field
@@ -182,7 +182,7 @@
 (primitive_type) @type.primitive
 (generic_type) @type.generic
 (generic_type_with_turbofish) @type.generic.turbofish
-(type_argument (_) @element)
+(type_argument (trait_bounds)? @constraint) @element.type_argument
 (reference_type) @type.reference
 (pointer_type) @type.pointer
 (array_type) @type.array

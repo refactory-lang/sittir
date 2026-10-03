@@ -1339,7 +1339,7 @@ export function wrapExportClause(data: T.ExportClause, tree: TreeHandle): T.Expo
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1723,7 +1723,7 @@ export function wrapNamedImports(data: T.NamedImports, tree: TreeHandle): T.Name
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -7296,7 +7296,7 @@ export function wrapFormalParameters(data: T.FormalParameters, tree: TreeHandle)
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -10253,7 +10253,7 @@ export function wrapEnumBody(data: T.EnumBody, tree: TreeHandle): T.EnumBody.Par
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', Delimiter.Trailing),
+		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -13194,7 +13194,7 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.Ty
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -13596,7 +13596,7 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -14043,7 +14043,7 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle): T.TupleType.
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
+		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -14404,7 +14404,7 @@ export function wrapExportSpecifiers(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -14455,7 +14455,7 @@ export function wrapImportSpecifiers(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -14554,7 +14554,7 @@ export function wrapFormalParametersElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -14733,7 +14733,7 @@ export function wrapEnumBodyElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.Trailing,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -14781,7 +14781,7 @@ export function wrapTypes(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -14837,7 +14837,7 @@ export function wrapTypeParametersElements(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -14893,7 +14893,7 @@ export function wrapTupleTypeMembers(
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? Delimiter.None,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -15176,7 +15176,7 @@ export function wrapObjectTypeContent(
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		separator: _separator ?? TSKindId.Semi,
-		delimiter: _delimiter ?? Delimiter.Trailing,
+		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -19347,6 +19347,8 @@ function _hydrateUnknownKindChildren(data: _UntypedNode, tree: TreeHandle): _Unt
 			out[key] = hydrateChild(value, tree);
 		}
 	}
+	const handle = currentHandle();
+	out.$engine = handle && (() => handle.current);
 	return out as unknown as _UntypedNode;
 }
 

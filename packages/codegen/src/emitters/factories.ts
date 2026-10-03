@@ -1742,7 +1742,7 @@ export function listOptionDefaults(
 		...(parts.hasSeparatorKindOption
 			? [{ key: 'separator', default: declaredSeparatorDefault(node, nodeMap, kindEntries) ?? 'undefined' }]
 			: []),
-		...(parts.hasDelimiterOption ? [{ key: 'delimiter', default: declaredDelimiterDefault(node) }] : [])
+		...(parts.hasDelimiterOption ? [{ key: 'delimiter', default: 'undefined' }] : [])
 	];
 }
 
@@ -2135,7 +2135,7 @@ function listBuiltTypeSurface(
 		`(${[own, ...seated.map((seat) => `T.${seat.group.typeName}.${row}[0]`)].join(' | ')})`;
 	const extraMembers = [
 		...(surface.hasSeparatorKindOption ? ['  readonly _separator: number | undefined;'] : []),
-		...(surface.hasDelimiterOption ? ['  readonly _delimiter: Delimiter;'] : [])
+		...(surface.hasDelimiterOption ? ['  readonly _delimiter: Delimiter | undefined;'] : [])
 	];
 	return {
 		mainType: `T.${node.typeName}`,
@@ -2167,7 +2167,6 @@ function emitSeparatedListFactory(
 ): string | undefined {
 	if (!node.rawFactoryName) return undefined;
 	const fn = node.rawFactoryName;
-	const delimiterDefault = declaredDelimiterDefault(node);
 
 	const isMultiField = node.slots.length > 1;
 	const canonical = isMultiField ? undefined : canonicalSeparatedListField(node);
@@ -2222,7 +2221,7 @@ function emitSeparatedListFactory(
 		} else lines.push(`  const _separator = options.separator ?? ${separatorDefault};`);
 	}
 	if (hasDelimiterOption) {
-		lines.push(`  const _delimiter = options.delimiter ?? ${delimiterDefault};`);
+		lines.push('  const _delimiter = options.delimiter;');
 	}
 
 	const plan = seatPlanOf(node, nodeMap, kindEntries);

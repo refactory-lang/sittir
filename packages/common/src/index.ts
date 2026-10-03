@@ -5,3 +5,4 @@ export { detachCoordinates, detachCoordinate, treeHandleOf } from './transport-d
 export { byteLength, sliceSpan, sourceSpans, spanSlicer, type ByteSpan, type IndexRange, type SourceSpans } from './span.ts';
 export { type TriviaSides } from './trivia.ts';
 export { createEngine } from './create-engine.ts';
+export { ParseErrors } from './parse-errors.ts';

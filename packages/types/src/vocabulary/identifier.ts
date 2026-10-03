@@ -62,6 +62,7 @@ export namespace Identifier {
 	export interface Metavariable<G extends GrammarContext> extends Simplify<SubKindOf<V.Identifier<G>>> {
 		// claimed by r
 		readonly kind: 'identifier.metavariable';
+		readonly attributes?: G['attribute'][];
 	}
 	export interface Nested<G extends GrammarContext> extends Simplify<SubKindOf<V.Identifier<G>>> {
 		// claimed by t

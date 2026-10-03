@@ -12,7 +12,7 @@ import { writeSync } from 'node:fs';
 
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
 import { sourceSpans, spanSlicer, type TriviaSides } from '@sittir/common';
-import { crossingTrivia, hydrateStub, isStub, mapTriviaEntries, readTrivia, type TriviaView } from '@sittir/common/utils';
+import { spanOf, crossingTrivia, hydrateStub, isStub, mapTriviaEntries, readTrivia, type TriviaView } from '@sittir/common/utils';
 import { deriveRuleKinds } from './render-bodies.ts';
 import { load } from '../codegen-surface.ts';
 
@@ -376,7 +376,7 @@ export function selfContainedRenderInput(
 	const slice = spanSlicer(source);
 	const textOf = (record: Record<string, unknown>): string | undefined => {
 		if (typeof record.$text === 'string') return record.$text;
-		const span = record.$span as { start: number; end: number } | undefined;
+		const span = spanOf(record);
 		return span === undefined ? undefined : slice(span);
 	};
 	const hasStorage = (record: Record<string, unknown>): boolean =>
@@ -654,7 +654,7 @@ export async function validateReadRenderParse(
 						// kinds (whose display name differs) are admitted and probed
 						// against their own templates rather than silently skipped.
 						if (displayKind === undefined || sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
-						const span = (w as { $span?: { start: number; end: number } }).$span;
+						const span = spanOf(w);
 						if (span == null) return;
 						const dedup = `${sourceKind}@${span.start}:${span.end}`;
 						if (seen.has(dedup)) return;

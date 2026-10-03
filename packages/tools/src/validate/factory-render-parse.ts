@@ -24,6 +24,7 @@
  */
 
 import type { AnyUntypedNode } from '@sittir/types';
+import { spanOf } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
 import { deriveRuleKinds } from './render-bodies.ts';
@@ -643,7 +644,7 @@ export async function validateFactoryRenderParse(
 			const sourceKind = kindNameFromId ? kindNameFromId(nativeShownKindId(w)) : undefined;
 			if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
 			if (surface !== undefined && surface.entries[sourceKind] === undefined) return;
-			const span = (w as { $span?: { start: number; end: number } }).$span;
+			const span = spanOf(w);
 			if (span == null) return;
 			const dedup = `${sourceKind}@${span.start}:${span.end}`;
 			if (seen.has(dedup)) return;

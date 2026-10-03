@@ -2439,7 +2439,8 @@
             }
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "declare class Error {\n  constructor: Function\n}\ndeclare var foo: number;\ndeclare const bar = \"baz\";\ndeclare function greet(greeting: string): void ;\ndeclare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\ndeclare class Greeter {\n  constructor(greeting: string) ;\n  greeting: string ;\n  showGreeting(): void ;\n}\ndeclare module Foo.Bar {\n  export var foo;\n}\n;declare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n"
   },
@@ -14239,7 +14240,8 @@
             "finalizer"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "try {}\ncatch (e: unknown) {}\nfinally {}\n"
   },
@@ -15074,7 +15076,8 @@
             }
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "declare interface IFoo {\n  bar(): number,\n  baz(): IBaz,\n}\ndeclare class Foo {\n  bar(): number,\n  baz(): Baz,\n}\n"
   },
@@ -17085,7 +17088,8 @@
             }
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "declare module.exports: {\n  foo: string;\n}\n"
   },
@@ -18068,7 +18072,8 @@
           ],
           "_decorator": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "export default function point(x: number, y: number) {\n  return { x, y };\n}\n\n// a comment\nexport default class A {}\n\nexport async function readFile(filename: string): Promise<Buffer>\n"
   },
@@ -20714,7 +20719,8 @@
             }
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "declare class Linter {\n  static findConfiguration: typeof findConfiguration ;\n}\n"
   },
@@ -21413,7 +21419,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "export = Linter;\nexport = {};\n"
   },
@@ -21665,7 +21672,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "import r = X.N;\n"
   },
@@ -21942,7 +21950,8 @@
             "body"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "module C {\n  import r = X.N;\n}\n"
   },
@@ -22578,7 +22587,8 @@
             "body"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "module M {\n  export module N {}\n  export import X = N;\n}\n"
   },
@@ -23728,7 +23738,8 @@
           ],
           "_decorator": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "export interface IAppState {\n  public readonly users: ReadonlyArray<User>\n}\n\nexport class CloningRepository {\n  public readonly id = CloningRepositoryID++\n}\n"
   },
@@ -25650,7 +25661,8 @@
             }
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "declare type IndexableType = string | number | Date | Array<string | number | Date>;\n"
   },
@@ -27543,7 +27555,8 @@
             }
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "module Promise {\n  var on: {}\n  export function resolve<R>(value?: Thenable<R>): Promise<R> ;\n}\ndeclare module \"example\"\ndeclare module \"example\" {}\n"
   },
@@ -30963,7 +30976,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "x = { name, description, private: private_ }\n"
   },
@@ -31692,7 +31706,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "foo as any as Array<number>\nbar satisfies number[]\n\"foobar\" as const\n"
   },
@@ -33105,7 +33120,8 @@
           ],
           "_decorator": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "export interface Foo {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V> ;\n}\n"
   },
@@ -38095,7 +38111,8 @@
             }
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "declare namespace moment {\n  type formatFunction = () => string;\n  export var x: string;\n  export class foo {}\n  export function utc(): Moment ;\n  export const enum Blah {\n    Blaz,\n    Bloz,\n    Bleez\n  }\n}\n"
   },
@@ -41199,7 +41216,8 @@
             }
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "declare namespace Foo {\n  export interface Bar {}\n}\n"
   },
@@ -42073,7 +42091,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "namespace Foo {}\nnamespace Bar {\n  var x;\n}\n"
   },
@@ -43003,7 +43022,8 @@
           ],
           "_decorator": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "class Foo {\n  private async() {};\n  get(): Result {};\n  private set(plugin) {};\n}\n"
   },
@@ -45054,7 +45074,8 @@
           ],
           "_decorator": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "class Foo {\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number): Promise<T> ;\n  public readonly async bar ?<T>() ;\n  private static bar() ;\n  private static async bar(): T ;\n}\n"
   },
@@ -51441,7 +51462,8 @@
           ],
           "_decorator": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "class Foo {\n  static 2: string ;\n  public static 2: string = 'string' ;\n  public static readonly 'hello' ?: int = 'string' ;\n  static readonly 'hello' ?: int = 'string' ;\n  readonly 'hello' ?: int = 'string' ;\n}\n"
   },
@@ -53721,7 +53743,8 @@
           ],
           "_decorator": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "class Foo {\n  @ bar<T>()\n  method() {}\n}\n"
   },
@@ -55334,7 +55357,8 @@
             "automatic_semicolon"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "@ baz\n@ bam\nclass Foo {\n  @ foo\n  static 2: string ;\n  @ bar.buzz(grue)\n  public static 2: string = 'string' ;\n  @ readonly\n  readonly 'hello' ?: int = 'string' ;\n  @ readonly\n  fooBar(@ required param: any, @ optional param2?: any) {}\n}\n"
   },
@@ -58736,7 +58760,8 @@
           ],
           "_decorator": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "class Foo<Bar> extends Baz {\n  bar = 5 ;\n  static one(a) {\n    return a;\n  };\n  two(b) {\n    return b;\n  }\n  three(c) {\n    return c;\n  }\n}\n"
   },
@@ -61110,7 +61135,8 @@
           ],
           "_decorator": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "class Foo {\n  static {\n    this.#bar = '';\n  }\n  static {\n    this.baz();\n  }\n}\n"
   },
@@ -62504,7 +62530,8 @@
             }
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "declare global {}\n"
   },
@@ -63401,7 +63428,8 @@
             "body"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "abstract class Foo {}\n\nabstract class Animal {\n  readonly abstract prop: string ;\n  requiredProp !: string ;\n  abstract makeSound(): void ;\n  abstract get readonlyProp(): string ;\n  protected abstract readonlyProp ?(): string ;\n  move(): void {\n    console.log(\"roaming the earth...\");\n  }\n}\n\n@ bar\nabstract class Foo {}\n"
   },
@@ -66127,7 +66155,8 @@
           ],
           "_decorator": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "class C {\n  @(super.decorate)\n  method2() {}\n}\n"
   },
@@ -67056,7 +67085,8 @@
           ],
           "_decorator": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "export type Extracted = keyof Pick<Base, \"id\">\n"
   },
@@ -68179,7 +68209,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "var a !: b;\nlet a !: b;\n"
   },
@@ -69086,7 +69117,8 @@
           ],
           "_decorator": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "export default abstract class C {}\n\nexport default class C {}\n\nexport class C {}\n\nexport default interface I {}\n\nexport interface I {}\n"
   },
@@ -70569,7 +70601,8 @@
           ],
           "_decorator": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "class A<B, C,> {}\n\nclass D extends A<X, Y,> {}\n"
   },
@@ -72571,7 +72604,8 @@
           ],
           "_decorator": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "class A extends B<C>(D) implements C {}\n\nexport class A extends B<C>(D) implements C {}\n\nclass A extends B<C>(D)<E> implements C {}\n\nexport class A extends B<C>(D)<E> implements C {}\n\nexport class A extends B<C, D> implements C {}\n"
   },
@@ -76264,7 +76298,8 @@
           ],
           "_decorator": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "class Foo {\n  public bar() {}\n}\n"
   },
@@ -76996,7 +77031,8 @@
           ],
           "_decorator": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "abstract class Foo {\n  abstract baz(): void ;\n}\n\nclass Bar extends Foo {\n  override baz() {}\n}\n"
   },
@@ -78403,7 +78439,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "h as `hello`\nT as {} & {\n  [t: T]: T\n}\nT as {} & {\n  [t: T]: T\n} & {\n  [g: G]: G\n}\n"
   },
@@ -82073,7 +82110,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "h satisfies `hello`\nT satisfies {} & {\n  [t: T]: T\n}\nT satisfies {} & {\n  [t: T]: T\n} & {\n  [g: G]: G\n}\n"
   },
@@ -85437,7 +85475,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "typeof class {} === \"function\";\ntypeof module === \"object\" && typeof module.exports === \"object\"\n"
   },
@@ -86792,7 +86831,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "[, a,, b,,,, s,,,]\n"
   },
@@ -87048,7 +87088,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "var module;\nmodule;\n"
   },
@@ -87359,7 +87400,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "var a = b, c = d, e = f\n"
   },
@@ -87935,7 +87977,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "i < foo.length;\ni < type.length;\ni < string.length;\n"
   },
@@ -88784,7 +88827,8 @@
             "consequence"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "if (foo) {\n  set[1].apply()\n}\n"
   },
@@ -89915,7 +89959,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "{ public: true, private: true, readonly: true };\n{ readonly: 1, abstract: 1, static: 1 };\n"
   },
@@ -90837,7 +90882,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "foo ! = bar;\nfoo ! += bar;\n(foo) ! = bar;\n(foo) ! += bar;\n"
   },
@@ -92131,7 +92177,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "f<T>(x)\n"
   },
@@ -92844,7 +92891,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "const makeHammerBox = makeBox<Hammer>;\nconst makeStringBox = makeBox<string>;\nconst ErrorMap = Map<string, Error>;\n"
   },
@@ -94195,7 +94243,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "<A> b;\n<C<D>> e.f;\n"
   },
@@ -95119,7 +95168,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "a ? function () {\n  return true\n} : b;\n"
   },
@@ -97291,7 +97341,8 @@
             "automatic_semicolon"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "function greeter(person: string) {\n  return \"Hello, \" + person;\n}\n\nfunction foo<T>(x: T): T {}\n\nfunction foo<T, U>(a: T[], f: (x: T) => U): U[] {}\n\nfunction foo<T, U>(this: T[]): U[] {\n  return []\n}\n\nfunction foo<const T, const U extends string>(x: T, y: U) {}\n"
   },
@@ -103675,7 +103726,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "const lines = new Array<DiffLine>()\n"
   },
@@ -104446,7 +104498,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "a.b<[C]>();\na<C.D[]>();\n"
   },
@@ -105589,7 +105642,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "A?.<B>();\n"
   },
@@ -106619,7 +106673,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "<A>(amount, interestRate, duration): number => 2\nfunction * foo<A>(amount, interestRate, duration): number {\n  yield amount * interestRate * duration / 12\n}\n(module: any): number => 2\n"
   },
@@ -109632,7 +109687,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "const x = async => async;\n"
   },
@@ -110486,7 +110542,8 @@
           ],
           "_decorator": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "class A extends B {\n  constructor(x: number, y: number) {\n    super(x);\n  }\n  public toString() {\n    return super.toString() + \" y=\" + this.y;\n  }\n}\n"
   },
@@ -113390,7 +113447,8 @@
           ],
           "_decorator": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "export default function foo(): bar\n"
   },
@@ -114534,7 +114592,8 @@
             "automatic_semicolon"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "function foo() {}\n\nfunction foo(bar)\nfunction foo(bar): baz ;\nfunction foo(bar)\nfunction foo(): () => {\n  [key: foo]: bar\n}\nfunction foo(): () => {\n  [key: foo]: bar\n} {}\n"
   },
@@ -117728,7 +117787,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "function foo()\n// above is a signature\nfoo();\nfunction bar() // above is a function declaration\n{}\n\nfunction foo(): number ;\n"
   },
@@ -118479,7 +118539,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "var x: string = 'hi';\nvar y: number;\n"
   },
@@ -119213,7 +119274,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "var x: (string);\nvar x: ({\n  a: any\n});\n"
   },
@@ -121046,7 +121108,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "let person: {\n  name: string,\n  age: number\n};\nlet thing: {\n  [type: string]: string\n};\ntype T = {\n  [K in keyof T] -?: any\n}\ntype T = {\n  [K in keyof T] ?: any\n}\ntype T = {\n  - readonly[K in keyof T]: any\n}\n"
   },
@@ -124567,7 +124630,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "let MyFunction: {\n  (string): string,\n  length: number\n};\n"
   },
@@ -125775,7 +125839,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type Foo = {\n  [b: string]: any;\n  readonly[c: number]: string;\n}\n"
   },
@@ -126893,7 +126958,8 @@
             "automatic_semicolon"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "function f(): any {\n  'a';\n  'b';\n}\n\nfunction\nf\n(): any {\n  'a'\n  'b'\n}\n"
   },
@@ -128329,7 +128395,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "let x: X[];\n"
   },
@@ -129067,7 +129134,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "let x: (result: string) => any;\nconst foo: (this: Readable, size?: number) => any;\n"
   },
@@ -131220,7 +131288,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "let foo: ({ a }: Foo) => number\n"
   },
@@ -132631,7 +132700,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "let x: new <T1, T2>(p1, p2) => R;\n"
   },
@@ -134450,7 +134520,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "const symFoo: unique symbol = Symbol(\"foo\");\nconst symBar: symbol = Symbol.for(\"bar\");\n"
   },
@@ -135972,7 +136043,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "const range = (document: any).selection.createRange()\n"
   },
@@ -137049,7 +137121,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "const editor: ? CodeEditor\nconst miscArray: ? T[]\n"
   },
@@ -139726,7 +139799,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "import type { UserID, User } from \"./User.js\";\nimport { type UserID, type User } from \"./User.js\";\nimport typeof { jimiguitar as GuitarT } from \"./User.js\";\nimport type UserID, { addUser, removeUser } from './User.js';\nimport type from './User.js';\nimport type, { addUser } from './User.js';\nimport { type } from './User.js';\nimport { addUser as type } from './User.js';\nimport { type as addUser } from './User.js';\nimport { type, addUser } from './User.js';\nimport { addUser, type } from './User.js';\nimport type, { addUser, type User } from './User.js';\n"
   },
@@ -142867,7 +142941,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "export type { UserType }\nexport type { UserType } from \"./User.js\";\nexport type { A, B, C as D } from 'mymodule';\n"
   },
@@ -143599,7 +143674,8 @@
           ],
           "_decorator": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "export type UserType = {};\n\nexport interface UserInterface {}\n"
   },
@@ -144693,7 +144769,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type FileMergeData = {\n  document: Doc,\n  headDocument: Doc,\n  baseDocument: Doc,\n  conflicts: ConflictInfo[]\n}\ntype ConflictInfo = {\n  start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle\n}\n"
   },
@@ -147990,7 +148067,8 @@
             "body"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "enum Test {\n  A,\n  'B',\n  'C' = Math.floor(Math.random() * 1000),\n  D = 10,\n  E\n}\n\nenum Style {\n  None = 0,\n  Bold = 1,\n  Italic = 2,\n  Underline = 4,\n  Emphasis = Bold | Italic,\n  Hyperlink = Bold | Underline\n}\n"
   },
@@ -150392,7 +150470,8 @@
           ],
           "_decorator": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "class A<B, C,> {}\n\nclass D extends A<X, Y,> {}\n\nclass E extends funThatEvalsToClass()<X, Y,> {}\n\nclass F extends G, H<T> {}\n"
   },
@@ -151941,7 +152020,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "let x: Array<*>\n"
   },
@@ -152774,7 +152854,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type U = number | string;\ntype Z = | \"foo\" | \"bar\";\ntype Z = | \"foo\";\n"
   },
@@ -154029,7 +154110,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type BrowserStats$ResourceTiming = number & string;\n"
   },
@@ -154369,7 +154451,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type BrowserStats = {|\n  url: string,\n  ms: number\n|}\n"
   },
@@ -155282,7 +155365,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "let x: 2\nlet x: 2 | -3 | +4\nlet x: \"string\"\nlet x: false\n"
   },
@@ -157039,7 +157123,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type HandlerFunction<T :Element> = void\n"
   },
@@ -158045,7 +158130,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "interface X {\n  x(): Promise<Array<Foo>>;\n}\n\nvar y: Map<number, Promise<Map<bool, Map<Foo, Bar>>>>\n"
   },
@@ -161775,7 +161861,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "let score: (string: string, query: string) => number\n"
   },
@@ -162975,7 +163062,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "const repository = foo++!\n"
   },
@@ -164415,7 +164503,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type T = keyof Person;\ntype T = keyof Person.P;\ntype T = keyof Person<P>;\ntype T = keyof (Person);\ntype T = typeof Person;\ntype T = typeof Person.P;\ntype T = typeof import('person');\ntype T = keyof typeof Person;\ntype T = keyof U[number];\ntype T = keyof U & V;\ntype T = typeof array[number];\n"
   },
@@ -168049,7 +168138,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type K1 = Foo[bar]\ntype K1 = Foo['bar' | 'baz']\n"
   },
@@ -169507,7 +169597,8 @@
           ],
           "_decorator": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "export type NoInfer<T> = T & {\n  [K in keyof T]: T[K]\n};\n"
   },
@@ -171560,7 +171651,8 @@
             "automatic_semicolon"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "function f(x: any): asserts x {}\n"
   },
@@ -172722,7 +172814,8 @@
             "automatic_semicolon"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "function f(x: any): asserts x is number {}\n\nclass Foo<T> {\n  test(): this is T {}\n}\n\nfunction isT(t: T): t is T {\n  return true\n}\n"
   },
@@ -174973,7 +175066,8 @@
             }
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "declare const f: (x: any) => asserts x;\ndeclare const g: (x: any) => asserts x is number;\n"
   },
@@ -177650,7 +177744,8 @@
             "automatic_semicolon"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "function isFish(pet: Fish): pet is Fish {}\n\nfunction isFish(object: Fish): object is Fish {}\n"
   },
@@ -179454,7 +179549,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type t = a[]\ntype t = readonly a[]\ntype t = readonly a[][]\ntype t = (readonly a[])[]\ntype t = readonly (readonly a[])[]\n"
   },
@@ -182759,7 +182855,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type t = []\ntype t = [A,]\ntype t = [A | B, C]\ntype t = readonly [A[], B.C]\n// special optional and rest type syntax\ntype t = [string ?, ...B]\n// labeled elements\ntype t = [a: A, b ?: B, ...c: C[]]\n"
   },
@@ -188512,7 +188609,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type T = X extends Y ? Z: Y\ntype T = X extends ? Y ? ? X: Y\ntype F<T, X, Y> = ((t: T) => X extends Y ? X: Y) extends ((t: T) => X extends Y ? Y: X) ? X: Y\ntype F<T, X, Y> = (t: T) => X extends Y ? X: Y extends (t: T) => X extends Y ? Y: X ? X: Y\ntype T<X, Y> = T extends X<infer Y> ? Y: X\ntype T<X> = X extends (infer X)[] ? X: never;\ntype T<X> = T extends {\n  x: infer X\n} ? X: never;\ntype T<X> = T extends {\n  x: infer X extends number\n} ? X: never;\n"
   },
@@ -202726,7 +202824,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type A<B, C> = `${B}${C}`;\ntype A = `${B[0]}-foo-${C}-bar-${D<U, D>}`\ntype A = `[${'a'}${0}]`\ntype A<B, C> = B extends C ? C extends string ? `${C}${\"\" extends C ? \"\": \".\"}${B}`: never: never\ntype Trim<S extends string> = S extends `${infer R}` ? Trim<R>: S;\ntype A = `${true & ('foo' | false)}`;\ntype StringToNumber<S extends string> = S extends `${infer N extends number}` ? N: never;\n"
   },
@@ -211408,7 +211507,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type A<B> = {\n  [B in keyof C & string as `get${Capitalize<P>}`]: () => A[B]\n};\ntype A<B> = {\n  [B in keyof C & string as `${P}1` | `${P}2`]: A[B]\n}\n"
   },
@@ -216722,7 +216822,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type T = Foo<Bar<typeof bar>>\ntype T = Foo<Bar<typeof bar.baz>>\ntype T = Foo<Bar<typeof bar[\"baz\"]>>\n"
   },
@@ -219460,7 +219561,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type T = Foo<any, unknown, number, string, void, true, false, null, undefined, 0, \"foo\">\n"
   },
@@ -220935,7 +221037,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type Foo<T extends abstract new (...args: any) => any> = T;\ntype Foo<T extends new (...args: any) => any> = T;\n"
   },
@@ -223031,7 +223134,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type Foo<T> = abstract new () => T;\n"
   },
@@ -223820,7 +223924,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "// These should generate the same AST aside from the parenthesized_type node\ntype X1 = typeof Y[keyof typeof Z];\ntype X2 = (typeof Y)[keyof typeof Z];\n"
   },
@@ -225034,7 +225139,8 @@
             ]
           }
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "// This is a special construct, different from both \"typeof (f<T>)\" and\n// \"(typeof f)<T>\" (which are both invalid)\ntype T = typeof f<T>;\n"
   },
@@ -225978,7 +226084,8 @@
           ],
           "_decorator": []
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "class A {\n  colors: [{\n    color: \"green\",\n    code: \"#E5F8F2\"\n  }]\n  color: (typeof this.colors)[number] = this.colors[0]\n}\n"
   },
@@ -229307,7 +229414,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "type Foo = import('node:fs').ReadStream & {\n  bar();\n};\n"
   },
@@ -230503,7 +230611,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "import something from 'foo.css' assert { type: 'css' }\n"
   },
@@ -231087,7 +231196,8 @@
             "body"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "enum T {\n  A,\n  B,\n}\n"
   },
@@ -231499,7 +231609,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "const x = \"a\\nb\\tc\";\nconst y = 'It\\'s\\ttabbed';\n"
   },
@@ -232436,7 +232547,8 @@
             "terminator"
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "const z = `pre${x}mid\\n${y}post`;\n"
   },
@@ -235606,7 +235718,8 @@
             }
           ]
         }
-      ]
+      ],
+      "$errors": []
     },
     "expectedOutput": "declare class Error {\n  constructor: Function\n}\ndeclare var foo: number;\ndeclare const bar = \"baz\";\ndeclare function greet(greeting: string): void ;\ndeclare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\ndeclare class Greeter {\n  constructor(greeting: string) ;\n  greeting: string ;\n  showGreeting(): void ;\n}\ndeclare module Foo.Bar {\n  export var foo;\n}\n;declare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  for (let i = 0; i < 3; i++) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n"
   },

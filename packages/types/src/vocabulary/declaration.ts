@@ -8,6 +8,11 @@ export interface Declaration<G extends GrammarContext> {
 }
 
 export namespace Declaration {
+	export interface Ambient<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration<G>>> {
+		// claimed by t
+		readonly kind: 'declaration.ambient';
+		readonly content: V.Clause.Import.Alias<G> | G['declaration'] | V.Statement.Block<G>;
+	}
 	export interface Class<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration<G>>> {
 		// claimed by pt
 		readonly kind: 'declaration.class';
@@ -21,39 +26,12 @@ export namespace Declaration {
 		)[];
 		// p only
 		readonly body: G['declaration'] | G['statement'] | (G['declaration'] | G['statement'])[];
-		readonly declare?: boolean;
-		// t only
 		readonly decorators?: V.Attribute.Decorator<G>[];
 		readonly doc?: V.Literal.String<G>;
 		// p only
 		readonly extends?: V.Clause.Extends<G>;
 		// t only
 		readonly implements?: (G['identifier'] | G['type'])[];
-		// t only
-		readonly label?:
-			| V.Identifier.Label<G>
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
 		// t only
 		readonly name: G['identifier'];
 		readonly typeParameters?: V.Declaration.TypeParameter<G> | V.Declaration.TypeParameter<G>[];
@@ -64,34 +42,9 @@ export namespace Declaration {
 			readonly kind: 'declaration.class.abstract';
 			readonly abstract?: boolean;
 			readonly body: (G['declaration'] | V.Statement.Block.Static<G>)[];
-			readonly declare?: boolean;
 			readonly decorators?: V.Attribute.Decorator<G>[];
 			readonly extends?: V.Clause.Extends<G>;
 			readonly implements?: (G['identifier'] | G['type'])[];
-			readonly label?:
-				| V.Identifier.Label<G>
-				| 'any'
-				| 'async'
-				| 'boolean'
-				| 'declare'
-				| 'export'
-				| 'get'
-				| 'let'
-				| 'module'
-				| 'namespace'
-				| 'new'
-				| 'number'
-				| 'object'
-				| 'override'
-				| 'private'
-				| 'protected'
-				| 'public'
-				| 'readonly'
-				| 'set'
-				| 'static'
-				| 'string'
-				| 'symbol'
-				| 'type';
 			readonly name: V.Identifier.Type<G>;
 			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 		}
@@ -119,33 +72,6 @@ export namespace Declaration {
 		readonly body: V.Declaration.EnumMember<G> | V.Declaration.EnumMember<G>[];
 		readonly const?: boolean;
 		// t only
-		readonly declare?: boolean;
-		// t only
-		readonly label?:
-			| V.Identifier.Label<G>
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
-		// t only
 		readonly name: G['identifier'];
 		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
 		// r only
@@ -157,6 +83,8 @@ export namespace Declaration {
 	export interface EnumMember<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration<G>>> {
 		// claimed by rt
 		readonly kind: 'declaration.enum_member';
+		readonly attributes?: G['attribute'][];
+		// r only
 		readonly body?: (V.Unmapped<'rust:attributed_ordered_field'> | V.Declaration.Field<G>)[];
 		// r only
 		// unmapped: <rust:attributed_ordered_field>
@@ -247,6 +175,8 @@ export namespace Declaration {
 		// t only
 		readonly accessor?: boolean;
 		// t only
+		readonly attributes?: G['attribute'][];
+		// r only
 		readonly declare?: boolean;
 		// t only
 		readonly decorators?: V.Attribute.Decorator<G>[];
@@ -338,8 +268,6 @@ export namespace Declaration {
 		readonly body?: V.Declaration.TypeAlias<G> | G['statement'];
 		readonly const?: boolean;
 		// r only
-		readonly declare?: boolean;
-		// t only
 		readonly decorators?: V.Attribute.Decorator<G>[];
 		// p only
 		readonly default?: boolean;
@@ -348,31 +276,6 @@ export namespace Declaration {
 		// p only
 		readonly extern?: V.Modifier.Extern<G>;
 		// r only
-		readonly label?:
-			| V.Identifier.Label<G>
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
-		// t only
 		readonly name: G['identifier'];
 		readonly parameters: (
 			| V.Clause.Bounds.Removed<G>
@@ -401,32 +304,7 @@ export namespace Declaration {
 			readonly kind: 'declaration.function.generator';
 			readonly async?: boolean;
 			readonly body: V.Statement.Block<G>;
-			readonly declare?: boolean;
 			readonly generator?: boolean;
-			readonly label?:
-				| V.Identifier.Label<G>
-				| 'any'
-				| 'async'
-				| 'boolean'
-				| 'declare'
-				| 'export'
-				| 'get'
-				| 'let'
-				| 'module'
-				| 'namespace'
-				| 'new'
-				| 'number'
-				| 'object'
-				| 'override'
-				| 'private'
-				| 'protected'
-				| 'public'
-				| 'readonly'
-				| 'set'
-				| 'static'
-				| 'string'
-				| 'symbol'
-				| 'type';
 			readonly name: G['identifier'];
 			readonly parameters: V.Declaration.Parameter.Any<G>[];
 			readonly returnType?: G['identifier'] | G['type'];
@@ -437,35 +315,8 @@ export namespace Declaration {
 			readonly kind: 'declaration.function.signature';
 			readonly async?: boolean;
 			// t only
-			readonly declare?: boolean;
-			// t only
 			readonly functionModifiers?: (V.Modifier.Extern<G> | 'async' | 'const' | 'default' | 'unsafe')[];
 			// r only
-			readonly label?:
-				| V.Identifier.Label<G>
-				| 'any'
-				| 'async'
-				| 'boolean'
-				| 'declare'
-				| 'export'
-				| 'get'
-				| 'let'
-				| 'module'
-				| 'namespace'
-				| 'new'
-				| 'number'
-				| 'object'
-				| 'override'
-				| 'private'
-				| 'protected'
-				| 'public'
-				| 'readonly'
-				| 'set'
-				| 'static'
-				| 'string'
-				| 'symbol'
-				| 'type';
-			// t only
 			readonly name: G['identifier'];
 			readonly parameters: (
 				| V.Clause.Bounds.Removed<G>
@@ -498,33 +349,8 @@ export namespace Declaration {
 			| V.Type.Object<G>
 			| (G['attribute'] | G['declaration'] | V.Expression.Call.Macro<G> | G['statement'] | V.Type.Object<G>)[];
 		// rt only
-		readonly declare?: boolean;
 		readonly extends?: G['clause'];
 		// rt only
-		readonly label?:
-			| V.Identifier.Label<G>
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
 		readonly name: V.Identifier.Type<G>;
 		// rt only
 		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
@@ -557,6 +383,8 @@ export namespace Declaration {
 		readonly body?: V.Declaration.TypeAlias<G> | G['statement'];
 		readonly const?: boolean;
 		// rt only
+		readonly decorators?: V.Attribute.Decorator<G>[];
+		// t only
 		readonly default?: boolean;
 		// rt only
 		readonly doc?: V.Literal.String<G>;
@@ -787,33 +615,6 @@ export namespace Declaration {
 		readonly kind: 'declaration.module';
 		readonly body?: V.Statement.Block<G>;
 		// t only
-		readonly declare?: boolean;
-		// t only
-		readonly label?:
-			| V.Identifier.Label<G>
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
-		// t only
 		readonly name?: G['identifier'] | V.Literal.String<G>;
 		// t only
 	}
@@ -822,31 +623,6 @@ export namespace Declaration {
 			// claimed by t
 			readonly kind: 'declaration.module.external';
 			readonly body?: V.Statement.Block<G>;
-			readonly declare?: boolean;
-			readonly label?:
-				| V.Identifier.Label<G>
-				| 'any'
-				| 'async'
-				| 'boolean'
-				| 'declare'
-				| 'export'
-				| 'get'
-				| 'let'
-				| 'module'
-				| 'namespace'
-				| 'new'
-				| 'number'
-				| 'object'
-				| 'override'
-				| 'private'
-				| 'protected'
-				| 'public'
-				| 'readonly'
-				| 'set'
-				| 'static'
-				| 'string'
-				| 'symbol'
-				| 'type';
 			readonly name: G['identifier'] | V.Literal.String<G>;
 		}
 		export interface Foreign<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Module<G>>> {
@@ -857,6 +633,12 @@ export namespace Declaration {
 			| V.Declaration.Module<G>
 			| V.Declaration.Module.External<G>
 			| V.Declaration.Module.Foreign<G>;
+	}
+	export interface ModuleProperty<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration<G>>> {
+		// claimed by t
+		readonly kind: 'declaration.module_property';
+		readonly name: V.Identifier.Property<G>;
+		readonly type: G['identifier'] | G['type'];
 	}
 	export interface Parameter<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration<G>>> {
 		// claimed by prt
@@ -975,33 +757,6 @@ export namespace Declaration {
 	export interface TypeAlias<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration<G>>> {
 		// claimed by prt
 		readonly kind: 'declaration.type_alias';
-		readonly declare?: boolean;
-		// t only
-		readonly label?:
-			| V.Identifier.Label<G>
-			| 'any'
-			| 'async'
-			| 'boolean'
-			| 'declare'
-			| 'export'
-			| 'get'
-			| 'let'
-			| 'module'
-			| 'namespace'
-			| 'new'
-			| 'number'
-			| 'object'
-			| 'override'
-			| 'private'
-			| 'protected'
-			| 'public'
-			| 'readonly'
-			| 'set'
-			| 'static'
-			| 'string'
-			| 'symbol'
-			| 'type';
-		// t only
 		readonly left?: G['type'];
 		// p only
 		readonly name?: V.Identifier.Type<G>;
@@ -1033,6 +788,8 @@ export namespace Declaration {
 	export interface TypeParameter<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration<G>>> {
 		// claimed by prt
 		readonly kind: 'declaration.type_parameter';
+		readonly attributes?: G['attribute'][];
+		// r only
 		readonly const?: boolean;
 		// t only
 		readonly constraint?: G['clause'];
@@ -1048,6 +805,7 @@ export namespace Declaration {
 		export interface Const<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.TypeParameter<G>>> {
 			// claimed by r
 			readonly kind: 'declaration.type_parameter.const';
+			readonly attributes?: G['attribute'][];
 			readonly name: G['identifier'];
 			readonly type: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
 			readonly value?: G['identifier'] | G['literal'] | V.Statement.Block<G>;
@@ -1055,6 +813,7 @@ export namespace Declaration {
 		export interface Lifetime<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.TypeParameter<G>>> {
 			// claimed by r
 			readonly kind: 'declaration.type_parameter.lifetime';
+			readonly attributes?: G['attribute'][];
 			readonly bounds?: V.Clause.Bounds<G>;
 			readonly name: V.Identifier.Lifetime<G>;
 		}
@@ -1095,32 +854,7 @@ export namespace Declaration {
 			// claimed by t
 			readonly kind: 'declaration.variable.lexical';
 			readonly declarators: V.Declaration.Variable<G>[];
-			readonly declare?: boolean;
 			readonly keyword: 'const' | 'let';
-			readonly label?:
-				| V.Identifier.Label<G>
-				| 'any'
-				| 'async'
-				| 'boolean'
-				| 'declare'
-				| 'export'
-				| 'get'
-				| 'let'
-				| 'module'
-				| 'namespace'
-				| 'new'
-				| 'number'
-				| 'object'
-				| 'override'
-				| 'private'
-				| 'protected'
-				| 'public'
-				| 'readonly'
-				| 'set'
-				| 'static'
-				| 'string'
-				| 'symbol'
-				| 'type';
 		}
 		export interface Pattern<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Variable<G>>> {
 			// claimed by t
@@ -1143,31 +877,6 @@ export namespace Declaration {
 			// claimed by t
 			readonly kind: 'declaration.variable.var';
 			readonly declarators: V.Declaration.Variable<G>[];
-			readonly declare?: boolean;
-			readonly label?:
-				| V.Identifier.Label<G>
-				| 'any'
-				| 'async'
-				| 'boolean'
-				| 'declare'
-				| 'export'
-				| 'get'
-				| 'let'
-				| 'module'
-				| 'namespace'
-				| 'new'
-				| 'number'
-				| 'object'
-				| 'override'
-				| 'private'
-				| 'protected'
-				| 'public'
-				| 'readonly'
-				| 'set'
-				| 'static'
-				| 'string'
-				| 'symbol'
-				| 'type';
 		}
 		export type Any<G extends GrammarContext> =
 			| V.Declaration.Variable<G>
@@ -1177,6 +886,7 @@ export namespace Declaration {
 			| V.Declaration.Variable.Var<G>;
 	}
 	export type Any<G extends GrammarContext> =
+		| V.Declaration.Ambient<G>
 		| V.Declaration.Class<G>
 		| V.Declaration.Class.Abstract<G>
 		| V.Declaration.Constant<G>
@@ -1206,6 +916,7 @@ export namespace Declaration {
 		| V.Declaration.Module<G>
 		| V.Declaration.Module.External<G>
 		| V.Declaration.Module.Foreign<G>
+		| V.Declaration.ModuleProperty<G>
 		| V.Declaration.Parameter<G>
 		| V.Declaration.Parameter.Default<G>
 		| V.Declaration.Parameter.Optional<G>

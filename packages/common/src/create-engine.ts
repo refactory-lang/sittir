@@ -4,6 +4,7 @@ import type {
 	Engine,
 	EngineIdentity,
 	EngineOptions,
+	ErrorNode,
 	Language,
 	LanguageAPI,
 	LanguageIdentity,
@@ -18,6 +19,7 @@ import type {
 } from '@sittir/types';
 import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle } from './engine-scope.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
+import { ParseErrors } from './parse-errors.ts';
 import {
 	isEmptyNode as isEmptyUntypedNode,
 	isErrorNode,
@@ -148,7 +150,7 @@ function assembleEngine<API extends LanguageAPI>(
 		isNode: (value): value is API['node'] => isNode(value) && inLanguage(value),
 		isParsedNode: (value): value is API['node'] => isParsedNode(value) && inLanguage(value),
 		isFactoryNode: (value): value is API['node'] => isFactoryNode(value) && inLanguage(value),
-		isErrorNode: (value): value is API['node'] => isErrorNode(value) && inLanguage(value),
+		isErrorNode: (value): value is ErrorNode => isErrorNode(value) && inLanguage(value),
 		isEmptyNode: ((node: AnyUntypedNode): boolean => {
 			const kind = hooks.trivia.kindName(node.$type);
 			return (
@@ -160,6 +162,7 @@ function assembleEngine<API extends LanguageAPI>(
 		}) as Engine<API>['isEmptyNode'],
 		parse(source, parseOptions) {
 			const { root, tree } = readAndBind(source, parseOptions);
+			if (parseOptions?.errors === 'throw' && root.$errors.length > 0) throw new ParseErrors(root.$errors);
 			return hooks.wrap(root, tree);
 		},
 		read() {

@@ -3,7 +3,7 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createEngine, detachCoordinates, dumpMetrics, sliceSpan } from '@sittir/common';
-import { carryRead, holdTree, readDerivedSides, readTrivia, treeTokenOf, type TriviaView } from '@sittir/common/utils';
+import { carryRead, holdTree, readDerivedSides, readTrivia, spanOf, treeTokenOf, type TriviaView } from '@sittir/common/utils';
 import {
 	hydrateStub,
 	isStub,
@@ -19,7 +19,7 @@ import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
 import type { AnyUntypedNode, AnyTreeNode, Engine, LanguageAPI, NodeTrivia, ParseOptions } from '@sittir/types';
-import type { ByteSpan, TriviaSides } from '@sittir/common';
+import type { TriviaSides } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
 import { load } from '../codegen-surface.ts';
 import { languageByName } from '../languages.ts';
@@ -387,7 +387,8 @@ export function findNativeNodeId(
 	}
 
 	function spanMatches(d: AnyUntypedNode): boolean {
-		return span === undefined || (d.$span?.start === span.start && d.$span?.end === span.end);
+		const own = spanOf(d);
+		return span === undefined || (own?.start === span.start && own?.end === span.end);
 	}
 
 	function findEmbedded(d: AnyUntypedNode): NativeNodeCoords | null {
@@ -438,10 +439,6 @@ export function walkNativeForKind(
 	const results: NativeCandidateCoords[] = [];
 
 	const isKind = (d: AnyUntypedNode): boolean => nativeNodeIsKind(d, kind, kindNameFromId);
-
-	function spanOf(d: AnyUntypedNode): { start: number; end: number } | undefined {
-		return (d as unknown as Record<string, unknown>).$span as ByteSpan | undefined;
-	}
 
 	if (isKind(root)) {
 		results.push({ coords: {}, span: spanOf(root) });
@@ -1210,7 +1207,6 @@ export interface NodeToConfigOpts {
 export interface ReadNodeLike {
 	readonly $type?: string | number;
 	readonly $text?: string;
-	readonly $span?: ByteSpan;
 	readonly $parentHandle?: number;
 	readonly $childIndex?: number;
 	readonly $other?: unknown | readonly unknown[];
@@ -1293,7 +1289,8 @@ function soleWrappedNode(hydrated: ReadNodeLike, opts: NodeToConfigOpts): ReadNo
 function readNodeText(node: ReadNodeLike, opts: NodeToConfigOpts): string {
 	if (typeof node.$text === 'string') return node.$text;
 	const source = opts.tree?.source;
-	return node.$span !== undefined && source !== undefined ? sliceSpan(source, node.$span) : '';
+	const span = spanOf(node);
+	return span !== undefined && source !== undefined ? sliceSpan(source, span) : '';
 }
 
 function carriesOwnContents(c: ReadNodeLike): boolean {

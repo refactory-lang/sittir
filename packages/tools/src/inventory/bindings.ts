@@ -1,5 +1,5 @@
-import { type ByteSpan, type SourceSpans, createEngine, sourceSpans } from '@sittir/common';
-import { ERROR_KIND_ID } from '@sittir/common/utils';
+import { type SourceSpans, createEngine, sourceSpans } from '@sittir/common';
+import { isErrorNode, spanOf } from '@sittir/common/utils';
 import scm, {
 	type AnonymousNode,
 	type Definition,
@@ -59,14 +59,22 @@ export type MemberFact =
 
 export interface ContainerCapture extends SlotSelector {
 	readonly name: string;
-	readonly token: boolean;
+	readonly token: string | null;
 	readonly multiple: boolean;
+}
+
+export interface PatternOrigin {
+	readonly line: number;
+	readonly source: string;
 }
 
 export interface ContainerFact {
 	readonly kind: string;
 	readonly element: SlotSelector;
 	readonly captures: readonly ContainerCapture[];
+	readonly dropped: readonly SlotSelector[];
+	readonly reason: string | null;
+	readonly pattern: PatternOrigin;
 }
 
 export interface TemplateFact {
@@ -84,9 +92,7 @@ export interface BindingFacts {
 	readonly unclaimed: readonly UnclaimedFact[];
 }
 
-export interface BindingPattern {
-	readonly line: number;
-	readonly source: string;
+export interface BindingPattern extends PatternOrigin {
 	readonly definition: Definition.Parsed;
 }
 
@@ -142,16 +148,13 @@ function lineOf(text: string, spans: SourceSpans, offset: number): number {
 	return line;
 }
 
-interface ErrorItem {
-	readonly $span: ByteSpan;
-}
-
-const isErrorItem = (item: unknown): item is ErrorItem =>
-	typeof item === 'object' && item !== null && '$type' in item && item.$type === ERROR_KIND_ID && '$span' in item;
 
 function unparsed(node: NodeMethodsOf): number[] {
 	const trivia: readonly unknown[] = [...node.$trivia.leading(), ...node.$trivia.trailing()];
-	return trivia.flatMap((item) => (isErrorItem(item) ? [item.$span.start] : []));
+	return trivia.flatMap((item) => {
+		const span = isErrorNode(item) ? spanOf(item) : undefined;
+		return span === undefined ? [] : [span.start];
+	});
 }
 
 function definitionsOf(text: string): readonly Definition.Parsed[] {
@@ -161,7 +164,8 @@ function definitionsOf(text: string): readonly Definition.Parsed[] {
 export function bindingPatterns(text: string): BindingPattern[] {
 	const spans = sourceSpans(text);
 	return definitionsOf(text).map((definition) => {
-		const span = definition.$span;
+		const span = spanOf(definition);
+		if (span === undefined) throw new Error('bindings.scm: a parsed definition carries no span');
 		return { line: lineOf(text, spans, span.start), source: spans.slice(span), definition };
 	});
 }
@@ -206,7 +210,9 @@ function tokenText(v: Visit): string | null {
 }
 
 const isGroup = (v: Visit): boolean => v.node.$type === K.Grouping;
+const atTop = (v: Visit, top: Visit): boolean => v === top || (isGroup(top) && v.parent === top);
 const UNCLAIMED = 'unclaimed';
+const DROPPED = 'dropped';
 const isPath = (capture: string): boolean => capture.includes('.');
 const TOKEN_CLASSES: ReadonlySet<string> = new Set(['keyword', 'punctuation']);
 const inClaimPosition = (capture: string, atTop: boolean): boolean =>
@@ -318,7 +324,7 @@ function claimFact(v: Visit, vocab: string, top: Visit, predicate: boolean): Cla
 			if (!isGroup(v)) fieldLiterals[child.field] = text;
 		} else if (captures(child).length === 0) tokens.push(text);
 	}
-	const toplevel = v === top || (isGroup(top) && v.parent === top);
+	const toplevel = atTop(v, top);
 	const within: string[] = [];
 	for (let cursor = v.parent; cursor !== null; cursor = cursor.parent) {
 		const enclosing = kindOf(cursor);
@@ -346,15 +352,24 @@ function memberFact(v: Visit, name: string, top: Visit, topKind: string | null):
 	return { route: 'nested', owner: topKind, name, parent: owner, multiple: quantified(v), via, ...selector(v) };
 }
 
-function containerFact(kind: string, element: Visit, nodes: readonly Visit[]): ContainerFact {
+function containerFact(
+	kind: string,
+	element: Visit,
+	nodes: readonly Visit[],
+	reason: string | null,
+	pattern: PatternOrigin
+): ContainerFact {
 	return {
 		kind,
 		element: selector(element),
 		captures: nodes.flatMap((v) =>
 			captures(v)
-				.filter((name) => name !== 'element' && !name.startsWith('_'))
-				.map((name) => ({ name, token: tokenText(v) !== null, multiple: quantified(v), ...selector(v) }))
-		)
+				.filter((name) => name !== 'element' && name !== DROPPED && !name.startsWith('_'))
+				.map((name) => ({ name, token: tokenText(v), multiple: quantified(v), ...selector(v) }))
+		),
+		dropped: nodes.filter((v) => captures(v).includes(DROPPED)).map(selector),
+		reason,
+		pattern
 	};
 }
 
@@ -367,7 +382,7 @@ function reasonOf(predicates: readonly Predicate.Parsed[]): string | null {
 	return null;
 }
 
-function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts): void {
+function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin: PatternOrigin): void {
 	const unclaimed = nodes.filter((v) => captures(v).includes(UNCLAIMED));
 	if (unclaimed.length > 0) {
 		const reason = reasonOf(predicates);
@@ -379,8 +394,16 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts): void {
 	}
 	const topKind = kindOf(top);
 	const element = nodes.find((v) => captures(v).includes('element'));
-	if (topKind !== null && element !== undefined && !captures(top).some((name) => isPath(name) && !isTokenClass(name))) {
-		facts.containers.push(containerFact(topKind, element, nodes));
+	const owners = nodes.filter((v) => atTop(v, top) && !isGroup(v));
+	const owner = owners.length === 1 ? owners[0] : undefined;
+	const ownerKind = owner === undefined ? null : kindOf(owner);
+	if (
+		owner !== undefined &&
+		ownerKind !== null &&
+		element !== undefined &&
+		!captures(owner).some((name) => isPath(name) && !isTokenClass(name))
+	) {
+		facts.containers.push(containerFact(ownerKind, element, nodes, reasonOf(predicates), origin));
 		return;
 	}
 	const vocabs = nodes.flatMap((v) => captures(v).filter((name) => isPath(name) && !isTokenClass(name)));
@@ -421,11 +444,12 @@ function patternsOf(
 export function readBindings(text: string): BindingFacts {
 	const facts: Facts = { claims: [], members: [], containers: [], templates: [], unclaimed: [] };
 	const errors: number[] = [];
-	const definitions = definitionsOf(text);
-	if (definitions.length === 0 && text.trim() !== '') errors.push(0);
-	for (const definition of definitions) {
+	const patterns = bindingPatterns(text);
+	if (patterns.length === 0 && text.trim() !== '') errors.push(0);
+	for (const { definition, ...origin } of patterns) {
 		errors.push(...unparsed(definition));
-		for (const [top, inherited] of patternsOf(definition, [])) patternFacts(readPattern(top, errors, inherited), facts);
+		for (const [top, inherited] of patternsOf(definition, []))
+			patternFacts(readPattern(top, errors, inherited), facts, origin);
 	}
 	if (errors.length > 0) {
 		const spans = sourceSpans(text);
