@@ -127,15 +127,7 @@ export namespace Pattern {
 		// claimed by r
 		readonly kind: 'pattern.generic';
 		readonly name: G['identifier'];
-		readonly typeArguments: (
-			| V.Clause.Bounds.Removed<G>
-			| V.Element.TypeBinding<G>
-			| V.Expression.Call.Macro<G>
-			| G['identifier']
-			| G['literal']
-			| V.Statement.Block<G>
-			| G['type']
-		)[];
+		readonly typeArguments: V.Element.TypeArgument<G>[];
 	}
 	export interface List<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern<G>>> {
 		// claimed by p

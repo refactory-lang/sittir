@@ -351,20 +351,25 @@ export namespace Element {
 		}
 		export type Any<G extends GrammarContext> = V.Element.Tuple.Member<G> | V.Element.Tuple.Member.Optional<G>;
 	}
-	export interface TypeBinding<G extends GrammarContext> extends Simplify<SubKindOf<V.Element<G>>> {
+	export interface TypeArgument<G extends GrammarContext> extends Simplify<SubKindOf<V.Element<G>>> {
 		// claimed by r
-		readonly kind: 'element.type_binding';
-		readonly name: V.Identifier.Type<G>;
-		readonly type: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
-		readonly typeArguments?: (
+		readonly kind: 'element.type_argument';
+		readonly constraint?: V.Clause.Bounds<G>;
+		readonly content:
 			| V.Clause.Bounds.Removed<G>
 			| V.Element.TypeBinding<G>
 			| V.Expression.Call.Macro<G>
 			| G['identifier']
 			| G['literal']
 			| V.Statement.Block<G>
-			| G['type']
-		)[];
+			| G['type'];
+	}
+	export interface TypeBinding<G extends GrammarContext> extends Simplify<SubKindOf<V.Element<G>>> {
+		// claimed by r
+		readonly kind: 'element.type_binding';
+		readonly name: V.Identifier.Type<G>;
+		readonly type: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
+		readonly typeArguments?: V.Element.TypeArgument<G>[];
 	}
 	export type Any<G extends GrammarContext> =
 		| V.Element.Macro.Fragment<G>
@@ -384,5 +389,6 @@ export namespace Element {
 		| V.Element.Template.Substitution<G>
 		| V.Element.Tuple.Member<G>
 		| V.Element.Tuple.Member.Optional<G>
+		| V.Element.TypeArgument<G>
 		| V.Element.TypeBinding<G>;
 }
