@@ -11,6 +11,7 @@ const EXPECTED = [
 	'check-baseline',
 	'check-perf',
 	'classify',
+	'codemod-corpus',
 	'corpus-coverage-census',
 	'defect-histogram',
 	'diff-failures',

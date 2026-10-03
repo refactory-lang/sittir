@@ -10,6 +10,7 @@ import { benchCodemod } from './bench-codemod.ts';
 import { checkBaseline } from './check-baseline.ts';
 import { checkPerf } from './check-perf.ts';
 import { classify } from './classify.ts';
+import { codemodCorpus } from './codemod-corpus.ts';
 import { corpusCoverageCensus } from './corpus-coverage-census.ts';
 import { defectHistogram } from './defect-histogram.ts';
 import { diffFailures } from './diff-failures.ts';
@@ -52,6 +53,7 @@ export const toolModules: readonly CommandModule[] = [
 	checkBaseline,
 	checkPerf,
 	classify,
+	codemodCorpus,
 	corpusCoverageCensus,
 	defectHistogram,
 	diffFailures,

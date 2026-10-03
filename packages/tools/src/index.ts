@@ -57,6 +57,15 @@ export { run as inspectType, DEFAULT_NAMESPACES, type InspectTypeOptions } from 
 export { run as inspectRefs, type InspectRefsOptions } from './inspect/refs.ts';
 export { run as grammarDiagnostics, type GrammarDiagnosticsOptions } from './inspect/grammar-diagnostics.ts';
 export { run as walk, type WalkOptions } from './exercise/walk.ts';
+export {
+	run as codemodCorpus,
+	runCodemodCorpus,
+	rewriteWithInline,
+	CODEMOD_CORPUS,
+	type CodemodCorpusOptions,
+	type CodemodCorpusFile,
+	type CodemodCorpusResult
+} from './exercise/codemod-corpus.ts';
 export { run as exercise, type ExerciseOptions } from './exercise/roundtrip.ts';
 export { emitParityFixtures, runRoundtripProbes } from './post-generate.ts';
 
