@@ -78,15 +78,27 @@ pub fn gap_between<'s>(
     source.get(a.span.end as usize..b.span.start as usize)
 }
 
+/// One list item as the gap vote sees it: its coordinate when it crossed as
+/// one, and the whitespace run its leading trivia opens with when it carries
+/// one (`Prepare::leading_seam`).
+pub struct GapItem<'a> {
+    pub coord: Option<&'a NodeCoordinate>,
+    pub held: Option<&'a str>,
+}
+
 /// A list's source gaps: one class per side over every classifiable gap, by
 /// majority, and for each item whether the gap from it to the next
 /// coordinate is a source separator: it splits on the token and each side
-/// with a site classifies. Items with no coordinate — the ones an edit
-/// rebuilt — are skipped, so a gap spans from the nearest surviving
-/// coordinate on the left to the nearest on the right. A gap without the
-/// token, or a pair that is not two ordered coordinates of one tree,
-/// contributes nothing and leaves its item unseparated, as does a pair with a
-/// coordinate that addresses its text only.
+/// with a site classifies. Every gap the source shows votes once. An item
+/// past the first that carries a whitespace run toward its predecessor votes
+/// that run: the whole gap's class with no token, the after side with one,
+/// since the run starts past the separator. Its gap is then never also read
+/// as a coordinate pair, because the pair chain restarts after it. Items with
+/// no coordinate and no run, the ones an edit rebuilt, are skipped, so a gap
+/// spans from the nearest surviving coordinate on the left to the nearest on
+/// the right. A gap without the token, or a pair that is not two ordered
+/// coordinates of one tree, contributes nothing and leaves its item
+/// unseparated, as does a pair with a coordinate that addresses its text only.
 pub struct ListGaps {
     pub before: Option<u16>,
     pub after: Option<u16>,
@@ -94,7 +106,7 @@ pub struct ListGaps {
 }
 
 pub fn classify_list_gaps(
-    items: &[Option<&NodeCoordinate>],
+    items: &[GapItem<'_>],
     sources: &dyn SourceTable,
     token: &str,
     allowed_before: &[u16],
@@ -105,8 +117,25 @@ pub fn classify_list_gaps(
     let mut after = Vec::new();
     let mut separated = vec![false; items.len()];
     let mut previous: Option<(usize, &NodeCoordinate)> = None;
-    for (index, item) in items.iter().enumerate() {
-        let Some(item) = item else { continue };
+    let mut seen = false;
+    for (index, gap_item) in items.iter().enumerate() {
+        let present = gap_item.coord.is_some() || gap_item.held.is_some();
+        if let (true, Some(run)) = (seen, gap_item.held) {
+            if token.is_empty() {
+                before.extend(classify_whitespace(run, allowed_before, table));
+            } else {
+                after.extend(classify_whitespace(run, allowed_after, table));
+            }
+            previous = None;
+            continue;
+        }
+        seen |= present;
+        let Some(item) = gap_item.coord else {
+            if gap_item.held.is_some() {
+                previous = None;
+            }
+            continue;
+        };
         if let Some((at, a)) = previous {
             let evidence = a.is_layout_evidence() && item.is_layout_evidence();
             if let Some((lead, trail)) = evidence

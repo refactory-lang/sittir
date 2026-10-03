@@ -1,6 +1,28 @@
 import type { AnyUntypedNode, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
 
+/** One line-break run a read node owns as trivia: the whitespace member it reads as and the byte its run starts at. */
+export interface LineGap {
+	readonly kind: number;
+	readonly start: number;
+}
+
+/** A read node as the line-gap query names it: its own handle, or as a deep read leaves it, its tree's tag, its span and its stamped kind. */
+export type LineGapAddress =
+	| { readonly handle: number }
+	| { readonly treeHandle: number; readonly span: { readonly start: number; readonly end: number }; readonly kind: number };
+
+/**
+ * The line-break runs a read node owns, before it and in its closing gap, each in source order, and the span of the
+ * sibling its leading runs separate it from (`null` when it is its parent's first). A run holds only while that sibling
+ * is still the node's neighbour.
+ */
+export interface LineGaps {
+	readonly leading: readonly LineGap[];
+	readonly trailing: readonly LineGap[];
+	readonly previous: { readonly start: number; readonly end: number } | null;
+}
+
 export interface TriviaFacts {
 	readonly kindName: (type: AnyUntypedNode['$type']) => string | undefined;
 	readonly kinds: ReadonlySet<string>;
@@ -123,6 +145,7 @@ export interface NativeLanguageEngine<API extends LanguageAPI> {
 	render(node: AnyUntypedNode | number, options?: API['options'] & RenderCallOptions): Rendered;
 	parseAndRead: EngineDiagnostics['parseAndRead'];
 	readonly buildProfile?: EngineDiagnostics['buildProfile'];
+	lineGapsOf: EngineDiagnostics['lineGapsOf'];
 	dispose(): void;
 }
 
@@ -134,6 +157,12 @@ export interface ParsedRead<TRoot = unknown, TTree extends object = object> {
 export interface EngineDiagnostics<TRoot = unknown, TTree extends object = object> {
 	readonly buildProfile: string | undefined;
 	parseAndRead(source: string, options?: ParseOptions): ParsedRead<TRoot, TTree>;
+	/**
+	 * The line-break whitespace a read node owns as trivia, on each side in
+	 * source order: the whitespace member each run reads as and the byte its
+	 * run starts at. Asked of the parse that read the node.
+	 */
+	lineGapsOf(address: LineGapAddress): LineGaps;
 }
 
 export interface Rendered extends Disposable {

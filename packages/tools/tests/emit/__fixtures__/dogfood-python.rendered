@@ -1,9 +1,13 @@
 """Simple user management module."""
+
 from typing import Optional
+
+
 class User:
     def __init__(self, user_id: int, name: str) -> None:
         self.user_id = user_id
         self.name = name
+
     def greet(self) -> str:
         return f"Hello, {self.name}!"
 

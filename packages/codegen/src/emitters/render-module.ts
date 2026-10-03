@@ -2709,6 +2709,17 @@ function prepareEnumImpl(
 		),
 		`        }`,
 		`    }`,
+		...(anyPayload
+			? [
+					`    fn leading_seam(&self) -> Option<&str> {`,
+					`        match self {`,
+					...arms.map((a) =>
+						a.payload ? `            ${enumName}::${a.variant}(t) => t.leading_seam(),` : `            ${enumName}::${a.variant} => None,`
+					),
+					`        }`,
+					`    }`
+				]
+			: []),
 		`}`,
 		''
 	];
@@ -2824,8 +2835,8 @@ function listGapClassification(
 		if (binds) classified.add(field.name!);
 		body.push(
 			binds ? `        let ${separatedLocal(field.name!)} = {` : `        {`,
-			`            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = ${items}.map(|item| ${each}).collect();`,
-			`            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ${JSON.stringify(token)}, ${allowedOf(first)}, ${allowedOf(sites.after)}, &options::WHITESPACE);`
+			`            let gap_items: Vec<::sittir_core::classify::GapItem<'_>> = ${items}.map(|item| ::sittir_core::classify::GapItem { coord: ${each}, held: ${PREPARE_MOD}::Prepare::leading_seam(item) }).collect();`,
+			`            let gaps = ::sittir_core::classify::classify_list_gaps(&gap_items, ctx.sources, ${JSON.stringify(token)}, ${allowedOf(first)}, ${allowedOf(sites.after)}, &options::WHITESPACE);`
 		);
 		if (first !== undefined) {
 			const f = rustFieldIdent(first.fieldIdent);
@@ -3122,6 +3133,9 @@ function prepareStructImpl(
 		`    ${body.length > 0 ? PREPARE_SIG : PREPARE_SIG.replace('ctx:', '_ctx:')}`,
 		...body,
 		`        Ok(())`,
+		`    }`,
+		`    fn leading_seam(&self) -> Option<&str> {`,
+		`        self.transport_trivia_data.as_ref().and_then(|trivia| trivia.leading_seam())`,
 		`    }`,
 		`}`,
 		''
