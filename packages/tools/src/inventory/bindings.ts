@@ -161,7 +161,7 @@ export function bindingPatterns(text: string): BindingPattern[] {
 	return definitionsOf(text).map((definition) => {
 		const span = spanOf(definition);
 		if (span === undefined) throw new Error('bindings.scm: a parsed definition carries no span');
-		return { line: lineOf(text, spans, span.start), source: definition.$render(), definition };
+		return { line: lineOf(text, spans, span.start), source: spans.slice(span), definition };
 	});
 }
 
