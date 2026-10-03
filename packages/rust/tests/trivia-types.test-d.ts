@@ -5,7 +5,7 @@
  * Compile-time only: `pnpm --filter @sittir/rust type-check`.
  */
 
-import { type Block, type EmptyBlock, type EmptyMatchBlock } from '@sittir/rust';
+import { type Arguments, type Block, type EmptyBlock, type EmptyMatchBlock } from '@sittir/rust';
 import rust from '@sittir/rust';
 import { createEngine } from '@sittir/common';
 
@@ -34,3 +34,8 @@ rs.build.identifier('a').$trivia(rs.build.lineComment(' c'));
 
 // @ts-expect-error a kind with no inner gap has no inner position
 rs.build.identifier('a').$trivia.inner();
+
+declare const parsedArgs: Arguments.Parsed;
+// @ts-expect-error an edited node is never typed as an empty form, so it has no inner position
+parsedArgs.$with.elements().$trivia.inner();
+parsedArgs.$with.elements().$trivia.leading();
