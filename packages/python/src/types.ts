@@ -14084,7 +14084,7 @@ export namespace YieldFromClause {
 }
 export namespace Names {
 	export type Config = ConfigFor<TSKindId.Names>;
-	export type Types = ImportList;
+	export type Types = SupertypeSurface<ImportList, BoundByKindId>;
 	export interface Bound extends BoundOf<T.Names, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.Names['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -14101,7 +14101,7 @@ export namespace Names {
 }
 export namespace AsPatternTarget {
 	export type Config = ConfigFor<TSKindId.AsPatternTarget>;
-	export type Types = Expression;
+	export type Types = SupertypeSurface<Expression, BoundByKindId>;
 	export interface Bound extends BoundOf<T.AsPatternTarget, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.AsPatternTarget['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -14118,7 +14118,7 @@ export namespace AsPatternTarget {
 }
 export namespace FormatExpression {
 	export type Config = ConfigFor<TSKindId.FormatExpression>;
-	export type Types = Interpolation;
+	export type Types = SupertypeSurface<Interpolation, BoundByKindId>;
 	export interface Bound extends BoundOf<T.FormatExpression, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.FormatExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;

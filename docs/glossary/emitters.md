@@ -7211,7 +7211,7 @@ take, because a grammar may have a kind whose type is named `BooleanKeyword` (ty
 
 ### `packages/codegen/src/emitters/types.ts::aliasContentTypeExpr`
 
-The content type of an AssembledAlias with one slot: the slot's storage type, except that a kind-enum slot names its member ids (`TSKindId.X | …`) rather than `number`. Emitted as `<Alias>.Types` in the alias's namespace and referenced by the interface's `__aliasContent__` brand and by every construction input that admits the alias's content.
+The content type of an AssembledAlias with one slot: the slot's storage type, except that a kind-enum slot names its member ids (`TSKindId.X | …`) rather than `number`. `<Alias>.Types` in the alias's namespace is this type resolved to its `.Bound` forms through `SupertypeSurface` over the `.Bound` map (a kind id passes through), so the public name never names a storage interface; it is referenced by the interface's `__aliasContent__` brand and by every construction input that admits the alias's content.
 
 ### `packages/codegen/src/emitters/types.ts::emitRefineFormSubNamespaces`
 

@@ -52,3 +52,10 @@ export function storageShapeRefused(storage: T.StatementBlock): void {
 	// @ts-expect-error a storage-shaped literal is not a node
 	fn.$with.body({ $type: ts.kinds.StatementBlock });
 }
+
+type Equals<A, B> = (<X>() => X extends A ? 1 : 2) extends <X>() => X extends B ? 1 : 2 ? true : false;
+function expectTrue<_T extends true>(): void {}
+
+export function aliasContentNamesBuiltForms(): void {
+	expectTrue<Equals<T.TypeIdentifier.Types, T.Identifier.Bound>>();
+}

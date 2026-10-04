@@ -23416,7 +23416,7 @@ export namespace ForHeaderLetConstKind {
 }
 export namespace StatementIdentifier {
 	export type Config = ConfigFor<TSKindId.StatementIdentifier>;
-	export type Types =
+	export type Types = SupertypeSurface<
 		| Identifier
 		| TSKindId.DeclareKeyword
 		| TSKindId.NamespaceKeyword
@@ -23439,7 +23439,9 @@ export namespace StatementIdentifier {
 		| TSKindId.SetKeyword
 		| TSKindId.AsyncKeyword
 		| TSKindId.StaticKeyword
-		| TSKindId.LetKeyword;
+		| TSKindId.LetKeyword,
+		BoundByKindId
+	>;
 	export interface Bound extends BoundOf<T.StatementIdentifier, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.StatementIdentifier['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -23482,7 +23484,7 @@ export namespace StatementIdentifier {
 }
 export namespace ShorthandPropertyIdentifier {
 	export type Config = ConfigFor<TSKindId.ShorthandPropertyIdentifier>;
-	export type Types =
+	export type Types = SupertypeSurface<
 		| Identifier
 		| TSKindId.DeclareKeyword
 		| TSKindId.NamespaceKeyword
@@ -23505,7 +23507,9 @@ export namespace ShorthandPropertyIdentifier {
 		| TSKindId.SetKeyword
 		| TSKindId.AsyncKeyword
 		| TSKindId.StaticKeyword
-		| TSKindId.LetKeyword;
+		| TSKindId.LetKeyword,
+		BoundByKindId
+	>;
 	export interface Bound extends BoundOf<T.ShorthandPropertyIdentifier, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.ShorthandPropertyIdentifier['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -23548,7 +23552,7 @@ export namespace ShorthandPropertyIdentifier {
 }
 export namespace ShorthandPropertyIdentifierPattern {
 	export type Config = ConfigFor<TSKindId.ShorthandPropertyIdentifierPattern>;
-	export type Types =
+	export type Types = SupertypeSurface<
 		| Identifier
 		| TSKindId.DeclareKeyword
 		| TSKindId.NamespaceKeyword
@@ -23571,7 +23575,9 @@ export namespace ShorthandPropertyIdentifierPattern {
 		| TSKindId.SetKeyword
 		| TSKindId.AsyncKeyword
 		| TSKindId.StaticKeyword
-		| TSKindId.LetKeyword;
+		| TSKindId.LetKeyword,
+		BoundByKindId
+	>;
 	export interface Bound extends BoundOf<T.ShorthandPropertyIdentifierPattern, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.ShorthandPropertyIdentifierPattern['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -23614,7 +23620,7 @@ export namespace ShorthandPropertyIdentifierPattern {
 }
 export namespace PropertyIdentifier {
 	export type Config = ConfigFor<TSKindId.PropertyIdentifier>;
-	export type Types =
+	export type Types = SupertypeSurface<
 		| Identifier
 		| TSKindId.DeclareKeyword
 		| TSKindId.NamespaceKeyword
@@ -23637,7 +23643,9 @@ export namespace PropertyIdentifier {
 		| TSKindId.SetKeyword
 		| TSKindId.AsyncKeyword
 		| TSKindId.StaticKeyword
-		| TSKindId.LetKeyword;
+		| TSKindId.LetKeyword,
+		BoundByKindId
+	>;
 	export interface Bound extends BoundOf<T.PropertyIdentifier, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.PropertyIdentifier['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -23680,7 +23688,7 @@ export namespace PropertyIdentifier {
 }
 export namespace TypeIdentifier {
 	export type Config = ConfigFor<TSKindId.TypeIdentifier>;
-	export type Types = Identifier;
+	export type Types = SupertypeSurface<Identifier, BoundByKindId>;
 	export interface Bound extends BoundOf<T.TypeIdentifier, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.TypeIdentifier['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -23697,7 +23705,7 @@ export namespace TypeIdentifier {
 }
 export namespace InterfaceBody {
 	export type Config = ConfigFor<TSKindId.InterfaceBody>;
-	export type Types = ObjectType;
+	export type Types = SupertypeSurface<ObjectType, BoundByKindId>;
 	export interface Bound extends BoundOf<T.InterfaceBody, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.InterfaceBody['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;

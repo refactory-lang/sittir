@@ -24708,7 +24708,7 @@ export namespace MatchBlockArms {
 }
 export namespace TypeIdentifier {
 	export type Config = ConfigFor<TSKindId.TypeIdentifier>;
-	export type Types = Identifier;
+	export type Types = SupertypeSurface<Identifier, BoundByKindId>;
 	export interface Bound extends BoundOf<T.TypeIdentifier, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.TypeIdentifier['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -24725,7 +24725,7 @@ export namespace TypeIdentifier {
 }
 export namespace FieldIdentifier {
 	export type Config = ConfigFor<TSKindId.FieldIdentifier>;
-	export type Types = Identifier;
+	export type Types = SupertypeSurface<Identifier, BoundByKindId>;
 	export interface Bound extends BoundOf<T.FieldIdentifier, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.FieldIdentifier['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -24742,7 +24742,7 @@ export namespace FieldIdentifier {
 }
 export namespace ShorthandFieldIdentifier {
 	export type Config = ConfigFor<TSKindId.ShorthandFieldIdentifier>;
-	export type Types = Identifier;
+	export type Types = SupertypeSurface<Identifier, BoundByKindId>;
 	export interface Bound extends BoundOf<T.ShorthandFieldIdentifier, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.ShorthandFieldIdentifier['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;

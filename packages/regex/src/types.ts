@@ -2532,7 +2532,7 @@ export namespace InlineFlagsGroupDisable {
 }
 export namespace Lazy {
 	export type Config = ConfigFor<TSKindId.Lazy>;
-	export type Types = TSKindId.Qmark;
+	export type Types = SupertypeSurface<TSKindId.Qmark, BoundByKindId>;
 	export interface Bound extends BoundOf<T.Lazy, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.Lazy['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -2549,7 +2549,7 @@ export namespace Lazy {
 }
 export namespace UnicodePropertyName {
 	export type Config = ConfigFor<TSKindId.UnicodePropertyName>;
-	export type Types = UnicodePropertyValue;
+	export type Types = SupertypeSurface<UnicodePropertyValue, BoundByKindId>;
 	export interface Bound extends BoundOf<T.UnicodePropertyName, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.UnicodePropertyName['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;

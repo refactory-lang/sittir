@@ -1319,7 +1319,7 @@ function emitNamespaceSugarBlock(
 	const spelling = spellingTypeOf(node, nodeMap, kindEntries);
 	if (spelling !== undefined) lines.push(`  export type Options = ${spelling};`);
 	const aliasContent = aliasContentTypeExpr(node, nodeMap, kindEntries);
-	if (aliasContent !== undefined) lines.push(`  export type Types = ${aliasContent};`);
+	if (aliasContent !== undefined) lines.push(`  export type Types = SupertypeSurface<${aliasContent}, BoundByKindId>;`);
 	const surface = emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries })
 		? builtTypeSurfaceOf(node, nodeMap, kindEntries)
 		: undefined;
