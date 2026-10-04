@@ -41,7 +41,7 @@ describe('wire_slot', () => {
 		const owner = ts.idOf('export_statement_default_declaration');
 		expect(ts.source).toContain(`(${owner}, None, "export_statement_default_declaration_default_kw") => Some("content"),`);
 		expect(ts.source).toContain(`(${owner}, None, "function_declaration") => Some("content"),`);
-		for (const grammar of ['python', 'typescript', 'rust'] as const) {
+		for (const grammar of ['python', 'typescript', 'rust', 'scm', 'regex'] as const) {
 			const { source } = await emittedKindIds(grammar);
 			const table = source.slice(source.indexOf('pub fn wire_slot'), source.indexOf('static SLOT_SEPARATORS'));
 			expect(table, grammar).not.toMatch(/\(\d+, Some\("[a-z_]+"\), _\) => Some/);
