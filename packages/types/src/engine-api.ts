@@ -1,5 +1,6 @@
 import type { AnyUntypedNode, ErrorNode, ErrorRegion, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaItem, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
+import type { Admit } from './node-surface.ts';
 
 /** One line-break run a read node owns as trivia: the whitespace member it reads as and the byte its run starts at. */
 export interface LineGap {
@@ -265,9 +266,12 @@ export type RenderCall<API extends LanguageAPI, Input> = <const R extends API['o
 	options?: R & RenderOptionsCheck<API, R, keyof RenderCallOptions> & RenderCallOptions
 ) => Rendered;
 
-export interface Renderable<Kind extends number> extends Pick<NodeMethods, '$render'> {
-	readonly $type: Kind;
-}
+/**
+ * A node of one of the kinds `Kind`, built, parsed or edited: what `engine.render` takes and what a
+ * builder parameter, config field or `$with` setter admits where a slot names a node. It is checked by
+ * kind (`$type`) and `$render`, never by the node's other members.
+ */
+export type Renderable<Kind extends number> = Admit<{ readonly $type: Kind }>;
 
 type Draft<API extends LanguageAPI> = Renderable<Extract<API['node']['$type'], number>>;
 

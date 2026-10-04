@@ -496,6 +496,7 @@ const VOCABULARY_IMPORTS = [
 	'BoundOf',
 	'ParsedOf',
 	'Admit',
+	'ListOptions',
 	'SupertypeSurface',
 	'WithNode',
 	'BoundWithNode'

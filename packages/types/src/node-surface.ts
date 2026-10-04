@@ -1,5 +1,5 @@
 import type { AnyUntypedNode, TriviaSetter } from './core-types.ts';
-import type { Renderable } from './engine-api.ts';
+import type { NodeMethods } from './engine-api.ts';
 
 export interface SlotHint<Input, Optional extends boolean = false, Rest extends boolean = false, Config = never> {
 	readonly input: Input;
@@ -87,7 +87,7 @@ export type Admit<V> = V extends unknown
 	? V extends readonly unknown[]
 		? { [I in keyof V]: Admit<V[I]> }
 		: V extends { readonly $type: infer Id extends number }
-			? Renderable<Id>
+			? { readonly $type: Id; readonly $render: NodeMethods['$render'] }
 			: V
 	: never;
 
@@ -107,7 +107,7 @@ type ValueSetter<Self, Of, K extends keyof SlotHintsOf<Of>, ByBound, Reflect ext
 					(() => SetResult<Self, K, undefined, ByBound, Reflect>)
 			: (value: Admit<SlotInput<Of, K>>) => SetResult<Self, K, SlotInput<Of, K>, ByBound, Reflect>;
 
-type ListOptions<O> = O & { readonly $type?: never };
+export type ListOptions<O> = O & { readonly $type?: never };
 
 type ListItems<Self, Of, K extends keyof SlotHintsOf<Of>, E, O, ByBound, Reflect extends boolean> = {
 	(options: ListOptions<O>, ...items: readonly Admit<E>[]): SetResult<Self, K, SlotInput<Of, K>, ByBound, Reflect>;

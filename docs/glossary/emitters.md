@@ -16617,6 +16617,10 @@ The version of the wire between the JS packages and a native build: the render t
 
 Emits a kind's `Bound` and `Parsed` interfaces. Each declares `$type` first, then `$with` over `this`, then its own members. A kind that seats a flattened group gets its `Bound` and `Parsed` as type aliases instead, `BoundSurface & FlatShapesOf<…>` and `ParsedSurface & FlatShapesOf<…>`, because an interface cannot extend the present-or-absent union; each unexported surface interface carries the members, and its `$with` returns the alias while reading its hints from the interface itself, so a rebuilt node keeps the union without the alias referring to itself. The kind's empty form is then an alias too, whose `$trivia` names the alias where an interface would use `this`. The order matters: the checker compares a target's properties in declaration order, and a mismatched kind must fail on the `$type` discriminant before it reaches the deep `$with` and accessor members; without it every non-matching arm of a wide union is compared structurally to the checker's depth limit.
 
+### `packages/codegen/src/emitters/shared.ts::listOptionsParam`
+
+The options parameter type of a generated list builder, a forwarding constructor's list overload and a list's argument rows: the list's options type under `ListOptions`, so a node is never taken as the options. The list view hint keeps the bare options type.
+
 ### `packages/codegen/src/emitters/factories.ts::hasTopLevelUnion`
 
 Whether a type text has ` | ` outside every bracket pair, the test `parenthesizeUnion` applies.

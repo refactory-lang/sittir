@@ -3,7 +3,7 @@
 import type * as T from '../types-internal.js';
 import { Delimiter } from '@sittir/common/utils';
 import { TSKindId } from '../types.js';
-import type { Admit, NonEmptyArray, NumericConfig, NumericLiteral, WidenNumeric } from '@sittir/types';
+import type { Admit, ListOptions, NonEmptyArray, NumericConfig, NumericLiteral, WidenNumeric } from '@sittir/types';
 import {
 	currentHandle,
 	listSlotWith,
@@ -948,7 +948,7 @@ export function buildEnumVariantList(
 	value?: Admit<T.EnumVariantListElements>
 ): ReturnType<typeof _buildEnumVariantList>;
 export function buildEnumVariantList(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.AttributedEnumVariant | T.EnumVariant>>
 ): ReturnType<typeof _buildEnumVariantList>;
 export function buildEnumVariantList(
@@ -1076,7 +1076,7 @@ export function buildFieldDeclarationList(
 	value?: Admit<T.FieldDeclarationListElements>
 ): ReturnType<typeof _buildFieldDeclarationList>;
 export function buildFieldDeclarationList(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.AttributedFieldDeclaration | T.FieldDeclaration>>
 ): ReturnType<typeof _buildFieldDeclarationList>;
 export function buildFieldDeclarationList(
@@ -1202,7 +1202,7 @@ export function buildOrderedFieldDeclarationList(
 	value?: Admit<T.OrderedFieldDeclarationListElements>
 ): ReturnType<typeof _buildOrderedFieldDeclarationList>;
 export function buildOrderedFieldDeclarationList(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildOrderedFieldDeclarationList>;
 export function buildOrderedFieldDeclarationList(
@@ -1771,7 +1771,7 @@ export function buildFunctionModifiers(
 
 export function buildWhereClause(value?: Admit<T.WherePredicates>): ReturnType<typeof _buildWhereClause>;
 export function buildWhereClause(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.WherePredicate>>
 ): ReturnType<typeof _buildWhereClause>;
 export function buildWhereClause(
@@ -2122,7 +2122,7 @@ export function buildRemovedTraitBound(value: Admit<T.Type | T.TypeIdentifier.Ty
 
 export function buildTypeParameters(value: Admit<T.TypeParametersElements>): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<
 		Admit<T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>
 	>
@@ -2511,7 +2511,7 @@ export function buildScopedUseList(config: Partial<T.ScopedUseList.Config> = {})
 export function buildUseList(): T.EmptyUseList;
 export function buildUseList(value?: Admit<T.UseClauses>): ReturnType<typeof _buildUseList>;
 export function buildUseList(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<
 		Admit<
 			| TSKindId.Self
@@ -2769,7 +2769,7 @@ function _buildUseWildcard(value?: Admit<T.UseWildcardGroup>): T.UseWildcard.Bou
 export function buildParameters(): T.EmptyParameters;
 export function buildParameters(value?: Admit<T.ParametersElements>): ReturnType<typeof _buildParameters>;
 export function buildParameters(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<
 		Admit<
 			| T.AttributedParameter
@@ -3175,7 +3175,7 @@ export function buildArrayType(config: T.ArrayType.Config): T.ArrayType.Bound {
 
 export function buildForLifetimes(value: Admit<T.Lifetimes>): ReturnType<typeof _buildForLifetimes>;
 export function buildForLifetimes(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.Lifetime>>
 ): ReturnType<typeof _buildForLifetimes>;
 export function buildForLifetimes(...elements: NonEmptyArray<Admit<T.Lifetime>>): ReturnType<typeof _buildForLifetimes>;
@@ -3307,7 +3307,7 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 
 export function buildTupleType(value: Admit<T.Types>): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(
@@ -3551,7 +3551,7 @@ export function buildBoundedType(config: T.BoundedType.Config): T.BoundedType.Bo
 export function buildUseBounds(): T.EmptyUseBounds;
 export function buildUseBounds(value?: Admit<T.UseBoundsElements>): ReturnType<typeof _buildUseBounds>;
 export function buildUseBounds(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildUseBounds>;
 export function buildUseBounds(
@@ -3616,7 +3616,7 @@ function _buildUseBounds(value?: Admit<T.UseBoundsElements>): T.UseBounds.Bound 
 
 export function buildTypeArguments(value: Admit<T.TypeArgumentsElements>): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<
 		Admit<T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types>
 	>
@@ -4494,7 +4494,7 @@ export function buildCallExpression(config: T.CallExpression.Config): T.CallExpr
 export function buildArguments(): T.EmptyArguments;
 export function buildArguments(value?: Admit<T.ArgumentsElements>): ReturnType<typeof _buildArguments>;
 export function buildArguments(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>
 ): ReturnType<typeof _buildArguments>;
 export function buildArguments(
@@ -4685,7 +4685,7 @@ export function buildFieldInitializerList(
 	value?: Admit<T.FieldInitializerListElements>
 ): ReturnType<typeof _buildFieldInitializerList>;
 export function buildFieldInitializerList(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>>
 ): ReturnType<typeof _buildFieldInitializerList>;
 export function buildFieldInitializerList(
@@ -5811,7 +5811,7 @@ export function buildGenericPattern(config: T.GenericPattern.Config): T.GenericP
 export function buildTuplePattern(): T.EmptyTuplePattern;
 export function buildTuplePattern(value?: Admit<T.TuplePatternElements>): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.Pattern | T.ClosureExpression>>
 ): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(
@@ -5877,7 +5877,7 @@ function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePatte
 export function buildSlicePattern(): T.EmptySlicePattern;
 export function buildSlicePattern(value?: Admit<T.Patterns>): ReturnType<typeof _buildSlicePattern>;
 export function buildSlicePattern(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.Pattern>>
 ): ReturnType<typeof _buildSlicePattern>;
 export function buildSlicePattern(...elements: NonEmptyArray<Admit<T.Pattern>>): ReturnType<typeof _buildSlicePattern>;
@@ -6364,7 +6364,7 @@ export function buildMetavariable(input: string, affix: boolean = true): T.Metav
 
 export function buildMacroRules(...elements: NonEmptyArray<Admit<T.MacroRule>>): ReturnType<typeof _buildMacroRules>;
 export function buildMacroRules(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.MacroRule>>
 ): ReturnType<typeof _buildMacroRules>;
 export function buildMacroRules(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.MacroRule>)[]) {
@@ -6422,7 +6422,7 @@ export function buildEnumVariantListElements(
 	...elements: NonEmptyArray<Admit<T.AttributedEnumVariant | T.EnumVariant>>
 ): ReturnType<typeof _buildEnumVariantListElements>;
 export function buildEnumVariantListElements(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.AttributedEnumVariant | T.EnumVariant>>
 ): ReturnType<typeof _buildEnumVariantListElements>;
 export function buildEnumVariantListElements(
@@ -6506,7 +6506,7 @@ export function buildFieldDeclarationListElements(
 	...elements: NonEmptyArray<Admit<T.AttributedFieldDeclaration | T.FieldDeclaration>>
 ): ReturnType<typeof _buildFieldDeclarationListElements>;
 export function buildFieldDeclarationListElements(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.AttributedFieldDeclaration | T.FieldDeclaration>>
 ): ReturnType<typeof _buildFieldDeclarationListElements>;
 export function buildFieldDeclarationListElements(
@@ -6593,7 +6593,7 @@ export function buildOrderedFieldDeclarationListElements(
 	...elements: NonEmptyArray<Admit<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildOrderedFieldDeclarationListElements>;
 export function buildOrderedFieldDeclarationListElements(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildOrderedFieldDeclarationListElements>;
 export function buildOrderedFieldDeclarationListElements(
@@ -6680,7 +6680,7 @@ export function buildWherePredicates(
 	...elements: NonEmptyArray<Admit<T.WherePredicate>>
 ): ReturnType<typeof _buildWherePredicates>;
 export function buildWherePredicates(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.WherePredicate>>
 ): ReturnType<typeof _buildWherePredicates>;
 export function buildWherePredicates(
@@ -6743,7 +6743,7 @@ export function buildTypeParametersElements(
 	>
 ): ReturnType<typeof _buildTypeParametersElements>;
 export function buildTypeParametersElements(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<
 		Admit<T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>
 	>
@@ -6872,7 +6872,7 @@ export function buildUseClauses(
 	>
 ): ReturnType<typeof _buildUseClauses>;
 export function buildUseClauses(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<
 		Admit<
 			| TSKindId.Self
@@ -7110,7 +7110,7 @@ export function buildParametersElements(
 	>
 ): ReturnType<typeof _buildParametersElements>;
 export function buildParametersElements(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<
 		Admit<
 			| T.AttributedParameter
@@ -7242,7 +7242,7 @@ function _buildParametersElements(
 
 export function buildLifetimes(...elements: NonEmptyArray<Admit<T.Lifetime>>): ReturnType<typeof _buildLifetimes>;
 export function buildLifetimes(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.Lifetime>>
 ): ReturnType<typeof _buildLifetimes>;
 export function buildLifetimes(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.Lifetime>)[]) {
@@ -7300,7 +7300,7 @@ export function buildTypes(
 	...elements: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildTypes>;
 export function buildTypes(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildTypes>;
 export function buildTypes(
@@ -7365,7 +7365,7 @@ export function buildUseBoundsElements(
 	...elements: NonEmptyArray<Admit<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildUseBoundsElements>;
 export function buildUseBoundsElements(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildUseBoundsElements>;
 export function buildUseBoundsElements(
@@ -7435,7 +7435,7 @@ export function buildTypeArgumentsElements(
 	>
 ): ReturnType<typeof _buildTypeArgumentsElements>;
 export function buildTypeArgumentsElements(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<
 		Admit<T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types>
 	>
@@ -7525,7 +7525,7 @@ export function buildArgumentsElements(
 	...elements: NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>
 ): ReturnType<typeof _buildArgumentsElements>;
 export function buildArgumentsElements(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>
 ): ReturnType<typeof _buildArgumentsElements>;
 export function buildArgumentsElements(
@@ -7606,7 +7606,7 @@ function _buildArgumentsElements(
 
 export function buildExpressions(...elements: NonEmptyArray<Admit<T.Expression>>): ReturnType<typeof _buildExpressions>;
 export function buildExpressions(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.Expression>>
 ): ReturnType<typeof _buildExpressions>;
 export function buildExpressions(
@@ -7667,7 +7667,7 @@ export function buildFieldInitializerListElements(
 	...elements: NonEmptyArray<Admit<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>>
 ): ReturnType<typeof _buildFieldInitializerListElements>;
 export function buildFieldInitializerListElements(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>>
 ): ReturnType<typeof _buildFieldInitializerListElements>;
 export function buildFieldInitializerListElements(
@@ -7733,7 +7733,7 @@ export function buildTuplePatternElements(
 	...elements: NonEmptyArray<Admit<T.Pattern | T.ClosureExpression>>
 ): ReturnType<typeof _buildTuplePatternElements>;
 export function buildTuplePatternElements(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.Pattern | T.ClosureExpression>>
 ): ReturnType<typeof _buildTuplePatternElements>;
 export function buildTuplePatternElements(
@@ -7794,7 +7794,7 @@ function _buildTuplePatternElements(
 
 export function buildPatterns(...elements: NonEmptyArray<Admit<T.Pattern>>): ReturnType<typeof _buildPatterns>;
 export function buildPatterns(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.Pattern>>
 ): ReturnType<typeof _buildPatterns>;
 export function buildPatterns(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.Pattern>)[]) {
@@ -7852,7 +7852,7 @@ export function buildStructPatternElements(
 	...elements: NonEmptyArray<Admit<T.FieldPattern | TSKindId.RemainingFieldPattern>>
 ): ReturnType<typeof _buildStructPatternElements>;
 export function buildStructPatternElements(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.FieldPattern | TSKindId.RemainingFieldPattern>>
 ): ReturnType<typeof _buildStructPatternElements>;
 export function buildStructPatternElements(

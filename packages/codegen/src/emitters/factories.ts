@@ -80,6 +80,7 @@ import {
 	expandAndDedupeContentTypes,
 	registeredSlots,
 	withEmptyOverload,
+	listOptionsParam,
 	listRestParamType,
 	resolvesLooseInput,
 	looseElementType,
@@ -1281,7 +1282,7 @@ export function constructorSurface(
 				: {
 						params: `...elements: ${list.elementsType}`,
 						paramsOverloads: [
-							`options: ${list.optionsType}, ...elements: ${list.elementsType}`,
+							`options: ${listOptionsParam(list.optionsType)}, ...elements: ${list.elementsType}`,
 							`...elements: ${list.elementsType}`
 						],
 						args: '...args'
@@ -2183,7 +2184,7 @@ function emitSeparatedListFactory(
 	if (hasOptions) {
 		if (!surface.separatorRequired) lines.push(`export function ${fn}(...elements: ${elementsType}): ReturnType<typeof _${fn}>;`);
 		lines.push(
-			`export function ${fn}(options: ${optionsType}, ...elements: ${elementsType}): ReturnType<typeof _${fn}>;`
+			`export function ${fn}(options: ${listOptionsParam(optionsType)}, ...elements: ${elementsType}): ReturnType<typeof _${fn}>;`
 		);
 		lines.push(`export function ${fn}(...args: (${optionsType} | ${elemTypeForArray})[]) {`);
 		const permittedKeys = listOptionKeys(surface);
@@ -2463,4 +2464,4 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 	}
 }
 
-const SITTIR_TYPES_IMPORT_CANDIDATES = ['Admit', 'AnyUntypedNode', 'ConfigOf', 'LooseValue', 'NonEmptyArray', 'NumericConfig', 'NumericLiteral', 'WidenNumeric'];
+const SITTIR_TYPES_IMPORT_CANDIDATES = ['Admit', 'ListOptions', 'AnyUntypedNode', 'ConfigOf', 'LooseValue', 'NonEmptyArray', 'NumericConfig', 'NumericLiteral', 'WidenNumeric'];

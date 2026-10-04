@@ -27,6 +27,7 @@ import type {
 	BoundOf,
 	ParsedOf,
 	Admit,
+	ListOptions,
 	SupertypeSurface,
 	WithNode,
 	BoundWithNode
@@ -21873,7 +21874,7 @@ export namespace MacroRules {
 	export type BuildArgs =
 		| [element: Admit<T.MacroRule>, ...elements: Admit<T.MacroRule>[]]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<T.MacroRule>,
 				...elements: Admit<T.MacroRule>[]
 		  ];
@@ -21883,7 +21884,7 @@ export namespace MacroRules {
 				...elements: (T.MacroRules.Loose | LooseValue<T.MacroRule, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: T.MacroRules.Loose | LooseValue<T.MacroRule, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 				...elements: (T.MacroRules.Loose | LooseValue<T.MacroRule, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ];
@@ -21909,7 +21910,7 @@ export namespace EnumVariantListElements {
 				...elements: (Admit<T.AttributedEnumVariant | T.EnumVariant> | T.AttributedEnumVariant.BuildArgs[0])[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<T.AttributedEnumVariant | T.EnumVariant> | T.AttributedEnumVariant.BuildArgs[0],
 				...elements: (Admit<T.AttributedEnumVariant | T.EnumVariant> | T.AttributedEnumVariant.BuildArgs[0])[]
 		  ];
@@ -21926,7 +21927,7 @@ export namespace EnumVariantListElements {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.EnumVariantListElements.Loose
 					| LooseValue<T.AttributedEnumVariant | T.EnumVariant, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
@@ -21962,7 +21963,7 @@ export namespace FieldDeclarationListElements {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<T.AttributedFieldDeclaration | T.FieldDeclaration> | T.AttributedFieldDeclaration.BuildArgs[0],
 				...elements: (
 					| Admit<T.AttributedFieldDeclaration | T.FieldDeclaration>
@@ -21992,7 +21993,7 @@ export namespace FieldDeclarationListElements {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.FieldDeclarationListElements.Loose
 					| LooseValue<
@@ -22040,7 +22041,7 @@ export namespace OrderedFieldDeclarationListElements {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| Admit<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>
 					| T.AttributedOrderedField.BuildArgs[0],
@@ -22072,7 +22073,7 @@ export namespace OrderedFieldDeclarationListElements {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.OrderedFieldDeclarationListElements.Loose
 					| LooseValue<
@@ -22112,7 +22113,7 @@ export namespace WherePredicates {
 	export type BuildArgs =
 		| [element: Admit<T.WherePredicate>, ...elements: Admit<T.WherePredicate>[]]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<T.WherePredicate>,
 				...elements: Admit<T.WherePredicate>[]
 		  ];
@@ -22127,7 +22128,7 @@ export namespace WherePredicates {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.WherePredicates.Loose
 					| LooseValue<T.WherePredicate, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
@@ -22163,7 +22164,7 @@ export namespace TypeParametersElements {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| Admit<T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>
 					| T.AttributedTypeParameter.BuildArgs[0],
@@ -22195,7 +22196,7 @@ export namespace TypeParametersElements {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.TypeParametersElements.Loose
 					| LooseValue<
@@ -22300,7 +22301,7 @@ export namespace UseClauses {
 				>[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<
 					| TSKindId.Self
 					| TSKindId.U8Keyword
@@ -22445,7 +22446,7 @@ export namespace UseClauses {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.UseClauses.Loose
 					| LooseValue<
@@ -22565,7 +22566,7 @@ export namespace ParametersElements {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| Admit<
 							| T.AttributedParameter
@@ -22625,7 +22626,7 @@ export namespace ParametersElements {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.ParametersElements.Loose
 					| LooseValue<
@@ -22677,7 +22678,7 @@ export namespace Lifetimes {
 	export type BuildArgs =
 		| [element: Admit<T.Lifetime>, ...elements: Admit<T.Lifetime>[]]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<T.Lifetime>,
 				...elements: Admit<T.Lifetime>[]
 		  ];
@@ -22687,7 +22688,7 @@ export namespace Lifetimes {
 				...elements: (T.Lifetimes.Loose | LooseValue<T.Lifetime, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: T.Lifetimes.Loose | LooseValue<T.Lifetime, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 				...elements: (T.Lifetimes.Loose | LooseValue<T.Lifetime, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ];
@@ -22710,7 +22711,7 @@ export namespace Types {
 	export type BuildArgs =
 		| [element: Admit<T.Type | T.TypeIdentifier.Types>, ...elements: Admit<T.Type | T.TypeIdentifier.Types>[]]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<T.Type | T.TypeIdentifier.Types>,
 				...elements: Admit<T.Type | T.TypeIdentifier.Types>[]
 		  ];
@@ -22725,7 +22726,7 @@ export namespace Types {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.Types.Loose
 					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
@@ -22756,7 +22757,7 @@ export namespace UseBoundsElements {
 				...elements: Admit<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>,
 				...elements: Admit<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>[]
 		  ];
@@ -22781,7 +22782,7 @@ export namespace UseBoundsElements {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.UseBoundsElements.Loose
 					| LooseValue<
@@ -22827,7 +22828,7 @@ export namespace TypeArgumentsElements {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| Admit<T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types>
 					| T.TypeArgument.BuildArgs[0],
@@ -22859,7 +22860,7 @@ export namespace TypeArgumentsElements {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.TypeArgumentsElements.Loose
 					| LooseValue<
@@ -22902,7 +22903,7 @@ export namespace ArgumentsElements {
 				...elements: (Admit<T.AttributedArgument | T.Expression> | T.AttributedArgument.BuildArgs[0])[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<T.AttributedArgument | T.Expression> | T.AttributedArgument.BuildArgs[0],
 				...elements: (Admit<T.AttributedArgument | T.Expression> | T.AttributedArgument.BuildArgs[0])[]
 		  ];
@@ -22919,7 +22920,7 @@ export namespace ArgumentsElements {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.ArgumentsElements.Loose
 					| LooseValue<T.AttributedArgument | T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
@@ -22949,7 +22950,7 @@ export namespace Expressions {
 	export type BuildArgs =
 		| [element: Admit<T.Expression>, ...elements: Admit<T.Expression>[]]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<T.Expression>,
 				...elements: Admit<T.Expression>[]
 		  ];
@@ -22962,7 +22963,7 @@ export namespace Expressions {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: T.Expressions.Loose | LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 				...elements: (
 					| T.Expressions.Loose
@@ -22991,7 +22992,7 @@ export namespace FieldInitializerListElements {
 				...elements: Admit<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>,
 				...elements: Admit<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>[]
 		  ];
@@ -23016,7 +23017,7 @@ export namespace FieldInitializerListElements {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.FieldInitializerListElements.Loose
 					| LooseValue<
@@ -23054,7 +23055,7 @@ export namespace TuplePatternElements {
 	export type BuildArgs =
 		| [element: Admit<T.Pattern | T.ClosureExpression>, ...elements: Admit<T.Pattern | T.ClosureExpression>[]]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<T.Pattern | T.ClosureExpression>,
 				...elements: Admit<T.Pattern | T.ClosureExpression>[]
 		  ];
@@ -23069,7 +23070,7 @@ export namespace TuplePatternElements {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.TuplePatternElements.Loose
 					| LooseValue<T.Pattern | T.ClosureExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
@@ -23097,7 +23098,7 @@ export namespace Patterns {
 	export type BuildArgs =
 		| [element: Admit<T.Pattern>, ...elements: Admit<T.Pattern>[]]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<T.Pattern>,
 				...elements: Admit<T.Pattern>[]
 		  ];
@@ -23107,7 +23108,7 @@ export namespace Patterns {
 				...elements: (T.Patterns.Loose | LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: T.Patterns.Loose | LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 				...elements: (T.Patterns.Loose | LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ];
@@ -23133,7 +23134,7 @@ export namespace StructPatternElements {
 				...elements: Admit<T.FieldPattern | TSKindId.RemainingFieldPattern>[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<T.FieldPattern | TSKindId.RemainingFieldPattern>,
 				...elements: Admit<T.FieldPattern | TSKindId.RemainingFieldPattern>[]
 		  ];
@@ -23158,7 +23159,7 @@ export namespace StructPatternElements {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.StructPatternElements.Loose
 					| LooseValue<

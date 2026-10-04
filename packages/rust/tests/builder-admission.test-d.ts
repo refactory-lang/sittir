@@ -41,6 +41,13 @@ export function listNodeIsNotOptions(): void {
 	fn.$with.parameters(args);
 }
 
+export function listBuilderOptionsRefuseNodes(): void {
+	const params = rs.parse('fn f(a: u8) {}\n').statements()[0]!;
+	if (!rs.is.functionItem(params)) return;
+	// @ts-expect-error a Parameters list is not the options bag of arguments
+	rs.build.arguments(params.parameters(), rs.build.identifier('a'));
+}
+
 export function storageShapeRefused(storage: T.Block): void {
 	const fn = rs.build.functionItem({ name: 'g', parameters: rs.build.parameters(), body: rs.build.block() });
 	// @ts-expect-error the storage interface is not a node

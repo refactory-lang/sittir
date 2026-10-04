@@ -3,7 +3,15 @@
 import type * as T from '../types-internal.js';
 import { Delimiter } from '@sittir/common/utils';
 import { TSKindId } from '../types.js';
-import type { Admit, ConfigOf, NonEmptyArray, NumericConfig, NumericLiteral, WidenNumeric } from '@sittir/types';
+import type {
+	Admit,
+	ListOptions,
+	ConfigOf,
+	NonEmptyArray,
+	NumericConfig,
+	NumericLiteral,
+	WidenNumeric
+} from '@sittir/types';
 import {
 	currentHandle,
 	listSlotWith,
@@ -174,7 +182,7 @@ export function buildNamespaceExport(value: Admit<T.Identifier | T.String>): T.N
 export function buildExportClause(): T.EmptyExportClause;
 export function buildExportClause(value?: Admit<T.ExportSpecifiers>): ReturnType<typeof _buildExportClause>;
 export function buildExportClause(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String>>
 ): ReturnType<typeof _buildExportClause>;
 export function buildExportClause(
@@ -390,7 +398,7 @@ export function buildNamespaceImport(value: Admit<T.Identifier>): T.NamespaceImp
 export function buildNamedImports(): T.EmptyNamedImports;
 export function buildNamedImports(value?: Admit<T.ImportSpecifiers>): ReturnType<typeof _buildNamedImports>;
 export function buildNamedImports(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.ImportSpecifier>>
 ): ReturnType<typeof _buildNamedImports>;
 export function buildNamedImports(
@@ -3496,7 +3504,7 @@ export function buildFormalParameters(
 	value?: Admit<T.FormalParametersElements>
 ): ReturnType<typeof _buildFormalParameters>;
 export function buildFormalParameters(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.RequiredParameter | T.OptionalParameter>>
 ): ReturnType<typeof _buildFormalParameters>;
 export function buildFormalParameters(
@@ -5048,7 +5056,7 @@ export function buildEnumDeclaration(config: T.EnumDeclaration.Config): T.EnumDe
 export function buildEnumBody(): T.EmptyEnumBody;
 export function buildEnumBody(value?: Admit<T.EnumBodyElements>): ReturnType<typeof _buildEnumBody>;
 export function buildEnumBody(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.EnumBodyElement>>
 ): ReturnType<typeof _buildEnumBody>;
 export function buildEnumBody(...elements: NonEmptyArray<Admit<T.EnumBodyElement>>): ReturnType<typeof _buildEnumBody>;
@@ -6571,7 +6579,7 @@ export function buildParenthesizedType(value: Admit<T.Type | T.TypeIdentifier.Ty
 
 export function buildTypeArguments(value: Admit<T.Types>): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(
@@ -6867,7 +6875,7 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 
 export function buildTypeParameters(value: Admit<T.TypeParametersElements>): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(
@@ -7126,7 +7134,7 @@ export function buildArrayType(value: Admit<T.PrimaryType | T.TypeIdentifier.Typ
 export function buildTupleType(): T.EmptyTupleType;
 export function buildTupleType(value?: Admit<T.TupleTypeMembers>): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<
 		Admit<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types>
 	>
@@ -7359,7 +7367,7 @@ export function buildExportSpecifiers(
 	...elements: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String>>
 ): ReturnType<typeof _buildExportSpecifiers>;
 export function buildExportSpecifiers(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String>>
 ): ReturnType<typeof _buildExportSpecifiers>;
 export function buildExportSpecifiers(
@@ -7434,7 +7442,7 @@ export function buildImportSpecifiers(
 	...elements: NonEmptyArray<Admit<T.ImportSpecifier>>
 ): ReturnType<typeof _buildImportSpecifiers>;
 export function buildImportSpecifiers(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.ImportSpecifier>>
 ): ReturnType<typeof _buildImportSpecifiers>;
 export function buildImportSpecifiers(
@@ -7495,7 +7503,7 @@ export function buildFormalParametersElements(
 	...elements: NonEmptyArray<Admit<T.RequiredParameter | T.OptionalParameter>>
 ): ReturnType<typeof _buildFormalParametersElements>;
 export function buildFormalParametersElements(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.RequiredParameter | T.OptionalParameter>>
 ): ReturnType<typeof _buildFormalParametersElements>;
 export function buildFormalParametersElements(
@@ -7655,7 +7663,7 @@ export function buildEnumBodyElements(
 	...elements: NonEmptyArray<Admit<T.EnumBodyElement>>
 ): ReturnType<typeof _buildEnumBodyElements>;
 export function buildEnumBodyElements(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.EnumBodyElement>>
 ): ReturnType<typeof _buildEnumBodyElements>;
 export function buildEnumBodyElements(
@@ -7716,7 +7724,7 @@ export function buildTypes(
 	...elements: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildTypes>;
 export function buildTypes(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildTypes>;
 export function buildTypes(
@@ -7781,7 +7789,7 @@ export function buildTypeParametersElements(
 	...elements: NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildTypeParametersElements>;
 export function buildTypeParametersElements(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildTypeParametersElements>;
 export function buildTypeParametersElements(
@@ -7861,7 +7869,7 @@ export function buildTupleTypeMembers(
 	>
 ): ReturnType<typeof _buildTupleTypeMembers>;
 export function buildTupleTypeMembers(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<
 		Admit<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types>
 	>
@@ -8102,10 +8110,10 @@ export function buildObjectTypeContent(
 	>
 ): ReturnType<typeof _buildObjectTypeContent>;
 export function buildObjectTypeContent(
-	options: {
+	options: ListOptions<{
 		separator?: TSKindId.Comma | TSKindId.Semi;
 		delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
-	},
+	}>,
 	...elements: NonEmptyArray<
 		Admit<
 			| T.ExportStatement

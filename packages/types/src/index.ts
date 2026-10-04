@@ -1288,6 +1288,7 @@ export type {
 	RenderArgument,
 	RenderCall,
 	RenderOptionsCheck,
+	Renderable,
 	Rendered,
 	StrictMembers,
 	StrictSurface,

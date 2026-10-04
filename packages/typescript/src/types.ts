@@ -27,6 +27,7 @@ import type {
 	BoundOf,
 	ParsedOf,
 	Admit,
+	ListOptions,
 	SupertypeSurface,
 	WithNode,
 	BoundWithNode
@@ -21832,7 +21833,7 @@ export namespace ExportSpecifiers {
 				...elements: Admit<T.ExportSpecifier | T.Identifier | T.String>[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<T.ExportSpecifier | T.Identifier | T.String>,
 				...elements: Admit<T.ExportSpecifier | T.Identifier | T.String>[]
 		  ];
@@ -21847,7 +21848,7 @@ export namespace ExportSpecifiers {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.ExportSpecifiers.Loose
 					| LooseValue<T.ExportSpecifier | T.Identifier | T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
@@ -21875,7 +21876,7 @@ export namespace ImportSpecifiers {
 	export type BuildArgs =
 		| [element: Admit<T.ImportSpecifier>, ...elements: Admit<T.ImportSpecifier>[]]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<T.ImportSpecifier>,
 				...elements: Admit<T.ImportSpecifier>[]
 		  ];
@@ -21890,7 +21891,7 @@ export namespace ImportSpecifiers {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.ImportSpecifiers.Loose
 					| LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
@@ -21921,7 +21922,7 @@ export namespace FormalParametersElements {
 				...elements: Admit<T.RequiredParameter | T.OptionalParameter>[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<T.RequiredParameter | T.OptionalParameter>,
 				...elements: Admit<T.RequiredParameter | T.OptionalParameter>[]
 		  ];
@@ -21936,7 +21937,7 @@ export namespace FormalParametersElements {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.FormalParametersElements.Loose
 					| LooseValue<T.RequiredParameter | T.OptionalParameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
@@ -22013,7 +22014,7 @@ export namespace EnumBodyElements {
 	export type BuildArgs =
 		| [element: Admit<T.EnumBodyElement>, ...elements: Admit<T.EnumBodyElement>[]]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<T.EnumBodyElement>,
 				...elements: Admit<T.EnumBodyElement>[]
 		  ];
@@ -22028,7 +22029,7 @@ export namespace EnumBodyElements {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.EnumBodyElements.Loose
 					| LooseValue<T.EnumBodyElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
@@ -22056,7 +22057,7 @@ export namespace Types {
 	export type BuildArgs =
 		| [element: Admit<T.Type | T.TypeIdentifier.Types>, ...elements: Admit<T.Type | T.TypeIdentifier.Types>[]]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<T.Type | T.TypeIdentifier.Types>,
 				...elements: Admit<T.Type | T.TypeIdentifier.Types>[]
 		  ];
@@ -22071,7 +22072,7 @@ export namespace Types {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.Types.Loose
 					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
@@ -22102,7 +22103,7 @@ export namespace TypeParametersElements {
 				...elements: Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>,
 				...elements: Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>[]
 		  ];
@@ -22127,7 +22128,7 @@ export namespace TypeParametersElements {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.TypeParametersElements.Loose
 					| LooseValue<
@@ -22172,7 +22173,7 @@ export namespace TupleTypeMembers {
 				>[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<
 					T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types
 				>,
@@ -22211,7 +22212,7 @@ export namespace TupleTypeMembers {
 				)[]
 		  ]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.TupleTypeMembers.Loose
 					| LooseValue<
@@ -22346,10 +22347,10 @@ export namespace ObjectTypeContent {
 				>[]
 		  ]
 		| [
-				options: {
+				options: ListOptions<{
 					separator?: TSKindId.Comma | TSKindId.Semi;
 					delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
-				},
+				}>,
 				element: Admit<
 					| T.ExportStatement
 					| T.PropertySignature
@@ -22398,10 +22399,10 @@ export namespace ObjectTypeContent {
 				)[]
 		  ]
 		| [
-				options: {
+				options: ListOptions<{
 					separator?: TSKindId.Comma | TSKindId.Semi;
 					delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
-				},
+				}>,
 				element:
 					| T.ObjectTypeContent.Loose
 					| LooseValue<

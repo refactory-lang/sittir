@@ -34,6 +34,13 @@ export function wrongKindRefused(): void {
 	ts.build.functionDeclaration.strict({ name: ts.build.identifier('g'), parameters: ts.build.formalParameters(), body: ts.build.formalParameters() });
 }
 
+export function listBuilderOptionsRefuseNodes(): void {
+	const fn = ts.parse('function f(a) {}\n').statements()[0]!;
+	if (!ts.is.functionDeclaration(fn)) return;
+	// @ts-expect-error a FormalParameters list is not the options bag of type arguments
+	ts.build.typeArguments(fn.parameters(), ts.build.identifier('T'));
+}
+
 export function storageShapeRefused(storage: T.StatementBlock): void {
 	const fn = ts.build.functionDeclaration({ name: 'g', parameters: ts.build.formalParameters(), body: ts.build.statementBlock() });
 	// @ts-expect-error the storage interface is not a node

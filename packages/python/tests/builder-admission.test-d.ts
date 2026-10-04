@@ -36,6 +36,13 @@ export function wrongKindRefused(): void {
 	py.build.functionDefinition.strict({ name: py.build.identifier('g'), parameters: py.build.parameters(), body: py.build.parameters() });
 }
 
+export function listBuilderOptionsRefuseNodes(): void {
+	const fn = py.parse('def f(a):\n    a\n').statements()[0]!;
+	if (!py.is.functionDefinition(fn)) return;
+	// @ts-expect-error a Parameters list is not the options bag of an import list
+	py.build.importList(fn.parameters(), py.build.dottedName(py.build.identifier('m')));
+}
+
 export function storageShapeRefused(storage: T.SuiteBlock): void {
 	const fn = py.build.functionDefinition({ name: 'g', parameters: py.build.parameters(), body: py.build.block(py.build.passStatement) });
 	// @ts-expect-error the storage interface is not a node
