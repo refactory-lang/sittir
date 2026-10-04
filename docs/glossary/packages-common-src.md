@@ -526,7 +526,7 @@ The elements a list stores: its array, or the one element it holds, or none. The
 
 ### `packages/common/src/utils.ts::ownerView`
 
-What a list owner knows of the list it holds, read once when the owner is built: the list itself, and its stored elements. An owner normally holds the list node already read, with its elements as stubs. A list stored only as a read stub (a parent handle and a child index) carries no count, so with a tree the stub is read one level, without wrapping it, and without a tree the elements are unknown and the owner cannot count them.
+What a list owner knows of the list it holds, read once when the owner is built: the list itself, and its stored elements. An owner normally holds the list node already read, with its elements as stubs. A list stored only as a read stub (a parent handle and a child index) carries no count, so the owner's `hydrate` reads it. A wrap passes its own `hydrateChild`, the path its accessors take, so the list arrives wrapped, with its children seated in the model's slots, and `count` names a model slot whatever key the parser gave the items. Without a hydrator (a factory) the elements are unknown and the owner cannot count them.
 
 ### `packages/common/src/utils.ts::ownerElements`
 

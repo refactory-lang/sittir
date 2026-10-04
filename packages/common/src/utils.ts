@@ -5,7 +5,7 @@ import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { currentHandle, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
-import { hydrateStub, isStub, readUntypedNode, type TreeHandle } from './readUntypedNode.ts';
+import { isStub, readUntypedNode } from './readUntypedNode.ts';
 import { spelledForm } from './interior.ts';
 
 export { Delimiter } from './delimiter.ts';
@@ -421,16 +421,16 @@ export function listIterator(this: ListItemsHolder): IterableIterator<unknown> {
 	return listItemsOf(this)[Symbol.iterator]();
 }
 
-/** What an owner knows of the list it holds: the list itself, hydrated when it is a read stub and a tree is given, and its stored elements (undefined while the stub cannot be read). */
+/** What an owner knows of the list it holds: the list itself, hydrated by `hydrate` when it is a read stub, and its stored elements (undefined while the stub cannot be read). */
 export interface OwnerView {
 	readonly list: Record<string, unknown> | undefined;
 	readonly stored: readonly unknown[] | undefined;
 }
 
-export function ownerView(stored: unknown, count: string, tree?: TreeHandle): OwnerView {
+export function ownerView(stored: unknown, count: string, hydrate?: (list: object) => unknown): OwnerView {
 	const list = stored as (object & Partial<AnyUntypedNode>) | null | undefined;
 	if (list == null) return { list: undefined, stored: [] };
-	const source = count in list || !isStub(list) ? list : tree === undefined ? undefined : hydrateStub(list, tree);
+	const source = count in list || !isStub(list) ? list : hydrate?.(list);
 	if (source === undefined) return { list: undefined, stored: undefined };
 	const elements = (source as Record<string, unknown>)[count];
 	return {

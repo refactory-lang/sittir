@@ -261,12 +261,12 @@ function hydrateSelf<T>(entry: T, tree: TreeHandle): T {
 // Resolve a CHILD position. A stub reads one more level. A child a
 // read already expanded was typed when its parent was wrapped
 // (`storeExpanded`), so it is returned as stored.
-type ParsedOfData<D> = D extends { readonly $type: infer Id }
+export type ParsedOfData<D> = D extends { readonly $type: infer Id }
 	? Id extends keyof T.ParsedByKindId
 		? T.ParsedByKindId[Id]
 		: D
 	: D;
-function hydrateChild<T>(entry: T | ParsedOfData<T>, tree: TreeHandle): ParsedOfData<T> {
+export function hydrateChild<T>(entry: T | ParsedOfData<T>, tree: TreeHandle): ParsedOfData<T> {
 	const resolved = hydrateSelf(entry, tree);
 	const e = resolved as unknown as _UntypedNode;
 	if (resolved === entry && typeof e?.$type === 'number' && !isTypedNode(e))
@@ -1306,7 +1306,7 @@ export function wrapExportClause(data: T.ExportClause, tree: TreeHandle): T.Expo
 		}),
 		tree
 	);
-	const listView = ownerView(_export_specifiers, '_item', tree);
+	const listView = ownerView(_export_specifiers, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.ExportClause as const,
@@ -1707,7 +1707,7 @@ export function wrapNamedImports(data: T.NamedImports, tree: TreeHandle): T.Name
 		}),
 		tree
 	);
-	const listView = ownerView(_import_specifiers, '_item', tree);
+	const listView = ownerView(_import_specifiers, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.NamedImports as const,
@@ -7403,7 +7403,7 @@ export function wrapFormalParameters(data: T.FormalParameters, tree: TreeHandle)
 		}),
 		tree
 	);
-	const listView = ownerView(_elements, '_item', tree);
+	const listView = ownerView(_elements, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.FormalParameters as const,
@@ -10449,7 +10449,7 @@ export function wrapEnumBody(data: T.EnumBody, tree: TreeHandle): T.EnumBody.Par
 		}),
 		tree
 	);
-	const listView = ownerView(_elements, '_item', tree);
+	const listView = ownerView(_elements, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.EnumBody as const,
@@ -13465,7 +13465,7 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.Ty
 		}),
 		tree
 	);
-	const listView = ownerView(_types, '_item', tree);
+	const listView = ownerView(_types, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.TypeArguments as const,
@@ -13867,7 +13867,7 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 		}),
 		tree
 	);
-	const listView = ownerView(_elements, '_item', tree);
+	const listView = ownerView(_elements, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.TypeParameters as const,
@@ -14329,7 +14329,7 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle): T.TupleType.
 		}),
 		tree
 	);
-	const listView = ownerView(_tuple_type_members, '_item', tree);
+	const listView = ownerView(_tuple_type_members, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.TupleType as const,

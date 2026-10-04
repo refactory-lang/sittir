@@ -269,12 +269,12 @@ function hydrateSelf<T>(entry: T, tree: TreeHandle): T {
 // Resolve a CHILD position. A stub reads one more level. A child a
 // read already expanded was typed when its parent was wrapped
 // (`storeExpanded`), so it is returned as stored.
-type ParsedOfData<D> = D extends { readonly $type: infer Id }
+export type ParsedOfData<D> = D extends { readonly $type: infer Id }
 	? Id extends keyof T.ParsedByKindId
 		? T.ParsedByKindId[Id]
 		: D
 	: D;
-function hydrateChild<T>(entry: T | ParsedOfData<T>, tree: TreeHandle): ParsedOfData<T> {
+export function hydrateChild<T>(entry: T | ParsedOfData<T>, tree: TreeHandle): ParsedOfData<T> {
 	const resolved = hydrateSelf(entry, tree);
 	const e = resolved as unknown as _UntypedNode;
 	if (resolved === entry && typeof e?.$type === 'number' && !isTypedNode(e))
@@ -2963,7 +2963,7 @@ export function wrapEnumVariantList(data: T.EnumVariantList, tree: TreeHandle): 
 		}),
 		tree
 	);
-	const listView = ownerView(_elements, '_item', tree);
+	const listView = ownerView(_elements, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.EnumVariantList as const,
@@ -3110,7 +3110,7 @@ export function wrapFieldDeclarationList(
 		}),
 		tree
 	);
-	const listView = ownerView(_elements, '_item', tree);
+	const listView = ownerView(_elements, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.FieldDeclarationList as const,
@@ -3262,7 +3262,7 @@ export function wrapOrderedFieldDeclarationList(
 		}),
 		tree
 	);
-	const listView = ownerView(_attributes, '_item', tree);
+	const listView = ownerView(_attributes, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.OrderedFieldDeclarationList as const,
@@ -4250,7 +4250,7 @@ export function wrapWhereClause(data: T.WhereClause, tree: TreeHandle): T.WhereC
 		}),
 		tree
 	);
-	const listView = ownerView(_where_predicates, '_item', tree);
+	const listView = ownerView(_where_predicates, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.WhereClause as const,
@@ -4903,7 +4903,7 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 		}),
 		tree
 	);
-	const listView = ownerView(_elements, '_item', tree);
+	const listView = ownerView(_elements, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.TypeParameters as const,
@@ -5693,7 +5693,7 @@ export function wrapUseList(data: T.UseList, tree: TreeHandle): T.UseList.Parsed
 		}),
 		tree
 	);
-	const listView = ownerView(_use_clauses, '_item', tree);
+	const listView = ownerView(_use_clauses, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.UseList as const,
@@ -5895,7 +5895,7 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 		}),
 		tree
 	);
-	const listView = ownerView(_elements, '_item', tree);
+	const listView = ownerView(_elements, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.Parameters as const,
@@ -6646,7 +6646,7 @@ export function wrapForLifetimes(data: T.ForLifetimes, tree: TreeHandle): T.ForL
 		}),
 		tree
 	);
-	const listView = ownerView(_lifetimes, '_item', tree);
+	const listView = ownerView(_lifetimes, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.ForLifetimes as const,
@@ -6821,7 +6821,7 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle): T.TupleType.
 		}),
 		tree
 	);
-	const listView = ownerView(_types, '_item', tree);
+	const listView = ownerView(_types, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.TupleType as const,
@@ -7174,7 +7174,7 @@ export function wrapUseBounds(data: T.UseBounds, tree: TreeHandle): T.UseBounds.
 		}),
 		tree
 	);
-	const listView = ownerView(_bounds, '_item', tree);
+	const listView = ownerView(_bounds, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.UseBounds as const,
@@ -7226,7 +7226,7 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.Ty
 		}),
 		tree
 	);
-	const listView = ownerView(_elements, '_item', tree);
+	const listView = ownerView(_elements, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.TypeArguments as const,
@@ -9509,7 +9509,7 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle): T.Arguments.
 		}),
 		tree
 	);
-	const listView = ownerView(_elements, '_item', tree);
+	const listView = ownerView(_elements, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.Arguments as const,
@@ -9759,7 +9759,7 @@ export function wrapFieldInitializerList(
 		}),
 		tree
 	);
-	const listView = ownerView(_initializers, '_item', tree);
+	const listView = ownerView(_initializers, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.FieldInitializerList as const,
@@ -12041,7 +12041,7 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.Tupl
 		}),
 		tree
 	);
-	const listView = ownerView(_elements, '_item', tree);
+	const listView = ownerView(_elements, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.TuplePattern as const,
@@ -12093,7 +12093,7 @@ export function wrapSlicePattern(data: T.SlicePattern, tree: TreeHandle): T.Slic
 		}),
 		tree
 	);
-	const listView = ownerView(_patterns, '_item', tree);
+	const listView = ownerView(_patterns, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.SlicePattern as const,

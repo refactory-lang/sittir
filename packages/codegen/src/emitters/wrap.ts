@@ -1323,14 +1323,14 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'// (`storeExpanded`), so it is returned as stored.',
 			...(this.#kindEntries
 				? [
-						'type ParsedOfData<D> = D extends { readonly $type: infer Id }',
+						'export type ParsedOfData<D> = D extends { readonly $type: infer Id }',
 						'  ? Id extends keyof T.ParsedByKindId',
 						'    ? T.ParsedByKindId[Id]',
 						'    : D',
 						'  : D;'
 					]
-				: ['type ParsedOfData<D> = D;']),
-			'function hydrateChild<T>(entry: T | ParsedOfData<T>, tree: TreeHandle): ParsedOfData<T> {',
+				: ['export type ParsedOfData<D> = D;']),
+			'export function hydrateChild<T>(entry: T | ParsedOfData<T>, tree: TreeHandle): ParsedOfData<T> {',
 			'  const resolved = hydrateSelf(entry, tree);',
 			'  const e = resolved as unknown as _UntypedNode;',
 			'  if (resolved === entry && typeof e?.$type === "number" && !isTypedNode(e)) return wrapNode(e, tree) as unknown as ParsedOfData<T>;',

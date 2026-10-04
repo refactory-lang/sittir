@@ -273,12 +273,12 @@ function hydrateSelf<T>(entry: T, tree: TreeHandle): T {
 // Resolve a CHILD position. A stub reads one more level. A child a
 // read already expanded was typed when its parent was wrapped
 // (`storeExpanded`), so it is returned as stored.
-type ParsedOfData<D> = D extends { readonly $type: infer Id }
+export type ParsedOfData<D> = D extends { readonly $type: infer Id }
 	? Id extends keyof T.ParsedByKindId
 		? T.ParsedByKindId[Id]
 		: D
 	: D;
-function hydrateChild<T>(entry: T | ParsedOfData<T>, tree: TreeHandle): ParsedOfData<T> {
+export function hydrateChild<T>(entry: T | ParsedOfData<T>, tree: TreeHandle): ParsedOfData<T> {
 	const resolved = hydrateSelf(entry, tree);
 	const e = resolved as unknown as _UntypedNode;
 	if (resolved === entry && typeof e?.$type === 'number' && !isTypedNode(e))
@@ -1122,7 +1122,7 @@ export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle)
 		}),
 		tree
 	);
-	const listView = ownerView(_elements, '_item', tree);
+	const listView = ownerView(_elements, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.SimpleStatements as const,
@@ -3063,7 +3063,7 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 		}),
 		tree
 	);
-	const listView = ownerView(_elements, '_item', tree);
+	const listView = ownerView(_elements, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.Parameters as const,
@@ -3115,7 +3115,7 @@ export function wrapLambdaParameters(data: T.LambdaParameters, tree: TreeHandle)
 		}),
 		tree
 	);
-	const listView = ownerView(_parameters_elements, '_item', tree);
+	const listView = ownerView(_parameters_elements, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.LambdaParameters as const,
@@ -3506,7 +3506,7 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.Ty
 		}),
 		tree
 	);
-	const listView = ownerView(_types, '_item', tree);
+	const listView = ownerView(_types, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.TypeParameter as const,
@@ -3594,7 +3594,7 @@ export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle): T.Argu
 		}),
 		tree
 	);
-	const listView = ownerView(_arguments, '_item', tree);
+	const listView = ownerView(_arguments, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.ArgumentList as const,
@@ -4144,7 +4144,7 @@ export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle): T.DictPa
 		}),
 		tree
 	);
-	const listView = ownerView(_elements, '_item', tree);
+	const listView = ownerView(_elements, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.DictPattern as const,
@@ -4793,7 +4793,7 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.Tupl
 		}),
 		tree
 	);
-	const listView = ownerView(_patterns, '_item', tree);
+	const listView = ownerView(_patterns, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.TuplePattern as const,
@@ -4845,7 +4845,7 @@ export function wrapListPattern(data: T.ListPattern, tree: TreeHandle): T.ListPa
 		}),
 		tree
 	);
-	const listView = ownerView(_patterns, '_item', tree);
+	const listView = ownerView(_patterns, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.ListPattern as const,
@@ -7347,7 +7347,7 @@ export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
 		}),
 		tree
 	);
-	const listView = ownerView(_collection_elements, '_item', tree);
+	const listView = ownerView(_collection_elements, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.List as const,
@@ -7400,7 +7400,7 @@ export function wrapSet(data: T.Set, tree: TreeHandle): T.Set.Parsed {
 		}),
 		tree
 	);
-	const listView = ownerView(_collection_elements, '_item', tree);
+	const listView = ownerView(_collection_elements, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.Set as const,
@@ -7452,7 +7452,7 @@ export function wrapTuple(data: T.Tuple, tree: TreeHandle): T.Tuple.Parsed {
 		}),
 		tree
 	);
-	const listView = ownerView(_elements, '_item', tree);
+	const listView = ownerView(_elements, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.Tuple as const,
@@ -7504,7 +7504,7 @@ export function wrapDictionary(data: T.Dictionary, tree: TreeHandle): T.Dictiona
 		}),
 		tree
 	);
-	const listView = ownerView(_elements, '_item', tree);
+	const listView = ownerView(_elements, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.Dictionary as const,
@@ -9524,7 +9524,7 @@ export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle)
 		}),
 		tree
 	);
-	const listView = ownerView(_list_pattern_case_patterns, '_item', tree);
+	const listView = ownerView(_list_pattern_case_patterns, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.CaseTuplePattern as const,
@@ -9577,7 +9577,7 @@ export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle): 
 		}),
 		tree
 	);
-	const listView = ownerView(_list_pattern_case_patterns, '_item', tree);
+	const listView = ownerView(_list_pattern_case_patterns, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.CaseListPattern as const,
@@ -9812,7 +9812,7 @@ export function wrapPrintStatementPlain(data: T.PrintStatementPlain, tree: TreeH
 		}),
 		tree
 	);
-	const listView = ownerView(_print_arguments, '_argument', tree);
+	const listView = ownerView(_print_arguments, '_argument', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.PrintStatementPlain as const,
@@ -9867,7 +9867,7 @@ export function wrapParenthesizedImportList(
 		}),
 		tree
 	);
-	const listView = ownerView(_import_list, '_name', tree);
+	const listView = ownerView(_import_list, '_name', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.ParenthesizedImportList as const,
@@ -11122,7 +11122,7 @@ export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle): 
 		}),
 		tree
 	);
-	const listView = ownerView(_with_items, '_item', tree);
+	const listView = ownerView(_with_items, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.WithClauseParen as const,
@@ -11260,7 +11260,7 @@ export function wrapSuiteInline(data: T.SuiteInline, tree: TreeHandle): T.SuiteI
 		}),
 		tree
 	);
-	const listView = ownerView(_elements, '_item', tree);
+	const listView = ownerView(_elements, '_item', (list) => hydrateChild(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.SuiteInline as const,

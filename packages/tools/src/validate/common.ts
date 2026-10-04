@@ -5,7 +5,6 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createEngine, detachCoordinates, dumpMetrics, sliceSpan } from '@sittir/common';
 import { carryRead, carrySource, holdTree, readDerivedSides, readTrivia, spanOf, treeTokenOf, type TriviaView } from '@sittir/common/utils';
 import {
-	hydrateStub,
 	isStub,
 	readUntypedNode,
 	metricsEnabled,
@@ -667,30 +666,29 @@ export function upstreamWasmPath(grammar: string): string | undefined {
 	}
 }
 
-export async function readNodeOf(
-	grammar: string
-): Promise<((handle: TreeHandle, parentHandle?: number, childIndex?: number) => unknown) | null> {
+async function wrapExportOf<F>(grammar: string, name: 'readNode' | 'wrapNode' | 'hydrateChild'): Promise<F | null> {
 	try {
 		const mod = await importGrammarModule(grammar, 'wrap.ts');
 		if (!mod) return null;
-		return mod.readNode ?? null;
+		return (mod[name] as F | undefined) ?? null;
 	} catch (e) {
 		console.error(`[validators] failed to load wrap module for ${grammar}: ${(e as Error).message}`);
 		return null;
 	}
 }
 
-export async function loadWrapNode(
+export function readNodeOf(
 	grammar: string
-): Promise<((data: AnyUntypedNode, tree: TreeHandle) => unknown) | null> {
-	try {
-		const mod = await importGrammarModule(grammar, 'wrap.ts');
-		if (!mod) return null;
-		return mod.wrapNode ?? null;
-	} catch (e) {
-		console.error(`[validators] failed to load wrap module for ${grammar}: ${(e as Error).message}`);
-		return null;
-	}
+): Promise<((handle: TreeHandle, parentHandle?: number, childIndex?: number) => unknown) | null> {
+	return wrapExportOf(grammar, 'readNode');
+}
+
+export function loadWrapNode(grammar: string): Promise<((data: AnyUntypedNode, tree: TreeHandle) => unknown) | null> {
+	return wrapExportOf(grammar, 'wrapNode');
+}
+
+export function hydrateChildOf(grammar: string): Promise<HydrateChild | null> {
+	return wrapExportOf(grammar, 'hydrateChild');
 }
 
 export interface Seat {
@@ -1187,10 +1185,13 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
 
 export type FactoryEntry = ((...args: any[]) => unknown) | number | object;
 
+export type HydrateChild = (entry: unknown, tree: TreeHandle) => unknown;
+
 export interface NodeToConfigOpts {
 	readonly shownKind?: string;
 	readonly interiorOf?: (kind: string) => TokenInterior | undefined;
 	readonly tree?: TreeHandle;
+	readonly hydrateChild?: HydrateChild;
 	readonly factoryMap?: Record<string, FactoryEntry>;
 	readonly factoryShapes?: Record<string, FactoryShape>;
 	readonly fieldAliasMap?: Record<string, Record<string, string>>;
@@ -1302,10 +1303,10 @@ function carriesOwnContents(c: ReadNodeLike): boolean {
 }
 
 function hydrateForConfig(c: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike {
-	const { tree } = opts;
-	if (!tree || carriesOwnContents(c)) return c;
+	const { tree, hydrateChild } = opts;
+	if (!tree || !hydrateChild || carriesOwnContents(c)) return c;
 	try {
-		return hydrateStub(c, tree) as ReadNodeLike;
+		return hydrateChild(c, tree) as ReadNodeLike;
 	} catch {
 		return c;
 	}
@@ -2089,6 +2090,7 @@ export interface FactoryDispatchOpts {
 	readonly namedChildKindHints?: readonly string[];
 	readonly kindNameFromId?: (id: number) => string | undefined;
 	readonly tree?: unknown;
+	readonly hydrateChild?: HydrateChild;
 }
 
 export function buildFactoryNodeFromReference(
@@ -2111,7 +2113,8 @@ export function buildFactoryNodeFromReference(
 		firstNamedChildKindHint: opts.firstNamedChildKindHint,
 		namedChildKindHints: opts.namedChildKindHints,
 		kindNameFromId: opts.kindNameFromId,
-		tree: opts.tree
+		tree: opts.tree,
+		hydrateChild: opts.hydrateChild
 	} as NodeToConfigOpts;
 	return buildWithFactory(referenceData, kind, factory, configOpts);
 }

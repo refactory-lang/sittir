@@ -92,13 +92,13 @@ describe('a list owner', () => {
 		expect(node[0]).toBe('arm');
 	});
 
-	it('sizes an owner over a read stub from its list node read one level, without reading the items', () => {
+	it('sizes an owner over a read stub from its list node hydrated once, without reading the items', () => {
 		const reads: [number | undefined, number | undefined][] = [];
-		const tree = {
-			read: (handle?: number, childIndex?: number) => (reads.push([handle, childIndex]), { $type: 9, _element: [{ $type: 2 }, { $type: 2 }] })
-		};
+		const hydrate = (list: { $parentHandle?: number; $childIndex?: number }) => (
+			reads.push([list.$parentHandle, list.$childIndex]), { $type: 9, _element: [{ $type: 2 }, { $type: 2 }] }
+		);
 		let itemReads = 0;
-		const view = ownerView({ $type: 9, $parentHandle: 4, $childIndex: 1 }, '_element', tree as never);
+		const view = ownerView({ $type: 9, $parentHandle: 4, $childIndex: 1 }, '_element', hydrate);
 		const node: Record<PropertyKey, unknown> = {
 			$type: 1,
 			items: () => (itemReads++, listNode(['a', 'b'])),
