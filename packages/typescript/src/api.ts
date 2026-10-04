@@ -13,7 +13,7 @@ import {
 	type TypescriptTypeMap
 } from './types.js';
 import type { IndentChar, Options } from './options.js';
-import { triviaFacts } from './utils.js';
+import { querySlots, triviaFacts } from './utils.js';
 import { buildCommentBlock, buildCommentLine } from './factories/raw.js';
 import { coerceToCommentLine } from './factories/coerce.js';
 import { RENDER_MODULE_HASH } from './hash.js';
@@ -48,6 +48,7 @@ export const hooks: LanguageHooks<TypescriptAPI> = Object.freeze<LanguageHooks<T
 			{ open: '//', close: '', build: (text: string) => buildCommentLine(text as `//${string}`, false) }
 		])
 	}),
+	querySlots,
 	createNative: (options) => nativeLanguageEngine<TypescriptAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ProgramRoot & ParsedRoot, tree as TreeHandle)
 });

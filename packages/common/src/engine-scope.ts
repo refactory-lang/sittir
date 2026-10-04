@@ -2,6 +2,7 @@ import type { AnyUntypedNode, EngineIdentity, LineGapAddress, LineGaps, Rendered
 
 export interface LiveEngine extends EngineIdentity {
 	render(node: AnyUntypedNode | number, options?: object): Rendered;
+	query(node: object): object;
 }
 
 export interface EngineHandle {

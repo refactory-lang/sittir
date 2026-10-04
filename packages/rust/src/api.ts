@@ -13,7 +13,7 @@ import {
 	type RustTypeMap
 } from './types.js';
 import type { IndentChar, Options } from './options.js';
-import { triviaFacts } from './utils.js';
+import { querySlots, triviaFacts } from './utils.js';
 import { coerceToLineComment, coerceToBlockComment } from './factories/coerce.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type SourceFileRoot } from './render-engine.js';
@@ -47,6 +47,7 @@ export const hooks: LanguageHooks<RustAPI> = Object.freeze<LanguageHooks<RustAPI
 			{ open: '//', close: '', build: (text: string) => coerceToLineComment(text) }
 		])
 	}),
+	querySlots,
 	createNative: (options) => nativeLanguageEngine<RustAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as SourceFileRoot & ParsedRoot, tree as TreeHandle)
 });

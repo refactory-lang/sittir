@@ -1,3 +1,5 @@
+import type { TreeHandle } from './readUntypedNode.ts';
+
 /**
  * What a parsed object holds to keep its tree live: one per tree, shared by
  * every object read from it.
@@ -43,6 +45,17 @@ export function carryTree<T extends object>(from: object, to: T): T {
 	const token = treeTokenOf(from);
 	if (token !== undefined) holdTreeOn(to, token);
 	return to;
+}
+
+const trees = new WeakMap<TreeToken, TreeHandle>();
+
+export function registerTree(token: TreeToken, tree: TreeHandle): void {
+	trees.set(token, tree);
+}
+
+export function treeOf(node: object): TreeHandle | undefined {
+	const token = treeTokenOf(node);
+	return token === undefined ? undefined : trees.get(token);
 }
 
 /** Make `node` stop holding its tree. */

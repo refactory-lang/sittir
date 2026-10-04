@@ -308,6 +308,61 @@ macro_rules! napi_engine {
                 })
             }
 
+            /// One batch of a pre-order walk of the named descendants under
+            /// the node `from` names (JSON, see `query::Address`), filtered to
+            /// `kinds` when given and to the `where` plan (JSON, see
+            /// `query::PlanSpec`) when given, resuming after the path `resume`
+            /// an earlier batch returned, `depth` levels down (every level
+            /// when absent). As JSON `{ stubs, resume }`. Refuses
+            /// a tree that is not live and a plan whose pattern the native
+            /// matcher cannot compile.
+            #[::napi_derive::napi]
+            pub fn descendants(
+                &mut self,
+                from: String,
+                kinds: Option<Vec<u32>>,
+                resume: Option<Vec<u32>>,
+                limit: u32,
+                plan: Option<String>,
+                depth: Option<u32>,
+            ) -> ::napi::Result<String> {
+                let plan = plan.map(|json| $crate::napi_engine::compile_plan(&json)).transpose()?;
+                let from = $crate::napi_engine::address_from_json(&from)?;
+                let kinds = kinds
+                    .unwrap_or_default()
+                    .into_iter()
+                    .map(|k| u16::try_from(k).map_err(|_| ::napi::Error::from_reason(format!("kind {k} is not a kind id"))))
+                    .collect::<::napi::Result<Vec<u16>>>()?;
+                let (tree_id, _) = $crate::engine::decode_handle(from.tree_handle());
+                LIVE_TREES.with(|trees| {
+                    let mut trees = trees.borrow_mut();
+                    let parsed = trees.get_mut(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                    let batch = parsed
+                        .descendants(from, &kinds, plan.as_ref(), resume.as_deref(), limit.max(1), depth)
+                        .map_err(::napi::Error::from_reason)?;
+                    ::serde_json::to_string(&batch).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                })
+            }
+
+            /// Whether each node `addresses` names (a JSON array of
+            /// `query::Address`, all in one tree) satisfies the `where` plan
+            /// (JSON, see `query::PlanSpec`), in order. Refuses a tree that is
+            /// not live, an address naming no node of it, and a plan whose
+            /// pattern the native matcher cannot compile.
+            #[::napi_derive::napi]
+            pub fn plan_holds(&mut self, addresses: String, plan: String) -> ::napi::Result<Vec<bool>> {
+                let plan = $crate::napi_engine::compile_plan(&plan)?;
+                let addresses: Vec<$crate::query::Address> =
+                    ::serde_json::from_str(&addresses).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                let Some(first) = addresses.first() else { return Ok(Vec::new()) };
+                let (tree_id, _) = $crate::engine::decode_handle(first.tree_handle());
+                LIVE_TREES.with(|trees| {
+                    let trees = trees.borrow();
+                    let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                    parsed.plan_holds(&addresses, &plan).map_err(::napi::Error::from_reason)
+                })
+            }
+
             /// Read the root of a live tree again, `depth` levels down, so a
             /// caller holding a shallow root can ask for a deeper one without
             /// re-parsing. Refuses a tree that is not live, as
@@ -470,6 +525,27 @@ pub fn checked_index(value: f64, label: &str) -> napi::Result<u64> {
         )));
     }
     Ok(value as u64)
+}
+
+/// A `where` plan from its JSON (`query::PlanSpec`), compiled; a pattern the
+/// native matcher cannot compile is refused.
+pub fn compile_plan(json: &str) -> napi::Result<crate::query::Plan> {
+    serde_json::from_str::<crate::query::PlanSpec>(json)
+        .map_err(|e| e.to_string())
+        .and_then(crate::query::Plan::compile)
+        .map_err(napi::Error::from_reason)
+}
+
+/// A node's address from its JSON (`query::Address`).
+pub fn address_from_json(json: &str) -> napi::Result<crate::query::Address> {
+    serde_json::from_str(json).map_err(|e| napi::Error::from_reason(format!("not a node address: {e}")))
+}
+
+/// The refusal for an address into a tree this thread does not hold.
+pub fn tree_not_live(tree_id: u32) -> napi::Error {
+    napi::Error::from_reason(format!(
+        "tree {tree_id} is not live (never parsed on this thread, or already released)"
+    ))
 }
 
 /// Map the boundary's optional level count onto a [`ReadDepth`](crate::ReadDepth):

@@ -137,7 +137,7 @@ type ResolveInput<V, ByBound> =
 		: never;
 type BoundFormOf<Self, ByBound> = Self extends { readonly $type: infer T } ? (T extends keyof ByBound ? ByBound[T] : Self) : Self;
 type DraftTrivia<Self, ByBound> = Self extends { readonly $trivia: TriviaSetter<any, infer Trivia> } ? TriviaSetter<BoundFormOf<Self, ByBound>, Trivia> : never;
-export type WithSlot<Self, K extends PropertyKey, V, ByBound> = Remap<Self, K | '$with' | '$trivia'> & {
+export type WithSlot<Self, K extends PropertyKey, V, ByBound> = Remap<Self, K | '$with' | '$trivia' | '$query'> & {
 	[P in K]: () => ResolveInput<V, ByBound>;
 } & {
 	readonly $trivia: DraftTrivia<Self, ByBound>;

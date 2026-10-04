@@ -20,6 +20,7 @@ import type {
 import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle } from './engine-scope.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
 import { ParseErrors } from './parse-errors.ts';
+import { queryFacet, type QueryHooks } from './query.ts';
 import {
 	isEmptyNode as isEmptyUntypedNode,
 	isErrorNode,
@@ -140,6 +141,11 @@ function assembleEngine<API extends LanguageAPI>(
 		const stamp = engineOf(value);
 		return stamp !== undefined && sameLanguage(stamp, identity);
 	};
+	const queryHooks: QueryHooks = {
+		querySlots: hooks.querySlots,
+		kindName: (kind) => hooks.trivia.kindName(kind),
+		wrap: hooks.wrap
+	};
 	const engine: Engine<API> = {
 		...identity,
 		build,
@@ -165,6 +171,15 @@ function assembleEngine<API extends LanguageAPI>(
 			if (parseOptions?.errors === 'throw' && root.$errors.length > 0) throw new ParseErrors(root.$errors);
 			return hooks.wrap(root, tree);
 		},
+		query: ((node: object) => {
+			if (handle.current !== engine)
+				throw new Error('query: engine disposed; parse the source again with a live engine');
+			const stamp = engineOf(node);
+			if (stamp !== undefined && !sameLanguage(stamp, identity)) {
+				throw new Error(`cannot query a ${stamp.language.name} node through a ${language.name} engine`);
+			}
+			return queryFacet(node, queryHooks);
+		}) as Engine<API>['query'],
 		read() {
 			return Promise.reject(unimplementedVerb('read'));
 		},

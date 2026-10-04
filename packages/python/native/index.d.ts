@@ -87,6 +87,25 @@ export declare class SittirEngine {
    */
   readUntypedNode(handle: number, childIndex: number, depth?: number | undefined | null): string
   /**
+   * One batch of a pre-order walk of the named descendants under
+   * the node `from` names (JSON, see `query::Address`), filtered to
+   * `kinds` when given and to the `where` plan (JSON, see
+   * `query::PlanSpec`) when given, resuming after the path `resume`
+   * an earlier batch returned, `depth` levels down (every level
+   * when absent). As JSON `{ stubs, resume }`. Refuses
+   * a tree that is not live and a plan whose pattern the native
+   * matcher cannot compile.
+   */
+  descendants(from: string, kinds: Array<number> | undefined | null, resume: Array<number> | undefined | null, limit: number, plan?: string | undefined | null, depth?: number | undefined | null): string
+  /**
+   * Whether each node `addresses` names (a JSON array of
+   * `query::Address`, all in one tree) satisfies the `where` plan
+   * (JSON, see `query::PlanSpec`), in order. Refuses a tree that is
+   * not live, an address naming no node of it, and a plan whose
+   * pattern the native matcher cannot compile.
+   */
+  planHolds(addresses: string, plan: string): Array<boolean>
+  /**
    * Read the root of a live tree again, `depth` levels down, so a
    * caller holding a shallow root can ask for a deeper one without
    * re-parsing. Refuses a tree that is not live, as

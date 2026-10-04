@@ -18,6 +18,7 @@ export interface NodeMemberSpec {
 	readonly accessors: readonly { readonly name: string; readonly read: string }[];
 	readonly inner: InnerPositions;
 	readonly extra?: readonly string[];
+	readonly parsed?: true;
 }
 
 export function innerPositionsOf(kind: string, nodeMap: NodeMap): InnerPositions {
@@ -49,6 +50,9 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 		...(spec.inner.inner ? ['      inner: (...items: unknown[]) => triviaInner(node, handle, items),'] : []),
 		...(spec.inner.keyed ? ['      innerAt: (gap: string, ...items: unknown[]) => triviaInnerAt(node, handle, gap, items),'] : []),
 		'    },',
+		...(spec.parsed
+			? ['    $query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,']
+			: []),
 		'    $engine: handle && (() => handle.current)'
 	);
 	return lines;

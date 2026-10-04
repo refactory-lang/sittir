@@ -20,13 +20,16 @@ export function liveHandle(
 		renderModuleHash: 'hash',
 		options: undefined,
 		trivia: options.trivia ?? triviaFacts(),
-		render: (node) => ({ toString: () => options.render?.(node) ?? '' }) as Rendered
+		render: (node) => ({ toString: () => options.render?.(node) ?? '' }) as Rendered,
+		query: () => {
+			throw new Error('fake engine has no parsed trees');
+		}
 	};
 	return { current: live };
 }
 
 export function detach(handle: EngineHandle): EngineIdentity {
-	const { render: _render, ...identity } = handle.current as LiveEngine;
+	const { render: _render, query: _query, ...identity } = handle.current as LiveEngine;
 	handle.current = identity;
 	return identity;
 }
