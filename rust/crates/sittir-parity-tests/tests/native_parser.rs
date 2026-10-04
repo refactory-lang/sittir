@@ -45,11 +45,11 @@ fn typescript_lexical_declaration_reads_override_named_fields() {
     }
 }
 
-/// The reader keys every member by its model slot: the name members and the
-/// `enum_assignment` members all land in `element`, one
-/// bucket in document order, so no `$slotOrder` is needed to interleave them.
+/// The reader keys every child by the parser's key: the members are all
+/// tagged with the field `item`, so they land in one bucket in document
+/// order, and no `$slotOrder` is needed to interleave them.
 #[test]
-fn typescript_enum_body_elements_reads_members_into_one_slot() {
+fn typescript_enum_body_elements_reads_members_under_their_field() {
     let source = "enum T {\n    A,\n    'B',\n    'C' = 3,\n    D = 10,\n    E\n}";
     let mut parser = Parser::new();
     parser

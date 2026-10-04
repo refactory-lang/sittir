@@ -3,18 +3,34 @@ import python from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const py = await createEngine(python);
-const pyNative = (await python.load()).createNative();
+
+function memberNames(node: object): string[] {
+	const names = new Set<string>();
+	for (let o: object | null = node; o !== null && o !== Object.prototype && o !== Array.prototype; o = Object.getPrototypeOf(o)) {
+		for (const name of Object.getOwnPropertyNames(o)) if (/^[a-z]/.test(name) && !(name in Array.prototype)) names.add(name);
+	}
+	return [...names];
+}
+
+function findParsed(node: unknown, kind: number): Record<string, unknown> | undefined {
+	if (node === null || typeof node !== 'object') return undefined;
+	if ((node as { $type?: unknown }).$type === kind) return node as Record<string, unknown>;
+	for (const name of memberNames(node)) {
+		const member = (node as Record<string, unknown>)[name];
+		if (typeof member !== 'function' || member.length !== 0) continue;
+		const held: unknown = member.call(node);
+		for (const child of Array.isArray(held) ? held : [held]) {
+			const found = findParsed(child, kind);
+			if (found !== undefined) return found;
+		}
+	}
+	return undefined;
+}
 
 function readName(text: string): { $type: number; $text?: string } {
-	const { root } = pyNative.parseAndRead(text, { deep: true });
-	const statement = (
-		root as unknown as {
-			_statements: {
-				_elements: { _item: { _content: { _expression: { _name: unknown } } } };
-			};
-		}
-	)._statements._elements._item;
-	return statement._content._expression._name as { $type: number; $text?: string };
+	const named = findParsed(py.parse(text), py.kinds.NamedExpression) as { name(): unknown } | undefined;
+	const name = named?.name();
+	return typeof name === 'number' ? { $type: name } : (name as { $type: number; $text?: string });
 }
 
 describe('the grammar reserved wordset', () => {

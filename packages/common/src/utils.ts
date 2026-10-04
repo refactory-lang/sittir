@@ -610,6 +610,82 @@ export function configFieldOr(input: unknown, key: string, orElse: () => unknown
 		: orElse();
 }
 
+export function modelSlots<T extends object>(
+	data: T,
+	keys: readonly string[],
+	routes?: Readonly<Record<string, string>>
+): T {
+	const src = data as Record<string, unknown>;
+	let routed = false;
+	if (routes !== undefined) {
+		for (const key in routes) {
+			if (src[key] !== undefined) {
+				routed = true;
+				break;
+			}
+		}
+	}
+	if (!routed) {
+		const kept: Record<string, unknown> = { ...src };
+		for (const key of Object.keys(kept)) {
+			if (key.charCodeAt(0) === 95 && !keys.includes(key)) delete kept[key];
+		}
+		return kept as T;
+	}
+	const names = Object.keys(src);
+	const targets: string[] = [];
+	let shared = false;
+	for (const key of names) {
+		if (key.charCodeAt(0) !== 95) continue;
+		const target = routes![key] ?? key;
+		if (targets.includes(target)) shared = true;
+		else targets.push(target);
+	}
+	const order = src.$slotOrder as readonly string[] | undefined;
+	const out: Record<string, unknown> = {};
+	for (const key of names) {
+		if (key.charCodeAt(0) !== 95) {
+			if (key === '$slotOrder') {
+				if (order !== undefined && targets.length >= 2) out.$slotOrder = order.map((name) => routes![`_${name}`]?.slice(1) ?? name);
+				continue;
+			}
+			out[key] = src[key];
+			continue;
+		}
+		const target = routes![key] ?? key;
+		if (!keys.includes(target)) continue;
+		if (shared) {
+			if (target in out) continue;
+			const sources = names.filter((name) => name.charCodeAt(0) === 95 && (routes![name] ?? name) === target);
+			out[target] = sources.length === 1 ? src[key] : interleaveBuckets(src, sources, order);
+			continue;
+		}
+		out[target] = src[key];
+	}
+	for (const symbol of Object.getOwnPropertySymbols(src)) {
+		if (Object.prototype.propertyIsEnumerable.call(src, symbol)) (out as Record<symbol, unknown>)[symbol] = (src as Record<symbol, unknown>)[symbol];
+	}
+	return out as T;
+}
+
+function interleaveBuckets(src: Record<string, unknown>, keys: readonly string[], order: readonly string[] | undefined): unknown[] {
+	const buckets = new Map<string, { readonly items: readonly unknown[]; at: number }>();
+	for (const key of keys) {
+		const value = src[key];
+		buckets.set(key.slice(1), { items: Array.isArray(value) ? value : [value], at: 0 });
+	}
+	const merged: unknown[] = [];
+	if (order === undefined) {
+		for (const bucket of buckets.values()) merged.push(...bucket.items);
+		return merged;
+	}
+	for (const name of order) {
+		const bucket = buckets.get(name);
+		if (bucket !== undefined && bucket.at < bucket.items.length) merged.push(bucket.items[bucket.at++]);
+	}
+	return merged;
+}
+
 export function isParsedNode(v: unknown): v is AnyUntypedNode {
 	return isNode(v) && (v.$source === Source.Ts || v.$source === Source.Sg);
 }

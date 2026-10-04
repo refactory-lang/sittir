@@ -108,16 +108,6 @@ impl HandleMint for NoMint {
 /// reader is otherwise grammar-agnostic; every fact here is generated from
 /// the model and stamped, never re-derived from a node's shape.
 pub trait ReadModel {
-    /// The model slot a child of a `parent` node is stored under, when its
-    /// name differs from the key the parser gives the child: a field-tagged
-    /// child by its field, a named child without a field by its kind name.
-    /// `None` keeps the parser's key: the slot is named for it, or the model
-    /// has no slot for the child.
-    fn wire_slot(&self, parent: KindId, field: Option<&str>, child: &str) -> Option<&'static str> {
-        let _ = (parent, field, child);
-        None
-    }
-
     /// The gap an extra inside a node of this kind occupies when the node
     /// has no named child to own it, named by the model slot whose position
     /// the gap holds, given the count of anonymous tokens before the extra.
@@ -784,7 +774,6 @@ fn read_slots(
     let mut fields_acc: IndexMap<String, Vec<UntypedNode>> = IndexMap::new();
     let mut children_acc: Vec<UntypedNode> = Vec::new();
     let mut slot_order_acc: Vec<String> = Vec::new();
-    let parent_kind = stamped_kind(&node);
 
     let child_count = node.child_count() as u32;
     for i in 0..child_count {
@@ -840,19 +829,14 @@ fn read_slots(
         };
         match field_name.as_deref() {
             Some(name) => {
-                let slot = model
-                    .wire_slot(parent_kind, Some(name), child.kind())
-                    .unwrap_or(name);
-                slot_order_acc.push(slot.to_string());
-                assign_named_slot(&mut fields_acc, slot, data);
+                slot_order_acc.push(name.to_string());
+                assign_named_slot(&mut fields_acc, name, data);
             }
             None => {
                 if child.is_named() {
-                    let slot = model
-                        .wire_slot(parent_kind, None, child.kind())
-                        .unwrap_or_else(|| child.kind());
-                    slot_order_acc.push(slot.to_string());
-                    assign_named_slot(&mut fields_acc, slot, data);
+                    let key = child.kind();
+                    slot_order_acc.push(key.to_string());
+                    assign_named_slot(&mut fields_acc, key, data);
                 } else {
                     // Anonymous literal token — stays in the legacy children bucket
                     // (numeric kind IDs only after the slot model unification).

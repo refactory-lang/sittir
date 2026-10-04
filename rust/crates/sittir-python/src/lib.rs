@@ -28,7 +28,7 @@ use sittir_core::engine::EngineGrammar;
 use render::{render_transport_parts, RenderRoot, RENDER_MODULE_HASH};
 
 #[cfg(feature = "napi-bindings")]
-const NATIVE_RENDER_TRANSPORT_ABI: u32 = 12;
+const NATIVE_RENDER_TRANSPORT_ABI: u32 = 13;
 
 #[derive(Clone, Copy, Default)]
 pub struct PythonGrammar;
@@ -48,15 +48,6 @@ impl EngineGrammar for PythonGrammar {
 }
 
 impl sittir_core::read_untyped_node::ReadModel for PythonGrammar {
-    fn wire_slot(
-        &self,
-        parent: sittir_core::types::KindId,
-        field: Option<&str>,
-        child: &str,
-    ) -> Option<&'static str> {
-        render::kind_ids::wire_slot(parent, field, child)
-    }
-
     fn inner_gap_key(&self, kind: sittir_core::types::KindId, preceding_tokens: u16) -> Option<&'static str> {
         render::kind_ids::inner_gap_key(kind, preceding_tokens)
     }

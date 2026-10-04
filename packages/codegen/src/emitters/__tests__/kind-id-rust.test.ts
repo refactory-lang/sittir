@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { emitKindIdRust } from '../kind-id-rust.ts';
+import { slotRoutesOf } from '../shared.ts';
 import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
 import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
@@ -25,32 +26,34 @@ async function emittedKindIds(grammar: GrammarName) {
 		if (id === undefined) throw new Error(`no kind entry for ${kind}`);
 		return id;
 	};
-	return { source: emitKindIdRust({ grammar, nodeMap, generatedIdTables }), idOf };
+	return { source: emitKindIdRust({ grammar, nodeMap, generatedIdTables }), idOf, nodeMap };
 }
 
-describe('wire_slot', () => {
+describe('slot routes', () => {
+	const routesOf = (nodeMap: Awaited<ReturnType<typeof emittedKindIds>>['nodeMap'], kind: string) =>
+		slotRoutesOf(nodeMap.nodes.get(kind)!, nodeMap);
 	it('routes an untagged child by its kind to the model slot that stores it', async () => {
-		const { source, idOf } = await emittedKindIds('typescript');
-		expect(source).toContain(
-			"pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'static str> {"
-		);
-		expect(source).toContain(`(${idOf('for_in_statement')}, None, "for_header_lhs") => Some("for_header"),`);
+		const { nodeMap } = await emittedKindIds('typescript');
+		expect(routesOf(nodeMap, 'for_in_statement')).toMatchObject({ for_header_lhs: 'for_header' });
 	}, FULL_PIPELINE_TIMEOUT);
-	it('routes a union slot child by its kind, and no grammar routes one by a field label', async () => {
-		const ts = await emittedKindIds('typescript');
-		const owner = ts.idOf('export_statement_default_declaration');
-		expect(ts.source).toContain(`(${owner}, None, "export_statement_default_declaration_default_kw") => Some("content"),`);
-		expect(ts.source).toContain(`(${owner}, None, "function_declaration") => Some("content"),`);
-		for (const grammar of ['python', 'typescript', 'rust', 'scm', 'regex'] as const) {
-			const { source } = await emittedKindIds(grammar);
-			const table = source.slice(source.indexOf('pub fn wire_slot'), source.indexOf('static SLOT_SEPARATORS'));
-			expect(table, grammar).not.toMatch(/\(\d+, Some\("[a-z_]+"\), _\) => Some/);
+	it('routes each arm of a union slot by its kind', async () => {
+		const { nodeMap } = await emittedKindIds('typescript');
+		expect(routesOf(nodeMap, 'export_statement_default_declaration')).toMatchObject({
+			export_statement_default_declaration_default_kw: 'content',
+			function_declaration: 'content'
+		});
+	}, FULL_PIPELINE_TIMEOUT);
+	it('leaves a child whose key already names its slot unrouted', async () => {
+		const { nodeMap } = await emittedKindIds('typescript');
+		for (const [kind] of nodeMap.nodes) {
+			for (const [key, slot] of Object.entries(routesOf(nodeMap, kind))) expect(key, kind).not.toBe(slot);
 		}
 	}, FULL_PIPELINE_TIMEOUT);
-	it('leaves a child whose key already names its slot to the parser', async () => {
-		const { source } = await emittedKindIds('typescript');
-		const table = source.slice(source.indexOf('pub fn wire_slot'), source.indexOf('static SLOT_SEPARATORS'));
-		expect(table).not.toMatch(/, None, "([a-z_]+)"\) => Some\("\1"\)/);
+	it('gives the reader no routing table', async () => {
+		for (const grammar of ['python', 'typescript', 'rust', 'scm', 'regex'] as const) {
+			const { source } = await emittedKindIds(grammar);
+			expect(source, grammar).not.toContain('pub fn wire_slot');
+		}
 	}, FULL_PIPELINE_TIMEOUT);
 });
 

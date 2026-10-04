@@ -2,7 +2,7 @@ import { PATTERN, SEQ, SYMBOL } from '../../../codegen/src/types/rule-types.ts';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript6';
 import { describe, expect, it } from 'vitest';
-import type { TreeHandle } from '@sittir/common/utils';
+import { modelSlots, type TreeHandle } from '@sittir/common/utils';
 import { AssembledBranch, AssembledPattern, type AssembledNode } from '../../../codegen/src/compiler/model/node-map.ts';
 import type { RenderRule, SimplifiedRule } from '../../../codegen/src/types/rule.ts';
 import { emitWrap } from '../../../codegen/src/__tests__/helpers/emit-wrap.ts';
@@ -54,8 +54,10 @@ async function loadFreshWrapWitnessModule(): Promise<{
 	nodes.set('list_splat', new AssembledBranch('list_splat', simplifiedRule, renderRule));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	const source = emitWrap({ grammar: 'synth', nodeMap: makeNodeMapWith(nodes) });
+	(globalThis as { __sittirModelSlots?: typeof modelSlots }).__sittirModelSlots = modelSlots;
 	const stubbedSource = [
 		'const readUntypedNode = () => { throw new Error("unused"); };',
+		'const modelSlots = globalThis.__sittirModelSlots;',
 		'const currentHandle = () => undefined;',
 		'const rebuilt = (node, handle, build) => build();',
 		'const renderText = () => "";',

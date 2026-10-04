@@ -3,6 +3,7 @@
 
 import {
 	readUntypedNode,
+	modelSlots,
 	restItems,
 	isNode,
 	isStub,
@@ -365,17 +366,6 @@ function _wrapKindNameOf(entry: unknown): string | undefined {
 	return typeof raw === 'string' ? raw : undefined;
 }
 
-// The model is the wire contract: a `_<key>` the model has no slot for
-// (a reference to a literal — the grammar-agnostic reader still emits it)
-// never enters a wrapped node.
-function _keepModelledSlots<T extends object>(data: T, keys: readonly string[]): T {
-	const out: Record<string, unknown> = { ...(data as Record<string, unknown>) };
-	for (const key of Object.keys(out)) {
-		if (key.charCodeAt(0) === 95 /* `_` */ && !keys.includes(key)) delete out[key];
-	}
-	return out as T;
-}
-
 function _matchesAllowedWrapKind(kind: string, allowedKinds: readonly string[]): boolean {
 	if (allowedKinds.includes(kind)) return true;
 	const stripped = kind.startsWith('_') ? kind.slice(1) : undefined;
@@ -503,8 +493,9 @@ function splitElidedWrapSlot<T>(
 	return positions;
 }
 
+const _ROUTES_Pattern: Readonly<Record<string, string>> = { _alternation: '_content', _term: '_content' };
 export function wrapPattern(data: T.Pattern, tree: TreeHandle): T.Pattern.Parsed {
-	data = _keepModelledSlots(data, ['_content']);
+	data = modelSlots(data, ['_content'], _ROUTES_Pattern);
 	const handle = currentHandle();
 	const node = {
 		...data,
@@ -537,7 +528,7 @@ export function wrapPattern(data: T.Pattern, tree: TreeHandle): T.Pattern.Parsed
 }
 
 export function wrapAlternation(data: T.Alternation, tree: TreeHandle): T.Alternation.Parsed {
-	data = _keepModelledSlots(data, ['_terms']);
+	data = modelSlots(data, ['_terms']);
 	const handle = currentHandle();
 	const _order = (data as _UntypedNode).$slotOrder?.slice();
 	const node = {
@@ -564,7 +555,7 @@ export function wrapAlternation(data: T.Alternation, tree: TreeHandle): T.Altern
 }
 
 export function wrapTerm(data: T.Term, tree: TreeHandle): T.Term.Parsed {
-	data = _keepModelledSlots(data, ['_term_group']);
+	data = modelSlots(data, ['_term_group']);
 	const handle = currentHandle();
 	const node = {
 		...data,
@@ -596,8 +587,12 @@ export function wrapTerm(data: T.Term, tree: TreeHandle): T.Term.Parsed {
 	return node as unknown as T.Term.Parsed;
 }
 
+const _ROUTES_LookaroundAssertion: Readonly<Record<string, string>> = {
+	_lookahead_assertion: '_content',
+	_lookbehind_assertion: '_content'
+};
 export function wrapLookaroundAssertion(data: T.LookaroundAssertion, tree: TreeHandle): T.LookaroundAssertion.Parsed {
-	data = _keepModelledSlots(data, ['_content']);
+	data = modelSlots(data, ['_content'], _ROUTES_LookaroundAssertion);
 	const handle = currentHandle();
 	const node = {
 		...data,
@@ -629,8 +624,9 @@ export function wrapLookaroundAssertion(data: T.LookaroundAssertion, tree: TreeH
 	return node as unknown as T.LookaroundAssertion.Parsed;
 }
 
+const _ROUTES_LookaheadAssertion: Readonly<Record<string, string>> = { _eq: '_content', _bang: '_content' };
 export function wrapLookaheadAssertion(data: T.LookaheadAssertion, tree: TreeHandle): T.LookaheadAssertion.Parsed {
-	data = _keepModelledSlots(data, ['_content', '_pattern']);
+	data = modelSlots(data, ['_content', '_pattern'], _ROUTES_LookaheadAssertion);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -690,8 +686,9 @@ export function wrapLookaheadAssertion(data: T.LookaheadAssertion, tree: TreeHan
 	return node as unknown as T.LookaheadAssertion.Parsed;
 }
 
+const _ROUTES_LookbehindAssertion: Readonly<Record<string, string>> = { _eq: '_content', _bang: '_content' };
 export function wrapLookbehindAssertion(data: T.LookbehindAssertion, tree: TreeHandle): T.LookbehindAssertion.Parsed {
-	data = _keepModelledSlots(data, ['_content', '_pattern']);
+	data = modelSlots(data, ['_content', '_pattern'], _ROUTES_LookbehindAssertion);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -752,7 +749,7 @@ export function wrapLookbehindAssertion(data: T.LookbehindAssertion, tree: TreeH
 }
 
 export function wrapCharacterClass(data: T.CharacterClass, tree: TreeHandle): T.CharacterClass.Parsed {
-	data = _keepModelledSlots(data, ['_negation', '_leading', '_class_atoms', '_trailing']);
+	data = modelSlots(data, ['_negation', '_leading', '_class_atoms', '_trailing']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -867,7 +864,7 @@ export function wrapCharacterClass(data: T.CharacterClass, tree: TreeHandle): T.
 }
 
 export function wrapPosixCharacterClass(data: T.PosixCharacterClass, tree: TreeHandle): T.PosixCharacterClass.Parsed {
-	data = _keepModelledSlots(data, ['_posix_class_name']);
+	data = modelSlots(data, ['_posix_class_name']);
 	const handle = currentHandle();
 	const node = {
 		...data,
@@ -900,7 +897,7 @@ export function wrapPosixCharacterClass(data: T.PosixCharacterClass, tree: TreeH
 }
 
 export function wrapClassRange(data: T.ClassRange, tree: TreeHandle): T.ClassRange.Parsed {
-	data = _keepModelledSlots(data, ['_start', '_end']);
+	data = modelSlots(data, ['_start', '_end']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -972,7 +969,7 @@ export function wrapAnonymousCapturingGroup(
 	data: T.AnonymousCapturingGroup,
 	tree: TreeHandle
 ): T.AnonymousCapturingGroup.Parsed {
-	data = _keepModelledSlots(data, ['_pattern']);
+	data = modelSlots(data, ['_pattern']);
 	const handle = currentHandle();
 	const node = {
 		...data,
@@ -1004,8 +1001,12 @@ export function wrapAnonymousCapturingGroup(
 	return node as unknown as T.AnonymousCapturingGroup.Parsed;
 }
 
+const _ROUTES_NamedCapturingGroup: Readonly<Record<string, string>> = {
+	_lparen_qmark_lt: '_content',
+	_lparen_qmarkP_lt: '_content'
+};
 export function wrapNamedCapturingGroup(data: T.NamedCapturingGroup, tree: TreeHandle): T.NamedCapturingGroup.Parsed {
-	data = _keepModelledSlots(data, ['_content', '_group_name', '_pattern']);
+	data = modelSlots(data, ['_content', '_group_name', '_pattern'], _ROUTES_NamedCapturingGroup);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -1080,7 +1081,7 @@ export function wrapNamedCapturingGroup(data: T.NamedCapturingGroup, tree: TreeH
 }
 
 export function wrapNonCapturingGroup(data: T.NonCapturingGroup, tree: TreeHandle): T.NonCapturingGroup.Parsed {
-	data = _keepModelledSlots(data, ['_pattern']);
+	data = modelSlots(data, ['_pattern']);
 	const handle = currentHandle();
 	const node = {
 		...data,
@@ -1117,7 +1118,7 @@ export function wrapInlineFlagsGroup(
 	tree: TreeHandle
 ): T.InlineFlagsGroup.Parsed {
 	if (typeof data === 'number') return data as unknown as T.InlineFlagsGroup.Parsed;
-	const node = _keepModelledSlots(data, [
+	const node = modelSlots(data, [
 		'_inline_flags_group_enable',
 		'_inline_flags_group_toggle',
 		'_inline_flags_group_disable'
@@ -1151,8 +1152,12 @@ export function wrapInlineFlagsGroup(
 	);
 }
 
+const _ROUTES_CountQuantifier: Readonly<Record<string, string>> = {
+	_count_quantifier_arm: '_content',
+	_decimal_digits: '_content'
+};
 export function wrapCountQuantifier(data: T.CountQuantifier, tree: TreeHandle): T.CountQuantifier.Parsed {
-	data = _keepModelledSlots(data, ['_content', '_lazy']);
+	data = modelSlots(data, ['_content', '_lazy'], _ROUTES_CountQuantifier);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -1211,7 +1216,7 @@ export function wrapCountQuantifier(data: T.CountQuantifier, tree: TreeHandle): 
 }
 
 export function wrapBackreferenceEscape(data: T.BackreferenceEscape, tree: TreeHandle): T.BackreferenceEscape.Parsed {
-	data = _keepModelledSlots(data, ['_group_name']);
+	data = modelSlots(data, ['_group_name']);
 	const handle = currentHandle();
 	const node = {
 		...data,
@@ -1247,7 +1252,7 @@ export function wrapNamedGroupBackreference(
 	data: T.NamedGroupBackreference,
 	tree: TreeHandle
 ): T.NamedGroupBackreference.Parsed {
-	data = _keepModelledSlots(data, ['_group_name']);
+	data = modelSlots(data, ['_group_name']);
 	const handle = currentHandle();
 	const node = {
 		...data,
@@ -1279,11 +1284,16 @@ export function wrapNamedGroupBackreference(
 	return node as unknown as T.NamedGroupBackreference.Parsed;
 }
 
+const _ROUTES_CharacterClassEscape: Readonly<Record<string, string>> = {
+	_character_class_escape_text1: '_content',
+	_character_class_escape_arm: '_content',
+	_unicode_character_escape: '_content'
+};
 export function wrapCharacterClassEscape(
 	data: T.CharacterClassEscape,
 	tree: TreeHandle
 ): T.CharacterClassEscape.Parsed {
-	data = _keepModelledSlots(data, ['_content']);
+	data = modelSlots(data, ['_content'], _ROUTES_CharacterClassEscape);
 	const handle = currentHandle();
 	const node = {
 		...data,
@@ -1322,7 +1332,7 @@ export function wrapUnicodePropertyValueExpression(
 	data: T.UnicodePropertyValueExpression,
 	tree: TreeHandle
 ): T.UnicodePropertyValueExpression.Parsed {
-	data = _keepModelledSlots(data, ['_unicode_property_value_expression_group', '_unicode_property_value']);
+	data = modelSlots(data, ['_unicode_property_value_expression_group', '_unicode_property_value']);
 	const handle = currentHandle();
 	const node = {
 		...data,
@@ -1384,7 +1394,7 @@ export function wrapUnicodePropertyValueExpression(
 }
 
 export function wrapIdentityEscape(data: T.IdentityEscape, tree: TreeHandle): T.IdentityEscape.Parsed {
-	data = _keepModelledSlots(data, ['_content']);
+	data = modelSlots(data, ['_content']);
 	data = _projectLexed(data, TOKEN_INTERIORS['identity_escape'], 'identity_escape');
 	const handle = currentHandle();
 	const node = {
@@ -1417,8 +1427,32 @@ export function wrapIdentityEscape(data: T.IdentityEscape, tree: TreeHandle): T.
 	return node as unknown as T.IdentityEscape.Parsed;
 }
 
+const _ROUTES_TermGroup: Readonly<Record<string, string>> = {
+	_start_assertion: '_content',
+	_end_assertion: '_content',
+	_boundary_assertion: '_content',
+	_non_boundary_assertion: '_content',
+	_lookaround_assertion: '_content',
+	_pattern_character: '_content',
+	_character_class: '_content',
+	_posix_character_class: '_content',
+	_any_character: '_content',
+	_decimal_escape: '_content',
+	_character_class_escape: '_content',
+	_control_escape: '_content',
+	_control_letter_escape: '_content',
+	_identity_escape: '_content',
+	_backreference_escape: '_content',
+	_named_group_backreference: '_content',
+	_anonymous_capturing_group: '_content',
+	_named_capturing_group: '_content',
+	_non_capturing_group: '_content',
+	_inline_flags_group_enable: '_content',
+	_inline_flags_group_toggle: '_content',
+	_inline_flags_group_disable: '_content'
+};
 export function wrapTermGroup(data: T.TermGroup, tree: TreeHandle): T.TermGroup.Parsed {
-	data = _keepModelledSlots(data, ['_content', '_quantifier']);
+	data = modelSlots(data, ['_content', '_quantifier'], _ROUTES_TermGroup);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -1538,7 +1572,7 @@ export function wrapCountQuantifierGroup(
 	data: T.CountQuantifierGroup,
 	tree: TreeHandle
 ): T.CountQuantifierGroup.Parsed {
-	data = _keepModelledSlots(data, ['_decimal_digits']);
+	data = modelSlots(data, ['_decimal_digits']);
 	const handle = currentHandle();
 	const node = {
 		...data,
@@ -1571,7 +1605,7 @@ export function wrapCountQuantifierGroup(
 }
 
 export function wrapCountQuantifierArm(data: T.CountQuantifierArm, tree: TreeHandle): T.CountQuantifierArm.Parsed {
-	data = _keepModelledSlots(data, ['_decimal_digits', '_count_quantifier_group']);
+	data = modelSlots(data, ['_decimal_digits', '_count_quantifier_group']);
 	const handle = currentHandle();
 	const node = {
 		...data,
@@ -1621,7 +1655,7 @@ export function wrapCharacterClassEscapeArm(
 	data: T.CharacterClassEscapeArm,
 	tree: TreeHandle
 ): T.CharacterClassEscapeArm.Parsed {
-	data = _keepModelledSlots(data, ['_character_class_escape_text2', '_unicode_property_value_expression']);
+	data = modelSlots(data, ['_character_class_escape_text2', '_unicode_property_value_expression']);
 	const handle = currentHandle();
 	const node = {
 		...data,
@@ -1683,7 +1717,7 @@ export function wrapUnicodePropertyValueExpressionGroup(
 	data: T.UnicodePropertyValueExpressionGroup,
 	tree: TreeHandle
 ): T.UnicodePropertyValueExpressionGroup.Parsed {
-	data = _keepModelledSlots(data, ['_unicode_property_name']);
+	data = modelSlots(data, ['_unicode_property_name']);
 	const handle = currentHandle();
 	const node = {
 		...data,
@@ -1721,7 +1755,7 @@ export function wrapInlineFlagsGroupEnable(
 	data: T.InlineFlagsGroupEnable,
 	tree: TreeHandle
 ): T.InlineFlagsGroupEnable.Parsed {
-	data = _keepModelledSlots(data, ['_enabled', '_pattern']);
+	data = modelSlots(data, ['_enabled', '_pattern']);
 	const handle = currentHandle();
 	const node = {
 		...data,
@@ -1771,7 +1805,7 @@ export function wrapInlineFlagsGroupToggle(
 	data: T.InlineFlagsGroupToggle,
 	tree: TreeHandle
 ): T.InlineFlagsGroupToggle.Parsed {
-	data = _keepModelledSlots(data, ['_enabled', '_disabled', '_pattern']);
+	data = modelSlots(data, ['_enabled', '_disabled', '_pattern']);
 	const handle = currentHandle();
 	const node = {
 		...data,
@@ -1835,7 +1869,7 @@ export function wrapInlineFlagsGroupDisable(
 	data: T.InlineFlagsGroupDisable,
 	tree: TreeHandle
 ): T.InlineFlagsGroupDisable.Parsed {
-	data = _keepModelledSlots(data, ['_disabled', '_pattern']);
+	data = modelSlots(data, ['_disabled', '_pattern']);
 	const handle = currentHandle();
 	const node = {
 		...data,
@@ -1882,7 +1916,7 @@ export function wrapInlineFlagsGroupDisable(
 }
 
 export function wrapLazy(data: T.Lazy, tree: TreeHandle): T.Lazy.Parsed {
-	data = _keepModelledSlots(data, ['_content']);
+	data = modelSlots(data, ['_content']);
 	const handle = currentHandle();
 	if (_isReadTextLeaf(data)) {
 		const node = {
@@ -1928,7 +1962,7 @@ export function wrapLazy(data: T.Lazy, tree: TreeHandle): T.Lazy.Parsed {
 }
 
 export function wrapUnicodePropertyName(data: T.UnicodePropertyName, tree: TreeHandle): T.UnicodePropertyName.Parsed {
-	data = _keepModelledSlots(data, ['_content']);
+	data = modelSlots(data, ['_content']);
 	const handle = currentHandle();
 	const node = {
 		...data,

@@ -1087,6 +1087,30 @@ export function wireRoutesOf(slot: AssembledNonterminal, nodeMap: NodeMap): Wire
 	return { fields, kinds: kindNames.length > 0 ? expandToConcreteParseKinds(kindNames, nodeMap) : [] };
 }
 
+export function slotRoutesOf(
+	node: { readonly kind: string; readonly slots: readonly AssembledNonterminal[] },
+	nodeMap: NodeMap
+): Readonly<Record<string, string>> {
+	const claims = new Map<string, string>();
+	const claim = (key: string, slot: string): void => {
+		const claimed = claims.get(key);
+		if (claimed !== undefined && claimed !== slot) {
+			throw new Error(
+				`slot routes: '${node.kind}' receives children keyed '${key}' for two slots ('${claimed}', '${slot}'); the wrap cannot route them by field or kind alone`
+			);
+		}
+		claims.set(key, slot);
+	};
+	for (const slot of node.slots) {
+		if (!slot.isUnnamed) claim(slot.storageName, slot.storageName);
+		const routes = wireRoutesOf(slot, nodeMap);
+		for (const key of [...routes.fields, ...routes.kinds]) claim(key, slot.storageName);
+	}
+	const routes: Record<string, string> = {};
+	for (const [key, slot] of claims) if (key !== slot) routes[key] = slot;
+	return routes;
+}
+
 export function classifyFactoryEmission(
 	kind: string,
 	node: AssembledNode,
