@@ -202,7 +202,7 @@ describe('where', () => {
 		expect(children.map((fn) => firstLine(SOURCE, fn))).toEqual(['def a(x):', 'def e():']);
 	});
 
-	it('moves ahead of an opaque filter without changing the items', () => {
+	it('an index-free filter gives the same items before or after ofType and where', () => {
 		const keep = (fn: { name(): unknown }) => textOf(SOURCE, fn.name()) !== 'e';
 		const before = Array.from(
 			descendants()
@@ -223,6 +223,31 @@ describe('where', () => {
 				.ofType(K.FunctionDefinition)
 		].map(occurrence);
 		expect(typedLate).toEqual([...descendants().ofType(K.FunctionDefinition)].map(occurrence));
+	});
+
+	it('never moves ofType or where past a callback that takes an index', () => {
+		expect(
+			Array.from(
+				descendants()
+					.filter((_, i) => i === 0)
+					.ofType(K.FunctionDefinition)
+			).map((fn) => firstLine(SOURCE, fn))
+		).toEqual(['def a(x):']);
+		expect(
+			Array.from(
+				descendants()
+					.filter((_, i) => i === 1)
+					.ofType(K.FunctionDefinition)
+			)
+		).toEqual([]);
+		expect(
+			Array.from(
+				descendants()
+					.filter((_, i) => i === 1)
+					.ofType(K.FunctionDefinition)
+					.where((c) => c.name.match(/./))
+			)
+		).toEqual([]);
 	});
 
 	it('refuses an unknown slot, a call, a plain predicate and a flagged pattern at the call', () => {
@@ -271,6 +296,16 @@ describe('the view verbs', () => {
 		).toThrow(/empty view/);
 	});
 
+	it('counts slice and at bounds as an array does: truncated, NaN as zero', () => {
+		const all = Array.from(names());
+		expect(Array.from(names().slice(0, 2.5))).toEqual(all.slice(0, 2.5));
+		expect(Array.from(names().slice(NaN))).toEqual(all.slice(NaN));
+		expect(Array.from(names().slice(1.9, -1.5))).toEqual(all.slice(1.9, -1.5));
+		expect(Array.from(descendants().ofType(K.FunctionDefinition).slice(0, 2.5)).length).toBe(2);
+		expect(names().at(1.5)).toBe(all.at(1.5));
+		expect(names().at(NaN)).toBe(all.at(NaN));
+	});
+
 	it('slices the declarative prefix before hydrating', () => {
 		expect(
 			Array.from(descendants().ofType(K.FunctionDefinition).slice(1, 3)).map((fn) => firstLine(SOURCE, fn))
@@ -301,10 +336,19 @@ describe('refusals', () => {
 		expect(() => py.query(built as never)).toThrow(/\$commit\(\)/);
 	});
 
-	it('a $with draft holds no tree: engine.query refuses it', () => {
+	it('a $with draft has no $query, and engine.query refuses it', () => {
 		const fn = descendants().ofType(K.FunctionDefinition).find()!;
 		const draft = fn.$with.name(py.build.identifier('z'));
+		expect((draft as { $query?: unknown }).$query).toBeUndefined();
 		expect(() => py.query(draft as never)).toThrow(/\$commit\(\)/);
+	});
+
+	it('a parsed leaf is plain data with no $query; engine.query gives it an empty facet', () => {
+		const leaf = descendants().ofType(K.Identifier).find()!;
+		expect('$query' in leaf).toBe(false);
+		expect(Object.keys(py.query(leaf))).toEqual(['$children', '$descendants']);
+		expect(Array.from(py.query(leaf).$descendants)).toEqual([]);
+		expect(Array.from(py.query(leaf).$children)).toEqual([]);
 	});
 
 	it("a disposed engine's nodes refuse $query", async () => {

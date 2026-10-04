@@ -634,24 +634,6 @@
   },
   {
     "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "ownerKind": "import_from_statement",
-    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [import_list, parenthesized_import_list] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import]",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "wildcard_import"
-      ]
-    },
-    "location": "import_from_statement"
-  },
-  {
-    "source": "grammar",
     "grammar": "regex",
     "backend": "native",
     "scope": "grammar",
@@ -3872,42 +3854,6 @@
       "ruleId": "rule:public_field_definition:root"
     },
     "location": "public_field_definition"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "ownerKind": "export_statement_default_declaration",
-    "message": "[collect-slots] kind 'export_statement_default_declaration': choice rule:export_statement_default_declaration:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_declaration_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration]",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "declaration"
-      ]
-    },
-    "location": "export_statement_default_declaration"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "ownerKind": "export_statement_default_declaration_default_kw",
-    "message": "[collect-slots] kind 'export_statement_default_declaration_default_kw': choice rule:export_statement_default_declaration_default_kw:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_declaration_default_kw_value] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration]",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "declaration"
-      ]
-    },
-    "location": "export_statement_default_declaration_default_kw"
   },
   {
     "source": "validator",

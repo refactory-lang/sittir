@@ -532,7 +532,7 @@ export function wrapPattern(data: T.Pattern, tree: TreeHandle): T.Pattern.Parsed
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.Pattern.Parsed;
@@ -560,7 +560,7 @@ export function wrapAlternation(data: T.Alternation, tree: TreeHandle): T.Altern
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.Alternation.Parsed;
@@ -594,7 +594,7 @@ export function wrapTerm(data: T.Term, tree: TreeHandle): T.Term.Parsed {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.Term.Parsed;
@@ -628,7 +628,7 @@ export function wrapLookaroundAssertion(data: T.LookaroundAssertion, tree: TreeH
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.LookaroundAssertion.Parsed;
@@ -646,7 +646,7 @@ export function wrapLookaheadAssertion(data: T.LookaheadAssertion, tree: TreeHan
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 			},
-			$query: handle && (() => queryOf(handle, node)),
+			$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 			$engine: handle && (() => handle.current)
 		};
 		return node as unknown as T.LookaheadAssertion.Parsed;
@@ -691,7 +691,7 @@ export function wrapLookaheadAssertion(data: T.LookaheadAssertion, tree: TreeHan
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.LookaheadAssertion.Parsed;
@@ -709,7 +709,7 @@ export function wrapLookbehindAssertion(data: T.LookbehindAssertion, tree: TreeH
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 			},
-			$query: handle && (() => queryOf(handle, node)),
+			$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 			$engine: handle && (() => handle.current)
 		};
 		return node as unknown as T.LookbehindAssertion.Parsed;
@@ -754,7 +754,7 @@ export function wrapLookbehindAssertion(data: T.LookbehindAssertion, tree: TreeH
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.LookbehindAssertion.Parsed;
@@ -773,7 +773,7 @@ export function wrapCharacterClass(data: T.CharacterClass, tree: TreeHandle): T.
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
 				inner: (...items: unknown[]) => triviaInner(node, handle, items)
 			},
-			$query: handle && (() => queryOf(handle, node)),
+			$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 			$engine: handle && (() => handle.current)
 		};
 		return node as unknown as T.CharacterClass.Parsed;
@@ -871,7 +871,7 @@ export function wrapCharacterClass(data: T.CharacterClass, tree: TreeHandle): T.
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.CharacterClass.Parsed;
@@ -905,7 +905,7 @@ export function wrapPosixCharacterClass(data: T.PosixCharacterClass, tree: TreeH
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.PosixCharacterClass.Parsed;
@@ -923,7 +923,7 @@ export function wrapClassRange(data: T.ClassRange, tree: TreeHandle): T.ClassRan
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 			},
-			$query: handle && (() => queryOf(handle, node)),
+			$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 			$engine: handle && (() => handle.current)
 		};
 		return node as unknown as T.ClassRange.Parsed;
@@ -976,7 +976,7 @@ export function wrapClassRange(data: T.ClassRange, tree: TreeHandle): T.ClassRan
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.ClassRange.Parsed;
@@ -1013,7 +1013,7 @@ export function wrapAnonymousCapturingGroup(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.AnonymousCapturingGroup.Parsed;
@@ -1031,7 +1031,7 @@ export function wrapNamedCapturingGroup(data: T.NamedCapturingGroup, tree: TreeH
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 			},
-			$query: handle && (() => queryOf(handle, node)),
+			$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 			$engine: handle && (() => handle.current)
 		};
 		return node as unknown as T.NamedCapturingGroup.Parsed;
@@ -1090,7 +1090,7 @@ export function wrapNamedCapturingGroup(data: T.NamedCapturingGroup, tree: TreeH
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.NamedCapturingGroup.Parsed;
@@ -1124,7 +1124,7 @@ export function wrapNonCapturingGroup(data: T.NonCapturingGroup, tree: TreeHandl
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.NonCapturingGroup.Parsed;
@@ -1181,7 +1181,7 @@ export function wrapCountQuantifier(data: T.CountQuantifier, tree: TreeHandle): 
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 			},
-			$query: handle && (() => queryOf(handle, node)),
+			$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 			$engine: handle && (() => handle.current)
 		};
 		return node as unknown as T.CountQuantifier.Parsed;
@@ -1224,7 +1224,7 @@ export function wrapCountQuantifier(data: T.CountQuantifier, tree: TreeHandle): 
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.CountQuantifier.Parsed;
@@ -1258,7 +1258,7 @@ export function wrapBackreferenceEscape(data: T.BackreferenceEscape, tree: TreeH
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.BackreferenceEscape.Parsed;
@@ -1295,7 +1295,7 @@ export function wrapNamedGroupBackreference(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.NamedGroupBackreference.Parsed;
@@ -1335,7 +1335,7 @@ export function wrapCharacterClassEscape(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.CharacterClassEscape.Parsed;
@@ -1401,7 +1401,7 @@ export function wrapUnicodePropertyValueExpression(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.UnicodePropertyValueExpression.Parsed;
@@ -1436,7 +1436,7 @@ export function wrapIdentityEscape(data: T.IdentityEscape, tree: TreeHandle): T.
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.IdentityEscape.Parsed;
@@ -1454,7 +1454,7 @@ export function wrapTermGroup(data: T.TermGroup, tree: TreeHandle): T.TermGroup.
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 			},
-			$query: handle && (() => queryOf(handle, node)),
+			$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 			$engine: handle && (() => handle.current)
 		};
 		return node as unknown as T.TermGroup.Parsed;
@@ -1555,7 +1555,7 @@ export function wrapTermGroup(data: T.TermGroup, tree: TreeHandle): T.TermGroup.
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.TermGroup.Parsed;
@@ -1592,7 +1592,7 @@ export function wrapCountQuantifierGroup(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.CountQuantifierGroup.Parsed;
@@ -1640,7 +1640,7 @@ export function wrapCountQuantifierArm(data: T.CountQuantifierArm, tree: TreeHan
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.CountQuantifierArm.Parsed;
@@ -1703,7 +1703,7 @@ export function wrapCharacterClassEscapeArm(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.CharacterClassEscapeArm.Parsed;
@@ -1742,7 +1742,7 @@ export function wrapUnicodePropertyValueExpressionGroup(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.UnicodePropertyValueExpressionGroup.Parsed;
@@ -1793,7 +1793,7 @@ export function wrapInlineFlagsGroupEnable(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.InlineFlagsGroupEnable.Parsed;
@@ -1858,7 +1858,7 @@ export function wrapInlineFlagsGroupToggle(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.InlineFlagsGroupToggle.Parsed;
@@ -1909,7 +1909,7 @@ export function wrapInlineFlagsGroupDisable(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.InlineFlagsGroupDisable.Parsed;
@@ -1927,7 +1927,7 @@ export function wrapLazy(data: T.Lazy, tree: TreeHandle): T.Lazy.Parsed {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 			},
-			$query: handle && (() => queryOf(handle, node)),
+			$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 			$engine: handle && (() => handle.current)
 		};
 		return node as unknown as T.Lazy.Parsed;
@@ -1957,7 +1957,7 @@ export function wrapLazy(data: T.Lazy, tree: TreeHandle): T.Lazy.Parsed {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.Lazy.Parsed;
@@ -1991,7 +1991,7 @@ export function wrapUnicodePropertyName(data: T.UnicodePropertyName, tree: TreeH
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		},
-		$query: handle && (() => queryOf(handle, node)),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.UnicodePropertyName.Parsed;

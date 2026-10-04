@@ -11482,10 +11482,16 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "export_statement_default_declaration_default_kw",
-            "declaration"
+            "declaration",
+            "export_statement_default_declaration_default_kw"
           ],
           "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "declaration",
+              "parseKind": "declaration"
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -11497,12 +11503,6 @@
                 "mount": "defaultKw",
                 "seated": true
               }
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "declaration",
-              "parseKind": "declaration"
             }
           ]
         }
@@ -11534,10 +11534,16 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "export_statement_default_declaration_default_kw_value",
-            "declaration"
+            "declaration",
+            "export_statement_default_declaration_default_kw_value"
           ],
           "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "declaration",
+              "parseKind": "declaration"
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -11549,12 +11555,6 @@
                 "mount": "value",
                 "seated": true
               }
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "declaration",
-              "parseKind": "declaration"
             }
           ]
         }

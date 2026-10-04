@@ -52,7 +52,9 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 			? ['      innerAt: (gap: string, ...items: unknown[]) => triviaInnerAt(node, handle, gap, items),']
 			: []),
 		'    },',
-		...(spec.parsed ? ['    $query: handle && (() => queryOf(handle, node)),'] : []),
+		...(spec.parsed
+			? ['    $query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,']
+			: []),
 		'    $engine: handle && (() => handle.current)'
 	);
 	return lines;

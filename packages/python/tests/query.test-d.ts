@@ -52,6 +52,10 @@ export function narrowing(): void {
 	>();
 	const guarded = descendants.filter((node): node is T.Call.Parsed => node.$type === engine.kinds.Call).find();
 	expectTrue<Equals<typeof guarded, T.Call.Parsed | undefined>>();
+	const leaf = descendants.ofType(engine.kinds.Identifier).find()!;
+	// @ts-expect-error a parsed leaf has no $query member
+	leaf.$query();
+	expectTrue<Equals<ItemOf<ReturnType<typeof engine.query<typeof leaf>>['$descendants']>, never>>();
 }
 
 export function onlyParsedNodesQuery(): void {

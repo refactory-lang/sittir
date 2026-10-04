@@ -140,8 +140,6 @@ export function splitPlan(steps: readonly Step[]): {
 	const late: Step[] = [];
 	for (const step of steps) {
 		if (late.length === 0 && isDeclarative(step)) early.push(step);
-		else if ((step.op === 'ofType' || step.op === 'where') && late.every((held) => held.op === 'filter'))
-			early.push(step);
 		else late.push(step);
 	}
 	return { early, late };
@@ -180,8 +178,12 @@ class View<T> implements Iterable<T> {
 		return this.#with({ op: 'flatMap', fn: fn as (node: unknown, index: number) => unknown });
 	}
 
-	slice(start = 0, end?: number): View<T> {
-		return this.#with({ op: 'slice', start, end });
+	slice(start?: number, end?: number): View<T> {
+		return this.#with({
+			op: 'slice',
+			start: toIntegerOrInfinity(start),
+			end: end === undefined ? undefined : toIntegerOrInfinity(end)
+		});
 	}
 
 	ofType(kind: number): View<T> {
@@ -322,13 +324,18 @@ class View<T> implements Iterable<T> {
 		for (const node of this) fn(node, index++);
 	}
 
-	at(index: number): T | undefined {
-		if (!Number.isInteger(index)) refuse('query: at takes an integer');
+	at(at: number): T | undefined {
+		const index = toIntegerOrInfinity(at);
 		if (index < 0) return [...this].at(index);
 		let position = 0;
 		for (const node of this) if (position++ === index) return node;
 		return undefined;
 	}
+}
+
+function toIntegerOrInfinity(value: number | undefined): number {
+	const number = Number(value);
+	return Number.isNaN(number) ? 0 : Math.trunc(number);
 }
 
 function entryOfItem(item: unknown): Entry {

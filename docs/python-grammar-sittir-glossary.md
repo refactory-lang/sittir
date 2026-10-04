@@ -580,15 +580,13 @@ beneath it.
 ### `import_from_statement` (`packages/python/grammar.sittir.ts:196`)
 
 ```text
-				// import_from_statement: 1 field(s)
-				// Path-scoped to choice arm 0 (the bare `$.wildcard_import` symbol).
-				// The previous flat `3: field('wildcard_import')` wrapped the WHOLE
-				// position-3 choice, so in the parenthesized arm
-				// (`seq('(', $._import_list, ')')`) the field landed on the anonymous
-				// '(' / ',' / ')' tokens (the named imports inside `_import_list`
-				// already carry their own field('name')) — the wildcard_import slot
-				// then filtered those out and threw "repeated slot 'wildcard_import'
-				// requires at least one value" for `from a import (b, c)`.
+				// import_from_statement: the position-3 choice is the bare
+				// `$.wildcard_import` symbol, `_import_list` and
+				// `_parenthesized_import_list`. The wildcard arm carries no field:
+				// the three arms form one union slot routed by kind, so the parser
+				// and storage agree. Only the parenthesized arm is aliased (path
+				// `3/2`), so its `(`, `)` and the list inside read as one
+				// `parenthesized_import_list` child.
 ```
 
 ### `splat_type` (`packages/python/grammar.sittir.ts:227`)

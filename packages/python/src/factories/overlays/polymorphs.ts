@@ -4,6 +4,7 @@ import * as F from '../raw.js';
 import * as C from '../coerce.js';
 import { bundle } from '@sittir/common/utils';
 import type { ArgsOf, OmitEach, OptionsArg } from '@sittir/types';
+import { TSKindId } from '../../types.js';
 import { isGroupConfig } from '@sittir/common/utils';
 import type * as T from '../../types.js';
 export * from './refines.js';
@@ -71,6 +72,18 @@ export const futureImportStatement = Object.freeze({
 	};
 };
 
+const importFromStatement$wildcardImport =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+const importFromStatement$wildcardImport$strict = importFromStatement$wildcardImport(
+	F.buildImportFromStatement,
+	TSKindId.WildcardImport
+);
+const importFromStatement$wildcardImport$coerce = importFromStatement$wildcardImport(
+	C.coerceToImportFromStatement,
+	TSKindId.WildcardImport
+);
 const importFromStatement$importList =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -104,6 +117,10 @@ const importFromStatement$parenthesizedImportList$coerce = importFromStatement$p
 );
 export const importFromStatement = Object.freeze({
 	...B.importFromStatement,
+	wildcardImport: bundle(importFromStatement$wildcardImport$strict, importFromStatement$wildcardImport$coerce, {
+		key: 'importFromStatement.wildcardImport',
+		max: 2
+	}),
 	importList: bundle(importFromStatement$importList$strict, importFromStatement$importList$coerce, {
 		key: 'importFromStatement.importList',
 		max: 2
@@ -114,6 +131,16 @@ export const importFromStatement = Object.freeze({
 		{ key: 'importFromStatement.parenthesizedImportList', max: 2 }
 	)
 }) as unknown as typeof B.importFromStatement & {
+	wildcardImport: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildImportFromStatement>[0], 'content'>,
+			options?: OptionsArg<typeof F.buildImportFromStatement>
+		) => ReturnType<typeof F.buildImportFromStatement>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToImportFromStatement>[0], 'content'>,
+			options?: OptionsArg<typeof C.coerceToImportFromStatement>
+		) => ReturnType<typeof C.coerceToImportFromStatement>;
+	};
 	importList: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildImportFromStatement>[0], 'content'> & {

@@ -83,7 +83,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	133: [['content', { fields: [], kinds: ['import_list', 'parenthesized_import_list'] }]],
 	134: [
 		['moduleName', { fields: ['module_name'], kinds: [] }],
-		['content', { fields: ['wildcard_import'], kinds: ['import_list', 'parenthesized_import_list'] }]
+		['content', { fields: [], kinds: ['wildcard_import', 'import_list', 'parenthesized_import_list'] }]
 	],
 	135: [['names', { fields: ['name'], kinds: [] }]],
 	136: [

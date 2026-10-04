@@ -1275,6 +1275,7 @@ export type {
 	BuildSurface,
 	Engine,
 	EngineDiagnostics,
+	FacetOf,
 	EngineIdentity,
 	CreateEngineOptions,
 	EngineOptions,

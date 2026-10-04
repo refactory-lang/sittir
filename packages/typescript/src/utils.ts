@@ -1053,7 +1053,29 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	422: [
 		['decorators', { fields: ['decorator'], kinds: [] }],
-		['content', { fields: ['declaration'], kinds: ['export_statement_default_declaration_default_kw'] }]
+		[
+			'content',
+			{
+				fields: [],
+				kinds: [
+					'function_declaration',
+					'generator_function_declaration',
+					'class_declaration',
+					'lexical_declaration',
+					'variable_declaration',
+					'function_signature',
+					'abstract_class_declaration',
+					'module',
+					'internal_module',
+					'type_alias_declaration',
+					'enum_declaration',
+					'interface_declaration',
+					'import_alias',
+					'ambient_declaration',
+					'export_statement_default_declaration_default_kw'
+				]
+			}
+		]
 	],
 	423: [['source', { fields: ['source'], kinds: [] }]],
 	424: [
@@ -1064,7 +1086,31 @@ export const querySlots: QuerySlots = Object.freeze({
 		['exportClause', { fields: [], kinds: ['export_clause'] }],
 		['source', { fields: ['source'], kinds: [] }]
 	],
-	426: [['content', { fields: ['declaration'], kinds: ['export_statement_default_declaration_default_kw_value'] }]],
+	426: [
+		[
+			'content',
+			{
+				fields: [],
+				kinds: [
+					'function_declaration',
+					'generator_function_declaration',
+					'class_declaration',
+					'lexical_declaration',
+					'variable_declaration',
+					'function_signature',
+					'abstract_class_declaration',
+					'module',
+					'internal_module',
+					'type_alias_declaration',
+					'enum_declaration',
+					'interface_declaration',
+					'import_alias',
+					'ambient_declaration',
+					'export_statement_default_declaration_default_kw_value'
+				]
+			}
+		]
+	],
 	427: [
 		['value', { fields: ['value'], kinds: [] }],
 		['automaticSemicolon', { fields: [], kinds: ['automatic_semicolon', 'semi'] }]

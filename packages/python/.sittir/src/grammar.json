@@ -354,14 +354,11 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "FIELD",
+              "type": "SYMBOL",
               "name": "wildcard_import",
-              "content": {
-                "type": "SYMBOL",
-                "name": "wildcard_import"
-              },
-              "metadata": {
-                "fieldSource": "override"
+              "annotations": {
+                "variant": "wildcard_import",
+                "variantOf": "import_from_statement"
               }
             },
             {
