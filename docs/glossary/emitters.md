@@ -2881,39 +2881,8 @@ A row's member is named from its model kind (`modelKindOfEntry`, so a renamed ro
 
 ```text
 // (the reader stays grammar-agnostic; wrap is the model-driven boundary —
-// see `wrap.ts::_keepModelledSlots`.)
+// see `utils.ts::modelSlots`.)
 ```
-
-### `packages/codegen/src/emitters/kind-id-rust.ts::wire_slot`
-
-The reader↔model naming contract: the reader keys every modelled child by
-its model slot, so a slot has one spelling from the read to the wrap.
-`read_slots` asks `wire_slot(parent, field, child)` for every child it
-seats. A field-tagged child routes by its field (`Some(field)`); a named child
-without a field routes by its kind name (`None`); a row exists only where the
-slot's name differs from that key. The field wins over the kind: a
-field-tagged child never routes by its kind, and keeps its field name when no
-row names it. `None` keeps the parser's key: the slot is named for the child,
-or the model has no slot for it (a literal the template prints, or a parent
-with no slots, such as an alias over hidden supertype storage). The wrap reads
-only slot keys, and `_keepModelledSlots` drops any other `_` key. The parent
-is the reader's grammar id (`findOwnKindEntry`), as in `stores_scalar`;
-the child is keyed by its name, the key the reader stored it under before
-the contract existed. Rows come from `wireSlotRows`.
-
-### `packages/codegen/src/emitters/kind-id-rust.ts::wireSlotRows`
-
-The `wire_slot` rows: for every unnamed slot of every catalogued parent, a
-field row per field label (`wireRoutesOf(...).fields`) and a kind row per
-concrete kind (`wireRoutesOf(...).kinds`), each naming `slot.storageName`.
-Throws when one parent routes one field, or one untagged kind, to two slots,
-because the reader's lookup must be a function. Rows whose key already equals
-the slot name are dropped, since the reader's default is that key.
-
-### `packages/codegen/src/emitters/kind-id-rust.ts::WireSlotRow`
-
-One `wire_slot` arm: the parent kind id, either the field or the child kind
-name, and the slot name the reader stores the child under.
 
 ### `packages/codegen/src/emitters/kind-id-rust.ts::innerGapRows`
 
@@ -2973,6 +2942,22 @@ named slot has no routes, since its field is its name.
 ### `packages/codegen/src/emitters/shared.ts::WireRoutes`
 
 The fields and the concrete kinds `wireRoutesOf` finds for one slot.
+
+### `packages/codegen/src/emitters/shared.ts::slotRoutesOf`
+
+The model slot each child of a node is seated in, keyed by the name the reader
+hands the child over under: its tree-sitter field when it has one, else its
+kind name. Every route comes from `wireRoutesOf` over the node's slots, and a
+named slot claims its own name. A key that would reach two different slots
+throws, because the reader keys a field-tagged child and an untagged child of
+the same name alike, so the wrap could not tell them apart. Keys already equal
+to their slot are left out: an unrouted key is seated under its own name.
+
+### `packages/codegen/src/emitters/wrap.ts::slotRouting`
+
+A routed kind's `slotRoutesOf`, as storage keys (`_<key>` → `_<slot>`): the
+module-level `_ROUTES_<Kind>` table and the third argument its wrap passes to
+`modelSlots`. A kind with no routes gets neither.
 
 ### `packages/codegen/src/emitters/refine-emit.ts::collectRefineKindInfos`
 
@@ -7296,19 +7281,6 @@ The grammar's list kinds as sorted kind ids: every `AssembledList` the model hol
 	 */
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::_keepModelledSlots`
-
-```text
-// Emitted prelude helper, called first in every wrap function with the
-// keys that kind's wrap reads (its slots' storage keys plus the kind-keyed
-// candidates of its unnamed slots). The grammar-agnostic reader still
-// emits a `_<key>` for every named child, including a reference to a
-// literal the model has no slot for; wrap is the model-driven boundary
-// and drops those before they can be spread into the wrapped node.
-```
-
-It copies the data by spread and then deletes the unmodelled keys, where a copy built key by key from the string keys would lose the tree the data holds: the hold is a symbol member, which a spread carries and a walk over string keys does not see. `_aliasEnvelope` assembles its result member by member for the same data, so it passes the hold on by name (`carryTree`).
-
 ### `packages/codegen/src/emitters/wrap.ts::buildWrapParamType`
 
 ```text
@@ -7342,8 +7314,8 @@ It copies the data by spread and then deletes the unmodelled keys, where a copy 
  * repeated content fields use (`resolveFieldStorageInfo`), so the elements'
  * types resolve as a positional repeated slot's would. `fieldName` is
  * intentionally left `undefined` (positional/unnamed); the reader stores
- * the elements under the list's slot name (`kind-id-rust.ts::wireSlotRows`),
- * which is the key the wrap reads.
+ * the elements under their kind names, which `modelSlots` seats under the
+ * list's slot key, the key the wrap reads (`shared.ts::slotRoutesOf`).
  *
  * Exported for reuse by factories.ts, which needs the SAME synthetic
  * "elements as an unnamed repeated slot" to resolve the `elements`
@@ -7391,7 +7363,7 @@ It copies the data by spread and then deletes the unmodelled keys, where a copy 
  * across all 3 grammars as of this task):
  *
  * - `_content`: the elements array, read from the list's slot key, where
- *   the reader stores the elements (`kind-id-rust.ts::wireSlotRows`).
+ *   `modelSlots` seats the elements (`shared.ts::slotRoutesOf`).
  *   Populated via the same `resolveSlotHydrateExprs` a real repeated field
  *   uses.
  *
@@ -13519,7 +13491,7 @@ guards (`isErrorNode`) recognise it wherever it surfaces.
 
 `readUntypedNode` and `readNode` take an optional level count, which reaches the native read. `hydrateSelf` reads a stub of a list owner's kind (`listViewOwners`, emitted as `_LIST_OWNER_KINDS`) two levels at once, and every other stub one level.
 
-Every per-kind wrap function stores its node-valued slots through `storeExpanded` (the store expression `resolveSlotHydrateExprs` builds): a child the read already expanded is typed there, with its parent; a stub stays a stub until an accessor hydrates it, and a node with no slots (a text leaf, a token) is stored as read, since that already is its model shape. Stored data therefore has one shape, the model's, at every level a node can be reached from, whatever depth it was read at: a lone repeated child is a one-element array and an untagged child sits under its model slot all the way down, so a node that crosses to the render as its slots needs no reshaping on the way. `hydrateChild` returns a stored typed child as it is (`isTypedNode`, from `@sittir/common/utils`: it carries the methods `withMethods` attaches) and types only a child that reached it untyped. Which nodes hold slots is `holdsSlots`, the same predicate the transport walk uses. Its return type, `StoredOf<T>`, says exactly that: each node position is the value as read or its typed node (`T | ParsedOfData<T>`), mapped over arrays, so the stored shape is visible to the checker and the hydrate helpers take it as their input; the single generic signature sits over an `unknown` implementation, which is why its body needs no cast.
+Every per-kind wrap function stores its node-valued slots through `storeExpanded` (the store expression `resolveSlotHydrateExprs` builds): a child the read already expanded is typed there, with its parent; a stub stays a stub until an accessor hydrates it, and a node with no slots (a text leaf, a token) is stored as read, since that already is its model shape. Stored data therefore has one shape, the model's, at every level a node can be reached from, whatever depth it was read at: a lone repeated child is a one-element array and an untagged child sits under its model slot all the way down, so a node that crosses to the render as its slots needs no reshaping on the way. `hydrateChild` and its `ParsedOfData` type are exported, so a tool that hydrates read data takes the same path as the accessors. `hydrateChild` returns a stored typed child as it is (`isTypedNode`, from `@sittir/common/utils`: it carries the methods `withMethods` attaches) and types only a child that reached it untyped. Which nodes hold slots is `holdsSlots`, the same predicate the transport walk uses. Its return type, `StoredOf<T>`, says exactly that: each node position is the value as read or its typed node (`T | ParsedOfData<T>`), mapped over arrays, so the stored shape is visible to the checker and the hydrate helpers take it as their input; the single generic signature sits over an `unknown` implementation, which is why its body needs no cast.
 
 #### body
 
@@ -16743,7 +16715,7 @@ The lines a group seat adds to a node's builder: a reader of the seated group, h
 
 ### `packages/codegen/src/emitters/node-members.ts::ownerViewParts`
 
-The lines that make a list owner read as an array: before the literal, the owner's view of its list; as members, `length`, the items under `LIST_ITEMS`, the shared array methods, the iterator, `isConcatSpreadable`, `unscopables` and the list's options; after the literal, the index positions. A built owner holds its items and writes them as plain properties; a wrapped owner holds none until first use (`LIST_READ`) and takes the shared index getters. A raw factory given a list that is a read stub refuses the build (`refuseReadStub`) before the literal, so a built owner always has a plain data `length`.
+The lines that make a list owner read as an array: before the literal, the owner's view of its list; as members, `length`, the items under `LIST_ITEMS`, the shared array methods, the iterator, `isConcatSpreadable`, `unscopables` and the list's options; after the literal, the index positions. A built owner holds its items and writes them as plain properties; a wrapped owner holds none until first use (`LIST_READ`) and takes the shared index getters, and hands `ownerView` its own `hydrateChild`, so a list stored as a stub is read wrapped. A raw factory given a list that is a read stub refuses the build (`refuseReadStub`) before the literal, so a built owner always has a plain data `length`.
 
 ### `packages/codegen/src/emitters/node-members.ts::listSelfViewParts`
 

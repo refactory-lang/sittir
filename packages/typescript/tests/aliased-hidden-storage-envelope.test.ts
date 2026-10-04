@@ -3,7 +3,6 @@ import typescript from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const ts = await createEngine(typescript);
-const tsNative = (await typescript.load()).createNative();
 
 function shapeOf(node: unknown): unknown {
 	if (Array.isArray(node)) return node.map(shapeOf);
@@ -15,6 +14,29 @@ function shapeOf(node: unknown): unknown {
 	);
 }
 
+function memberNames(node: object): string[] {
+	const names = new Set<string>();
+	for (let o: object | null = node; o !== null && o !== Object.prototype && o !== Array.prototype; o = Object.getPrototypeOf(o)) {
+		for (const name of Object.getOwnPropertyNames(o)) if (/^[a-z]/.test(name) && !(name in Array.prototype)) names.add(name);
+	}
+	return [...names];
+}
+
+function findParsed(node: unknown, kind: number): Record<string, unknown> | undefined {
+	if (node === null || typeof node !== 'object') return undefined;
+	if ((node as { $type?: unknown }).$type === kind) return node as Record<string, unknown>;
+	for (const name of memberNames(node)) {
+		const member = (node as Record<string, unknown>)[name];
+		if (typeof member !== 'function' || member.length !== 0) continue;
+		const held: unknown = member.call(node);
+		for (const child of Array.isArray(held) ? held : [held]) {
+			const found = findParsed(child, kind);
+			if (found !== undefined) return found;
+		}
+	}
+	return undefined;
+}
+
 describe('an assignment target over aliased hidden storage', () => {
 	it('builds the same envelope the reader reads', () => {
 		const built = ts.build.assignmentExpression.strict({
@@ -22,9 +44,8 @@ describe('an assignment target over aliased hidden storage', () => {
 			right: ts.build.number('1')
 		});
 		expect(built.$render().toString()).toBe('a = 1');
-		const { root } = tsNative.parseAndRead('a = 1;', { deep: true });
-		const read = (root as { _statements?: { _expression?: { _left?: unknown } } })._statements?._expression?._left;
-		expect(shapeOf(read)).toEqual(shapeOf(built._left));
+		const assignment = findParsed(ts.parse('a = 1;'), ts.kinds.AssignmentExpression) as { left(): unknown } | undefined;
+		expect(shapeOf(assignment?.left())).toEqual(shapeOf(built._left));
 	});
 
 	it('takes a bare string on the loose surface and builds the strict envelope', () => {

@@ -200,53 +200,6 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
     }
 }
 
-/// The model slot a child is stored under where its name differs from the
-/// parser's key: a field-tagged child by (parent kind id, field), a named
-/// child without a field by (parent kind id, the child's kind name).
-/// `None` keeps the parser's key.
-pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'static str> {
-    match (parent.0, field, child) {
-        (51, None, "alternation") => Some("content"),
-        (51, None, "term") => Some("content"),
-        (55, None, "lookahead_assertion") => Some("content"),
-        (55, None, "lookbehind_assertion") => Some("content"),
-        (56, None, "bang") => Some("content"),
-        (56, None, "eq") => Some("content"),
-        (57, None, "bang") => Some("content"),
-        (57, None, "eq") => Some("content"),
-        (63, None, "lparen_qmarkP_lt") => Some("content"),
-        (63, None, "lparen_qmark_lt") => Some("content"),
-        (70, None, "count_quantifier_arm") => Some("content"),
-        (70, None, "decimal_digits") => Some("content"),
-        (73, None, "character_class_escape_arm") => Some("content"),
-        (73, None, "character_class_escape_text1") => Some("content"),
-        (73, None, "unicode_character_escape") => Some("content"),
-        (77, None, "anonymous_capturing_group") => Some("content"),
-        (77, None, "any_character") => Some("content"),
-        (77, None, "backreference_escape") => Some("content"),
-        (77, None, "boundary_assertion") => Some("content"),
-        (77, None, "character_class") => Some("content"),
-        (77, None, "character_class_escape") => Some("content"),
-        (77, None, "control_escape") => Some("content"),
-        (77, None, "control_letter_escape") => Some("content"),
-        (77, None, "decimal_escape") => Some("content"),
-        (77, None, "end_assertion") => Some("content"),
-        (77, None, "identity_escape") => Some("content"),
-        (77, None, "inline_flags_group_disable") => Some("content"),
-        (77, None, "inline_flags_group_enable") => Some("content"),
-        (77, None, "inline_flags_group_toggle") => Some("content"),
-        (77, None, "lookaround_assertion") => Some("content"),
-        (77, None, "named_capturing_group") => Some("content"),
-        (77, None, "named_group_backreference") => Some("content"),
-        (77, None, "non_boundary_assertion") => Some("content"),
-        (77, None, "non_capturing_group") => Some("content"),
-        (77, None, "pattern_character") => Some("content"),
-        (77, None, "posix_character_class") => Some("content"),
-        (77, None, "start_assertion") => Some("content"),
-        _ => None,
-    }
-}
-
 /// The gap an extra occupies inside a node with no named child to own it,
 /// by (kind id, anonymous tokens before the extra): the model slot whose
 /// position the gap holds. `None` when the model has no slot there.

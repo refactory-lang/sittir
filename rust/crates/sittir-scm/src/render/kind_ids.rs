@@ -156,31 +156,6 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
     }
 }
 
-/// The model slot a child is stored under where its name differs from the
-/// parser's key: a field-tagged child by (parent kind id, field), a named
-/// child without a field by (parent kind id, the child's kind name).
-/// `None` keeps the parser's key.
-pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'static str> {
-    match (parent.0, field, child) {
-        (41, None, "escape_sequence") => Some("content"),
-        (41, None, "string_content_text") => Some("content"),
-        (56, None, "anonymous_node") => Some("group_expression"),
-        (56, None, "field_definition") => Some("group_expression"),
-        (56, None, "group_expression_arm") => Some("group_expression"),
-        (56, None, "grouping") => Some("group_expression"),
-        (56, None, "list") => Some("group_expression"),
-        (56, None, "missing_node") => Some("group_expression"),
-        (56, None, "named_node_plain") => Some("group_expression"),
-        (56, None, "named_node_supertyped") => Some("group_expression"),
-        (56, None, "predicate") => Some("group_expression"),
-        (59, None, "named_node_group_anchored_last") => Some("named_node_group"),
-        (59, None, "named_node_group_children") => Some("named_node_group"),
-        (60, None, "named_node_group_anchored_last") => Some("named_node_group"),
-        (60, None, "named_node_group_children") => Some("named_node_group"),
-        _ => None,
-    }
-}
-
 /// The gap an extra occupies inside a node with no named child to own it,
 /// by (kind id, anonymous tokens before the extra): the model slot whose
 /// position the gap holds. `None` when the model has no slot there.

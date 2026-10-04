@@ -138,7 +138,7 @@ export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: st
 		};
 	}
 	return {
-		prelude: [`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)}, tree);`],
+		prelude: [`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)}, (list) => hydrateChild(list, tree));`],
 		members: [
 			'    length: listView.stored?.length,',
 			'    [LIST_ITEMS]: undefined,',

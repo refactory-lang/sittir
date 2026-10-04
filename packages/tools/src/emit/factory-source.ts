@@ -773,6 +773,7 @@ import {
 	loadNativeEngine,
 	loadNodeModel,
 	readNodeOf,
+	hydrateChildOf,
 	materialize,
 	type ModelFullForm
 } from '../validate/common.ts';
@@ -1032,7 +1033,8 @@ export async function emitFactorySourceText(
 	const tree = parser.parse(source);
 	if (!tree || tree.rootNode.hasError) throw new Error(`emit-factory-source: the ${grammar} parse has errors`);
 	const readNode = await readNodeOf(grammar);
-	if (!readNode) throw new Error(`emit-factory-source: no wrap module for ${grammar}`);
+	const hydrateChild = await hydrateChildOf(grammar);
+	if (!readNode || !hydrateChild) throw new Error(`emit-factory-source: no wrap module for ${grammar}`);
 	const kindIdFromName = await loadKindIdFromName(grammar);
 	const handle = await buildReadHandle(grammar, tree, source, options.backend ?? 'native', kindIdFromName);
 	const model = await loadNodeModel(grammar);
@@ -1130,7 +1132,7 @@ export async function emitFactorySourceText(
 	const shownRoot = nativeShownKindId(root);
 	const rootKind = typeof shownRoot === 'number' ? kindNameFromId(shownRoot) : shownRoot;
 	if (!rootKind) throw new Error(`emit-factory-source: root kind id ${String(root.$type)} is not in the catalog`);
-	const body = printFactorySource(root, rootKind, artifacts, { kindNameFromId, tree: handle }, ctx);
+	const body = printFactorySource(root, rootKind, artifacts, { kindNameFromId, tree: handle, hydrateChild }, ctx);
 	for (const finding of new Set(leafFindings)) process.stderr.write(`[emit-factory-source] leaf finding: ${finding}\n`);
 	const used = new RegExp(`(?<![\\w.$"'\`])${binding.engine}\\.`).test(body);
 	const engineStatement = `${used ? `const ${binding.engine} = ` : ''}await ${engineCall(binding.descriptor)};`;

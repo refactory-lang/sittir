@@ -1,6 +1,6 @@
 import { NATIVE_TARGETS, grammarDisplayName, nativeBinaryName, type GrammarName } from '../grammars.ts';
 
-export const NATIVE_RENDER_TRANSPORT_ABI = 13;
+export const NATIVE_RENDER_TRANSPORT_ABI = 14;
 
 export interface NativeCrateFile {
 	readonly path: string;
@@ -198,15 +198,6 @@ impl EngineGrammar for ${v.Name}Grammar {
 }
 
 impl sittir_core::read_untyped_node::ReadModel for ${v.Name}Grammar {
-    fn wire_slot(
-        &self,
-        parent: sittir_core::types::KindId,
-        field: Option<&str>,
-        child: &str,
-    ) -> Option<&'static str> {
-        render::kind_ids::wire_slot(parent, field, child)
-    }
-
     fn inner_gap_key(&self, kind: sittir_core::types::KindId, preceding_tokens: u16) -> Option<&'static str> {
         render::kind_ids::inner_gap_key(kind, preceding_tokens)
     }

@@ -783,6 +783,14 @@ keeps its own missing-module behaviour. The only way the validators and
 `emit-factory-source` import generated modules; `node-model.json5` is data
 and is read with `readFileSync` on the path.
 
+### `packages/tools/src/validate/common.ts::wrapExportOf`
+
+One export of a grammar's generated wrap module, loaded by dynamic import: `readNode`, `wrapNode` or `hydrateChild`. A module that fails to load is reported on stderr and yields null, as does a missing export.
+
+### `packages/tools/src/validate/common.ts::hydrateChildOf`
+
+The grammar wrap's `hydrateChild`: the path a wrapped node's accessors take to hydrate a child, which reads a stub and wraps it so its children sit in the model's slots. A validator that turns read data into factory config hydrates stubs through it, never with a raw read.
+
 ### `packages/tools/src/validate/common.ts::readNodeOf`
 
 ```text
@@ -1333,10 +1341,11 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
 
 ```text
 /**
- * Hydrate a stub through @sittir/common's hydrateStub before it becomes factory
- * config: a native handle reads through `tree.read`, a wasm handle through
- * the JS walker, so validators stay backend-agnostic. A handle that lacks the
- * node (a factory-built subtree) leaves the stub as is.
+ * Hydrate a stub through the grammar wrap's `hydrateChild` (the caller passes
+ * it with the tree) before it becomes factory config, so its `_` keys are the
+ * model's slots, as the accessors see them, before they are mapped to factory
+ * slots. Without a tree or a hydrator, or when the handle lacks the node (a
+ * factory-built subtree), the stub is left as is.
  *
  * A child that already carries its own contents is left alone. Re-reading it
  * would return the raw parse node and discard the wrap layer's per-slot kind

@@ -285,6 +285,14 @@ Whether a value is a node of one kind id. It answers a boolean and never narrows
 
 The value of the key `key` when the input is a config object (not a node) that carries it, else `orElse()`. The fallback is a thunk so it runs only when no config was given, which keeps a bare-input refusal from firing for a config. It takes and returns `unknown` for the reason `isNodeOfKind` never narrows: the `in` and `!isNode` narrowing it replaces relates the members of a `.Bound`-bearing union.
 
+### `packages/common/src/utils.ts::modelSlots`
+
+A read node reduced to its model's slots, the first step of every generated wrap: `keys` are the model's storage keys, and a `_` key outside them (a child the model has no slot for, such as a literal the template prints) is dropped; every other member, symbol-keyed ones included, is kept. The reader hands each child over under its tree-sitter field or its kind name; `routes` re-keys those names onto the model slot that stores them, which is how the model's slot names reach a read node at all. Keys routed to one slot merge in document order, read off `$slotOrder`, and a merged bucket of one stays a single value. `$slotOrder` itself is renamed to the model's slots and dropped when routing leaves fewer than two buckets, so it reads exactly as a read of model slots would. A node none of whose keys is routed is copied as a plain filter: the route check reads the table's keys, not the node's.
+
+### `packages/common/src/utils.ts::interleaveBuckets`
+
+The values of several keys merged into one array in document order: each `$slotOrder` entry takes the next item of its key's bucket, through a cursor per bucket. Without a stamp the buckets are concatenated in key order.
+
 ### `packages/common/src/utils.ts::orDefault`
 
 The value, or the default's when it is absent. The default's type is not an inference site (`NoInfer`), so the result is the value's own type and the checker never reduces the value's union against the default's, which is what a `??` expression does and what exceeds the depth on a union that holds a node's `.Bound` beside its storage type.
@@ -518,7 +526,7 @@ The elements a list stores: its array, or the one element it holds, or none. The
 
 ### `packages/common/src/utils.ts::ownerView`
 
-What a list owner knows of the list it holds, read once when the owner is built: the list itself, and its stored elements. An owner normally holds the list node already read, with its elements as stubs. A list stored only as a read stub (a parent handle and a child index) carries no count, so with a tree the stub is read one level, without wrapping it, and without a tree the elements are unknown and the owner cannot count them.
+What a list owner knows of the list it holds, read once when the owner is built: the list itself, and its stored elements. An owner normally holds the list node already read, with its elements as stubs. A list stored only as a read stub (a parent handle and a child index) carries no count, so the owner's `hydrate` reads it. A wrap passes its own `hydrateChild`, the path its accessors take, so the list arrives wrapped, with its children seated in the model's slots, and `count` names a model slot whatever key the parser gave the items. Without a hydrator (a factory) the elements are unknown and the owner cannot count them.
 
 ### `packages/common/src/utils.ts::ownerElements`
 

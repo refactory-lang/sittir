@@ -5,7 +5,7 @@ import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { currentHandle, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
-import { hydrateStub, isStub, readUntypedNode, type TreeHandle } from './readUntypedNode.ts';
+import { isStub } from './readUntypedNode.ts';
 import { spelledForm } from './interior.ts';
 
 export { Delimiter } from './delimiter.ts';
@@ -421,16 +421,16 @@ export function listIterator(this: ListItemsHolder): IterableIterator<unknown> {
 	return listItemsOf(this)[Symbol.iterator]();
 }
 
-/** What an owner knows of the list it holds: the list itself, hydrated when it is a read stub and a tree is given, and its stored elements (undefined while the stub cannot be read). */
+/** What an owner knows of the list it holds: the list itself, hydrated by `hydrate` when it is a read stub, and its stored elements (undefined while the stub cannot be read). */
 export interface OwnerView {
 	readonly list: Record<string, unknown> | undefined;
 	readonly stored: readonly unknown[] | undefined;
 }
 
-export function ownerView(stored: unknown, count: string, tree?: TreeHandle): OwnerView {
+export function ownerView(stored: unknown, count: string, hydrate?: (list: object) => unknown): OwnerView {
 	const list = stored as (object & Partial<AnyUntypedNode>) | null | undefined;
 	if (list == null) return { list: undefined, stored: [] };
-	const source = count in list || !isStub(list) ? list : tree === undefined ? undefined : hydrateStub(list, tree);
+	const source = count in list || !isStub(list) ? list : hydrate?.(list);
 	if (source === undefined) return { list: undefined, stored: undefined };
 	const elements = (source as Record<string, unknown>)[count];
 	return {
@@ -623,6 +623,82 @@ export function configFieldOr(input: unknown, key: string, orElse: () => unknown
 	return input !== null && typeof input === 'object' && !isNode(input) && key in input
 		? (input as Record<string, unknown>)[key]
 		: orElse();
+}
+
+export function modelSlots<T extends object>(
+	data: T,
+	keys: readonly string[],
+	routes?: Readonly<Record<string, string>>
+): T {
+	const src = data as Record<string, unknown>;
+	let routed = false;
+	if (routes !== undefined) {
+		for (const key in routes) {
+			if (src[key] !== undefined) {
+				routed = true;
+				break;
+			}
+		}
+	}
+	if (!routed) {
+		const kept: Record<string, unknown> = { ...src };
+		for (const key of Object.keys(kept)) {
+			if (key.charCodeAt(0) === 95 && !keys.includes(key)) delete kept[key];
+		}
+		return kept as T;
+	}
+	const names = Object.keys(src);
+	const targets: string[] = [];
+	let shared = false;
+	for (const key of names) {
+		if (key.charCodeAt(0) !== 95) continue;
+		const target = routes![key] ?? key;
+		if (targets.includes(target)) shared = true;
+		else targets.push(target);
+	}
+	const order = src.$slotOrder as readonly string[] | undefined;
+	const out: Record<string, unknown> = {};
+	for (const key of names) {
+		if (key.charCodeAt(0) !== 95) {
+			if (key === '$slotOrder') {
+				if (order !== undefined && targets.length >= 2) out.$slotOrder = order.map((name) => routes![`_${name}`]?.slice(1) ?? name);
+				continue;
+			}
+			out[key] = src[key];
+			continue;
+		}
+		const target = routes![key] ?? key;
+		if (!keys.includes(target)) continue;
+		if (shared) {
+			if (target in out) continue;
+			const sources = names.filter((name) => name.charCodeAt(0) === 95 && (routes![name] ?? name) === target);
+			out[target] = sources.length === 1 ? src[key] : interleaveBuckets(src, sources, order);
+			continue;
+		}
+		out[target] = src[key];
+	}
+	for (const symbol of Object.getOwnPropertySymbols(src)) {
+		if (Object.prototype.propertyIsEnumerable.call(src, symbol)) (out as Record<symbol, unknown>)[symbol] = (src as Record<symbol, unknown>)[symbol];
+	}
+	return out as T;
+}
+
+function interleaveBuckets(src: Record<string, unknown>, keys: readonly string[], order: readonly string[] | undefined): unknown[] {
+	const buckets = new Map<string, { readonly items: readonly unknown[]; at: number }>();
+	for (const key of keys) {
+		const value = src[key];
+		buckets.set(key.slice(1), { items: Array.isArray(value) ? value : [value], at: 0 });
+	}
+	const merged: unknown[] = [];
+	if (order === undefined) {
+		for (const bucket of buckets.values()) merged.push(...bucket.items);
+		return merged;
+	}
+	for (const name of order) {
+		const bucket = buckets.get(name);
+		if (bucket !== undefined && bucket.at < bucket.items.length) merged.push(bucket.items[bucket.at++]);
+	}
+	return merged;
 }
 
 export function isParsedNode(v: unknown): v is AnyUntypedNode {

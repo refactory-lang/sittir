@@ -108,16 +108,6 @@ impl HandleMint for NoMint {
 /// reader is otherwise grammar-agnostic; every fact here is generated from
 /// the model and stamped, never re-derived from a node's shape.
 pub trait ReadModel {
-    /// The model slot a child of a `parent` node is stored under, when its
-    /// name differs from the key the parser gives the child: a field-tagged
-    /// child by its field, a named child without a field by its kind name.
-    /// `None` keeps the parser's key: the slot is named for it, or the model
-    /// has no slot for the child.
-    fn wire_slot(&self, parent: KindId, field: Option<&str>, child: &str) -> Option<&'static str> {
-        let _ = (parent, field, child);
-        None
-    }
-
     /// The gap an extra inside a node of this kind occupies when the node
     /// has no named child to own it, named by the model slot whose position
     /// the gap holds, given the count of anonymous tokens before the extra.
@@ -784,7 +774,6 @@ fn read_slots(
     let mut fields_acc: IndexMap<String, Vec<UntypedNode>> = IndexMap::new();
     let mut children_acc: Vec<UntypedNode> = Vec::new();
     let mut slot_order_acc: Vec<String> = Vec::new();
-    let parent_kind = stamped_kind(&node);
 
     let child_count = node.child_count() as u32;
     for i in 0..child_count {
@@ -837,7 +826,7 @@ fn read_slots(
                 }
             }
         };
-        match child_slot(model, parent_kind, node.field_name_for_child(i), &child) {
+        match child_slot(node.field_name_for_child(i), &child) {
             Some(slot) => {
                 slot_order_acc.push(slot.to_string());
                 assign_named_slot(&mut fields_acc, slot, data);
@@ -878,20 +867,14 @@ fn read_slots(
     (fields, children, slot_order)
 }
 
-/// The model slot a child of a `parent_kind` node is stored under: a
-/// field-tagged child by its field, a named child without a field by its
-/// kind name, each renamed where the model's routing says so; `None` for an
-/// anonymous child without a field, which no slot holds. The reader stores
-/// children by it and a query plan finds a slot's values by it.
-pub(crate) fn child_slot(
-    model: &dyn ReadModel,
-    parent_kind: KindId,
-    field: Option<&'static str>,
-    child: &tree_sitter::Node<'_>,
-) -> Option<&'static str> {
+/// The key a child is stored under: a field-tagged child by its field, a
+/// named child without a field by its kind name; `None` for an anonymous
+/// child without a field, which no slot holds. Seating the key in the model's
+/// slot is the wrap's work.
+fn child_slot(field: Option<&'static str>, child: &tree_sitter::Node<'_>) -> Option<&'static str> {
     match field {
-        Some(name) => Some(model.wire_slot(parent_kind, Some(name), child.kind()).unwrap_or(name)),
-        None if child.is_named() => Some(model.wire_slot(parent_kind, None, child.kind()).unwrap_or_else(|| child.kind())),
+        Some(name) => Some(name),
+        None if child.is_named() => Some(child.kind()),
         None => None,
     }
 }
