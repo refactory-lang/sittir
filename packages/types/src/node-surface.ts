@@ -107,8 +107,10 @@ type ValueSetter<Self, Of, K extends keyof SlotHintsOf<Of>, ByBound, Reflect ext
 					(() => SetResult<Self, K, undefined, ByBound, Reflect>)
 			: (value: Admit<SlotInput<Of, K>>) => SetResult<Self, K, SlotInput<Of, K>, ByBound, Reflect>;
 
+type ListOptions<O> = O & { readonly $type?: never };
+
 type ListItems<Self, Of, K extends keyof SlotHintsOf<Of>, E, O, ByBound, Reflect extends boolean> = {
-	(options: O, ...items: readonly Admit<E>[]): SetResult<Self, K, SlotInput<Of, K>, ByBound, Reflect>;
+	(options: ListOptions<O>, ...items: readonly Admit<E>[]): SetResult<Self, K, SlotInput<Of, K>, ByBound, Reflect>;
 	(...items: readonly Admit<E>[]): SetResult<Self, K, SlotInput<Of, K>, ByBound, Reflect>;
 };
 

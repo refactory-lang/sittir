@@ -278,7 +278,11 @@ A slot setter: one value admitted through `Admit` (rest arguments for a repeated
 
 ### `packages/types/src/node-surface.ts::ListItems`
 
-A list slot's items form, with and without its options, each item admitted through `Admit`.
+A list slot's items form, with and without its options, each item admitted through `Admit`; the options come first as `ListOptions`.
+
+### `packages/types/src/node-surface.ts::ListOptions`
+
+A list slot's options bag, closed to nodes by an absent `$type`. A list node reads as a `ListView` that carries the same option keys (`delimiter`), so without the closure a list node of another kind would be taken as the options with no items.
 
 ### `packages/types/src/node-surface.ts::SlotSetterOf`
 

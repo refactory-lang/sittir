@@ -34,6 +34,13 @@ export function wrongKindRefused(): void {
 	rs.build.functionItem.strict({ name: rs.build.identifier('g'), parameters: rs.build.parameters(), body: rs.build.parameters() });
 }
 
+export function listNodeIsNotOptions(): void {
+	const fn = rs.build.functionItem({ name: 'g', parameters: rs.build.parameters(), body: rs.build.block() });
+	const args = rs.build.arguments(rs.build.identifier('a'));
+	// @ts-expect-error an Arguments list is not Parameters, and a node is never the options bag
+	fn.$with.parameters(args);
+}
+
 export function storageShapeRefused(storage: T.Block): void {
 	const fn = rs.build.functionItem({ name: 'g', parameters: rs.build.parameters(), body: rs.build.block() });
 	// @ts-expect-error the storage interface is not a node

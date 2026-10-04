@@ -144,6 +144,12 @@ describe('BoundOf / ParsedOf', () => {
 		expectTypeOf(fn.$with.params(param, param).params()).toEqualTypeOf<Params.Bound>();
 		expectTypeOf(fn.$with.params(...fn.params())).toHaveProperty('params');
 	});
+	it('a list node of another kind is not taken as the options bag', () => {
+		// @ts-expect-error an Items node is not a Params node, and a node is never options
+		fn.$with.params(items);
+		// @ts-expect-error a node is never options, even with items after it
+		fn.$with.params(items, param);
+	});
 	it('$with has no call signature, a list owner included', () => {
 		// @ts-expect-error not callable
 		fn.$with(built);
