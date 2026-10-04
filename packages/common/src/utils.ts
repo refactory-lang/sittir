@@ -5,7 +5,7 @@ import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { currentHandle, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
-import { isStub, readUntypedNode } from './readUntypedNode.ts';
+import { isStub } from './readUntypedNode.ts';
 import { spelledForm } from './interior.ts';
 
 export { Delimiter } from './delimiter.ts';
