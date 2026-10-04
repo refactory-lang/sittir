@@ -1,14 +1,6 @@
-import type {
-	AnyUntypedNode,
-	ErrorNode,
-	ErrorRegion,
-	FormatRecord,
-	GrammarTriviaEntry,
-	RenderCallOptions,
-	TriviaItem,
-	TriviaSetter
-} from './core-types.ts';
+import type { AnyUntypedNode, ErrorNode, ErrorRegion, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaItem, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
+import type { Admit } from './node-surface.ts';
 import type { QueryFacet, QuerySlots } from './query.ts';
 
 /** One line-break run a read node owns as trivia: the whitespace member it reads as and the byte its run starts at. */
@@ -20,11 +12,7 @@ export interface LineGap {
 /** A read node as the line-gap query names it: its own handle, or as a deep read leaves it, its tree's tag, its span and its stamped kind. */
 export type LineGapAddress =
 	| { readonly handle: number }
-	| {
-			readonly treeHandle: number;
-			readonly span: { readonly start: number; readonly end: number };
-			readonly kind: number;
-	  };
+	| { readonly treeHandle: number; readonly span: { readonly start: number; readonly end: number }; readonly kind: number };
 
 /**
  * The line-break runs a read node owns, before it and in its closing gap, each in source order, and the spans of the
@@ -159,9 +147,7 @@ export interface Language<API extends LanguageAPI> {
 	 * @returns The engine, once the language has loaded.
 	 * @throws When an option the engine does not implement yet is set, or the language fails to load.
 	 */
-	createEngine<const R extends API['options'] = API['options']>(
-		options?: CreateEngineOptions<API, R>
-	): Promise<Engine<API>>;
+	createEngine<const R extends API['options'] = API['options']>(options?: CreateEngineOptions<API, R>): Promise<Engine<API>>;
 }
 
 export interface NativeEngineOptions<O extends object = Readonly<Record<string, unknown>>> {
@@ -294,9 +280,12 @@ export type RenderCall<API extends LanguageAPI, Input> = <const R extends API['o
 	options?: R & RenderOptionsCheck<API, R, keyof RenderCallOptions> & RenderCallOptions
 ) => Rendered;
 
-export interface Renderable<Kind extends number> extends Pick<NodeMethods, '$render'> {
-	readonly $type: Kind;
-}
+/**
+ * A node of one of the kinds `Kind`, built, parsed or edited: what `engine.render` takes and what a
+ * builder parameter, config field or `$with` setter admits where a slot names a node. It is checked by
+ * kind (`$type`) and `$render`, never by the node's other members.
+ */
+export type Renderable<Kind extends number> = Admit<{ readonly $type: Kind }>;
 
 type Draft<API extends LanguageAPI> = Renderable<Extract<API['node']['$type'], number>>;
 
@@ -325,13 +314,13 @@ export interface EngineOptions<API extends LanguageAPI, M extends ApiSurface = '
 }
 
 export interface Interceptor<API extends LanguageAPI> {
-	build?(
-		call: { readonly path: readonly string[]; readonly args: readonly unknown[] },
-		next: () => API['node']
-	): API['node'];
+	build?(call: { readonly path: readonly string[]; readonly args: readonly unknown[] }, next: () => API['node']): API['node'];
 	render?(call: { readonly node: RenderInput<API>; readonly options: API['options'] }, next: () => string): string;
 	parse?(call: { readonly source: string }, next: () => API['root']): API['root'];
-	file?(change: FileChange & { readonly verb: 'create' | 'edit' | 'write' }, next: () => Promise<void>): Promise<void>;
+	file?(
+		change: FileChange & { readonly verb: 'create' | 'edit' | 'write' },
+		next: () => Promise<void>
+	): Promise<void>;
 }
 
 export interface Project extends AsyncDisposable {

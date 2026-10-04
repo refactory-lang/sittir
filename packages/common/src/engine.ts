@@ -140,10 +140,8 @@ export type { ParseOptions };
  * `ParseEngine.parse`, which wraps what these produce. Reach for these only
  * from inside the wrap layer or from validator/diagnostic tooling.
  */
-export interface NativeEngineDiagnostics<TRoot extends AnyUntypedNode = AnyUntypedNode> extends EngineDiagnostics<
-	TRoot & ParsedRoot,
-	TreeHandle
-> {
+export interface NativeEngineDiagnostics<TRoot extends AnyUntypedNode = AnyUntypedNode>
+	extends EngineDiagnostics<TRoot & ParsedRoot, TreeHandle> {
 	/**
 	 * Reads one node by handle, for inspection. The data it returns does not
 	 * hold its tree: the tree lives only as long as the tree handle of the
@@ -162,10 +160,7 @@ export interface NativeEngineDiagnostics<TRoot extends AnyUntypedNode = AnyUntyp
  * rendering from dragging in the parse surface, and the module graph acyclic.
  */
 export interface RenderEngine<O extends object = RenderOptionValues, IndentChar extends string = never> {
-	render<const I extends string = string>(
-		node: AnyUntypedNode | number,
-		options?: RenderOptions<O & IndentOption<I, IndentChar>>
-	): Rendered;
+	render<const I extends string = string>(node: AnyUntypedNode | number, options?: RenderOptions<O & IndentOption<I, IndentChar>>): Rendered;
 	dispose(): void;
 }
 
@@ -194,10 +189,7 @@ export interface SittirEngine<
 
 export type { ParsedRoot };
 
-export type ParseAndReadResult<TRoot extends AnyUntypedNode = AnyUntypedNode> = ParsedRead<
-	TRoot & ParsedRoot,
-	TreeHandle
->;
+export type ParseAndReadResult<TRoot extends AnyUntypedNode = AnyUntypedNode> = ParsedRead<TRoot & ParsedRoot, TreeHandle>;
 
 /**
  * Frees a native tree once JavaScript can no longer read from it.
@@ -322,8 +314,7 @@ export function createNativeEngine<
 						// Boundary assertion: the native reader returns the grammar's
 						// root kind for a whole-source parse, stamped with its span; the
 						// parse's error regions ride beside it and are stamped here.
-						const root = Object.assign(parsed.untypedNode, { $errors: Object.freeze(parsed.errors) }) as TRoot &
-							ParsedRoot;
+						const root = Object.assign(parsed.untypedNode, { $errors: Object.freeze(parsed.errors) }) as TRoot & ParsedRoot;
 						// One root per depth: the parse's own read seeds it, and a
 						// root asked for at another depth is read natively once.
 						const roots = new Map<number, AnyUntypedNode>([[depthOf(parseOptions) ?? 1, root]]);

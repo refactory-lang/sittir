@@ -21,7 +21,13 @@ import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle } from '.
 import { metricsEnabled, recordFfi } from './metrics.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
-import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode } from './utils.ts';
+import {
+	isEmptyNode as isEmptyUntypedNode,
+	isErrorNode,
+	isFactoryNode,
+	isNode,
+	isParsedNode
+} from './utils.ts';
 
 const loaded = new WeakMap<LanguageIdentity<LanguageAPI>, Promise<LanguageHooks<LanguageAPI>>>();
 
@@ -97,8 +103,7 @@ function scopedBuild<B>(build: B, handle: EngineHandle): B {
 function languageGuards<G extends object>(guards: G, inLanguage: (value: unknown) => boolean): Readonly<G> {
 	const entries = Object.entries(guards).map(([name, guard]): [string, unknown] => [
 		name,
-		(value: unknown, ...rest: unknown[]) =>
-			inLanguage(value) && (guard as (...args: unknown[]) => boolean)(value, ...rest)
+		(value: unknown, ...rest: unknown[]) => inLanguage(value) && (guard as (...args: unknown[]) => boolean)(value, ...rest)
 	]);
 	return Object.freeze(Object.fromEntries(entries) as G);
 }
@@ -147,11 +152,7 @@ function assembleEngine<API extends LanguageAPI>(
 		is: languageGuards(hooks.is, inLanguage),
 		kinds: hooks.kinds,
 		types: undefined as unknown as API['types'],
-		diagnostics: {
-			buildProfile: native.buildProfile,
-			parseAndRead: readAndBind,
-			lineGapsOf: (address) => native.lineGapsOf(address)
-		},
+		diagnostics: { buildProfile: native.buildProfile, parseAndRead: readAndBind, lineGapsOf: (address) => native.lineGapsOf(address) },
 		isNode: (value): value is API['node'] => isNode(value) && inLanguage(value),
 		isParsedNode: (value): value is API['node'] => isParsedNode(value) && inLanguage(value),
 		isFactoryNode: (value): value is API['node'] => isFactoryNode(value) && inLanguage(value),

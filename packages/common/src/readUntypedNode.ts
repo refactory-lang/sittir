@@ -114,12 +114,7 @@ function promoteAnonymousKeyword(
  * `fieldNameForChild`. That walker is kept only for those handles; fix
  * read-shape gaps in the rust reader, not here.
  */
-export function readUntypedNode(
-	tree: TreeHandle,
-	handle?: number,
-	childIndex?: number,
-	depth?: number
-): AnyUntypedNode {
+export function readUntypedNode(tree: TreeHandle, handle?: number, childIndex?: number, depth?: number): AnyUntypedNode {
 	// Native-handle dispatch: when `tree.read` is present the handle owns a
 	// Rust/napi engine that produces `AnyUntypedNode` directly (no JS-side tree
 	// walk needed). TS handles do NOT set `tree.read` so this branch is

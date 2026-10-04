@@ -3,6 +3,7 @@ import { execFileSync } from 'node:child_process';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
+import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
@@ -466,21 +467,26 @@ function typeChecks(lines: readonly string[]): void {
 describe('a list takes its rest parameter by cardinality and options', () => {
 	it('requires an element from a non-empty list and puts the options object first', () => {
 		expect(listRestParamType(true, 'E', undefined)).toBe('[element: E, ...elements: E[]]');
-		expect(listRestParamType(true, 'E', 'O')).toBe('[element: E, ...elements: E[]] | [options: O, element: E, ...elements: E[]]');
+		expect(listRestParamType(true, 'E', 'O')).toBe('[element: E, ...elements: E[]] | [options: ListOptions<O>, element: E, ...elements: E[]]');
 	});
 
 	it('lets an empty-capable list take nothing, or only its options', () => {
 		expect(listRestParamType(false, 'E', undefined)).toBe('[...elements: E[]]');
-		expect(listRestParamType(false, 'E', 'O')).toBe('[...elements: E[]] | [options: O, ...elements: E[]]');
+		expect(listRestParamType(false, 'E', 'O')).toBe('[...elements: E[]] | [options: ListOptions<O>, ...elements: E[]]');
 	});
 
 	it('puts required options first with no elements-only form', () => {
-		expect(listRestParamType(true, 'E', 'O', true)).toBe('[options: O, element: E, ...elements: E[]]');
-		expect(listRestParamType(false, 'E', 'O', true)).toBe('[options: O, ...elements: E[]]');
+		expect(listRestParamType(true, 'E', 'O', true)).toBe('[options: ListOptions<O>, element: E, ...elements: E[]]');
+		expect(listRestParamType(false, 'E', 'O', true)).toBe('[options: ListOptions<O>, ...elements: E[]]');
 	});
 
 	it('rejects an elements-only call at the type level when the options are required', () => {
-		const lines = ['type E = { readonly element: true };', 'type O = { readonly separator: 1 | 2 };', 'const element: E = { element: true };'];
+		const lines = [
+			`import type { ListOptions } from ${JSON.stringify(fileURLToPath(new URL('../../../../types/src/node-surface.ts', import.meta.url)))};`,
+			'type E = { readonly element: true };',
+			'type O = { readonly separator: 1 | 2 };',
+			'const element: E = { element: true };'
+		];
 		for (const nonEmpty of [true, false]) {
 			const fn = nonEmpty ? 'nonEmpty' : 'emptyCapable';
 			lines.push(`declare function ${fn}(...input: ${listRestParamType(nonEmpty, 'E', 'O', true)}): void;`);

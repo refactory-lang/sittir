@@ -6,7 +6,7 @@ import { lexedConfig, numberText, spelledForm, spelledInterior } from '@sittir/c
 import type * as T from '../types-internal.js';
 import { TSKindId, KIND_NAMES } from '../types.js';
 import { Delimiter } from '@sittir/common/utils';
-import type { AnyUntypedNode, NonEmptyArray, NumericInput, SpelledAffix, WithSpelling } from '@sittir/types';
+import type { AnyUntypedNode, Admit, NonEmptyArray, NumericInput, SpelledAffix, WithSpelling } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind } from '@sittir/common/utils';
 import { isNode } from '../utils.js';
 
@@ -752,8 +752,8 @@ function _resolveOne<T>(
 	leafKinds: readonly string[],
 	branchKinds: readonly string[],
 	defaultArm?: string
-): T {
-	if (v === undefined || v === null) return v as T;
+): Admit<T> {
+	if (v === undefined || v === null) return v as Admit<T>;
 	const kindId = isNode(v) ? v.$type : typeof v === 'number' && _KIND_ID_STORED.has(v) ? v : undefined;
 	if (typeof kindId === 'number') {
 		const kindName = KIND_NAMES.get(kindId);
@@ -763,11 +763,11 @@ function _resolveOne<T>(
 				branchKinds.includes(kindName) ||
 				(_ENUMS_OF_MEMBER[kindId] ?? []).some((e) => leafKinds.includes(e)))
 		)
-			return v as T;
+			return v as Admit<T>;
 		const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);
 		const arm = arms.length <= 1 ? arms[0] : undefined;
-		if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as T;
-		if (isNode(v)) return v as T;
+		if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as Admit<T>;
+		if (isNode(v)) return v as Admit<T>;
 		if (arms.length > 1) {
 			throw new Error(
 				`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(', ')}]; name the arm explicitly`
@@ -776,11 +776,11 @@ function _resolveOne<T>(
 	}
 	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
 		const scalar = _resolveScalar(v);
-		if (scalar !== undefined) return scalar as T;
+		if (scalar !== undefined) return scalar as Admit<T>;
 	}
 	if (typeof v === 'string') {
 		const leaf = _resolveBareText(v, [...leafKinds, ...branchKinds]);
-		if (leaf !== undefined) return leaf as T;
+		if (leaf !== undefined) return leaf as Admit<T>;
 		if (branchKinds.length === 0 && leafKinds.length === 1) return _resolveOneLeaf<T>(v, leafKinds[0]!);
 		if (branchKinds.length === 0 && leafKinds.length > 1 && leafKinds.every((k) => _AFFIXED_KINDS.has(k))) {
 			throw new Error(
@@ -792,8 +792,8 @@ function _resolveOne<T>(
 		const bk = _KEYWORD_BRANCH_BY_TEXT[v];
 		if (bk !== undefined && branchKinds.includes(bk)) {
 			const build = _KEYWORD_BRANCH_BUILD[bk];
-			if (build !== undefined) return build() as T;
-			if (_isFromKind(bk)) return _resolveByKind(bk, {}) as T;
+			if (build !== undefined) return build() as Admit<T>;
+			if (_isFromKind(bk)) return _resolveByKind(bk, {}) as Admit<T>;
 		}
 	}
 	const tagged = _splitTag(v);
@@ -802,11 +802,11 @@ function _resolveOne<T>(
 			_fromOfTag(tagged.tag, [...leafKinds, ...branchKinds]),
 			tagged.rest
 		) as _LooseFieldInput;
-		return (isNode(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as T;
+		return (isNode(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as Admit<T>;
 	}
 	if (branchKinds.length === 1 && typeof v === 'object' && !Array.isArray(v)) {
 		const bk = branchKinds[0]!;
-		if (_isFromKind(bk)) return _resolveByKind(bk, v) as T;
+		if (_isFromKind(bk)) return _resolveByKind(bk, v) as Admit<T>;
 	}
 	if (!(typeof v === 'object' && !Array.isArray(v))) {
 		const candidates = typeof v === 'string' ? branchKinds.filter((b) => _STRING_CAPABLE_BRANCHES.has(b)) : branchKinds;
@@ -817,9 +817,9 @@ function _resolveOne<T>(
 					? defaultArm
 					: undefined;
 		if (target !== undefined && Array.isArray(v) && target in _wrapKindIds) {
-			return _wrapArray(target, v) as T;
+			return _wrapArray(target, v) as Admit<T>;
 		}
-		if (target !== undefined && _isFromKind(target)) return _resolveByKind(target, v) as T;
+		if (target !== undefined && _isFromKind(target)) return _resolveByKind(target, v) as Admit<T>;
 		if (typeof v === 'string' && candidates.length > 0) {
 			throw new Error(
 				`_resolveOne: a bare string picks no arm among [${branchKinds.join(', ')}]; declare the arm (defaultArm()) or name it explicitly`
@@ -835,7 +835,7 @@ function _resolveOne<T>(
 		const texts = _TEXT_KINDS_BY_RANK.filter((kind) => leafKinds.includes(kind) || branchKinds.includes(kind));
 		if (texts.length > 0) throw new Error(`_resolveOne: ${JSON.stringify(v)} matches none of [${texts.join(', ')}]`);
 	}
-	return v as T;
+	return v as Admit<T>;
 }
 
 function _resolveMany<T>(
@@ -843,7 +843,7 @@ function _resolveMany<T>(
 	leafKinds: readonly string[],
 	branchKinds: readonly string[],
 	defaultArm?: string
-): readonly T[] {
+): readonly Admit<T>[] {
 	if (v === undefined || v === null) return [];
 	const arr: readonly _LooseFieldInput[] = Array.isArray(v) ? v : [v];
 	return arr.map((e) => _resolveOne<T>(e, leafKinds, branchKinds, defaultArm));
@@ -884,20 +884,20 @@ function _listElements(
 	return optionsFirst ? [head, ...resolved] : resolved;
 }
 
-function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
-	if (v === undefined || v === null) return v as T;
-	if (isNode(v)) return v as T;
+function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): Admit<T> {
+	if (v === undefined || v === null) return v as Admit<T>;
+	if (isNode(v)) return v as Admit<T>;
 	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
 		const scalar = _resolveScalar(v);
-		if (scalar !== undefined) return scalar as T;
+		if (scalar !== undefined) return scalar as Admit<T>;
 	}
-	if (typeof v === 'string' && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as T;
+	if (typeof v === 'string' && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as Admit<T>;
 	const tagged = _splitTag(v);
-	if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as T;
+	if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as Admit<T>;
 	if (typeof v === 'object') {
 		throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${JSON.stringify(v)}`);
 	}
-	return v as T;
+	return v as Admit<T>;
 }
 
 const _wrapKindIds: { readonly [kind: string]: number } = {
@@ -1301,13 +1301,13 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 	}
 }
 
-function _wrapArray<T>(kind: string, arr: readonly unknown[]): T {
+function _wrapArray<T>(kind: string, arr: readonly unknown[]): Admit<T> {
 	const elementKind = _wrapElementKinds[kind];
 	if (_wrapDirectKinds.has(kind) && elementKind !== undefined && elementKind in _wrapKindIds) {
-		if (arr.length === 0 && _wrapOptionalSoleKinds.has(kind)) return _wrapWithChildren(kind, []) as T;
-		return _wrapWithChildren(kind, [_wrapArray(elementKind, arr)]) as T;
+		if (arr.length === 0 && _wrapOptionalSoleKinds.has(kind)) return _wrapWithChildren(kind, []) as Admit<T>;
+		return _wrapWithChildren(kind, [_wrapArray(elementKind, arr)]) as Admit<T>;
 	}
-	return _wrapWithChildren(kind, arr) as T;
+	return _wrapWithChildren(kind, arr) as Admit<T>;
 }
 
 function _resolveOneBranch<T>(
@@ -1315,9 +1315,9 @@ function _resolveOneBranch<T>(
 	kind: string,
 	altKinds?: readonly (string | number)[],
 	optionalSlot?: boolean
-): T {
-	if (v === undefined || v === null) return v as T;
-	if (optionalSlot === true && Array.isArray(v) && v.length === 0) return undefined as T;
+): Admit<T> {
+	if (v === undefined || v === null) return v as Admit<T>;
+	if (optionalSlot === true && Array.isArray(v) && v.length === 0) return undefined as Admit<T>;
 	const tagged = _splitTag(v);
 	if (tagged !== undefined) {
 		const kn = _fromOfTag(tagged.tag, [kind]);
@@ -1327,29 +1327,29 @@ function _resolveOneBranch<T>(
 	if (isNode(v)) {
 		const wrapId = _wrapKindIds[kind];
 		if (wrapId !== undefined && v.$type !== wrapId) {
-			if (altKinds !== undefined && altKinds.some((k) => k === v.$type)) return v as T;
-			return _wrapWithChildren(kind, [v]) as T;
+			if (altKinds !== undefined && altKinds.some((k) => k === v.$type)) return v as Admit<T>;
+			return _wrapWithChildren(kind, [v]) as Admit<T>;
 		}
-		return v as T;
+		return v as Admit<T>;
 	}
 	if (Array.isArray(v) && kind in _wrapKindIds) {
-		return _wrapArray(kind, v) as T;
+		return _wrapArray(kind, v) as Admit<T>;
 	}
 	if ((typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') && _isFromKind(kind)) {
-		return _resolveByKind(kind, v) as T;
+		return _resolveByKind(kind, v) as Admit<T>;
 	}
 	if (typeof v === 'object' && !Array.isArray(v)) {
 		const tagged = _splitTag(v);
-		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as T;
-		if (_isFromKind(kind)) return _resolveByKind(kind, v) as T;
+		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as Admit<T>;
+		if (_isFromKind(kind)) return _resolveByKind(kind, v) as Admit<T>;
 	}
 	if (typeof v === 'object') {
 		throw new Error(`_resolveOneBranch: cannot resolve value to branch kind '${kind}': ${JSON.stringify(v)}`);
 	}
-	return v as T;
+	return v as Admit<T>;
 }
 
-function _resolveManyLeaf<T>(v: _LooseFieldInput, kind: string): readonly T[] {
+function _resolveManyLeaf<T>(v: _LooseFieldInput, kind: string): readonly Admit<T>[] {
 	if (v === undefined || v === null) return [];
 	const arr: readonly _LooseFieldInput[] = Array.isArray(v) ? v : [v];
 	return arr.map((e) => _resolveOneLeaf<T>(e, kind));
@@ -1359,7 +1359,7 @@ function _resolveManyBranch<T>(
 	v: _LooseFieldInput,
 	kind: string,
 	altKinds?: readonly (string | number)[]
-): readonly T[] {
+): readonly Admit<T>[] {
 	if (v === undefined || v === null) return [];
 	const arr: readonly _LooseFieldInput[] = Array.isArray(v) ? v : [v];
 	return arr.map((e) => _resolveOneBranch<T>(e, kind, altKinds));
@@ -2098,7 +2098,7 @@ export function coerceToModule(...input: T.Module.LooseArgs): ReturnType<typeof 
 
 export function resolveSimpleStatements_elements(
 	value: T.SimpleStatements.LooseConfig['elements']
-): T.SimpleStatements['_elements'] {
+): Admit<T.SimpleStatements['_elements']> {
 	return _resolveOneBranch<T.SimpleStatementsElements>(value, 'simple_statements_elements');
 }
 
@@ -2128,7 +2128,7 @@ export function coerceToSimpleStatements(...args: unknown[]): ReturnType<typeof 
 
 export function resolveImportStatement_names(
 	value: T.ImportStatement.LooseConfig['names']
-): T.ImportStatement['_names'] {
+): Admit<T.ImportStatement['_names']> {
 	return _resolveOneBranch<T.Names>(value, 'names');
 }
 
@@ -2154,11 +2154,13 @@ export function coerceToImportPrefix(input: T.ImportPrefix.Loose): ReturnType<ty
 
 export function resolveRelativeImport_prefix(
 	value: T.RelativeImport.LooseConfig['prefix']
-): T.RelativeImport['_prefix'] {
+): Admit<T.RelativeImport['_prefix']> {
 	return _resolveOneLeaf<T.ImportPrefix>(value, 'import_prefix');
 }
 
-export function resolveRelativeImport_name(value: T.RelativeImport.LooseConfig['name']): T.RelativeImport['_name'] {
+export function resolveRelativeImport_name(
+	value: T.RelativeImport.LooseConfig['name']
+): Admit<T.RelativeImport['_name']> {
 	return _resolveOneBranch<T.DottedName>(value, 'dotted_name', undefined, true);
 }
 
@@ -2173,7 +2175,7 @@ export function coerceToRelativeImport(input: T.RelativeImport.Loose): ReturnTyp
 
 export function resolveFutureImportStatement_content(
 	value: T.FutureImportStatement.LooseConfig['content']
-): T.FutureImportStatement['_content'] {
+): Admit<T.FutureImportStatement['_content']> {
 	return _resolveOne<T.ImportList | T.ParenthesizedImportList>(value, _K0, _K2);
 }
 
@@ -2197,13 +2199,13 @@ export function coerceToFutureImportStatement(
 
 export function resolveImportFromStatement_moduleName(
 	value: T.ImportFromStatement.LooseConfig['moduleName']
-): T.ImportFromStatement['_module_name'] {
+): Admit<T.ImportFromStatement['_module_name']> {
 	return _resolveOne<T.RelativeImport | T.DottedName>(value, _K0, _K3);
 }
 
 export function resolveImportFromStatement_content(
 	value: T.ImportFromStatement.LooseConfig['content']
-): T.ImportFromStatement['_content'] {
+): Admit<T.ImportFromStatement['_content']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<'*' | T.ImportList | T.ParenthesizedImportList>(value, _K4, _K2)),
 		[['*', TSKindId.WildcardImport] as const]
@@ -2237,7 +2239,7 @@ export function coerceToImportList(...input: T.ImportList.LooseArgs): ReturnType
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
-			...(children as unknown as NonEmptyArray<T.DottedName | T.AliasedImport>)
+			...(children as unknown as NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>)
 		);
 	}
 	return F.buildImportList(
@@ -2247,15 +2249,17 @@ export function coerceToImportList(...input: T.ImportList.LooseArgs): ReturnType
 			undefined,
 			(els) => _resolveMany<T.DottedName | T.AliasedImport>(els, _K0, _K5),
 			['dotted_name', 'aliased_import']
-		) as unknown as NonEmptyArray<T.DottedName | T.AliasedImport>)
+		) as unknown as NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>)
 	);
 }
 
-export function resolveAliasedImport_name(value: T.AliasedImport.LooseConfig['name']): T.AliasedImport['_name'] {
+export function resolveAliasedImport_name(value: T.AliasedImport.LooseConfig['name']): Admit<T.AliasedImport['_name']> {
 	return _resolveOneBranch<T.DottedName>(value, 'dotted_name');
 }
 
-export function resolveAliasedImport_alias(value: T.AliasedImport.LooseConfig['alias']): T.AliasedImport['_alias'] {
+export function resolveAliasedImport_alias(
+	value: T.AliasedImport.LooseConfig['alias']
+): Admit<T.AliasedImport['_alias']> {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
@@ -2274,7 +2278,7 @@ export function coerceToWildcardImport(_input?: T.WildcardImport.Loose): typeof 
 
 export function resolvePrintStatement_content(
 	value: T.PrintStatement.LooseConfig['content']
-): T.PrintStatement['_content'] {
+): Admit<T.PrintStatement['_content']> {
 	return _resolveOne<T.PrintStatementChevron | T.PrintStatementPlain>(value, _K0, _K6);
 }
 
@@ -2293,7 +2297,7 @@ export function coerceToPrintStatement(input: T.PrintStatement.Loose): ReturnTyp
 	);
 }
 
-export function resolveChevron_expression(value: T.Chevron.LooseConfig['expression']): T.Chevron['_expression'] {
+export function resolveChevron_expression(value: T.Chevron.LooseConfig['expression']): Admit<T.Chevron['_expression']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -2353,7 +2357,7 @@ export function coerceToAssertStatement(
 
 export function resolveExpressionStatement_content(
 	value: T.ExpressionStatement.LooseConfig['content']
-): T.ExpressionStatement['_content'] {
+): Admit<T.ExpressionStatement['_content']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
 			_resolveOne<T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield>(
@@ -2391,7 +2395,9 @@ export function coerceToExpressionStatement(
 	);
 }
 
-export function resolveNamedExpression_name(value: T.NamedExpression.LooseConfig['name']): T.NamedExpression['_name'] {
+export function resolveNamedExpression_name(
+	value: T.NamedExpression.LooseConfig['name']
+): Admit<T.NamedExpression['_name']> {
 	return _keywordOr(
 		value,
 		[
@@ -2421,7 +2427,7 @@ export function resolveNamedExpression_name(value: T.NamedExpression.LooseConfig
 
 export function resolveNamedExpression_value(
 	value: T.NamedExpression.LooseConfig['value']
-): T.NamedExpression['_value'] {
+): Admit<T.NamedExpression['_value']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -2439,7 +2445,7 @@ export function coerceToNamedExpression(input: T.NamedExpression.Loose): ReturnT
 
 export function resolveReturnStatement_expressions(
 	value: T.ReturnStatement.LooseConfig['expressions']
-): T.ReturnStatement['_expressions'] {
+): Admit<T.ReturnStatement['_expressions']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.ExpressionList>(value, _K7, _K10)),
 		[]
@@ -2467,7 +2473,7 @@ export function coerceToReturnStatement(input?: T.ReturnStatement.Loose): Return
 
 export function resolveDeleteStatement_expressions(
 	value: T.DeleteStatement.LooseConfig['expressions']
-): T.DeleteStatement['_expressions'] {
+): Admit<T.DeleteStatement['_expressions']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.ExpressionList>(value, _K7, _K10)),
 		[]
@@ -2499,14 +2505,16 @@ export function coerceToDeleteStatement(input: T.DeleteStatement.Loose): ReturnT
 
 export function resolveRaiseStatement_expressions(
 	value: T.RaiseStatement.LooseConfig['expressions']
-): T.RaiseStatement['_expressions'] {
+): Admit<T.RaiseStatement['_expressions']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.ExpressionList>(value, _K7, _K10)),
 		[]
 	);
 }
 
-export function resolveRaiseStatement_cause(value: T.RaiseStatement.LooseConfig['cause']): T.RaiseStatement['_cause'] {
+export function resolveRaiseStatement_cause(
+	value: T.RaiseStatement.LooseConfig['cause']
+): Admit<T.RaiseStatement['_cause']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -2536,7 +2544,7 @@ export function coerceToContinueStatement(_input?: T.ContinueStatement.Loose): t
 
 export function resolveIfStatement_condition(
 	value: T.IfStatement.LooseConfig['condition']
-): T.IfStatement['_condition'] {
+): Admit<T.IfStatement['_condition']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -2545,13 +2553,13 @@ export function resolveIfStatement_condition(
 
 export function resolveIfStatement_consequence(
 	value: T.IfStatement.LooseConfig['consequence']
-): T.IfStatement['_consequence'] {
+): Admit<T.IfStatement['_consequence']> {
 	return _resolveOne<T.Suite>(value, _K0, _super_suite);
 }
 
 export function resolveIfStatement_alternatives(
 	value: T.IfStatement.LooseConfig['alternative']
-): T.IfStatement['_alternative'] {
+): Admit<T.IfStatement['_alternative']> {
 	return _resolveMany<T.ElifClause | T.ElseClause>(value, _K0, _K11);
 }
 
@@ -2565,7 +2573,9 @@ export function coerceToIfStatement(input: T.IfStatement.Loose): ReturnType<type
 	});
 }
 
-export function resolveElifClause_condition(value: T.ElifClause.LooseConfig['condition']): T.ElifClause['_condition'] {
+export function resolveElifClause_condition(
+	value: T.ElifClause.LooseConfig['condition']
+): Admit<T.ElifClause['_condition']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -2574,7 +2584,7 @@ export function resolveElifClause_condition(value: T.ElifClause.LooseConfig['con
 
 export function resolveElifClause_consequence(
 	value: T.ElifClause.LooseConfig['consequence']
-): T.ElifClause['_consequence'] {
+): Admit<T.ElifClause['_consequence']> {
 	return _resolveOne<T.Suite>(value, _K0, _super_suite);
 }
 
@@ -2586,7 +2596,7 @@ export function coerceToElifClause(input: T.ElifClause.Loose): ReturnType<typeof
 	});
 }
 
-export function resolveElseClause_body(value: T.ElseClause.LooseConfig['body']): T.ElseClause['_body'] {
+export function resolveElseClause_body(value: T.ElseClause.LooseConfig['body']): Admit<T.ElseClause['_body']> {
 	return _resolveOne<T.Suite>(value, _K0, _super_suite);
 }
 
@@ -2607,11 +2617,13 @@ export function coerceToElseClause(input: T.ElseClause.Loose): ReturnType<typeof
 
 export function resolveMatchStatement_subjects(
 	value: T.MatchStatement.LooseConfig['subjects']
-): T.MatchStatement['_subjects'] {
+): Admit<T.MatchStatement['_subjects']> {
 	return _resolveOneBranch<T.Subjects>(value, 'subjects');
 }
 
-export function resolveMatchStatement_body(value: T.MatchStatement.LooseConfig['body']): T.MatchStatement['_body'] {
+export function resolveMatchStatement_body(
+	value: T.MatchStatement.LooseConfig['body']
+): Admit<T.MatchStatement['_body']> {
 	return _resolveOneBranch<T.MatchBlock>(value, 'match_block');
 }
 
@@ -2624,7 +2636,7 @@ export function coerceToMatchStatement(input: T.MatchStatement.Loose): ReturnTyp
 	});
 }
 
-export function resolveMatchBlock_content(value: T.MatchBlock.LooseConfig['content']): T.MatchBlock['_content'] {
+export function resolveMatchBlock_content(value: T.MatchBlock.LooseConfig['content']): Admit<T.MatchBlock['_content']> {
 	return _resolveOne<T.MatchBlockBlock | T.MatchBlockEmpty>(value, _K0, _K12, 'match_block_block');
 }
 
@@ -2646,17 +2658,17 @@ export function coerceToMatchBlock(input: T.MatchBlock.Loose): ReturnType<typeof
 
 export function resolveCaseClause_casePatterns(
 	value: T.CaseClause.LooseConfig['casePatterns']
-): T.CaseClause['_case_patterns'] {
+): Admit<T.CaseClause['_case_patterns']> {
 	return _resolveOneBranch<T.CasePatterns>(value, 'case_patterns');
 }
 
-export function resolveCaseClause_guard(value: T.CaseClause.LooseConfig['guard']): T.CaseClause['_guard'] {
+export function resolveCaseClause_guard(value: T.CaseClause.LooseConfig['guard']): Admit<T.CaseClause['_guard']> {
 	return _resolveOneBranch<T.IfClause>(value, 'if_clause', undefined, true);
 }
 
 export function resolveCaseClause_consequence(
 	value: T.CaseClause.LooseConfig['consequence']
-): T.CaseClause['_consequence'] {
+): Admit<T.CaseClause['_consequence']> {
 	return _resolveOne<T.Suite>(value, _K0, _super_suite);
 }
 
@@ -2669,28 +2681,28 @@ export function coerceToCaseClause(input: T.CaseClause.Loose): ReturnType<typeof
 	});
 }
 
-export function resolveForStatement_async(value: T.ForStatement.LooseConfig['async']): T.ForStatement['_async'] {
+export function resolveForStatement_async(value: T.ForStatement.LooseConfig['async']): Admit<T.ForStatement['_async']> {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveForStatement_left(value: T.ForStatement.LooseConfig['left']): T.ForStatement['_left'] {
+export function resolveForStatement_left(value: T.ForStatement.LooseConfig['left']): Admit<T.ForStatement['_left']> {
 	return _resolveOne<T.Pattern | T.PatternList>(value, _K13, _K14);
 }
 
-export function resolveForStatement_right(value: T.ForStatement.LooseConfig['right']): T.ForStatement['_right'] {
+export function resolveForStatement_right(value: T.ForStatement.LooseConfig['right']): Admit<T.ForStatement['_right']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.ExpressionList>(value, _K7, _K10)),
 		[]
 	);
 }
 
-export function resolveForStatement_body(value: T.ForStatement.LooseConfig['body']): T.ForStatement['_body'] {
+export function resolveForStatement_body(value: T.ForStatement.LooseConfig['body']): Admit<T.ForStatement['_body']> {
 	return _resolveOne<T.Suite>(value, _K0, _super_suite);
 }
 
 export function resolveForStatement_alternative(
 	value: T.ForStatement.LooseConfig['alternative']
-): T.ForStatement['_alternative'] {
+): Admit<T.ForStatement['_alternative']> {
 	return _resolveOneBranch<T.ElseClause>(value, 'else_clause', undefined, true);
 }
 
@@ -2708,20 +2720,22 @@ export function coerceToForStatement(input: T.ForStatement.Loose): ReturnType<ty
 
 export function resolveWhileStatement_condition(
 	value: T.WhileStatement.LooseConfig['condition']
-): T.WhileStatement['_condition'] {
+): Admit<T.WhileStatement['_condition']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
 	);
 }
 
-export function resolveWhileStatement_body(value: T.WhileStatement.LooseConfig['body']): T.WhileStatement['_body'] {
+export function resolveWhileStatement_body(
+	value: T.WhileStatement.LooseConfig['body']
+): Admit<T.WhileStatement['_body']> {
 	return _resolveOne<T.Suite>(value, _K0, _super_suite);
 }
 
 export function resolveWhileStatement_alternative(
 	value: T.WhileStatement.LooseConfig['alternative']
-): T.WhileStatement['_alternative'] {
+): Admit<T.WhileStatement['_alternative']> {
 	return _resolveOneBranch<T.ElseClause>(value, 'else_clause', undefined, true);
 }
 
@@ -2735,25 +2749,25 @@ export function coerceToWhileStatement(input: T.WhileStatement.Loose): ReturnTyp
 	});
 }
 
-export function resolveTryStatement_body(value: T.TryStatement.LooseConfig['body']): T.TryStatement['_body'] {
+export function resolveTryStatement_body(value: T.TryStatement.LooseConfig['body']): Admit<T.TryStatement['_body']> {
 	return _resolveOne<T.Suite>(value, _K0, _super_suite);
 }
 
 export function resolveTryStatement_exceptClauses(
 	value: T.TryStatement.LooseConfig['exceptClauses']
-): T.TryStatement['_except_clauses'] {
+): Admit<T.TryStatement['_except_clauses']> {
 	return _resolveManyBranch<T.ExceptClause>(value, 'except_clause');
 }
 
 export function resolveTryStatement_elseClause(
 	value: T.TryStatement.LooseConfig['elseClause']
-): T.TryStatement['_else_clause'] {
+): Admit<T.TryStatement['_else_clause']> {
 	return _resolveOneBranch<T.ElseClause>(value, 'else_clause', undefined, true);
 }
 
 export function resolveTryStatement_finallyClause(
 	value: T.TryStatement.LooseConfig['finallyClause']
-): T.TryStatement['_finally_clause'] {
+): Admit<T.TryStatement['_finally_clause']> {
 	return _resolveOneBranch<T.FinallyClause>(value, 'finally_clause', undefined, true);
 }
 
@@ -2768,17 +2782,17 @@ export function coerceToTryStatement(input: T.TryStatement.Loose): ReturnType<ty
 	});
 }
 
-export function resolveExceptClause_group(value: T.ExceptClause.LooseConfig['group']): T.ExceptClause['_group'] {
+export function resolveExceptClause_group(value: T.ExceptClause.LooseConfig['group']): Admit<T.ExceptClause['_group']> {
 	return _resolveBooleanKeyword(value);
 }
 
 export function resolveExceptClause_exception(
 	value: T.ExceptClause.LooseConfig['exception']
-): T.ExceptClause['_exception'] {
+): Admit<T.ExceptClause['_exception']> {
 	return _resolveOneBranch<T.ExceptClauseException>(value, 'except_clause_exception', undefined, true);
 }
 
-export function resolveExceptClause_suite(value: T.ExceptClause.LooseConfig['suite']): T.ExceptClause['_suite'] {
+export function resolveExceptClause_suite(value: T.ExceptClause.LooseConfig['suite']): Admit<T.ExceptClause['_suite']> {
 	return _resolveOne<T.Suite>(value, _K0, _super_suite);
 }
 
@@ -2792,7 +2806,9 @@ export function coerceToExceptClause(input: T.ExceptClause.Loose): ReturnType<ty
 	});
 }
 
-export function resolveFinallyClause_block(value: T.FinallyClause.LooseConfig['block']): T.FinallyClause['_block'] {
+export function resolveFinallyClause_block(
+	value: T.FinallyClause.LooseConfig['block']
+): Admit<T.FinallyClause['_block']> {
 	return _resolveOne<T.Suite>(value, _K0, _super_suite);
 }
 
@@ -2811,17 +2827,19 @@ export function coerceToFinallyClause(input: T.FinallyClause.Loose): ReturnType<
 	);
 }
 
-export function resolveWithStatement_async(value: T.WithStatement.LooseConfig['async']): T.WithStatement['_async'] {
+export function resolveWithStatement_async(
+	value: T.WithStatement.LooseConfig['async']
+): Admit<T.WithStatement['_async']> {
 	return _resolveBooleanKeyword(value);
 }
 
 export function resolveWithStatement_withClause(
 	value: T.WithStatement.LooseConfig['withClause']
-): T.WithStatement['_with_clause'] {
+): Admit<T.WithStatement['_with_clause']> {
 	return _resolveOne<T.WithClause>(value, _K0, _super_with_clause);
 }
 
-export function resolveWithStatement_body(value: T.WithStatement.LooseConfig['body']): T.WithStatement['_body'] {
+export function resolveWithStatement_body(value: T.WithStatement.LooseConfig['body']): Admit<T.WithStatement['_body']> {
 	return _resolveOne<T.Suite>(value, _K0, _super_suite);
 }
 
@@ -2835,7 +2853,7 @@ export function coerceToWithStatement(input: T.WithStatement.Loose): ReturnType<
 	});
 }
 
-export function resolveWithItem_value(value: T.WithItem.LooseConfig['value']): T.WithItem['_value'] {
+export function resolveWithItem_value(value: T.WithItem.LooseConfig['value']): Admit<T.WithItem['_value']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -2866,37 +2884,37 @@ export function coerceToWithItem(input: T.WithItem.Loose): ReturnType<typeof F.b
 
 export function resolveFunctionDefinition_async(
 	value: T.FunctionDefinition.LooseConfig['async']
-): T.FunctionDefinition['_async'] {
+): Admit<T.FunctionDefinition['_async']> {
 	return _resolveBooleanKeyword(value);
 }
 
 export function resolveFunctionDefinition_name(
 	value: T.FunctionDefinition.LooseConfig['name']
-): T.FunctionDefinition['_name'] {
+): Admit<T.FunctionDefinition['_name']> {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
 export function resolveFunctionDefinition_typeParameters(
 	value: T.FunctionDefinition.LooseConfig['typeParameters']
-): T.FunctionDefinition['_type_parameters'] {
+): Admit<T.FunctionDefinition['_type_parameters']> {
 	return _resolveOneBranch<T.TypeParameter>(value, 'type_parameter', undefined, true);
 }
 
 export function resolveFunctionDefinition_parameters(
 	value: T.FunctionDefinition.LooseConfig['parameters']
-): T.FunctionDefinition['_parameters'] {
+): Admit<T.FunctionDefinition['_parameters']> {
 	return _resolveOneBranch<T.Parameters>(value, 'parameters');
 }
 
 export function resolveFunctionDefinition_returnType(
 	value: T.FunctionDefinition.LooseConfig['returnType']
-): T.FunctionDefinition['_return_type'] {
+): Admit<T.FunctionDefinition['_return_type']> {
 	return _resolveOneBranch<T.Type>(value, 'type', undefined, true);
 }
 
 export function resolveFunctionDefinition_body(
 	value: T.FunctionDefinition.LooseConfig['body']
-): T.FunctionDefinition['_body'] {
+): Admit<T.FunctionDefinition['_body']> {
 	return _resolveOne<T.Suite>(value, _K0, _super_suite);
 }
 
@@ -2915,7 +2933,9 @@ export function coerceToFunctionDefinition(
 	});
 }
 
-export function resolveParameters_elements(value: T.Parameters.LooseConfig['elements']): T.Parameters['_elements'] {
+export function resolveParameters_elements(
+	value: T.Parameters.LooseConfig['elements']
+): Admit<T.Parameters['_elements']> {
 	return _resolveOneBranch<T.ParametersElements>(value, 'parameters_elements', undefined, true);
 }
 
@@ -2940,7 +2960,7 @@ export function coerceToParameters(...args: unknown[]): ReturnType<typeof F.buil
 
 export function resolveLambdaParameters_parametersElements(
 	value: T.LambdaParameters.LooseConfig['parametersElements']
-): T.LambdaParameters['_parameters_elements'] {
+): Admit<T.LambdaParameters['_parameters_elements']> {
 	return _resolveOneBranch<T.ParametersElements>(value, 'parameters_elements');
 }
 
@@ -2968,7 +2988,9 @@ export function coerceToLambdaParameters(...args: unknown[]): ReturnType<typeof 
 	);
 }
 
-export function resolveListSplat_expression(value: T.ListSplat.LooseConfig['expression']): T.ListSplat['_expression'] {
+export function resolveListSplat_expression(
+	value: T.ListSplat.LooseConfig['expression']
+): Admit<T.ListSplat['_expression']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -2999,7 +3021,7 @@ export function coerceToListSplat(input: T.ListSplat.Loose): ReturnType<typeof F
 
 export function resolveDictionarySplat_expression(
 	value: T.DictionarySplat.LooseConfig['expression']
-): T.DictionarySplat['_expression'] {
+): Admit<T.DictionarySplat['_expression']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -3079,13 +3101,13 @@ export function coerceToNonlocalStatement(
 	);
 }
 
-export function resolveExecStatement_code(value: T.ExecStatement.LooseConfig['code']): T.ExecStatement['_code'] {
+export function resolveExecStatement_code(value: T.ExecStatement.LooseConfig['code']): Admit<T.ExecStatement['_code']> {
 	return _resolveOne<T.String | T.Identifier>(value, _K13, _K15);
 }
 
 export function resolveExecStatement_inClauses(
 	value: T.ExecStatement.LooseConfig['inClause']
-): T.ExecStatement['_in_clause'] {
+): Admit<T.ExecStatement['_in_clause']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveMany<T.Expression>(value, _K7, _K8)),
 		[]
@@ -3103,13 +3125,13 @@ export function coerceToExecStatement(input: T.ExecStatement.Loose): ReturnType<
 
 export function resolveTypeAliasStatement_left(
 	value: T.TypeAliasStatement.LooseConfig['left']
-): T.TypeAliasStatement['_left'] {
+): Admit<T.TypeAliasStatement['_left']> {
 	return _resolveOneBranch<T.Type>(value, 'type');
 }
 
 export function resolveTypeAliasStatement_right(
 	value: T.TypeAliasStatement.LooseConfig['right']
-): T.TypeAliasStatement['_right'] {
+): Admit<T.TypeAliasStatement['_right']> {
 	return _resolveOneBranch<T.Type>(value, 'type');
 }
 
@@ -3124,23 +3146,27 @@ export function coerceToTypeAliasStatement(
 	});
 }
 
-export function resolveClassDefinition_name(value: T.ClassDefinition.LooseConfig['name']): T.ClassDefinition['_name'] {
+export function resolveClassDefinition_name(
+	value: T.ClassDefinition.LooseConfig['name']
+): Admit<T.ClassDefinition['_name']> {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
 export function resolveClassDefinition_typeParameters(
 	value: T.ClassDefinition.LooseConfig['typeParameters']
-): T.ClassDefinition['_type_parameters'] {
+): Admit<T.ClassDefinition['_type_parameters']> {
 	return _resolveOneBranch<T.TypeParameter>(value, 'type_parameter', undefined, true);
 }
 
 export function resolveClassDefinition_superclasses(
 	value: T.ClassDefinition.LooseConfig['superclasses']
-): T.ClassDefinition['_superclasses'] {
+): Admit<T.ClassDefinition['_superclasses']> {
 	return _resolveOneBranch<T.ArgumentList>(value, 'argument_list', undefined, true);
 }
 
-export function resolveClassDefinition_body(value: T.ClassDefinition.LooseConfig['body']): T.ClassDefinition['_body'] {
+export function resolveClassDefinition_body(
+	value: T.ClassDefinition.LooseConfig['body']
+): Admit<T.ClassDefinition['_body']> {
 	return _resolveOne<T.Suite>(value, _K0, _super_suite);
 }
 
@@ -3155,7 +3181,9 @@ export function coerceToClassDefinition(input: T.ClassDefinition.Loose): ReturnT
 	});
 }
 
-export function resolveTypeParameter_types(value: T.TypeParameter.LooseConfig['types']): T.TypeParameter['_types'] {
+export function resolveTypeParameter_types(
+	value: T.TypeParameter.LooseConfig['types']
+): Admit<T.TypeParameter['_types']> {
 	return _resolveOneBranch<T.Types>(value, 'types');
 }
 
@@ -3179,7 +3207,7 @@ export function coerceToTypeParameter(...args: unknown[]): ReturnType<typeof F.b
 
 export function resolveParenthesizedListSplat_content(
 	value: T.ParenthesizedListSplat.LooseConfig['content']
-): T.ParenthesizedListSplat['_content'] {
+): Admit<T.ParenthesizedListSplat['_content']> {
 	return _resolveOne<T.ParenthesizedListSplat | T.ListSplat>(value, _K0, _K16);
 }
 
@@ -3201,7 +3229,7 @@ export function coerceToParenthesizedListSplat(
 
 export function resolveArgumentList_arguments(
 	value: T.ArgumentList.LooseConfig['arguments']
-): T.ArgumentList['_arguments'] {
+): Admit<T.ArgumentList['_arguments']> {
 	return _resolveOneBranch<T.ArgumentListElements>(value, 'argument_list_elements', undefined, true);
 }
 
@@ -3230,8 +3258,8 @@ export function coerceToArgumentList(...args: unknown[]): ReturnType<typeof F.bu
 
 export function resolveDecoratedDefinition_decorators(
 	value: T.DecoratedDefinition.LooseConfig['decorator']
-): T.DecoratedDefinition['_decorator'] {
-	const resolved: readonly T.DecoratedDefinition['_decorator'][number][] = _resolveManyBranch<T.Decorator>(
+): Admit<T.DecoratedDefinition['_decorator']> {
+	const resolved: readonly Admit<T.DecoratedDefinition['_decorator'][number]>[] = _resolveManyBranch<T.Decorator>(
 		value,
 		'decorator'
 	);
@@ -3241,7 +3269,7 @@ export function resolveDecoratedDefinition_decorators(
 
 export function resolveDecoratedDefinition_definition(
 	value: T.DecoratedDefinition.LooseConfig['definition']
-): T.DecoratedDefinition['_definition'] {
+): Admit<T.DecoratedDefinition['_definition']> {
 	return _resolveOne<T.ClassDefinition | T.FunctionDefinition>(value, _K0, _K17);
 }
 
@@ -3264,7 +3292,9 @@ export function coerceToDecoratedDefinition(
 	});
 }
 
-export function resolveDecorator_expression(value: T.Decorator.LooseConfig['expression']): T.Decorator['_expression'] {
+export function resolveDecorator_expression(
+	value: T.Decorator.LooseConfig['expression']
+): Admit<T.Decorator['_expression']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -3324,7 +3354,7 @@ export function coerceToExpressionList(...input: T.ExpressionList.LooseArgs): Re
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
-			...(children as unknown as NonEmptyArray<T.Expression>)
+			...(children as unknown as NonEmptyArray<Admit<T.Expression>>)
 		);
 	}
 	return F.buildExpressionList(
@@ -3384,7 +3414,7 @@ export function coerceToExpressionList(...input: T.ExpressionList.LooseArgs): Re
 				'named_expression',
 				'as_pattern'
 			]
-		) as unknown as NonEmptyArray<T.Expression>)
+		) as unknown as NonEmptyArray<Admit<T.Expression>>)
 	);
 }
 
@@ -3409,7 +3439,9 @@ export function coerceToDottedName(...input: T.DottedName.LooseArgs): ReturnType
 	);
 }
 
-export function resolveCasePattern_content(value: T.CasePattern.LooseConfig['content']): T.CasePattern['_content'] {
+export function resolveCasePattern_content(
+	value: T.CasePattern.LooseConfig['content']
+): Admit<T.CasePattern['_content']> {
 	return _resolveOne<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(value, _K0, _K18);
 }
 
@@ -3430,7 +3462,7 @@ export function coerceToCasePattern(input: T.CasePattern.Loose): ReturnType<type
 
 export function resolveSimplePattern_content(
 	value: T.SimplePattern.LooseConfig['content']
-): T.SimplePattern['_content'] {
+): Admit<T.SimplePattern['_content']> {
 	return _keywordOr(
 		value,
 		[
@@ -3525,13 +3557,13 @@ export function coerceToSimplePattern(input: T.SimplePattern.Loose): ReturnType<
 
 export function resolveCaseAsPattern_casePattern(
 	value: T.CaseAsPattern.LooseConfig['casePattern']
-): T.CaseAsPattern['_case_pattern'] {
+): Admit<T.CaseAsPattern['_case_pattern']> {
 	return _resolveOneBranch<T.CasePattern>(value, 'case_pattern');
 }
 
 export function resolveCaseAsPattern_identifier(
 	value: T.CaseAsPattern.LooseConfig['identifier']
-): T.CaseAsPattern['_identifier'] {
+): Admit<T.CaseAsPattern['_identifier']> {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
@@ -3594,7 +3626,9 @@ export function coerceToUnionPattern(...input: T.UnionPattern.LooseArgs): Return
 	);
 }
 
-export function resolveDictPattern_elements(value: T.DictPattern.LooseConfig['elements']): T.DictPattern['_elements'] {
+export function resolveDictPattern_elements(
+	value: T.DictPattern.LooseConfig['elements']
+): Admit<T.DictPattern['_elements']> {
 	return _resolveOneBranch<T.DictPatternElements>(value, 'dict_pattern_elements', undefined, true);
 }
 
@@ -3617,7 +3651,9 @@ export function coerceToDictPattern(...args: unknown[]): ReturnType<typeof F.bui
 	);
 }
 
-export function resolveKeyValuePattern_key(value: T.KeyValuePattern.LooseConfig['key']): T.KeyValuePattern['_key'] {
+export function resolveKeyValuePattern_key(
+	value: T.KeyValuePattern.LooseConfig['key']
+): Admit<T.KeyValuePattern['_key']> {
 	return _keywordOr(
 		value,
 		[
@@ -3659,7 +3695,7 @@ export function resolveKeyValuePattern_key(value: T.KeyValuePattern.LooseConfig[
 
 export function resolveKeyValuePattern_value(
 	value: T.KeyValuePattern.LooseConfig['value']
-): T.KeyValuePattern['_value'] {
+): Admit<T.KeyValuePattern['_value']> {
 	return _resolveOneBranch<T.CasePattern>(value, 'case_pattern');
 }
 
@@ -3672,11 +3708,15 @@ export function coerceToKeyValuePattern(input: T.KeyValuePattern.Loose): ReturnT
 	});
 }
 
-export function resolveKeywordPattern_name(value: T.KeywordPattern.LooseConfig['name']): T.KeywordPattern['_name'] {
+export function resolveKeywordPattern_name(
+	value: T.KeywordPattern.LooseConfig['name']
+): Admit<T.KeywordPattern['_name']> {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
-export function resolveKeywordPattern_value(value: T.KeywordPattern.LooseConfig['value']): T.KeywordPattern['_value'] {
+export function resolveKeywordPattern_value(
+	value: T.KeywordPattern.LooseConfig['value']
+): Admit<T.KeywordPattern['_value']> {
 	return _keywordOr(
 		value,
 		[
@@ -3727,14 +3767,14 @@ export function coerceToKeywordPattern(input: T.KeywordPattern.Loose): ReturnTyp
 
 export function resolveSplatPattern_operator(
 	value: T.SplatPattern.LooseConfig['operator']
-): T.SplatPattern['_operator'] {
+): Admit<T.SplatPattern['_operator']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'*' | '**'>(value, _K0, _K0)),
 		[['*', TSKindId.Star] as const, ['**', TSKindId.StarStar] as const]
 	);
 }
 
-export function resolveSplatPattern_name(value: T.SplatPattern.LooseConfig['name']): T.SplatPattern['_name'] {
+export function resolveSplatPattern_name(value: T.SplatPattern.LooseConfig['name']): Admit<T.SplatPattern['_name']> {
 	return _keywordOr(value, [['_', TSKindId.Underscore] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, () => _resolveOneLeaf<T.Identifier | '_'>(value, 'identifier')),
@@ -3752,13 +3792,13 @@ export function coerceToSplatPattern(input: T.SplatPattern.Loose): ReturnType<ty
 	});
 }
 
-export function resolveClassPattern_name(value: T.ClassPattern.LooseConfig['name']): T.ClassPattern['_name'] {
+export function resolveClassPattern_name(value: T.ClassPattern.LooseConfig['name']): Admit<T.ClassPattern['_name']> {
 	return _resolveOneBranch<T.DottedName>(value, 'dotted_name');
 }
 
 export function resolveClassPattern_arguments(
 	value: T.ClassPattern.LooseConfig['arguments']
-): T.ClassPattern['_arguments'] {
+): Admit<T.ClassPattern['_arguments']> {
 	return _resolveOneBranch<T.ListPatternCasePatterns>(value, 'list_pattern_case_patterns', undefined, true);
 }
 
@@ -3771,17 +3811,21 @@ export function coerceToClassPattern(input: T.ClassPattern.Loose): ReturnType<ty
 	});
 }
 
-export function resolveComplexPattern_sign(value: T.ComplexPattern.LooseConfig['sign']): T.ComplexPattern['_sign'] {
+export function resolveComplexPattern_sign(
+	value: T.ComplexPattern.LooseConfig['sign']
+): Admit<T.ComplexPattern['_sign']> {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveComplexPattern_real(value: T.ComplexPattern.LooseConfig['real']): T.ComplexPattern['_real'] {
+export function resolveComplexPattern_real(
+	value: T.ComplexPattern.LooseConfig['real']
+): Admit<T.ComplexPattern['_real']> {
 	return _resolveOne<T.Integer | T.Float>(value, _super_integer_decimal, _K21);
 }
 
 export function resolveComplexPattern_operator(
 	value: T.ComplexPattern.LooseConfig['operator']
-): T.ComplexPattern['_operator'] {
+): Admit<T.ComplexPattern['_operator']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'+' | '-'>(value, _K0, _K0)),
 		[['+', TSKindId.Plus] as const, ['-', TSKindId.Dash] as const]
@@ -3790,7 +3834,7 @@ export function resolveComplexPattern_operator(
 
 export function resolveComplexPattern_imaginary(
 	value: T.ComplexPattern.LooseConfig['imaginary']
-): T.ComplexPattern['_imaginary'] {
+): Admit<T.ComplexPattern['_imaginary']> {
 	return _resolveOne<T.Integer | T.Float>(value, _super_integer_decimal, _K21);
 }
 
@@ -3819,7 +3863,7 @@ export function coerceToParametersElements(
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
-			...(children as unknown as NonEmptyArray<T.Parameter>)
+			...(children as unknown as NonEmptyArray<Admit<T.Parameter>>)
 		);
 	}
 	return F.buildParametersElements(
@@ -3843,7 +3887,7 @@ export function coerceToParametersElements(
 				'tuple_pattern',
 				'dictionary_splat_pattern'
 			]
-		) as unknown as NonEmptyArray<T.Parameter>)
+		) as unknown as NonEmptyArray<Admit<T.Parameter>>)
 	);
 }
 
@@ -3859,7 +3903,7 @@ export function coerceToPatterns(...input: T.Patterns.LooseArgs): ReturnType<typ
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
-			...(children as unknown as NonEmptyArray<T.Pattern>)
+			...(children as unknown as NonEmptyArray<Admit<T.Pattern>>)
 		);
 	}
 	return F.buildPatterns(
@@ -3876,13 +3920,13 @@ export function coerceToPatterns(...input: T.Patterns.LooseArgs): ReturnType<typ
 			'list_splat_pattern',
 			'tuple_pattern',
 			'list_pattern'
-		]) as unknown as NonEmptyArray<T.Pattern>)
+		]) as unknown as NonEmptyArray<Admit<T.Pattern>>)
 	);
 }
 
 export function resolveTuplePattern_patterns(
 	value: T.TuplePattern.LooseConfig['patterns']
-): T.TuplePattern['_patterns'] {
+): Admit<T.TuplePattern['_patterns']> {
 	return _resolveOneBranch<T.Patterns>(value, 'patterns', undefined, true);
 }
 
@@ -3902,7 +3946,9 @@ export function coerceToTuplePattern(...args: unknown[]): ReturnType<typeof F.bu
 	);
 }
 
-export function resolveListPattern_patterns(value: T.ListPattern.LooseConfig['patterns']): T.ListPattern['_patterns'] {
+export function resolveListPattern_patterns(
+	value: T.ListPattern.LooseConfig['patterns']
+): Admit<T.ListPattern['_patterns']> {
 	return _resolveOneBranch<T.Patterns>(value, 'patterns', undefined, true);
 }
 
@@ -3924,13 +3970,13 @@ export function coerceToListPattern(...args: unknown[]): ReturnType<typeof F.bui
 
 export function resolveDefaultParameter_name(
 	value: T.DefaultParameter.LooseConfig['name']
-): T.DefaultParameter['_name'] {
+): Admit<T.DefaultParameter['_name']> {
 	return _resolveOne<T.Identifier | T.TuplePattern>(value, _K13, _K25);
 }
 
 export function resolveDefaultParameter_value(
 	value: T.DefaultParameter.LooseConfig['value']
-): T.DefaultParameter['_value'] {
+): Admit<T.DefaultParameter['_value']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -3948,19 +3994,19 @@ export function coerceToDefaultParameter(input: T.DefaultParameter.Loose): Retur
 
 export function resolveTypedDefaultParameter_name(
 	value: T.TypedDefaultParameter.LooseConfig['name']
-): T.TypedDefaultParameter['_name'] {
+): Admit<T.TypedDefaultParameter['_name']> {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
 export function resolveTypedDefaultParameter_type(
 	value: T.TypedDefaultParameter.LooseConfig['type']
-): T.TypedDefaultParameter['_type'] {
+): Admit<T.TypedDefaultParameter['_type']> {
 	return _resolveOneBranch<T.Type>(value, 'type');
 }
 
 export function resolveTypedDefaultParameter_value(
 	value: T.TypedDefaultParameter.LooseConfig['value']
-): T.TypedDefaultParameter['_value'] {
+): Admit<T.TypedDefaultParameter['_value']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -3981,7 +4027,7 @@ export function coerceToTypedDefaultParameter(
 
 export function resolveListSplatPattern_target(
 	value: T.ListSplatPattern.LooseConfig['target']
-): T.ListSplatPattern['_target'] {
+): Admit<T.ListSplatPattern['_target']> {
 	return _keywordOr(
 		value,
 		[
@@ -4057,7 +4103,7 @@ export function coerceToListSplatPattern(input: T.ListSplatPattern.Loose): Retur
 
 export function resolveDictionarySplatPattern_target(
 	value: T.DictionarySplatPattern.LooseConfig['target']
-): T.DictionarySplatPattern['_target'] {
+): Admit<T.DictionarySplatPattern['_target']> {
 	return _keywordOr(
 		value,
 		[
@@ -4133,14 +4179,16 @@ export function coerceToDictionarySplatPattern(
 	);
 }
 
-export function resolveAsPattern_expression(value: T.AsPattern.LooseConfig['expression']): T.AsPattern['_expression'] {
+export function resolveAsPattern_expression(
+	value: T.AsPattern.LooseConfig['expression']
+): Admit<T.AsPattern['_expression']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
 	);
 }
 
-export function resolveAsPattern_alias(value: T.AsPattern.LooseConfig['alias']): T.AsPattern['_alias'] {
+export function resolveAsPattern_alias(value: T.AsPattern.LooseConfig['alias']): Admit<T.AsPattern['_alias']> {
 	return _resolveOneBranch<T.AsPatternTarget>(value, 'as_pattern_target');
 }
 
@@ -4152,7 +4200,9 @@ export function coerceToAsPattern(input: T.AsPattern.Loose): ReturnType<typeof F
 	});
 }
 
-export function resolveNotOperator_argument(value: T.NotOperator.LooseConfig['argument']): T.NotOperator['_argument'] {
+export function resolveNotOperator_argument(
+	value: T.NotOperator.LooseConfig['argument']
+): Admit<T.NotOperator['_argument']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -4180,7 +4230,9 @@ export function coerceToNotOperator(input: T.NotOperator.Loose): ReturnType<type
 	);
 }
 
-export function resolveBooleanOperator_left(value: T.BooleanOperator.LooseConfig['left']): T.BooleanOperator['_left'] {
+export function resolveBooleanOperator_left(
+	value: T.BooleanOperator.LooseConfig['left']
+): Admit<T.BooleanOperator['_left']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -4189,7 +4241,7 @@ export function resolveBooleanOperator_left(value: T.BooleanOperator.LooseConfig
 
 export function resolveBooleanOperator_operator(
 	value: T.BooleanOperator.LooseConfig['operator']
-): T.BooleanOperator['_operator'] {
+): Admit<T.BooleanOperator['_operator']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'and' | 'or'>(value, _K0, _K0)),
 		[['and', TSKindId.AndKeyword] as const, ['or', TSKindId.OrKeyword] as const]
@@ -4198,7 +4250,7 @@ export function resolveBooleanOperator_operator(
 
 export function resolveBooleanOperator_right(
 	value: T.BooleanOperator.LooseConfig['right']
-): T.BooleanOperator['_right'] {
+): Admit<T.BooleanOperator['_right']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -4215,7 +4267,9 @@ export function coerceToBooleanOperator(input: T.BooleanOperator.Loose): ReturnT
 	});
 }
 
-export function resolveBinaryOperator_left(value: T.BinaryOperator.LooseConfig['left']): T.BinaryOperator['_left'] {
+export function resolveBinaryOperator_left(
+	value: T.BinaryOperator.LooseConfig['left']
+): Admit<T.BinaryOperator['_left']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K27)),
 		[]
@@ -4224,7 +4278,7 @@ export function resolveBinaryOperator_left(value: T.BinaryOperator.LooseConfig['
 
 export function resolveBinaryOperator_operator(
 	value: T.BinaryOperator.LooseConfig['operator']
-): T.BinaryOperator['_operator'] {
+): Admit<T.BinaryOperator['_operator']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
 			_resolveOne<'+' | '-' | '*' | '@' | '/' | '%' | '//' | '**' | '|' | '&' | '^' | '<<' | '>>'>(value, _K0, _K0)
@@ -4247,7 +4301,9 @@ export function resolveBinaryOperator_operator(
 	);
 }
 
-export function resolveBinaryOperator_right(value: T.BinaryOperator.LooseConfig['right']): T.BinaryOperator['_right'] {
+export function resolveBinaryOperator_right(
+	value: T.BinaryOperator.LooseConfig['right']
+): Admit<T.BinaryOperator['_right']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K27)),
 		[]
@@ -4266,7 +4322,7 @@ export function coerceToBinaryOperator(input: T.BinaryOperator.Loose): ReturnTyp
 
 export function resolveUnaryOperator_operator(
 	value: T.UnaryOperator.LooseConfig['operator']
-): T.UnaryOperator['_operator'] {
+): Admit<T.UnaryOperator['_operator']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'+' | '-' | '~'>(value, _K0, _K0)),
 		[['+', TSKindId.Plus] as const, ['-', TSKindId.Dash] as const, ['~', TSKindId.Tilde] as const]
@@ -4275,7 +4331,7 @@ export function resolveUnaryOperator_operator(
 
 export function resolveUnaryOperator_argument(
 	value: T.UnaryOperator.LooseConfig['argument']
-): T.UnaryOperator['_argument'] {
+): Admit<T.UnaryOperator['_argument']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K27)),
 		[]
@@ -4293,7 +4349,7 @@ export function coerceToUnaryOperator(input: T.UnaryOperator.Loose): ReturnType<
 
 export function resolveComparisonOperator_left(
 	value: T.ComparisonOperator.LooseConfig['left']
-): T.ComparisonOperator['_left'] {
+): Admit<T.ComparisonOperator['_left']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K27)),
 		[]
@@ -4302,8 +4358,8 @@ export function resolveComparisonOperator_left(
 
 export function resolveComparisonOperator_comparators(
 	value: T.ComparisonOperator.LooseConfig['comparators']
-): T.ComparisonOperator['_comparators'] {
-	const resolved: readonly T.ComparisonOperator['_comparators'][number][] =
+): Admit<T.ComparisonOperator['_comparators']> {
+	const resolved: readonly Admit<T.ComparisonOperator['_comparators'][number]>[] =
 		_resolveManyBranch<T.ComparisonOperatorComparator>(value, 'comparison_operator_comparator');
 	_assertNonEmpty(resolved, 'comparison_operator.comparators');
 	return resolved;
@@ -4324,11 +4380,11 @@ export function coerceToComparisonOperator(
 	});
 }
 
-export function resolveLambda_parameters(value: T.Lambda.LooseConfig['parameters']): T.Lambda['_parameters'] {
+export function resolveLambda_parameters(value: T.Lambda.LooseConfig['parameters']): Admit<T.Lambda['_parameters']> {
 	return _resolveOneBranch<T.LambdaParameters>(value, 'lambda_parameters', undefined, true);
 }
 
-export function resolveLambda_body(value: T.Lambda.LooseConfig['body']): T.Lambda['_body'] {
+export function resolveLambda_body(value: T.Lambda.LooseConfig['body']): Admit<T.Lambda['_body']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -4345,13 +4401,13 @@ export function coerceToLambda(input: T.Lambda.Loose): ReturnType<typeof F.build
 
 export function resolveLambdaWithinForInClause_parameters(
 	value: T.LambdaWithinForInClause.LooseConfig['parameters']
-): T.LambdaWithinForInClause['_parameters'] {
+): Admit<T.LambdaWithinForInClause['_parameters']> {
 	return _resolveOneBranch<T.LambdaParameters>(value, 'lambda_parameters', undefined, true);
 }
 
 export function resolveLambdaWithinForInClause_body(
 	value: T.LambdaWithinForInClause.LooseConfig['body']
-): T.LambdaWithinForInClause['_body'] {
+): Admit<T.LambdaWithinForInClause['_body']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.LambdaWithinForInClause>(value, _K7, _K28)),
 		[]
@@ -4371,13 +4427,13 @@ export function coerceToLambdaWithinForInClause(
 
 export function resolveAugmentedAssignment_left(
 	value: T.AugmentedAssignment.LooseConfig['left']
-): T.AugmentedAssignment['_left'] {
+): Admit<T.AugmentedAssignment['_left']> {
 	return _resolveOne<T.Pattern | T.PatternList>(value, _K13, _K14);
 }
 
 export function resolveAugmentedAssignment_operator(
 	value: T.AugmentedAssignment.LooseConfig['operator']
-): T.AugmentedAssignment['_operator'] {
+): Admit<T.AugmentedAssignment['_operator']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
 			_resolveOne<'+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|='>(
@@ -4406,7 +4462,7 @@ export function resolveAugmentedAssignment_operator(
 
 export function resolveAugmentedAssignment_right(
 	value: T.AugmentedAssignment.LooseConfig['right']
-): T.AugmentedAssignment['_right'] {
+): Admit<T.AugmentedAssignment['_right']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
 			_resolveOne<T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield>(
@@ -4443,7 +4499,7 @@ export function coerceToPatternList(...input: T.PatternList.LooseArgs): ReturnTy
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
-			...(children as unknown as NonEmptyArray<T.Pattern>)
+			...(children as unknown as NonEmptyArray<Admit<T.Pattern>>)
 		);
 	}
 	return F.buildPatternList(
@@ -4460,11 +4516,11 @@ export function coerceToPatternList(...input: T.PatternList.LooseArgs): ReturnTy
 			'list_splat_pattern',
 			'tuple_pattern',
 			'list_pattern'
-		]) as unknown as NonEmptyArray<T.Pattern>)
+		]) as unknown as NonEmptyArray<Admit<T.Pattern>>)
 	);
 }
 
-export function resolveYield_content(value: T.Yield.LooseConfig['content']): T.Yield['_content'] {
+export function resolveYield_content(value: T.Yield.LooseConfig['content']): Admit<T.Yield['_content']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.YieldFromClause | T.Expression | T.ExpressionList>(value, _K7, _K30)),
 		[]
@@ -4490,14 +4546,16 @@ export function coerceToYield(input?: T.Yield.Loose): ReturnType<typeof F.buildY
 	);
 }
 
-export function resolveAttribute_object(value: T.Attribute.LooseConfig['object']): T.Attribute['_object'] {
+export function resolveAttribute_object(value: T.Attribute.LooseConfig['object']): Admit<T.Attribute['_object']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K27)),
 		[]
 	);
 }
 
-export function resolveAttribute_attribute(value: T.Attribute.LooseConfig['attribute']): T.Attribute['_attribute'] {
+export function resolveAttribute_attribute(
+	value: T.Attribute.LooseConfig['attribute']
+): Admit<T.Attribute['_attribute']> {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
@@ -4509,14 +4567,16 @@ export function coerceToAttribute(input: T.Attribute.Loose): ReturnType<typeof F
 	});
 }
 
-export function resolveSubscript_value(value: T.Subscript.LooseConfig['value']): T.Subscript['_value'] {
+export function resolveSubscript_value(value: T.Subscript.LooseConfig['value']): Admit<T.Subscript['_value']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K27)),
 		[]
 	);
 }
 
-export function resolveSubscript_subscripts(value: T.Subscript.LooseConfig['subscripts']): T.Subscript['_subscripts'] {
+export function resolveSubscript_subscripts(
+	value: T.Subscript.LooseConfig['subscripts']
+): Admit<T.Subscript['_subscripts']> {
 	return _resolveOneBranch<T.Subscripts>(value, 'subscripts');
 }
 
@@ -4528,21 +4588,21 @@ export function coerceToSubscript(input: T.Subscript.Loose): ReturnType<typeof F
 	});
 }
 
-export function resolveSlice_start(value: T.Slice.LooseConfig['start']): T.Slice['_start'] {
+export function resolveSlice_start(value: T.Slice.LooseConfig['start']): Admit<T.Slice['_start']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
 	);
 }
 
-export function resolveSlice_stop(value: T.Slice.LooseConfig['stop']): T.Slice['_stop'] {
+export function resolveSlice_stop(value: T.Slice.LooseConfig['stop']): Admit<T.Slice['_stop']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
 	);
 }
 
-export function resolveSlice_step(value: T.Slice.LooseConfig['step']): T.Slice['_step'] {
+export function resolveSlice_step(value: T.Slice.LooseConfig['step']): Admit<T.Slice['_step']> {
 	return _resolveOneBranch<T.SliceGroup>(value, 'slice_group', undefined, true);
 }
 
@@ -4560,14 +4620,14 @@ export function coerceToEllipsis(_input?: T.Ellipsis.Loose): typeof F.buildEllip
 	return F.buildEllipsis;
 }
 
-export function resolveCall_function(value: T.Call.LooseConfig['function']): T.Call['_function'] {
+export function resolveCall_function(value: T.Call.LooseConfig['function']): Admit<T.Call['_function']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K27)),
 		[]
 	);
 }
 
-export function resolveCall_arguments(value: T.Call.LooseConfig['arguments']): T.Call['_arguments'] {
+export function resolveCall_arguments(value: T.Call.LooseConfig['arguments']): Admit<T.Call['_arguments']> {
 	return _resolveOne<T.GeneratorExpression | T.ArgumentList>(value, _K0, _K31);
 }
 
@@ -4579,11 +4639,15 @@ export function coerceToCall(input: T.Call.Loose): ReturnType<typeof F.buildCall
 	});
 }
 
-export function resolveTypedParameter_name(value: T.TypedParameter.LooseConfig['name']): T.TypedParameter['_name'] {
+export function resolveTypedParameter_name(
+	value: T.TypedParameter.LooseConfig['name']
+): Admit<T.TypedParameter['_name']> {
 	return _resolveOne<T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern>(value, _K13, _K32);
 }
 
-export function resolveTypedParameter_type(value: T.TypedParameter.LooseConfig['type']): T.TypedParameter['_type'] {
+export function resolveTypedParameter_type(
+	value: T.TypedParameter.LooseConfig['type']
+): Admit<T.TypedParameter['_type']> {
 	return _resolveOneBranch<T.Type>(value, 'type');
 }
 
@@ -4596,7 +4660,7 @@ export function coerceToTypedParameter(input: T.TypedParameter.Loose): ReturnTyp
 	});
 }
 
-export function resolveType_content(value: T.Type.LooseConfig['content']): T.Type['_content'] {
+export function resolveType_content(value: T.Type.LooseConfig['content']): Admit<T.Type['_content']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
 			_resolveOne<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>(
@@ -4631,14 +4695,14 @@ export function coerceToType(input: T.Type.Loose): ReturnType<typeof F.buildType
 	);
 }
 
-export function resolveSplatType_operator(value: T.SplatType.LooseConfig['operator']): T.SplatType['_operator'] {
+export function resolveSplatType_operator(value: T.SplatType.LooseConfig['operator']): Admit<T.SplatType['_operator']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'*' | '**'>(value, _K0, _K0)),
 		[['*', TSKindId.Star] as const, ['**', TSKindId.StarStar] as const]
 	);
 }
 
-export function resolveSplatType_name(value: T.SplatType.LooseConfig['name']): T.SplatType['_name'] {
+export function resolveSplatType_name(value: T.SplatType.LooseConfig['name']): Admit<T.SplatType['_name']> {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
@@ -4650,7 +4714,7 @@ export function coerceToSplatType(input: T.SplatType.Loose): ReturnType<typeof F
 	});
 }
 
-export function resolveGenericType_name(value: T.GenericType.LooseConfig['name']): T.GenericType['_name'] {
+export function resolveGenericType_name(value: T.GenericType.LooseConfig['name']): Admit<T.GenericType['_name']> {
 	return _keywordOr(value, [['type', TSKindId.TypeKeyword] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, () => _resolveOneLeaf<T.Identifier | 'type'>(value, 'identifier')),
@@ -4661,7 +4725,7 @@ export function resolveGenericType_name(value: T.GenericType.LooseConfig['name']
 
 export function resolveGenericType_typeParameter(
 	value: T.GenericType.LooseConfig['typeParameter']
-): T.GenericType['_type_parameter'] {
+): Admit<T.GenericType['_type_parameter']> {
 	return _resolveOneBranch<T.TypeParameter>(value, 'type_parameter');
 }
 
@@ -4674,11 +4738,11 @@ export function coerceToGenericType(input: T.GenericType.Loose): ReturnType<type
 	});
 }
 
-export function resolveUnionType_left(value: T.UnionType.LooseConfig['left']): T.UnionType['_left'] {
+export function resolveUnionType_left(value: T.UnionType.LooseConfig['left']): Admit<T.UnionType['_left']> {
 	return _resolveOneBranch<T.Type>(value, 'type');
 }
 
-export function resolveUnionType_right(value: T.UnionType.LooseConfig['right']): T.UnionType['_right'] {
+export function resolveUnionType_right(value: T.UnionType.LooseConfig['right']): Admit<T.UnionType['_right']> {
 	return _resolveOneBranch<T.Type>(value, 'type');
 }
 
@@ -4692,13 +4756,13 @@ export function coerceToUnionType(input: T.UnionType.Loose): ReturnType<typeof F
 
 export function resolveConstrainedType_baseType(
 	value: T.ConstrainedType.LooseConfig['baseType']
-): T.ConstrainedType['_base_type'] {
+): Admit<T.ConstrainedType['_base_type']> {
 	return _resolveOneBranch<T.Type>(value, 'type');
 }
 
 export function resolveConstrainedType_constraint(
 	value: T.ConstrainedType.LooseConfig['constraint']
-): T.ConstrainedType['_constraint'] {
+): Admit<T.ConstrainedType['_constraint']> {
 	return _resolveOneBranch<T.Type>(value, 'type');
 }
 
@@ -4711,11 +4775,13 @@ export function coerceToConstrainedType(input: T.ConstrainedType.Loose): ReturnT
 	});
 }
 
-export function resolveMemberType_baseType(value: T.MemberType.LooseConfig['baseType']): T.MemberType['_base_type'] {
+export function resolveMemberType_baseType(
+	value: T.MemberType.LooseConfig['baseType']
+): Admit<T.MemberType['_base_type']> {
 	return _resolveOneBranch<T.Type>(value, 'type');
 }
 
-export function resolveMemberType_name(value: T.MemberType.LooseConfig['name']): T.MemberType['_name'] {
+export function resolveMemberType_name(value: T.MemberType.LooseConfig['name']): Admit<T.MemberType['_name']> {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
@@ -4727,7 +4793,9 @@ export function coerceToMemberType(input: T.MemberType.Loose): ReturnType<typeof
 	});
 }
 
-export function resolveKeywordArgument_name(value: T.KeywordArgument.LooseConfig['name']): T.KeywordArgument['_name'] {
+export function resolveKeywordArgument_name(
+	value: T.KeywordArgument.LooseConfig['name']
+): Admit<T.KeywordArgument['_name']> {
 	return _keywordOr(
 		value,
 		[
@@ -4757,7 +4825,7 @@ export function resolveKeywordArgument_name(value: T.KeywordArgument.LooseConfig
 
 export function resolveKeywordArgument_value(
 	value: T.KeywordArgument.LooseConfig['value']
-): T.KeywordArgument['_value'] {
+): Admit<T.KeywordArgument['_value']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -4775,7 +4843,7 @@ export function coerceToKeywordArgument(input: T.KeywordArgument.Loose): ReturnT
 
 export function resolveList_collectionElements(
 	value: T.List.LooseConfig['collectionElements']
-): T.List['_collection_elements'] {
+): Admit<T.List['_collection_elements']> {
 	return _resolveOneBranch<T.CollectionElements>(value, 'collection_elements', undefined, true);
 }
 
@@ -4798,7 +4866,7 @@ export function coerceToList(...args: unknown[]): ReturnType<typeof F.buildList>
 
 export function resolveSet_collectionElements(
 	value: T.Set.LooseConfig['collectionElements']
-): T.Set['_collection_elements'] {
+): Admit<T.Set['_collection_elements']> {
 	return _resolveOneBranch<T.CollectionElements>(value, 'collection_elements');
 }
 
@@ -4820,7 +4888,7 @@ export function coerceToSet(...args: unknown[]): ReturnType<typeof F.buildSet> {
 	);
 }
 
-export function resolveTuple_elements(value: T.Tuple.LooseConfig['elements']): T.Tuple['_elements'] {
+export function resolveTuple_elements(value: T.Tuple.LooseConfig['elements']): Admit<T.Tuple['_elements']> {
 	return _resolveOneBranch<T.TupleElements>(value, 'tuple_elements', undefined, true);
 }
 
@@ -4841,7 +4909,9 @@ export function coerceToTuple(...args: unknown[]): ReturnType<typeof F.buildTupl
 	);
 }
 
-export function resolveDictionary_elements(value: T.Dictionary.LooseConfig['elements']): T.Dictionary['_elements'] {
+export function resolveDictionary_elements(
+	value: T.Dictionary.LooseConfig['elements']
+): Admit<T.Dictionary['_elements']> {
 	return _resolveOneBranch<T.DictionaryElements>(value, 'dictionary_elements', undefined, true);
 }
 
@@ -4864,14 +4934,14 @@ export function coerceToDictionary(...args: unknown[]): ReturnType<typeof F.buil
 	);
 }
 
-export function resolvePair_key(value: T.Pair.LooseConfig['key']): T.Pair['_key'] {
+export function resolvePair_key(value: T.Pair.LooseConfig['key']): Admit<T.Pair['_key']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
 	);
 }
 
-export function resolvePair_value(value: T.Pair.LooseConfig['value']): T.Pair['_value'] {
+export function resolvePair_value(value: T.Pair.LooseConfig['value']): Admit<T.Pair['_value']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -4888,7 +4958,7 @@ export function coerceToPair(input: T.Pair.Loose): ReturnType<typeof F.buildPair
 
 export function resolveListComprehension_body(
 	value: T.ListComprehension.LooseConfig['body']
-): T.ListComprehension['_body'] {
+): Admit<T.ListComprehension['_body']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -4897,7 +4967,7 @@ export function resolveListComprehension_body(
 
 export function resolveListComprehension_comprehensionClauses(
 	value: T.ListComprehension.LooseConfig['comprehensionClauses']
-): T.ListComprehension['_comprehension_clauses'] {
+): Admit<T.ListComprehension['_comprehension_clauses']> {
 	return _resolveOneBranch<T.ComprehensionClauses>(value, 'comprehension_clauses');
 }
 
@@ -4915,13 +4985,13 @@ export function coerceToListComprehension(
 
 export function resolveDictionaryComprehension_body(
 	value: T.DictionaryComprehension.LooseConfig['body']
-): T.DictionaryComprehension['_body'] {
+): Admit<T.DictionaryComprehension['_body']> {
 	return _resolveOneBranch<T.Pair>(value, 'pair');
 }
 
 export function resolveDictionaryComprehension_comprehensionClauses(
 	value: T.DictionaryComprehension.LooseConfig['comprehensionClauses']
-): T.DictionaryComprehension['_comprehension_clauses'] {
+): Admit<T.DictionaryComprehension['_comprehension_clauses']> {
 	return _resolveOneBranch<T.ComprehensionClauses>(value, 'comprehension_clauses');
 }
 
@@ -4939,7 +5009,7 @@ export function coerceToDictionaryComprehension(
 
 export function resolveSetComprehension_body(
 	value: T.SetComprehension.LooseConfig['body']
-): T.SetComprehension['_body'] {
+): Admit<T.SetComprehension['_body']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -4948,7 +5018,7 @@ export function resolveSetComprehension_body(
 
 export function resolveSetComprehension_comprehensionClauses(
 	value: T.SetComprehension.LooseConfig['comprehensionClauses']
-): T.SetComprehension['_comprehension_clauses'] {
+): Admit<T.SetComprehension['_comprehension_clauses']> {
 	return _resolveOneBranch<T.ComprehensionClauses>(value, 'comprehension_clauses');
 }
 
@@ -4964,7 +5034,7 @@ export function coerceToSetComprehension(input: T.SetComprehension.Loose): Retur
 
 export function resolveGeneratorExpression_body(
 	value: T.GeneratorExpression.LooseConfig['body']
-): T.GeneratorExpression['_body'] {
+): Admit<T.GeneratorExpression['_body']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -4973,7 +5043,7 @@ export function resolveGeneratorExpression_body(
 
 export function resolveGeneratorExpression_comprehensionClauses(
 	value: T.GeneratorExpression.LooseConfig['comprehensionClauses']
-): T.GeneratorExpression['_comprehension_clauses'] {
+): Admit<T.GeneratorExpression['_comprehension_clauses']> {
 	return _resolveOneBranch<T.ComprehensionClauses>(value, 'comprehension_clauses');
 }
 
@@ -4991,7 +5061,7 @@ export function coerceToGeneratorExpression(
 
 export function resolveParenthesizedExpression_expression(
 	value: T.ParenthesizedExpression.LooseConfig['expression']
-): T.ParenthesizedExpression['_expression'] {
+): Admit<T.ParenthesizedExpression['_expression']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.Yield>(value, _K7, _K34)),
 		[]
@@ -5035,7 +5105,7 @@ export function coerceToCollectionElements(
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
-			...(children as unknown as NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>)
+			...(children as unknown as NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>)
 		);
 	}
 	return F.buildCollectionElements(
@@ -5100,20 +5170,20 @@ export function coerceToCollectionElements(
 				'list_splat',
 				'parenthesized_list_splat'
 			]
-		) as unknown as NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>)
+		) as unknown as NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>)
 	);
 }
 
-export function resolveForInClause_async(value: T.ForInClause.LooseConfig['async']): T.ForInClause['_async'] {
+export function resolveForInClause_async(value: T.ForInClause.LooseConfig['async']): Admit<T.ForInClause['_async']> {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveForInClause_left(value: T.ForInClause.LooseConfig['left']): T.ForInClause['_left'] {
+export function resolveForInClause_left(value: T.ForInClause.LooseConfig['left']): Admit<T.ForInClause['_left']> {
 	return _resolveOne<T.Pattern | T.PatternList>(value, _K13, _K14);
 }
 
-export function resolveForInClause_rights(value: T.ForInClause.LooseConfig['right']): T.ForInClause['_right'] {
-	const resolved: readonly T.ForInClause['_right'][number][] = coerceMixedEnumStorage(
+export function resolveForInClause_rights(value: T.ForInClause.LooseConfig['right']): Admit<T.ForInClause['_right']> {
+	const resolved: readonly Admit<T.ForInClause['_right'][number]>[] = coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveMany<T.Expression | T.LambdaWithinForInClause>(value, _K7, _K28)),
 		[]
 	);
@@ -5121,7 +5191,7 @@ export function resolveForInClause_rights(value: T.ForInClause.LooseConfig['righ
 	return resolved;
 }
 
-export function resolveForInClause_comma(value: T.ForInClause.LooseConfig['comma']): T.ForInClause['_comma'] {
+export function resolveForInClause_comma(value: T.ForInClause.LooseConfig['comma']): Admit<T.ForInClause['_comma']> {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -5136,7 +5206,7 @@ export function coerceToForInClause(input: T.ForInClause.Loose): ReturnType<type
 	});
 }
 
-export function resolveIfClause_condition(value: T.IfClause.LooseConfig['condition']): T.IfClause['_condition'] {
+export function resolveIfClause_condition(value: T.IfClause.LooseConfig['condition']): Admit<T.IfClause['_condition']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -5167,7 +5237,7 @@ export function coerceToIfClause(input: T.IfClause.Loose): ReturnType<typeof F.b
 
 export function resolveConditionalExpression_body(
 	value: T.ConditionalExpression.LooseConfig['body']
-): T.ConditionalExpression['_body'] {
+): Admit<T.ConditionalExpression['_body']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -5176,7 +5246,7 @@ export function resolveConditionalExpression_body(
 
 export function resolveConditionalExpression_condition(
 	value: T.ConditionalExpression.LooseConfig['condition']
-): T.ConditionalExpression['_condition'] {
+): Admit<T.ConditionalExpression['_condition']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -5185,7 +5255,7 @@ export function resolveConditionalExpression_condition(
 
 export function resolveConditionalExpression_alternative(
 	value: T.ConditionalExpression.LooseConfig['alternative']
-): T.ConditionalExpression['_alternative'] {
+): Admit<T.ConditionalExpression['_alternative']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -5235,15 +5305,17 @@ export function coerceToConcatenatedString(
 	);
 }
 
-export function resolveString_stringStart(value: T.String.LooseConfig['stringStart']): T.String['_string_start'] {
+export function resolveString_stringStart(
+	value: T.String.LooseConfig['stringStart']
+): Admit<T.String['_string_start']> {
 	return _resolveOneLeaf<T.StringStart>(value, 'string_start');
 }
 
-export function resolveString_contents(value: T.String.LooseConfig['content']): T.String['_content'] {
+export function resolveString_contents(value: T.String.LooseConfig['content']): Admit<T.String['_content']> {
 	return _resolveMany<T.Interpolation | T.StringContent>(value, _K0, _K36);
 }
 
-export function resolveString_stringEnd(value: T.String.LooseConfig['stringEnd']): T.String['_string_end'] {
+export function resolveString_stringEnd(value: T.String.LooseConfig['stringEnd']): Admit<T.String['_string_end']> {
 	return _resolveOneLeaf<T.StringEnd>(value, 'string_end');
 }
 
@@ -5297,7 +5369,7 @@ export function coerceToStringContent(...input: T.StringContent.LooseArgs): Retu
 
 export function resolveInterpolation_expression(
 	value: T.Interpolation.LooseConfig['expression']
-): T.Interpolation['_expression'] {
+): Admit<T.Interpolation['_expression']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
 			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(value, _K7, _K38)
@@ -5306,19 +5378,21 @@ export function resolveInterpolation_expression(
 	);
 }
 
-export function resolveInterpolation_debug(value: T.Interpolation.LooseConfig['debug']): T.Interpolation['_debug'] {
+export function resolveInterpolation_debug(
+	value: T.Interpolation.LooseConfig['debug']
+): Admit<T.Interpolation['_debug']> {
 	return _resolveBooleanKeyword(value);
 }
 
 export function resolveInterpolation_typeConversion(
 	value: T.Interpolation.LooseConfig['typeConversion']
-): T.Interpolation['_type_conversion'] {
+): Admit<T.Interpolation['_type_conversion']> {
 	return _resolveOneLeaf<T.TypeConversion>(value, 'type_conversion');
 }
 
 export function resolveInterpolation_formatSpecifier(
 	value: T.Interpolation.LooseConfig['formatSpecifier']
-): T.Interpolation['_format_specifier'] {
+): Admit<T.Interpolation['_format_specifier']> {
 	return _resolveOneBranch<T.FormatSpecifier>(value, 'format_specifier', undefined, true);
 }
 
@@ -5386,7 +5460,7 @@ export function coerceToNone(_input?: T.None.Loose): typeof F.buildNone {
 	return F.buildNone;
 }
 
-export function resolveAwait_expression(value: T.Await.LooseConfig['expression']): T.Await['_expression'] {
+export function resolveAwait_expression(value: T.Await.LooseConfig['expression']): Admit<T.Await['_expression']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K27)),
 		[]
@@ -5414,7 +5488,7 @@ export function coerceToAwait(input: T.Await.Loose): ReturnType<typeof F.buildAw
 	);
 }
 
-export function resolveComment_content(value: T.Comment.LooseConfig['content']): T.Comment['_content'] {
+export function resolveComment_content(value: T.Comment.LooseConfig['content']): Admit<T.Comment['_content']> {
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
@@ -5457,7 +5531,7 @@ export function coerceToSimpleStatementsElements(
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
-			...(children as unknown as NonEmptyArray<T.SimpleStatement>)
+			...(children as unknown as NonEmptyArray<Admit<T.SimpleStatement>>)
 		);
 	}
 	return F.buildSimpleStatementsElements(
@@ -5488,7 +5562,7 @@ export function coerceToSimpleStatementsElements(
 				'exec_statement',
 				'type_alias_statement'
 			]
-		) as unknown as NonEmptyArray<T.SimpleStatement>)
+		) as unknown as NonEmptyArray<Admit<T.SimpleStatement>>)
 	);
 }
 
@@ -5504,7 +5578,7 @@ export function coerceToSubjects(...input: T.Subjects.LooseArgs): ReturnType<typ
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
-			...(children as unknown as NonEmptyArray<T.Expression>)
+			...(children as unknown as NonEmptyArray<Admit<T.Expression>>)
 		);
 	}
 	return F.buildSubjects(
@@ -5564,7 +5638,7 @@ export function coerceToSubjects(...input: T.Subjects.LooseArgs): ReturnType<typ
 				'named_expression',
 				'as_pattern'
 			]
-		) as unknown as NonEmptyArray<T.Expression>)
+		) as unknown as NonEmptyArray<Admit<T.Expression>>)
 	);
 }
 
@@ -5580,7 +5654,7 @@ export function coerceToCasePatterns(...input: T.CasePatterns.LooseArgs): Return
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
-			...(children as unknown as NonEmptyArray<T.CasePattern>)
+			...(children as unknown as NonEmptyArray<Admit<T.CasePattern>>)
 		);
 	}
 	return F.buildCasePatterns(
@@ -5590,7 +5664,7 @@ export function coerceToCasePatterns(...input: T.CasePatterns.LooseArgs): Return
 			undefined,
 			(els) => _resolveManyBranch<T.CasePattern>(els, 'case_pattern'),
 			['case_pattern']
-		) as unknown as NonEmptyArray<T.CasePattern>)
+		) as unknown as NonEmptyArray<Admit<T.CasePattern>>)
 	);
 }
 
@@ -5608,13 +5682,13 @@ export function coerceToWithClauseWithItems(
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
-			...(children as unknown as NonEmptyArray<T.WithItem>)
+			...(children as unknown as NonEmptyArray<Admit<T.WithItem>>)
 		);
 	}
 	return F.buildWithClauseWithItems(
 		...(_listElements(input, ['delimiter'], undefined, (els) => _resolveManyBranch<T.WithItem>(els, 'with_item'), [
 			'with_item'
-		]) as unknown as NonEmptyArray<T.WithItem>)
+		]) as unknown as NonEmptyArray<Admit<T.WithItem>>)
 	);
 }
 
@@ -5630,13 +5704,13 @@ export function coerceToTypes(...input: T.Types.LooseArgs): ReturnType<typeof F.
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
-			...(children as unknown as NonEmptyArray<T.Type>)
+			...(children as unknown as NonEmptyArray<Admit<T.Type>>)
 		);
 	}
 	return F.buildTypes(
 		...(_listElements(input, ['delimiter'], undefined, (els) => _resolveManyBranch<T.Type>(els, 'type'), [
 			'type'
-		]) as unknown as NonEmptyArray<T.Type>)
+		]) as unknown as NonEmptyArray<Admit<T.Type>>)
 	);
 }
 
@@ -5655,7 +5729,7 @@ export function coerceToArgumentListElements(
 				})()
 			},
 			...(children as unknown as NonEmptyArray<
-				T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
+				Admit<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>
 			>)
 		);
 	}
@@ -5727,7 +5801,7 @@ export function coerceToArgumentListElements(
 				'keyword_argument'
 			]
 		) as unknown as NonEmptyArray<
-			T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
+			Admit<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>
 		>)
 	);
 }
@@ -5746,7 +5820,7 @@ export function coerceToListPatternCasePatterns(
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
-			...(children as unknown as NonEmptyArray<T.CasePattern>)
+			...(children as unknown as NonEmptyArray<Admit<T.CasePattern>>)
 		);
 	}
 	return F.buildListPatternCasePatterns(
@@ -5756,7 +5830,7 @@ export function coerceToListPatternCasePatterns(
 			undefined,
 			(els) => _resolveManyBranch<T.CasePattern>(els, 'case_pattern'),
 			['case_pattern']
-		) as unknown as NonEmptyArray<T.CasePattern>)
+		) as unknown as NonEmptyArray<Admit<T.CasePattern>>)
 	);
 }
 
@@ -5774,7 +5848,7 @@ export function coerceToDictPatternElements(
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
-			...(children as unknown as NonEmptyArray<T.KeyValuePattern | T.SplatPattern>)
+			...(children as unknown as NonEmptyArray<Admit<T.KeyValuePattern | T.SplatPattern>>)
 		);
 	}
 	return F.buildDictPatternElements(
@@ -5784,7 +5858,7 @@ export function coerceToDictPatternElements(
 			undefined,
 			(els) => _resolveMany<T.KeyValuePattern | T.SplatPattern>(els, _K0, _K44),
 			['key_value_pattern', 'splat_pattern']
-		) as unknown as NonEmptyArray<T.KeyValuePattern | T.SplatPattern>)
+		) as unknown as NonEmptyArray<Admit<T.KeyValuePattern | T.SplatPattern>>)
 	);
 }
 
@@ -5800,7 +5874,7 @@ export function coerceToSubscripts(...input: T.Subscripts.LooseArgs): ReturnType
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
-			...(children as unknown as NonEmptyArray<T.Expression | T.Slice>)
+			...(children as unknown as NonEmptyArray<Admit<T.Expression | T.Slice>>)
 		);
 	}
 	return F.buildSubscripts(
@@ -5861,7 +5935,7 @@ export function coerceToSubscripts(...input: T.Subscripts.LooseArgs): ReturnType
 				'as_pattern',
 				'slice'
 			]
-		) as unknown as NonEmptyArray<T.Expression | T.Slice>)
+		) as unknown as NonEmptyArray<Admit<T.Expression | T.Slice>>)
 	);
 }
 
@@ -5879,7 +5953,7 @@ export function coerceToDictionaryElements(
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
-			...(children as unknown as NonEmptyArray<T.Pair | T.DictionarySplat>)
+			...(children as unknown as NonEmptyArray<Admit<T.Pair | T.DictionarySplat>>)
 		);
 	}
 	return F.buildDictionaryElements(
@@ -5889,13 +5963,13 @@ export function coerceToDictionaryElements(
 			undefined,
 			(els) => _resolveMany<T.Pair | T.DictionarySplat>(els, _K0, _K46),
 			['pair', 'dictionary_splat']
-		) as unknown as NonEmptyArray<T.Pair | T.DictionarySplat>)
+		) as unknown as NonEmptyArray<Admit<T.Pair | T.DictionarySplat>>)
 	);
 }
 
 export function resolveSliceGroup_expression(
 	value: T.SliceGroup.LooseConfig['expression']
-): T.SliceGroup['_expression'] {
+): Admit<T.SliceGroup['_expression']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -5940,7 +6014,7 @@ export function coerceToTupleElements(...input: T.TupleElements.LooseArgs): Retu
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
-			...(children as unknown as NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>)
+			...(children as unknown as NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>)
 		);
 	}
 	return F.buildTupleElements(
@@ -6005,13 +6079,13 @@ export function coerceToTupleElements(...input: T.TupleElements.LooseArgs): Retu
 				'list_splat',
 				'parenthesized_list_splat'
 			]
-		) as unknown as NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>)
+		) as unknown as NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>)
 	);
 }
 
 export function resolveExceptClauseExceptionAs_value(
 	value: T.ExceptClauseExceptionAs.LooseConfig['value']
-): T.ExceptClauseExceptionAs['_value'] {
+): Admit<T.ExceptClauseExceptionAs['_value']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -6020,7 +6094,7 @@ export function resolveExceptClauseExceptionAs_value(
 
 export function resolveExceptClauseExceptionAs_alias(
 	value: T.ExceptClauseExceptionAs.LooseConfig['alias']
-): T.ExceptClauseExceptionAs['_alias'] {
+): Admit<T.ExceptClauseExceptionAs['_alias']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -6040,7 +6114,7 @@ export function coerceToExceptClauseExceptionAs(
 
 export function resolveCaseTuplePattern_listPatternCasePatterns(
 	value: T.CaseTuplePattern.LooseConfig['listPatternCasePatterns']
-): T.CaseTuplePattern['_list_pattern_case_patterns'] {
+): Admit<T.CaseTuplePattern['_list_pattern_case_patterns']> {
 	return _resolveOneBranch<T.ListPatternCasePatterns>(value, 'list_pattern_case_patterns', undefined, true);
 }
 
@@ -6069,7 +6143,7 @@ export function coerceToCaseTuplePattern(...args: unknown[]): ReturnType<typeof 
 
 export function resolveCaseListPattern_listPatternCasePatterns(
 	value: T.CaseListPattern.LooseConfig['listPatternCasePatterns']
-): T.CaseListPattern['_list_pattern_case_patterns'] {
+): Admit<T.CaseListPattern['_list_pattern_case_patterns']> {
 	return _resolveOneBranch<T.ListPatternCasePatterns>(value, 'list_pattern_case_patterns', undefined, true);
 }
 
@@ -6108,7 +6182,7 @@ export function coerceToPrintArguments(...input: T.PrintArguments.LooseArgs): Re
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
-			...(children as unknown as NonEmptyArray<T.Expression>)
+			...(children as unknown as NonEmptyArray<Admit<T.Expression>>)
 		);
 	}
 	return F.buildPrintArguments(
@@ -6168,7 +6242,7 @@ export function coerceToPrintArguments(...input: T.PrintArguments.LooseArgs): Re
 				'named_expression',
 				'as_pattern'
 			]
-		) as unknown as NonEmptyArray<T.Expression>)
+		) as unknown as NonEmptyArray<Admit<T.Expression>>)
 	);
 }
 
@@ -6186,7 +6260,7 @@ export function coerceToPrintChevronArguments(
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
-			...(children as unknown as NonEmptyArray<T.Expression>)
+			...(children as unknown as NonEmptyArray<Admit<T.Expression>>)
 		);
 	}
 	return F.buildPrintChevronArguments(
@@ -6246,19 +6320,19 @@ export function coerceToPrintChevronArguments(
 				'named_expression',
 				'as_pattern'
 			]
-		) as unknown as NonEmptyArray<T.Expression>)
+		) as unknown as NonEmptyArray<Admit<T.Expression>>)
 	);
 }
 
 export function resolvePrintStatementChevron_chevron(
 	value: T.PrintStatementChevron.LooseConfig['chevron']
-): T.PrintStatementChevron['_chevron'] {
+): Admit<T.PrintStatementChevron['_chevron']> {
 	return _resolveOneBranch<T.Chevron>(value, 'chevron');
 }
 
 export function resolvePrintStatementChevron_printChevronArguments(
 	value: T.PrintStatementChevron.LooseConfig['printChevronArguments']
-): T.PrintStatementChevron['_print_chevron_arguments'] {
+): Admit<T.PrintStatementChevron['_print_chevron_arguments']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
 			_resolveOneBranch<T.PrintChevronArguments | ','>(value, 'print_chevron_arguments', [TSKindId.Comma], true)
@@ -6280,7 +6354,7 @@ export function coerceToPrintStatementChevron(
 
 export function resolvePrintStatementPlain_printArguments(
 	value: T.PrintStatementPlain.LooseConfig['printArguments']
-): T.PrintStatementPlain['_print_arguments'] {
+): Admit<T.PrintStatementPlain['_print_arguments']> {
 	return _resolveOneBranch<T.PrintArguments>(value, 'print_arguments');
 }
 
@@ -6314,7 +6388,7 @@ export function coerceToWildcardPattern(_input?: T.WildcardPattern.Loose): typeo
 
 export function resolveParenthesizedImportList_importList(
 	value: T.ParenthesizedImportList.LooseConfig['importList']
-): T.ParenthesizedImportList['_import_list'] {
+): Admit<T.ParenthesizedImportList['_import_list']> {
 	return _resolveOneBranch<T.ImportList>(value, 'import_list');
 }
 
@@ -6369,7 +6443,7 @@ export function coerceToComprehensionClauses(
 	);
 }
 
-export function resolveIntegerHex_content(value: T.IntegerHex.LooseConfig['content']): T.IntegerHex['_content'] {
+export function resolveIntegerHex_content(value: T.IntegerHex.LooseConfig['content']): Admit<T.IntegerHex['_content']> {
 	return typeof value === 'number' || typeof value === 'bigint'
 		? numberText(16, '', value)
 		: _resolveOne<string>(value, _K0, _K0);
@@ -6405,7 +6479,9 @@ export function coerceToIntegerHex<const I extends T.IntegerHex.Loose, const O e
 	>;
 }
 
-export function resolveIntegerOctal_content(value: T.IntegerOctal.LooseConfig['content']): T.IntegerOctal['_content'] {
+export function resolveIntegerOctal_content(
+	value: T.IntegerOctal.LooseConfig['content']
+): Admit<T.IntegerOctal['_content']> {
 	return typeof value === 'number' || typeof value === 'bigint'
 		? numberText(8, '', value)
 		: _resolveOne<string>(value, _K0, _K0);
@@ -6443,7 +6519,7 @@ export function coerceToIntegerOctal<const I extends T.IntegerOctal.Loose, const
 
 export function resolveIntegerBinary_content(
 	value: T.IntegerBinary.LooseConfig['content']
-): T.IntegerBinary['_content'] {
+): Admit<T.IntegerBinary['_content']> {
 	return typeof value === 'number' || typeof value === 'bigint'
 		? numberText(2, '', value)
 		: _resolveOne<string>(value, _K0, _K0);
@@ -6504,29 +6580,35 @@ export function coerceToIntegerDecimalPlain(
 	return F.buildIntegerDecimalPlain(input as Parameters<typeof F.buildIntegerDecimalPlain>[0]);
 }
 
-export function resolveFloatPoint_integer(value: T.FloatPoint.LooseConfig['integer']): T.FloatPoint['_integer'] {
+export function resolveFloatPoint_integer(value: T.FloatPoint.LooseConfig['integer']): Admit<T.FloatPoint['_integer']> {
 	return typeof value === 'number' || typeof value === 'bigint'
 		? numberText(10, '', value)
 		: _resolveOne<string>(value, _K0, _K0);
 }
 
-export function resolveFloatPoint_fraction(value: T.FloatPoint.LooseConfig['fraction']): T.FloatPoint['_fraction'] {
+export function resolveFloatPoint_fraction(
+	value: T.FloatPoint.LooseConfig['fraction']
+): Admit<T.FloatPoint['_fraction']> {
 	return typeof value === 'number' || typeof value === 'bigint'
 		? numberText(10, '', value)
 		: _resolveOne<string>(value, _K0, _K0);
 }
 
-export function resolveFloatPoint_marker(value: T.FloatPoint.LooseConfig['marker']): T.FloatPoint['_marker'] {
+export function resolveFloatPoint_marker(value: T.FloatPoint.LooseConfig['marker']): Admit<T.FloatPoint['_marker']> {
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
-export function resolveFloatPoint_exponent(value: T.FloatPoint.LooseConfig['exponent']): T.FloatPoint['_exponent'] {
+export function resolveFloatPoint_exponent(
+	value: T.FloatPoint.LooseConfig['exponent']
+): Admit<T.FloatPoint['_exponent']> {
 	return typeof value === 'number' || typeof value === 'bigint'
 		? numberText(10, '', value)
 		: _resolveOne<string>(value, _K0, _K0);
 }
 
-export function resolveFloatPoint_imaginary(value: T.FloatPoint.LooseConfig['imaginary']): T.FloatPoint['_imaginary'] {
+export function resolveFloatPoint_imaginary(
+	value: T.FloatPoint.LooseConfig['imaginary']
+): Admit<T.FloatPoint['_imaginary']> {
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
@@ -6552,7 +6634,7 @@ export function coerceToFloatPoint(input: T.FloatPoint.Loose): ReturnType<typeof
 
 export function resolveFloatLeadingPoint_integer(
 	value: T.FloatLeadingPoint.LooseConfig['integer']
-): T.FloatLeadingPoint['_integer'] {
+): Admit<T.FloatLeadingPoint['_integer']> {
 	return typeof value === 'number' || typeof value === 'bigint'
 		? numberText(10, '', value)
 		: _resolveOne<string>(value, _K0, _K0);
@@ -6560,7 +6642,7 @@ export function resolveFloatLeadingPoint_integer(
 
 export function resolveFloatLeadingPoint_fraction(
 	value: T.FloatLeadingPoint.LooseConfig['fraction']
-): T.FloatLeadingPoint['_fraction'] {
+): Admit<T.FloatLeadingPoint['_fraction']> {
 	return typeof value === 'number' || typeof value === 'bigint'
 		? numberText(10, '', value)
 		: _resolveOne<string>(value, _K0, _K0);
@@ -6568,13 +6650,13 @@ export function resolveFloatLeadingPoint_fraction(
 
 export function resolveFloatLeadingPoint_marker(
 	value: T.FloatLeadingPoint.LooseConfig['marker']
-): T.FloatLeadingPoint['_marker'] {
+): Admit<T.FloatLeadingPoint['_marker']> {
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
 export function resolveFloatLeadingPoint_exponent(
 	value: T.FloatLeadingPoint.LooseConfig['exponent']
-): T.FloatLeadingPoint['_exponent'] {
+): Admit<T.FloatLeadingPoint['_exponent']> {
 	return typeof value === 'number' || typeof value === 'bigint'
 		? numberText(10, '', value)
 		: _resolveOne<string>(value, _K0, _K0);
@@ -6582,7 +6664,7 @@ export function resolveFloatLeadingPoint_exponent(
 
 export function resolveFloatLeadingPoint_imaginary(
 	value: T.FloatLeadingPoint.LooseConfig['imaginary']
-): T.FloatLeadingPoint['_imaginary'] {
+): Admit<T.FloatLeadingPoint['_imaginary']> {
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
@@ -6610,7 +6692,7 @@ export function coerceToFloatLeadingPoint(
 
 export function resolveFloatScientific_integer(
 	value: T.FloatScientific.LooseConfig['integer']
-): T.FloatScientific['_integer'] {
+): Admit<T.FloatScientific['_integer']> {
 	return typeof value === 'number' || typeof value === 'bigint'
 		? numberText(10, '', value)
 		: _resolveOne<string>(value, _K0, _K0);
@@ -6618,13 +6700,13 @@ export function resolveFloatScientific_integer(
 
 export function resolveFloatScientific_marker(
 	value: T.FloatScientific.LooseConfig['marker']
-): T.FloatScientific['_marker'] {
+): Admit<T.FloatScientific['_marker']> {
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
 export function resolveFloatScientific_exponent(
 	value: T.FloatScientific.LooseConfig['exponent']
-): T.FloatScientific['_exponent'] {
+): Admit<T.FloatScientific['_exponent']> {
 	return typeof value === 'number' || typeof value === 'bigint'
 		? numberText(10, '', value)
 		: _resolveOne<string>(value, _K0, _K0);
@@ -6632,7 +6714,7 @@ export function resolveFloatScientific_exponent(
 
 export function resolveFloatScientific_imaginary(
 	value: T.FloatScientific.LooseConfig['imaginary']
-): T.FloatScientific['_imaginary'] {
+): Admit<T.FloatScientific['_imaginary']> {
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
@@ -6657,7 +6739,7 @@ export function coerceToFloatScientific(input: T.FloatScientific.Loose): ReturnT
 
 export function resolveEscapeSequenceUnicodeFixed_content(
 	value: T.EscapeSequenceUnicodeFixed.LooseConfig['content']
-): T.EscapeSequenceUnicodeFixed['_content'] {
+): Admit<T.EscapeSequenceUnicodeFixed['_content']> {
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
@@ -6684,7 +6766,7 @@ export function coerceToEscapeSequenceUnicodeFixed(
 
 export function resolveEscapeSequenceUnicodeWide_content(
 	value: T.EscapeSequenceUnicodeWide.LooseConfig['content']
-): T.EscapeSequenceUnicodeWide['_content'] {
+): Admit<T.EscapeSequenceUnicodeWide['_content']> {
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
@@ -6711,7 +6793,7 @@ export function coerceToEscapeSequenceUnicodeWide(
 
 export function resolveEscapeSequenceHex_content(
 	value: T.EscapeSequenceHex.LooseConfig['content']
-): T.EscapeSequenceHex['_content'] {
+): Admit<T.EscapeSequenceHex['_content']> {
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
@@ -6736,7 +6818,7 @@ export function coerceToEscapeSequenceHex(
 
 export function resolveEscapeSequenceOctal_content(
 	value: T.EscapeSequenceOctal.LooseConfig['content']
-): T.EscapeSequenceOctal['_content'] {
+): Admit<T.EscapeSequenceOctal['_content']> {
 	return typeof value === 'number' || typeof value === 'bigint'
 		? numberText(10, '', value)
 		: _resolveOne<string>(value, _K0, _K0);
@@ -6763,7 +6845,7 @@ export function coerceToEscapeSequenceOctal(
 
 export function resolveEscapeSequenceLineBreak_content(
 	value: T.EscapeSequenceLineBreak.LooseConfig['content']
-): T.EscapeSequenceLineBreak['_content'] {
+): Admit<T.EscapeSequenceLineBreak['_content']> {
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
@@ -6790,7 +6872,7 @@ export function coerceToEscapeSequenceLineBreak(
 
 export function resolveEscapeSequenceSimple_content(
 	value: T.EscapeSequenceSimple.LooseConfig['content']
-): T.EscapeSequenceSimple['_content'] {
+): Admit<T.EscapeSequenceSimple['_content']> {
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
@@ -6817,7 +6899,7 @@ export function coerceToEscapeSequenceSimple(
 
 export function resolveEscapeSequenceNamed_content(
 	value: T.EscapeSequenceNamed.LooseConfig['content']
-): T.EscapeSequenceNamed['_content'] {
+): Admit<T.EscapeSequenceNamed['_content']> {
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
@@ -6855,13 +6937,13 @@ export function coerceToLineContinuationNul(_input?: T.LineContinuationNul.Loose
 
 export function resolveSimplePatternNegative_sign(
 	value: T.SimplePatternNegative.LooseConfig['sign']
-): T.SimplePatternNegative['_sign'] {
+): Admit<T.SimplePatternNegative['_sign']> {
 	return _resolveBooleanKeyword(value);
 }
 
 export function resolveSimplePatternNegative_value(
 	value: T.SimplePatternNegative.LooseConfig['value']
-): T.SimplePatternNegative['_value'] {
+): Admit<T.SimplePatternNegative['_value']> {
 	return _resolveOne<T.Integer | T.Float>(value, _super_integer_decimal, _K21);
 }
 
@@ -6907,7 +6989,7 @@ export function coerceToExceptClauseExceptionList(
 
 export function resolveExceptClauseException_content(
 	value: T.ExceptClauseException.LooseConfig['content']
-): T.ExceptClauseException['_content'] {
+): Admit<T.ExceptClauseException['_content']> {
 	return _resolveOne<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(value, _K0, _K48);
 }
 
@@ -6929,11 +7011,11 @@ export function coerceToExceptClauseException(
 	);
 }
 
-export function resolveAssignmentEq_left(value: T.AssignmentEq.LooseConfig['left']): T.AssignmentEq['_left'] {
+export function resolveAssignmentEq_left(value: T.AssignmentEq.LooseConfig['left']): Admit<T.AssignmentEq['_left']> {
 	return _resolveOne<T.Pattern | T.PatternList>(value, _K13, _K14);
 }
 
-export function resolveAssignmentEq_right(value: T.AssignmentEq.LooseConfig['right']): T.AssignmentEq['_right'] {
+export function resolveAssignmentEq_right(value: T.AssignmentEq.LooseConfig['right']): Admit<T.AssignmentEq['_right']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
 			_resolveOne<T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield>(
@@ -6955,11 +7037,15 @@ export function coerceToAssignmentEq(input: T.AssignmentEq.Loose): ReturnType<ty
 	});
 }
 
-export function resolveAssignmentType_left(value: T.AssignmentType.LooseConfig['left']): T.AssignmentType['_left'] {
+export function resolveAssignmentType_left(
+	value: T.AssignmentType.LooseConfig['left']
+): Admit<T.AssignmentType['_left']> {
 	return _resolveOne<T.Pattern | T.PatternList>(value, _K13, _K14);
 }
 
-export function resolveAssignmentType_type(value: T.AssignmentType.LooseConfig['type']): T.AssignmentType['_type'] {
+export function resolveAssignmentType_type(
+	value: T.AssignmentType.LooseConfig['type']
+): Admit<T.AssignmentType['_type']> {
 	return _resolveOneBranch<T.Type>(value, 'type');
 }
 
@@ -6972,17 +7058,21 @@ export function coerceToAssignmentType(input: T.AssignmentType.Loose): ReturnTyp
 	});
 }
 
-export function resolveAssignmentTyped_left(value: T.AssignmentTyped.LooseConfig['left']): T.AssignmentTyped['_left'] {
+export function resolveAssignmentTyped_left(
+	value: T.AssignmentTyped.LooseConfig['left']
+): Admit<T.AssignmentTyped['_left']> {
 	return _resolveOne<T.Pattern | T.PatternList>(value, _K13, _K14);
 }
 
-export function resolveAssignmentTyped_type(value: T.AssignmentTyped.LooseConfig['type']): T.AssignmentTyped['_type'] {
+export function resolveAssignmentTyped_type(
+	value: T.AssignmentTyped.LooseConfig['type']
+): Admit<T.AssignmentTyped['_type']> {
 	return _resolveOneBranch<T.Type>(value, 'type');
 }
 
 export function resolveAssignmentTyped_right(
 	value: T.AssignmentTyped.LooseConfig['right']
-): T.AssignmentTyped['_right'] {
+): Admit<T.AssignmentTyped['_right']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
 			_resolveOne<T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield>(
@@ -7019,7 +7109,7 @@ export function coerceToExpressionStatementTuple(
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
-			...(children as unknown as NonEmptyArray<T.Expression>)
+			...(children as unknown as NonEmptyArray<Admit<T.Expression>>)
 		);
 	}
 	return F.buildExpressionStatementTuple(
@@ -7079,7 +7169,7 @@ export function coerceToExpressionStatementTuple(
 				'named_expression',
 				'as_pattern'
 			]
-		) as unknown as NonEmptyArray<T.Expression>)
+		) as unknown as NonEmptyArray<Admit<T.Expression>>)
 	);
 }
 
@@ -7095,19 +7185,19 @@ export function coerceToWithClauseBare(...input: T.WithClauseBare.LooseArgs): Re
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
-			...(children as unknown as NonEmptyArray<T.WithItem>)
+			...(children as unknown as NonEmptyArray<Admit<T.WithItem>>)
 		);
 	}
 	return F.buildWithClauseBare(
 		...(_listElements(input, ['delimiter'], undefined, (els) => _resolveManyBranch<T.WithItem>(els, 'with_item'), [
 			'with_item'
-		]) as unknown as NonEmptyArray<T.WithItem>)
+		]) as unknown as NonEmptyArray<Admit<T.WithItem>>)
 	);
 }
 
 export function resolveWithClauseParen_withItems(
 	value: T.WithClauseParen.LooseConfig['withItems']
-): T.WithClauseParen['_with_items'] {
+): Admit<T.WithClauseParen['_with_items']> {
 	return _resolveOneBranch<T.WithClauseWithItems>(value, 'with_clause_with_items');
 }
 
@@ -7166,7 +7256,7 @@ export function coerceToMatchBlockBlock(
 
 export function resolveMatchBlockEmpty_newline(
 	value: T.MatchBlockEmpty.LooseConfig['newline'] | undefined
-): T.MatchBlockEmpty['_newline'] {
+): Admit<T.MatchBlockEmpty['_newline']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'\n'>(value, '_newline')),
 		[['\n', TSKindId.Newline] as const]
@@ -7191,7 +7281,9 @@ export function coerceToMatchBlockEmpty(input?: T.MatchBlockEmpty.Loose): Return
 	);
 }
 
-export function resolveSuiteInline_elements(value: T.SuiteInline.LooseConfig['elements']): T.SuiteInline['_elements'] {
+export function resolveSuiteInline_elements(
+	value: T.SuiteInline.LooseConfig['elements']
+): Admit<T.SuiteInline['_elements']> {
 	return _resolveOneBranch<T.SimpleStatementsElements>(value, 'simple_statements_elements');
 }
 
@@ -7218,7 +7310,9 @@ export function coerceToSuiteInline(...args: unknown[]): ReturnType<typeof F.bui
 	);
 }
 
-export function resolveSuiteBlock_block(value: T.SuiteBlock.LooseConfig['block'] | undefined): T.SuiteBlock['_block'] {
+export function resolveSuiteBlock_block(
+	value: T.SuiteBlock.LooseConfig['block'] | undefined
+): Admit<T.SuiteBlock['_block']> {
 	return _resolveOneBranch<T.Block>(value, 'block');
 }
 
@@ -7239,7 +7333,7 @@ export function coerceToSuiteBlock(...args: unknown[]): ReturnType<typeof F.buil
 
 export function resolveSuiteEmpty_newline(
 	value: T.SuiteEmpty.LooseConfig['newline'] | undefined
-): T.SuiteEmpty['_newline'] {
+): Admit<T.SuiteEmpty['_newline']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'\n'>(value, '_newline')),
 		[['\n', TSKindId.Newline] as const]
@@ -7266,7 +7360,7 @@ export function coerceToSuiteEmpty(input?: T.SuiteEmpty.Loose): ReturnType<typeo
 
 export function resolveComparisonOperatorComparator_operators(
 	value: T.ComparisonOperatorComparator.LooseConfig['operators']
-): T.ComparisonOperatorComparator['_operators'] {
+): Admit<T.ComparisonOperatorComparator['_operators']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
 			_resolveOne<'<' | '<=' | '==' | '!=' | '>=' | '>' | '<>' | 'in' | 'not in' | 'is' | 'is not'>(value, _K0, _K0)
@@ -7289,7 +7383,7 @@ export function resolveComparisonOperatorComparator_operators(
 
 export function resolveComparisonOperatorComparator_primaryExpression(
 	value: T.ComparisonOperatorComparator.LooseConfig['primaryExpression']
-): T.ComparisonOperatorComparator['_primary_expression'] {
+): Admit<T.ComparisonOperatorComparator['_primary_expression']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K27)),
 		[]
@@ -7317,7 +7411,7 @@ export function coerceToComparisonOperatorComparator(
 
 export function resolveYieldFromClause_expression(
 	value: T.YieldFromClause.LooseConfig['expression']
-): T.YieldFromClause['_expression'] {
+): Admit<T.YieldFromClause['_expression']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -7393,7 +7487,7 @@ export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): typeo
 	return F.buildDoubleBlankline;
 }
 
-export function resolveNames_content(value: T.Names.LooseConfig['content']): T.Names['_content'] {
+export function resolveNames_content(value: T.Names.LooseConfig['content']): Admit<T.Names['_content']> {
 	return _resolveOneBranch<T.ImportList>(value, 'import_list');
 }
 
@@ -7413,7 +7507,7 @@ export function coerceToNames(input: T.Names.Loose): ReturnType<typeof F.buildNa
 
 export function resolveAsPatternTarget_content(
 	value: T.AsPatternTarget.LooseConfig['content']
-): T.AsPatternTarget['_content'] {
+): Admit<T.AsPatternTarget['_content']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
 		[]
@@ -7445,7 +7539,7 @@ export function coerceToAsPatternTarget(input: T.AsPatternTarget.Loose): ReturnT
 
 export function resolveFormatExpression_content(
 	value: T.FormatExpression.LooseConfig['content']
-): T.FormatExpression['_content'] {
+): Admit<T.FormatExpression['_content']> {
 	return _resolveOneBranch<T.Interpolation>(value, 'interpolation');
 }
 

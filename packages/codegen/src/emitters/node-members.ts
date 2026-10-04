@@ -48,9 +48,7 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 		"      leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),",
 		"      trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),",
 		...(spec.inner.inner ? ['      inner: (...items: unknown[]) => triviaInner(node, handle, items),'] : []),
-		...(spec.inner.keyed
-			? ['      innerAt: (gap: string, ...items: unknown[]) => triviaInnerAt(node, handle, gap, items),']
-			: []),
+		...(spec.inner.keyed ? ['      innerAt: (gap: string, ...items: unknown[]) => triviaInnerAt(node, handle, gap, items),'] : []),
 		'    },',
 		...(spec.parsed
 			? ['    $query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,']
@@ -61,9 +59,7 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 }
 
 export function spelledGroupSlots(plan: SeatPlan): ReadonlySet<string> {
-	return new Set(
-		plan.groups.filter(({ hint }) => hint.keys.some((key) => key.name === hint.slot)).map(({ hint }) => hint.slot)
-	);
+	return new Set(plan.groups.filter(({ hint }) => hint.keys.some((key) => key.name === hint.slot)).map(({ hint }) => hint.slot));
 }
 
 const readGroupName = (slot: string): string => `readGroup_${slot}`;
@@ -73,23 +69,12 @@ export function seatedSetters(setters: readonly SetterEntry[], plan: SeatPlan): 
 		const base = `(${entry.params}) => ${entry.body}`;
 		const element = plan.elements.find((candidate) => candidate.slot === entry.name);
 		const slot = plan.slots.find((candidate) => candidate.slot === entry.name);
-		const elementSet =
-			element === undefined
-				? base
-				: `(...args: never[]) => elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${element.spec} }, ${base})`;
+		const elementSet = element === undefined ? base : `(...args: never[]) => elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${element.spec} }, ${base})`;
 		if (slot !== undefined) {
-			return {
-				name: entry.name,
-				params: '...args: unknown[]',
-				body: `listSlotWith(args, { ${slot.spec} }, ${elementSet})`
-			};
+			return { name: entry.name, params: '...args: unknown[]', body: `listSlotWith(args, { ${slot.spec} }, ${elementSet})` };
 		}
 		if (element !== undefined) {
-			return {
-				name: entry.name,
-				params: '...args: unknown[]',
-				body: `elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${element.spec} }, ${base})`
-			};
+			return { name: entry.name, params: '...args: unknown[]', body: `elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${element.spec} }, ${base})` };
 		}
 		return entry;
 	});
@@ -110,10 +95,7 @@ export function seatedSetters(setters: readonly SetterEntry[], plan: SeatPlan): 
 	return [...seated.filter((entry) => !replaced.has(entry.name)), ...keyed];
 }
 
-export function groupSeatParts(
-	plan: SeatPlan,
-	readOf: (slot: string) => string
-): { readonly prelude: string[]; readonly members: string[] } {
+export function groupSeatParts(plan: SeatPlan, readOf: (slot: string) => string): { readonly prelude: string[]; readonly members: string[] } {
 	if (plan.groups.length === 0) return { prelude: [], members: [] };
 	const prelude = plan.groups.map(({ hint }) => `  const ${readGroupName(hint.slot)} = ${readOf(hint.slot)};`);
 	const members = plan.groups.flatMap(({ hint }) =>
@@ -122,9 +104,7 @@ export function groupSeatParts(
 				`    ${key.name}: ${hint.stored} === undefined ? undefined : () => groupField(${readGroupName(hint.slot)}.call(node), ${JSON.stringify(key.field ?? key.name)}),`
 		)
 	);
-	members.push(
-		`    [STORED_SLOT_READERS]: { ${plan.groups.map(({ hint }) => `${hint.slot}: ${readGroupName(hint.slot)}`).join(', ')} },`
-	);
+	members.push(`    [STORED_SLOT_READERS]: { ${plan.groups.map(({ hint }) => `${hint.slot}: ${readGroupName(hint.slot)}`).join(', ')} },`);
 	return { prelude, members };
 }
 
@@ -134,12 +114,7 @@ export interface ListViewParts {
 	readonly postlude: string[];
 }
 
-export function ownerViewParts(
-	plan: ListViewPlan,
-	storage: string,
-	accessor: string,
-	environment: 'factory' | 'wrap'
-): ListViewParts {
+export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: string, environment: 'factory' | 'wrap'): ListViewParts {
 	const wrapper = plan.wrapper ?? 'undefined';
 	const options = plan.options.map(
 		(option) => `    ${option.key}: listOption(listView.list, ${JSON.stringify(option.key)}, ${option.default}),`
@@ -159,9 +134,7 @@ export function ownerViewParts(
 				`  const listedItems = listItems(ownerElements(listView.list, ${JSON.stringify(plan.elements)}), ${wrapper});`
 			],
 			members: ['    length: listedItems.length,', '    [LIST_ITEMS]: listedItems,', ...shared],
-			postlude: [
-				'  for (let index = 0; index < listedItems.length; index++) (node as Record<number, unknown>)[index] = listedItems[index];'
-			]
+			postlude: ['  for (let index = 0; index < listedItems.length; index++) (node as Record<number, unknown>)[index] = listedItems[index];']
 		};
 	}
 	return {

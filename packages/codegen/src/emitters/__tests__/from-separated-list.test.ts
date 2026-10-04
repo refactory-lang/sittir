@@ -90,12 +90,12 @@ describe('from emitter — separatedList', () => {
 		// genuinely multi-element list).
 		expect(emitted).not.toContain('children[0] as Parameters<typeof F.buildMemberList>[0]');
 		expect(emitted).toMatch(
-			/F\.buildMemberList\(\{ delimiter: .*\}, \.\.\.\(children as unknown as NonEmptyArray<T\.Member>\)\)/
+			/F\.buildMemberList\(\{ delimiter: .*\}, \.\.\.\(children as unknown as NonEmptyArray<Admit<T\.Member>>\)\)/
 		);
 		// The fresh path resolves each element through the content slot before
 		// spreading, with a leading options object passed through untouched.
 		expect(emitted).toMatch(
-			/F\.buildMemberList\(\.\.\.\(_listElements\(input, \["delimiter"\], undefined, \(els\) => .*\) as unknown as NonEmptyArray<T\.Member>\)\)/
+			/F\.buildMemberList\(\.\.\.\(_listElements\(input, \["delimiter"\], undefined, \(els\) => .*\) as unknown as NonEmptyArray<Admit<T\.Member>>\)\)/
 		);
 	});
 
@@ -150,7 +150,7 @@ describe('from emitter — separatedList', () => {
 		const row = looseRow(nodeMap);
 
 		expect(emit(nodeMap)).toContain(TAKES_ITS_ROW);
-		expect(row).toMatch(/^\[element: [^]*?\.\.\.elements: [^]*?\] \| \[options: \{ delimiter\?: [^}]*\}, element: /);
+		expect(row).toMatch(/^\[element: [^]*?\.\.\.elements: [^]*?\] \| \[options: ListOptions<\{ delimiter\?: [^}]*\}>, element: /);
 		expect(row).not.toContain('element?:');
 	});
 
@@ -164,7 +164,7 @@ describe('from emitter — separatedList', () => {
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
 
 		expect(emit(nodeMap)).toContain(TAKES_ITS_ROW);
-		expect(looseRow(nodeMap)).toMatch(/^\[\.\.\.elements: [^]*?\] \| \[options: \{ delimiter\?: [^}]*\}, \.\.\.elements: /);
+		expect(looseRow(nodeMap)).toMatch(/^\[\.\.\.elements: [^]*?\] \| \[options: ListOptions<\{ delimiter\?: [^}]*\}>, \.\.\.elements: /);
 	});
 
 	it('takes the options object first, with no elements-only form, when the separator has no declared default', () => {
@@ -185,7 +185,7 @@ describe('from emitter — separatedList', () => {
 		const row = looseRow(nodeMap);
 
 		expect(emit(nodeMap)).toContain(TAKES_ITS_ROW);
-		expect(row.startsWith('[options: { separator: TSKindId.Comma | TSKindId.Semi; delimiter?: Delimiter.None | Delimiter.Trailing }, element: ')).toBe(true);
+		expect(row.startsWith('[options: ListOptions<{ separator: TSKindId.Comma | TSKindId.Semi; delimiter?: Delimiter.None | Delimiter.Trailing }>, element: ')).toBe(true);
 		expect(row).not.toMatch(/(^|\| )\[element: /);
 	});
 

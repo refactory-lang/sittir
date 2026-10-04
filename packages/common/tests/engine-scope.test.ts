@@ -13,13 +13,7 @@ const identity: EngineIdentity = {
 	language: { name: 'fake', fileTypes: [], load: () => Promise.reject(new Error('type-only')) },
 	renderModuleHash: 'hash',
 	options: {},
-	trivia: {
-		kindName: () => undefined,
-		kinds: new Set<string>(),
-		innerGaps: {},
-		rebuildWrappers: new Set<number>(),
-		listKinds: new Set<number>()
-	}
+	trivia: { kindName: () => undefined, kinds: new Set<string>(), innerGaps: {}, rebuildWrappers: new Set<number>(), listKinds: new Set<number>() }
 };
 
 function handleOf(label: string): EngineHandle {

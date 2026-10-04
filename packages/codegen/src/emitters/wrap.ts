@@ -1,11 +1,6 @@
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import {
-	AbstractAssembledCompound,
-	AssembledAlias,
-	isBuilderTextLeaf,
-	storageKindOfRef
-} from '../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, AssembledAlias, isBuilderTextLeaf, storageKindOfRef } from '../compiler/model/node-map.ts';
 import { CHOICE, SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule } from '../types/rule.ts';
 import { findOwnKindEntry, type GeneratedIdTables } from '../dsl/symbol-table.ts';
@@ -23,16 +18,7 @@ type BranchLikeForWrap = AuthoredCompound;
 import { deriveUnnamedChildrenCardinality } from '../compiler/model/node-map.ts';
 import { buildSupertypeMembersMap } from '../compiler/model/supertype-members.ts';
 import { interiorOf } from './interior.ts';
-import {
-	groupSeatParts,
-	innerPositionsOf,
-	listSelfViewParts,
-	nodeMemberLines,
-	ownerViewParts,
-	seatedSetters,
-	spelledGroupSlots,
-	type SetterEntry
-} from './node-members.ts';
+import { groupSeatParts, innerPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, spelledGroupSlots, type SetterEntry } from './node-members.ts';
 
 import {
 	DELIMITER_IMPORT,
@@ -86,16 +72,12 @@ function aliasEnvelopeIds(envelopes: readonly AssembledAlias[]): number[] {
 }
 
 export function listKindIds(nodeMap: NodeMap): number[] {
-	return [...nodeMap.nodes.values()]
-		.flatMap((node) => (node instanceof AssembledList && node.kindId !== undefined ? [node.kindId] : []))
-		.sort((a, b) => a - b);
+	return [...nodeMap.nodes.values()].flatMap((node) => (node instanceof AssembledList && node.kindId !== undefined ? [node.kindId] : [])).sort((a, b) => a - b);
 }
 
 export function rebuildWrapperKindIds(nodeMap: NodeMap): number[] {
 	const hoisted = [...nodeMap.nodes.values()].flatMap((node) =>
-		node instanceof AbstractAssembledCompound && node.annotations?.hoisted === true && node.kindId !== undefined
-			? [node.kindId]
-			: []
+		node instanceof AbstractAssembledCompound && node.annotations?.hoisted === true && node.kindId !== undefined ? [node.kindId] : []
 	);
 	return [...new Set([...aliasEnvelopeIds(aliasEnvelopesOf(nodeMap)), ...hoisted])].sort((a, b) => a - b);
 }
@@ -426,13 +408,7 @@ function emitSeparatedListWrap(
 	if (wrapsAnonLiteralContent(node.slots, nodeMap)) {
 		lines.push(
 			'  if (_isReadTextLeaf(data)) {',
-			`    const node = { ...data${wrapTextLeafTypeStamp(node, kindEntries)}, ${nodeMemberLines({
-				accessors: [],
-				inner: innerPositionsOf(node.kind, nodeMap),
-				parsed: true
-			})
-				.map((line) => line.trim())
-				.join(' ')} };`,
+			`    const node = { ...data${wrapTextLeafTypeStamp(node, kindEntries)}, ${nodeMemberLines({ accessors: [], inner: innerPositionsOf(node.kind, nodeMap), parsed: true }).map((line) => line.trim()).join(' ')} };`,
 			`    return ${castToParsed('node', parsedType)};`,
 			'  }'
 		);
@@ -504,12 +480,7 @@ function emitSeparatedListWrap(
 	} else {
 		lines.push(`    ${canonical.propertyName}() { ${accessorBody}; },`);
 	}
-	const view = listSelfViewParts(
-		plan.viewPlan!,
-		node.slots.length > 1 ? canonical.storageKey : '_content',
-		canonical.propertyName,
-		'wrap'
-	);
+	const view = listSelfViewParts(plan.viewPlan!, node.slots.length > 1 ? canonical.storageKey : '_content', canonical.propertyName, 'wrap');
 	lines.push(
 		...nodeMemberLines({
 			setters: seatedSetters([], plan),
@@ -632,8 +603,7 @@ function emitSlotOrderDraftLine(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
 ): void {
-	if (dropsDelimiters(slots, ownerKind, kindEntries, nodeMap))
-		lines.push('  const _order = (data as _UntypedNode).$slotOrder?.slice();');
+	if (dropsDelimiters(slots, ownerKind, kindEntries, nodeMap)) lines.push('  const _order = (data as _UntypedNode).$slotOrder?.slice();');
 }
 
 function separatorIdsExprOf(
@@ -643,8 +613,7 @@ function separatorIdsExprOf(
 	elided: boolean
 ): string | undefined {
 	if (!kindEntries) return undefined;
-	const tagged =
-		owner !== undefined && f.fieldName !== undefined ? (fieldTaggedLiteralTexts(owner).get(f.fieldName) ?? []) : [];
+	const tagged = owner !== undefined && f.fieldName !== undefined ? (fieldTaggedLiteralTexts(owner).get(f.fieldName) ?? []) : [];
 	const sepTexts = [...new Set([...slotSeparatorTexts(f, elided), ...tagged])];
 	if (sepTexts.length === 0) return undefined;
 	return `[${sepTexts.map((text) => kindDiscriminantExprForLiteral(text, kindEntries)).join(', ')}]`;
@@ -673,6 +642,7 @@ function fieldTaggedLiteralTexts(node: AssembledNode): ReadonlyMap<string, reado
 	if (node instanceof AbstractAssembledCompound && !node.lexedInterior) walk(node.renderRule, undefined);
 	return out;
 }
+
 
 function fieldAccessorBodies(
 	slots: readonly AssembledNonterminal[],
@@ -745,20 +715,14 @@ function emitFieldCarryingWrap(
 	}
 	const plan = seatPlanOf(nodeMap.nodes.get(node.kind)!, nodeMap, kindEntries, 'RAW.');
 	const owner = plan.viewPlan?.owner;
-	const view =
-		plan.viewPlan !== undefined && owner !== undefined
-			? ownerViewParts(plan.viewPlan, owner.storage, owner.accessor, 'wrap')
-			: undefined;
+	const view = plan.viewPlan !== undefined && owner !== undefined ? ownerViewParts(plan.viewPlan, owner.storage, owner.accessor, 'wrap') : undefined;
 	const groups = groupSeatParts(plan, (slot) => {
 		const { stored, group } = plan.groups.find(({ hint }) => hint.slot === slot)!.hint;
 		return `() => hydrateChild<T.${group} | undefined>(${stored}, tree)`;
 	});
 	const spelled = spelledGroupSlots(plan);
 	const hoist = {
-		keys: new Set([
-			...(owner === undefined || view === undefined ? [] : [owner.storage]),
-			...plan.groups.map(({ hint }) => hint.stored)
-		]),
+		keys: new Set([...(owner === undefined || view === undefined ? [] : [owner.storage]), ...plan.groups.map(({ hint }) => hint.stored)]),
 		prelude: [] as string[]
 	};
 	const inner = innerPositionsOf(node.kind, nodeMap);
@@ -766,13 +730,7 @@ function emitFieldCarryingWrap(
 	if (wrapsAnonLiteralContent(slots, nodeMap)) {
 		lines.push(
 			'  if (_isReadTextLeaf(data)) {',
-			`    const node = { ...data${wrapTextLeafTypeStamp(node, kindEntries)}, ${nodeMemberLines({
-				accessors: [],
-				inner,
-				parsed: true
-			})
-				.map((line) => line.trim())
-				.join(' ')} };`,
+			`    const node = { ...data${wrapTextLeafTypeStamp(node, kindEntries)}, ${nodeMemberLines({ accessors: [], inner, parsed: true }).map((line) => line.trim()).join(' ')} };`,
 			`    return ${castToParsed('node', parsedType)};`,
 			'  }'
 		);
@@ -817,9 +775,7 @@ function emitFieldCarryingWrap(
 
 	lines.push(
 		...nodeMemberLines({
-			setters: node.rawFactoryName
-				? seatedSetters(inlineSetters(node, slots, children, nodeMap, kindEntries), plan)
-				: undefined,
+			setters: node.rawFactoryName ? seatedSetters(inlineSetters(node, slots, children, nodeMap, kindEntries), plan) : undefined,
 			accessors: [],
 			extra: [...(view?.members ?? []), ...groups.members],
 			inner,
@@ -857,11 +813,7 @@ function inlineSetters(
 		}
 		const restType = childrenSetterRestType(children, childElem, childRest);
 		return [
-			{
-				name: setter,
-				params: `...vs: ${restType}`,
-				body: `${wrapFn}({ ${spreadData}, $other: restItems(${JSON.stringify(setter)}, vs) }, tree)`
-			}
+			{ name: setter, params: `...vs: ${restType}`, body: `${wrapFn}({ ${spreadData}, $other: restItems(${JSON.stringify(setter)}, vs) }, tree)` }
 		];
 	}
 
@@ -886,11 +838,7 @@ function inlineSetters(
 			});
 		} else {
 			const setterValueType = `NonNullable<T.${node.typeName}['${f.storageKey}']>`;
-			setters.push({
-				name: method,
-				params: `v: ${setterValueType}`,
-				body: `${wrapFn}({ ${spreadData}, ${f.storageKey}: v }, tree)`
-			});
+			setters.push({ name: method, params: `v: ${setterValueType}`, body: `${wrapFn}({ ${spreadData}, ${f.storageKey}: v }, tree)` });
 		}
 	}
 	if (children.length > 0) {
@@ -898,11 +846,7 @@ function inlineSetters(
 		const childElem = childrenConfig.elemType;
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
 		if (childrenConfig.slot.arity === 'one') {
-			setters.push({
-				name: 'children',
-				params: `item: ${childElem}`,
-				body: `${wrapFn}({ ${spreadData}, $other: item }, tree)`
-			});
+			setters.push({ name: 'children', params: `item: ${childElem}`, body: `${wrapFn}({ ${spreadData}, $other: item }, tree)` });
 		} else {
 			const restType = childrenSetterRestType(children, childElem, childRest);
 			setters.push({
@@ -1025,27 +969,17 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'}'
 		];
 		if (!this.#kindEntries) {
-			return [
-				...displayOf,
-				"function _kindOf(entry: _UntypedNode): _UntypedNode['$type'] {",
-				'  return entry.$type;',
-				'}',
-				''
-			];
+			return [...displayOf, "function _kindOf(entry: _UntypedNode): _UntypedNode['$type'] {", '  return entry.$type;', '}', ''];
 		}
 		const envelopes = aliasEnvelopesOf(this.#nodeMap);
 		const envelopeIds = aliasEnvelopeIds(envelopes);
 		const hiddenIds =
 			envelopes.length === 0
 				? []
-				: [...new Set(this.#kindEntries.filter((entry) => entry.hidden).map((entry) => entry.id))].sort(
-						(a, b) => a - b
-					);
+				: [...new Set(this.#kindEntries.filter((entry) => entry.hidden).map((entry) => entry.id))].sort((a, b) => a - b);
 		return [
 			`const _ALIAS_ENVELOPES: ReadonlySet<_UntypedNode["$type"]> = new Set([${envelopeIds.join(', ')}]);`,
-			...(envelopes.length === 0
-				? []
-				: [`const _HIDDEN_KINDS: ReadonlySet<_UntypedNode["$type"]> = new Set([${hiddenIds.join(', ')}]);`]),
+			...(envelopes.length === 0 ? [] : [`const _HIDDEN_KINDS: ReadonlySet<_UntypedNode["$type"]> = new Set([${hiddenIds.join(', ')}]);`]),
 			...displayOf,
 			"function _kindOf(entry: _UntypedNode): _UntypedNode['$type'] {",
 			'  const display = _displayOf(entry);',
@@ -1668,7 +1602,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'',
 						'// A delimiter the parser field-tagged into a slot is punctuation the',
 						'// render body writes itself, so it is dropped rather than stored, and',
-						"// its entry leaves the node's `$slotOrder` draft with it.",
+						'// its entry leaves the node\'s `$slotOrder` draft with it.',
 						'// Assumes T itself is never an array type — slot elements are node unions.',
 						'function dropWireDelimiters<T>(',
 						'  value: T | readonly (T | _WireDelimiter)[] | undefined,',
@@ -1909,10 +1843,10 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			lines.push('  const fn = _wrapTable[rawType];');
 			lines.push('  const own = _dropSpelling(data);');
 		}
-		lines.push('  const shown = own.$_trivia == null ? own : { ...own, $_trivia: _wrapTrivia(own.$_trivia, tree) };');
 		lines.push(
-			'  return carryRead(data, inTreeEngine(tree, () => (fn ? fn(shown, tree) : _hydrateUnknownKindChildren(shown, tree))));'
+			'  const shown = own.$_trivia == null ? own : { ...own, $_trivia: _wrapTrivia(own.$_trivia, tree) };'
 		);
+		lines.push('  return carryRead(data, inTreeEngine(tree, () => (fn ? fn(shown, tree) : _hydrateUnknownKindChildren(shown, tree))));');
 		lines.push('}');
 		lines.push('');
 		lines.push('/**');

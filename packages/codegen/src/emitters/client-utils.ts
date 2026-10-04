@@ -21,12 +21,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 		`import { KIND_NAMES, type ${map} } from './types.js';`,
 		"import { INNER_GAPS } from './consts.js';",
 		'',
-		...emitTriviaFacts(
-			whitespaceTrivia(config.nodeMap),
-			config.triviaKinds ?? [],
-			rebuildWrapperKindIds(config.nodeMap),
-			listKindIds(config.nodeMap)
-		),
+		...emitTriviaFacts(whitespaceTrivia(config.nodeMap), config.triviaKinds ?? [], rebuildWrapperKindIds(config.nodeMap), listKindIds(config.nodeMap)),
 		'',
 		...emitQuerySlots(querySlotRows(config.nodeMap)),
 		'',

@@ -7211,7 +7211,7 @@ take, because a grammar may have a kind whose type is named `BooleanKeyword` (ty
 
 ### `packages/codegen/src/emitters/types.ts::aliasContentTypeExpr`
 
-The content type of an AssembledAlias with one slot: the slot's storage type, except that a kind-enum slot names its member ids (`TSKindId.X | …`) rather than `number`. Emitted as `<Alias>.Types` in the alias's namespace and referenced by the interface's `__aliasContent__` brand and by every construction input that admits the alias's content.
+The content type of an AssembledAlias with one slot: the slot's storage type, except that a kind-enum slot names its member ids (`TSKindId.X | …`) rather than `number`. `<Alias>.Types` in the alias's namespace is this type resolved to its `.Bound` forms through `SupertypeSurface` over the `.Bound` map (a kind id passes through), so the public name never names a storage interface; it is referenced by the interface's `__aliasContent__` brand and by every construction input that admits the alias's content.
 
 ### `packages/codegen/src/emitters/types.ts::emitRefineFormSubNamespaces`
 
@@ -11444,7 +11444,7 @@ when the list declares no default separator.
 
 ### `packages/codegen/src/emitters/factories.ts::FactoryParam`
 
-A parameter that holds a node (`admitsNodes`) is typed through `AdmitBound` over the emitted `AdmittedNodes`, so it takes the kind, its `.Bound`, its `.Parsed` and its empty form; a leaf parameter is raw text and is not widened.
+A parameter that holds a node (`admitsNodes`) is typed through `Admit`, so it takes any node of the slot's kinds (built, parsed or a draft) by kind and never the storage shape; a leaf parameter is raw text and is not widened.
 
 ```text
 /**
@@ -11679,7 +11679,7 @@ The single parameter of a one-argument kind's row, in parts: its label, the stri
 
 ### `packages/codegen/src/emitters/factories.ts::rowParamOf`
 
-Reads a `RowParam` off a kind's factory surface: the row types as `paramsToTuple` prints them (the strict one through `AdmitBound` where the parameter holds a node), the loose optionality from `rowLooseOptional`, and the options text from the same `spellingTypeOf` fact the raw factory's trailing parameter comes from.
+Reads a `RowParam` off a kind's factory surface: the row types as `paramsToTuple` prints them (the strict one through `Admit` where the parameter holds a node), the loose optionality from `rowLooseOptional`, and the options text from the same `spellingTypeOf` fact the raw factory's trailing parameter comes from.
 
 ### `packages/codegen/src/emitters/factories.ts::fieldCarryingBuiltTypeSurface`
 
@@ -11915,7 +11915,7 @@ A slot's setter as parts: the accessor `name`, the `input` type text, whether th
 
 ### `packages/codegen/src/emitters/factories.ts::parenthesizeUnion`
 
-Wraps an element type in parentheses only when it has a union at its top level. A union inside generic arguments (`AdmitBound<A | B, T.AdmittedNodes>`) is atomic and stays bare before an array suffix.
+Wraps an element type in parentheses only when it has a union at its top level. A union inside generic arguments (`Admit<A | B>`) is atomic and stays bare before an array suffix.
 
 ```text
 /** `fieldElementType` doesn't parenthesize multi-member unions (unlike
@@ -12998,6 +12998,8 @@ In `_resolveOne`, a value that is neither a config object nor kinded data hoists
 `_resolveBareText` tests the slot's text leaves in lexical-rank order, counting an envelope arm's leaves (`_ENVELOPE_TEXT_LEAVES`, from `transparentEnvelopeTextLeaves`) as the slot's own. A text reached through an envelope is passed as text to the envelope's coercer, which runs its own keyword extraction and rank, so `left: 'result'` builds the same `_lhs_expression` envelope the strict surface spells and `left: 'async'` builds the envelope around the keyword arm.
 
 `_listElements` passes an element that is already the list's wrapper kind through untouched and resolves only the others to the wrapper's content; resolving a built wrapper toward an alias content kind would nest it inside that alias.
+
+The node resolvers (`_resolveOne`, `_resolveMany`, `_resolveOneLeaf`, `_resolveOneBranch`, `_resolveManyLeaf`, `_resolveManyBranch`, `_wrapArray`) take the slot's kinds as the type argument `T` and return `Admit<T>`: what they produce is a node of one of those kinds, built or passed through, and the builders they feed admit nodes by kind.
 
 #### body
 
@@ -16627,9 +16629,9 @@ The version of the wire between the JS packages and a native build: the render t
 
 Emits a kind's `Bound` and `Parsed` interfaces. Each declares `$type` first, then `$with` over `this`, then (on `Parsed` only) `$query`, the node's `QueryFacet`, then its own members. A draft drops `$query` with `$with` and `$trivia` (`WithSlot`), so only a node read from a parse has one. A kind that seats a flattened group gets its `Bound` and `Parsed` as type aliases instead, `BoundSurface & FlatShapesOf<…>` and `ParsedSurface & FlatShapesOf<…>`, because an interface cannot extend the present-or-absent union; each unexported surface interface carries the members, and its `$with` returns the alias while reading its hints from the interface itself, so a rebuilt node keeps the union without the alias referring to itself. The kind's empty form is then an alias too, whose `$trivia` names the alias where an interface would use `this`. The order matters: the checker compares a target's properties in declaration order, and a mismatched kind must fail on the `$type` discriminant before it reaches the deep `$with` and accessor members; without it every non-matching arm of a wide union is compared structurally to the checker's depth limit.
 
-### `packages/codegen/src/emitters/types.ts::AdmittedNodes`
+### `packages/codegen/src/emitters/shared.ts::listOptionsParam`
 
-The emitted alias `AdmitLookup<BoundByKindId, ParsedByKindId, EmptyByKindId>`: for every kind id, the nodes a slot input admits. Generated factories, coercers and setters name it as the second argument of `AdmitBound`; it is built from the id-keyed maps and never from the namespace map, which keeps it out of the cycle formed by the argument lists.
+The options parameter type of a generated list builder, a forwarding constructor's list overload and a list's argument rows: the list's options type under `ListOptions`, so a node is never taken as the options. The list view hint keeps the bare options type.
 
 ### `packages/codegen/src/emitters/factories.ts::hasTopLevelUnion`
 

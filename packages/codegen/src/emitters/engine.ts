@@ -44,9 +44,7 @@ function triviaHook(config: EmitEngineConfig): string {
 						.map(
 							(form) =>
 								`{ open: ${JSON.stringify(form.open)}, close: ${JSON.stringify(form.close)}, build: (text: string) => ${
-									form.spelledType === undefined
-										? `${form.builder}(text)`
-										: `${form.builder}(text as ${form.spelledType}, false)`
+									form.spelledType === undefined ? `${form.builder}(text)` : `${form.builder}(text as ${form.spelledType}, false)`
 								} }`
 						)
 						.join(', ')}])`

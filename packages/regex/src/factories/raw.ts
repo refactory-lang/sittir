@@ -2,7 +2,7 @@
 
 import type * as T from '../types-internal.js';
 import { TSKindId } from '../types.js';
-import type { AdmitBound, NonEmptyArray, NumericLiteral } from '@sittir/types';
+import type { Admit, NonEmptyArray, NumericLiteral } from '@sittir/types';
 import {
 	currentHandle,
 	rebuilt,
@@ -44,7 +44,7 @@ const _leafRe_buildCharacterClassEscapeText1 = /^(?:(?:\\[dDsSwW]))$/u;
 const _leafRe_buildCharacterClassEscapeText2 = /^(?:(?:\\[pP]))$/u;
 export const _slotRe_buildIdentityEscape_content = /^(?:(?:[^kdDsSpPwWbfnrtv0-9]))$/u;
 
-export function buildPattern(value: AdmitBound<T.Alternation | T.Term, T.AdmittedNodes>): T.Pattern.Bound {
+export function buildPattern(value: Admit<T.Alternation | T.Term>): T.Pattern.Bound {
 	const _content = rejectBareText(value, 'Pattern.content', 'a built Alternation / Term');
 	const handle = currentHandle();
 	const node = {
@@ -53,7 +53,7 @@ export function buildPattern(value: AdmitBound<T.Alternation | T.Term, T.Admitte
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: T.Alternation | T.Term) => rebuilt(node, handle, () => buildPattern(value))
+			content: (value: Admit<T.Alternation | T.Term>) => rebuilt(node, handle, () => buildPattern(value))
 		},
 		content: () => _content,
 		$render: () => renderText(handle, node),
@@ -66,7 +66,7 @@ export function buildPattern(value: AdmitBound<T.Alternation | T.Term, T.Admitte
 	return node as unknown as T.Pattern.Bound;
 }
 
-export function buildAlternation(...children: NonEmptyArray<AdmitBound<T.Term, T.AdmittedNodes>>): T.Alternation.Bound {
+export function buildAlternation(...children: NonEmptyArray<Admit<T.Term>>): T.Alternation.Bound {
 	_assertNonEmpty(children, 'alternation.children');
 	const _terms = rejectBareText(children, 'Alternation.terms', 'a built Term');
 	const handle = currentHandle();
@@ -76,7 +76,8 @@ export function buildAlternation(...children: NonEmptyArray<AdmitBound<T.Term, T
 		$named: true as const,
 		_terms,
 		$with: {
-			terms: (...vs: NonEmptyArray<T.Term>) => rebuilt(node, handle, () => buildAlternation(...restItems('terms', vs)))
+			terms: (...vs: NonEmptyArray<Admit<T.Term>>) =>
+				rebuilt(node, handle, () => buildAlternation(...restItems('terms', vs)))
 		},
 		terms: () => _terms,
 		$render: () => renderText(handle, node),
@@ -89,7 +90,7 @@ export function buildAlternation(...children: NonEmptyArray<AdmitBound<T.Term, T
 	return node as unknown as T.Alternation.Bound;
 }
 
-export function buildTerm(...children: NonEmptyArray<AdmitBound<T.TermGroup, T.AdmittedNodes>>): T.Term.Bound {
+export function buildTerm(...children: NonEmptyArray<Admit<T.TermGroup>>): T.Term.Bound {
 	_assertNonEmpty(children, 'term.children');
 	const _term_group = rejectBareText(children, 'Term.termGroup', 'a built TermGroup');
 	const handle = currentHandle();
@@ -99,7 +100,7 @@ export function buildTerm(...children: NonEmptyArray<AdmitBound<T.TermGroup, T.A
 		$named: true as const,
 		_term_group,
 		$with: {
-			termGroups: (...vs: NonEmptyArray<T.TermGroup>) =>
+			termGroups: (...vs: NonEmptyArray<Admit<T.TermGroup>>) =>
 				rebuilt(node, handle, () => buildTerm(...restItems('termGroups', vs)))
 		},
 		termGroups: () => _term_group,
@@ -124,7 +125,7 @@ export const buildBoundaryAssertion: TSKindId.BoundaryAssertion = TSKindId.Bound
 export const buildNonBoundaryAssertion: TSKindId.NonBoundaryAssertion = TSKindId.NonBoundaryAssertion;
 
 export function buildLookaroundAssertion(
-	value: AdmitBound<T.LookaheadAssertion | T.LookbehindAssertion, T.AdmittedNodes>
+	value: Admit<T.LookaheadAssertion | T.LookbehindAssertion>
 ): T.LookaroundAssertion.Bound {
 	const _content = rejectBareText(
 		value,
@@ -138,7 +139,7 @@ export function buildLookaroundAssertion(
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: T.LookaheadAssertion | T.LookbehindAssertion) =>
+			content: (value: Admit<T.LookaheadAssertion | T.LookbehindAssertion>) =>
 				rebuilt(node, handle, () => buildLookaroundAssertion(value))
 		},
 		content: () => _content,
@@ -167,9 +168,10 @@ export function buildLookaheadAssertion(config: T.LookaheadAssertion.Config): T.
 		_content,
 		_pattern,
 		$with: {
-			content: (value: NonNullable<T.LookaheadAssertion.Config>['content']) =>
+			content: (value: Admit<NonNullable<T.LookaheadAssertion.Config>['content']>) =>
 				rebuilt(node, handle, () => buildLookaheadAssertion({ ...config, content: value })),
-			pattern: (value: T.Pattern) => rebuilt(node, handle, () => buildLookaheadAssertion({ ...config, pattern: value }))
+			pattern: (value: Admit<T.Pattern>) =>
+				rebuilt(node, handle, () => buildLookaheadAssertion({ ...config, pattern: value }))
 		},
 		content: () => _content,
 		pattern: () => _pattern,
@@ -198,9 +200,9 @@ export function buildLookbehindAssertion(config: T.LookbehindAssertion.Config): 
 		_content,
 		_pattern,
 		$with: {
-			content: (value: NonNullable<T.LookbehindAssertion.Config>['content']) =>
+			content: (value: Admit<NonNullable<T.LookbehindAssertion.Config>['content']>) =>
 				rebuilt(node, handle, () => buildLookbehindAssertion({ ...config, content: value })),
-			pattern: (value: T.Pattern) =>
+			pattern: (value: Admit<T.Pattern>) =>
 				rebuilt(node, handle, () => buildLookbehindAssertion({ ...config, pattern: value }))
 		},
 		content: () => _content,
@@ -260,13 +262,13 @@ export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {
 		_class_atoms,
 		_trailing,
 		$with: {
-			negation: (value?: NonNullable<T.CharacterClass.Config>['negation']) =>
+			negation: (value?: Admit<NonNullable<T.CharacterClass.Config>['negation']>) =>
 				rebuilt(node, handle, () => buildCharacterClass({ ...config, negation: value })),
-			leading: (value?: NonNullable<T.CharacterClass.Config>['leading']) =>
+			leading: (value?: Admit<NonNullable<T.CharacterClass.Config>['leading']>) =>
 				rebuilt(node, handle, () => buildCharacterClass({ ...config, leading: value })),
-			classAtoms: (...values: NonNullable<NonNullable<T.CharacterClass.Config>['classAtoms']>[number][]) =>
+			classAtoms: (...values: Admit<NonNullable<NonNullable<T.CharacterClass.Config>['classAtoms']>[number][]>) =>
 				rebuilt(node, handle, () => buildCharacterClass({ ...config, classAtoms: restItems('classAtoms', values) })),
-			trailing: (value?: NonNullable<T.CharacterClass.Config>['trailing']) =>
+			trailing: (value?: Admit<NonNullable<T.CharacterClass.Config>['trailing']>) =>
 				rebuilt(node, handle, () => buildCharacterClass({ ...config, trailing: value }))
 		},
 		negation: () => _negation,
@@ -284,9 +286,7 @@ export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {
 	return node as unknown as T.CharacterClass.Bound;
 }
 
-export function buildPosixCharacterClass(
-	value: AdmitBound<T.PosixClassName, T.AdmittedNodes>
-): T.PosixCharacterClass.Bound {
+export function buildPosixCharacterClass(value: Admit<T.PosixClassName>): T.PosixCharacterClass.Bound {
 	const _posix_class_name = rejectBareText(value, 'PosixCharacterClass.posixClassName', 'buildPosixClassName(…)');
 	const handle = currentHandle();
 	const node = {
@@ -295,7 +295,7 @@ export function buildPosixCharacterClass(
 		$named: true as const,
 		_posix_class_name,
 		$with: {
-			posixClassName: (value: T.PosixClassName) => rebuilt(node, handle, () => buildPosixCharacterClass(value))
+			posixClassName: (value: Admit<T.PosixClassName>) => rebuilt(node, handle, () => buildPosixCharacterClass(value))
 		},
 		posixClassName: () => _posix_class_name,
 		$render: () => renderText(handle, node),
@@ -347,9 +347,9 @@ export function buildClassRange(config: T.ClassRange.Config): T.ClassRange.Bound
 		_start,
 		_end,
 		$with: {
-			start: (value: NonNullable<T.ClassRange.Config>['start']) =>
+			start: (value: Admit<NonNullable<T.ClassRange.Config>['start']>) =>
 				rebuilt(node, handle, () => buildClassRange({ ...config, start: value })),
-			end: (value: NonNullable<T.ClassRange.Config>['end']) =>
+			end: (value: Admit<NonNullable<T.ClassRange.Config>['end']>) =>
 				rebuilt(node, handle, () => buildClassRange({ ...config, end: value }))
 		},
 		start: () => _start,
@@ -384,15 +384,13 @@ export function buildClassCharacter(text: string): T.ClassCharacter.Bound {
 	return node as unknown as T.ClassCharacter.Bound;
 }
 
+export function buildAnonymousCapturingGroup(value: Admit<T.Pattern>): ReturnType<typeof _buildAnonymousCapturingGroup>;
 export function buildAnonymousCapturingGroup(
-	value: AdmitBound<T.Pattern, T.AdmittedNodes>
-): ReturnType<typeof _buildAnonymousCapturingGroup>;
-export function buildAnonymousCapturingGroup(
-	value: AdmitBound<T.Alternation | T.Term, T.AdmittedNodes>
+	value: Admit<T.Alternation | T.Term>
 ): ReturnType<typeof _buildAnonymousCapturingGroup>;
 export function buildAnonymousCapturingGroup(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildAnonymousCapturingGroup(args[0] as T.Pattern);
+		return _buildAnonymousCapturingGroup(args[0] as Parameters<typeof _buildAnonymousCapturingGroup>[0]);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -400,10 +398,12 @@ export function buildAnonymousCapturingGroup(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.Pattern as const);
 	return prebuilt
-		? _buildAnonymousCapturingGroup(args[0] as T.Pattern)
-		: _buildAnonymousCapturingGroup((buildPattern as (...a: unknown[]) => unknown)(...args) as T.Pattern);
+		? _buildAnonymousCapturingGroup(args[0] as Parameters<typeof _buildAnonymousCapturingGroup>[0])
+		: _buildAnonymousCapturingGroup(
+				(buildPattern as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildAnonymousCapturingGroup>[0]
+			);
 }
-function _buildAnonymousCapturingGroup(value: AdmitBound<T.Pattern, T.AdmittedNodes>): T.AnonymousCapturingGroup.Bound {
+function _buildAnonymousCapturingGroup(value: Admit<T.Pattern>): T.AnonymousCapturingGroup.Bound {
 	const _pattern = rejectBareText(value, 'AnonymousCapturingGroup.pattern', 'a built Pattern');
 	const handle = currentHandle();
 	const node = {
@@ -412,7 +412,7 @@ function _buildAnonymousCapturingGroup(value: AdmitBound<T.Pattern, T.AdmittedNo
 		$named: true as const,
 		_pattern,
 		$with: {
-			pattern: (value: T.Pattern) => rebuilt(node, handle, () => _buildAnonymousCapturingGroup(value))
+			pattern: (value: Admit<T.Pattern>) => rebuilt(node, handle, () => _buildAnonymousCapturingGroup(value))
 		},
 		pattern: () => _pattern,
 		$render: () => renderText(handle, node),
@@ -442,11 +442,11 @@ export function buildNamedCapturingGroup(config: T.NamedCapturingGroup.Config): 
 		_group_name,
 		_pattern,
 		$with: {
-			content: (value: NonNullable<T.NamedCapturingGroup.Config>['content']) =>
+			content: (value: Admit<NonNullable<T.NamedCapturingGroup.Config>['content']>) =>
 				rebuilt(node, handle, () => buildNamedCapturingGroup({ ...config, content: value })),
-			groupName: (value: T.GroupName) =>
+			groupName: (value: Admit<T.GroupName>) =>
 				rebuilt(node, handle, () => buildNamedCapturingGroup({ ...config, groupName: value })),
-			pattern: (value: T.Pattern) =>
+			pattern: (value: Admit<T.Pattern>) =>
 				rebuilt(node, handle, () => buildNamedCapturingGroup({ ...config, pattern: value }))
 		},
 		content: () => _content,
@@ -462,15 +462,13 @@ export function buildNamedCapturingGroup(config: T.NamedCapturingGroup.Config): 
 	return node as unknown as T.NamedCapturingGroup.Bound;
 }
 
+export function buildNonCapturingGroup(value: Admit<T.Pattern>): ReturnType<typeof _buildNonCapturingGroup>;
 export function buildNonCapturingGroup(
-	value: AdmitBound<T.Pattern, T.AdmittedNodes>
-): ReturnType<typeof _buildNonCapturingGroup>;
-export function buildNonCapturingGroup(
-	value: AdmitBound<T.Alternation | T.Term, T.AdmittedNodes>
+	value: Admit<T.Alternation | T.Term>
 ): ReturnType<typeof _buildNonCapturingGroup>;
 export function buildNonCapturingGroup(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildNonCapturingGroup(args[0] as T.Pattern);
+		return _buildNonCapturingGroup(args[0] as Parameters<typeof _buildNonCapturingGroup>[0]);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -478,10 +476,12 @@ export function buildNonCapturingGroup(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.Pattern as const);
 	return prebuilt
-		? _buildNonCapturingGroup(args[0] as T.Pattern)
-		: _buildNonCapturingGroup((buildPattern as (...a: unknown[]) => unknown)(...args) as T.Pattern);
+		? _buildNonCapturingGroup(args[0] as Parameters<typeof _buildNonCapturingGroup>[0])
+		: _buildNonCapturingGroup(
+				(buildPattern as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildNonCapturingGroup>[0]
+			);
 }
-function _buildNonCapturingGroup(value: AdmitBound<T.Pattern, T.AdmittedNodes>): T.NonCapturingGroup.Bound {
+function _buildNonCapturingGroup(value: Admit<T.Pattern>): T.NonCapturingGroup.Bound {
 	const _pattern = rejectBareText(value, 'NonCapturingGroup.pattern', 'a built Pattern');
 	const handle = currentHandle();
 	const node = {
@@ -490,7 +490,7 @@ function _buildNonCapturingGroup(value: AdmitBound<T.Pattern, T.AdmittedNodes>):
 		$named: true as const,
 		_pattern,
 		$with: {
-			pattern: (value: T.Pattern) => rebuilt(node, handle, () => _buildNonCapturingGroup(value))
+			pattern: (value: Admit<T.Pattern>) => rebuilt(node, handle, () => _buildNonCapturingGroup(value))
 		},
 		pattern: () => _pattern,
 		$render: () => renderText(handle, node),
@@ -593,9 +593,9 @@ export function buildCountQuantifier(config: T.CountQuantifier.Config): T.CountQ
 		_content,
 		_lazy,
 		$with: {
-			content: (value: T.CountQuantifierArm | T.DecimalDigits) =>
+			content: (value: Admit<T.CountQuantifierArm | T.DecimalDigits>) =>
 				rebuilt(node, handle, () => buildCountQuantifier({ ...config, content: value })),
-			lazy: (value?: NonNullable<T.CountQuantifier.Config>['lazy']) =>
+			lazy: (value?: Admit<NonNullable<T.CountQuantifier.Config>['lazy']>) =>
 				rebuilt(node, handle, () => buildCountQuantifier({ ...config, lazy: value }))
 		},
 		content: () => _content,
@@ -610,7 +610,7 @@ export function buildCountQuantifier(config: T.CountQuantifier.Config): T.CountQ
 	return node as unknown as T.CountQuantifier.Bound;
 }
 
-export function buildBackreferenceEscape(value: AdmitBound<T.GroupName, T.AdmittedNodes>): T.BackreferenceEscape.Bound {
+export function buildBackreferenceEscape(value: Admit<T.GroupName>): T.BackreferenceEscape.Bound {
 	const _group_name = rejectBareText(value, 'BackreferenceEscape.groupName', 'buildGroupName(…)');
 	const handle = currentHandle();
 	const node = {
@@ -619,7 +619,7 @@ export function buildBackreferenceEscape(value: AdmitBound<T.GroupName, T.Admitt
 		$named: true as const,
 		_group_name,
 		$with: {
-			groupName: (value: T.GroupName) => rebuilt(node, handle, () => buildBackreferenceEscape(value))
+			groupName: (value: Admit<T.GroupName>) => rebuilt(node, handle, () => buildBackreferenceEscape(value))
 		},
 		groupName: () => _group_name,
 		$render: () => renderText(handle, node),
@@ -632,9 +632,7 @@ export function buildBackreferenceEscape(value: AdmitBound<T.GroupName, T.Admitt
 	return node as unknown as T.BackreferenceEscape.Bound;
 }
 
-export function buildNamedGroupBackreference(
-	value: AdmitBound<T.GroupName, T.AdmittedNodes>
-): T.NamedGroupBackreference.Bound {
+export function buildNamedGroupBackreference(value: Admit<T.GroupName>): T.NamedGroupBackreference.Bound {
 	const _group_name = rejectBareText(value, 'NamedGroupBackreference.groupName', 'buildGroupName(…)');
 	const handle = currentHandle();
 	const node = {
@@ -643,7 +641,7 @@ export function buildNamedGroupBackreference(
 		$named: true as const,
 		_group_name,
 		$with: {
-			groupName: (value: T.GroupName) => rebuilt(node, handle, () => buildNamedGroupBackreference(value))
+			groupName: (value: Admit<T.GroupName>) => rebuilt(node, handle, () => buildNamedGroupBackreference(value))
 		},
 		groupName: () => _group_name,
 		$render: () => renderText(handle, node),
@@ -677,7 +675,7 @@ export function buildDecimalEscape(text: string): T.DecimalEscape.Bound {
 }
 
 export function buildCharacterClassEscape(
-	value: AdmitBound<T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape, T.AdmittedNodes>
+	value: Admit<T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>
 ): T.CharacterClassEscape.Bound {
 	const _content = rejectBareText(
 		value,
@@ -691,7 +689,7 @@ export function buildCharacterClassEscape(
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape) =>
+			content: (value: Admit<T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>) =>
 				rebuilt(node, handle, () => buildCharacterClassEscape(value))
 		},
 		content: () => _content,
@@ -746,11 +744,11 @@ export function buildUnicodePropertyValueExpression(
 		_unicode_property_value_expression_group,
 		_unicode_property_value,
 		$with: {
-			unicodePropertyValueExpressionGroup: (value?: T.UnicodePropertyValueExpressionGroup) =>
+			unicodePropertyValueExpressionGroup: (value?: Admit<T.UnicodePropertyValueExpressionGroup>) =>
 				rebuilt(node, handle, () =>
 					buildUnicodePropertyValueExpression({ ...config, unicodePropertyValueExpressionGroup: value })
 				),
-			unicodePropertyValue: (value: T.UnicodePropertyValue) =>
+			unicodePropertyValue: (value: Admit<T.UnicodePropertyValue>) =>
 				rebuilt(node, handle, () => buildUnicodePropertyValueExpression({ ...config, unicodePropertyValue: value }))
 		},
 		unicodePropertyValueExpressionGroup: () => _unicode_property_value_expression_group,
@@ -839,7 +837,7 @@ export function buildIdentityEscape(input: string, affix: boolean = true): T.Ide
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: string) => rebuilt(node, handle, () => buildIdentityEscape(value))
+			content: (value: Admit<string>) => rebuilt(node, handle, () => buildIdentityEscape(value))
 		},
 		content: () => _content,
 		$render: () => renderText(handle, node),
@@ -915,9 +913,9 @@ export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Bound {
 		_content,
 		_quantifier,
 		$with: {
-			content: (value: NonNullable<T.TermGroup.Config>['content']) =>
+			content: (value: Admit<NonNullable<T.TermGroup.Config>['content']>) =>
 				rebuilt(node, handle, () => buildTermGroup({ ...config, content: value })),
-			quantifier: (value?: T.ZeroOrMore | T.OneOrMore | T.Optional | T.CountQuantifier) =>
+			quantifier: (value?: Admit<T.ZeroOrMore | T.OneOrMore | T.Optional | T.CountQuantifier>) =>
 				rebuilt(node, handle, () => buildTermGroup({ ...config, quantifier: value }))
 		},
 		content: () => _content,
@@ -932,9 +930,7 @@ export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Bound {
 	return node as unknown as T.TermGroup.Bound;
 }
 
-export function buildCountQuantifierGroup(
-	value?: AdmitBound<T.DecimalDigits, T.AdmittedNodes>
-): T.CountQuantifierGroup.Bound {
+export function buildCountQuantifierGroup(value?: Admit<T.DecimalDigits>): T.CountQuantifierGroup.Bound {
 	const _decimal_digits = rejectBareText(value, 'CountQuantifierGroup.decimalDigits', 'buildDecimalDigits(…)');
 	const handle = currentHandle();
 	const node = {
@@ -943,7 +939,7 @@ export function buildCountQuantifierGroup(
 		$named: true as const,
 		_decimal_digits,
 		$with: {
-			decimalDigits: (value?: T.DecimalDigits) => rebuilt(node, handle, () => buildCountQuantifierGroup(value))
+			decimalDigits: (value?: Admit<T.DecimalDigits>) => rebuilt(node, handle, () => buildCountQuantifierGroup(value))
 		},
 		decimalDigits: () => _decimal_digits,
 		$render: () => renderText(handle, node),
@@ -975,9 +971,9 @@ export function buildCountQuantifierArm(config: T.CountQuantifierArm.Config): T.
 		_decimal_digits,
 		_count_quantifier_group,
 		$with: {
-			decimalDigits: (value: T.DecimalDigits) =>
+			decimalDigits: (value: Admit<T.DecimalDigits>) =>
 				rebuilt(node, handle, () => buildCountQuantifierArm({ ...config, decimalDigits: value })),
-			countQuantifierGroup: (value?: T.CountQuantifierGroup) =>
+			countQuantifierGroup: (value?: Admit<T.CountQuantifierGroup>) =>
 				rebuilt(node, handle, () => buildCountQuantifierArm({ ...config, countQuantifierGroup: value }))
 		},
 		decimalDigits: () => _decimal_digits,
@@ -1013,9 +1009,9 @@ export function buildCharacterClassEscapeArm(
 		_character_class_escape_text2,
 		_unicode_property_value_expression,
 		$with: {
-			characterClassEscapeText2: (value: T.CharacterClassEscapeText2) =>
+			characterClassEscapeText2: (value: Admit<T.CharacterClassEscapeText2>) =>
 				rebuilt(node, handle, () => buildCharacterClassEscapeArm({ ...config, characterClassEscapeText2: value })),
-			unicodePropertyValueExpression: (value: T.UnicodePropertyValueExpression) =>
+			unicodePropertyValueExpression: (value: Admit<T.UnicodePropertyValueExpression>) =>
 				rebuilt(node, handle, () => buildCharacterClassEscapeArm({ ...config, unicodePropertyValueExpression: value }))
 		},
 		characterClassEscapeText2: () => _character_class_escape_text2,
@@ -1031,14 +1027,16 @@ export function buildCharacterClassEscapeArm(
 }
 
 export function buildUnicodePropertyValueExpressionGroup(
-	value: AdmitBound<T.UnicodePropertyName | T.UnicodePropertyName.Types, T.AdmittedNodes>
+	value: Admit<T.UnicodePropertyName | T.UnicodePropertyName.Types>
 ): ReturnType<typeof _buildUnicodePropertyValueExpressionGroup>;
 export function buildUnicodePropertyValueExpressionGroup(
-	value: AdmitBound<T.UnicodePropertyValue, T.AdmittedNodes>
+	value: Admit<T.UnicodePropertyValue>
 ): ReturnType<typeof _buildUnicodePropertyValueExpressionGroup>;
 export function buildUnicodePropertyValueExpressionGroup(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildUnicodePropertyValueExpressionGroup(args[0] as T.UnicodePropertyName | T.UnicodePropertyName.Types);
+		return _buildUnicodePropertyValueExpressionGroup(
+			args[0] as Parameters<typeof _buildUnicodePropertyValueExpressionGroup>[0]
+		);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -1046,15 +1044,17 @@ export function buildUnicodePropertyValueExpressionGroup(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.UnicodePropertyName as const);
 	return prebuilt
-		? _buildUnicodePropertyValueExpressionGroup(args[0] as T.UnicodePropertyName | T.UnicodePropertyName.Types)
+		? _buildUnicodePropertyValueExpressionGroup(
+				args[0] as Parameters<typeof _buildUnicodePropertyValueExpressionGroup>[0]
+			)
 		: _buildUnicodePropertyValueExpressionGroup(
-				(buildUnicodePropertyName as (...a: unknown[]) => unknown)(...args) as
-					| T.UnicodePropertyName
-					| T.UnicodePropertyName.Types
+				(buildUnicodePropertyName as (...a: unknown[]) => unknown)(...args) as Parameters<
+					typeof _buildUnicodePropertyValueExpressionGroup
+				>[0]
 			);
 }
 function _buildUnicodePropertyValueExpressionGroup(
-	value: AdmitBound<T.UnicodePropertyName | T.UnicodePropertyName.Types, T.AdmittedNodes>
+	value: Admit<T.UnicodePropertyName | T.UnicodePropertyName.Types>
 ): T.UnicodePropertyValueExpressionGroup.Bound {
 	const _unicode_property_name = admitAliasContent<
 		NonNullable<T.UnicodePropertyValueExpressionGroup['_unicode_property_name']>
@@ -1068,7 +1068,7 @@ function _buildUnicodePropertyValueExpressionGroup(
 		$named: true as const,
 		_unicode_property_name,
 		$with: {
-			unicodePropertyName: (value: T.UnicodePropertyName | T.UnicodePropertyName.Types) =>
+			unicodePropertyName: (value: Admit<T.UnicodePropertyName | T.UnicodePropertyName.Types>) =>
 				rebuilt(node, handle, () => _buildUnicodePropertyValueExpressionGroup(value))
 		},
 		unicodePropertyName: () => _unicode_property_name,
@@ -1135,9 +1135,9 @@ export function buildInlineFlagsGroupEnable(config: T.InlineFlagsGroupEnable.Con
 		_enabled,
 		_pattern,
 		$with: {
-			enabled: (value: T.Flags) =>
+			enabled: (value: Admit<T.Flags>) =>
 				rebuilt(node, handle, () => buildInlineFlagsGroupEnable({ ...config, enabled: value })),
-			pattern: (value?: T.Pattern) =>
+			pattern: (value?: Admit<T.Pattern>) =>
 				rebuilt(node, handle, () => buildInlineFlagsGroupEnable({ ...config, pattern: value }))
 		},
 		enabled: () => _enabled,
@@ -1165,11 +1165,11 @@ export function buildInlineFlagsGroupToggle(config: T.InlineFlagsGroupToggle.Con
 		_disabled,
 		_pattern,
 		$with: {
-			enabled: (value: T.Flags) =>
+			enabled: (value: Admit<T.Flags>) =>
 				rebuilt(node, handle, () => buildInlineFlagsGroupToggle({ ...config, enabled: value })),
-			disabled: (value: T.Flags) =>
+			disabled: (value: Admit<T.Flags>) =>
 				rebuilt(node, handle, () => buildInlineFlagsGroupToggle({ ...config, disabled: value })),
-			pattern: (value?: T.Pattern) =>
+			pattern: (value?: Admit<T.Pattern>) =>
 				rebuilt(node, handle, () => buildInlineFlagsGroupToggle({ ...config, pattern: value }))
 		},
 		enabled: () => _enabled,
@@ -1198,9 +1198,9 @@ export function buildInlineFlagsGroupDisable(
 		_disabled,
 		_pattern,
 		$with: {
-			disabled: (value: T.Flags) =>
+			disabled: (value: Admit<T.Flags>) =>
 				rebuilt(node, handle, () => buildInlineFlagsGroupDisable({ ...config, disabled: value })),
-			pattern: (value?: T.Pattern) =>
+			pattern: (value?: Admit<T.Pattern>) =>
 				rebuilt(node, handle, () => buildInlineFlagsGroupDisable({ ...config, pattern: value }))
 		},
 		disabled: () => _disabled,
@@ -1223,7 +1223,7 @@ export const buildBlankline: TSKindId.Blankline = TSKindId.Blankline;
 
 export const buildDoubleBlankline: TSKindId.DoubleBlankline = TSKindId.DoubleBlankline;
 
-export function buildLazy(value?: AdmitBound<TSKindId.Qmark, T.AdmittedNodes>): T.Lazy.Bound {
+export function buildLazy(value?: Admit<TSKindId.Qmark>): T.Lazy.Bound {
 	const _content = rejectBareText(
 		kindIdStorage<NonNullable<T.Lazy['_content']>>(orDefault(value, () => TSKindId.Qmark as const)),
 		'Lazy.content',
@@ -1236,7 +1236,7 @@ export function buildLazy(value?: AdmitBound<TSKindId.Qmark, T.AdmittedNodes>): 
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: NonNullable<TSKindId.Qmark>) => rebuilt(node, handle, () => buildLazy(value))
+			content: (value: Admit<NonNullable<TSKindId.Qmark>>) => rebuilt(node, handle, () => buildLazy(value))
 		},
 		content: () => _content,
 		$render: () => renderText(handle, node),
@@ -1249,9 +1249,7 @@ export function buildLazy(value?: AdmitBound<TSKindId.Qmark, T.AdmittedNodes>): 
 	return node as unknown as T.Lazy.Bound;
 }
 
-export function buildUnicodePropertyName(
-	value: AdmitBound<T.UnicodePropertyValue, T.AdmittedNodes>
-): T.UnicodePropertyName.Bound {
+export function buildUnicodePropertyName(value: Admit<T.UnicodePropertyValue>): T.UnicodePropertyName.Bound {
 	const _content = rejectBareText(value, 'UnicodePropertyName.content', 'buildUnicodePropertyValue(…)');
 	const handle = currentHandle();
 	const node = {
@@ -1260,7 +1258,7 @@ export function buildUnicodePropertyName(
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: T.UnicodePropertyValue) => rebuilt(node, handle, () => buildUnicodePropertyName(value))
+			content: (value: Admit<T.UnicodePropertyValue>) => rebuilt(node, handle, () => buildUnicodePropertyName(value))
 		},
 		content: () => _content,
 		$render: () => renderText(handle, node),
