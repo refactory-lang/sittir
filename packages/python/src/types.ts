@@ -2296,7 +2296,7 @@ export interface FutureImportStatement {
 export interface ImportFromStatement {
 	readonly $type: TSKindId.ImportFromStatement;
 	readonly _module_name: RelativeImport | DottedName;
-	readonly _content: ImportList | ParenthesizedImportList | TSKindId.WildcardImport;
+	readonly _content: TSKindId.WildcardImport | ImportList | ParenthesizedImportList;
 	readonly __inputHints__?: {
 		readonly content: KindEnum<'*', TSKindId.WildcardImport | TSKindId.Star> | ImportList | ParenthesizedImportList;
 	};
@@ -2305,7 +2305,7 @@ export interface ImportFromStatement {
 		readonly content: SlotHint<NonNullable<T.ImportFromStatement.Config>['content']>;
 	};
 	moduleName(): RelativeImport | DottedName;
-	content(): ImportList | ParenthesizedImportList | TSKindId.WildcardImport;
+	content(): TSKindId.WildcardImport | ImportList | ParenthesizedImportList;
 }
 
 export interface ImportList {

@@ -127,6 +127,7 @@
     "import_from_statement": {
       "definedBy": "override",
       "childKind": {
+        "wildcard_import": "wildcard_import",
         "import_list": "import_list",
         "parenthesized_import_list": "parenthesized_import_list"
       }
@@ -9697,11 +9698,17 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
+            "wildcard_import",
             "import_list",
-            "parenthesized_import_list",
-            "wildcard_import"
+            "parenthesized_import_list"
           ],
           "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "wildcard_import",
+              "parseKind": "wildcard_import"
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -9713,12 +9720,6 @@
               "multiplicity": "single",
               "name": "parenthesized_import_list",
               "parseKind": "parenthesized_import_list"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "wildcard_import",
-              "parseKind": "wildcard_import"
             }
           ]
         }

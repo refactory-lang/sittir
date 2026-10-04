@@ -5113,21 +5113,6 @@ describe('export_statement_default_from sub-factories', () => {
 });
 
 describe('export_statement_default_declaration sub-factories', () => {
-	it('defaultKw builds the parent', () => {
-		const node = ir.exportStatement.default.declaration.defaultKw.coerce({
-			content: {
-				$type: TSKindId.ExportStatementDefaultDeclarationDefaultKwValue,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-				_automatic_semicolon: TSKindId.AutomaticSemicolon as never
-			} as any
-		});
-		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
-		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementDefaultDeclarationDefaultKw);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
 	it('function builds the parent', () => {
 		const node = ir.exportStatement.default.declaration.function.coerce({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
@@ -5315,12 +5300,253 @@ describe('export_statement_default_declaration sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('defaultKw.value builds the parent', () => {
-		const node = ir.exportStatement.default.declaration.defaultKw.value.coerce({
-			content: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
+	it('defaultKw builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.defaultKw.coerce({
+			content: {
+				$type: TSKindId.ExportStatementDefaultDeclarationDefaultKwValue,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+				_automatic_semicolon: TSKindId.AutomaticSemicolon as never
+			} as any
 		});
 		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
 		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementDefaultDeclarationDefaultKw);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('ambient.function builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.ambient.function.coerce({
+			content: [
+				{
+					name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+					parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+					body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
+		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('ambient.generatorFunction builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.ambient.generatorFunction.coerce({
+			content: [
+				{
+					name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+					parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+					body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
+		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('ambient.class builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.ambient.class.coerce({
+			content: [
+				{
+					name: {
+						$type: TSKindId.TypeIdentifier,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+					} as any,
+					body: { $type: TSKindId.ClassBody, $text: 'test', $source: 2, $named: true } as any
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
+		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('ambient.lexical builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.ambient.lexical.coerce({
+			content: [
+				{
+					kind: 'let',
+					declarators: [
+						{
+							$type: TSKindId.VariableDeclaratorPlain,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+						} as any
+					]
+				},
+				{ terminator: TSKindId.AutomaticSemicolon }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
+		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('ambient.variable builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.ambient.variable.coerce({
+			content: [
+				{
+					declarators: [
+						{
+							$type: TSKindId.VariableDeclaratorPlain,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+						} as any
+					]
+				},
+				{ terminator: TSKindId.AutomaticSemicolon }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
+		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('ambient.functionSignature builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.ambient.functionSignature.coerce({
+			content: [
+				{
+					name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+					parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
+				},
+				{ terminator: TSKindId.AutomaticSemicolon }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
+		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('ambient.abstractClass builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.ambient.abstractClass.coerce({
+			content: [
+				{
+					name: {
+						$type: TSKindId.TypeIdentifier,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+					} as any,
+					body: { $type: TSKindId.ClassBody, $text: 'test', $source: 2, $named: true } as any
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
+		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('ambient.internalModule builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.ambient.internalModule.coerce({
+			content: [{ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any }]
+		});
+		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
+		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('ambient.typeAlias builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.ambient.typeAlias.coerce({
+			content: [
+				{
+					name: {
+						$type: TSKindId.TypeIdentifier,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+					} as any,
+					value: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
+				},
+				{ terminator: TSKindId.AutomaticSemicolon }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
+		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('ambient.enum builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.ambient.enum.coerce({
+			content: [
+				{
+					name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+					body: { $type: TSKindId.EnumBody, $text: 'test', $source: 2, $named: true } as any
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
+		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('ambient.interface builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.ambient.interface.coerce({
+			content: [
+				{
+					name: {
+						$type: TSKindId.TypeIdentifier,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+					} as any,
+					body: {
+						$type: TSKindId.InterfaceBody,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_content: {
+							$type: TSKindId.ObjectType,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_opening: TSKindId.Lbrace as never,
+							_closing: TSKindId.Rbrace as never
+						} as any
+					} as any
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
+		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('ambient.importAlias builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.ambient.importAlias.coerce({
+			content: [
+				{
+					name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+					value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+				},
+				{ terminator: TSKindId.AutomaticSemicolon }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
+		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('ambient.ambient builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.ambient.ambient.coerce({
+			content: [
+				{
+					$type: TSKindId.AmbientDeclarationGlobal,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
+		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('ambient.global builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.ambient.global.coerce({
+			content: [{ $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any]
+		});
+		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
+		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('defaultKw.function builds the parent', () => {
@@ -5557,17 +5783,9 @@ describe('export_statement_default_declaration sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementDefaultDeclarationDefaultKw);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('defaultKw.value.automaticSemicolon builds the parent', () => {
-		const node = ir.exportStatement.default.declaration.defaultKw.value.automaticSemicolon.coerce({
-			content: [{ value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any }]
-		});
-		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
-		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementDefaultDeclarationDefaultKw);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('defaultKw.value.semi builds the parent', () => {
-		const node = ir.exportStatement.default.declaration.defaultKw.value.semi.coerce({
-			content: [{ value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any }]
+	it('defaultKw.value builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.defaultKw.value.coerce({
+			content: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
 		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementDefaultDeclarationDefaultKw);
@@ -5807,238 +6025,20 @@ describe('export_statement_default_declaration sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementDefaultDeclarationDefaultKw);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('ambient.function builds the parent', () => {
-		const node = ir.exportStatement.default.declaration.ambient.function.coerce({
-			content: [
-				{
-					name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-					body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any
-				}
-			]
+	it('defaultKw.value.automaticSemicolon builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.defaultKw.value.automaticSemicolon.coerce({
+			content: [{ value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any }]
 		});
 		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
-		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
+		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementDefaultDeclarationDefaultKw);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('ambient.generatorFunction builds the parent', () => {
-		const node = ir.exportStatement.default.declaration.ambient.generatorFunction.coerce({
-			content: [
-				{
-					name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-					body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any
-				}
-			]
+	it('defaultKw.value.semi builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.defaultKw.value.semi.coerce({
+			content: [{ value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any }]
 		});
 		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
-		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('ambient.class builds the parent', () => {
-		const node = ir.exportStatement.default.declaration.ambient.class.coerce({
-			content: [
-				{
-					name: {
-						$type: TSKindId.TypeIdentifier,
-						$text: 'test',
-						$source: 2,
-						$named: true,
-						_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-					} as any,
-					body: { $type: TSKindId.ClassBody, $text: 'test', $source: 2, $named: true } as any
-				}
-			]
-		});
-		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
-		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('ambient.lexical builds the parent', () => {
-		const node = ir.exportStatement.default.declaration.ambient.lexical.coerce({
-			content: [
-				{
-					kind: 'let',
-					declarators: [
-						{
-							$type: TSKindId.VariableDeclaratorPlain,
-							$text: 'test',
-							$source: 2,
-							$named: true,
-							_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-						} as any
-					]
-				},
-				{ terminator: TSKindId.AutomaticSemicolon }
-			]
-		});
-		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
-		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('ambient.variable builds the parent', () => {
-		const node = ir.exportStatement.default.declaration.ambient.variable.coerce({
-			content: [
-				{
-					declarators: [
-						{
-							$type: TSKindId.VariableDeclaratorPlain,
-							$text: 'test',
-							$source: 2,
-							$named: true,
-							_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-						} as any
-					]
-				},
-				{ terminator: TSKindId.AutomaticSemicolon }
-			]
-		});
-		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
-		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('ambient.functionSignature builds the parent', () => {
-		const node = ir.exportStatement.default.declaration.ambient.functionSignature.coerce({
-			content: [
-				{
-					name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
-				},
-				{ terminator: TSKindId.AutomaticSemicolon }
-			]
-		});
-		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
-		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('ambient.abstractClass builds the parent', () => {
-		const node = ir.exportStatement.default.declaration.ambient.abstractClass.coerce({
-			content: [
-				{
-					name: {
-						$type: TSKindId.TypeIdentifier,
-						$text: 'test',
-						$source: 2,
-						$named: true,
-						_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-					} as any,
-					body: { $type: TSKindId.ClassBody, $text: 'test', $source: 2, $named: true } as any
-				}
-			]
-		});
-		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
-		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('ambient.internalModule builds the parent', () => {
-		const node = ir.exportStatement.default.declaration.ambient.internalModule.coerce({
-			content: [{ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any }]
-		});
-		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
-		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('ambient.typeAlias builds the parent', () => {
-		const node = ir.exportStatement.default.declaration.ambient.typeAlias.coerce({
-			content: [
-				{
-					name: {
-						$type: TSKindId.TypeIdentifier,
-						$text: 'test',
-						$source: 2,
-						$named: true,
-						_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-					} as any,
-					value: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
-				},
-				{ terminator: TSKindId.AutomaticSemicolon }
-			]
-		});
-		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
-		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('ambient.enum builds the parent', () => {
-		const node = ir.exportStatement.default.declaration.ambient.enum.coerce({
-			content: [
-				{
-					name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					body: { $type: TSKindId.EnumBody, $text: 'test', $source: 2, $named: true } as any
-				}
-			]
-		});
-		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
-		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('ambient.interface builds the parent', () => {
-		const node = ir.exportStatement.default.declaration.ambient.interface.coerce({
-			content: [
-				{
-					name: {
-						$type: TSKindId.TypeIdentifier,
-						$text: 'test',
-						$source: 2,
-						$named: true,
-						_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-					} as any,
-					body: {
-						$type: TSKindId.InterfaceBody,
-						$text: 'test',
-						$source: 2,
-						$named: true,
-						_content: {
-							$type: TSKindId.ObjectType,
-							$text: 'test',
-							$source: 2,
-							$named: true,
-							_opening: TSKindId.Lbrace as never,
-							_closing: TSKindId.Rbrace as never
-						} as any
-					} as any
-				}
-			]
-		});
-		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
-		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('ambient.importAlias builds the parent', () => {
-		const node = ir.exportStatement.default.declaration.ambient.importAlias.coerce({
-			content: [
-				{
-					name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-				},
-				{ terminator: TSKindId.AutomaticSemicolon }
-			]
-		});
-		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
-		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('ambient.ambient builds the parent', () => {
-		const node = ir.exportStatement.default.declaration.ambient.ambient.coerce({
-			content: [
-				{
-					$type: TSKindId.AmbientDeclarationGlobal,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any
-				} as any
-			]
-		});
-		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
-		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('ambient.global builds the parent', () => {
-		const node = ir.exportStatement.default.declaration.ambient.global.coerce({
-			content: [{ $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any]
-		});
-		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
-		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
+		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementDefaultDeclarationDefaultKw);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });

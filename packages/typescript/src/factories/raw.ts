@@ -9979,7 +9979,7 @@ export function buildExportStatementDefaultDeclaration(
 	const _content = rejectBareText(
 		config.content,
 		'ExportStatementDefaultDeclaration.content',
-		'a built ExportStatementDefaultDeclarationDefaultKw / Declaration'
+		'a built Declaration / ExportStatementDefaultDeclarationDefaultKw'
 	);
 	const handle = currentHandle();
 	const node = {
@@ -9993,7 +9993,7 @@ export function buildExportStatementDefaultDeclaration(
 				rebuilt(node, handle, () =>
 					buildExportStatementDefaultDeclaration({ ...config, decorator: restItems('decorators', values) })
 				),
-			content: (value: Admit<T.ExportStatementDefaultDeclarationDefaultKw | T.Declaration>) =>
+			content: (value: Admit<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>) =>
 				rebuilt(node, handle, () => buildExportStatementDefaultDeclaration({ ...config, content: value }))
 		},
 		decorators: () => _decorator,
@@ -10108,12 +10108,12 @@ export function buildExportStatementDefaultFromClauseFrom(
 }
 
 export function buildExportStatementDefaultDeclarationDefaultKw(
-	value: Admit<T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration>
+	value: Admit<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue>
 ): T.ExportStatementDefaultDeclarationDefaultKw.Bound {
 	const _content = rejectBareText(
 		value,
 		'ExportStatementDefaultDeclarationDefaultKw.content',
-		'a built ExportStatementDefaultDeclarationDefaultKwValue / Declaration'
+		'a built Declaration / ExportStatementDefaultDeclarationDefaultKwValue'
 	);
 	const handle = currentHandle();
 	const node = {
@@ -10122,7 +10122,7 @@ export function buildExportStatementDefaultDeclarationDefaultKw(
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: Admit<T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration>) =>
+			content: (value: Admit<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue>) =>
 				rebuilt(node, handle, () => buildExportStatementDefaultDeclarationDefaultKw(value))
 		},
 		content: () => _content,

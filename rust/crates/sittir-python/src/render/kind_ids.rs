@@ -702,7 +702,7 @@ pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'s
         (133, None, "parenthesized_import_list") => Some("content"),
         (134, None, "import_list") => Some("content"),
         (134, None, "parenthesized_import_list") => Some("content"),
-        (134, Some("wildcard_import"), _) => Some("content"),
+        (134, None, "wildcard_import") => Some("content"),
         (138, None, "print_statement_chevron") => Some("content"),
         (138, None, "print_statement_plain") => Some("content"),
         (141, None, "as_pattern") => Some("content"),

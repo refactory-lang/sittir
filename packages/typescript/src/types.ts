@@ -10666,13 +10666,13 @@ export interface ExportStatementDefaultFrom {
 export interface ExportStatementDefaultDeclaration {
 	readonly $type: TSKindId.ExportStatementDefaultDeclaration;
 	readonly _decorator?: readonly Decorator[];
-	readonly _content: ExportStatementDefaultDeclarationDefaultKw | Declaration;
+	readonly _content: Declaration | ExportStatementDefaultDeclarationDefaultKw;
 	readonly __slotHints__?: {
 		readonly decorators: SlotHint<T.Decorator[], true, true>;
-		readonly content: SlotHint<T.ExportStatementDefaultDeclarationDefaultKw | T.Declaration>;
+		readonly content: SlotHint<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>;
 	};
 	decorators(): readonly Decorator[];
-	content(): ExportStatementDefaultDeclarationDefaultKw | Declaration;
+	content(): Declaration | ExportStatementDefaultDeclarationDefaultKw;
 }
 
 export interface ExportStatementDefaultFromStarFrom {
@@ -10722,11 +10722,11 @@ export interface ExportStatementDefaultFromClauseFrom {
 
 export interface ExportStatementDefaultDeclarationDefaultKw {
 	readonly $type: TSKindId.ExportStatementDefaultDeclarationDefaultKw;
-	readonly _content: ExportStatementDefaultDeclarationDefaultKwValue | Declaration;
+	readonly _content: Declaration | ExportStatementDefaultDeclarationDefaultKwValue;
 	readonly __slotHints__?: {
-		readonly content: SlotHint<T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration>;
+		readonly content: SlotHint<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue>;
 	};
-	content(): ExportStatementDefaultDeclarationDefaultKwValue | Declaration;
+	content(): Declaration | ExportStatementDefaultDeclarationDefaultKwValue;
 }
 
 export interface ExportStatementDefaultDeclarationDefaultKwValue {
@@ -23296,7 +23296,7 @@ export namespace ExportStatementDefaultDeclarationDefaultKw {
 	}
 	export type Loose = LooseFor<TSKindId.ExportStatementDefaultDeclarationDefaultKw>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultDeclarationDefaultKw>;
-	export type BuildArgs = [value: Admit<T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration>];
+	export type BuildArgs = [value: Admit<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue>];
 	export type LooseArgs = [value: T.ExportStatementDefaultDeclarationDefaultKw.Loose];
 	export type Kind = TSKindId.ExportStatementDefaultDeclarationDefaultKw;
 }
