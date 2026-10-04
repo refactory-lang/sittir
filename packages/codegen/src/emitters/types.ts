@@ -499,7 +499,8 @@ const VOCABULARY_IMPORTS = [
 	'ListOptions',
 	'SupertypeSurface',
 	'WithNode',
-	'BoundWithNode'
+	'BoundWithNode',
+	'QueryFacet'
 ];
 
 function emitGrammarTypeMap(grammar: string, nodeMap: NodeMap, triviaKinds: readonly string[], keyed: boolean): string[] {
@@ -923,6 +924,7 @@ function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, i
 			lines.push(
 				`${indent}  readonly $with: ${name.startsWith('Bound') ? 'BoundWithNode' : 'WithNode'}<${self}, BoundByKindId${self === 'this' ? '' : `, ${name}`}>;`
 			);
+		if (withNode && name.startsWith('Parsed')) lines.push(`${indent}  readonly $query: () => QueryFacet<${self}, ParsedByKindId>;`);
 		for (const member of surface.members) lines.push(`${indent}${member}`);
 		lines.push(`${indent}}`);
 	};

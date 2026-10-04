@@ -13,7 +13,7 @@ import {
 	type RegexTypeMap
 } from './types.js';
 import type { IndentChar, Options } from './options.js';
-import { triviaFacts } from './utils.js';
+import { querySlots, triviaFacts } from './utils.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type PatternRoot } from './render-engine.js';
 import { wrapNode, type PatternTree } from './wrap.js';
@@ -39,6 +39,7 @@ export const hooks: LanguageHooks<RegexAPI> = Object.freeze<LanguageHooks<RegexA
 	is,
 	kinds: TSKindId,
 	trivia: triviaFacts,
+	querySlots,
 	createNative: (options) => nativeLanguageEngine<RegexAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as PatternRoot & ParsedRoot, tree as TreeHandle)
 });

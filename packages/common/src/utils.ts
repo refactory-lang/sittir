@@ -44,6 +44,11 @@ export function renderText(handle: EngineHandle | undefined, node: object): stri
 	return handle.current.render(node as AnyUntypedNode).toString();
 }
 
+export function queryOf(handle: EngineHandle, node: object): object {
+	if (!isLive(handle.current)) throw new Error('query: engine disposed; parse the source again with a live engine');
+	return handle.current.query(node);
+}
+
 /**
  * Runs a rebuild inside the node's own engine and hands the source node's trivia on to the
  * node it returns. Inner entries can only travel to a node that is still empty: once the
@@ -232,6 +237,16 @@ function lineGapAddressOf(node: AnyUntypedNode): LineGapAddress | undefined {
 	const source = sourceOf(node);
 	if (source === undefined) return undefined;
 	return source.handle === undefined ? { treeHandle: source.treeHandle, span: source.span, kind: source.kind } : { handle: source.handle };
+}
+
+export type NodeAddress = LineGapAddress | { readonly parent: number; readonly index: number };
+
+export function nodeAddressOf(node: AnyUntypedNode): NodeAddress | undefined {
+	const record = node as unknown as { readonly $handle?: unknown; readonly $parentHandle?: unknown; readonly $childIndex?: unknown };
+	if (typeof record.$handle !== 'number' && typeof record.$parentHandle === 'number' && typeof record.$childIndex === 'number') {
+		return { parent: record.$parentHandle, index: record.$childIndex };
+	}
+	return lineGapAddressOf(node);
 }
 
 /** Comment entries and whitespace runs of one side merged in source order; `undefined` when both are empty. */

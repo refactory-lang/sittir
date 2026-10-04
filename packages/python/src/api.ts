@@ -13,7 +13,7 @@ import {
 	type PythonTypeMap
 } from './types.js';
 import type { IndentChar, Options } from './options.js';
-import { triviaFacts } from './utils.js';
+import { querySlots, triviaFacts } from './utils.js';
 import { coerceToComment } from './factories/coerce.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ModuleRoot } from './render-engine.js';
@@ -40,6 +40,7 @@ export const hooks: LanguageHooks<PythonAPI> = Object.freeze<LanguageHooks<Pytho
 	is,
 	kinds: TSKindId,
 	trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),
+	querySlots,
 	createNative: (options) => nativeLanguageEngine<PythonAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ModuleRoot & ParsedRoot, tree as TreeHandle)
 });

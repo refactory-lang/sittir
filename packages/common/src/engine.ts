@@ -18,7 +18,8 @@ import type {
 import type { TreeHandle } from './readUntypedNode.ts';
 import { holdReadTree, toTransportData, type TriviaView } from './transport-data.ts';
 import { readDerivedSides, readTrivia } from './utils.ts';
-import { mintTreeToken } from './tree-token.ts';
+import { mintTreeToken, registerTree } from './tree-token.ts';
+import type { DescendantBatch } from './query.ts';
 
 /** The options object a grammar package types as its `Options`. */
 export type RenderOptionValues = Readonly<Record<string, unknown>>;
@@ -70,6 +71,15 @@ export interface NativeEngineLike<TTransport = unknown> {
 	readUntypedNode(handle: number, childIndex: number, depth?: number): string;
 	readRoot(treeId: number, depth?: number): string;
 	lineGapsOf(handle: number, span?: number[], kind?: number): string;
+	descendants(
+		from: string,
+		kinds: number[] | undefined | null,
+		resume: number[] | undefined | null,
+		limit: number,
+		plan?: string | null,
+		depth?: number | null
+	): string;
+	planHolds(addresses: string, plan: string): boolean[];
 	render(node: TTransport, treeId?: number, options?: object): string;
 	renderToFile?(node: TTransport, path: string, treeId?: number, options?: object): void;
 	/** The binary's compile profile (`debug` | `release`); absent on a binary that predates the getter. */
@@ -318,31 +328,44 @@ export function createNativeEngine<
 							release: status.native.disposeTree,
 							treeId: parsed.treeId
 						});
-						return {
-							root,
-							tree: {
-								get rootNode(): never {
-									throw new Error('rootNode unavailable on native engine handle; use tree.read()');
-								},
-								source,
-								read: (handle, childIndex, depth) => {
-									if (handle === undefined) {
-										const levels = depth ?? 1;
-										let cached = roots.get(levels);
-										if (cached === undefined) {
-											cached = JSON.parse(engine.readRoot(parsed.treeId, depth)) as AnyUntypedNode;
-											holdReadTree(cached, liveToken);
-											roots.set(levels, cached);
-										}
-										return cached;
+						const tree: TreeHandle = {
+							get rootNode(): never {
+								throw new Error('rootNode unavailable on native engine handle; use tree.read()');
+							},
+							source,
+							read: (handle, childIndex, depth) => {
+								if (handle === undefined) {
+									const levels = depth ?? 1;
+									let cached = roots.get(levels);
+									if (cached === undefined) {
+										cached = JSON.parse(engine.readRoot(parsed.treeId, depth)) as AnyUntypedNode;
+										holdReadTree(cached, liveToken);
+										roots.set(levels, cached);
 									}
-									const node = JSON.parse(engine.readUntypedNode(handle, childIndex ?? 0, depth)) as AnyUntypedNode;
-									holdReadTree(node, liveToken);
-									return node;
-								},
-								format: parsed.format
-							} satisfies TreeHandle
+									return cached;
+								}
+								const node = JSON.parse(engine.readUntypedNode(handle, childIndex ?? 0, depth)) as AnyUntypedNode;
+								holdReadTree(node, liveToken);
+								return node;
+							},
+							format: parsed.format,
+							query: {
+								descendants: (walk) =>
+									JSON.parse(
+										engine.descendants(
+											JSON.stringify(walk.from),
+											walk.kinds === undefined ? undefined : [...walk.kinds],
+											walk.resume === undefined ? undefined : [...walk.resume],
+											walk.limit,
+											walk.plan === undefined ? undefined : JSON.stringify(walk.plan),
+											walk.depth
+										)
+									) as DescendantBatch,
+								planHolds: (addresses, plan) => engine.planHolds(JSON.stringify(addresses), JSON.stringify(plan))
+							}
 						};
+						registerTree(liveToken, tree);
+						return { root, tree };
 					},
 
 					readUntypedNode(handle: number, childIndex = 0, parseOptions?: ParseOptions) {

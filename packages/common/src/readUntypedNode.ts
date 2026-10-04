@@ -16,6 +16,7 @@
  */
 
 import type { AnyUntypedNode, AnyTreeNode, FormatRecord } from '@sittir/types';
+import type { TreeQuery } from './query.ts';
 
 /**
  * A handle to the parsed tree, providing node navigation via handle + childIndex.
@@ -46,6 +47,7 @@ export interface TreeHandle {
 	 * Callers can also set this manually to apply a house-style config.
 	 */
 	format?: FormatRecord;
+	query?: TreeQuery;
 	/**
 	 * Phase D: convert a tree-sitter string kind name to the numeric
 	 * `TSKindId` value used as `$type` in `AnyUntypedNode`. Required for

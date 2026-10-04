@@ -1,6 +1,7 @@
 import type { AnyUntypedNode, ErrorNode, ErrorRegion, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaItem, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
 import type { Admit } from './node-surface.ts';
+import type { QueryFacet, QuerySlots } from './query.ts';
 
 /** One line-break run a read node owns as trivia: the whitespace member it reads as and the byte its run starts at. */
 export interface LineGap {
@@ -161,6 +162,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	readonly is: API['is'];
 	readonly kinds: API['kinds'];
 	readonly trivia: TriviaFacts;
+	readonly querySlots: QuerySlots;
 	createNative(options?: NativeEngineOptions<API['options']>): NativeLanguageEngine<API>;
 	wrap(root: unknown, tree: unknown): API['root'];
 }
@@ -231,6 +233,9 @@ export type BuildSurface<API extends LanguageAPI, M extends ApiSurface> = M exte
 		? never
 		: API['build'];
 
+/** The facet `engine.query` returns: the node's own `$query` result, or a leaf's empty facet. */
+export type FacetOf<N> = N extends { readonly $query: () => infer F } ? F : QueryFacet<N, {}>;
+
 export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'> extends EngineIdentity<API> {
 	readonly build: BuildSurface<API, M>;
 	readonly is: API['is'];
@@ -253,6 +258,15 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	 * did not parse cleanly.
 	 */
 	readonly parse: (source: string, options?: ParseOptions) => API['root'];
+	/**
+	 * The query facet of a node this engine parsed: what `node.$query()` returns for a node with
+	 * structure, a view per slot over the slot's items, and `$children` and `$descendants`. A parsed
+	 * leaf has no `$query` member; its facet has no slots and nothing below it.
+	 *
+	 * @throws When `node` holds no parsed tree (a built node, a draft, or a copy that lost its tree):
+	 * `$commit()` it first. Also when its tree's engine is disposed.
+	 */
+	readonly query: <N extends API['node']>(node: N) => FacetOf<N>;
 	readonly read: (path: string, options?: ParseOptions) => Promise<API['root']>;
 	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, StoredInput<API> | RenderBuilder<API>>;
 	readonly create: (path: string, fn: (build: API['build']) => API['root']) => Pending;

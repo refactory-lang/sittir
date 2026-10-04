@@ -195,7 +195,7 @@ fn widen_to_whole_source(root: &mut UntypedNode, source: &str) {
 /// needs the display symbol as identity — a transport accepts every
 /// identity the parser can show as one of its members, the display kind
 /// of an anonymous token included.
-fn stamped_kind(node: &tree_sitter::Node<'_>) -> KindId {
+pub(crate) fn stamped_kind(node: &tree_sitter::Node<'_>) -> KindId {
     KindId(node.grammar_id())
 }
 
@@ -784,7 +784,6 @@ fn read_slots(
         if is_trivia(&child) {
             continue;
         }
-        let field_name = node.field_name_for_child(i).map(|s| s.to_string());
         let data = if is_leaf(&child) {
             // A leaf keeps a coordinate at either depth. Under a shallow read
             // it is a child like any stub — the parent's handle and its index,
@@ -827,22 +826,14 @@ fn read_slots(
                 }
             }
         };
-        match field_name.as_deref() {
-            Some(name) => {
-                slot_order_acc.push(name.to_string());
-                assign_named_slot(&mut fields_acc, name, data);
+        match child_slot(node.field_name_for_child(i), &child) {
+            Some(slot) => {
+                slot_order_acc.push(slot.to_string());
+                assign_named_slot(&mut fields_acc, slot, data);
             }
-            None => {
-                if child.is_named() {
-                    let key = child.kind();
-                    slot_order_acc.push(key.to_string());
-                    assign_named_slot(&mut fields_acc, key, data);
-                } else {
-                    // Anonymous literal token — stays in the legacy children bucket
-                    // (numeric kind IDs only after the slot model unification).
-                    children_acc.push(data);
-                }
-            }
+            // Anonymous literal token — stays in the legacy children bucket
+            // (numeric kind IDs only after the slot model unification).
+            None => children_acc.push(data),
         }
     }
 
@@ -876,6 +867,18 @@ fn read_slots(
     (fields, children, slot_order)
 }
 
+/// The key a child is stored under: a field-tagged child by its field, a
+/// named child without a field by its kind name; `None` for an anonymous
+/// child without a field, which no slot holds. Seating the key in the model's
+/// slot is the wrap's work.
+fn child_slot(field: Option<&'static str>, child: &tree_sitter::Node<'_>) -> Option<&'static str> {
+    match field {
+        Some(name) => Some(name),
+        None if child.is_named() => Some(child.kind()),
+        None => None,
+    }
+}
+
 /// Whether a node's bytes are its content: an anonymous token, an error, or
 /// a node with no children to address them.
 fn carries_text(node: &tree_sitter::Node<'_>) -> bool {
@@ -897,7 +900,7 @@ fn node_text(node: tree_sitter::Node<'_>, source: &str) -> Option<String> {
     Some(text.to_string())
 }
 
-fn stub_of(
+pub(crate) fn stub_of(
     child: tree_sitter::Node<'_>,
     source: &str,
     parent_handle: Option<u64>,

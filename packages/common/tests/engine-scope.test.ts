@@ -19,7 +19,10 @@ const identity: EngineIdentity = {
 function handleOf(label: string): EngineHandle {
 	const live: LiveEngine = {
 		...identity,
-		render: () => Object.assign(() => label, { toString: () => label }) as never
+		render: () => Object.assign(() => label, { toString: () => label }) as never,
+		query: () => {
+			throw new Error('type-only');
+		}
 	};
 	return { current: live };
 }

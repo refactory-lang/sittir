@@ -1,6 +1,6 @@
 import { NATIVE_TARGETS, grammarDisplayName, nativeBinaryName, type GrammarName } from '../grammars.ts';
 
-export const NATIVE_RENDER_TRANSPORT_ABI = 13;
+export const NATIVE_RENDER_TRANSPORT_ABI = 14;
 
 export interface NativeCrateFile {
 	readonly path: string;
