@@ -231,6 +231,7 @@ Operations are generated from the same finalized slot model as the accessors and
 - **`$edit().slot` reaches through a hoisted list kind.** Where the slot holds a list node, the operations edit the list's items, and the list node and its owner are both rebuilt.
 - **Below a list's minimum, an edit is refused at run time.** It throws from the one edit function in common every facet calls: `removeAt` on the only item of a non-empty list, for instance. The static types do not carry list lengths.
 - **Removal by value is deferred.** `remove(value)` and `replace(value, …)` need value equality, which is not settled; `removeAt` and `replaceAt` target the occurrence by position.
+- **Boundary semantics are open.** Negative and out-of-range indices, `remove()` on an absent optional, and whether `move(from, to)` reads `to` before or after removing `from` are not decided. They are settled with the edit facet, which is not in v1.
 
 ### 8.2 Where `$edit` lives
 
@@ -240,7 +241,7 @@ Operations are generated from the same finalized slot model as the accessors and
 
 On a parsed node, a `$with` or edit result is a draft in the sense of the edit lifecycle. It keeps its tree association, sends no stale span, and leaves its unchanged children as coordinates.
 
-- `$commit()` commits one draft through tree-sitter and returns it as a coordinate of the new tree version.
+- `$commit()` commits one draft through tree-sitter and returns the node the commit produced, a coordinate of the new tree version, found and verified rather than guessed: the changed ranges lie within the edit, and a node of the rendered kind spans the new range. When the check fails, the commit fails with a diagnostic and leaves the tree at the old version. The rest of the commit's contract belongs to the edit lifecycle (#437).
 - `engine.commit(...drafts)` commits several drafts of one tree in one version, and returns the committed nodes.
 - `engine.edit(path, fn)` is removed. It bundled parsing, a callback over the whole root, the commit and the write; drafts, `commit` and `save` cover those steps at node grain, and the name `edit` goes to the node's facet.
 - `engine.create(path, build => root)` and `engine.write(path, node)` stay as the file verbs.
