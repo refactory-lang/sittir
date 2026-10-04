@@ -63,7 +63,11 @@ The ruling estimated each closure at about 64 B and 2 ns, extrapolated from the 
 
 ### 3.4 `$edit` transforms a slot
 
-`$edit: () => engine.edit(node)` is a closure in the literal like `$query`, and the engine makes the edit facet when it is called. It comes after the query facet. `fn.$edit().parameters.insert(1, p)` returns a new parent with the slot's items transformed (§8). There is no `$edit().slot(value)` synonym for `$with`.
+```ts
+$edit: handle && (() => handle.current.edit(node))
+```
+
+`$edit` is a closure in the literal in the same form as `$query`, and the engine makes the edit facet when it is called. A node with no engine has neither member. Which nodes carry `$edit`, parsed nodes only or drafts too, is open. The edit facet comes after the query facet. `fn.$edit().parameters.insert(1, p)` returns a new parent with the slot's items transformed (§8). There is no `$edit().slot(value)` synonym for `$with`.
 
 ### 3.5 Superseded: slot views as getters on a per-kind class
 
@@ -230,7 +234,7 @@ Operations are generated from the same finalized slot model as the accessors and
 
 ### 8.2 Where `$edit` lives
 
-`$edit` is a closure in the node's literal, `$edit: () => engine.edit(node)`, like `$query` (§3.2), and the engine makes the edit facet when it is called. The logic of every operation is one function in common, and each facet only names the slot.
+`$edit` is a closure in the node's literal, `$edit: handle && (() => handle.current.edit(node))`, in the same form as `$query` (§3.2), and the engine makes the edit facet when it is called. Which nodes carry it is open (§3.4). The logic of every operation is one function in common, and each facet only names the slot.
 
 ### 8.3 Results are drafts
 
@@ -289,7 +293,7 @@ Ruled by the maintainer on 2026-10-03:
 9. **A facet slot is a lazy view, not callable (§3.2).** `node.slot()` gives the same items as `[...node.$query().slot]` (§13). Traversal is `$query().$children` and `$query().$descendants` (§5.2).
 10. **`where` is in v1 (§7), on views and on `$children` too.** Plans compile on the client to parser terms `{ fields, kinds }`, and native code has no slot knowledge.
 11. **On a union, the facet has only the slots all members share (§3.2).**
-12. **The edit facet is `$edit: () => engine.edit(node)` (§3.4, §8.2), and comes later.** `engine.edit(path, fn)` is removed; `create` and `write` stay; `engine.commit(...drafts)` commits drafts; `Project.save()` writes (§8.3).
+12. **The edit facet is `$edit: handle && (() => handle.current.edit(node))` (§3.4, §8.2), and comes later.** A node with no engine has neither member. Which nodes carry `$edit`, parsed only or drafts too, is not ruled. `engine.edit(path, fn)` is removed; `create` and `write` stay; `engine.commit(...drafts)` commits drafts; `Project.save()` writes (§8.3).
 
 ## 13. Laws
 
@@ -328,7 +332,7 @@ Ruled by the maintainer on 2026-10-03:
 
 ## 15. Implementation direction
 
-- **Generation:** a parsed node's literal carries `$query: handle && (() => queryOf(handle, node))` next to `$engine`, and later `$edit`; a built node's literal does not. The facet's slot table, the edit facets and the recorder's slot map come from the finalized slot model that already drives the accessors and `$with`. There is no class per kind, prototype or getter.
+- **Generation:** a parsed node's literal carries `$query: handle && (() => queryOf(handle, node))` next to `$engine`, and a built node's literal does not. `$edit` comes later in the same form; which nodes carry it is open (§3.4). The facet's slot table, the edit facets and the recorder's slot map come from the finalized slot model that already drives the accessors and `$with`. There is no class per kind, prototype or getter.
 - **Native:** one walk, `descendants`: a pre-order walk from an address (the node's own handle, a stub's coordinate, or a tree, span and kind) with a kind filter, an optional `where` plan, a resume path, a batch limit and a depth. It never enters an extra, and each batch returns the walk's start as its own handle. `planHolds` evaluates a plan over a list of addresses in one call. The evaluator matches parser terms and keeps no slot knowledge.
 - **JavaScript runtime:** source, plan, terminal and edit primitive are separate pieces in common. The plan splitter moves `ofType` and `where` ahead of opaque filters, sends the declarative prefix to the walk, and pulls geometric batches. The JavaScript `where` evaluator is kept only as the test oracle.
 
