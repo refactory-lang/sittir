@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, Cond, QueryPlan, QuerySlots, Recorder, SlotRef } from '@sittir/types';
+import type { AnyUntypedNode, Cond, QueryPlan, QuerySlots, Recorder, SlotRef, SlotRoutes } from '@sittir/types';
 import { inTreeEngine } from './engine-scope.ts';
 import type { TreeHandle } from './readUntypedNode.ts';
 import { treeOf, treeTokenOf } from './tree-token.ts';
@@ -97,10 +97,10 @@ function kindLabel(context: Context, kind: number): string {
 	return context.hooks.kindName(kind) ?? `kind ${kind}`;
 }
 
-const slotTables = new WeakMap<QuerySlots, Map<number, ReadonlyMap<string, string>>>();
-const NO_SLOTS: ReadonlyMap<string, string> = new Map();
+const slotTables = new WeakMap<QuerySlots, Map<number, ReadonlyMap<string, SlotRoutes>>>();
+const NO_SLOTS: ReadonlyMap<string, SlotRoutes> = new Map();
 
-function slotsOf(table: QuerySlots, kind: number): ReadonlyMap<string, string> {
+function slotsOf(table: QuerySlots, kind: number): ReadonlyMap<string, SlotRoutes> {
 	let byKind = slotTables.get(table);
 	if (byKind === undefined) slotTables.set(table, (byKind = new Map()));
 	let slots = byKind.get(kind);
@@ -522,33 +522,37 @@ function cond(plan: QueryPlan): Cond {
 	}) as unknown as Cond;
 }
 
-function slotRef(slot: string): SlotRef {
+function slotRef(slot: string, routes: SlotRoutes): SlotRef {
 	return Object.freeze({
 		eq(text: string) {
 			if (typeof text !== 'string') refuse(`query: ${slot}.eq takes the text to compare`);
-			return cond({ op: 'eq', slot, text });
+			return cond({ op: 'eq', fields: routes.fields, kinds: routes.kinds, text });
 		},
 		match(pattern: RegExp) {
 			if (!(pattern instanceof RegExp)) refuse(`query: ${slot}.match takes a RegExp`);
 			if (pattern.flags.replace(/u/g, '') !== '')
 				refuse(`query: ${slot}.match: flags ${pattern.flags} have no native equivalent`);
-			return cond({ op: 'match', slot, pattern: pattern.source });
+			return cond({ op: 'match', fields: routes.fields, kinds: routes.kinds, pattern: pattern.source });
 		}
 	});
 }
 
+const NO_ROUTES: SlotRoutes = Object.freeze({ fields: [], kinds: [] });
+
 function recorder(context: Context, kind: number | undefined): Recorder<unknown> {
 	const table = context.hooks.querySlots;
-	const slots: ReadonlyMap<string, string> =
-		kind === undefined ? new Map([...everyAccessor(table)].map((a) => [a, a])) : slotsOf(table, kind);
+	const slots: ReadonlyMap<string, SlotRoutes> =
+		kind === undefined
+			? new Map([...everyAccessor(table)].map((accessor) => [accessor, NO_ROUTES]))
+			: slotsOf(table, kind);
 	const owner = kind === undefined ? 'this grammar' : kindLabel(context, kind);
 	const refuseRecorder = (what: string): never =>
 		refuse(`query: ${what}; a condition reads slots and compares them (c.slot.eq / .match)`);
 	return new Proxy(Object.create(null) as Recorder<unknown>, {
 		get(_, key) {
 			if (typeof key === 'string') {
-				const slot = slots.get(key);
-				if (slot !== undefined) return slotRef(slot);
+				const routes = slots.get(key);
+				if (routes !== undefined) return slotRef(key, routes);
 			}
 			return refuseRecorder(`${String(key)} is not a slot of ${owner}`);
 		},
@@ -557,7 +561,7 @@ function recorder(context: Context, kind: number | undefined): Recorder<unknown>
 		ownKeys: () => [...slots.keys()],
 		getOwnPropertyDescriptor: (_, key) =>
 			typeof key === 'string' && slots.has(key)
-				? { configurable: true, enumerable: true, value: slotRef(slots.get(key)!) }
+				? { configurable: true, enumerable: true, value: slotRef(key, slots.get(key)!) }
 				: undefined
 	});
 }
@@ -578,13 +582,13 @@ function sameOccurrence(a: unknown, b: unknown): boolean {
 	);
 }
 
-export function holds(plan: QueryPlan, texts: (slot: string) => readonly string[]): boolean {
+export function holds(plan: QueryPlan, texts: (routes: SlotRoutes) => readonly string[]): boolean {
 	switch (plan.op) {
 		case 'eq':
-			return texts(plan.slot).includes(plan.text);
+			return texts(plan).includes(plan.text);
 		case 'match': {
 			const pattern = new RegExp(plan.pattern, 'u');
-			return texts(plan.slot).some((text) => pattern.test(text));
+			return texts(plan).some((text) => pattern.test(text));
 		}
 		case 'not':
 			return !holds(plan.of, texts);

@@ -10900,13 +10900,17 @@ The facts carry no `comment` builder and no render or edit: a node renders and e
 
 `triviaFacts` is frozen, with its whitespace run table.
 
+### `packages/codegen/src/emitters/client-utils.ts::queryRoutesOf`
+
+How the parser delivers a slot's children: a named slot by its field alone, and an unnamed slot by the routes `wireRoutesOf` finds (its field labels, and the concrete kinds that arrive under no field), the derivation the `wire_slot` rows use.
+
 ### `packages/codegen/src/emitters/client-utils.ts::querySlotRows`
 
-Each kind's slots, by stamped kind id: the accessor a node reads the slot through (`propertyName`) and the name the reader stores the slot's children under (`storageName`, the name the reader's `wire_slot` routes claim, falling back to the field or the child's kind). It walks `node.slots` as `wireSlotRows` does, so a query names a slot exactly as the reader keys it. A kind with no slots has no row. Two nodes stamped with one kind id must agree on the row, and the emitter throws when they do not.
+Each kind's slots, by stamped kind id: the accessor a node reads the slot through (`propertyName`) and the slot's parser routes (`queryRoutesOf`). A query condition compiles on the client to these routes, so the native evaluator knows no slot names. A kind with no slots has no row. Two nodes stamped with one kind id must agree on the row, and the emitter throws when they do not.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitQuerySlots`
 
-Emits `querySlots`, the `querySlotRows` table as a frozen object keyed by kind id. The language hooks carry it to the engine, where a node's query facet takes its slot names from the row of the node's kind and a `where` condition maps each accessor it reads to the slot the native plan names.
+Emits `querySlots`, the `querySlotRows` table as a frozen object keyed by kind id. The language hooks carry it to the engine, where a node's query facet takes its slot names from the row of the node's kind and a `where` condition compiles each slot it reads to that slot's routes.
 
 ### `packages/codegen/src/emitters/emit.ts::module`
 

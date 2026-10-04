@@ -96,11 +96,11 @@ Keeps the entries of a batch whose slots satisfy a `where` condition: entries ar
 
 ### `packages/common/src/query.ts::compileFor`
 
-The plan a `where` callback records for elements of one kind, cached per callback and kind. The callback runs against that kind's recorder, so each accessor maps to the slot the reader stores it under; a kind lacking a slot the callback reads is refused there.
+The plan a `where` callback records for elements of one kind, cached per callback and kind. The callback runs against that kind's recorder, so each slot it reads compiles to that kind's parser routes for the slot; a kind lacking a slot the callback reads is refused there.
 
 ### `packages/common/src/query.ts::recorder`
 
-What a `where` callback receives: a Proxy whose members are the accessors of a kind, each a slot reference with `eq` and `match`. Any other key, an assignment and a call are refused. A view whose element kinds are not yet known checks the callback at the `where` call against every accessor of the grammar, so its shape is refused early and each kind's slots when it runs. A pattern crosses as its source; a flag has no native equivalent and is refused rather than dropped.
+What a `where` callback receives: a Proxy whose members are the accessors of a kind, each a slot reference with `eq` and `match` that records the slot's parser routes (fields, and kinds under no field) from the kind's `querySlots` row. Any other key, an assignment and a call are refused. A view whose element kinds are not yet known checks the callback at the `where` call against every accessor of the grammar, recording no routes, so its shape is refused early and each kind's slots when it runs. A pattern crosses as its source; a flag has no native equivalent and is refused rather than dropped.
 
 ### `packages/common/src/query.ts::sameOccurrence`
 
@@ -108,7 +108,7 @@ How `includes` compares: the same object, or two parsed nodes of the same tree (
 
 ### `packages/common/src/query.ts::holds`
 
-The JavaScript evaluation of a plan over a node's slot texts. It is the oracle the native evaluator is tested against, never an evaluator of its own.
+The JavaScript evaluation of a plan over the texts a node's children have along each leaf's routes. It is the oracle the native evaluator is tested against, never an evaluator of its own.
 
 ### `packages/common/src/engine-scope.ts::inTreeEngine`
 

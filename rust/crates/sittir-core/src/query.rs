@@ -1,7 +1,6 @@
 //! The native half of a node query: the `where` plan a query compiles to, and
 //! the batch a descendant walk returns.
 
-use crate::read_untyped_node::{child_slot, stamped_kind, ReadModel};
 use crate::types::UntypedNode;
 
 /// One batch of [`crate::engine::ParsedTree::descendants`]: the stubs found,
@@ -43,15 +42,39 @@ impl Address {
     }
 }
 
-/// A `where` condition over a node's model slots, as the portable layer
-/// records it. A slot is found through the same routing the reader stores
-/// children by (`child_slot`), so the plan names model slots and nothing maps
-/// them to parser fields a second time.
+/// A slot as the parser spells it: the fields its children arrive under, and
+/// the kinds of its children that arrive under no field. The client compiles a
+/// `where` condition's slots to these, so the evaluator knows no slot names.
+#[derive(serde::Deserialize)]
+pub struct Routes {
+    pub fields: Vec<String>,
+    pub kinds: Vec<String>,
+}
+
+impl Routes {
+    fn admits(&self, field: Option<&str>, child: &tree_sitter::Node<'_>) -> bool {
+        match field {
+            Some(field) => self.fields.iter().any(|f| f == field),
+            None => self.kinds.iter().any(|k| k == child.kind()),
+        }
+    }
+}
+
+/// A `where` condition over a node's slots, each slot given by its parser
+/// routes.
 #[derive(serde::Deserialize)]
 #[serde(tag = "op", rename_all = "lowercase")]
 pub enum PlanSpec {
-    Eq { slot: String, text: String },
-    Match { slot: String, pattern: String },
+    Eq {
+        #[serde(flatten)]
+        routes: Routes,
+        text: String,
+    },
+    Match {
+        #[serde(flatten)]
+        routes: Routes,
+        pattern: String,
+    },
     Not { of: Box<PlanSpec> },
     And { of: Vec<PlanSpec> },
     Or { of: Vec<PlanSpec> },
@@ -59,8 +82,8 @@ pub enum PlanSpec {
 
 /// A [`PlanSpec`] with its patterns compiled.
 pub enum Plan {
-    Eq { slot: String, text: String },
-    Match { slot: String, pattern: regex::Regex },
+    Eq { routes: Routes, text: String },
+    Match { routes: Routes, pattern: regex::Regex },
     Not(Box<Plan>),
     And(Vec<Plan>),
     Or(Vec<Plan>),
@@ -71,9 +94,9 @@ impl Plan {
     /// back-reference, a look-around) is refused, never matched differently.
     pub fn compile(spec: PlanSpec) -> Result<Plan, String> {
         Ok(match spec {
-            PlanSpec::Eq { slot, text } => Plan::Eq { slot, text },
-            PlanSpec::Match { slot, pattern } => Plan::Match {
-                slot,
+            PlanSpec::Eq { routes, text } => Plan::Eq { routes, text },
+            PlanSpec::Match { routes, pattern } => Plan::Match {
+                routes,
                 pattern: regex::Regex::new(&pattern).map_err(|e| e.to_string())?,
             },
             PlanSpec::Not { of } => Plan::Not(Box::new(Plan::compile(*of)?)),
@@ -83,27 +106,24 @@ impl Plan {
     }
 
     /// Whether `node` satisfies the condition: a comparison holds when some
-    /// value in the slot has the text or matches.
-    pub fn holds(&self, node: &tree_sitter::Node<'_>, source: &str, model: &dyn ReadModel) -> bool {
+    /// child the slot's routes admit has the text or matches.
+    pub fn holds(&self, node: &tree_sitter::Node<'_>, source: &str) -> bool {
         match self {
-            Plan::Eq { slot, text } => any_value(node, source, model, slot, |value| value == text),
-            Plan::Match { slot, pattern } => any_value(node, source, model, slot, |value| pattern.is_match(value)),
-            Plan::Not(of) => !of.holds(node, source, model),
-            Plan::And(of) => of.iter().all(|p| p.holds(node, source, model)),
-            Plan::Or(of) => of.iter().any(|p| p.holds(node, source, model)),
+            Plan::Eq { routes, text } => any_value(node, source, routes, |value| value == text),
+            Plan::Match { routes, pattern } => any_value(node, source, routes, |value| pattern.is_match(value)),
+            Plan::Not(of) => !of.holds(node, source),
+            Plan::And(of) => of.iter().all(|p| p.holds(node, source)),
+            Plan::Or(of) => of.iter().any(|p| p.holds(node, source)),
         }
     }
 }
 
-/// Whether some child of `node` the reader stores under `slot` has source
-/// text passing `test`.
-fn any_value(node: &tree_sitter::Node<'_>, source: &str, model: &dyn ReadModel, slot: &str, test: impl Fn(&str) -> bool) -> bool {
-    let parent_kind = stamped_kind(node);
+/// Whether some non-extra child of `node` that `routes` admit has source text
+/// passing `test`.
+fn any_value(node: &tree_sitter::Node<'_>, source: &str, routes: &Routes, test: impl Fn(&str) -> bool) -> bool {
     (0..node.child_count() as u32).any(|i| {
         node.child(i).is_some_and(|child| {
-            !child.is_extra()
-                && child_slot(model, parent_kind, node.field_name_for_child(i), &child) == Some(slot)
-                && source.get(child.byte_range()).is_some_and(&test)
+            !child.is_extra() && routes.admits(node.field_name_for_child(i), &child) && source.get(child.byte_range()).is_some_and(&test)
         })
     })
 }

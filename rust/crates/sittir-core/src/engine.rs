@@ -282,7 +282,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             .iter()
             .map(|&address| {
                 let node = self.node_at(address)?.ok_or_else(|| format!("{address:?} names no node of tree {}", self.tree_id))?;
-                Ok(plan.holds(&node, &self.source, &self.grammar))
+                Ok(plan.holds(&node, &self.source))
             })
             .collect()
     }
@@ -376,7 +376,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             if node.is_named()
                 && !node.is_extra()
                 && (kinds.is_empty() || kinds.contains(&node.grammar_id()))
-                && plan.map_or(true, |plan| plan.holds(&node, &self.source, &self.grammar))
+                && plan.map_or(true, |plan| plan.holds(&node, &self.source))
             {
                 let depth = frames.len() - 1;
                 let parent = Self::mint_frame(&mut self.nodes, &mut frames, &path, depth - 1);
@@ -808,15 +808,26 @@ mod tests {
     fn a_where_plan_selects_by_a_slot_text() {
         let (mut tree, root) = parsed(FNS);
         let fns = [kind_id("function_item")];
-        let eq = plan(r#"{ "op": "eq", "slot": "name", "text": "b" }"#);
+        let eq = plan(r#"{ "op": "eq", "fields": ["name"], "kinds": [], "text": "b" }"#);
         let eq_stubs = walk(&mut tree, root, &fns, Some(&eq), 1);
         assert_eq!(texts(&tree, &eq_stubs), ["fn b() -> u8 { 0 }"]);
-        let private = plan(r#"{ "op": "and", "of": [{ "op": "match", "slot": "name", "pattern": "^_" }, { "op": "not", "of": { "op": "eq", "slot": "name", "text": "_c" } }] }"#);
+        let private = plan(r#"{ "op": "and", "of": [{ "op": "match", "fields": ["name"], "kinds": [], "pattern": "^_" }, { "op": "not", "of": { "op": "eq", "fields": ["name"], "kinds": [], "text": "_c" } }] }"#);
         let private_stubs = walk(&mut tree, root, &fns, Some(&private), 1);
         assert_eq!(texts(&tree, &private_stubs), ["fn _d() { fn e() {} }"]);
-        let typed = plan(r#"{ "op": "or", "of": [{ "op": "eq", "slot": "return_type", "text": "u8" }, { "op": "eq", "slot": "name", "text": "e" }] }"#);
+        let typed = plan(r#"{ "op": "or", "of": [{ "op": "eq", "fields": ["return_type"], "kinds": [], "text": "u8" }, { "op": "eq", "fields": ["name"], "kinds": [], "text": "e" }] }"#);
         let typed_stubs = walk(&mut tree, root, &fns, Some(&typed), 4);
         assert_eq!(texts(&tree, &typed_stubs), ["fn b() -> u8 { 0 }", "fn e() {}"]);
+    }
+
+    #[test]
+    fn a_route_by_kind_admits_only_children_under_no_field() {
+        let (mut tree, root) = parsed(FNS);
+        let lists = [kind_id("declaration_list"), kind_id("block")];
+        let by_kind = plan(r#"{ "op": "match", "fields": [], "kinds": ["function_item"], "pattern": "^fn e" }"#);
+        let blocks = walk(&mut tree, root, &lists, Some(&by_kind), 4);
+        assert_eq!(texts(&tree, &blocks), ["{ fn e() {} }"]);
+        let named_not_kind = plan(r#"{ "op": "eq", "fields": [], "kinds": ["identifier"], "text": "b" }"#);
+        assert!(walk(&mut tree, root, &[kind_id("function_item")], Some(&named_not_kind), 4).is_empty());
     }
 
     fn walk_from(tree: &mut ParsedTree<TestGrammar>, from: crate::query::Address, kinds: &[u16]) -> Vec<String> {
@@ -856,7 +867,7 @@ mod tests {
                 ref other => panic!("a stub names its parent, not {other:?}"),
             })
             .collect();
-        let private = plan(r#"{ "op": "match", "slot": "name", "pattern": "^_" }"#);
+        let private = plan(r#"{ "op": "match", "fields": ["name"], "kinds": [], "pattern": "^_" }"#);
         assert_eq!(tree.plan_holds(&addresses, &private).expect("holds"), [false, false, true, true, false]);
         let elsewhere = crate::query::Address::Own { handle: encode_handle(9, 0) };
         assert!(tree.plan_holds(&[elsewhere], &private).is_err());
@@ -892,7 +903,7 @@ mod tests {
 
     #[test]
     fn a_pattern_the_native_matcher_cannot_compile_is_refused() {
-        let spec = serde_json::from_str(r#"{ "op": "match", "slot": "name", "pattern": "(a)\\1" }"#).expect("plan json");
+        let spec = serde_json::from_str(r#"{ "op": "match", "fields": ["name"], "kinds": [], "pattern": "(a)\\1" }"#).expect("plan json");
         assert!(Plan::compile(spec).is_err());
     }
 

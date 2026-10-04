@@ -160,16 +160,16 @@ type Combinable = { and(other: unknown): never; not(): never };
 
 describe('where', () => {
 	const cases: readonly (readonly [string, (c: NameRecorder) => never, QueryPlan])[] = [
-		['name eq a', (c) => c.name.eq('a'), { op: 'eq', slot: 'name', text: 'a' }],
-		['name match ^_', (c) => c.name.match(/^_/), { op: 'match', slot: 'name', pattern: '^_' }],
+		['name eq a', (c) => c.name.eq('a'), { op: 'eq', fields: ['name'], kinds: [], text: 'a' }],
+		['name match ^_', (c) => c.name.match(/^_/), { op: 'match', fields: ['name'], kinds: [], pattern: '^_' }],
 		[
 			'name match ^_ and not ^__',
 			(c) => (c.name.match(/^_/) as Combinable).and((c.name.match(/^__/) as Combinable).not()),
 			{
 				op: 'and',
 				of: [
-					{ op: 'match', slot: 'name', pattern: '^_' },
-					{ op: 'not', of: { op: 'match', slot: 'name', pattern: '^__' } }
+					{ op: 'match', fields: ['name'], kinds: [], pattern: '^_' },
+					{ op: 'not', of: { op: 'match', fields: ['name'], kinds: [], pattern: '^__' } }
 				]
 			}
 		]

@@ -1,12 +1,18 @@
 import type { SlotHintsOf } from './node-surface.ts';
 
-/** Each kind's slots, by kind id: the accessor a node reads a slot through and the slot the reader stores its children under. */
-export type QuerySlots = Readonly<Record<number, readonly (readonly [accessor: string, slot: string])[]>>;
+/** A slot as the parser spells it: the fields its children arrive under, and the kinds of its children that arrive under no field. */
+export interface SlotRoutes {
+	readonly fields: readonly string[];
+	readonly kinds: readonly string[];
+}
 
-/** A `where` condition as the native walk evaluates it, naming slots as the reader stores them. */
+/** Each kind's slots, by kind id: the accessor a node reads a slot through and the slot's parser routes. */
+export type QuerySlots = Readonly<Record<number, readonly (readonly [accessor: string, routes: SlotRoutes])[]>>;
+
+/** A `where` condition as the native walk evaluates it, each slot compiled to its parser routes. */
 export type QueryPlan =
-	| { readonly op: 'eq'; readonly slot: string; readonly text: string }
-	| { readonly op: 'match'; readonly slot: string; readonly pattern: string }
+	| ({ readonly op: 'eq'; readonly text: string } & SlotRoutes)
+	| ({ readonly op: 'match'; readonly pattern: string } & SlotRoutes)
 	| { readonly op: 'not'; readonly of: QueryPlan }
 	| { readonly op: 'and' | 'or'; readonly of: readonly QueryPlan[] };
 

@@ -1309,7 +1309,7 @@ export type {
 	TriviaFacts,
 	Types
 } from './engine-api.ts';
-export type { Cond, QueryFacet, QueryPlan, QuerySlots, Recorder, SlotNameOf, SlotRef, View } from './query.ts';
+export type { Cond, QueryFacet, QueryPlan, QuerySlots, Recorder, SlotNameOf, SlotRef, SlotRoutes, View } from './query.ts';
 
 type RefusedValue<V, Integer extends boolean> = V extends number | bigint ? NumericLiteral<V, Integer> : V;
 

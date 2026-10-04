@@ -18,73 +18,89 @@ export const triviaFacts = Object.freeze({
 } satisfies TriviaFacts);
 
 export const querySlots: QuerySlots = Object.freeze({
-	1: [['content', 'content']],
-	11: [['content', 'content']],
-	32: [['definitions', 'definitions']],
-	38: [['name', 'name']],
-	39: [['stringContent', 'string_content']],
-	40: [['stringContent', 'string_content']],
-	41: [['contents', 'content']],
-	42: [['elements', 'elements']],
+	1: [['content', { fields: ['content'], kinds: [] }]],
+	11: [['content', { fields: ['content'], kinds: [] }]],
+	32: [['definitions', { fields: ['definitions'], kinds: [] }]],
+	38: [['name', { fields: ['name'], kinds: [] }]],
+	39: [['stringContent', { fields: ['string_content'], kinds: [] }]],
+	40: [['stringContent', { fields: [], kinds: ['string_content'] }]],
+	41: [['contents', { fields: [], kinds: ['string_content_text', 'escape_sequence'] }]],
+	42: [['elements', { fields: ['elements'], kinds: [] }]],
 	43: [
-		['definitions', 'definitions'],
-		['elements', 'elements']
+		['definitions', { fields: ['definitions'], kinds: [] }],
+		['elements', { fields: ['elements'], kinds: [] }]
 	],
 	44: [
-		['groupingGroups', 'grouping_group'],
-		['elements', 'elements']
+		['groupingGroups', { fields: [], kinds: ['grouping_group'] }],
+		['elements', { fields: ['elements'], kinds: [] }]
 	],
 	45: [
-		['name', 'name'],
-		['elements', 'elements']
+		['name', { fields: ['name'], kinds: [] }],
+		['elements', { fields: ['elements'], kinds: [] }]
 	],
 	46: [
-		['name', 'name'],
-		['elements', 'elements']
+		['name', { fields: ['name'], kinds: [] }],
+		['elements', { fields: ['elements'], kinds: [] }]
 	],
 	49: [
-		['name', 'name'],
-		['definition', 'definition']
+		['name', { fields: ['name'], kinds: [] }],
+		['definition', { fields: ['definition'], kinds: [] }]
 	],
-	50: [['identifier', 'identifier']],
+	50: [['identifier', { fields: ['identifier'], kinds: [] }]],
 	51: [
-		['prefix', 'prefix'],
-		['name', 'name'],
-		['type', 'type'],
-		['parameters', 'parameters']
+		['prefix', { fields: ['prefix'], kinds: [] }],
+		['name', { fields: ['name'], kinds: [] }],
+		['type', { fields: ['type'], kinds: [] }],
+		['parameters', { fields: ['parameters'], kinds: [] }]
 	],
-	52: [['quantifier', 'quantifier']],
+	52: [['quantifier', { fields: ['quantifier'], kinds: [] }]],
 	54: [
-		['left', 'left'],
-		['right', 'right']
+		['left', { fields: ['left'], kinds: [] }],
+		['right', { fields: ['right'], kinds: [] }]
 	],
 	55: [
-		['left', 'left'],
-		['right', 'right']
+		['left', { fields: ['left'], kinds: [] }],
+		['right', { fields: ['right'], kinds: [] }]
 	],
 	56: [
-		['groupExpression', 'group_expression'],
-		['anchor', 'anchor']
+		[
+			'groupExpression',
+			{
+				fields: [],
+				kinds: [
+					'named_node_plain',
+					'named_node_supertyped',
+					'anonymous_node',
+					'missing_node',
+					'grouping',
+					'predicate',
+					'list',
+					'field_definition',
+					'group_expression_arm'
+				]
+			}
+		],
+		['anchor', { fields: [], kinds: ['anchor'] }]
 	],
 	59: [
-		['name', 'name'],
-		['namedNodeGroup', 'named_node_group'],
-		['elements', 'elements']
+		['name', { fields: ['name'], kinds: [] }],
+		['namedNodeGroup', { fields: [], kinds: ['named_node_group_children', 'named_node_group_anchored_last'] }],
+		['elements', { fields: ['elements'], kinds: [] }]
 	],
 	60: [
-		['supertype', 'supertype'],
-		['name', 'name'],
-		['namedNodeGroup', 'named_node_group'],
-		['elements', 'elements']
+		['supertype', { fields: ['supertype'], kinds: [] }],
+		['name', { fields: ['name'], kinds: [] }],
+		['namedNodeGroup', { fields: [], kinds: ['named_node_group_children', 'named_node_group_anchored_last'] }],
+		['elements', { fields: ['elements'], kinds: [] }]
 	],
 	61: [
-		['anchor', 'anchor'],
-		['namedNodeExpressions', 'named_node_expressions']
+		['anchor', { fields: [], kinds: ['anchor'] }],
+		['namedNodeExpressions', { fields: ['named_node_expressions'], kinds: [] }]
 	],
 	62: [
-		['anchor', 'anchor'],
-		['namedNodeExpressions', 'named_node_expressions'],
-		['last', 'last']
+		['anchor', { fields: [], kinds: ['anchor'] }],
+		['namedNodeExpressions', { fields: ['named_node_expressions'], kinds: [] }],
+		['last', { fields: ['last'], kinds: [] }]
 	]
 });
 
