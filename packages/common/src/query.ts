@@ -73,7 +73,7 @@ const FACET: ProxyHandler<Facet> = {
 		if (key === '$children') return walkView(facet, 1);
 		if (key === '$descendants') return walkView(facet, undefined);
 		if (slotsOf(facet.context.hooks.querySlots, facet.kind).has(key))
-			return new View(facet.context, { slot: key, node: facet.node }, []);
+			return view(facet.context, { slot: key, node: facet.node }, []);
 		if (key === 'then') return undefined;
 		return refuse(`query: ${kindLabel(facet.context, facet.kind)} has no slot '${key}'`);
 	},
@@ -89,8 +89,8 @@ const FACET: ProxyHandler<Facet> = {
 	setPrototypeOf: () => refuse('query: a facet is read-only')
 };
 
-function walkView(facet: Facet, depth: number | undefined): View<unknown> {
-	return new View(facet.context, { from: facet.from, depth }, []);
+function walkView(facet: Facet, depth: number | undefined): QueryView {
+	return view(facet.context, { from: facet.from, depth }, []);
 }
 
 function kindLabel(context: Context, kind: number): string {
@@ -151,186 +151,165 @@ interface Entry {
 	readonly hydrate: () => unknown;
 }
 
-class View<T> implements Iterable<T> {
-	readonly #context: Context;
-	readonly #source: Source;
-	readonly #steps: readonly Step[];
+type Fn = (node: unknown, index: number) => unknown;
 
-	constructor(context: Context, source: Source, steps: readonly Step[]) {
-		this.#context = context;
-		this.#source = source;
-		this.#steps = steps;
+interface QueryView extends Iterable<unknown> {
+	filter(fn: Fn): QueryView;
+	map(fn: Fn): QueryView;
+	flatMap(fn: Fn): QueryView;
+	slice(start?: number, end?: number): QueryView;
+	ofType(kind: number): QueryView;
+	where(condition: Where): QueryView;
+	find(predicate?: Fn): unknown;
+	findIndex(predicate: Fn): number;
+	some(predicate: Fn): boolean;
+	every(predicate: Fn): boolean;
+	includes(node: unknown): boolean;
+	reduce(fn: (accumulated: unknown, node: unknown, index: number) => unknown, ...initial: [unknown?]): unknown;
+	forEach(fn: (node: unknown, index: number) => void): void;
+	at(index: number): unknown;
+}
+
+function view(context: Context, source: Source, steps: readonly Step[]): QueryView {
+	const next = (step: Step): QueryView => view(context, source, [...steps, step]);
+	const items = (): Iterable<unknown> => run(context, source, steps);
+	return {
+		filter: (fn) => next({ op: 'filter', fn }),
+		map: (fn) => next({ op: 'map', fn }),
+		flatMap: (fn) => next({ op: 'flatMap', fn }),
+		slice: (start, end) => next(sliceStep(start, end)),
+		ofType: (kind) => next(ofTypeStep(kind)),
+		where: (condition) => next(whereStep(context, steps, condition)),
+		find: (predicate) => find(items(), predicate),
+		findIndex: (predicate) => findIndex(items(), predicate),
+		some: (predicate) => findIndex(items(), predicate) >= 0,
+		every: (predicate) => findIndex(items(), (node, index) => !predicate(node, index)) < 0,
+		includes: (node) => findIndex(items(), (candidate) => sameOccurrence(candidate, node)) >= 0,
+		reduce: (fn, ...initial) => reduce(items(), fn, initial),
+		forEach: (fn) => forEach(items(), fn),
+		at: (index) => at(items(), index),
+		[Symbol.iterator]: () => items()[Symbol.iterator]()
+	};
+}
+
+function sliceStep(start: number | undefined, end: number | undefined): Step {
+	return { op: 'slice', start: toIntegerOrInfinity(start), end: end === undefined ? undefined : toIntegerOrInfinity(end) };
+}
+
+function ofTypeStep(kind: number): Step {
+	if (typeof kind !== 'number') refuse('query: ofType takes a kind id');
+	return { op: 'ofType', kind };
+}
+
+function whereStep(context: Context, steps: readonly Step[], condition: Where): Step {
+	const kinds = knownKinds(steps);
+	if (kinds === undefined) planOf(condition(recorder(context, undefined)));
+	else for (const kind of kinds) compileFor(context, condition, kind);
+	return { op: 'where', condition };
+}
+
+function* run(context: Context, source: Source, steps: readonly Step[]): Iterable<unknown> {
+	const { early, late } = splitPlan(steps);
+	const entries = 'slot' in source ? slotEntries(context, source, early) : walkEntries(context, source, early);
+	let items: Iterable<unknown> = hydrated(entries);
+	for (const step of late) items = applyStep(step, items, context);
+	yield* items;
+}
+
+function* slotEntries(context: Context, source: { readonly slot: string; readonly node: object }, early: readonly Declarative[]): Iterable<readonly Entry[]> {
+	const read = (source.node as Record<string, unknown>)[source.slot];
+	const value = typeof read === 'function' ? (read as () => unknown).call(source.node) : read;
+	const items = Array.isArray(value) ? value : value === undefined ? [] : [value];
+	yield* declarativeSteps([items.map(entryOfItem)], early, context);
+}
+
+function* walkEntries(context: Context, source: { readonly from: NodeAddress; readonly depth: number | undefined }, early: readonly Declarative[]): Iterable<readonly Entry[]> {
+	const pushed = pushdown(context, early);
+	if (pushed === 'none') return;
+	yield* declarativeSteps(batches(context, source, pushed.kinds, pushed.plan), early.slice(pushed.count), context);
+}
+
+function pushdown(context: Context, early: readonly Declarative[]): { kinds: readonly number[]; plan: QueryPlan | undefined; count: number } | 'none' {
+	let kinds: readonly number[] | undefined;
+	const plans: QueryPlan[] = [];
+	let count = 0;
+	for (const step of early) {
+		if (step.op === 'ofType') {
+			kinds = kinds === undefined ? [step.kind] : kinds.filter((kind) => kind === step.kind);
+			if (kinds.length === 0) return 'none';
+		} else if (step.op === 'where') {
+			const plan = kinds === undefined ? undefined : sharedPlan(context, step.condition, kinds);
+			if (plan === undefined) break;
+			plans.push(plan);
+		} else break;
+		count++;
 	}
+	return { kinds: kinds ?? [], plan: plans.length === 0 ? undefined : plans.length === 1 ? plans[0] : { op: 'and', of: plans }, count };
+}
 
-	#with(step: Step): View<never> {
-		return new View(this.#context, this.#source, [...this.#steps, step]);
-	}
-
-	filter(fn: (node: T, index: number) => unknown): View<T> {
-		return this.#with({ op: 'filter', fn: fn as (node: unknown, index: number) => unknown });
-	}
-
-	map<U>(fn: (node: T, index: number) => U): View<U> {
-		return this.#with({ op: 'map', fn: fn as (node: unknown, index: number) => unknown });
-	}
-
-	flatMap<U>(fn: (node: T, index: number) => U | readonly U[]): View<U> {
-		return this.#with({ op: 'flatMap', fn: fn as (node: unknown, index: number) => unknown });
-	}
-
-	slice(start?: number, end?: number): View<T> {
-		return this.#with({
-			op: 'slice',
-			start: toIntegerOrInfinity(start),
-			end: end === undefined ? undefined : toIntegerOrInfinity(end)
+function* batches(context: Context, source: { readonly from: NodeAddress; readonly depth: number | undefined }, kinds: readonly number[], plan: QueryPlan | undefined): Iterable<readonly Entry[]> {
+	const { query, tree, hooks } = context;
+	let from = source.from;
+	let resume: readonly number[] | undefined;
+	for (let call = 0; ; call++) {
+		const limit = BATCH_LIMITS[Math.min(call, BATCH_LIMITS.length - 1)]!;
+		const batch = query.descendants({
+			from,
+			limit,
+			...(kinds.length > 0 ? { kinds } : {}),
+			...(plan === undefined ? {} : { plan }),
+			...(resume === undefined ? {} : { resume }),
+			...(source.depth === undefined ? {} : { depth: source.depth })
 		});
+		yield batch.stubs.map((stub) => entryOfStub(stub, tree, hooks));
+		if (batch.resume === null) return;
+		from = { handle: batch.origin };
+		resume = batch.resume;
 	}
+}
 
-	ofType(kind: number): View<T> {
-		if (typeof kind !== 'number') refuse('query: ofType takes a kind id');
-		return this.#with({ op: 'ofType', kind });
+function find(items: Iterable<unknown>, predicate: Fn | undefined): unknown {
+	let index = 0;
+	for (const node of items) if (predicate === undefined || predicate(node, index++)) return node;
+	return undefined;
+}
+
+function findIndex(items: Iterable<unknown>, predicate: Fn): number {
+	let index = 0;
+	for (const node of items) {
+		if (predicate(node, index)) return index;
+		index++;
 	}
+	return -1;
+}
 
-	where(condition: (slots: Recorder<T>) => Cond): View<T> {
-		const where = condition as Where;
-		const kinds = knownKinds(this.#steps);
-		if (kinds === undefined) planOf(where(recorder(this.#context, undefined)));
-		else for (const kind of kinds) compileFor(this.#context, where, kind);
-		return this.#with({ op: 'where', condition: where });
-	}
-
-	*[Symbol.iterator](): Iterator<T> {
-		const { early, late } = splitPlan(this.#steps);
-		const entries =
-			'slot' in this.#source ? this.#slotEntries(this.#source, early) : this.#walkEntries(this.#source, early);
-		let items: Iterable<unknown> = hydrated(entries);
-		for (const step of late) items = applyStep(step, items, this.#context);
-		yield* items as Iterable<T>;
-	}
-
-	*#slotEntries(
-		source: { readonly slot: string; readonly node: object },
-		early: readonly Declarative[]
-	): Iterable<readonly Entry[]> {
-		const read = (source.node as Record<string, unknown>)[source.slot];
-		const value = typeof read === 'function' ? (read as () => unknown).call(source.node) : read;
-		const items = Array.isArray(value) ? value : value === undefined ? [] : [value];
-		yield* declarativeSteps([items.map(entryOfItem)], early, this.#context);
-	}
-
-	*#walkEntries(
-		source: { readonly from: NodeAddress; readonly depth: number | undefined },
-		early: readonly Declarative[]
-	): Iterable<readonly Entry[]> {
-		const pushed = this.#pushdown(early);
-		if (pushed === 'none') return;
-		yield* declarativeSteps(this.#batches(source, pushed.kinds, pushed.plan), early.slice(pushed.count), this.#context);
-	}
-
-	#pushdown(
-		early: readonly Declarative[]
-	): { kinds: readonly number[]; plan: QueryPlan | undefined; count: number } | 'none' {
-		let kinds: readonly number[] | undefined;
-		const plans: QueryPlan[] = [];
-		let count = 0;
-		for (const step of early) {
-			if (step.op === 'ofType') {
-				kinds = kinds === undefined ? [step.kind] : kinds.filter((kind) => kind === step.kind);
-				if (kinds.length === 0) return 'none';
-			} else if (step.op === 'where') {
-				const plan = kinds === undefined ? undefined : sharedPlan(this.#context, step.condition, kinds);
-				if (plan === undefined) break;
-				plans.push(plan);
-			} else break;
-			count++;
+function reduce(items: Iterable<unknown>, fn: (accumulated: unknown, node: unknown, index: number) => unknown, initial: readonly unknown[]): unknown {
+	let index = 0;
+	let started = initial.length > 0;
+	let accumulated = initial[0];
+	for (const node of items) {
+		if (started) accumulated = fn(accumulated, node, index);
+		else {
+			accumulated = node;
+			started = true;
 		}
-		return {
-			kinds: kinds ?? [],
-			plan: plans.length === 0 ? undefined : plans.length === 1 ? plans[0] : { op: 'and', of: plans },
-			count
-		};
+		index++;
 	}
+	if (!started) refuse('query: reduce of an empty view with no initial value');
+	return accumulated;
+}
 
-	*#batches(
-		source: { readonly from: NodeAddress; readonly depth: number | undefined },
-		kinds: readonly number[],
-		plan: QueryPlan | undefined
-	): Iterable<readonly Entry[]> {
-		const { query, tree, hooks } = this.#context;
-		let from = source.from;
-		let resume: readonly number[] | undefined;
-		for (let call = 0; ; call++) {
-			const limit = BATCH_LIMITS[Math.min(call, BATCH_LIMITS.length - 1)]!;
-			const batch = query.descendants({
-				from,
-				limit,
-				...(kinds.length > 0 ? { kinds } : {}),
-				...(plan === undefined ? {} : { plan }),
-				...(resume === undefined ? {} : { resume }),
-				...(source.depth === undefined ? {} : { depth: source.depth })
-			});
-			yield batch.stubs.map((stub) => entryOfStub(stub, tree, hooks));
-			if (batch.resume === null) return;
-			from = { handle: batch.origin };
-			resume = batch.resume;
-		}
-	}
+function forEach(items: Iterable<unknown>, fn: (node: unknown, index: number) => void): void {
+	let index = 0;
+	for (const node of items) fn(node, index++);
+}
 
-	find(predicate?: (node: T, index: number) => unknown): T | undefined {
-		let index = 0;
-		for (const node of this) if (predicate === undefined || predicate(node, index++)) return node;
-		return undefined;
-	}
-
-	findIndex(predicate: (node: T, index: number) => unknown): number {
-		let index = 0;
-		for (const node of this) {
-			if (predicate(node, index)) return index;
-			index++;
-		}
-		return -1;
-	}
-
-	some(predicate: (node: T, index: number) => unknown): boolean {
-		return this.findIndex(predicate) >= 0;
-	}
-
-	every(predicate: (node: T, index: number) => unknown): boolean {
-		return this.findIndex((node, index) => !predicate(node, index)) < 0;
-	}
-
-	includes(node: T): boolean {
-		return this.findIndex((candidate) => sameOccurrence(candidate, node)) >= 0;
-	}
-
-	reduce<U>(fn: (accumulated: U, node: T, index: number) => U, ...initial: [U?]): U {
-		let index = 0;
-		let started = initial.length > 0;
-		let accumulated = initial[0] as U;
-		for (const node of this) {
-			if (started) accumulated = fn(accumulated, node, index);
-			else {
-				accumulated = node as unknown as U;
-				started = true;
-			}
-			index++;
-		}
-		if (!started) refuse('query: reduce of an empty view with no initial value');
-		return accumulated;
-	}
-
-	forEach(fn: (node: T, index: number) => void): void {
-		let index = 0;
-		for (const node of this) fn(node, index++);
-	}
-
-	at(at: number): T | undefined {
-		const index = toIntegerOrInfinity(at);
-		if (index < 0) return [...this].at(index);
-		let position = 0;
-		for (const node of this) if (position++ === index) return node;
-		return undefined;
-	}
+function at(items: Iterable<unknown>, at: number): unknown {
+	const index = toIntegerOrInfinity(at);
+	if (index < 0) return [...items].at(index);
+	let position = 0;
+	for (const node of items) if (position++ === index) return node;
+	return undefined;
 }
 
 function toIntegerOrInfinity(value: number | undefined): number {

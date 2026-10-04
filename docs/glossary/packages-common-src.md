@@ -86,9 +86,65 @@ The limits a walk's successive batches take: 1, 4, 16, 64, then 256 for every ba
 
 Splits a view's steps into those the source runs before any node is hydrated (`early`) and those after (`late`). Declarative steps (`ofType`, `where`, `slice`) are early until the first opaque step (`filter`, `map`, `flatMap`); everything from there on is late, in order. Nothing moves past an opaque step: a callback receives each element's index, so filtering by kind or slot before it would renumber what it sees.
 
-### `packages/common/src/query.ts::View`
+### `packages/common/src/query.ts::QueryView`
 
-A lazy sequence: a source (a slot's items, or a walk under a node to a depth) and its steps. Operators return a new view; iteration splits the plan, runs the early steps over entries (a kind, an address and a way to hydrate) and hydrates only what survives them, then runs the late steps over nodes. Terminals stop pulling as soon as they have their answer. `slice` and `at` bounds are counted as an array counts them (truncated toward zero, `NaN` as zero, a negative from the end). On a walk, the leading run of `ofType` and `where` steps goes into the native call: kinds intersected (an empty intersection yields nothing without a call), plans joined by `and`. A `where` goes native only when every kind its elements can have compiles it to the same plan; otherwise it runs over each batch's entries through `planHolds`, one call per kind. A slot's items are already read with their node, so its steps run over them in memory, with `where` again one native call per kind.
+What `view` returns, typed loosely inside the module: the read-only array verbs over `unknown` nodes. Callers see it as `View<T>` from `@sittir/types`, which carries the node types; the module only needs the shape.
+
+### `packages/common/src/query.ts::view`
+
+A lazy sequence: a source (a slot's items, or a walk under a node to a depth) and its steps. It returns a plain object whose verbs close over those three values. There is no class, prototype or `this`, so a verb can be passed around detached. A verb that adds a step returns `view` of the same source with that step appended; a terminal runs the plan through `run` and hands the items to the matching module function. Every closure forwards in one line, so the logic lives in the module functions and is shared by every view. The cost is that each view allocates its own closures (about five times the heap of a class instance, and about six times the build time).
+
+### `packages/common/src/query.ts::sliceStep`
+
+The `slice` step, with its bounds counted as an array counts them: truncated toward zero, `NaN` as zero, a negative counted from the end.
+
+### `packages/common/src/query.ts::ofTypeStep`
+
+The `ofType` step. Refuses a kind that is not a number, so a kind name passed by mistake fails at the call, not as an empty result.
+
+### `packages/common/src/query.ts::whereStep`
+
+The `where` step. Compiles the condition when the step is added, so a malformed condition fails at the call: for each kind the earlier `ofType` steps allow when they are known, otherwise once against a recorder with no kind.
+
+### `packages/common/src/query.ts::run`
+
+Iterates a view. It splits the plan, runs the early steps over entries (a kind, an address and a way to hydrate) from the source, and hydrates only what survives them. It then runs the late steps over nodes. Being a generator, it stops pulling as soon as the consumer stops.
+
+### `packages/common/src/query.ts::slotEntries`
+
+The entries of a slot source. A slot's items are already read with their node, so the early steps run over them in memory, and `where` runs as one native call per kind.
+
+### `packages/common/src/query.ts::walkEntries`
+
+The entries of a walk source. The steps `pushdown` takes go into the native walk; the rest of the early steps run over each batch's entries, and a `where` among them makes one `planHolds` call per kind.
+
+### `packages/common/src/query.ts::pushdown`
+
+The leading run of `ofType` and `where` steps that can go into the native walk. Kinds are intersected, and an empty intersection is `'none'`, which yields nothing without a call. Plans are joined by `and`. A `where` goes native only when every kind its elements can have compiles it to the same plan; the run stops at the first step that cannot.
+
+### `packages/common/src/query.ts::batches`
+
+Calls the native walk repeatedly, with batch sizes growing along `BATCH_LIMITS`, resuming from the cursor each call returns. One batch of entries is yielded per call, so a terminal that has its answer makes no further calls.
+
+### `packages/common/src/query.ts::find`
+
+The `find` terminal: the first item the predicate accepts, or the first item when there is no predicate.
+
+### `packages/common/src/query.ts::findIndex`
+
+The position of the first item the predicate accepts, or -1. `some`, `every` and `includes` are built on it; `includes` compares by occurrence.
+
+### `packages/common/src/query.ts::reduce`
+
+The `reduce` terminal, as an array reduces. The initial value is passed as a rest list so that an explicit `undefined` initial value can be told apart from none; an empty view with no initial value is refused.
+
+### `packages/common/src/query.ts::forEach`
+
+The `forEach` terminal.
+
+### `packages/common/src/query.ts::at`
+
+The `at` terminal. A non-negative index stops at that item; a negative one must read the whole sequence to count from the end.
 
 ### `packages/common/src/query.ts::whereHolds`
 
