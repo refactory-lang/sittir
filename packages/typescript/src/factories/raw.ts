@@ -10020,7 +10020,7 @@ export function buildExportStatementDefaultDeclaration(
 	const _content = rejectBareText(
 		config.content,
 		'ExportStatementDefaultDeclaration.content',
-		'a built ExportStatementDefaultDeclarationDefaultKw / Declaration'
+		'a built Declaration / ExportStatementDefaultDeclarationDefaultKw'
 	);
 	const handle = currentHandle();
 	const node = {
@@ -10034,7 +10034,7 @@ export function buildExportStatementDefaultDeclaration(
 				rebuilt(node, handle, () =>
 					buildExportStatementDefaultDeclaration({ ...config, decorator: restItems('decorators', values) })
 				),
-			content: (value: T.ExportStatementDefaultDeclarationDefaultKw | T.Declaration) =>
+			content: (value: T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw) =>
 				rebuilt(node, handle, () => buildExportStatementDefaultDeclaration({ ...config, content: value }))
 		},
 		decorators: () => _decorator,
@@ -10148,12 +10148,12 @@ export function buildExportStatementDefaultFromClauseFrom(
 }
 
 export function buildExportStatementDefaultDeclarationDefaultKw(
-	value: AdmitBound<T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration, T.AdmittedNodes>
+	value: AdmitBound<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue, T.AdmittedNodes>
 ): T.ExportStatementDefaultDeclarationDefaultKw.Bound {
 	const _content = rejectBareText(
 		value,
 		'ExportStatementDefaultDeclarationDefaultKw.content',
-		'a built ExportStatementDefaultDeclarationDefaultKwValue / Declaration'
+		'a built Declaration / ExportStatementDefaultDeclarationDefaultKwValue'
 	);
 	const handle = currentHandle();
 	const node = {
@@ -10162,7 +10162,7 @@ export function buildExportStatementDefaultDeclarationDefaultKw(
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration) =>
+			content: (value: T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue) =>
 				rebuilt(node, handle, () => buildExportStatementDefaultDeclarationDefaultKw(value))
 		},
 		content: () => _content,

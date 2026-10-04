@@ -36,11 +36,16 @@ describe('wire_slot', () => {
 		);
 		expect(source).toContain(`(${idOf('for_in_statement')}, None, "for_header_lhs") => Some("for_header"),`);
 	}, FULL_PIPELINE_TIMEOUT);
-	it('routes a field-tagged child by its field when the model slot has another name', async () => {
-		const { source, idOf } = await emittedKindIds('typescript');
-		const owner = idOf('export_statement_default_declaration');
-		expect(source).toContain(`(${owner}, Some("declaration"), _) => Some("content"),`);
-		expect(source).toContain(`(${owner}, None, "export_statement_default_declaration_default_kw") => Some("content"),`);
+	it('routes a union slot child by its kind, and no grammar routes one by a field label', async () => {
+		const ts = await emittedKindIds('typescript');
+		const owner = ts.idOf('export_statement_default_declaration');
+		expect(ts.source).toContain(`(${owner}, None, "export_statement_default_declaration_default_kw") => Some("content"),`);
+		expect(ts.source).toContain(`(${owner}, None, "function_declaration") => Some("content"),`);
+		for (const grammar of ['python', 'typescript', 'rust'] as const) {
+			const { source } = await emittedKindIds(grammar);
+			const table = source.slice(source.indexOf('pub fn wire_slot'), source.indexOf('static SLOT_SEPARATORS'));
+			expect(table, grammar).not.toMatch(/\(\d+, Some\("[a-z_]+"\), _\) => Some/);
+		}
 	}, FULL_PIPELINE_TIMEOUT);
 	it('leaves a child whose key already names its slot to the parser', async () => {
 		const { source } = await emittedKindIds('typescript');

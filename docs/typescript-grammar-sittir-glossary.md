@@ -766,6 +766,23 @@ takes one patch per set.
 				// opportunity but not a blocking bug.
 ```
 
+### `export_statement_default` unfielded declaration arms (`packages/typescript/grammar.sittir.ts`)
+
+```text
+				// export_statement_default: paths `1/2/0` and `1/2/1/1/0` replace
+				// the `field('declaration', $.declaration)` arm of the two
+				// declaration-or-value choices with the bare `$.declaration`
+				// symbol (a literal rule object). Each choice is one union slot:
+				// its other arm is a lifted group (`default_kw`, then `value`), so
+				// the slot spans two kinds and is stored as `content`. With the
+				// field in place the parser reported the declaration under the
+				// label `declaration` while storage held it in `content`, and the
+				// reader needed a field-label route into the slot; unfielded, the
+				// arm is routed by kind like its sibling and the parser and storage
+				// agree. Both paths are needed: removing one leaves that kind's
+				// label route.
+```
+
 ### `call_expression` (`packages/typescript/grammar.sittir.ts:1041`)
 
 ```text

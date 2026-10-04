@@ -266,7 +266,6 @@ export default sittirGrammar(base, {
 
 		// See docs/python-grammar-sittir-glossary.md::import_from_statement
 		import_from_statement: [
-			{ '3/0': field('wildcard_import') }, // wildcard_import [struct=0]
 			{ '3/2': alias('parenthesized_import_list') }
 		],
 		future_import_statement: { '3/1': alias('parenthesized_import_list') },

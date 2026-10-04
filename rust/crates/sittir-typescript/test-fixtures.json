@@ -2681,7 +2681,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void ;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string) ;\n\n  greeting: string ;\n  showGreeting(): void ;\n}\n\ndeclare module Foo.Bar {\n  export var foo;\n}\n;declare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
-    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (string_double elements: (string_fragment))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator_plain name: (identifier))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon)))))",
+    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (string_double elements: (string_fragment))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon)))))",
     "wrappedText": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void ;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string) ;\n\n  greeting: string ;\n  showGreeting(): void ;\n}\n\ndeclare module Foo.Bar {\n  export var foo;\n}\n;declare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
     "wrappedOffset": 0
   },
@@ -4420,7 +4420,7 @@
     "pattern": "ambient_declaration",
     "edits": [],
     "expectedSourceOut": "declare module Foo.Bar {\n  export var foo;\n}",
-    "expectedReparseTree": "(ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) automatic_semicolon: (automatic_semicolon))))",
+    "expectedReparseTree": "(ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) automatic_semicolon: (automatic_semicolon))))",
     "wrappedText": "declare module Foo.Bar {\n  export var foo;\n}",
     "wrappedOffset": 0
   },
@@ -9926,7 +9926,7 @@
     "pattern": "statement_block",
     "edits": [],
     "expectedSourceOut": "{\n  export var foo;\n}",
-    "expectedReparseTree": "(statement_block statements: (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "{\n  export var foo;\n}",
     "wrappedOffset": 0
   },
@@ -12646,7 +12646,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "module Foo.Bar {\n  export var foo;\n}",
-    "expectedReparseTree": "(module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "module Foo.Bar {\n  export var foo;\n}",
     "wrappedOffset": 0
   },
@@ -13724,7 +13724,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export var foo;",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator_plain name: (identifier))))",
+    "expectedReparseTree": "(export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier))))",
     "wrappedText": "export var foo;",
     "wrappedOffset": 0
   },
@@ -19271,7 +19271,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "export default function point(x: number, y: number) {\n  return { x, y };\n}\n\n// a comment\n\nexport default class A {}\n\nexport async function readFile(filename: string): Promise<Buffer>\n",
-    "expectedReparseTree": "(program statements: (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (function_declaration name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement expression: (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)))) (comment_line) statements: (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon)))) statements: (export_statement_default_declaration declaration: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))) terminator: (automatic_semicolon))))",
+    "expectedReparseTree": "(program statements: (export_statement_default_declaration (export_statement_default_declaration_default_kw (function_declaration name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement expression: (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)))) (comment_line) statements: (export_statement_default_declaration (export_statement_default_declaration_default_kw (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon)))) statements: (export_statement_default_declaration (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))) terminator: (automatic_semicolon))))",
     "wrappedText": "export default function point(x: number, y: number) {\n  return { x, y };\n}\n\n// a comment\n\nexport default class A {}\n\nexport async function readFile(filename: string): Promise<Buffer>\n",
     "wrappedOffset": 0
   },
@@ -19615,7 +19615,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export default function point(x: number, y: number) {\n  return { x, y };\n}\n",
-    "expectedReparseTree": "(export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (function_declaration name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement expression: (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon))))",
+    "expectedReparseTree": "(export_statement_default_declaration (export_statement_default_declaration_default_kw (function_declaration name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement expression: (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon))))",
     "wrappedText": "export default function point(x: number, y: number) {\n  return { x, y };\n}\n",
     "wrappedOffset": 0
   },
@@ -19725,7 +19725,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "// a comment\n\nexport default class A {}\n",
-    "expectedReparseTree": "(export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))",
+    "expectedReparseTree": "(export_statement_default_declaration (export_statement_default_declaration_default_kw (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))",
     "wrappedText": "// a comment\n\nexport default class A {}\n",
     "wrappedOffset": 0
   },
@@ -19975,7 +19975,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export async function readFile(filename: string): Promise<Buffer>\n",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(export_statement_default_declaration (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))) terminator: (automatic_semicolon)))",
     "wrappedText": "export async function readFile(filename: string): Promise<Buffer>\n",
     "wrappedOffset": 0
   },
@@ -24007,7 +24007,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "module M {\n  export module N {}\n  export import X = N;\n}\n",
-    "expectedReparseTree": "(program statements: (module name: (identifier) body: (statement_block statements: (export_statement_default_declaration declaration: (module name: (identifier) body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (export_statement_default_declaration declaration: (import_alias name: (identifier) value: (identifier))) automatic_semicolon: (automatic_semicolon))))",
+    "expectedReparseTree": "(program statements: (module name: (identifier) body: (statement_block statements: (export_statement_default_declaration (module name: (identifier) body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (export_statement_default_declaration (import_alias name: (identifier) value: (identifier))) automatic_semicolon: (automatic_semicolon))))",
     "wrappedText": "module M {\n  export module N {}\n  export import X = N;\n}\n",
     "wrappedOffset": 0
   },
@@ -24243,7 +24243,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "module M {\n  export module N {}\n  export import X = N;\n}\n",
-    "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (export_statement_default_declaration declaration: (module name: (identifier) body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (export_statement_default_declaration declaration: (import_alias name: (identifier) value: (identifier))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (export_statement_default_declaration (module name: (identifier) body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (export_statement_default_declaration (import_alias name: (identifier) value: (identifier))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "module M {\n  export module N {}\n  export import X = N;\n}\n",
     "wrappedOffset": 0
   },
@@ -24523,7 +24523,7 @@
     "pattern": "statement_block",
     "edits": [],
     "expectedSourceOut": "{\n  export module N {}\n  export import X = N;\n}\n",
-    "expectedReparseTree": "(statement_block statements: (export_statement_default_declaration declaration: (module name: (identifier) body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (export_statement_default_declaration declaration: (import_alias name: (identifier) value: (identifier))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (export_statement_default_declaration (module name: (identifier) body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (export_statement_default_declaration (import_alias name: (identifier) value: (identifier))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "{\n  export module N {}\n  export import X = N;\n}\n",
     "wrappedOffset": 0
   },
@@ -24658,7 +24658,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export module N {}\n",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (module name: (identifier) body: (statement_block automatic_semicolon: (automatic_semicolon))))",
+    "expectedReparseTree": "(export_statement_default_declaration (module name: (identifier) body: (statement_block automatic_semicolon: (automatic_semicolon))))",
     "wrappedText": "export module N {}\n",
     "wrappedOffset": 0
   },
@@ -24744,7 +24744,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export import X = N;",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (import_alias name: (identifier) value: (identifier)))",
+    "expectedReparseTree": "(export_statement_default_declaration (import_alias name: (identifier) value: (identifier)))",
     "wrappedText": "export import X = N;",
     "wrappedOffset": 0
   },
@@ -25218,7 +25218,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "export interface IAppState {\n  public readonly users: ReadonlyArray<User>\n}\n\nexport class CloningRepository {\n  public readonly id = CloningRepositoryID++\n}\n",
-    "expectedReparseTree": "(program statements: (export_statement_default_declaration declaration: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))))) statements: (export_statement_default_declaration declaration: (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) value: (update_expression_postfix argument: (identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))))",
+    "expectedReparseTree": "(program statements: (export_statement_default_declaration (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))))) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) value: (update_expression_postfix argument: (identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))))",
     "wrappedText": "export interface IAppState {\n  public readonly users: ReadonlyArray<User>\n}\n\nexport class CloningRepository {\n  public readonly id = CloningRepositoryID++\n}\n",
     "wrappedOffset": 0
   },
@@ -25447,7 +25447,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export interface IAppState {\n  public readonly users: ReadonlyArray<User>\n}",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))))))",
+    "expectedReparseTree": "(export_statement_default_declaration (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))))))",
     "wrappedText": "export interface IAppState {\n  public readonly users: ReadonlyArray<User>\n}",
     "wrappedOffset": 0
   },
@@ -25624,7 +25624,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export class CloningRepository {\n  public readonly id = CloningRepositoryID++\n}\n",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) value: (update_expression_postfix argument: (identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(export_statement_default_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) value: (update_expression_postfix argument: (identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "export class CloningRepository {\n  public readonly id = CloningRepositoryID++\n}\n",
     "wrappedOffset": 0
   },
@@ -29270,7 +29270,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "module Promise {\n  var on: {}\n  export function resolve<R>(value?: Thenable<R>): Promise<R> ;\n}\n\ndeclare module \"example\"\n\ndeclare module \"example\" {}\n",
-    "expectedReparseTree": "(program statements: (module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type))) terminator: (automatic_semicolon)) statements: (export_statement_default_declaration declaration: (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (module name: (string_double elements: (string_fragment)))) statements: (ambient_declaration (module name: (string_double elements: (string_fragment)) body: (statement_block automatic_semicolon: (automatic_semicolon)))))",
+    "expectedReparseTree": "(program statements: (module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type))) terminator: (automatic_semicolon)) statements: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (module name: (string_double elements: (string_fragment)))) statements: (ambient_declaration (module name: (string_double elements: (string_fragment)) body: (statement_block automatic_semicolon: (automatic_semicolon)))))",
     "wrappedText": "module Promise {\n  var on: {}\n  export function resolve<R>(value?: Thenable<R>): Promise<R> ;\n}\n\ndeclare module \"example\"\n\ndeclare module \"example\" {}\n",
     "wrappedOffset": 0
   },
@@ -29817,7 +29817,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "module Promise {\n  var on: {}\n  export function resolve<R>(value?: Thenable<R>): Promise<R> ;\n}\n",
-    "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type))) terminator: (automatic_semicolon)) statements: (export_statement_default_declaration declaration: (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type))) terminator: (automatic_semicolon)) statements: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "module Promise {\n  var on: {}\n  export function resolve<R>(value?: Thenable<R>): Promise<R> ;\n}\n",
     "wrappedOffset": 0
   },
@@ -30507,7 +30507,7 @@
     "pattern": "statement_block",
     "edits": [],
     "expectedSourceOut": "{\n  var on: {}\n  export function resolve<R>(value?: Thenable<R>): Promise<R> ;\n}\n",
-    "expectedReparseTree": "(statement_block statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type))) terminator: (automatic_semicolon)) statements: (export_statement_default_declaration declaration: (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type))) terminator: (automatic_semicolon)) statements: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "{\n  var on: {}\n  export function resolve<R>(value?: Thenable<R>): Promise<R> ;\n}\n",
     "wrappedOffset": 0
   },
@@ -31402,7 +31402,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export function resolve<R>(value?: Thenable<R>): Promise<R> ;",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))",
+    "expectedReparseTree": "(export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (optional_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))",
     "wrappedText": "export function resolve<R>(value?: Thenable<R>): Promise<R> ;",
     "wrappedOffset": 0
   },
@@ -35205,7 +35205,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "export interface Foo {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V> ;\n}\n",
-    "expectedReparseTree": "(program statements: (export_statement_default_declaration declaration: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (export_statement_default_declaration declaration: (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))))))))",
+    "expectedReparseTree": "(program statements: (export_statement_default_declaration (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))))))))",
     "wrappedText": "export interface Foo {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V> ;\n}\n",
     "wrappedOffset": 0
   },
@@ -35805,7 +35805,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export interface Foo {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V> ;\n}",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (export_statement_default_declaration declaration: (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))))))",
+    "expectedReparseTree": "(export_statement_default_declaration (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))))))",
     "wrappedText": "export interface Foo {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V> ;\n}",
     "wrappedOffset": 0
   },
@@ -36318,7 +36318,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V> ;",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))",
+    "expectedReparseTree": "(export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))",
     "wrappedText": "export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V> ;",
     "wrappedOffset": 0
   },
@@ -36901,7 +36901,7 @@
     "pattern": "interface_declaration",
     "edits": [],
     "expectedSourceOut": "interface Foo {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V> ;\n}",
-    "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (export_statement_default_declaration declaration: (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))))))",
+    "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))))))",
     "wrappedText": "interface Foo {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V> ;\n}",
     "wrappedOffset": 0
   },
@@ -37737,7 +37737,7 @@
     "pattern": "interface_body",
     "edits": [],
     "expectedSourceOut": "{\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V> ;\n}",
-    "expectedReparseTree": "(interface_body members: (object_type_content item: (export_statement_default_declaration declaration: (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))))",
+    "expectedReparseTree": "(interface_body members: (object_type_content item: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))))",
     "wrappedText": "interface _I {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V> ;\n}",
     "wrappedOffset": 13
   },
@@ -38280,7 +38280,7 @@
     "pattern": "object_type",
     "edits": [],
     "expectedSourceOut": "{\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V> ;\n}",
-    "expectedReparseTree": "(interface_body members: (object_type_content item: (export_statement_default_declaration declaration: (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))))",
+    "expectedReparseTree": "(interface_body members: (object_type_content item: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))))",
     "wrappedText": "interface _I {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V> ;\n}",
     "wrappedOffset": 13
   },
@@ -40643,7 +40643,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "declare namespace moment {\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {}\n  export function utc(): Moment ;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}\n",
-    "expectedReparseTree": "(program statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (export_statement_default_declaration declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))) statements: (export_statement_default_declaration declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))) statements: (export_statement_default_declaration declaration: (enum_declaration name: (identifier) body: (enum_body elements: (enum_body_elements item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)))))) automatic_semicolon: (automatic_semicolon)))))",
+    "expectedReparseTree": "(program statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))) statements: (export_statement_default_declaration (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))) statements: (export_statement_default_declaration (enum_declaration name: (identifier) body: (enum_body elements: (enum_body_elements item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)))))) automatic_semicolon: (automatic_semicolon)))))",
     "wrappedText": "declare namespace moment {\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {}\n  export function utc(): Moment ;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}\n",
     "wrappedOffset": 0
   },
@@ -41252,7 +41252,7 @@
     "pattern": "ambient_declaration",
     "edits": [],
     "expectedSourceOut": "declare namespace moment {\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {}\n  export function utc(): Moment ;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}\n",
-    "expectedReparseTree": "(ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (export_statement_default_declaration declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))) statements: (export_statement_default_declaration declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))) statements: (export_statement_default_declaration declaration: (enum_declaration name: (identifier) body: (enum_body elements: (enum_body_elements item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)))))) automatic_semicolon: (automatic_semicolon))))",
+    "expectedReparseTree": "(ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))) statements: (export_statement_default_declaration (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))) statements: (export_statement_default_declaration (enum_declaration name: (identifier) body: (enum_body elements: (enum_body_elements item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)))))) automatic_semicolon: (automatic_semicolon))))",
     "wrappedText": "declare namespace moment {\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {}\n  export function utc(): Moment ;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}\n",
     "wrappedOffset": 0
   },
@@ -41845,7 +41845,7 @@
     "pattern": "internal_module",
     "edits": [],
     "expectedSourceOut": "namespace moment {\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {}\n  export function utc(): Moment ;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}\n",
-    "expectedReparseTree": "(internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (export_statement_default_declaration declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))) statements: (export_statement_default_declaration declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))) statements: (export_statement_default_declaration declaration: (enum_declaration name: (identifier) body: (enum_body elements: (enum_body_elements item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)))))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))) statements: (export_statement_default_declaration (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))) statements: (export_statement_default_declaration (enum_declaration name: (identifier) body: (enum_body elements: (enum_body_elements item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)))))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "namespace moment {\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {}\n  export function utc(): Moment ;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}\n",
     "wrappedOffset": 0
   },
@@ -42408,7 +42408,7 @@
     "pattern": "statement_block",
     "edits": [],
     "expectedSourceOut": "{\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {}\n  export function utc(): Moment ;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}\n",
-    "expectedReparseTree": "(statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (export_statement_default_declaration declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))) statements: (export_statement_default_declaration declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))) statements: (export_statement_default_declaration declaration: (enum_declaration name: (identifier) body: (enum_body elements: (enum_body_elements item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)))))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))) statements: (export_statement_default_declaration (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))) statements: (export_statement_default_declaration (enum_declaration name: (identifier) body: (enum_body elements: (enum_body_elements item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)))))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "{\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {}\n  export function utc(): Moment ;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}\n",
     "wrappedOffset": 0
   },
@@ -42793,7 +42793,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export var x: string;",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))))",
+    "expectedReparseTree": "(export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))))",
     "wrappedText": "export var x: string;",
     "wrappedOffset": 0
   },
@@ -42871,7 +42871,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export class foo {}\n",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(export_statement_default_declaration (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "export class foo {}\n",
     "wrappedOffset": 0
   },
@@ -42979,7 +42979,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export function utc(): Moment ;",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))",
+    "expectedReparseTree": "(export_statement_default_declaration (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))",
     "wrappedText": "export function utc(): Moment ;",
     "wrappedOffset": 0
   },
@@ -43173,7 +43173,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export const enum Blah { Blaz, Bloz, Bleez }",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (enum_declaration name: (identifier) body: (enum_body elements: (enum_body_elements item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier))))))",
+    "expectedReparseTree": "(export_statement_default_declaration (enum_declaration name: (identifier) body: (enum_body elements: (enum_body_elements item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier))))))",
     "wrappedText": "export const enum Blah { Blaz, Bloz, Bleez }",
     "wrappedOffset": 0
   },
@@ -43920,7 +43920,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "declare namespace Foo {\n  export interface Bar {}\n}\n",
-    "expectedReparseTree": "(program statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (export_statement_default_declaration declaration: (interface_declaration name: (type_identifier) body: (interface_body))) automatic_semicolon: (automatic_semicolon)))))",
+    "expectedReparseTree": "(program statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (export_statement_default_declaration (interface_declaration name: (type_identifier) body: (interface_body))) automatic_semicolon: (automatic_semicolon)))))",
     "wrappedText": "declare namespace Foo {\n  export interface Bar {}\n}\n",
     "wrappedOffset": 0
   },
@@ -44091,7 +44091,7 @@
     "pattern": "ambient_declaration",
     "edits": [],
     "expectedSourceOut": "declare namespace Foo {\n  export interface Bar {}\n}\n",
-    "expectedReparseTree": "(ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (export_statement_default_declaration declaration: (interface_declaration name: (type_identifier) body: (interface_body))) automatic_semicolon: (automatic_semicolon))))",
+    "expectedReparseTree": "(ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (export_statement_default_declaration (interface_declaration name: (type_identifier) body: (interface_body))) automatic_semicolon: (automatic_semicolon))))",
     "wrappedText": "declare namespace Foo {\n  export interface Bar {}\n}\n",
     "wrappedOffset": 0
   },
@@ -44246,7 +44246,7 @@
     "pattern": "internal_module",
     "edits": [],
     "expectedSourceOut": "namespace Foo {\n  export interface Bar {}\n}\n",
-    "expectedReparseTree": "(internal_module name: (identifier) body: (statement_block statements: (export_statement_default_declaration declaration: (interface_declaration name: (type_identifier) body: (interface_body))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(internal_module name: (identifier) body: (statement_block statements: (export_statement_default_declaration (interface_declaration name: (type_identifier) body: (interface_body))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "namespace Foo {\n  export interface Bar {}\n}\n",
     "wrappedOffset": 0
   },
@@ -44371,7 +44371,7 @@
     "pattern": "statement_block",
     "edits": [],
     "expectedSourceOut": "{\n  export interface Bar {}\n}\n",
-    "expectedReparseTree": "(statement_block statements: (export_statement_default_declaration declaration: (interface_declaration name: (type_identifier) body: (interface_body))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (export_statement_default_declaration (interface_declaration name: (type_identifier) body: (interface_body))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "{\n  export interface Bar {}\n}\n",
     "wrappedOffset": 0
   },
@@ -44456,7 +44456,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export interface Bar {}",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (interface_declaration name: (type_identifier) body: (interface_body)))",
+    "expectedReparseTree": "(export_statement_default_declaration (interface_declaration name: (type_identifier) body: (interface_body)))",
     "wrappedText": "export interface Bar {}",
     "wrappedOffset": 0
   },
@@ -71074,7 +71074,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "export type Extracted = keyof Pick<Base, \"id\">\n",
-    "expectedReparseTree": "(program statements: (export_statement_default_declaration declaration: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (literal_type (string_double elements: (string_fragment))))))) terminator: (automatic_semicolon))))",
+    "expectedReparseTree": "(program statements: (export_statement_default_declaration (type_alias_declaration name: (type_identifier) value: (index_type_query type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (literal_type (string_double elements: (string_fragment))))))) terminator: (automatic_semicolon))))",
     "wrappedText": "export type Extracted = keyof Pick<Base, \"id\">\n",
     "wrappedOffset": 0
   },
@@ -71308,7 +71308,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export type Extracted = keyof Pick<Base, \"id\">\n",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (literal_type (string_double elements: (string_fragment))))))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(export_statement_default_declaration (type_alias_declaration name: (type_identifier) value: (index_type_query type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (literal_type (string_double elements: (string_fragment))))))) terminator: (automatic_semicolon)))",
     "wrappedText": "export type Extracted = keyof Pick<Base, \"id\">\n",
     "wrappedOffset": 0
   },
@@ -73185,7 +73185,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "export default abstract class C {}\nexport default class C {}\nexport class C {}\nexport default interface I {}\nexport interface I {}\n",
-    "expectedReparseTree": "(program statements: (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (abstract_class_declaration name: (type_identifier) body: (class_body)))) statements: (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon)))) statements: (export_statement_default_declaration declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))) statements: (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (interface_declaration name: (type_identifier) body: (interface_body)))) statements: (export_statement_default_declaration declaration: (interface_declaration name: (type_identifier) body: (interface_body))))",
+    "expectedReparseTree": "(program statements: (export_statement_default_declaration (export_statement_default_declaration_default_kw (abstract_class_declaration name: (type_identifier) body: (class_body)))) statements: (export_statement_default_declaration (export_statement_default_declaration_default_kw (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon)))) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))) statements: (export_statement_default_declaration (export_statement_default_declaration_default_kw (interface_declaration name: (type_identifier) body: (interface_body)))) statements: (export_statement_default_declaration (interface_declaration name: (type_identifier) body: (interface_body))))",
     "wrappedText": "export default abstract class C {}\nexport default class C {}\nexport class C {}\nexport default interface I {}\nexport interface I {}\n",
     "wrappedOffset": 0
   },
@@ -73286,7 +73286,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export default abstract class C {}",
-    "expectedReparseTree": "(export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (abstract_class_declaration name: (type_identifier) body: (class_body))))",
+    "expectedReparseTree": "(export_statement_default_declaration (export_statement_default_declaration_default_kw (abstract_class_declaration name: (type_identifier) body: (class_body))))",
     "wrappedText": "export default abstract class C {}",
     "wrappedOffset": 0
   },
@@ -73380,7 +73380,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export default class C {}\n",
-    "expectedReparseTree": "(export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))",
+    "expectedReparseTree": "(export_statement_default_declaration (export_statement_default_declaration_default_kw (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))",
     "wrappedText": "export default class C {}\n",
     "wrappedOffset": 0
   },
@@ -73458,7 +73458,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export class C {}\n",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(export_statement_default_declaration (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "export class C {}\n",
     "wrappedOffset": 0
   },
@@ -73559,7 +73559,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export default interface I {}",
-    "expectedReparseTree": "(export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (interface_declaration name: (type_identifier) body: (interface_body))))",
+    "expectedReparseTree": "(export_statement_default_declaration (export_statement_default_declaration_default_kw (interface_declaration name: (type_identifier) body: (interface_body))))",
     "wrappedText": "export default interface I {}",
     "wrappedOffset": 0
   },
@@ -73644,7 +73644,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export interface I {}",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (interface_declaration name: (type_identifier) body: (interface_body)))",
+    "expectedReparseTree": "(export_statement_default_declaration (interface_declaration name: (type_identifier) body: (interface_body)))",
     "wrappedText": "export interface I {}",
     "wrappedOffset": 0
   },
@@ -76784,7 +76784,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "class A extends B<C>(D) implements C {}\nexport class A extends B<C>(D) implements C {}\n\nclass A extends B<C>(D)<E> implements C {}\nexport class A extends B<C>(D)<E> implements C {}\n\nexport class A extends B<C, D> implements C {}\n",
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon)) statements: (export_statement_default_declaration declaration: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))) statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon)) statements: (export_statement_default_declaration declaration: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))) statements: (export_statement_default_declaration declaration: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon)) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))) statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon)) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))))",
     "wrappedText": "class A extends B<C>(D) implements C {}\nexport class A extends B<C>(D) implements C {}\n\nclass A extends B<C>(D)<E> implements C {}\nexport class A extends B<C>(D)<E> implements C {}\n\nexport class A extends B<C, D> implements C {}\n",
     "wrappedOffset": 0
   },
@@ -79816,7 +79816,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export class A extends B<C>(D) implements C {}\n",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(export_statement_default_declaration (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "export class A extends B<C>(D) implements C {}\n",
     "wrappedOffset": 0
   },
@@ -80140,7 +80140,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export class A extends B<C>(D)<E> implements C {}\n",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(export_statement_default_declaration (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "export class A extends B<C>(D)<E> implements C {}\n",
     "wrappedOffset": 0
   },
@@ -80389,7 +80389,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export class A extends B<C, D> implements C {}\n",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(export_statement_default_declaration (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "export class A extends B<C, D> implements C {}\n",
     "wrappedOffset": 0
   },
@@ -119384,7 +119384,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "export default function foo(): bar\n",
-    "expectedReparseTree": "(program statements: (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)) terminator: (automatic_semicolon)))))",
+    "expectedReparseTree": "(program statements: (export_statement_default_declaration (export_statement_default_declaration_default_kw (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)) terminator: (automatic_semicolon)))))",
     "wrappedText": "export default function foo(): bar\n",
     "wrappedOffset": 0
   },
@@ -119508,7 +119508,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export default function foo(): bar\n",
-    "expectedReparseTree": "(export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)) terminator: (automatic_semicolon))))",
+    "expectedReparseTree": "(export_statement_default_declaration (export_statement_default_declaration_default_kw (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)) terminator: (automatic_semicolon))))",
     "wrappedText": "export default function foo(): bar\n",
     "wrappedOffset": 0
   },
@@ -151099,7 +151099,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "export type UserType = {};\nexport interface UserInterface {}\n",
-    "expectedReparseTree": "(program statements: (export_statement_default_declaration declaration: (type_alias_declaration name: (type_identifier) value: (object_type))) statements: (export_statement_default_declaration declaration: (interface_declaration name: (type_identifier) body: (interface_body))))",
+    "expectedReparseTree": "(program statements: (export_statement_default_declaration (type_alias_declaration name: (type_identifier) value: (object_type))) statements: (export_statement_default_declaration (interface_declaration name: (type_identifier) body: (interface_body))))",
     "wrappedText": "export type UserType = {};\nexport interface UserInterface {}\n",
     "wrappedOffset": 0
   },
@@ -151190,7 +151190,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export type UserType = {};",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (type_alias_declaration name: (type_identifier) value: (object_type)))",
+    "expectedReparseTree": "(export_statement_default_declaration (type_alias_declaration name: (type_identifier) value: (object_type)))",
     "wrappedText": "export type UserType = {};",
     "wrappedOffset": 0
   },
@@ -151275,7 +151275,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export interface UserInterface {}",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (interface_declaration name: (type_identifier) body: (interface_body)))",
+    "expectedReparseTree": "(export_statement_default_declaration (interface_declaration name: (type_identifier) body: (interface_body)))",
     "wrappedText": "export interface UserInterface {}",
     "wrappedOffset": 0
   },
@@ -178140,7 +178140,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "export type NoInfer<T> = T & { [K in keyof T]: T[K] };\n",
-    "expectedReparseTree": "(program statements: (export_statement_default_declaration declaration: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) value: (intersection_type left: (type_identifier) right: (object_type members: (object_type_content item: (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (type_annotation type: (lookup_type type: (type_identifier) index_type: (type_identifier))))))))))",
+    "expectedReparseTree": "(program statements: (export_statement_default_declaration (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) value: (intersection_type left: (type_identifier) right: (object_type members: (object_type_content item: (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (type_annotation type: (lookup_type type: (type_identifier) index_type: (type_identifier))))))))))",
     "wrappedText": "export type NoInfer<T> = T & { [K in keyof T]: T[K] };\n",
     "wrappedOffset": 0
   },
@@ -178518,7 +178518,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export type NoInfer<T> = T & { [K in keyof T]: T[K] };",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) value: (intersection_type left: (type_identifier) right: (object_type members: (object_type_content item: (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (type_annotation type: (lookup_type type: (type_identifier) index_type: (type_identifier)))))))))",
+    "expectedReparseTree": "(export_statement_default_declaration (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) value: (intersection_type left: (type_identifier) right: (object_type members: (object_type_content item: (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (type_annotation type: (lookup_type type: (type_identifier) index_type: (type_identifier)))))))))",
     "wrappedText": "export type NoInfer<T> = T & { [K in keyof T]: T[K] };",
     "wrappedOffset": 0
   },
@@ -247068,7 +247068,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void ;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string) ;\n\n  greeting: string ;\n  showGreeting(): void ;\n}\n\ndeclare module Foo.Bar {\n  export var foo;\n}\n;declare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  for (let i = 0; i < 3; i++) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
-    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (string_double elements: (string_fragment))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator_plain name: (identifier))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (number_decimal))) condition: (binary_expression left: (identifier) right: (number_decimal)) increment: (update_expression_postfix argument: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon)))))",
+    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (string_double elements: (string_fragment))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (number_decimal))) condition: (binary_expression left: (identifier) right: (number_decimal)) increment: (update_expression_postfix argument: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon)))))",
     "wrappedText": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void ;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string ;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string) ;\n\n  greeting: string ;\n  showGreeting(): void ;\n}\n\ndeclare module Foo.Bar {\n  export var foo;\n}\n;declare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  for (let i = 0; i < 3; i++) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
     "wrappedOffset": 0
   },
@@ -248807,7 +248807,7 @@
     "pattern": "ambient_declaration",
     "edits": [],
     "expectedSourceOut": "declare module Foo.Bar {\n  export var foo;\n}",
-    "expectedReparseTree": "(ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) automatic_semicolon: (automatic_semicolon))))",
+    "expectedReparseTree": "(ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) automatic_semicolon: (automatic_semicolon))))",
     "wrappedText": "declare module Foo.Bar {\n  export var foo;\n}",
     "wrappedOffset": 0
   },
@@ -254619,7 +254619,7 @@
     "pattern": "statement_block",
     "edits": [],
     "expectedSourceOut": "{\n  export var foo;\n}",
-    "expectedReparseTree": "(statement_block statements: (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "{\n  export var foo;\n}",
     "wrappedOffset": 0
   },
@@ -257561,7 +257561,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "module Foo.Bar {\n  export var foo;\n}",
-    "expectedReparseTree": "(module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "module Foo.Bar {\n  export var foo;\n}",
     "wrappedOffset": 0
   },
@@ -258817,7 +258817,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export var foo;",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator_plain name: (identifier))))",
+    "expectedReparseTree": "(export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier))))",
     "wrappedText": "export var foo;",
     "wrappedOffset": 0
   },

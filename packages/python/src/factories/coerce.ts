@@ -2205,7 +2205,7 @@ export function resolveImportFromStatement_content(
 	value: T.ImportFromStatement.LooseConfig['content']
 ): T.ImportFromStatement['_content'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.ImportList | T.ParenthesizedImportList | '*'>(value, _K4, _K2)),
+		_resolveKindEnum(value, () => _resolveOne<'*' | T.ImportList | T.ParenthesizedImportList>(value, _K4, _K2)),
 		[['*', TSKindId.WildcardImport] as const]
 	);
 }

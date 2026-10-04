@@ -1321,7 +1321,7 @@ export function wrapImportFromStatement(data: T.ImportFromStatement, tree: TreeH
 			projectMixedEnumStorage(
 				normalizeSingularWrapSlot(
 					data._content ??
-						readTerminalFromOther<T.ImportList | T.ParenthesizedImportList | TSKindId.WildcardImport>(data, [
+						readTerminalFromOther<TSKindId.WildcardImport | T.ImportList | T.ParenthesizedImportList>(data, [
 							TSKindId.WildcardImport
 						]),
 					'content',
@@ -1339,7 +1339,7 @@ export function wrapImportFromStatement(data: T.ImportFromStatement, tree: TreeH
 			return hydrateChild<T.RelativeImport | T.DottedName>(this._module_name, tree);
 		},
 		content() {
-			return hydrateChild<T.ImportList | T.ParenthesizedImportList | TSKindId.WildcardImport>(this._content, tree);
+			return hydrateChild<TSKindId.WildcardImport | T.ImportList | T.ParenthesizedImportList>(this._content, tree);
 		},
 		$with: {
 			moduleName: (v: NonNullable<T.ImportFromStatement['_module_name']>) =>

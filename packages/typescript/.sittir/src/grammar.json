@@ -16394,12 +16394,8 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "FIELD",
-              "name": "declaration",
-              "content": {
-                "type": "SYMBOL",
-                "name": "declaration"
-              }
+              "type": "SYMBOL",
+              "name": "declaration"
             },
             {
               "type": "SYMBOL",
@@ -16478,15 +16474,8 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "FIELD",
-              "name": "declaration",
-              "content": {
-                "type": "SYMBOL",
-                "name": "declaration"
-              },
-              "annotations": {
-                "variantOf": "export_statement_default_declaration_default_kw"
-              }
+              "type": "SYMBOL",
+              "name": "declaration"
             },
             {
               "type": "SYMBOL",

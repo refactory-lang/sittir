@@ -498,13 +498,16 @@ export default sittirGrammar(base, {
 			'2': variant('default_import')
 		},
 
+		// See docs/typescript-grammar-sittir-glossary.md::export_statement_default unfielded declaration arms
 		export_statement_default: {
 			0: variant('from'),
 			'0/1/0': variant('star_from'),
 			'0/1/1': variant('ns_from'),
 			'0/1/2': variant('clause_from'),
 			1: variant('declaration'),
+			'1/2/0': { type: 'SYMBOL', name: 'declaration' } as never,
 			'1/2/1': variant('default_kw'),
+			'1/2/1/1/0': { type: 'SYMBOL', name: 'declaration' } as never,
 			'1/2/1/1/1': variant('value')
 		},
 
