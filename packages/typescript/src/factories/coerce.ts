@@ -2550,7 +2550,6 @@ const _K75: readonly string[] = [
 	'export_clause'
 ];
 const _K76: readonly string[] = [
-	'export_statement_default_declaration_default_kw',
 	'function_declaration',
 	'generator_function_declaration',
 	'class_declaration',
@@ -2564,10 +2563,10 @@ const _K76: readonly string[] = [
 	'enum_declaration',
 	'interface_declaration',
 	'import_alias',
-	'ambient_declaration'
+	'ambient_declaration',
+	'export_statement_default_declaration_default_kw'
 ];
 const _K77: readonly string[] = [
-	'export_statement_default_declaration_default_kw_value',
 	'function_declaration',
 	'generator_function_declaration',
 	'class_declaration',
@@ -2581,7 +2580,8 @@ const _K77: readonly string[] = [
 	'enum_declaration',
 	'interface_declaration',
 	'import_alias',
-	'ambient_declaration'
+	'ambient_declaration',
+	'export_statement_default_declaration_default_kw_value'
 ];
 const _K78: readonly string[] = [
 	'_lhs_expression',
@@ -11646,7 +11646,7 @@ export function resolveExportStatementDefaultDeclaration_decorators(
 export function resolveExportStatementDefaultDeclaration_content(
 	value: T.ExportStatementDefaultDeclaration.LooseConfig['content']
 ): T.ExportStatementDefaultDeclaration['_content'] {
-	return _resolveOne<T.ExportStatementDefaultDeclarationDefaultKw | T.Declaration>(value, _K2, _K76);
+	return _resolveOne<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>(value, _K2, _K76);
 }
 
 export function coerceToExportStatementDefaultDeclaration(
@@ -11750,7 +11750,7 @@ export function coerceToExportStatementDefaultFromClauseFrom(
 export function resolveExportStatementDefaultDeclarationDefaultKw_content(
 	value: T.ExportStatementDefaultDeclarationDefaultKw.LooseConfig['content']
 ): T.ExportStatementDefaultDeclarationDefaultKw['_content'] {
-	return _resolveOne<T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration>(value, _K2, _K77);
+	return _resolveOne<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue>(value, _K2, _K77);
 }
 
 export function coerceToExportStatementDefaultDeclarationDefaultKw(
@@ -11762,7 +11762,7 @@ export function coerceToExportStatementDefaultDeclarationDefaultKw(
 		_requireField(
 			'export_statement_default_declaration_default_kw',
 			'content',
-			_resolveOne<T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration>(
+			_resolveOne<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue>(
 				configFieldOr(input, 'content', () => input),
 				_K2,
 				_K77

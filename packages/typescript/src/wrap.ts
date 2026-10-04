@@ -17816,7 +17816,7 @@ export function wrapExportStatementDefaultDeclaration(
 			return hydrateChildren<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree);
 		},
 		content() {
-			return hydrateChild<T.ExportStatementDefaultDeclarationDefaultKw | T.Declaration>(this._content, tree);
+			return hydrateChild<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>(this._content, tree);
 		},
 		$with: {
 			decorators: (...v: NonNullable<T.ExportStatementDefaultDeclaration['_decorator']>[number][]) =>
@@ -18001,7 +18001,7 @@ export function wrapExportStatementDefaultDeclarationDefaultKw(
 		),
 
 		content() {
-			return hydrateChild<T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration>(this._content, tree);
+			return hydrateChild<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue>(this._content, tree);
 		},
 		$with: {
 			content: (v: NonNullable<T.ExportStatementDefaultDeclarationDefaultKw['_content']>) =>

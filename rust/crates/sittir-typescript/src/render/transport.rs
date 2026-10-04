@@ -64437,7 +64437,6 @@ impl ::sittir_core::render::Render for ExportStatementDefaultFromAutomaticSemico
 
 #[derive(Debug, Clone)]
 pub enum ExportStatementDefaultDeclarationContentTransportSlot {
-    ExportStatementDefaultDeclarationDefaultKw(ExportStatementDefaultDeclarationDefaultKwTransport),
     FunctionDeclaration(FunctionDeclarationTransport),
     GeneratorFunctionDeclaration(GeneratorFunctionDeclarationTransport),
     ClassDeclaration(ClassDeclarationTransport),
@@ -64452,12 +64451,12 @@ pub enum ExportStatementDefaultDeclarationContentTransportSlot {
     InterfaceDeclaration(InterfaceDeclarationTransport),
     ImportAlias(ImportAliasTransport),
     AmbientDeclaration(AmbientDeclarationTransport),
+    ExportStatementDefaultDeclarationDefaultKw(ExportStatementDefaultDeclarationDefaultKwTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationContentTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.prepare(ctx),
             ExportStatementDefaultDeclarationContentTransportSlot::FunctionDeclaration(t) => t.prepare(ctx),
             ExportStatementDefaultDeclarationContentTransportSlot::GeneratorFunctionDeclaration(t) => t.prepare(ctx),
             ExportStatementDefaultDeclarationContentTransportSlot::ClassDeclaration(t) => t.prepare(ctx),
@@ -64472,11 +64471,11 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationConten
             ExportStatementDefaultDeclarationContentTransportSlot::InterfaceDeclaration(t) => t.prepare(ctx),
             ExportStatementDefaultDeclarationContentTransportSlot::ImportAlias(t) => t.prepare(ctx),
             ExportStatementDefaultDeclarationContentTransportSlot::AmbientDeclaration(t) => t.prepare(ctx),
+            ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.prepare(ctx),
         }
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.source_gap(),
             ExportStatementDefaultDeclarationContentTransportSlot::FunctionDeclaration(t) => t.source_gap(),
             ExportStatementDefaultDeclarationContentTransportSlot::GeneratorFunctionDeclaration(t) => t.source_gap(),
             ExportStatementDefaultDeclarationContentTransportSlot::ClassDeclaration(t) => t.source_gap(),
@@ -64491,11 +64490,11 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationConten
             ExportStatementDefaultDeclarationContentTransportSlot::InterfaceDeclaration(t) => t.source_gap(),
             ExportStatementDefaultDeclarationContentTransportSlot::ImportAlias(t) => t.source_gap(),
             ExportStatementDefaultDeclarationContentTransportSlot::AmbientDeclaration(t) => t.source_gap(),
+            ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.gap_edges(),
             ExportStatementDefaultDeclarationContentTransportSlot::FunctionDeclaration(t) => t.gap_edges(),
             ExportStatementDefaultDeclarationContentTransportSlot::GeneratorFunctionDeclaration(t) => t.gap_edges(),
             ExportStatementDefaultDeclarationContentTransportSlot::ClassDeclaration(t) => t.gap_edges(),
@@ -64510,6 +64509,7 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationConten
             ExportStatementDefaultDeclarationContentTransportSlot::InterfaceDeclaration(t) => t.gap_edges(),
             ExportStatementDefaultDeclarationContentTransportSlot::ImportAlias(t) => t.gap_edges(),
             ExportStatementDefaultDeclarationContentTransportSlot::AmbientDeclaration(t) => t.gap_edges(),
+            ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.gap_edges(),
         }
     }
 }
@@ -64517,7 +64517,6 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationConten
 impl ::sittir_core::view::KindOf for ExportStatementDefaultDeclarationContentTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::ExportStatementDefaultDeclarationDefaultKw(inner) => inner.kind_in(kinds),
             Self::FunctionDeclaration(inner) => inner.kind_in(kinds),
             Self::GeneratorFunctionDeclaration(inner) => inner.kind_in(kinds),
             Self::ClassDeclaration(inner) => inner.kind_in(kinds),
@@ -64532,6 +64531,7 @@ impl ::sittir_core::view::KindOf for ExportStatementDefaultDeclarationContentTra
             Self::InterfaceDeclaration(inner) => inner.kind_in(kinds),
             Self::ImportAlias(inner) => inner.kind_in(kinds),
             Self::AmbientDeclaration(inner) => inner.kind_in(kinds),
+            Self::ExportStatementDefaultDeclarationDefaultKw(inner) => inner.kind_in(kinds),
         }
     }
 }
@@ -64545,9 +64545,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDeclaratio
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    426 => Ok(Self::ExportStatementDefaultDeclarationDefaultKw(
-                        ExportStatementDefaultDeclarationDefaultKwTransport::from_napi_value(env, napi_val)?
-                    )),
                     246 => Ok(Self::FunctionDeclaration(
                         FunctionDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
@@ -64589,6 +64586,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDeclaratio
                     )),
                     305 => Ok(Self::AmbientDeclaration(
                         AmbientDeclarationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    426 => Ok(Self::ExportStatementDefaultDeclarationDefaultKw(
+                        ExportStatementDefaultDeclarationDefaultKwTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ExportStatementDefaultDeclarationContentTransportSlot",
@@ -64601,9 +64601,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDeclaratio
                     ::napi::Error::from_reason("$type property missing in ExportStatementDefaultDeclarationContentTransportSlot")
                 )?;
                 match kind_id {
-                    426 => Ok(Self::ExportStatementDefaultDeclarationDefaultKw(
-                        ExportStatementDefaultDeclarationDefaultKwTransport::from_napi_value(env, napi_val)?
-                    )),
                     246 => Ok(Self::FunctionDeclaration(
                         FunctionDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
@@ -64645,6 +64642,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDeclaratio
                     )),
                     305 => Ok(Self::AmbientDeclaration(
                         AmbientDeclarationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    426 => Ok(Self::ExportStatementDefaultDeclarationDefaultKw(
+                        ExportStatementDefaultDeclarationDefaultKwTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ExportStatementDefaultDeclarationContentTransportSlot",
@@ -64688,7 +64688,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultDeclarat
 
 fn export_statement_default_declaration_content_transport_slot_to_any(t: ExportStatementDefaultDeclarationContentTransportSlot) -> AnyTransport {
     match t {
-        ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(inner) => AnyTransport::ExportStatementDefaultDeclarationDefaultKw(inner),
         ExportStatementDefaultDeclarationContentTransportSlot::FunctionDeclaration(inner) => AnyTransport::FunctionDeclaration(inner),
         ExportStatementDefaultDeclarationContentTransportSlot::GeneratorFunctionDeclaration(inner) => AnyTransport::GeneratorFunctionDeclaration(inner),
         ExportStatementDefaultDeclarationContentTransportSlot::ClassDeclaration(inner) => AnyTransport::ClassDeclaration(inner),
@@ -64703,13 +64702,13 @@ fn export_statement_default_declaration_content_transport_slot_to_any(t: ExportS
         ExportStatementDefaultDeclarationContentTransportSlot::InterfaceDeclaration(inner) => AnyTransport::InterfaceDeclaration(inner),
         ExportStatementDefaultDeclarationContentTransportSlot::ImportAlias(inner) => AnyTransport::ImportAlias(inner),
         ExportStatementDefaultDeclarationContentTransportSlot::AmbientDeclaration(inner) => AnyTransport::AmbientDeclaration(inner),
+        ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(inner) => AnyTransport::ExportStatementDefaultDeclarationDefaultKw(inner),
     }
 }
 
 impl ::sittir_core::render::Render for ExportStatementDefaultDeclarationContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(inner) => inner.render(w),
             ExportStatementDefaultDeclarationContentTransportSlot::FunctionDeclaration(inner) => inner.render(w),
             ExportStatementDefaultDeclarationContentTransportSlot::GeneratorFunctionDeclaration(inner) => inner.render(w),
             ExportStatementDefaultDeclarationContentTransportSlot::ClassDeclaration(inner) => inner.render(w),
@@ -64724,13 +64723,13 @@ impl ::sittir_core::render::Render for ExportStatementDefaultDeclarationContentT
             ExportStatementDefaultDeclarationContentTransportSlot::InterfaceDeclaration(inner) => inner.render(w),
             ExportStatementDefaultDeclarationContentTransportSlot::ImportAlias(inner) => inner.render(w),
             ExportStatementDefaultDeclarationContentTransportSlot::AmbientDeclaration(inner) => inner.render(w),
+            ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(inner) => inner.render(w),
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub enum ExportStatementDefaultDeclarationDefaultKwContentTransportSlot {
-    ExportStatementDefaultDeclarationDefaultKwValue(ExportStatementDefaultDeclarationDefaultKwValueTransport),
     FunctionDeclaration(FunctionDeclarationTransport),
     GeneratorFunctionDeclaration(GeneratorFunctionDeclarationTransport),
     ClassDeclaration(ClassDeclarationTransport),
@@ -64745,12 +64744,12 @@ pub enum ExportStatementDefaultDeclarationDefaultKwContentTransportSlot {
     InterfaceDeclaration(InterfaceDeclarationTransport),
     ImportAlias(ImportAliasTransport),
     AmbientDeclaration(AmbientDeclarationTransport),
+    ExportStatementDefaultDeclarationDefaultKwValue(ExportStatementDefaultDeclarationDefaultKwValueTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationDefaultKwContentTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ExportStatementDefaultDeclarationDefaultKwValue(t) => t.prepare(ctx),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::FunctionDeclaration(t) => t.prepare(ctx),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::GeneratorFunctionDeclaration(t) => t.prepare(ctx),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ClassDeclaration(t) => t.prepare(ctx),
@@ -64765,11 +64764,11 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationDefaul
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::InterfaceDeclaration(t) => t.prepare(ctx),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ImportAlias(t) => t.prepare(ctx),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::AmbientDeclaration(t) => t.prepare(ctx),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ExportStatementDefaultDeclarationDefaultKwValue(t) => t.prepare(ctx),
         }
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
-            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ExportStatementDefaultDeclarationDefaultKwValue(t) => t.source_gap(),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::FunctionDeclaration(t) => t.source_gap(),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::GeneratorFunctionDeclaration(t) => t.source_gap(),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ClassDeclaration(t) => t.source_gap(),
@@ -64784,11 +64783,11 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationDefaul
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::InterfaceDeclaration(t) => t.source_gap(),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ImportAlias(t) => t.source_gap(),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::AmbientDeclaration(t) => t.source_gap(),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ExportStatementDefaultDeclarationDefaultKwValue(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ExportStatementDefaultDeclarationDefaultKwValue(t) => t.gap_edges(),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::FunctionDeclaration(t) => t.gap_edges(),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::GeneratorFunctionDeclaration(t) => t.gap_edges(),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ClassDeclaration(t) => t.gap_edges(),
@@ -64803,6 +64802,7 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationDefaul
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::InterfaceDeclaration(t) => t.gap_edges(),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ImportAlias(t) => t.gap_edges(),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::AmbientDeclaration(t) => t.gap_edges(),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ExportStatementDefaultDeclarationDefaultKwValue(t) => t.gap_edges(),
         }
     }
 }
@@ -64810,7 +64810,6 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationDefaul
 impl ::sittir_core::view::KindOf for ExportStatementDefaultDeclarationDefaultKwContentTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::ExportStatementDefaultDeclarationDefaultKwValue(inner) => inner.kind_in(kinds),
             Self::FunctionDeclaration(inner) => inner.kind_in(kinds),
             Self::GeneratorFunctionDeclaration(inner) => inner.kind_in(kinds),
             Self::ClassDeclaration(inner) => inner.kind_in(kinds),
@@ -64825,6 +64824,7 @@ impl ::sittir_core::view::KindOf for ExportStatementDefaultDeclarationDefaultKwC
             Self::InterfaceDeclaration(inner) => inner.kind_in(kinds),
             Self::ImportAlias(inner) => inner.kind_in(kinds),
             Self::AmbientDeclaration(inner) => inner.kind_in(kinds),
+            Self::ExportStatementDefaultDeclarationDefaultKwValue(inner) => inner.kind_in(kinds),
         }
     }
 }
@@ -64838,9 +64838,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDeclaratio
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    427 => Ok(Self::ExportStatementDefaultDeclarationDefaultKwValue(
-                        ExportStatementDefaultDeclarationDefaultKwValueTransport::from_napi_value(env, napi_val)?
-                    )),
                     246 => Ok(Self::FunctionDeclaration(
                         FunctionDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
@@ -64882,6 +64879,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDeclaratio
                     )),
                     305 => Ok(Self::AmbientDeclaration(
                         AmbientDeclarationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    427 => Ok(Self::ExportStatementDefaultDeclarationDefaultKwValue(
+                        ExportStatementDefaultDeclarationDefaultKwValueTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ExportStatementDefaultDeclarationDefaultKwContentTransportSlot",
@@ -64894,9 +64894,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDeclaratio
                     ::napi::Error::from_reason("$type property missing in ExportStatementDefaultDeclarationDefaultKwContentTransportSlot")
                 )?;
                 match kind_id {
-                    427 => Ok(Self::ExportStatementDefaultDeclarationDefaultKwValue(
-                        ExportStatementDefaultDeclarationDefaultKwValueTransport::from_napi_value(env, napi_val)?
-                    )),
                     246 => Ok(Self::FunctionDeclaration(
                         FunctionDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
@@ -64938,6 +64935,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDeclaratio
                     )),
                     305 => Ok(Self::AmbientDeclaration(
                         AmbientDeclarationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    427 => Ok(Self::ExportStatementDefaultDeclarationDefaultKwValue(
+                        ExportStatementDefaultDeclarationDefaultKwValueTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ExportStatementDefaultDeclarationDefaultKwContentTransportSlot",
@@ -64981,7 +64981,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultDeclarat
 
 fn export_statement_default_declaration_default_kw_content_transport_slot_to_any(t: ExportStatementDefaultDeclarationDefaultKwContentTransportSlot) -> AnyTransport {
     match t {
-        ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ExportStatementDefaultDeclarationDefaultKwValue(inner) => AnyTransport::ExportStatementDefaultDeclarationDefaultKwValue(inner),
         ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::FunctionDeclaration(inner) => AnyTransport::FunctionDeclaration(inner),
         ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::GeneratorFunctionDeclaration(inner) => AnyTransport::GeneratorFunctionDeclaration(inner),
         ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ClassDeclaration(inner) => AnyTransport::ClassDeclaration(inner),
@@ -64996,13 +64995,13 @@ fn export_statement_default_declaration_default_kw_content_transport_slot_to_any
         ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::InterfaceDeclaration(inner) => AnyTransport::InterfaceDeclaration(inner),
         ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ImportAlias(inner) => AnyTransport::ImportAlias(inner),
         ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::AmbientDeclaration(inner) => AnyTransport::AmbientDeclaration(inner),
+        ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ExportStatementDefaultDeclarationDefaultKwValue(inner) => AnyTransport::ExportStatementDefaultDeclarationDefaultKwValue(inner),
     }
 }
 
 impl ::sittir_core::render::Render for ExportStatementDefaultDeclarationDefaultKwContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ExportStatementDefaultDeclarationDefaultKwValue(inner) => inner.render(w),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::FunctionDeclaration(inner) => inner.render(w),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::GeneratorFunctionDeclaration(inner) => inner.render(w),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ClassDeclaration(inner) => inner.render(w),
@@ -65017,6 +65016,7 @@ impl ::sittir_core::render::Render for ExportStatementDefaultDeclarationDefaultK
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::InterfaceDeclaration(inner) => inner.render(w),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ImportAlias(inner) => inner.render(w),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::AmbientDeclaration(inner) => inner.render(w),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ExportStatementDefaultDeclarationDefaultKwValue(inner) => inner.render(w),
         }
     }
 }
@@ -112527,7 +112527,6 @@ impl ::sittir_core::prepare::SeatTarget for CallExpressionTemplateCallFunctionTr
 impl ::sittir_core::prepare::SeatTarget for ExportStatementDefaultDeclarationContentTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ExportStatementDefaultDeclarationDefaultKw(t) => t.seat_target(table),
             Self::FunctionDeclaration(t) => t.seat_target(table),
             Self::GeneratorFunctionDeclaration(t) => t.seat_target(table),
             Self::ClassDeclaration(t) => t.seat_target(table),
@@ -112542,6 +112541,7 @@ impl ::sittir_core::prepare::SeatTarget for ExportStatementDefaultDeclarationCon
             Self::InterfaceDeclaration(t) => t.seat_target(table),
             Self::ImportAlias(t) => t.seat_target(table),
             Self::AmbientDeclaration(t) => t.seat_target(table),
+            Self::ExportStatementDefaultDeclarationDefaultKw(t) => t.seat_target(table),
             #[allow(unreachable_patterns)]
             _ => None,
         }

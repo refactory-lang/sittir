@@ -2503,21 +2503,11 @@
             "named": true
           }
         ]
-      },
-      "wildcard_import": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "wildcard_import",
-            "named": true
-          }
-        ]
       }
     },
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "import_list",
@@ -2525,6 +2515,10 @@
         },
         {
           "type": "parenthesized_import_list",
+          "named": true
+        },
+        {
+          "type": "wildcard_import",
           "named": true
         }
       ]

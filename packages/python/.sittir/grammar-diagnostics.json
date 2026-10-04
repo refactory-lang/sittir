@@ -578,20 +578,5 @@
       "form": "rule",
       "name": "comprehension_clauses"
     }
-  },
-  {
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "grammar": "python",
-    "ownerKind": "import_from_statement",
-    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [import_list, parenthesized_import_list] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import]",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "wildcard_import"
-      ]
-    }
   }
 ]
