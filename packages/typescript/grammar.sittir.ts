@@ -176,7 +176,7 @@ export default sittirGrammar(base, {
 		type_query: { 1: field('expression') },
 		comment: {
 			'1/0/1': regex(/([^*]|\*+[^*\/])*\**/),
-			'1/0/2': { type: 'STRING', value: '*/' } as never,
+			'1/0/2': { type: 'STRING', value: '*/' },
 			0: variant('line'),
 			1: variant('block')
 		},
