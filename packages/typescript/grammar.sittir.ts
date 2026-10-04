@@ -505,9 +505,9 @@ export default sittirGrammar(base, {
 			'0/1/1': variant('ns_from'),
 			'0/1/2': variant('clause_from'),
 			1: variant('declaration'),
-			'1/2/0': { type: 'SYMBOL', name: 'declaration' } as never,
+			'1/2/0': { type: 'SYMBOL', name: 'declaration' },
 			'1/2/1': variant('default_kw'),
-			'1/2/1/1/0': { type: 'SYMBOL', name: 'declaration' } as never,
+			'1/2/1/1/0': { type: 'SYMBOL', name: 'declaration' },
 			'1/2/1/1/1': variant('value')
 		},
 
