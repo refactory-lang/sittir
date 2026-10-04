@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest';
-import type { BoundOf, ParsedOf, SlotHint, ListSlotHint, ListViewHint, WithNode } from '../src/index.ts';
+import type { BoundOf, ParsedOf, SlotHint, ListSlotHint, ListViewHint, NodeMethods, WithNode } from '../src/index.ts';
 
 const enum K {
 	Fn = 1,
@@ -46,35 +46,35 @@ interface Fn {
 	};
 }
 declare namespace Param {
-	interface Bound extends BoundOf<Param, ByB> {
-		readonly $with: WithNode<this, ByB, ByP>;
+	interface Bound extends BoundOf<Param, ByB>, Pick<NodeMethods, '$render'> {
+		readonly $with: WithNode<this, ByB>;
 	}
-	interface Parsed extends ParsedOf<Param, ByP> {
-		readonly $with: WithNode<this, ByB, ByP>;
+	interface Parsed extends ParsedOf<Param, ByP>, Pick<NodeMethods, '$render'> {
+		readonly $with: WithNode<this, ByB>;
 	}
 }
 declare namespace Items {
-	interface Bound extends BoundOf<Items, ByB> {
-		readonly $with: WithNode<this, ByB, ByP>;
+	interface Bound extends BoundOf<Items, ByB>, Pick<NodeMethods, '$render'> {
+		readonly $with: WithNode<this, ByB>;
 	}
-	interface Parsed extends ParsedOf<Items, ByP> {
-		readonly $with: WithNode<this, ByB, ByP>;
+	interface Parsed extends ParsedOf<Items, ByP>, Pick<NodeMethods, '$render'> {
+		readonly $with: WithNode<this, ByB>;
 	}
 }
 declare namespace Params {
-	interface Bound extends BoundOf<Params, ByB> {
-		readonly $with: WithNode<this, ByB, ByP>;
+	interface Bound extends BoundOf<Params, ByB>, Pick<NodeMethods, '$render'> {
+		readonly $with: WithNode<this, ByB>;
 	}
-	interface Parsed extends ParsedOf<Params, ByP> {
-		readonly $with: WithNode<this, ByB, ByP>;
+	interface Parsed extends ParsedOf<Params, ByP>, Pick<NodeMethods, '$render'> {
+		readonly $with: WithNode<this, ByB>;
 	}
 }
 declare namespace Fn {
-	interface Bound extends BoundOf<Fn, ByB> {
-		readonly $with: WithNode<this, ByB, ByP>;
+	interface Bound extends BoundOf<Fn, ByB>, Pick<NodeMethods, '$render'> {
+		readonly $with: WithNode<this, ByB>;
 	}
-	interface Parsed extends ParsedOf<Fn, ByP> {
-		readonly $with: WithNode<this, ByB, ByP>;
+	interface Parsed extends ParsedOf<Fn, ByP>, Pick<NodeMethods, '$render'> {
+		readonly $with: WithNode<this, ByB>;
 	}
 }
 interface ByB {
@@ -95,7 +95,8 @@ declare const built: Params.Bound;
 declare const items: Items.Bound;
 declare const storageParams: Params;
 declare const bound: Fn.Bound;
-declare const param: Param;
+declare const param: Param.Bound;
+declare const storageParam: Param;
 declare const owner: Params.Parsed;
 
 describe('BoundOf / ParsedOf', () => {
@@ -125,8 +126,11 @@ describe('BoundOf / ParsedOf', () => {
 	it('an optional slot can be cleared', () => {
 		expectTypeOf(fn.$with.kw()).toHaveProperty('kw');
 	});
-	it('a storage-typed input reads back as its Bound surface', () => {
-		expectTypeOf(fn.$with.params(storageParams).params()).toEqualTypeOf<Params.Bound>();
+	it('a storage-shaped input is refused: a node slot admits built nodes by kind', () => {
+		// @ts-expect-error storage interface is not a node
+		fn.$with.params(storageParams);
+		// @ts-expect-error storage interface is not a node
+		owner.$with.items(storageParam);
 	});
 	it('a wrong input is rejected', () => {
 		// @ts-expect-error Params.Bound expected
@@ -139,6 +143,12 @@ describe('BoundOf / ParsedOf', () => {
 		expectTypeOf(owner.$with.items()).toHaveProperty('items');
 		expectTypeOf(fn.$with.params(param, param).params()).toEqualTypeOf<Params.Bound>();
 		expectTypeOf(fn.$with.params(...fn.params())).toHaveProperty('params');
+	});
+	it('a list node of another kind is not taken as the options bag', () => {
+		// @ts-expect-error an Items node is not a Params node, and a node is never options
+		fn.$with.params(items);
+		// @ts-expect-error a node is never options, even with items after it
+		fn.$with.params(items, param);
 	});
 	it('$with has no call signature, a list owner included', () => {
 		// @ts-expect-error not callable

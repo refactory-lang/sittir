@@ -8,7 +8,6 @@
 // same key accept different things depending on where the node came from,
 // with nothing in the API to say which.
 import { describe, expect, it } from 'vitest';
-import type * as T from '../src/types.js';
 import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
@@ -17,14 +16,26 @@ const rs = await createEngine(rust);
 describe('setters do not coerce', () => {
 	it('takes the slot type on a parsed node, not the loose config', () => {
 		const file = rs.parse('fn main() { }\n');
-		const setter: (v: NonNullable<T.SourceFile['_shebang']>) => unknown = file.$with.shebang;
-		expect(typeof setter).toBe('function');
+		const refused = () => {
+			// @ts-expect-error the shebang setter takes a built Shebang; text is the constructor's input
+			file.$with.shebang('#!/bin/sh');
+			// @ts-expect-error a node of another kind is not a Shebang
+			file.$with.shebang(rs.build.identifier('x'));
+		};
+		expect(file.$with.shebang(rs.build.shebang('#!/bin/sh')).shebang()?.$type).toBe(rs.kinds.Shebang);
+		expect(typeof refused).toBe('function');
 	});
 
 	it('takes the same on a factory-built node', () => {
 		const built = rs.build.label(rs.build.identifier('outer'));
-		const setter: (v: T.Identifier) => unknown = built.$with.name;
-		expect(typeof setter).toBe('function');
+		const refused = () => {
+			// @ts-expect-error a node of another kind is not an Identifier
+			built.$with.name(rs.build.block());
+			// @ts-expect-error the loose config the constructor accepts is not a node
+			built.$with.name({ name: 'inner' });
+		};
+		expect(built.$with.name(rs.build.identifier('inner')).$render()).toContain('inner');
+		expect(typeof refused).toBe('function');
 	});
 
 	it('rejects a bare string that the CONSTRUCTOR accepts', () => {

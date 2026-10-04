@@ -332,15 +332,6 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 		lines.push('}');
 		lines.push('');
 	}
-	lines.push('export interface EmptyByKindId {');
-	for (const kind of surfaceKinds) {
-		const empty = emptyForms(nodeMap).get(kind);
-		if (empty !== undefined) lines.push(`  [${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)}]: ${empty.typeName};`);
-	}
-	lines.push('}');
-	lines.push('');
-	lines.push('export type AdmittedNodes = AdmitLookup<BoundByKindId, ParsedByKindId, EmptyByKindId>;');
-	lines.push('');
 
 	const fixedTextKindIds = new Set(
 		[...nodeMap.nodes]
@@ -504,10 +495,9 @@ const VOCABULARY_IMPORTS = [
 	'FlatShapesOf',
 	'BoundOf',
 	'ParsedOf',
-	'AdmitBound',
-	'AdmitLookup',
+	'Admit',
+	'ListOptions',
 	'SupertypeSurface',
-	'NodeLookup',
 	'WithNode',
 	'BoundWithNode'
 ];
@@ -931,7 +921,7 @@ function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, i
 		if (withNode) lines.push(`${indent}  readonly $type: ${surface.mainType}['$type'];`);
 		if (withNode)
 			lines.push(
-				`${indent}  readonly $with: ${name.startsWith('Bound') ? 'BoundWithNode' : 'WithNode'}<${self}, BoundByKindId, ParsedByKindId${self === 'this' ? '' : `, ${name}`}>;`
+				`${indent}  readonly $with: ${name.startsWith('Bound') ? 'BoundWithNode' : 'WithNode'}<${self}, BoundByKindId${self === 'this' ? '' : `, ${name}`}>;`
 			);
 		for (const member of surface.members) lines.push(`${indent}${member}`);
 		lines.push(`${indent}}`);
@@ -941,7 +931,6 @@ function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, i
 		lines.push(`${indent}export interface Parsed extends Bound {}`);
 		return;
 	}
-	const lookup = 'AdmitLookup<BoundByKindId, ParsedByKindId>';
 	for (const [name, of, byKindId] of [
 		['Bound', 'BoundOf', 'BoundByKindId'],
 		['Parsed', 'ParsedOf', 'ParsedByKindId']
@@ -952,7 +941,7 @@ function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, i
 		}
 		emit(`${name}Surface`, `${of}<${surface.mainType}, ${byKindId}>, NodeMethodsOf`, true, name, false);
 		lines.push(
-			`${indent}export type ${name} = ${name}Surface & FlatShapesOf<${name}Surface, ${surface.mainType}, ${byKindId}, ${lookup}>;`
+			`${indent}export type ${name} = ${name}Surface & FlatShapesOf<${name}Surface, ${surface.mainType}, ${byKindId}>;`
 		);
 	}
 }
@@ -1330,7 +1319,7 @@ function emitNamespaceSugarBlock(
 	const spelling = spellingTypeOf(node, nodeMap, kindEntries);
 	if (spelling !== undefined) lines.push(`  export type Options = ${spelling};`);
 	const aliasContent = aliasContentTypeExpr(node, nodeMap, kindEntries);
-	if (aliasContent !== undefined) lines.push(`  export type Types = ${aliasContent};`);
+	if (aliasContent !== undefined) lines.push(`  export type Types = SupertypeSurface<${aliasContent}, BoundByKindId>;`);
 	const surface = emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries })
 		? builtTypeSurfaceOf(node, nodeMap, kindEntries)
 		: undefined;

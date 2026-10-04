@@ -70,15 +70,15 @@ describe('_wrapArray builds a nested list envelope from an array (rule 4)', () =
 	});
 
 	it('recurses into the list target before wrapping the envelope, never collapsing to one element', () => {
-		expect(emitted).toContain('function _wrapArray<T>(kind: string, arr: readonly unknown[]): T {');
+		expect(emitted).toContain('function _wrapArray<T>(kind: string, arr: readonly unknown[]): Admit<T> {');
 		expect(emitted).toContain(
 			'if (_wrapDirectKinds.has(kind) && elementKind !== undefined && elementKind in _wrapKindIds) {'
 		);
-		expect(emitted).toContain('return _wrapWithChildren(kind, [_wrapArray(elementKind, arr)]) as T;');
+		expect(emitted).toContain('return _wrapWithChildren(kind, [_wrapArray(elementKind, arr)]) as Admit<T>;');
 	});
 
 	it('routes the single-kind array branch through _wrapArray, not an inline duplicate', () => {
-		expect(emitted).toContain('return _wrapArray(kind, v) as T;');
+		expect(emitted).toContain('return _wrapArray(kind, v) as Admit<T>;');
 		expect(emitted).not.toContain('const resolved = v.map(e => {');
 	});
 });

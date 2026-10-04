@@ -3,7 +3,15 @@
 import type * as T from '../types-internal.js';
 import { Delimiter } from '@sittir/common/utils';
 import { TSKindId } from '../types.js';
-import type { AdmitBound, ConfigOf, NonEmptyArray, NumericConfig, NumericLiteral, WidenNumeric } from '@sittir/types';
+import type {
+	Admit,
+	ListOptions,
+	ConfigOf,
+	NonEmptyArray,
+	NumericConfig,
+	NumericLiteral,
+	WidenNumeric
+} from '@sittir/types';
 import {
 	currentHandle,
 	listSlotWith,
@@ -103,9 +111,9 @@ export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.
 		_hash_bang_line,
 		_statements,
 		$with: {
-			hashBangLine: (value?: T.HashBangLine) =>
+			hashBangLine: (value?: Admit<T.HashBangLine>) =>
 				rebuilt(node, handle, () => buildProgram({ ...config, hashBangLine: value })),
-			statements: (...values: NonNullable<NonNullable<T.Program.Config>['statements']>[number][]) =>
+			statements: (...values: Admit<NonNullable<NonNullable<T.Program.Config>['statements']>[number][]>) =>
 				rebuilt(node, handle, () => buildProgram({ ...config, statements: restItems('statements', values) }))
 		},
 		hashBangLine: () => _hash_bang_line,
@@ -135,7 +143,7 @@ export function buildHashBangLine(input: string, affix: boolean = true): T.HashB
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: string) => rebuilt(node, handle, () => buildHashBangLine(value))
+			content: (value: Admit<string>) => rebuilt(node, handle, () => buildHashBangLine(value))
 		},
 		content: () => _content,
 		$render: () => renderText(handle, node),
@@ -148,9 +156,7 @@ export function buildHashBangLine(input: string, affix: boolean = true): T.HashB
 	return node as unknown as T.HashBangLine.Bound;
 }
 
-export function buildNamespaceExport(
-	value: AdmitBound<T.Identifier | T.String, T.AdmittedNodes>
-): T.NamespaceExport.Bound {
+export function buildNamespaceExport(value: Admit<T.Identifier | T.String>): T.NamespaceExport.Bound {
 	const _module_export_name = rejectBareText(value, 'NamespaceExport.moduleExportName', 'buildIdentifier(…)');
 	const handle = currentHandle();
 	const node = {
@@ -159,7 +165,8 @@ export function buildNamespaceExport(
 		$named: true as const,
 		_module_export_name,
 		$with: {
-			moduleExportName: (value: T.Identifier | T.String) => rebuilt(node, handle, () => buildNamespaceExport(value))
+			moduleExportName: (value: Admit<T.Identifier | T.String>) =>
+				rebuilt(node, handle, () => buildNamespaceExport(value))
 		},
 		moduleExportName: () => _module_export_name,
 		$render: () => renderText(handle, node),
@@ -173,19 +180,17 @@ export function buildNamespaceExport(
 }
 
 export function buildExportClause(): T.EmptyExportClause;
+export function buildExportClause(value?: Admit<T.ExportSpecifiers>): ReturnType<typeof _buildExportClause>;
 export function buildExportClause(
-	value?: AdmitBound<T.ExportSpecifiers, T.AdmittedNodes>
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String>>
 ): ReturnType<typeof _buildExportClause>;
 export function buildExportClause(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>>
-): ReturnType<typeof _buildExportClause>;
-export function buildExportClause(
-	...elements: NonEmptyArray<AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>>
+	...elements: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String>>
 ): ReturnType<typeof _buildExportClause>;
 export function buildExportClause(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildExportClause(args[0] as T.ExportSpecifiers);
+		return _buildExportClause(args[0] as Parameters<typeof _buildExportClause>[0]);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -193,10 +198,12 @@ export function buildExportClause(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.ExportSpecifiers as const);
 	return prebuilt
-		? _buildExportClause(args[0] as T.ExportSpecifiers)
-		: _buildExportClause((buildExportSpecifiers as (...a: unknown[]) => unknown)(...args) as T.ExportSpecifiers);
+		? _buildExportClause(args[0] as Parameters<typeof _buildExportClause>[0])
+		: _buildExportClause(
+				(buildExportSpecifiers as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildExportClause>[0]
+			);
 }
-function _buildExportClause(value?: AdmitBound<T.ExportSpecifiers, T.AdmittedNodes>): T.ExportClause.Bound {
+function _buildExportClause(value?: Admit<T.ExportSpecifiers>): T.ExportClause.Bound {
 	const _export_specifiers = rejectBareText(value, 'ExportClause.exportSpecifiers', 'a built ExportSpecifiers');
 	const listView = ownerView(_export_specifiers, '_item');
 	if (listView.stored === undefined) refuseReadStub('_export_specifiers');
@@ -217,7 +224,7 @@ function _buildExportClause(value?: AdmitBound<T.ExportSpecifiers, T.AdmittedNod
 					listSlotWith(
 						args,
 						{ kind: TSKindId.ExportSpecifiers as const, optional: true, make: buildExportSpecifiers },
-						(value?: T.ExportSpecifiers) => _buildExportClause(value)
+						(value?: Admit<T.ExportSpecifiers>) => _buildExportClause(value)
 					)
 				)
 		},
@@ -259,11 +266,11 @@ export function buildExportSpecifier(config: T.ExportSpecifier.Config): T.Export
 		_name,
 		_alias,
 		$with: {
-			exportKind: (value?: NonNullable<T.ExportSpecifier.Config>['exportKind']) =>
+			exportKind: (value?: Admit<NonNullable<T.ExportSpecifier.Config>['exportKind']>) =>
 				rebuilt(node, handle, () => buildExportSpecifier({ ...config, exportKind: value })),
-			name: (value: T.Identifier | T.String) =>
+			name: (value: Admit<T.Identifier | T.String>) =>
 				rebuilt(node, handle, () => buildExportSpecifier({ ...config, name: value })),
-			alias: (value?: T.Identifier | T.String) =>
+			alias: (value?: Admit<T.Identifier | T.String>) =>
 				rebuilt(node, handle, () => buildExportSpecifier({ ...config, alias: value }))
 		},
 		exportKind: () => _export_kind,
@@ -314,11 +321,11 @@ export function buildImportStatement(
 		_import_attribute,
 		_terminator,
 		$with: {
-			importClause: (value?: NonNullable<T.ImportStatement.Config>['importClause']) =>
+			importClause: (value?: Admit<NonNullable<T.ImportStatement.Config>['importClause']>) =>
 				rebuilt(node, handle, () => buildImportStatement({ ...config, importClause: value }, options)),
-			fromClause: (value: T.ImportStatementClauseFrom | T.ImportRequireClause | T.String) =>
+			fromClause: (value: Admit<T.ImportStatementClauseFrom | T.ImportRequireClause | T.String>) =>
 				rebuilt(node, handle, () => buildImportStatement({ ...config, fromClause: value }, options)),
-			importAttribute: (value?: T.ImportAttribute) =>
+			importAttribute: (value?: Admit<T.ImportAttribute>) =>
 				rebuilt(node, handle, () => buildImportStatement({ ...config, importAttribute: value }, options)),
 			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
 				rebuilt(node, handle, () => buildImportStatement(config, { ...options, terminator: spelling }))
@@ -338,7 +345,7 @@ export function buildImportStatement(
 }
 
 export function buildImportClause(
-	value: AdmitBound<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport, T.AdmittedNodes>
+	value: Admit<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>
 ): T.ImportClause.Bound {
 	const _content = rejectBareText(
 		value,
@@ -352,7 +359,7 @@ export function buildImportClause(
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport) =>
+			content: (value: Admit<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>) =>
 				rebuilt(node, handle, () => buildImportClause(value))
 		},
 		content: () => _content,
@@ -366,7 +373,7 @@ export function buildImportClause(
 	return node as unknown as T.ImportClause.Bound;
 }
 
-export function buildNamespaceImport(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T.NamespaceImport.Bound {
+export function buildNamespaceImport(value: Admit<T.Identifier>): T.NamespaceImport.Bound {
 	const _name = rejectBareText(value, 'NamespaceImport.name', 'buildIdentifier(…)');
 	const handle = currentHandle();
 	const node = {
@@ -375,7 +382,7 @@ export function buildNamespaceImport(value: AdmitBound<T.Identifier, T.AdmittedN
 		$named: true as const,
 		_name,
 		$with: {
-			name: (value: T.Identifier) => rebuilt(node, handle, () => buildNamespaceImport(value))
+			name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildNamespaceImport(value))
 		},
 		name: () => _name,
 		$render: () => renderText(handle, node),
@@ -389,19 +396,17 @@ export function buildNamespaceImport(value: AdmitBound<T.Identifier, T.AdmittedN
 }
 
 export function buildNamedImports(): T.EmptyNamedImports;
+export function buildNamedImports(value?: Admit<T.ImportSpecifiers>): ReturnType<typeof _buildNamedImports>;
 export function buildNamedImports(
-	value?: AdmitBound<T.ImportSpecifiers, T.AdmittedNodes>
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: NonEmptyArray<Admit<T.ImportSpecifier>>
 ): ReturnType<typeof _buildNamedImports>;
 export function buildNamedImports(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<AdmitBound<T.ImportSpecifier, T.AdmittedNodes>>
-): ReturnType<typeof _buildNamedImports>;
-export function buildNamedImports(
-	...elements: NonEmptyArray<AdmitBound<T.ImportSpecifier, T.AdmittedNodes>>
+	...elements: NonEmptyArray<Admit<T.ImportSpecifier>>
 ): ReturnType<typeof _buildNamedImports>;
 export function buildNamedImports(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildNamedImports(args[0] as T.ImportSpecifiers);
+		return _buildNamedImports(args[0] as Parameters<typeof _buildNamedImports>[0]);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -409,10 +414,12 @@ export function buildNamedImports(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.ImportSpecifiers as const);
 	return prebuilt
-		? _buildNamedImports(args[0] as T.ImportSpecifiers)
-		: _buildNamedImports((buildImportSpecifiers as (...a: unknown[]) => unknown)(...args) as T.ImportSpecifiers);
+		? _buildNamedImports(args[0] as Parameters<typeof _buildNamedImports>[0])
+		: _buildNamedImports(
+				(buildImportSpecifiers as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildNamedImports>[0]
+			);
 }
-function _buildNamedImports(value?: AdmitBound<T.ImportSpecifiers, T.AdmittedNodes>): T.NamedImports.Bound {
+function _buildNamedImports(value?: Admit<T.ImportSpecifiers>): T.NamedImports.Bound {
 	const _import_specifiers = rejectBareText(value, 'NamedImports.importSpecifiers', 'a built ImportSpecifiers');
 	const listView = ownerView(_import_specifiers, '_item');
 	if (listView.stored === undefined) refuseReadStub('_import_specifiers');
@@ -429,7 +436,7 @@ function _buildNamedImports(value?: AdmitBound<T.ImportSpecifiers, T.AdmittedNod
 					listSlotWith(
 						args,
 						{ kind: TSKindId.ImportSpecifiers as const, optional: true, make: buildImportSpecifiers },
-						(value?: T.ImportSpecifiers) => _buildNamedImports(value)
+						(value?: Admit<T.ImportSpecifiers>) => _buildNamedImports(value)
 					)
 				)
 		},
@@ -473,9 +480,10 @@ export function buildImportAttribute(config: T.ImportAttribute.Config): T.Import
 		_attribute_kind,
 		_object,
 		$with: {
-			attributeKind: (value: NonNullable<T.ImportAttribute.Config>['attributeKind']) =>
+			attributeKind: (value: Admit<NonNullable<T.ImportAttribute.Config>['attributeKind']>) =>
 				rebuilt(node, handle, () => buildImportAttribute({ ...config, attributeKind: value })),
-			object: (value: T.Object) => rebuilt(node, handle, () => buildImportAttribute({ ...config, object: value }))
+			object: (value: Admit<T.Object>) =>
+				rebuilt(node, handle, () => buildImportAttribute({ ...config, object: value }))
 		},
 		attributeKind: () => _attribute_kind,
 		object: () => _object,
@@ -490,7 +498,7 @@ export function buildImportAttribute(config: T.ImportAttribute.Config): T.Import
 }
 
 export function buildExpressionStatement(
-	value: AdmitBound<T.Expression | T.SequenceExpression, T.AdmittedNodes>,
+	value: Admit<T.Expression | T.SequenceExpression>,
 	options?: T.ExpressionStatement.Options
 ): T.ExpressionStatement.Bound {
 	const _expression = rejectBareText(
@@ -510,7 +518,7 @@ export function buildExpressionStatement(
 		_expression,
 		_terminator,
 		$with: {
-			expression: (value: NonNullable<T.Expression | T.SequenceExpression>) =>
+			expression: (value: Admit<NonNullable<T.Expression | T.SequenceExpression>>) =>
 				rebuilt(node, handle, () => buildExpressionStatement(value, options)),
 			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
 				rebuilt(node, handle, () => buildExpressionStatement(value, { ...options, terminator: spelling }))
@@ -548,7 +556,7 @@ export function buildVariableDeclaration(
 		_declarators,
 		_terminator,
 		$with: {
-			declarators: (...values: NonEmptyArray<T.VariableDeclarator>) =>
+			declarators: (...values: Admit<NonEmptyArray<T.VariableDeclarator>>) =>
 				rebuilt(node, handle, () =>
 					buildVariableDeclaration({ ...config, declarators: restItems('declarators', values) }, options)
 				),
@@ -594,9 +602,9 @@ export function buildLexicalDeclaration(
 		_declarators,
 		_terminator,
 		$with: {
-			kind: (value: NonNullable<T.LexicalDeclaration.Config>['kind']) =>
+			kind: (value: Admit<NonNullable<T.LexicalDeclaration.Config>['kind']>) =>
 				rebuilt(node, handle, () => buildLexicalDeclaration({ ...config, kind: value }, options)),
-			declarators: (...values: NonEmptyArray<T.VariableDeclarator>) =>
+			declarators: (...values: Admit<NonEmptyArray<T.VariableDeclarator>>) =>
 				rebuilt(node, handle, () =>
 					buildLexicalDeclaration({ ...config, declarators: restItems('declarators', values) }, options)
 				),
@@ -635,9 +643,9 @@ export function buildStatementBlock(config: Partial<T.StatementBlock.Config> = {
 		_statements,
 		_automatic_semicolon,
 		$with: {
-			statements: (...values: NonNullable<NonNullable<T.StatementBlock.Config>['statements']>[number][]) =>
+			statements: (...values: Admit<NonNullable<NonNullable<T.StatementBlock.Config>['statements']>[number][]>) =>
 				rebuilt(node, handle, () => buildStatementBlock({ ...config, statements: restItems('statements', values) })),
-			automaticSemicolon: (value?: NonNullable<T.StatementBlock.Config>['automaticSemicolon']) =>
+			automaticSemicolon: (value?: Admit<NonNullable<T.StatementBlock.Config>['automaticSemicolon']>) =>
 				rebuilt(node, handle, () => buildStatementBlock({ ...config, automaticSemicolon: value }))
 		},
 		statements: () => _statements,
@@ -653,7 +661,7 @@ export function buildStatementBlock(config: Partial<T.StatementBlock.Config> = {
 	return node as unknown as T.StatementBlock.Bound;
 }
 
-export function buildElseClause(value: AdmitBound<T.Statement, T.AdmittedNodes>): T.ElseClause.Bound {
+export function buildElseClause(value: Admit<T.Statement>): T.ElseClause.Bound {
 	const _body = rejectBareText(
 		kindIdStorage<NonNullable<T.ElseClause['_body']>>(value),
 		'ElseClause.body',
@@ -666,7 +674,7 @@ export function buildElseClause(value: AdmitBound<T.Statement, T.AdmittedNodes>)
 		$named: true as const,
 		_body,
 		$with: {
-			body: (value: NonNullable<T.Statement>) => rebuilt(node, handle, () => buildElseClause(value))
+			body: (value: Admit<NonNullable<T.Statement>>) => rebuilt(node, handle, () => buildElseClause(value))
 		},
 		body: () => _body,
 		$render: () => renderText(handle, node),
@@ -696,11 +704,11 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bo
 		_consequence,
 		_alternative,
 		$with: {
-			condition: (value: T.ParenthesizedExpression) =>
+			condition: (value: Admit<T.ParenthesizedExpression>) =>
 				rebuilt(node, handle, () => buildIfStatement({ ...config, condition: value })),
-			consequence: (value: NonNullable<T.IfStatement.Config>['consequence']) =>
+			consequence: (value: Admit<NonNullable<T.IfStatement.Config>['consequence']>) =>
 				rebuilt(node, handle, () => buildIfStatement({ ...config, consequence: value })),
-			alternative: (value?: T.ElseClause) =>
+			alternative: (value?: Admit<T.ElseClause>) =>
 				rebuilt(node, handle, () => buildIfStatement({ ...config, alternative: value }))
 		},
 		condition: () => _condition,
@@ -731,9 +739,10 @@ export function buildSwitchStatement(config: T.SwitchStatement.Config): T.Switch
 		_value,
 		_body,
 		$with: {
-			value: (value: T.ParenthesizedExpression) =>
+			value: (value: Admit<T.ParenthesizedExpression>) =>
 				rebuilt(node, handle, () => buildSwitchStatement({ ...config, value: value })),
-			body: (value: T.SwitchBody) => rebuilt(node, handle, () => buildSwitchStatement({ ...config, body: value }))
+			body: (value: Admit<T.SwitchBody>) =>
+				rebuilt(node, handle, () => buildSwitchStatement({ ...config, body: value }))
 		},
 		value: () => _value,
 		body: () => _body,
@@ -778,13 +787,13 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 		_increment,
 		_body,
 		$with: {
-			initializer: (value: NonNullable<T.ForStatement.Config>['initializer']) =>
+			initializer: (value: Admit<NonNullable<T.ForStatement.Config>['initializer']>) =>
 				rebuilt(node, handle, () => buildForStatement({ ...config, initializer: value })),
-			condition: (value: NonNullable<T.ForStatement.Config>['condition']) =>
+			condition: (value: Admit<NonNullable<T.ForStatement.Config>['condition']>) =>
 				rebuilt(node, handle, () => buildForStatement({ ...config, condition: value })),
-			increment: (value?: NonNullable<T.ForStatement.Config>['increment']) =>
+			increment: (value?: Admit<NonNullable<T.ForStatement.Config>['increment']>) =>
 				rebuilt(node, handle, () => buildForStatement({ ...config, increment: value })),
-			body: (value: NonNullable<T.ForStatement.Config>['body']) =>
+			body: (value: Admit<NonNullable<T.ForStatement.Config>['body']>) =>
 				rebuilt(node, handle, () => buildForStatement({ ...config, body: value }))
 		},
 		initializer: () => _initializer,
@@ -818,11 +827,11 @@ export function buildForInStatement(config: T.ForInStatement.Config): T.ForInSta
 		_for_header,
 		_body,
 		$with: {
-			await: (value?: NonNullable<T.ForInStatement.Config>['await']) =>
+			await: (value?: Admit<NonNullable<T.ForInStatement.Config>['await']>) =>
 				rebuilt(node, handle, () => buildForInStatement({ ...config, await: value })),
-			forHeader: (value: T.ForHeader) =>
+			forHeader: (value: Admit<T.ForHeader>) =>
 				rebuilt(node, handle, () => buildForInStatement({ ...config, forHeader: value })),
-			body: (value: NonNullable<T.ForInStatement.Config>['body']) =>
+			body: (value: Admit<NonNullable<T.ForInStatement.Config>['body']>) =>
 				rebuilt(node, handle, () => buildForInStatement({ ...config, body: value }))
 		},
 		await: () => _await,
@@ -853,9 +862,9 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 		_condition,
 		_body,
 		$with: {
-			condition: (value: T.ParenthesizedExpression) =>
+			condition: (value: Admit<T.ParenthesizedExpression>) =>
 				rebuilt(node, handle, () => buildWhileStatement({ ...config, condition: value })),
-			body: (value: NonNullable<T.WhileStatement.Config>['body']) =>
+			body: (value: Admit<NonNullable<T.WhileStatement.Config>['body']>) =>
 				rebuilt(node, handle, () => buildWhileStatement({ ...config, body: value }))
 		},
 		condition: () => _condition,
@@ -890,9 +899,9 @@ export function buildDoStatement(config: T.DoStatement.Config, options?: T.DoSta
 		_condition,
 		_terminator,
 		$with: {
-			body: (value: NonNullable<T.DoStatement.Config>['body']) =>
+			body: (value: Admit<NonNullable<T.DoStatement.Config>['body']>) =>
 				rebuilt(node, handle, () => buildDoStatement({ ...config, body: value }, options)),
-			condition: (value: T.ParenthesizedExpression) =>
+			condition: (value: Admit<T.ParenthesizedExpression>) =>
 				rebuilt(node, handle, () => buildDoStatement({ ...config, condition: value }, options)),
 			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
 				rebuilt(node, handle, () => buildDoStatement(config, { ...options, terminator: spelling }))
@@ -927,9 +936,11 @@ export function buildTryStatement(config: Partial<T.TryStatement.Config> = {}): 
 		_handler,
 		_finalizer,
 		$with: {
-			body: (value: T.StatementBlock) => rebuilt(node, handle, () => buildTryStatement({ ...config, body: value })),
-			handler: (value?: T.CatchClause) => rebuilt(node, handle, () => buildTryStatement({ ...config, handler: value })),
-			finalizer: (value?: T.FinallyClause) =>
+			body: (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildTryStatement({ ...config, body: value })),
+			handler: (value?: Admit<T.CatchClause>) =>
+				rebuilt(node, handle, () => buildTryStatement({ ...config, handler: value })),
+			finalizer: (value?: Admit<T.FinallyClause>) =>
 				rebuilt(node, handle, () => buildTryStatement({ ...config, finalizer: value }))
 		},
 		body: () => _body,
@@ -960,9 +971,9 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 		_object,
 		_body,
 		$with: {
-			object: (value: T.ParenthesizedExpression) =>
+			object: (value: Admit<T.ParenthesizedExpression>) =>
 				rebuilt(node, handle, () => buildWithStatement({ ...config, object: value })),
-			body: (value: NonNullable<T.WithStatement.Config>['body']) =>
+			body: (value: Admit<NonNullable<T.WithStatement.Config>['body']>) =>
 				rebuilt(node, handle, () => buildWithStatement({ ...config, body: value }))
 		},
 		object: () => _object,
@@ -978,11 +989,11 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 }
 
 export function buildBreakStatement(
-	value?: AdmitBound<T.StatementIdentifier | T.StatementIdentifier.Types, T.AdmittedNodes>,
+	value?: Admit<T.StatementIdentifier | T.StatementIdentifier.Types>,
 	options?: T.BreakStatement.Options
 ): ReturnType<typeof _buildBreakStatement>;
 export function buildBreakStatement(
-	value: AdmitBound<
+	value: Admit<
 		| T.Identifier
 		| TSKindId.DeclareKeyword
 		| TSKindId.NamespaceKeyword
@@ -1005,32 +1016,28 @@ export function buildBreakStatement(
 		| TSKindId.SetKeyword
 		| TSKindId.AsyncKeyword
 		| TSKindId.StaticKeyword
-		| TSKindId.LetKeyword,
-		T.AdmittedNodes
+		| TSKindId.LetKeyword
 	>
 ): ReturnType<typeof _buildBreakStatement>;
 export function buildBreakStatement(...args: unknown[]) {
 	if (args[0] === undefined) {
-		return _buildBreakStatement(
-			args[0] as unknown as T.StatementIdentifier | T.StatementIdentifier.Types,
-			args[1] as never
-		);
+		return _buildBreakStatement(args[0] as unknown as Parameters<typeof _buildBreakStatement>[0], args[1] as never);
 	}
 	const prebuilt =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.StatementIdentifier as const);
 	return prebuilt
-		? _buildBreakStatement(args[0] as T.StatementIdentifier | T.StatementIdentifier.Types, args[1] as never)
+		? _buildBreakStatement(args[0] as Parameters<typeof _buildBreakStatement>[0], args[1] as never)
 		: _buildBreakStatement(
-				(buildStatementIdentifier as (...a: unknown[]) => unknown)(args[0]) as
-					| T.StatementIdentifier
-					| T.StatementIdentifier.Types,
+				(buildStatementIdentifier as (...a: unknown[]) => unknown)(args[0]) as Parameters<
+					typeof _buildBreakStatement
+				>[0],
 				args[1] as never
 			);
 }
 function _buildBreakStatement(
-	value?: AdmitBound<T.StatementIdentifier | T.StatementIdentifier.Types, T.AdmittedNodes>,
+	value?: Admit<T.StatementIdentifier | T.StatementIdentifier.Types>,
 	options?: T.BreakStatement.Options
 ): T.BreakStatement.Bound {
 	const _label = admitAliasContent<NonNullable<T.BreakStatement['_label']>>(
@@ -1054,7 +1061,7 @@ function _buildBreakStatement(
 		_label,
 		_terminator,
 		$with: {
-			label: (value?: T.StatementIdentifier | T.StatementIdentifier.Types) =>
+			label: (value?: Admit<T.StatementIdentifier | T.StatementIdentifier.Types>) =>
 				rebuilt(node, handle, () => _buildBreakStatement(value, options)),
 			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
 				rebuilt(node, handle, () => _buildBreakStatement(value, { ...options, terminator: spelling }))
@@ -1072,11 +1079,11 @@ function _buildBreakStatement(
 }
 
 export function buildContinueStatement(
-	value?: AdmitBound<T.StatementIdentifier | T.StatementIdentifier.Types, T.AdmittedNodes>,
+	value?: Admit<T.StatementIdentifier | T.StatementIdentifier.Types>,
 	options?: T.ContinueStatement.Options
 ): ReturnType<typeof _buildContinueStatement>;
 export function buildContinueStatement(
-	value: AdmitBound<
+	value: Admit<
 		| T.Identifier
 		| TSKindId.DeclareKeyword
 		| TSKindId.NamespaceKeyword
@@ -1099,14 +1106,13 @@ export function buildContinueStatement(
 		| TSKindId.SetKeyword
 		| TSKindId.AsyncKeyword
 		| TSKindId.StaticKeyword
-		| TSKindId.LetKeyword,
-		T.AdmittedNodes
+		| TSKindId.LetKeyword
 	>
 ): ReturnType<typeof _buildContinueStatement>;
 export function buildContinueStatement(...args: unknown[]) {
 	if (args[0] === undefined) {
 		return _buildContinueStatement(
-			args[0] as unknown as T.StatementIdentifier | T.StatementIdentifier.Types,
+			args[0] as unknown as Parameters<typeof _buildContinueStatement>[0],
 			args[1] as never
 		);
 	}
@@ -1115,16 +1121,16 @@ export function buildContinueStatement(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.StatementIdentifier as const);
 	return prebuilt
-		? _buildContinueStatement(args[0] as T.StatementIdentifier | T.StatementIdentifier.Types, args[1] as never)
+		? _buildContinueStatement(args[0] as Parameters<typeof _buildContinueStatement>[0], args[1] as never)
 		: _buildContinueStatement(
-				(buildStatementIdentifier as (...a: unknown[]) => unknown)(args[0]) as
-					| T.StatementIdentifier
-					| T.StatementIdentifier.Types,
+				(buildStatementIdentifier as (...a: unknown[]) => unknown)(args[0]) as Parameters<
+					typeof _buildContinueStatement
+				>[0],
 				args[1] as never
 			);
 }
 function _buildContinueStatement(
-	value?: AdmitBound<T.StatementIdentifier | T.StatementIdentifier.Types, T.AdmittedNodes>,
+	value?: Admit<T.StatementIdentifier | T.StatementIdentifier.Types>,
 	options?: T.ContinueStatement.Options
 ): T.ContinueStatement.Bound {
 	const _label = admitAliasContent<NonNullable<T.ContinueStatement['_label']>>(
@@ -1148,7 +1154,7 @@ function _buildContinueStatement(
 		_label,
 		_terminator,
 		$with: {
-			label: (value?: T.StatementIdentifier | T.StatementIdentifier.Types) =>
+			label: (value?: Admit<T.StatementIdentifier | T.StatementIdentifier.Types>) =>
 				rebuilt(node, handle, () => _buildContinueStatement(value, options)),
 			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
 				rebuilt(node, handle, () => _buildContinueStatement(value, { ...options, terminator: spelling }))
@@ -1166,7 +1172,7 @@ function _buildContinueStatement(
 }
 
 export function buildDebuggerStatement(
-	value: AdmitBound<TSKindId.AutomaticSemicolon | TSKindId.Semi, T.AdmittedNodes>
+	value: Admit<TSKindId.AutomaticSemicolon | TSKindId.Semi>
 ): T.DebuggerStatement.Bound {
 	const _terminator = rejectBareText(
 		kindIdStorage<NonNullable<T.DebuggerStatement['_terminator']>>(value),
@@ -1180,7 +1186,7 @@ export function buildDebuggerStatement(
 		$named: true as const,
 		_terminator,
 		$with: {
-			terminator: (value: NonNullable<TSKindId.AutomaticSemicolon | TSKindId.Semi>) =>
+			terminator: (value: Admit<NonNullable<TSKindId.AutomaticSemicolon | TSKindId.Semi>>) =>
 				rebuilt(node, handle, () => buildDebuggerStatement(value))
 		},
 		terminator: () => _terminator,
@@ -1195,7 +1201,7 @@ export function buildDebuggerStatement(
 }
 
 export function buildReturnStatement(
-	value?: AdmitBound<T.Expression | T.SequenceExpression, T.AdmittedNodes>,
+	value?: Admit<T.Expression | T.SequenceExpression>,
 	options?: T.ReturnStatement.Options
 ): T.ReturnStatement.Bound {
 	const _expression = rejectBareText(
@@ -1215,7 +1221,7 @@ export function buildReturnStatement(
 		_expression,
 		_terminator,
 		$with: {
-			expression: (value?: NonNullable<T.Expression | T.SequenceExpression>) =>
+			expression: (value?: Admit<NonNullable<T.Expression | T.SequenceExpression>>) =>
 				rebuilt(node, handle, () => buildReturnStatement(value, options)),
 			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
 				rebuilt(node, handle, () => buildReturnStatement(value, { ...options, terminator: spelling }))
@@ -1233,7 +1239,7 @@ export function buildReturnStatement(
 }
 
 export function buildThrowStatement(
-	value: AdmitBound<T.Expression | T.SequenceExpression, T.AdmittedNodes>,
+	value: Admit<T.Expression | T.SequenceExpression>,
 	options?: T.ThrowStatement.Options
 ): T.ThrowStatement.Bound {
 	const _expression = rejectBareText(
@@ -1253,7 +1259,7 @@ export function buildThrowStatement(
 		_expression,
 		_terminator,
 		$with: {
-			expression: (value: NonNullable<T.Expression | T.SequenceExpression>) =>
+			expression: (value: Admit<NonNullable<T.Expression | T.SequenceExpression>>) =>
 				rebuilt(node, handle, () => buildThrowStatement(value, options)),
 			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
 				rebuilt(node, handle, () => buildThrowStatement(value, { ...options, terminator: spelling }))
@@ -1294,9 +1300,9 @@ export function buildLabeledStatement(config: T.LabeledStatement.Config): T.Labe
 		_label,
 		_body,
 		$with: {
-			label: (value: NonNullable<T.LabeledStatement.Config>['label']) =>
+			label: (value: Admit<NonNullable<T.LabeledStatement.Config>['label']>) =>
 				rebuilt(node, handle, () => buildLabeledStatement({ ...config, label: value })),
-			body: (value: NonNullable<T.LabeledStatement.Config>['body']) =>
+			body: (value: Admit<NonNullable<T.LabeledStatement.Config>['body']>) =>
 				rebuilt(node, handle, () => buildLabeledStatement({ ...config, body: value }))
 		},
 		label: () => _label,
@@ -1312,12 +1318,8 @@ export function buildLabeledStatement(config: T.LabeledStatement.Config): T.Labe
 }
 
 export function buildSwitchBody(): T.EmptySwitchBody;
-export function buildSwitchBody(
-	...children: AdmitBound<(T.SwitchCase | T.SwitchDefault)[], T.AdmittedNodes>
-): T.SwitchBody.Bound;
-export function buildSwitchBody(
-	...children: AdmitBound<(T.SwitchCase | T.SwitchDefault)[], T.AdmittedNodes>
-): T.SwitchBody.Bound {
+export function buildSwitchBody(...children: Admit<(T.SwitchCase | T.SwitchDefault)[]>): T.SwitchBody.Bound;
+export function buildSwitchBody(...children: Admit<(T.SwitchCase | T.SwitchDefault)[]>): T.SwitchBody.Bound {
 	const _cases = rejectBareText(children, 'SwitchBody.cases', 'a built SwitchCase / SwitchDefault');
 	const handle = currentHandle();
 	const node = {
@@ -1326,7 +1328,7 @@ export function buildSwitchBody(
 		$named: true as const,
 		_cases,
 		$with: {
-			cases: (...vs: (T.SwitchCase | T.SwitchDefault)[]) =>
+			cases: (...vs: Admit<T.SwitchCase | T.SwitchDefault>[]) =>
 				rebuilt(node, handle, () => buildSwitchBody(...restItems('cases', vs)))
 		},
 		cases: () => _cases,
@@ -1360,9 +1362,9 @@ export function buildSwitchCase(config: T.SwitchCase.Config): T.SwitchCase.Bound
 		_value,
 		_body,
 		$with: {
-			value: (value: NonNullable<T.SwitchCase.Config>['value']) =>
+			value: (value: Admit<NonNullable<T.SwitchCase.Config>['value']>) =>
 				rebuilt(node, handle, () => buildSwitchCase({ ...config, value: value })),
-			bodies: (...values: NonNullable<NonNullable<T.SwitchCase.Config>['body']>[number][]) =>
+			bodies: (...values: Admit<NonNullable<NonNullable<T.SwitchCase.Config>['body']>[number][]>) =>
 				rebuilt(node, handle, () => buildSwitchCase({ ...config, body: restItems('bodies', values) }))
 		},
 		value: () => _value,
@@ -1377,7 +1379,7 @@ export function buildSwitchCase(config: T.SwitchCase.Config): T.SwitchCase.Bound
 	return node as unknown as T.SwitchCase.Bound;
 }
 
-export function buildSwitchDefault(...children: AdmitBound<T.Statement[], T.AdmittedNodes>): T.SwitchDefault.Bound {
+export function buildSwitchDefault(...children: Admit<T.Statement[]>): T.SwitchDefault.Bound {
 	const _body = rejectBareText(children, 'SwitchDefault.body', 'a built Statement');
 	const handle = currentHandle();
 	const node = {
@@ -1386,7 +1388,8 @@ export function buildSwitchDefault(...children: AdmitBound<T.Statement[], T.Admi
 		$named: true as const,
 		_body,
 		$with: {
-			bodies: (...vs: T.Statement[]) => rebuilt(node, handle, () => buildSwitchDefault(...restItems('bodies', vs)))
+			bodies: (...vs: Admit<T.Statement>[]) =>
+				rebuilt(node, handle, () => buildSwitchDefault(...restItems('bodies', vs)))
 		},
 		bodies: () => _body,
 		$render: () => renderText(handle, node),
@@ -1419,9 +1422,10 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 		_catch_clause_group,
 		_body,
 		$with: {
-			catchClauseGroup: (value?: T.CatchClauseGroup) =>
+			catchClauseGroup: (value?: Admit<T.CatchClauseGroup>) =>
 				rebuilt(node, handle, () => buildCatchClause({ ...config, catchClauseGroup: value })),
-			body: (value: T.StatementBlock) => rebuilt(node, handle, () => buildCatchClause({ ...config, body: value })),
+			body: (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildCatchClause({ ...config, body: value })),
 			parameter: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
@@ -1437,7 +1441,7 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 						},
 						'parameter',
 						args,
-						(value?: T.CatchClauseGroup) => buildCatchClause({ ...config, catchClauseGroup: value }),
+						(value?: Admit<T.CatchClauseGroup>) => buildCatchClause({ ...config, catchClauseGroup: value }),
 						() => readGroup_catchClauseGroup.call(node)
 					)
 				),
@@ -1456,7 +1460,7 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 						},
 						'type',
 						args,
-						(value?: T.CatchClauseGroup) => buildCatchClause({ ...config, catchClauseGroup: value }),
+						(value?: Admit<T.CatchClauseGroup>) => buildCatchClause({ ...config, catchClauseGroup: value }),
 						() => readGroup_catchClauseGroup.call(node)
 					)
 				)
@@ -1480,16 +1484,14 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 	return node as unknown as T.CatchClause.Bound;
 }
 
-export function buildFinallyClause(
-	value: AdmitBound<T.StatementBlock, T.AdmittedNodes>
-): ReturnType<typeof _buildFinallyClause>;
+export function buildFinallyClause(value: Admit<T.StatementBlock>): ReturnType<typeof _buildFinallyClause>;
 export function buildFinallyClause(_config?: Partial<T.StatementBlock.Config>): ReturnType<typeof _buildFinallyClause>;
 export function buildFinallyClause(...args: unknown[]) {
 	if (args.length === 0) {
-		return _buildFinallyClause(buildStatementBlock() as T.StatementBlock);
+		return _buildFinallyClause(buildStatementBlock() as Parameters<typeof _buildFinallyClause>[0]);
 	}
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildFinallyClause(args[0] as T.StatementBlock);
+		return _buildFinallyClause(args[0] as Parameters<typeof _buildFinallyClause>[0]);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -1497,10 +1499,12 @@ export function buildFinallyClause(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.StatementBlock as const);
 	return prebuilt
-		? _buildFinallyClause(args[0] as T.StatementBlock)
-		: _buildFinallyClause((buildStatementBlock as (...a: unknown[]) => unknown)(...args) as T.StatementBlock);
+		? _buildFinallyClause(args[0] as Parameters<typeof _buildFinallyClause>[0])
+		: _buildFinallyClause(
+				(buildStatementBlock as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildFinallyClause>[0]
+			);
 }
-function _buildFinallyClause(value: AdmitBound<T.StatementBlock, T.AdmittedNodes>): T.FinallyClause.Bound {
+function _buildFinallyClause(value: Admit<T.StatementBlock>): T.FinallyClause.Bound {
 	const _body = rejectBareText(value, 'FinallyClause.body', 'a built StatementBlock');
 	const handle = currentHandle();
 	const node = {
@@ -1509,7 +1513,7 @@ function _buildFinallyClause(value: AdmitBound<T.StatementBlock, T.AdmittedNodes
 		$named: true as const,
 		_body,
 		$with: {
-			body: (value: T.StatementBlock) => rebuilt(node, handle, () => _buildFinallyClause(value))
+			body: (value: Admit<T.StatementBlock>) => rebuilt(node, handle, () => _buildFinallyClause(value))
 		},
 		body: () => _body,
 		$render: () => renderText(handle, node),
@@ -1522,9 +1526,7 @@ function _buildFinallyClause(value: AdmitBound<T.StatementBlock, T.AdmittedNodes
 	return node as unknown as T.FinallyClause.Bound;
 }
 
-export function buildYieldExpression(
-	value?: AdmitBound<T.YieldExpressionDelegate | T.Expression, T.AdmittedNodes>
-): T.YieldExpression.Bound {
+export function buildYieldExpression(value?: Admit<T.YieldExpressionDelegate | T.Expression>): T.YieldExpression.Bound {
 	const _expression = rejectBareText(
 		kindIdStorage<NonNullable<T.YieldExpression['_expression']>>(value),
 		'YieldExpression.expression',
@@ -1537,7 +1539,7 @@ export function buildYieldExpression(
 		$named: true as const,
 		_expression,
 		$with: {
-			expression: (value?: NonNullable<T.YieldExpressionDelegate | T.Expression>) =>
+			expression: (value?: Admit<NonNullable<T.YieldExpressionDelegate | T.Expression>>) =>
 				rebuilt(node, handle, () => buildYieldExpression(value))
 		},
 		expression: () => _expression,
@@ -1553,7 +1555,7 @@ export function buildYieldExpression(
 
 export function buildObject(): T.EmptyObject;
 export function buildObject(
-	...children: AdmitBound<
+	...children: Admit<
 		(
 			| (
 					| T.Pair
@@ -1584,12 +1586,11 @@ export function buildObject(
 					| TSKindId.LetKeyword
 			  )
 			| T.ShorthandPropertyIdentifier.Types
-		)[],
-		T.AdmittedNodes
+		)[]
 	>
 ): T.Object.Bound;
 export function buildObject(
-	...children: AdmitBound<
+	...children: Admit<
 		(
 			| (
 					| T.Pair
@@ -1620,8 +1621,7 @@ export function buildObject(
 					| TSKindId.LetKeyword
 			  )
 			| T.ShorthandPropertyIdentifier.Types
-		)[],
-		T.AdmittedNodes
+		)[]
 	>
 ): T.Object.Bound {
 	const _properties = admitAliasContent<NonNullable<T.Object['_properties']>>(
@@ -1640,7 +1640,7 @@ export function buildObject(
 		_properties,
 		$with: {
 			properties: (
-				...vs: (
+				...vs: Admit<
 					| (
 							| T.Pair
 							| T.SpreadElement
@@ -1670,7 +1670,7 @@ export function buildObject(
 							| TSKindId.LetKeyword
 					  )
 					| T.ShorthandPropertyIdentifier.Types
-				)[]
+				>[]
 			) => rebuilt(node, handle, () => buildObject(...restItems('properties', vs)))
 		},
 		properties: () => _properties,
@@ -1687,7 +1687,7 @@ export function buildObject(
 
 export function buildObjectPattern(): T.EmptyObjectPattern;
 export function buildObjectPattern(
-	...children: AdmitBound<
+	...children: Admit<
 		(
 			| (
 					| T.PairPattern
@@ -1718,12 +1718,11 @@ export function buildObjectPattern(
 					| TSKindId.LetKeyword
 			  )
 			| T.ShorthandPropertyIdentifierPattern.Types
-		)[],
-		T.AdmittedNodes
+		)[]
 	>
 ): T.ObjectPattern.Bound;
 export function buildObjectPattern(
-	...children: AdmitBound<
+	...children: Admit<
 		(
 			| (
 					| T.PairPattern
@@ -1754,8 +1753,7 @@ export function buildObjectPattern(
 					| TSKindId.LetKeyword
 			  )
 			| T.ShorthandPropertyIdentifierPattern.Types
-		)[],
-		T.AdmittedNodes
+		)[]
 	>
 ): T.ObjectPattern.Bound {
 	const _properties = admitAliasContent<NonNullable<T.ObjectPattern['_properties']>>(
@@ -1774,7 +1772,7 @@ export function buildObjectPattern(
 		_properties,
 		$with: {
 			properties: (
-				...vs: (
+				...vs: Admit<
 					| (
 							| T.PairPattern
 							| T.RestPattern
@@ -1804,7 +1802,7 @@ export function buildObjectPattern(
 							| TSKindId.LetKeyword
 					  )
 					| T.ShorthandPropertyIdentifierPattern.Types
-				)[]
+				>[]
 			) => rebuilt(node, handle, () => buildObjectPattern(...restItems('properties', vs)))
 		},
 		properties: () => _properties,
@@ -1834,8 +1832,9 @@ export function buildAssignmentPattern(config: T.AssignmentPattern.Config): T.As
 		_left,
 		_right,
 		$with: {
-			left: (value: T.Pattern) => rebuilt(node, handle, () => buildAssignmentPattern({ ...config, left: value })),
-			right: (value: NonNullable<T.AssignmentPattern.Config>['right']) =>
+			left: (value: Admit<T.Pattern>) =>
+				rebuilt(node, handle, () => buildAssignmentPattern({ ...config, left: value })),
+			right: (value: Admit<NonNullable<T.AssignmentPattern.Config>['right']>) =>
 				rebuilt(node, handle, () => buildAssignmentPattern({ ...config, right: value }))
 		},
 		left: () => _left,
@@ -1874,9 +1873,9 @@ export function buildObjectAssignmentPattern(
 		_left,
 		_right,
 		$with: {
-			left: (value: NonNullable<T.ObjectAssignmentPattern.Config>['left']) =>
+			left: (value: Admit<NonNullable<T.ObjectAssignmentPattern.Config>['left']>) =>
 				rebuilt(node, handle, () => buildObjectAssignmentPattern({ ...config, left: value })),
-			right: (value: NonNullable<T.ObjectAssignmentPattern.Config>['right']) =>
+			right: (value: Admit<NonNullable<T.ObjectAssignmentPattern.Config>['right']>) =>
 				rebuilt(node, handle, () => buildObjectAssignmentPattern({ ...config, right: value }))
 		},
 		left: () => _left,
@@ -1892,10 +1891,8 @@ export function buildObjectAssignmentPattern(
 }
 
 export function buildArray(): T.EmptyArray;
-export function buildArray(...children: AdmitBound<(T.Expression | T.SpreadElement)[], T.AdmittedNodes>): T.Array.Bound;
-export function buildArray(
-	...children: AdmitBound<(T.Expression | T.SpreadElement)[], T.AdmittedNodes>
-): T.Array.Bound {
+export function buildArray(...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Array.Bound;
+export function buildArray(...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Array.Bound {
 	const _elements = rejectBareText(children, 'Array.elements', 'a built Expression / SpreadElement');
 	const handle = currentHandle();
 	const node = {
@@ -1904,7 +1901,7 @@ export function buildArray(
 		$named: true as const,
 		_elements,
 		$with: {
-			elements: (...vs: (T.Expression | T.SpreadElement)[]) =>
+			elements: (...vs: Admit<T.Expression | T.SpreadElement>[]) =>
 				rebuilt(node, handle, () => buildArray(...restItems('elements', vs)))
 		},
 		elements: () => _elements,
@@ -1920,12 +1917,8 @@ export function buildArray(
 }
 
 export function buildArrayPattern(): T.EmptyArrayPattern;
-export function buildArrayPattern(
-	...children: AdmitBound<(T.Pattern | T.AssignmentPattern)[], T.AdmittedNodes>
-): T.ArrayPattern.Bound;
-export function buildArrayPattern(
-	...children: AdmitBound<(T.Pattern | T.AssignmentPattern)[], T.AdmittedNodes>
-): T.ArrayPattern.Bound {
+export function buildArrayPattern(...children: Admit<(T.Pattern | T.AssignmentPattern)[]>): T.ArrayPattern.Bound;
+export function buildArrayPattern(...children: Admit<(T.Pattern | T.AssignmentPattern)[]>): T.ArrayPattern.Bound {
 	const _elements = rejectBareText(children, 'ArrayPattern.elements', 'a built Pattern / AssignmentPattern');
 	const handle = currentHandle();
 	const node = {
@@ -1934,7 +1927,7 @@ export function buildArrayPattern(
 		$named: true as const,
 		_elements,
 		$with: {
-			elements: (...vs: (T.Pattern | T.AssignmentPattern)[]) =>
+			elements: (...vs: Admit<T.Pattern | T.AssignmentPattern>[]) =>
 				rebuilt(node, handle, () => buildArrayPattern(...restItems('elements', vs)))
 		},
 		elements: () => _elements,
@@ -1968,9 +1961,9 @@ export function buildNestedIdentifier(config: T.NestedIdentifier.Config): T.Nest
 		_object,
 		_property,
 		$with: {
-			object: (value: T.Identifier | T.NestedIdentifier) =>
+			object: (value: Admit<T.Identifier | T.NestedIdentifier>) =>
 				rebuilt(node, handle, () => buildNestedIdentifier({ ...config, object: value })),
-			property: (value: T.PropertyIdentifier | T.PropertyIdentifier.Types) =>
+			property: (value: Admit<T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildNestedIdentifier({ ...config, property: value }))
 		},
 		object: () => _object,
@@ -2009,20 +2002,21 @@ export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound 
 		_heritage,
 		_body,
 		$with: {
-			decorators: (...values: T.Decorator[]) =>
+			decorators: (...values: Admit<T.Decorator[]>) =>
 				rebuilt(node, handle, () => buildClass({ ...config, decorator: restItems('decorators', values) })),
-			name: (value?: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+			name: (value?: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildClass({ ...config, name: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: T.TypeParameters) => buildClass({ ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) => buildClass({ ...config, typeParameters: value })
 					)
 				),
-			heritage: (value?: T.ClassHeritage) => rebuilt(node, handle, () => buildClass({ ...config, heritage: value })),
-			body: (value: T.ClassBody) => rebuilt(node, handle, () => buildClass({ ...config, body: value }))
+			heritage: (value?: Admit<T.ClassHeritage>) =>
+				rebuilt(node, handle, () => buildClass({ ...config, heritage: value })),
+			body: (value: Admit<T.ClassBody>) => rebuilt(node, handle, () => buildClass({ ...config, body: value }))
 		},
 		decorators: () => _decorator,
 		name: () => _name,
@@ -2071,22 +2065,23 @@ export function buildClassDeclaration(config: T.ClassDeclaration.Config): T.Clas
 		_body,
 		_automatic_semicolon,
 		$with: {
-			decorators: (...values: T.Decorator[]) =>
+			decorators: (...values: Admit<T.Decorator[]>) =>
 				rebuilt(node, handle, () => buildClassDeclaration({ ...config, decorator: restItems('decorators', values) })),
-			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+			name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildClassDeclaration({ ...config, name: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: T.TypeParameters) => buildClassDeclaration({ ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) => buildClassDeclaration({ ...config, typeParameters: value })
 					)
 				),
-			heritage: (value?: T.ClassHeritage) =>
+			heritage: (value?: Admit<T.ClassHeritage>) =>
 				rebuilt(node, handle, () => buildClassDeclaration({ ...config, heritage: value })),
-			body: (value: T.ClassBody) => rebuilt(node, handle, () => buildClassDeclaration({ ...config, body: value })),
-			automaticSemicolon: (value?: NonNullable<T.ClassDeclaration.Config>['automaticSemicolon']) =>
+			body: (value: Admit<T.ClassBody>) =>
+				rebuilt(node, handle, () => buildClassDeclaration({ ...config, body: value })),
+			automaticSemicolon: (value?: Admit<NonNullable<T.ClassDeclaration.Config>['automaticSemicolon']>) =>
 				rebuilt(node, handle, () => buildClassDeclaration({ ...config, automaticSemicolon: value }))
 		},
 		decorators: () => _decorator,
@@ -2106,7 +2101,7 @@ export function buildClassDeclaration(config: T.ClassDeclaration.Config): T.Clas
 }
 
 export function buildClassHeritage(
-	value: AdmitBound<T.ClassHeritageExtendsClause | T.ImplementsClause, T.AdmittedNodes>
+	value: Admit<T.ClassHeritageExtendsClause | T.ImplementsClause>
 ): T.ClassHeritage.Bound {
 	const _content = rejectBareText(
 		value,
@@ -2120,7 +2115,7 @@ export function buildClassHeritage(
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: T.ClassHeritageExtendsClause | T.ImplementsClause) =>
+			content: (value: Admit<T.ClassHeritageExtendsClause | T.ImplementsClause>) =>
 				rebuilt(node, handle, () => buildClassHeritage(value))
 		},
 		content: () => _content,
@@ -2169,15 +2164,16 @@ export function buildFunctionExpression(config: Partial<T.FunctionExpression.Con
 		_return_type,
 		_body,
 		$with: {
-			async: (value?: NonNullable<T.FunctionExpression.Config>['async']) =>
+			async: (value?: Admit<NonNullable<T.FunctionExpression.Config>['async']>) =>
 				rebuilt(node, handle, () => buildFunctionExpression({ ...config, async: value })),
-			name: (value?: T.Identifier) => rebuilt(node, handle, () => buildFunctionExpression({ ...config, name: value })),
+			name: (value?: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildFunctionExpression({ ...config, name: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: T.TypeParameters) => buildFunctionExpression({ ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) => buildFunctionExpression({ ...config, typeParameters: value })
 					)
 				),
 			parameters: (...args: unknown[]) =>
@@ -2185,12 +2181,12 @@ export function buildFunctionExpression(config: Partial<T.FunctionExpression.Con
 					listSlotWith(
 						args,
 						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
-						(value: T.FormalParameters) => buildFunctionExpression({ ...config, parameters: value })
+						(value: Admit<T.FormalParameters>) => buildFunctionExpression({ ...config, parameters: value })
 					)
 				),
-			returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+			returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
 				rebuilt(node, handle, () => buildFunctionExpression({ ...config, returnType: value })),
-			body: (value: T.StatementBlock) =>
+			body: (value: Admit<T.StatementBlock>) =>
 				rebuilt(node, handle, () => buildFunctionExpression({ ...config, body: value }))
 		},
 		async: () => _async,
@@ -2248,15 +2244,16 @@ export function buildFunctionDeclaration(config: T.FunctionDeclaration.Config): 
 		_body,
 		_automatic_semicolon,
 		$with: {
-			async: (value?: NonNullable<T.FunctionDeclaration.Config>['async']) =>
+			async: (value?: Admit<NonNullable<T.FunctionDeclaration.Config>['async']>) =>
 				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, async: value })),
-			name: (value: T.Identifier) => rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, name: value })),
+			name: (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, name: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: T.TypeParameters) => buildFunctionDeclaration({ ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) => buildFunctionDeclaration({ ...config, typeParameters: value })
 					)
 				),
 			parameters: (...args: unknown[]) =>
@@ -2264,14 +2261,14 @@ export function buildFunctionDeclaration(config: T.FunctionDeclaration.Config): 
 					listSlotWith(
 						args,
 						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
-						(value: T.FormalParameters) => buildFunctionDeclaration({ ...config, parameters: value })
+						(value: Admit<T.FormalParameters>) => buildFunctionDeclaration({ ...config, parameters: value })
 					)
 				),
-			returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+			returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
 				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, returnType: value })),
-			body: (value: T.StatementBlock) =>
+			body: (value: Admit<T.StatementBlock>) =>
 				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, body: value })),
-			automaticSemicolon: (value?: NonNullable<T.FunctionDeclaration.Config>['automaticSemicolon']) =>
+			automaticSemicolon: (value?: Admit<NonNullable<T.FunctionDeclaration.Config>['automaticSemicolon']>) =>
 				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, automaticSemicolon: value }))
 		},
 		async: () => _async,
@@ -2326,15 +2323,16 @@ export function buildGeneratorFunction(config: Partial<T.GeneratorFunction.Confi
 		_return_type,
 		_body,
 		$with: {
-			async: (value?: NonNullable<T.GeneratorFunction.Config>['async']) =>
+			async: (value?: Admit<NonNullable<T.GeneratorFunction.Config>['async']>) =>
 				rebuilt(node, handle, () => buildGeneratorFunction({ ...config, async: value })),
-			name: (value?: T.Identifier) => rebuilt(node, handle, () => buildGeneratorFunction({ ...config, name: value })),
+			name: (value?: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildGeneratorFunction({ ...config, name: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: T.TypeParameters) => buildGeneratorFunction({ ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) => buildGeneratorFunction({ ...config, typeParameters: value })
 					)
 				),
 			parameters: (...args: unknown[]) =>
@@ -2342,12 +2340,13 @@ export function buildGeneratorFunction(config: Partial<T.GeneratorFunction.Confi
 					listSlotWith(
 						args,
 						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
-						(value: T.FormalParameters) => buildGeneratorFunction({ ...config, parameters: value })
+						(value: Admit<T.FormalParameters>) => buildGeneratorFunction({ ...config, parameters: value })
 					)
 				),
-			returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+			returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
 				rebuilt(node, handle, () => buildGeneratorFunction({ ...config, returnType: value })),
-			body: (value: T.StatementBlock) => rebuilt(node, handle, () => buildGeneratorFunction({ ...config, body: value }))
+			body: (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildGeneratorFunction({ ...config, body: value }))
 		},
 		async: () => _async,
 		name: () => _name,
@@ -2408,16 +2407,16 @@ export function buildGeneratorFunctionDeclaration(
 		_body,
 		_automatic_semicolon,
 		$with: {
-			async: (value?: NonNullable<T.GeneratorFunctionDeclaration.Config>['async']) =>
+			async: (value?: Admit<NonNullable<T.GeneratorFunctionDeclaration.Config>['async']>) =>
 				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, async: value })),
-			name: (value: T.Identifier) =>
+			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, name: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: T.TypeParameters) => buildGeneratorFunctionDeclaration({ ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) => buildGeneratorFunctionDeclaration({ ...config, typeParameters: value })
 					)
 				),
 			parameters: (...args: unknown[]) =>
@@ -2425,14 +2424,14 @@ export function buildGeneratorFunctionDeclaration(
 					listSlotWith(
 						args,
 						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
-						(value: T.FormalParameters) => buildGeneratorFunctionDeclaration({ ...config, parameters: value })
+						(value: Admit<T.FormalParameters>) => buildGeneratorFunctionDeclaration({ ...config, parameters: value })
 					)
 				),
-			returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+			returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
 				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, returnType: value })),
-			body: (value: T.StatementBlock) =>
+			body: (value: Admit<T.StatementBlock>) =>
 				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, body: value })),
-			automaticSemicolon: (value?: NonNullable<T.GeneratorFunctionDeclaration.Config>['automaticSemicolon']) =>
+			automaticSemicolon: (value?: Admit<NonNullable<T.GeneratorFunctionDeclaration.Config>['automaticSemicolon']>) =>
 				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, automaticSemicolon: value }))
 		},
 		async: () => _async,
@@ -2473,11 +2472,11 @@ export function buildArrowFunction(config: T.ArrowFunction.Config): T.ArrowFunct
 		_content,
 		_body,
 		$with: {
-			async: (value?: NonNullable<T.ArrowFunction.Config>['async']) =>
+			async: (value?: Admit<NonNullable<T.ArrowFunction.Config>['async']>) =>
 				rebuilt(node, handle, () => buildArrowFunction({ ...config, async: value })),
-			content: (value: T.ArrowFunctionParameter | T.CallSignature) =>
+			content: (value: Admit<T.ArrowFunctionParameter | T.CallSignature>) =>
 				rebuilt(node, handle, () => buildArrowFunction({ ...config, content: value })),
-			body: (value: NonNullable<T.ArrowFunction.Config>['body']) =>
+			body: (value: Admit<NonNullable<T.ArrowFunction.Config>['body']>) =>
 				rebuilt(node, handle, () => buildArrowFunction({ ...config, body: value }))
 		},
 		async: () => _async,
@@ -2512,17 +2511,17 @@ export function buildNewExpression(config: T.NewExpression.Config): T.NewExpress
 		_type_arguments,
 		_arguments,
 		$with: {
-			constructor_: (value: NonNullable<T.NewExpression.Config>['constructor_']) =>
+			constructor_: (value: Admit<NonNullable<T.NewExpression.Config>['constructor_']>) =>
 				rebuilt(node, handle, () => buildNewExpression({ ...config, constructor_: value })),
 			typeArguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-						(value?: T.TypeArguments) => buildNewExpression({ ...config, typeArguments: value })
+						(value?: Admit<T.TypeArguments>) => buildNewExpression({ ...config, typeArguments: value })
 					)
 				),
-			arguments: (value?: T.Arguments) =>
+			arguments: (value?: Admit<T.Arguments>) =>
 				rebuilt(node, handle, () => buildNewExpression({ ...config, arguments: value }))
 		},
 		constructor_: () => _constructor,
@@ -2538,7 +2537,7 @@ export function buildNewExpression(config: T.NewExpression.Config): T.NewExpress
 	return node as unknown as T.NewExpression.Bound;
 }
 
-export function buildAwaitExpression(value: AdmitBound<T.Expression, T.AdmittedNodes>): T.AwaitExpression.Bound {
+export function buildAwaitExpression(value: Admit<T.Expression>): T.AwaitExpression.Bound {
 	const _expression = rejectBareText(
 		kindIdStorage<NonNullable<T.AwaitExpression['_expression']>>(value),
 		'AwaitExpression.expression',
@@ -2551,7 +2550,7 @@ export function buildAwaitExpression(value: AdmitBound<T.Expression, T.AdmittedN
 		$named: true as const,
 		_expression,
 		$with: {
-			expression: (value: NonNullable<T.Expression>) => rebuilt(node, handle, () => buildAwaitExpression(value))
+			expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildAwaitExpression(value))
 		},
 		expression: () => _expression,
 		$render: () => renderText(handle, node),
@@ -2597,11 +2596,11 @@ export function buildMemberExpression(config: T.MemberExpression.Config): T.Memb
 		_separator,
 		_property,
 		$with: {
-			object: (value: NonNullable<T.MemberExpression.Config>['object']) =>
+			object: (value: Admit<NonNullable<T.MemberExpression.Config>['object']>) =>
 				rebuilt(node, handle, () => buildMemberExpression({ ...config, object: value })),
-			separator: (value: NonNullable<T.MemberExpression.Config>['separator']) =>
+			separator: (value: Admit<NonNullable<T.MemberExpression.Config>['separator']>) =>
 				rebuilt(node, handle, () => buildMemberExpression({ ...config, separator: value })),
-			property: (value: T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types) =>
+			property: (value: Admit<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildMemberExpression({ ...config, property: value }))
 		},
 		object: () => _object,
@@ -2640,11 +2639,11 @@ export function buildSubscriptExpression(config: T.SubscriptExpression.Config): 
 		_optional_chain,
 		_index,
 		$with: {
-			object: (value: NonNullable<T.SubscriptExpression.Config>['object']) =>
+			object: (value: Admit<NonNullable<T.SubscriptExpression.Config>['object']>) =>
 				rebuilt(node, handle, () => buildSubscriptExpression({ ...config, object: value })),
-			optionalChain: (value?: NonNullable<T.SubscriptExpression.Config>['optionalChain']) =>
+			optionalChain: (value?: Admit<NonNullable<T.SubscriptExpression.Config>['optionalChain']>) =>
 				rebuilt(node, handle, () => buildSubscriptExpression({ ...config, optionalChain: value })),
-			index: (value: NonNullable<T.SubscriptExpression.Config>['index']) =>
+			index: (value: Admit<NonNullable<T.SubscriptExpression.Config>['index']>) =>
 				rebuilt(node, handle, () => buildSubscriptExpression({ ...config, index: value }))
 		},
 		object: () => _object,
@@ -2661,7 +2660,7 @@ export function buildSubscriptExpression(config: T.SubscriptExpression.Config): 
 }
 
 export function buildLhsExpression(
-	value: AdmitBound<
+	value: Admit<
 		| T.MemberExpression
 		| T.SubscriptExpression
 		| TSKindId.Undefined
@@ -2690,8 +2689,7 @@ export function buildLhsExpression(
 		| TSKindId.LetKeyword
 		| T.ObjectPattern
 		| T.ArrayPattern
-		| T.NonNullExpression,
-		T.AdmittedNodes
+		| T.NonNullExpression
 	>
 ): T.LhsExpression.Bound {
 	const _content = rejectKeywordText(
@@ -2736,36 +2734,38 @@ export function buildLhsExpression(
 		_content,
 		$with: {
 			content: (
-				value: NonNullable<
-					| T.MemberExpression
-					| T.SubscriptExpression
-					| TSKindId.Undefined
-					| T.Identifier
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
-					| T.ObjectPattern
-					| T.ArrayPattern
-					| T.NonNullExpression
+				value: Admit<
+					NonNullable<
+						| T.MemberExpression
+						| T.SubscriptExpression
+						| TSKindId.Undefined
+						| T.Identifier
+						| TSKindId.DeclareKeyword
+						| TSKindId.NamespaceKeyword
+						| TSKindId.TypeKeyword
+						| TSKindId.PublicKeyword
+						| TSKindId.PrivateKeyword
+						| TSKindId.ProtectedKeyword
+						| TSKindId.OverrideKeyword
+						| TSKindId.ReadonlyKeyword
+						| TSKindId.ModuleKeyword
+						| TSKindId.AnyKeyword
+						| TSKindId.NumberKeyword
+						| TSKindId.BooleanKeyword
+						| TSKindId.StringKeyword
+						| TSKindId.SymbolKeyword
+						| TSKindId.ExportKeyword
+						| TSKindId.ObjectKeyword
+						| TSKindId.NewKeyword
+						| TSKindId.GetKeyword
+						| TSKindId.SetKeyword
+						| TSKindId.AsyncKeyword
+						| TSKindId.StaticKeyword
+						| TSKindId.LetKeyword
+						| T.ObjectPattern
+						| T.ArrayPattern
+						| T.NonNullExpression
+					>
 				>
 			) => rebuilt(node, handle, () => buildLhsExpression(value))
 		},
@@ -2801,11 +2801,11 @@ export function buildAssignmentExpression(config: T.AssignmentExpression.Config)
 		_left,
 		_right,
 		$with: {
-			using: (value?: NonNullable<T.AssignmentExpression.Config>['using']) =>
+			using: (value?: Admit<NonNullable<T.AssignmentExpression.Config>['using']>) =>
 				rebuilt(node, handle, () => buildAssignmentExpression({ ...config, using: value })),
-			left: (value: T.ParenthesizedExpression | T.LhsExpression) =>
+			left: (value: Admit<T.ParenthesizedExpression | T.LhsExpression>) =>
 				rebuilt(node, handle, () => buildAssignmentExpression({ ...config, left: value })),
-			right: (value: NonNullable<T.AssignmentExpression.Config>['right']) =>
+			right: (value: Admit<NonNullable<T.AssignmentExpression.Config>['right']>) =>
 				rebuilt(node, handle, () => buildAssignmentExpression({ ...config, right: value }))
 		},
 		using: () => _using,
@@ -2876,11 +2876,11 @@ export function buildAugmentedAssignmentExpression(
 		_operator,
 		_right,
 		$with: {
-			left: (value: NonNullable<T.AugmentedAssignmentExpression.Config>['left']) =>
+			left: (value: Admit<NonNullable<T.AugmentedAssignmentExpression.Config>['left']>) =>
 				rebuilt(node, handle, () => buildAugmentedAssignmentExpression({ ...config, left: value })),
-			operator: (value: NonNullable<T.AugmentedAssignmentExpression.Config>['operator']) =>
+			operator: (value: Admit<NonNullable<T.AugmentedAssignmentExpression.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildAugmentedAssignmentExpression({ ...config, operator: value })),
-			right: (value: NonNullable<T.AugmentedAssignmentExpression.Config>['right']) =>
+			right: (value: Admit<NonNullable<T.AugmentedAssignmentExpression.Config>['right']>) =>
 				rebuilt(node, handle, () => buildAugmentedAssignmentExpression({ ...config, right: value }))
 		},
 		left: () => _left,
@@ -2896,7 +2896,7 @@ export function buildAugmentedAssignmentExpression(
 	return node as unknown as T.AugmentedAssignmentExpression.Bound;
 }
 
-export function buildSpreadElement(value: AdmitBound<T.Expression, T.AdmittedNodes>): T.SpreadElement.Bound {
+export function buildSpreadElement(value: Admit<T.Expression>): T.SpreadElement.Bound {
 	const _expression = rejectBareText(
 		kindIdStorage<NonNullable<T.SpreadElement['_expression']>>(value),
 		'SpreadElement.expression',
@@ -2909,7 +2909,7 @@ export function buildSpreadElement(value: AdmitBound<T.Expression, T.AdmittedNod
 		$named: true as const,
 		_expression,
 		$with: {
-			expression: (value: NonNullable<T.Expression>) => rebuilt(node, handle, () => buildSpreadElement(value))
+			expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildSpreadElement(value))
 		},
 		expression: () => _expression,
 		$render: () => renderText(handle, node),
@@ -2947,11 +2947,11 @@ export function buildTernaryExpression(config: T.TernaryExpression.Config): T.Te
 		_consequence,
 		_alternative,
 		$with: {
-			condition: (value: NonNullable<T.TernaryExpression.Config>['condition']) =>
+			condition: (value: Admit<NonNullable<T.TernaryExpression.Config>['condition']>) =>
 				rebuilt(node, handle, () => buildTernaryExpression({ ...config, condition: value })),
-			consequence: (value: NonNullable<T.TernaryExpression.Config>['consequence']) =>
+			consequence: (value: Admit<NonNullable<T.TernaryExpression.Config>['consequence']>) =>
 				rebuilt(node, handle, () => buildTernaryExpression({ ...config, consequence: value })),
-			alternative: (value: NonNullable<T.TernaryExpression.Config>['alternative']) =>
+			alternative: (value: Admit<NonNullable<T.TernaryExpression.Config>['alternative']>) =>
 				rebuilt(node, handle, () => buildTernaryExpression({ ...config, alternative: value }))
 		},
 		condition: () => _condition,
@@ -2998,13 +2998,13 @@ export function buildBinaryExpression(config: Partial<T.BinaryExpression.Config>
 		_right,
 		_binary_expression_in,
 		$with: {
-			left: (value?: NonNullable<T.BinaryExpression.Config>['left']) =>
+			left: (value?: Admit<NonNullable<T.BinaryExpression.Config>['left']>) =>
 				rebuilt(node, handle, () => buildBinaryExpression({ ...config, left: value })),
-			operator: (value?: NonNullable<T.BinaryExpression.Config>['operator']) =>
+			operator: (value?: Admit<NonNullable<T.BinaryExpression.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildBinaryExpression({ ...config, operator: value })),
-			right: (value?: NonNullable<T.BinaryExpression.Config>['right']) =>
+			right: (value?: Admit<NonNullable<T.BinaryExpression.Config>['right']>) =>
 				rebuilt(node, handle, () => buildBinaryExpression({ ...config, right: value })),
-			binaryExpressionIn: (value?: T.BinaryExpressionIn) =>
+			binaryExpressionIn: (value?: Admit<T.BinaryExpressionIn>) =>
 				rebuilt(node, handle, () => buildBinaryExpression({ ...config, binaryExpressionIn: value }))
 		},
 		left: () => _left,
@@ -3040,9 +3040,9 @@ export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryE
 		_operator,
 		_argument,
 		$with: {
-			operator: (value: NonNullable<T.UnaryExpression.Config>['operator']) =>
+			operator: (value: Admit<NonNullable<T.UnaryExpression.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildUnaryExpression({ ...config, operator: value })),
-			argument: (value: NonNullable<T.UnaryExpression.Config>['argument']) =>
+			argument: (value: Admit<NonNullable<T.UnaryExpression.Config>['argument']>) =>
 				rebuilt(node, handle, () => buildUnaryExpression({ ...config, argument: value }))
 		},
 		operator: () => _operator,
@@ -3057,9 +3057,7 @@ export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryE
 	return node as unknown as T.UnaryExpression.Bound;
 }
 
-export function buildSequenceExpression(
-	...children: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>
-): T.SequenceExpression.Bound {
+export function buildSequenceExpression(...children: NonEmptyArray<Admit<T.Expression>>): T.SequenceExpression.Bound {
 	_assertNonEmpty(children, 'sequence_expression.children');
 	const _expression = rejectBareText(children, 'SequenceExpression.expression', 'a built Expression');
 	const handle = currentHandle();
@@ -3069,7 +3067,7 @@ export function buildSequenceExpression(
 		$named: true as const,
 		_expression,
 		$with: {
-			expressions: (...vs: NonEmptyArray<T.Expression>) =>
+			expressions: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
 				rebuilt(node, handle, () => buildSequenceExpression(...restItems('expressions', vs)))
 		},
 		expressions: () => _expression,
@@ -3137,7 +3135,7 @@ export function buildEscapeSequence(input: string, affix: boolean = true): T.Esc
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: string) => rebuilt(node, handle, () => buildEscapeSequence(value))
+			content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequence(value))
 		},
 		content: () => _content,
 		$render: () => renderText(handle, node),
@@ -3151,7 +3149,7 @@ export function buildEscapeSequence(input: string, affix: boolean = true): T.Esc
 }
 
 export function buildTemplateString(
-	...children: AdmitBound<(T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[], T.AdmittedNodes>
+	...children: Admit<(T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]>
 ): T.TemplateString.Bound {
 	const _elements = rejectBareText(children, 'TemplateString.elements', 'buildTemplateChars(…)');
 	const handle = currentHandle();
@@ -3161,7 +3159,7 @@ export function buildTemplateString(
 		$named: true as const,
 		_elements,
 		$with: {
-			elements: (...vs: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]) =>
+			elements: (...vs: Admit<T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution>[]) =>
 				rebuilt(node, handle, () => buildTemplateString(...restItems('elements', vs)))
 		},
 		elements: () => _elements,
@@ -3176,7 +3174,7 @@ export function buildTemplateString(
 }
 
 export function buildTemplateSubstitution(
-	value: AdmitBound<T.Expression | T.SequenceExpression, T.AdmittedNodes>
+	value: Admit<T.Expression | T.SequenceExpression>
 ): T.TemplateSubstitution.Bound {
 	const _expression = rejectBareText(
 		kindIdStorage<NonNullable<T.TemplateSubstitution['_expression']>>(value),
@@ -3190,7 +3188,7 @@ export function buildTemplateSubstitution(
 		$named: true as const,
 		_expression,
 		$with: {
-			expression: (value: NonNullable<T.Expression | T.SequenceExpression>) =>
+			expression: (value: Admit<NonNullable<T.Expression | T.SequenceExpression>>) =>
 				rebuilt(node, handle, () => buildTemplateSubstitution(value))
 		},
 		expression: () => _expression,
@@ -3215,8 +3213,8 @@ export function buildRegex(config: T.Regex.Config): T.Regex.Bound {
 		_pattern,
 		_flags,
 		$with: {
-			pattern: (value: T.RegexPattern) => rebuilt(node, handle, () => buildRegex({ ...config, pattern: value })),
-			flags: (value?: T.RegexFlags) => rebuilt(node, handle, () => buildRegex({ ...config, flags: value }))
+			pattern: (value: Admit<T.RegexPattern>) => rebuilt(node, handle, () => buildRegex({ ...config, pattern: value })),
+			flags: (value?: Admit<T.RegexFlags>) => rebuilt(node, handle, () => buildRegex({ ...config, flags: value }))
 		},
 		pattern: () => _pattern,
 		flags: () => _flags,
@@ -3307,7 +3305,7 @@ export function buildPrivatePropertyIdentifier(
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: string) => rebuilt(node, handle, () => buildPrivatePropertyIdentifier(value))
+			content: (value: Admit<string>) => rebuilt(node, handle, () => buildPrivatePropertyIdentifier(value))
 		},
 		content: () => _content,
 		$render: () => renderText(handle, node),
@@ -3333,12 +3331,8 @@ export const buildNull: TSKindId.Null = TSKindId.Null;
 export const buildUndefined: TSKindId.Undefined = TSKindId.Undefined;
 
 export function buildArguments(): T.EmptyArguments;
-export function buildArguments(
-	...children: AdmitBound<(T.Expression | T.SpreadElement)[], T.AdmittedNodes>
-): T.Arguments.Bound;
-export function buildArguments(
-	...children: AdmitBound<(T.Expression | T.SpreadElement)[], T.AdmittedNodes>
-): T.Arguments.Bound {
+export function buildArguments(...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Arguments.Bound;
+export function buildArguments(...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Arguments.Bound {
 	const _elements = rejectBareText(children, 'Arguments.elements', 'a built Expression / SpreadElement');
 	const handle = currentHandle();
 	const node = {
@@ -3347,7 +3341,7 @@ export function buildArguments(
 		$named: true as const,
 		_elements,
 		$with: {
-			elements: (...vs: (T.Expression | T.SpreadElement)[]) =>
+			elements: (...vs: Admit<T.Expression | T.SpreadElement>[]) =>
 				rebuilt(node, handle, () => buildArguments(...restItems('elements', vs)))
 		},
 		elements: () => _elements,
@@ -3363,9 +3357,8 @@ export function buildArguments(
 }
 
 export function buildDecorator(
-	value: AdmitBound<
-		T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression,
-		T.AdmittedNodes
+	value: Admit<
+		T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
 	>
 ): T.Decorator.Bound {
 	const _expression = rejectBareText(value, 'Decorator.expression', 'buildIdentifier(…)');
@@ -3377,11 +3370,9 @@ export function buildDecorator(
 		_expression,
 		$with: {
 			expression: (
-				value:
-					| T.Identifier
-					| T.DecoratorMemberExpression
-					| T.DecoratorCallExpression
-					| T.DecoratorParenthesizedExpression
+				value: Admit<
+					T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
+				>
 			) => rebuilt(node, handle, () => buildDecorator(value))
 		},
 		expression: () => _expression,
@@ -3416,9 +3407,9 @@ export function buildDecoratorMemberExpression(
 		_object,
 		_property,
 		$with: {
-			object: (value: T.Identifier | T.DecoratorMemberExpression) =>
+			object: (value: Admit<T.Identifier | T.DecoratorMemberExpression>) =>
 				rebuilt(node, handle, () => buildDecoratorMemberExpression({ ...config, object: value })),
-			property: (value: T.PropertyIdentifier | T.PropertyIdentifier.Types) =>
+			property: (value: Admit<T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildDecoratorMemberExpression({ ...config, property: value }))
 		},
 		object: () => _object,
@@ -3456,17 +3447,17 @@ export function buildDecoratorCallExpression(
 		_type_arguments,
 		_arguments,
 		$with: {
-			function: (value: T.Identifier | T.DecoratorMemberExpression) =>
+			function: (value: Admit<T.Identifier | T.DecoratorMemberExpression>) =>
 				rebuilt(node, handle, () => buildDecoratorCallExpression({ ...config, function: value })),
 			typeArguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-						(value?: T.TypeArguments) => buildDecoratorCallExpression({ ...config, typeArguments: value })
+						(value?: Admit<T.TypeArguments>) => buildDecoratorCallExpression({ ...config, typeArguments: value })
 					)
 				),
-			arguments: (value: T.Arguments) =>
+			arguments: (value: Admit<T.Arguments>) =>
 				rebuilt(node, handle, () => buildDecoratorCallExpression({ ...config, arguments: value }))
 		},
 		function: () => _function,
@@ -3483,8 +3474,8 @@ export function buildDecoratorCallExpression(
 }
 
 export function buildClassBody(): T.EmptyClassBody;
-export function buildClassBody(...children: AdmitBound<T.ClassBodyMember[], T.AdmittedNodes>): T.ClassBody.Bound;
-export function buildClassBody(...children: AdmitBound<T.ClassBodyMember[], T.AdmittedNodes>): T.ClassBody.Bound {
+export function buildClassBody(...children: Admit<T.ClassBodyMember[]>): T.ClassBody.Bound;
+export function buildClassBody(...children: Admit<T.ClassBodyMember[]>): T.ClassBody.Bound {
 	const _members = rejectBareText(children, 'ClassBody.members', 'a built ClassBodyMember');
 	const handle = currentHandle();
 	const node = {
@@ -3493,7 +3484,8 @@ export function buildClassBody(...children: AdmitBound<T.ClassBodyMember[], T.Ad
 		$named: true as const,
 		_members,
 		$with: {
-			members: (...vs: T.ClassBodyMember[]) => rebuilt(node, handle, () => buildClassBody(...restItems('members', vs)))
+			members: (...vs: Admit<T.ClassBodyMember>[]) =>
+				rebuilt(node, handle, () => buildClassBody(...restItems('members', vs)))
 		},
 		members: () => _members,
 		$render: () => renderText(handle, node),
@@ -3509,18 +3501,18 @@ export function buildClassBody(...children: AdmitBound<T.ClassBodyMember[], T.Ad
 
 export function buildFormalParameters(): T.EmptyFormalParameters;
 export function buildFormalParameters(
-	value?: AdmitBound<T.FormalParametersElements, T.AdmittedNodes>
+	value?: Admit<T.FormalParametersElements>
 ): ReturnType<typeof _buildFormalParameters>;
 export function buildFormalParameters(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>>
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: NonEmptyArray<Admit<T.RequiredParameter | T.OptionalParameter>>
 ): ReturnType<typeof _buildFormalParameters>;
 export function buildFormalParameters(
-	...elements: NonEmptyArray<AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>>
+	...elements: NonEmptyArray<Admit<T.RequiredParameter | T.OptionalParameter>>
 ): ReturnType<typeof _buildFormalParameters>;
 export function buildFormalParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildFormalParameters(args[0] as T.FormalParametersElements);
+		return _buildFormalParameters(args[0] as Parameters<typeof _buildFormalParameters>[0]);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -3528,14 +3520,14 @@ export function buildFormalParameters(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.FormalParametersElements as const);
 	return prebuilt
-		? _buildFormalParameters(args[0] as T.FormalParametersElements)
+		? _buildFormalParameters(args[0] as Parameters<typeof _buildFormalParameters>[0])
 		: _buildFormalParameters(
-				(buildFormalParametersElements as (...a: unknown[]) => unknown)(...args) as T.FormalParametersElements
+				(buildFormalParametersElements as (...a: unknown[]) => unknown)(...args) as Parameters<
+					typeof _buildFormalParameters
+				>[0]
 			);
 }
-function _buildFormalParameters(
-	value?: AdmitBound<T.FormalParametersElements, T.AdmittedNodes>
-): T.FormalParameters.Bound {
+function _buildFormalParameters(value?: Admit<T.FormalParametersElements>): T.FormalParameters.Bound {
 	const _elements = rejectBareText(value, 'FormalParameters.elements', 'a built FormalParametersElements');
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
@@ -3552,7 +3544,7 @@ function _buildFormalParameters(
 					listSlotWith(
 						args,
 						{ kind: TSKindId.FormalParametersElements as const, optional: true, make: buildFormalParametersElements },
-						(value?: T.FormalParametersElements) => _buildFormalParameters(value)
+						(value?: Admit<T.FormalParametersElements>) => _buildFormalParameters(value)
 					)
 				)
 		},
@@ -3594,9 +3586,10 @@ export function buildClassStaticBlock(config: Partial<T.ClassStaticBlock.Config>
 		_automatic_semicolon,
 		_body,
 		$with: {
-			automaticSemicolon: (value?: NonNullable<T.ClassStaticBlock.Config>['automaticSemicolon']) =>
+			automaticSemicolon: (value?: Admit<NonNullable<T.ClassStaticBlock.Config>['automaticSemicolon']>) =>
 				rebuilt(node, handle, () => buildClassStaticBlock({ ...config, automaticSemicolon: value })),
-			body: (value: T.StatementBlock) => rebuilt(node, handle, () => buildClassStaticBlock({ ...config, body: value }))
+			body: (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildClassStaticBlock({ ...config, body: value }))
 		},
 		automaticSemicolon: () => _automatic_semicolon,
 		body: () => _body,
@@ -3611,7 +3604,7 @@ export function buildClassStaticBlock(config: Partial<T.ClassStaticBlock.Config>
 }
 
 export function buildRestPattern(
-	value: AdmitBound<
+	value: Admit<
 		| T.MemberExpression
 		| T.SubscriptExpression
 		| TSKindId.Undefined
@@ -3640,8 +3633,7 @@ export function buildRestPattern(
 		| TSKindId.LetKeyword
 		| T.ObjectPattern
 		| T.ArrayPattern
-		| T.NonNullExpression,
-		T.AdmittedNodes
+		| T.NonNullExpression
 	>
 ): T.RestPattern.Bound {
 	const _lhs_expression = rejectKeywordText(
@@ -3686,36 +3678,38 @@ export function buildRestPattern(
 		_lhs_expression,
 		$with: {
 			lhsExpression: (
-				value: NonNullable<
-					| T.MemberExpression
-					| T.SubscriptExpression
-					| TSKindId.Undefined
-					| T.Identifier
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
-					| T.ObjectPattern
-					| T.ArrayPattern
-					| T.NonNullExpression
+				value: Admit<
+					NonNullable<
+						| T.MemberExpression
+						| T.SubscriptExpression
+						| TSKindId.Undefined
+						| T.Identifier
+						| TSKindId.DeclareKeyword
+						| TSKindId.NamespaceKeyword
+						| TSKindId.TypeKeyword
+						| TSKindId.PublicKeyword
+						| TSKindId.PrivateKeyword
+						| TSKindId.ProtectedKeyword
+						| TSKindId.OverrideKeyword
+						| TSKindId.ReadonlyKeyword
+						| TSKindId.ModuleKeyword
+						| TSKindId.AnyKeyword
+						| TSKindId.NumberKeyword
+						| TSKindId.BooleanKeyword
+						| TSKindId.StringKeyword
+						| TSKindId.SymbolKeyword
+						| TSKindId.ExportKeyword
+						| TSKindId.ObjectKeyword
+						| TSKindId.NewKeyword
+						| TSKindId.GetKeyword
+						| TSKindId.SetKeyword
+						| TSKindId.AsyncKeyword
+						| TSKindId.StaticKeyword
+						| TSKindId.LetKeyword
+						| T.ObjectPattern
+						| T.ArrayPattern
+						| T.NonNullExpression
+					>
 				>
 			) => rebuilt(node, handle, () => buildRestPattern(value))
 		},
@@ -3798,28 +3792,28 @@ export function buildMethodDefinition(config: T.MethodDefinition.Config): T.Meth
 		_return_type,
 		_body,
 		$with: {
-			accessibilityModifier: (value?: NonNullable<T.MethodDefinition.Config>['accessibilityModifier']) =>
+			accessibilityModifier: (value?: Admit<NonNullable<T.MethodDefinition.Config>['accessibilityModifier']>) =>
 				rebuilt(node, handle, () => buildMethodDefinition({ ...config, accessibilityModifier: value })),
-			static: (value?: NonNullable<T.MethodDefinition.Config>['static']) =>
+			static: (value?: Admit<NonNullable<T.MethodDefinition.Config>['static']>) =>
 				rebuilt(node, handle, () => buildMethodDefinition({ ...config, static: value })),
-			override: (value?: NonNullable<T.MethodDefinition.Config>['override']) =>
+			override: (value?: Admit<NonNullable<T.MethodDefinition.Config>['override']>) =>
 				rebuilt(node, handle, () => buildMethodDefinition({ ...config, override: value })),
-			readonly: (value?: NonNullable<T.MethodDefinition.Config>['readonly']) =>
+			readonly: (value?: Admit<NonNullable<T.MethodDefinition.Config>['readonly']>) =>
 				rebuilt(node, handle, () => buildMethodDefinition({ ...config, readonly: value })),
-			async: (value?: NonNullable<T.MethodDefinition.Config>['async']) =>
+			async: (value?: Admit<NonNullable<T.MethodDefinition.Config>['async']>) =>
 				rebuilt(node, handle, () => buildMethodDefinition({ ...config, async: value })),
-			accessorKind: (value?: NonNullable<T.MethodDefinition.Config>['accessorKind']) =>
+			accessorKind: (value?: Admit<NonNullable<T.MethodDefinition.Config>['accessorKind']>) =>
 				rebuilt(node, handle, () => buildMethodDefinition({ ...config, accessorKind: value })),
-			name: (value: NonNullable<T.MethodDefinition.Config>['name']) =>
+			name: (value: Admit<NonNullable<T.MethodDefinition.Config>['name']>) =>
 				rebuilt(node, handle, () => buildMethodDefinition({ ...config, name: value })),
-			optional: (value?: NonNullable<T.MethodDefinition.Config>['optional']) =>
+			optional: (value?: Admit<NonNullable<T.MethodDefinition.Config>['optional']>) =>
 				rebuilt(node, handle, () => buildMethodDefinition({ ...config, optional: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: T.TypeParameters) => buildMethodDefinition({ ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) => buildMethodDefinition({ ...config, typeParameters: value })
 					)
 				),
 			parameters: (...args: unknown[]) =>
@@ -3827,12 +3821,13 @@ export function buildMethodDefinition(config: T.MethodDefinition.Config): T.Meth
 					listSlotWith(
 						args,
 						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
-						(value: T.FormalParameters) => buildMethodDefinition({ ...config, parameters: value })
+						(value: Admit<T.FormalParameters>) => buildMethodDefinition({ ...config, parameters: value })
 					)
 				),
-			returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+			returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
 				rebuilt(node, handle, () => buildMethodDefinition({ ...config, returnType: value })),
-			body: (value: T.StatementBlock) => rebuilt(node, handle, () => buildMethodDefinition({ ...config, body: value }))
+			body: (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildMethodDefinition({ ...config, body: value }))
 		},
 		accessibilityModifier: () => _accessibility_modifier,
 		static: () => _static,
@@ -3878,9 +3873,9 @@ export function buildPair(config: T.Pair.Config): T.Pair.Bound {
 		_key,
 		_value,
 		$with: {
-			key: (value: NonNullable<T.Pair.Config>['key']) =>
+			key: (value: Admit<NonNullable<T.Pair.Config>['key']>) =>
 				rebuilt(node, handle, () => buildPair({ ...config, key: value })),
-			value: (value: NonNullable<T.Pair.Config>['value']) =>
+			value: (value: Admit<NonNullable<T.Pair.Config>['value']>) =>
 				rebuilt(node, handle, () => buildPair({ ...config, value: value }))
 		},
 		key: () => _key,
@@ -3913,9 +3908,9 @@ export function buildPairPattern(config: T.PairPattern.Config): T.PairPattern.Bo
 		_key,
 		_value,
 		$with: {
-			key: (value: NonNullable<T.PairPattern.Config>['key']) =>
+			key: (value: Admit<NonNullable<T.PairPattern.Config>['key']>) =>
 				rebuilt(node, handle, () => buildPairPattern({ ...config, key: value })),
-			value: (value: T.Pattern | T.AssignmentPattern) =>
+			value: (value: Admit<T.Pattern | T.AssignmentPattern>) =>
 				rebuilt(node, handle, () => buildPairPattern({ ...config, value: value }))
 		},
 		key: () => _key,
@@ -3930,9 +3925,7 @@ export function buildPairPattern(config: T.PairPattern.Config): T.PairPattern.Bo
 	return node as unknown as T.PairPattern.Bound;
 }
 
-export function buildComputedPropertyName(
-	value: AdmitBound<T.Expression, T.AdmittedNodes>
-): T.ComputedPropertyName.Bound {
+export function buildComputedPropertyName(value: Admit<T.Expression>): T.ComputedPropertyName.Bound {
 	const _expression = rejectBareText(
 		kindIdStorage<NonNullable<T.ComputedPropertyName['_expression']>>(value),
 		'ComputedPropertyName.expression',
@@ -3945,7 +3938,8 @@ export function buildComputedPropertyName(
 		$named: true as const,
 		_expression,
 		$with: {
-			expression: (value: NonNullable<T.Expression>) => rebuilt(node, handle, () => buildComputedPropertyName(value))
+			expression: (value: Admit<NonNullable<T.Expression>>) =>
+				rebuilt(node, handle, () => buildComputedPropertyName(value))
 		},
 		expression: () => _expression,
 		$render: () => renderText(handle, node),
@@ -4020,31 +4014,31 @@ export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Confi
 		_type,
 		_value,
 		$with: {
-			decorators: (...values: T.Decorator[]) =>
+			decorators: (...values: Admit<T.Decorator[]>) =>
 				rebuilt(node, handle, () =>
 					buildPublicFieldDefinition({ ...config, decorator: restItems('decorators', values) })
 				),
-			declare: (value?: NonNullable<T.PublicFieldDefinition.Config>['declare']) =>
+			declare: (value?: Admit<NonNullable<T.PublicFieldDefinition.Config>['declare']>) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, declare: value })),
-			accessibilityModifier: (value?: NonNullable<T.PublicFieldDefinition.Config>['accessibilityModifier']) =>
+			accessibilityModifier: (value?: Admit<NonNullable<T.PublicFieldDefinition.Config>['accessibilityModifier']>) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, accessibilityModifier: value })),
-			static: (value?: NonNullable<T.PublicFieldDefinition.Config>['static']) =>
+			static: (value?: Admit<NonNullable<T.PublicFieldDefinition.Config>['static']>) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, static: value })),
-			override: (value?: NonNullable<T.PublicFieldDefinition.Config>['override']) =>
+			override: (value?: Admit<NonNullable<T.PublicFieldDefinition.Config>['override']>) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, override: value })),
-			readonly: (value?: NonNullable<T.PublicFieldDefinition.Config>['readonly']) =>
+			readonly: (value?: Admit<NonNullable<T.PublicFieldDefinition.Config>['readonly']>) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, readonly: value })),
-			abstract: (value?: NonNullable<T.PublicFieldDefinition.Config>['abstract']) =>
+			abstract: (value?: Admit<NonNullable<T.PublicFieldDefinition.Config>['abstract']>) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, abstract: value })),
-			accessor: (value?: NonNullable<T.PublicFieldDefinition.Config>['accessor']) =>
+			accessor: (value?: Admit<NonNullable<T.PublicFieldDefinition.Config>['accessor']>) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, accessor: value })),
-			name: (value: NonNullable<T.PublicFieldDefinition.Config>['name']) =>
+			name: (value: Admit<NonNullable<T.PublicFieldDefinition.Config>['name']>) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, name: value })),
-			optionality: (value?: NonNullable<T.PublicFieldDefinition.Config>['optionality']) =>
+			optionality: (value?: Admit<NonNullable<T.PublicFieldDefinition.Config>['optionality']>) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, optionality: value })),
-			type: (value?: T.TypeAnnotation) =>
+			type: (value?: Admit<T.TypeAnnotation>) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, type: value })),
-			value: (value?: NonNullable<T.PublicFieldDefinition.Config>['value']) =>
+			value: (value?: Admit<NonNullable<T.PublicFieldDefinition.Config>['value']>) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, value: value }))
 		},
 		decorators: () => _decorator,
@@ -4069,7 +4063,7 @@ export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Confi
 	return node as unknown as T.PublicFieldDefinition.Bound;
 }
 
-export function buildNonNullExpression(value: AdmitBound<T.Expression, T.AdmittedNodes>): T.NonNullExpression.Bound {
+export function buildNonNullExpression(value: Admit<T.Expression>): T.NonNullExpression.Bound {
 	const _expression = rejectBareText(
 		kindIdStorage<NonNullable<T.NonNullExpression['_expression']>>(value),
 		'NonNullExpression.expression',
@@ -4082,7 +4076,8 @@ export function buildNonNullExpression(value: AdmitBound<T.Expression, T.Admitte
 		$named: true as const,
 		_expression,
 		$with: {
-			expression: (value: NonNullable<T.Expression>) => rebuilt(node, handle, () => buildNonNullExpression(value))
+			expression: (value: Admit<NonNullable<T.Expression>>) =>
+				rebuilt(node, handle, () => buildNonNullExpression(value))
 		},
 		expression: () => _expression,
 		$render: () => renderText(handle, node),
@@ -4157,28 +4152,28 @@ export function buildMethodSignature(config: T.MethodSignature.Config): T.Method
 		_parameters,
 		_return_type,
 		$with: {
-			accessibilityModifier: (value?: NonNullable<T.MethodSignature.Config>['accessibilityModifier']) =>
+			accessibilityModifier: (value?: Admit<NonNullable<T.MethodSignature.Config>['accessibilityModifier']>) =>
 				rebuilt(node, handle, () => buildMethodSignature({ ...config, accessibilityModifier: value })),
-			static: (value?: NonNullable<T.MethodSignature.Config>['static']) =>
+			static: (value?: Admit<NonNullable<T.MethodSignature.Config>['static']>) =>
 				rebuilt(node, handle, () => buildMethodSignature({ ...config, static: value })),
-			override: (value?: NonNullable<T.MethodSignature.Config>['override']) =>
+			override: (value?: Admit<NonNullable<T.MethodSignature.Config>['override']>) =>
 				rebuilt(node, handle, () => buildMethodSignature({ ...config, override: value })),
-			readonly: (value?: NonNullable<T.MethodSignature.Config>['readonly']) =>
+			readonly: (value?: Admit<NonNullable<T.MethodSignature.Config>['readonly']>) =>
 				rebuilt(node, handle, () => buildMethodSignature({ ...config, readonly: value })),
-			async: (value?: NonNullable<T.MethodSignature.Config>['async']) =>
+			async: (value?: Admit<NonNullable<T.MethodSignature.Config>['async']>) =>
 				rebuilt(node, handle, () => buildMethodSignature({ ...config, async: value })),
-			accessorKind: (value?: NonNullable<T.MethodSignature.Config>['accessorKind']) =>
+			accessorKind: (value?: Admit<NonNullable<T.MethodSignature.Config>['accessorKind']>) =>
 				rebuilt(node, handle, () => buildMethodSignature({ ...config, accessorKind: value })),
-			name: (value: NonNullable<T.MethodSignature.Config>['name']) =>
+			name: (value: Admit<NonNullable<T.MethodSignature.Config>['name']>) =>
 				rebuilt(node, handle, () => buildMethodSignature({ ...config, name: value })),
-			optional: (value?: NonNullable<T.MethodSignature.Config>['optional']) =>
+			optional: (value?: Admit<NonNullable<T.MethodSignature.Config>['optional']>) =>
 				rebuilt(node, handle, () => buildMethodSignature({ ...config, optional: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: T.TypeParameters) => buildMethodSignature({ ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) => buildMethodSignature({ ...config, typeParameters: value })
 					)
 				),
 			parameters: (...args: unknown[]) =>
@@ -4186,10 +4181,10 @@ export function buildMethodSignature(config: T.MethodSignature.Config): T.Method
 					listSlotWith(
 						args,
 						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
-						(value: T.FormalParameters) => buildMethodSignature({ ...config, parameters: value })
+						(value: Admit<T.FormalParameters>) => buildMethodSignature({ ...config, parameters: value })
 					)
 				),
-			returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+			returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
 				rebuilt(node, handle, () => buildMethodSignature({ ...config, returnType: value }))
 		},
 		accessibilityModifier: () => _accessibility_modifier,
@@ -4269,22 +4264,22 @@ export function buildAbstractMethodSignature(
 		_parameters,
 		_return_type,
 		$with: {
-			accessibilityModifier: (value?: NonNullable<T.AbstractMethodSignature.Config>['accessibilityModifier']) =>
+			accessibilityModifier: (value?: Admit<NonNullable<T.AbstractMethodSignature.Config>['accessibilityModifier']>) =>
 				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, accessibilityModifier: value })),
-			override: (value?: NonNullable<T.AbstractMethodSignature.Config>['override']) =>
+			override: (value?: Admit<NonNullable<T.AbstractMethodSignature.Config>['override']>) =>
 				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, override: value })),
-			accessorKind: (value?: NonNullable<T.AbstractMethodSignature.Config>['accessorKind']) =>
+			accessorKind: (value?: Admit<NonNullable<T.AbstractMethodSignature.Config>['accessorKind']>) =>
 				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, accessorKind: value })),
-			name: (value: NonNullable<T.AbstractMethodSignature.Config>['name']) =>
+			name: (value: Admit<NonNullable<T.AbstractMethodSignature.Config>['name']>) =>
 				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, name: value })),
-			optional: (value?: NonNullable<T.AbstractMethodSignature.Config>['optional']) =>
+			optional: (value?: Admit<NonNullable<T.AbstractMethodSignature.Config>['optional']>) =>
 				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, optional: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: T.TypeParameters) => buildAbstractMethodSignature({ ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) => buildAbstractMethodSignature({ ...config, typeParameters: value })
 					)
 				),
 			parameters: (...args: unknown[]) =>
@@ -4292,10 +4287,10 @@ export function buildAbstractMethodSignature(
 					listSlotWith(
 						args,
 						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
-						(value: T.FormalParameters) => buildAbstractMethodSignature({ ...config, parameters: value })
+						(value: Admit<T.FormalParameters>) => buildAbstractMethodSignature({ ...config, parameters: value })
 					)
 				),
-			returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+			returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
 				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, returnType: value }))
 		},
 		accessibilityModifier: () => _accessibility_modifier,
@@ -4354,16 +4349,16 @@ export function buildFunctionSignature(
 		_return_type,
 		_terminator,
 		$with: {
-			async: (value?: NonNullable<T.FunctionSignature.Config>['async']) =>
+			async: (value?: Admit<NonNullable<T.FunctionSignature.Config>['async']>) =>
 				rebuilt(node, handle, () => buildFunctionSignature({ ...config, async: value }, options)),
-			name: (value: T.Identifier) =>
+			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildFunctionSignature({ ...config, name: value }, options)),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: T.TypeParameters) => buildFunctionSignature({ ...config, typeParameters: value }, options)
+						(value?: Admit<T.TypeParameters>) => buildFunctionSignature({ ...config, typeParameters: value }, options)
 					)
 				),
 			parameters: (...args: unknown[]) =>
@@ -4371,10 +4366,10 @@ export function buildFunctionSignature(
 					listSlotWith(
 						args,
 						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
-						(value: T.FormalParameters) => buildFunctionSignature({ ...config, parameters: value }, options)
+						(value: Admit<T.FormalParameters>) => buildFunctionSignature({ ...config, parameters: value }, options)
 					)
 				),
-			returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+			returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
 				rebuilt(node, handle, () => buildFunctionSignature({ ...config, returnType: value }, options)),
 			terminator: (
 				spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.FunctionSignatureAutomaticSemicolon
@@ -4397,7 +4392,7 @@ export function buildFunctionSignature(
 }
 
 export function buildDecoratorParenthesizedExpression(
-	value: AdmitBound<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression, T.AdmittedNodes>
+	value: Admit<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>
 ): T.DecoratorParenthesizedExpression.Bound {
 	const _expression = rejectBareText(value, 'DecoratorParenthesizedExpression.expression', 'buildIdentifier(…)');
 	const handle = currentHandle();
@@ -4407,7 +4402,7 @@ export function buildDecoratorParenthesizedExpression(
 		$named: true as const,
 		_expression,
 		$with: {
-			expression: (value: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression) =>
+			expression: (value: Admit<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>) =>
 				rebuilt(node, handle, () => buildDecoratorParenthesizedExpression(value))
 		},
 		expression: () => _expression,
@@ -4441,10 +4436,10 @@ export function buildTypeAssertion(config: T.TypeAssertion.Config): T.TypeAssert
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
-						(value: T.TypeArguments) => buildTypeAssertion({ ...config, typeArguments: value })
+						(value: Admit<T.TypeArguments>) => buildTypeAssertion({ ...config, typeArguments: value })
 					)
 				),
-			expression: (value: NonNullable<T.TypeAssertion.Config>['expression']) =>
+			expression: (value: Admit<NonNullable<T.TypeAssertion.Config>['expression']>) =>
 				rebuilt(node, handle, () => buildTypeAssertion({ ...config, expression: value }))
 		},
 		typeArguments: () => _type_arguments,
@@ -4481,9 +4476,9 @@ export function buildAsExpression(config: T.AsExpression.Config): T.AsExpression
 		_expression,
 		_type_annotation,
 		$with: {
-			expression: (value: NonNullable<T.AsExpression.Config>['expression']) =>
+			expression: (value: Admit<NonNullable<T.AsExpression.Config>['expression']>) =>
 				rebuilt(node, handle, () => buildAsExpression({ ...config, expression: value })),
-			typeAnnotation: (value: NonNullable<T.AsExpression.Config>['typeAnnotation']) =>
+			typeAnnotation: (value: Admit<NonNullable<T.AsExpression.Config>['typeAnnotation']>) =>
 				rebuilt(node, handle, () => buildAsExpression({ ...config, typeAnnotation: value }))
 		},
 		expression: () => _expression,
@@ -4520,9 +4515,9 @@ export function buildSatisfiesExpression(config: T.SatisfiesExpression.Config): 
 		_expression,
 		_type_annotation,
 		$with: {
-			expression: (value: NonNullable<T.SatisfiesExpression.Config>['expression']) =>
+			expression: (value: Admit<NonNullable<T.SatisfiesExpression.Config>['expression']>) =>
 				rebuilt(node, handle, () => buildSatisfiesExpression({ ...config, expression: value })),
-			typeAnnotation: (value: NonNullable<T.SatisfiesExpression.Config>['typeAnnotation']) =>
+			typeAnnotation: (value: Admit<NonNullable<T.SatisfiesExpression.Config>['typeAnnotation']>) =>
 				rebuilt(node, handle, () => buildSatisfiesExpression({ ...config, typeAnnotation: value }))
 		},
 		expression: () => _expression,
@@ -4558,14 +4553,14 @@ export function buildInstantiationExpression(
 		_expression,
 		_type_arguments,
 		$with: {
-			expression: (value: NonNullable<T.InstantiationExpression.Config>['expression']) =>
+			expression: (value: Admit<NonNullable<T.InstantiationExpression.Config>['expression']>) =>
 				rebuilt(node, handle, () => buildInstantiationExpression({ ...config, expression: value })),
 			typeArguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
-						(value: T.TypeArguments) => buildInstantiationExpression({ ...config, typeArguments: value })
+						(value: Admit<T.TypeArguments>) => buildInstantiationExpression({ ...config, typeArguments: value })
 					)
 				)
 		},
@@ -4592,8 +4587,10 @@ export function buildImportRequireClause(config: T.ImportRequireClause.Config): 
 		_name,
 		_source,
 		$with: {
-			name: (value: T.Identifier) => rebuilt(node, handle, () => buildImportRequireClause({ ...config, name: value })),
-			source: (value: T.String) => rebuilt(node, handle, () => buildImportRequireClause({ ...config, source: value }))
+			name: (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildImportRequireClause({ ...config, name: value })),
+			source: (value: Admit<T.String>) =>
+				rebuilt(node, handle, () => buildImportRequireClause({ ...config, source: value }))
 		},
 		name: () => _name,
 		source: () => _source,
@@ -4607,9 +4604,7 @@ export function buildImportRequireClause(config: T.ImportRequireClause.Config): 
 	return node as unknown as T.ImportRequireClause.Bound;
 }
 
-export function buildExtendsClause(
-	...children: NonEmptyArray<AdmitBound<T.ExtendsClauseSingle, T.AdmittedNodes>>
-): T.ExtendsClause.Bound {
+export function buildExtendsClause(...children: NonEmptyArray<Admit<T.ExtendsClauseSingle>>): T.ExtendsClause.Bound {
 	_assertNonEmpty(children, 'extends_clause.children');
 	const _extends_clause_single = rejectBareText(
 		children,
@@ -4623,7 +4618,7 @@ export function buildExtendsClause(
 		$named: true as const,
 		_extends_clause_single,
 		$with: {
-			extendsClauseSingles: (...vs: NonEmptyArray<T.ExtendsClauseSingle>) =>
+			extendsClauseSingles: (...vs: NonEmptyArray<Admit<T.ExtendsClauseSingle>>) =>
 				rebuilt(node, handle, () => buildExtendsClause(...restItems('extendsClauseSingles', vs)))
 		},
 		extendsClauseSingles: () => _extends_clause_single,
@@ -4656,14 +4651,14 @@ export function buildExtendsClauseSingle(config: T.ExtendsClauseSingle.Config): 
 		_value,
 		_type_arguments,
 		$with: {
-			value: (value: NonNullable<T.ExtendsClauseSingle.Config>['value']) =>
+			value: (value: Admit<NonNullable<T.ExtendsClauseSingle.Config>['value']>) =>
 				rebuilt(node, handle, () => buildExtendsClauseSingle({ ...config, value: value })),
 			typeArguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-						(value?: T.TypeArguments) => buildExtendsClauseSingle({ ...config, typeArguments: value })
+						(value?: Admit<T.TypeArguments>) => buildExtendsClauseSingle({ ...config, typeArguments: value })
 					)
 				)
 		},
@@ -4680,7 +4675,7 @@ export function buildExtendsClauseSingle(config: T.ExtendsClauseSingle.Config): 
 }
 
 export function buildImplementsClause(
-	...children: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>
+	...children: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>
 ): T.ImplementsClause.Bound {
 	_assertNonEmpty(children, 'implements_clause.children');
 	const _type = admitAliasContent<NonNullable<T.ImplementsClause['_type']>>(
@@ -4694,7 +4689,7 @@ export function buildImplementsClause(
 		$named: true as const,
 		_type,
 		$with: {
-			types: (...vs: NonEmptyArray<T.Type | T.TypeIdentifier.Types>) =>
+			types: (...vs: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => buildImplementsClause(...restItems('types', vs)))
 		},
 		types: () => _type,
@@ -4709,7 +4704,7 @@ export function buildImplementsClause(
 }
 
 export function buildAmbientDeclaration(
-	value: AdmitBound<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule, T.AdmittedNodes>
+	value: Admit<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule>
 ): T.AmbientDeclaration.Bound {
 	const _content = rejectBareText(
 		value,
@@ -4723,7 +4718,7 @@ export function buildAmbientDeclaration(
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule) =>
+			content: (value: Admit<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule>) =>
 				rebuilt(node, handle, () => buildAmbientDeclaration(value))
 		},
 		content: () => _content,
@@ -4767,23 +4762,23 @@ export function buildAbstractClassDeclaration(
 		_heritage,
 		_body,
 		$with: {
-			decorators: (...values: T.Decorator[]) =>
+			decorators: (...values: Admit<T.Decorator[]>) =>
 				rebuilt(node, handle, () =>
 					buildAbstractClassDeclaration({ ...config, decorator: restItems('decorators', values) })
 				),
-			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+			name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, name: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: T.TypeParameters) => buildAbstractClassDeclaration({ ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) => buildAbstractClassDeclaration({ ...config, typeParameters: value })
 					)
 				),
-			heritage: (value?: T.ClassHeritage) =>
+			heritage: (value?: Admit<T.ClassHeritage>) =>
 				rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, heritage: value })),
-			body: (value: T.ClassBody) =>
+			body: (value: Admit<T.ClassBody>) =>
 				rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, body: value }))
 		},
 		decorators: () => _decorator,
@@ -4812,9 +4807,9 @@ export function buildModule(config: T.Module.Config): T.Module.Bound {
 		_name,
 		_body,
 		$with: {
-			name: (value: T.String | T.Identifier | T.NestedIdentifier) =>
+			name: (value: Admit<T.String | T.Identifier | T.NestedIdentifier>) =>
 				rebuilt(node, handle, () => buildModule({ ...config, name: value })),
-			body: (value?: T.StatementBlock) => rebuilt(node, handle, () => buildModule({ ...config, body: value }))
+			body: (value?: Admit<T.StatementBlock>) => rebuilt(node, handle, () => buildModule({ ...config, body: value }))
 		},
 		name: () => _name,
 		body: () => _body,
@@ -4839,9 +4834,10 @@ export function buildInternalModule(config: T.InternalModule.Config): T.Internal
 		_name,
 		_body,
 		$with: {
-			name: (value: T.String | T.Identifier | T.NestedIdentifier) =>
+			name: (value: Admit<T.String | T.Identifier | T.NestedIdentifier>) =>
 				rebuilt(node, handle, () => buildInternalModule({ ...config, name: value })),
-			body: (value?: T.StatementBlock) => rebuilt(node, handle, () => buildInternalModule({ ...config, body: value }))
+			body: (value?: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildInternalModule({ ...config, body: value }))
 		},
 		name: () => _name,
 		body: () => _body,
@@ -4871,8 +4867,9 @@ export function buildImportAlias(config: T.ImportAlias.Config, options?: T.Impor
 		_value,
 		_terminator,
 		$with: {
-			name: (value: T.Identifier) => rebuilt(node, handle, () => buildImportAlias({ ...config, name: value }, options)),
-			value: (value: T.Identifier | T.NestedIdentifier) =>
+			name: (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildImportAlias({ ...config, name: value }, options)),
+			value: (value: Admit<T.Identifier | T.NestedIdentifier>) =>
 				rebuilt(node, handle, () => buildImportAlias({ ...config, value: value }, options)),
 			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
 				rebuilt(node, handle, () => buildImportAlias(config, { ...options, terminator: spelling }))
@@ -4904,9 +4901,9 @@ export function buildNestedTypeIdentifier(config: T.NestedTypeIdentifier.Config)
 		_module,
 		_name,
 		$with: {
-			module: (value: T.Identifier | T.NestedIdentifier) =>
+			module: (value: Admit<T.Identifier | T.NestedIdentifier>) =>
 				rebuilt(node, handle, () => buildNestedTypeIdentifier({ ...config, module: value })),
-			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+			name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildNestedTypeIdentifier({ ...config, name: value }))
 		},
 		module: () => _module,
@@ -4950,19 +4947,19 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 		_extends_type_clause,
 		_body,
 		$with: {
-			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+			name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, name: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: T.TypeParameters) => buildInterfaceDeclaration({ ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) => buildInterfaceDeclaration({ ...config, typeParameters: value })
 					)
 				),
-			extendsTypeClause: (value?: T.ExtendsTypeClause) =>
+			extendsTypeClause: (value?: Admit<T.ExtendsTypeClause>) =>
 				rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, extendsTypeClause: value })),
-			body: (value: T.InterfaceBody | T.InterfaceBody.Types) =>
+			body: (value: Admit<T.InterfaceBody | T.InterfaceBody.Types>) =>
 				rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, body: value }))
 		},
 		name: () => _name,
@@ -4981,7 +4978,7 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 
 export function buildExtendsTypeClause(
 	...children: NonEmptyArray<
-		AdmitBound<(T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types, T.AdmittedNodes>
+		Admit<(T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types>
 	>
 ): T.ExtendsTypeClause.Bound {
 	_assertNonEmpty(children, 'extends_type_clause.children');
@@ -4997,7 +4994,9 @@ export function buildExtendsTypeClause(
 		_type,
 		$with: {
 			types: (
-				...vs: NonEmptyArray<(T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types>
+				...vs: NonEmptyArray<
+					Admit<(T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types>
+				>
 			) => rebuilt(node, handle, () => buildExtendsTypeClause(...restItems('types', vs)))
 		},
 		types: () => _type,
@@ -5028,15 +5027,16 @@ export function buildEnumDeclaration(config: T.EnumDeclaration.Config): T.EnumDe
 		_name,
 		_body,
 		$with: {
-			const: (value?: NonNullable<T.EnumDeclaration.Config>['const']) =>
+			const: (value?: Admit<NonNullable<T.EnumDeclaration.Config>['const']>) =>
 				rebuilt(node, handle, () => buildEnumDeclaration({ ...config, const: value })),
-			name: (value: T.Identifier) => rebuilt(node, handle, () => buildEnumDeclaration({ ...config, name: value })),
+			name: (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildEnumDeclaration({ ...config, name: value })),
 			body: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.EnumBody as const, optional: false, make: buildEnumBody },
-						(value: T.EnumBody) => buildEnumDeclaration({ ...config, body: value })
+						(value: Admit<T.EnumBody>) => buildEnumDeclaration({ ...config, body: value })
 					)
 				)
 		},
@@ -5054,19 +5054,15 @@ export function buildEnumDeclaration(config: T.EnumDeclaration.Config): T.EnumDe
 }
 
 export function buildEnumBody(): T.EmptyEnumBody;
+export function buildEnumBody(value?: Admit<T.EnumBodyElements>): ReturnType<typeof _buildEnumBody>;
 export function buildEnumBody(
-	value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: NonEmptyArray<Admit<T.EnumBodyElement>>
 ): ReturnType<typeof _buildEnumBody>;
-export function buildEnumBody(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<AdmitBound<T.EnumBodyElement, T.AdmittedNodes>>
-): ReturnType<typeof _buildEnumBody>;
-export function buildEnumBody(
-	...elements: NonEmptyArray<AdmitBound<T.EnumBodyElement, T.AdmittedNodes>>
-): ReturnType<typeof _buildEnumBody>;
+export function buildEnumBody(...elements: NonEmptyArray<Admit<T.EnumBodyElement>>): ReturnType<typeof _buildEnumBody>;
 export function buildEnumBody(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildEnumBody(args[0] as T.EnumBodyElements);
+		return _buildEnumBody(args[0] as Parameters<typeof _buildEnumBody>[0]);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -5074,10 +5070,12 @@ export function buildEnumBody(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.EnumBodyElements as const);
 	return prebuilt
-		? _buildEnumBody(args[0] as T.EnumBodyElements)
-		: _buildEnumBody((buildEnumBodyElements as (...a: unknown[]) => unknown)(...args) as T.EnumBodyElements);
+		? _buildEnumBody(args[0] as Parameters<typeof _buildEnumBody>[0])
+		: _buildEnumBody(
+				(buildEnumBodyElements as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildEnumBody>[0]
+			);
 }
-function _buildEnumBody(value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>): T.EnumBody.Bound {
+function _buildEnumBody(value?: Admit<T.EnumBodyElements>): T.EnumBody.Bound {
 	const _elements = rejectBareText(value, 'EnumBody.elements', 'a built EnumBodyElements');
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
@@ -5094,7 +5092,7 @@ function _buildEnumBody(value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>)
 					listSlotWith(
 						args,
 						{ kind: TSKindId.EnumBodyElements as const, optional: true, make: buildEnumBodyElements },
-						(value?: T.EnumBodyElements) => _buildEnumBody(value)
+						(value?: Admit<T.EnumBodyElements>) => _buildEnumBody(value)
 					)
 				)
 		},
@@ -5141,9 +5139,9 @@ export function buildEnumAssignment(config: T.EnumAssignment.Config): T.EnumAssi
 		_name,
 		_value,
 		$with: {
-			name: (value: NonNullable<T.EnumAssignment.Config>['name']) =>
+			name: (value: Admit<NonNullable<T.EnumAssignment.Config>['name']>) =>
 				rebuilt(node, handle, () => buildEnumAssignment({ ...config, name: value })),
-			value: (value: NonNullable<T.EnumAssignment.Config>['value']) =>
+			value: (value: Admit<NonNullable<T.EnumAssignment.Config>['value']>) =>
 				rebuilt(node, handle, () => buildEnumAssignment({ ...config, value: value }))
 		},
 		name: () => _name,
@@ -5193,17 +5191,18 @@ export function buildTypeAliasDeclaration(
 		_value,
 		_terminator,
 		$with: {
-			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+			name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildTypeAliasDeclaration({ ...config, name: value }, options)),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: T.TypeParameters) => buildTypeAliasDeclaration({ ...config, typeParameters: value }, options)
+						(value?: Admit<T.TypeParameters>) =>
+							buildTypeAliasDeclaration({ ...config, typeParameters: value }, options)
 					)
 				),
-			value: (value: NonNullable<T.TypeAliasDeclaration.Config>['value']) =>
+			value: (value: Admit<NonNullable<T.TypeAliasDeclaration.Config>['value']>) =>
 				rebuilt(node, handle, () => buildTypeAliasDeclaration({ ...config, value: value }, options)),
 			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
 				rebuilt(node, handle, () => buildTypeAliasDeclaration(config, { ...options, terminator: spelling }))
@@ -5261,19 +5260,19 @@ export function buildRequiredParameter(config: T.RequiredParameter.Config): T.Re
 		_type,
 		_value,
 		$with: {
-			decorators: (...values: T.Decorator[]) =>
+			decorators: (...values: Admit<T.Decorator[]>) =>
 				rebuilt(node, handle, () => buildRequiredParameter({ ...config, decorator: restItems('decorators', values) })),
-			accessibilityModifier: (value?: NonNullable<T.RequiredParameter.Config>['accessibilityModifier']) =>
+			accessibilityModifier: (value?: Admit<NonNullable<T.RequiredParameter.Config>['accessibilityModifier']>) =>
 				rebuilt(node, handle, () => buildRequiredParameter({ ...config, accessibilityModifier: value })),
-			override: (value?: NonNullable<T.RequiredParameter.Config>['override']) =>
+			override: (value?: Admit<NonNullable<T.RequiredParameter.Config>['override']>) =>
 				rebuilt(node, handle, () => buildRequiredParameter({ ...config, override: value })),
-			readonly: (value?: NonNullable<T.RequiredParameter.Config>['readonly']) =>
+			readonly: (value?: Admit<NonNullable<T.RequiredParameter.Config>['readonly']>) =>
 				rebuilt(node, handle, () => buildRequiredParameter({ ...config, readonly: value })),
-			pattern: (value: NonNullable<T.RequiredParameter.Config>['pattern']) =>
+			pattern: (value: Admit<NonNullable<T.RequiredParameter.Config>['pattern']>) =>
 				rebuilt(node, handle, () => buildRequiredParameter({ ...config, pattern: value })),
-			type: (value?: T.TypeAnnotation) =>
+			type: (value?: Admit<T.TypeAnnotation>) =>
 				rebuilt(node, handle, () => buildRequiredParameter({ ...config, type: value })),
-			value: (value?: NonNullable<T.RequiredParameter.Config>['value']) =>
+			value: (value?: Admit<NonNullable<T.RequiredParameter.Config>['value']>) =>
 				rebuilt(node, handle, () => buildRequiredParameter({ ...config, value: value }))
 		},
 		decorators: () => _decorator,
@@ -5330,19 +5329,19 @@ export function buildOptionalParameter(config: T.OptionalParameter.Config): T.Op
 		_type,
 		_value,
 		$with: {
-			decorators: (...values: T.Decorator[]) =>
+			decorators: (...values: Admit<T.Decorator[]>) =>
 				rebuilt(node, handle, () => buildOptionalParameter({ ...config, decorator: restItems('decorators', values) })),
-			accessibilityModifier: (value?: NonNullable<T.OptionalParameter.Config>['accessibilityModifier']) =>
+			accessibilityModifier: (value?: Admit<NonNullable<T.OptionalParameter.Config>['accessibilityModifier']>) =>
 				rebuilt(node, handle, () => buildOptionalParameter({ ...config, accessibilityModifier: value })),
-			override: (value?: NonNullable<T.OptionalParameter.Config>['override']) =>
+			override: (value?: Admit<NonNullable<T.OptionalParameter.Config>['override']>) =>
 				rebuilt(node, handle, () => buildOptionalParameter({ ...config, override: value })),
-			readonly: (value?: NonNullable<T.OptionalParameter.Config>['readonly']) =>
+			readonly: (value?: Admit<NonNullable<T.OptionalParameter.Config>['readonly']>) =>
 				rebuilt(node, handle, () => buildOptionalParameter({ ...config, readonly: value })),
-			pattern: (value: NonNullable<T.OptionalParameter.Config>['pattern']) =>
+			pattern: (value: Admit<NonNullable<T.OptionalParameter.Config>['pattern']>) =>
 				rebuilt(node, handle, () => buildOptionalParameter({ ...config, pattern: value })),
-			type: (value?: T.TypeAnnotation) =>
+			type: (value?: Admit<T.TypeAnnotation>) =>
 				rebuilt(node, handle, () => buildOptionalParameter({ ...config, type: value })),
-			value: (value?: NonNullable<T.OptionalParameter.Config>['value']) =>
+			value: (value?: Admit<NonNullable<T.OptionalParameter.Config>['value']>) =>
 				rebuilt(node, handle, () => buildOptionalParameter({ ...config, value: value }))
 		},
 		decorators: () => _decorator,
@@ -5363,7 +5362,7 @@ export function buildOptionalParameter(config: T.OptionalParameter.Config): T.Op
 }
 
 export function buildOmittingTypeAnnotation(
-	value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
+	value: Admit<T.Type | T.TypeIdentifier.Types>
 ): T.OmittingTypeAnnotation.Bound {
 	const _type = admitAliasContent<NonNullable<T.OmittingTypeAnnotation['_type']>>(
 		rejectBareText(
@@ -5380,7 +5379,7 @@ export function buildOmittingTypeAnnotation(
 		$named: true as const,
 		_type,
 		$with: {
-			type: (value: NonNullable<T.Type | T.TypeIdentifier.Types>) =>
+			type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => buildOmittingTypeAnnotation(value))
 		},
 		type: () => _type,
@@ -5394,9 +5393,7 @@ export function buildOmittingTypeAnnotation(
 	return node as unknown as T.OmittingTypeAnnotation.Bound;
 }
 
-export function buildAddingTypeAnnotation(
-	value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
-): T.AddingTypeAnnotation.Bound {
+export function buildAddingTypeAnnotation(value: Admit<T.Type | T.TypeIdentifier.Types>): T.AddingTypeAnnotation.Bound {
 	const _type = admitAliasContent<NonNullable<T.AddingTypeAnnotation['_type']>>(
 		rejectBareText(
 			kindIdStorage<NonNullable<T.AddingTypeAnnotation['_type']>>(value),
@@ -5412,7 +5409,7 @@ export function buildAddingTypeAnnotation(
 		$named: true as const,
 		_type,
 		$with: {
-			type: (value: NonNullable<T.Type | T.TypeIdentifier.Types>) =>
+			type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => buildAddingTypeAnnotation(value))
 		},
 		type: () => _type,
@@ -5426,9 +5423,7 @@ export function buildAddingTypeAnnotation(
 	return node as unknown as T.AddingTypeAnnotation.Bound;
 }
 
-export function buildOptingTypeAnnotation(
-	value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
-): T.OptingTypeAnnotation.Bound {
+export function buildOptingTypeAnnotation(value: Admit<T.Type | T.TypeIdentifier.Types>): T.OptingTypeAnnotation.Bound {
 	const _type = admitAliasContent<NonNullable<T.OptingTypeAnnotation['_type']>>(
 		rejectBareText(
 			kindIdStorage<NonNullable<T.OptingTypeAnnotation['_type']>>(value),
@@ -5444,7 +5439,7 @@ export function buildOptingTypeAnnotation(
 		$named: true as const,
 		_type,
 		$with: {
-			type: (value: NonNullable<T.Type | T.TypeIdentifier.Types>) =>
+			type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => buildOptingTypeAnnotation(value))
 		},
 		type: () => _type,
@@ -5458,9 +5453,7 @@ export function buildOptingTypeAnnotation(
 	return node as unknown as T.OptingTypeAnnotation.Bound;
 }
 
-export function buildTypeAnnotation(
-	value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
-): T.TypeAnnotation.Bound {
+export function buildTypeAnnotation(value: Admit<T.Type | T.TypeIdentifier.Types>): T.TypeAnnotation.Bound {
 	const _type = admitAliasContent<NonNullable<T.TypeAnnotation['_type']>>(
 		rejectBareText(kindIdStorage<NonNullable<T.TypeAnnotation['_type']>>(value), 'TypeAnnotation.type', 'a built Type'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -5472,7 +5465,7 @@ export function buildTypeAnnotation(
 		$named: true as const,
 		_type,
 		$with: {
-			type: (value: NonNullable<T.Type | T.TypeIdentifier.Types>) =>
+			type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => buildTypeAnnotation(value))
 		},
 		type: () => _type,
@@ -5515,9 +5508,9 @@ export function buildTypeQueryMemberExpressionInTypeAnnotation(
 		_object,
 		_property,
 		$with: {
-			object: (value: NonNullable<T.TypeQueryMemberExpressionInTypeAnnotation.Config>['object']) =>
+			object: (value: Admit<NonNullable<T.TypeQueryMemberExpressionInTypeAnnotation.Config>['object']>) =>
 				rebuilt(node, handle, () => buildTypeQueryMemberExpressionInTypeAnnotation({ ...config, object: value })),
-			property: (value: T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types) =>
+			property: (value: Admit<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildTypeQueryMemberExpressionInTypeAnnotation({ ...config, property: value }))
 		},
 		object: () => _object,
@@ -5553,9 +5546,9 @@ export function buildTypeQueryCallExpressionInTypeAnnotation(
 		_function,
 		_arguments,
 		$with: {
-			function: (value: NonNullable<T.TypeQueryCallExpressionInTypeAnnotation.Config>['function']) =>
+			function: (value: Admit<NonNullable<T.TypeQueryCallExpressionInTypeAnnotation.Config>['function']>) =>
 				rebuilt(node, handle, () => buildTypeQueryCallExpressionInTypeAnnotation({ ...config, function: value })),
-			arguments: (value: T.Arguments) =>
+			arguments: (value: Admit<T.Arguments>) =>
 				rebuilt(node, handle, () => buildTypeQueryCallExpressionInTypeAnnotation({ ...config, arguments: value }))
 		},
 		function: () => _function,
@@ -5570,9 +5563,7 @@ export function buildTypeQueryCallExpressionInTypeAnnotation(
 	return node as unknown as T.TypeQueryCallExpressionInTypeAnnotation.Bound;
 }
 
-export function buildAsserts(
-	value: AdmitBound<T.TypePredicate | T.Identifier | TSKindId.This, T.AdmittedNodes>
-): T.Asserts.Bound {
+export function buildAsserts(value: Admit<T.TypePredicate | T.Identifier | TSKindId.This>): T.Asserts.Bound {
 	const _value = rejectKeywordText(
 		rejectBareText(kindIdStorage<NonNullable<T.Asserts['_value']>>(value), 'Asserts.value', 'buildIdentifier(…)'),
 		'Asserts.value',
@@ -5586,7 +5577,7 @@ export function buildAsserts(
 		$named: true as const,
 		_value,
 		$with: {
-			value: (value: NonNullable<T.TypePredicate | T.Identifier | TSKindId.This>) =>
+			value: (value: Admit<NonNullable<T.TypePredicate | T.Identifier | TSKindId.This>>) =>
 				rebuilt(node, handle, () => buildAsserts(value))
 		},
 		value: () => _value,
@@ -5600,15 +5591,13 @@ export function buildAsserts(
 	return node as unknown as T.Asserts.Bound;
 }
 
+export function buildAssertsAnnotation(value: Admit<T.Asserts>): ReturnType<typeof _buildAssertsAnnotation>;
 export function buildAssertsAnnotation(
-	value: AdmitBound<T.Asserts, T.AdmittedNodes>
-): ReturnType<typeof _buildAssertsAnnotation>;
-export function buildAssertsAnnotation(
-	value: AdmitBound<T.TypePredicate | T.Identifier | TSKindId.This, T.AdmittedNodes>
+	value: Admit<T.TypePredicate | T.Identifier | TSKindId.This>
 ): ReturnType<typeof _buildAssertsAnnotation>;
 export function buildAssertsAnnotation(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildAssertsAnnotation(args[0] as T.Asserts);
+		return _buildAssertsAnnotation(args[0] as Parameters<typeof _buildAssertsAnnotation>[0]);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -5616,10 +5605,12 @@ export function buildAssertsAnnotation(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.Asserts as const);
 	return prebuilt
-		? _buildAssertsAnnotation(args[0] as T.Asserts)
-		: _buildAssertsAnnotation((buildAsserts as (...a: unknown[]) => unknown)(...args) as T.Asserts);
+		? _buildAssertsAnnotation(args[0] as Parameters<typeof _buildAssertsAnnotation>[0])
+		: _buildAssertsAnnotation(
+				(buildAsserts as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildAssertsAnnotation>[0]
+			);
 }
-function _buildAssertsAnnotation(value: AdmitBound<T.Asserts, T.AdmittedNodes>): T.AssertsAnnotation.Bound {
+function _buildAssertsAnnotation(value: Admit<T.Asserts>): T.AssertsAnnotation.Bound {
 	const _asserts = rejectBareText(value, 'AssertsAnnotation.asserts', 'a built Asserts');
 	const handle = currentHandle();
 	const node = {
@@ -5628,7 +5619,7 @@ function _buildAssertsAnnotation(value: AdmitBound<T.Asserts, T.AdmittedNodes>):
 		$named: true as const,
 		_asserts,
 		$with: {
-			asserts: (value: T.Asserts) => rebuilt(node, handle, () => _buildAssertsAnnotation(value))
+			asserts: (value: Admit<T.Asserts>) => rebuilt(node, handle, () => _buildAssertsAnnotation(value))
 		},
 		asserts: () => _asserts,
 		$render: () => renderText(handle, node),
@@ -5652,9 +5643,10 @@ export function buildTupleParameter(config: T.TupleParameter.Config): T.TuplePar
 		_name,
 		_type,
 		$with: {
-			name: (value: T.Identifier | T.RestPattern) =>
+			name: (value: Admit<T.Identifier | T.RestPattern>) =>
 				rebuilt(node, handle, () => buildTupleParameter({ ...config, name: value })),
-			type: (value: T.TypeAnnotation) => rebuilt(node, handle, () => buildTupleParameter({ ...config, type: value }))
+			type: (value: Admit<T.TypeAnnotation>) =>
+				rebuilt(node, handle, () => buildTupleParameter({ ...config, type: value }))
 		},
 		name: () => _name,
 		type: () => _type,
@@ -5679,9 +5671,9 @@ export function buildOptionalTupleParameter(config: T.OptionalTupleParameter.Con
 		_name,
 		_type,
 		$with: {
-			name: (value: T.Identifier) =>
+			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildOptionalTupleParameter({ ...config, name: value })),
-			type: (value: T.TypeAnnotation) =>
+			type: (value: Admit<T.TypeAnnotation>) =>
 				rebuilt(node, handle, () => buildOptionalTupleParameter({ ...config, type: value }))
 		},
 		name: () => _name,
@@ -5696,9 +5688,7 @@ export function buildOptionalTupleParameter(config: T.OptionalTupleParameter.Con
 	return node as unknown as T.OptionalTupleParameter.Bound;
 }
 
-export function buildOptionalType(
-	value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
-): T.OptionalType.Bound {
+export function buildOptionalType(value: Admit<T.Type | T.TypeIdentifier.Types>): T.OptionalType.Bound {
 	const _type = admitAliasContent<NonNullable<T.OptionalType['_type']>>(
 		rejectBareText(kindIdStorage<NonNullable<T.OptionalType['_type']>>(value), 'OptionalType.type', 'a built Type'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -5710,7 +5700,7 @@ export function buildOptionalType(
 		$named: true as const,
 		_type,
 		$with: {
-			type: (value: NonNullable<T.Type | T.TypeIdentifier.Types>) =>
+			type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => buildOptionalType(value))
 		},
 		type: () => _type,
@@ -5724,7 +5714,7 @@ export function buildOptionalType(
 	return node as unknown as T.OptionalType.Bound;
 }
 
-export function buildRestType(value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>): T.RestType.Bound {
+export function buildRestType(value: Admit<T.Type | T.TypeIdentifier.Types>): T.RestType.Bound {
 	const _type = admitAliasContent<NonNullable<T.RestType['_type']>>(
 		rejectBareText(kindIdStorage<NonNullable<T.RestType['_type']>>(value), 'RestType.type', 'a built Type'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -5736,7 +5726,8 @@ export function buildRestType(value: AdmitBound<T.Type | T.TypeIdentifier.Types,
 		$named: true as const,
 		_type,
 		$with: {
-			type: (value: NonNullable<T.Type | T.TypeIdentifier.Types>) => rebuilt(node, handle, () => buildRestType(value))
+			type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
+				rebuilt(node, handle, () => buildRestType(value))
 		},
 		type: () => _type,
 		$render: () => renderText(handle, node),
@@ -5781,14 +5772,14 @@ export function buildConstructorType(config: T.ConstructorType.Config): T.Constr
 		_parameters,
 		_type,
 		$with: {
-			abstract: (value?: NonNullable<T.ConstructorType.Config>['abstract']) =>
+			abstract: (value?: Admit<NonNullable<T.ConstructorType.Config>['abstract']>) =>
 				rebuilt(node, handle, () => buildConstructorType({ ...config, abstract: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: T.TypeParameters) => buildConstructorType({ ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) => buildConstructorType({ ...config, typeParameters: value })
 					)
 				),
 			parameters: (...args: unknown[]) =>
@@ -5796,10 +5787,10 @@ export function buildConstructorType(config: T.ConstructorType.Config): T.Constr
 					listSlotWith(
 						args,
 						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
-						(value: T.FormalParameters) => buildConstructorType({ ...config, parameters: value })
+						(value: Admit<T.FormalParameters>) => buildConstructorType({ ...config, parameters: value })
 					)
 				),
-			type: (value: NonNullable<T.ConstructorType.Config>['type']) =>
+			type: (value: Admit<NonNullable<T.ConstructorType.Config>['type']>) =>
 				rebuilt(node, handle, () => buildConstructorType({ ...config, type: value }))
 		},
 		abstract: () => _abstract,
@@ -5817,7 +5808,7 @@ export function buildConstructorType(config: T.ConstructorType.Config): T.Constr
 }
 
 export function buildTemplateType(
-	value: AdmitBound<(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types, T.AdmittedNodes>
+	value: Admit<(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types>
 ): T.TemplateType.Bound {
 	const _type = admitAliasContent<NonNullable<T.TemplateType['_type']>>(
 		rejectBareText(
@@ -5834,7 +5825,7 @@ export function buildTemplateType(
 		$named: true as const,
 		_type,
 		$with: {
-			type: (value: NonNullable<(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types>) =>
+			type: (value: Admit<NonNullable<(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => buildTemplateType(value))
 		},
 		type: () => _type,
@@ -5849,7 +5840,7 @@ export function buildTemplateType(
 }
 
 export function buildTemplateLiteralType(
-	...children: AdmitBound<(T.TemplateChars | T.TemplateType)[], T.AdmittedNodes>
+	...children: Admit<(T.TemplateChars | T.TemplateType)[]>
 ): T.TemplateLiteralType.Bound {
 	const _elements = rejectBareText(children, 'TemplateLiteralType.elements', 'buildTemplateChars(…)');
 	const handle = currentHandle();
@@ -5859,7 +5850,7 @@ export function buildTemplateLiteralType(
 		$named: true as const,
 		_elements,
 		$with: {
-			elements: (...vs: (T.TemplateChars | T.TemplateType)[]) =>
+			elements: (...vs: Admit<T.TemplateChars | T.TemplateType>[]) =>
 				rebuilt(node, handle, () => buildTemplateLiteralType(...restItems('elements', vs)))
 		},
 		elements: () => _elements,
@@ -5890,9 +5881,9 @@ export function buildInferType(config: T.InferType.Config): T.InferType.Bound {
 		_name,
 		_type,
 		$with: {
-			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+			name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildInferType({ ...config, name: value })),
-			type: (value?: NonNullable<T.InferType.Config>['type']) =>
+			type: (value?: Admit<NonNullable<T.InferType.Config>['type']>) =>
 				rebuilt(node, handle, () => buildInferType({ ...config, type: value }))
 		},
 		name: () => _name,
@@ -5950,13 +5941,13 @@ export function buildConditionalType(config: T.ConditionalType.Config): T.Condit
 		_consequence,
 		_alternative,
 		$with: {
-			left: (value: NonNullable<T.ConditionalType.Config>['left']) =>
+			left: (value: Admit<NonNullable<T.ConditionalType.Config>['left']>) =>
 				rebuilt(node, handle, () => buildConditionalType({ ...config, left: value })),
-			right: (value: NonNullable<T.ConditionalType.Config>['right']) =>
+			right: (value: Admit<NonNullable<T.ConditionalType.Config>['right']>) =>
 				rebuilt(node, handle, () => buildConditionalType({ ...config, right: value })),
-			consequence: (value: NonNullable<T.ConditionalType.Config>['consequence']) =>
+			consequence: (value: Admit<NonNullable<T.ConditionalType.Config>['consequence']>) =>
 				rebuilt(node, handle, () => buildConditionalType({ ...config, consequence: value })),
-			alternative: (value: NonNullable<T.ConditionalType.Config>['alternative']) =>
+			alternative: (value: Admit<NonNullable<T.ConditionalType.Config>['alternative']>) =>
 				rebuilt(node, handle, () => buildConditionalType({ ...config, alternative: value }))
 		},
 		left: () => _left,
@@ -5987,14 +5978,14 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 		_name,
 		_type_arguments,
 		$with: {
-			name: (value: T.TypeIdentifier | T.NestedTypeIdentifier | T.TypeIdentifier.Types) =>
+			name: (value: Admit<T.TypeIdentifier | T.NestedTypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildGenericType({ ...config, name: value })),
 			typeArguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
-						(value: T.TypeArguments) => buildGenericType({ ...config, typeArguments: value })
+						(value: Admit<T.TypeArguments>) => buildGenericType({ ...config, typeArguments: value })
 					)
 				)
 		},
@@ -6037,9 +6028,9 @@ export function buildTypePredicate(config: T.TypePredicate.Config): T.TypePredic
 		_name,
 		_type,
 		$with: {
-			name: (value: NonNullable<T.TypePredicate.Config>['name']) =>
+			name: (value: Admit<NonNullable<T.TypePredicate.Config>['name']>) =>
 				rebuilt(node, handle, () => buildTypePredicate({ ...config, name: value })),
-			type: (value: NonNullable<T.TypePredicate.Config>['type']) =>
+			type: (value: Admit<NonNullable<T.TypePredicate.Config>['type']>) =>
 				rebuilt(node, handle, () => buildTypePredicate({ ...config, type: value }))
 		},
 		name: () => _name,
@@ -6055,14 +6046,14 @@ export function buildTypePredicate(config: T.TypePredicate.Config): T.TypePredic
 }
 
 export function buildTypePredicateAnnotation(
-	value: AdmitBound<T.TypePredicate, T.AdmittedNodes>
+	value: Admit<T.TypePredicate>
 ): ReturnType<typeof _buildTypePredicateAnnotation>;
 export function buildTypePredicateAnnotation(
 	_config: T.TypePredicate.Config
 ): ReturnType<typeof _buildTypePredicateAnnotation>;
 export function buildTypePredicateAnnotation(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildTypePredicateAnnotation(args[0] as T.TypePredicate);
+		return _buildTypePredicateAnnotation(args[0] as Parameters<typeof _buildTypePredicateAnnotation>[0]);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -6070,12 +6061,14 @@ export function buildTypePredicateAnnotation(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.TypePredicate as const);
 	return prebuilt
-		? _buildTypePredicateAnnotation(args[0] as T.TypePredicate)
-		: _buildTypePredicateAnnotation((buildTypePredicate as (...a: unknown[]) => unknown)(...args) as T.TypePredicate);
+		? _buildTypePredicateAnnotation(args[0] as Parameters<typeof _buildTypePredicateAnnotation>[0])
+		: _buildTypePredicateAnnotation(
+				(buildTypePredicate as (...a: unknown[]) => unknown)(...args) as Parameters<
+					typeof _buildTypePredicateAnnotation
+				>[0]
+			);
 }
-function _buildTypePredicateAnnotation(
-	value: AdmitBound<T.TypePredicate, T.AdmittedNodes>
-): T.TypePredicateAnnotation.Bound {
+function _buildTypePredicateAnnotation(value: Admit<T.TypePredicate>): T.TypePredicateAnnotation.Bound {
 	const _type_predicate = rejectBareText(value, 'TypePredicateAnnotation.typePredicate', 'a built TypePredicate');
 	const handle = currentHandle();
 	const node = {
@@ -6084,7 +6077,8 @@ function _buildTypePredicateAnnotation(
 		$named: true as const,
 		_type_predicate,
 		$with: {
-			typePredicate: (value: T.TypePredicate) => rebuilt(node, handle, () => _buildTypePredicateAnnotation(value))
+			typePredicate: (value: Admit<T.TypePredicate>) =>
+				rebuilt(node, handle, () => _buildTypePredicateAnnotation(value))
 		},
 		typePredicate: () => _type_predicate,
 		$render: () => renderText(handle, node),
@@ -6137,11 +6131,11 @@ export function buildTypeQueryMemberExpression(
 		_content,
 		_property,
 		$with: {
-			object: (value: NonNullable<T.TypeQueryMemberExpression.Config>['object']) =>
+			object: (value: Admit<NonNullable<T.TypeQueryMemberExpression.Config>['object']>) =>
 				rebuilt(node, handle, () => buildTypeQueryMemberExpression({ ...config, object: value })),
-			content: (value: NonNullable<T.TypeQueryMemberExpression.Config>['content']) =>
+			content: (value: Admit<NonNullable<T.TypeQueryMemberExpression.Config>['content']>) =>
 				rebuilt(node, handle, () => buildTypeQueryMemberExpression({ ...config, content: value })),
-			property: (value: T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types) =>
+			property: (value: Admit<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildTypeQueryMemberExpression({ ...config, property: value }))
 		},
 		object: () => _object,
@@ -6187,11 +6181,11 @@ export function buildTypeQuerySubscriptExpression(
 		_optional_chain,
 		_index,
 		$with: {
-			object: (value: NonNullable<T.TypeQuerySubscriptExpression.Config>['object']) =>
+			object: (value: Admit<NonNullable<T.TypeQuerySubscriptExpression.Config>['object']>) =>
 				rebuilt(node, handle, () => buildTypeQuerySubscriptExpression({ ...config, object: value })),
-			optionalChain: (value?: NonNullable<T.TypeQuerySubscriptExpression.Config>['optionalChain']) =>
+			optionalChain: (value?: Admit<NonNullable<T.TypeQuerySubscriptExpression.Config>['optionalChain']>) =>
 				rebuilt(node, handle, () => buildTypeQuerySubscriptExpression({ ...config, optionalChain: value })),
-			index: (value: NonNullable<T.TypeQuerySubscriptExpression.Config>['index']) =>
+			index: (value: Admit<NonNullable<T.TypeQuerySubscriptExpression.Config>['index']>) =>
 				rebuilt(node, handle, () => buildTypeQuerySubscriptExpression({ ...config, index: value }))
 		},
 		object: () => _object,
@@ -6233,9 +6227,9 @@ export function buildTypeQueryCallExpression(
 		_function,
 		_arguments,
 		$with: {
-			function: (value: NonNullable<T.TypeQueryCallExpression.Config>['function']) =>
+			function: (value: Admit<NonNullable<T.TypeQueryCallExpression.Config>['function']>) =>
 				rebuilt(node, handle, () => buildTypeQueryCallExpression({ ...config, function: value })),
-			arguments: (value: T.Arguments) =>
+			arguments: (value: Admit<T.Arguments>) =>
 				rebuilt(node, handle, () => buildTypeQueryCallExpression({ ...config, arguments: value }))
 		},
 		function: () => _function,
@@ -6276,14 +6270,15 @@ export function buildTypeQueryInstantiationExpression(
 		_function,
 		_type_arguments,
 		$with: {
-			function: (value: NonNullable<T.TypeQueryInstantiationExpression.Config>['function']) =>
+			function: (value: Admit<NonNullable<T.TypeQueryInstantiationExpression.Config>['function']>) =>
 				rebuilt(node, handle, () => buildTypeQueryInstantiationExpression({ ...config, function: value })),
 			typeArguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments },
-						(value: T.TypeArguments) => buildTypeQueryInstantiationExpression({ ...config, typeArguments: value })
+						(value: Admit<T.TypeArguments>) =>
+							buildTypeQueryInstantiationExpression({ ...config, typeArguments: value })
 					)
 				)
 		},
@@ -6300,14 +6295,13 @@ export function buildTypeQueryInstantiationExpression(
 }
 
 export function buildTypeQuery(
-	value: AdmitBound<
+	value: Admit<
 		| T.TypeQuerySubscriptExpression
 		| T.TypeQueryMemberExpression
 		| T.TypeQueryCallExpression
 		| T.TypeQueryInstantiationExpression
 		| T.Identifier
-		| TSKindId.This,
-		T.AdmittedNodes
+		| TSKindId.This
 	>
 ): T.TypeQuery.Bound {
 	const _expression = rejectKeywordText(
@@ -6328,13 +6322,15 @@ export function buildTypeQuery(
 		_expression,
 		$with: {
 			expression: (
-				value: NonNullable<
-					| T.TypeQuerySubscriptExpression
-					| T.TypeQueryMemberExpression
-					| T.TypeQueryCallExpression
-					| T.TypeQueryInstantiationExpression
-					| T.Identifier
-					| TSKindId.This
+				value: Admit<
+					NonNullable<
+						| T.TypeQuerySubscriptExpression
+						| T.TypeQueryMemberExpression
+						| T.TypeQueryCallExpression
+						| T.TypeQueryInstantiationExpression
+						| T.Identifier
+						| TSKindId.This
+					>
 				>
 			) => rebuilt(node, handle, () => buildTypeQuery(value))
 		},
@@ -6349,9 +6345,7 @@ export function buildTypeQuery(
 	return node as unknown as T.TypeQuery.Bound;
 }
 
-export function buildIndexTypeQuery(
-	value: AdmitBound<T.PrimaryType | T.TypeIdentifier.Types, T.AdmittedNodes>
-): T.IndexTypeQuery.Bound {
+export function buildIndexTypeQuery(value: Admit<T.PrimaryType | T.TypeIdentifier.Types>): T.IndexTypeQuery.Bound {
 	const _type = admitAliasContent<NonNullable<T.IndexTypeQuery['_type']>>(
 		rejectBareText(
 			kindIdStorage<NonNullable<T.IndexTypeQuery['_type']>>(value),
@@ -6367,7 +6361,7 @@ export function buildIndexTypeQuery(
 		$named: true as const,
 		_type,
 		$with: {
-			type: (value: NonNullable<T.PrimaryType | T.TypeIdentifier.Types>) =>
+			type: (value: Admit<NonNullable<T.PrimaryType | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => buildIndexTypeQuery(value))
 		},
 		type: () => _type,
@@ -6406,9 +6400,9 @@ export function buildLookupType(config: T.LookupType.Config): T.LookupType.Bound
 		_type,
 		_index_type,
 		$with: {
-			type: (value: NonNullable<T.LookupType.Config>['type']) =>
+			type: (value: Admit<NonNullable<T.LookupType.Config>['type']>) =>
 				rebuilt(node, handle, () => buildLookupType({ ...config, type: value })),
-			indexType: (value: NonNullable<T.LookupType.Config>['indexType']) =>
+			indexType: (value: Admit<NonNullable<T.LookupType.Config>['indexType']>) =>
 				rebuilt(node, handle, () => buildLookupType({ ...config, indexType: value }))
 		},
 		type: () => _type,
@@ -6453,11 +6447,11 @@ export function buildMappedTypeClause(config: T.MappedTypeClause.Config): T.Mapp
 		_type,
 		_alias,
 		$with: {
-			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+			name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildMappedTypeClause({ ...config, name: value })),
-			type: (value: NonNullable<T.MappedTypeClause.Config>['type']) =>
+			type: (value: Admit<NonNullable<T.MappedTypeClause.Config>['type']>) =>
 				rebuilt(node, handle, () => buildMappedTypeClause({ ...config, type: value })),
-			alias: (value?: NonNullable<T.MappedTypeClause.Config>['alias']) =>
+			alias: (value?: Admit<NonNullable<T.MappedTypeClause.Config>['alias']>) =>
 				rebuilt(node, handle, () => buildMappedTypeClause({ ...config, alias: value }))
 		},
 		name: () => _name,
@@ -6474,15 +6468,14 @@ export function buildMappedTypeClause(config: T.MappedTypeClause.Config): T.Mapp
 }
 
 export function buildLiteralType(
-	value: AdmitBound<
+	value: Admit<
 		| T.LiteralTypeNegativeNumber
 		| T.Number
 		| T.String
 		| TSKindId.True
 		| TSKindId.False
 		| TSKindId.Null
-		| TSKindId.Undefined,
-		T.AdmittedNodes
+		| TSKindId.Undefined
 	>
 ): T.LiteralType.Bound {
 	const _content = rejectBareText(
@@ -6498,14 +6491,16 @@ export function buildLiteralType(
 		_content,
 		$with: {
 			content: (
-				value: NonNullable<
-					| T.LiteralTypeNegativeNumber
-					| T.Number
-					| T.String
-					| TSKindId.True
-					| TSKindId.False
-					| TSKindId.Null
-					| TSKindId.Undefined
+				value: Admit<
+					NonNullable<
+						| T.LiteralTypeNegativeNumber
+						| T.Number
+						| T.String
+						| TSKindId.True
+						| TSKindId.False
+						| TSKindId.Null
+						| TSKindId.Undefined
+					>
 				>
 			) => rebuilt(node, handle, () => buildLiteralType(value))
 		},
@@ -6522,9 +6517,7 @@ export function buildLiteralType(
 
 export const buildExistentialType: TSKindId.ExistentialType = TSKindId.ExistentialType;
 
-export function buildFlowMaybeType(
-	value: AdmitBound<T.PrimaryType | T.TypeIdentifier.Types, T.AdmittedNodes>
-): T.FlowMaybeType.Bound {
+export function buildFlowMaybeType(value: Admit<T.PrimaryType | T.TypeIdentifier.Types>): T.FlowMaybeType.Bound {
 	const _type = admitAliasContent<NonNullable<T.FlowMaybeType['_type']>>(
 		rejectBareText(
 			kindIdStorage<NonNullable<T.FlowMaybeType['_type']>>(value),
@@ -6540,7 +6533,7 @@ export function buildFlowMaybeType(
 		$named: true as const,
 		_type,
 		$with: {
-			type: (value: NonNullable<T.PrimaryType | T.TypeIdentifier.Types>) =>
+			type: (value: Admit<NonNullable<T.PrimaryType | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => buildFlowMaybeType(value))
 		},
 		type: () => _type,
@@ -6554,9 +6547,7 @@ export function buildFlowMaybeType(
 	return node as unknown as T.FlowMaybeType.Bound;
 }
 
-export function buildParenthesizedType(
-	value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
-): T.ParenthesizedType.Bound {
+export function buildParenthesizedType(value: Admit<T.Type | T.TypeIdentifier.Types>): T.ParenthesizedType.Bound {
 	const _type = admitAliasContent<NonNullable<T.ParenthesizedType['_type']>>(
 		rejectBareText(
 			kindIdStorage<NonNullable<T.ParenthesizedType['_type']>>(value),
@@ -6572,7 +6563,7 @@ export function buildParenthesizedType(
 		$named: true as const,
 		_type,
 		$with: {
-			type: (value: NonNullable<T.Type | T.TypeIdentifier.Types>) =>
+			type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => buildParenthesizedType(value))
 		},
 		type: () => _type,
@@ -6586,17 +6577,17 @@ export function buildParenthesizedType(
 	return node as unknown as T.ParenthesizedType.Bound;
 }
 
-export function buildTypeArguments(value: AdmitBound<T.Types, T.AdmittedNodes>): ReturnType<typeof _buildTypeArguments>;
+export function buildTypeArguments(value: Admit<T.Types>): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(
-	...elements: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>
+	...elements: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildTypeArguments(args[0] as T.Types);
+		return _buildTypeArguments(args[0] as Parameters<typeof _buildTypeArguments>[0]);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -6604,10 +6595,12 @@ export function buildTypeArguments(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.Types as const);
 	return prebuilt
-		? _buildTypeArguments(args[0] as T.Types)
-		: _buildTypeArguments((buildTypes as (...a: unknown[]) => unknown)(...args) as T.Types);
+		? _buildTypeArguments(args[0] as Parameters<typeof _buildTypeArguments>[0])
+		: _buildTypeArguments(
+				(buildTypes as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTypeArguments>[0]
+			);
 }
-function _buildTypeArguments(value: AdmitBound<T.Types, T.AdmittedNodes>): T.TypeArguments.Bound {
+function _buildTypeArguments(value: Admit<T.Types>): T.TypeArguments.Bound {
 	const _types = rejectBareText(value, 'TypeArguments.types', 'a built Types');
 	const listView = ownerView(_types, '_item');
 	if (listView.stored === undefined) refuseReadStub('_types');
@@ -6621,8 +6614,10 @@ function _buildTypeArguments(value: AdmitBound<T.Types, T.AdmittedNodes>): T.Typ
 		$with: {
 			types: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
-					listSlotWith(args, { kind: TSKindId.Types as const, optional: false, make: buildTypes }, (value: T.Types) =>
-						_buildTypeArguments(value)
+					listSlotWith(
+						args,
+						{ kind: TSKindId.Types as const, optional: false, make: buildTypes },
+						(value: Admit<T.Types>) => _buildTypeArguments(value)
 					)
 				)
 		},
@@ -6646,7 +6641,7 @@ function _buildTypeArguments(value: AdmitBound<T.Types, T.AdmittedNodes>): T.Typ
 	return node as unknown as T.TypeArguments.Bound;
 }
 
-export function buildObjectType(config: ConfigOf<T.ObjectType, T.NamespaceMap>): T.ObjectType.Bound {
+export function buildObjectType(config: ConfigOf<T.ObjectType>): T.ObjectType.Bound {
 	const _opening = rejectBareText(
 		kindIdStorage<NonNullable<T.ObjectType['_opening']>>(config.opening),
 		'ObjectType.opening',
@@ -6667,17 +6662,17 @@ export function buildObjectType(config: ConfigOf<T.ObjectType, T.NamespaceMap>):
 		_members,
 		_closing,
 		$with: {
-			opening: (value: NonNullable<ConfigOf<T.ObjectType, T.NamespaceMap>>['opening']) =>
+			opening: (value: Admit<NonNullable<ConfigOf<T.ObjectType>>['opening']>) =>
 				rebuilt(node, handle, () => buildObjectType({ ...config, opening: value })),
 			members: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.ObjectTypeContent as const, optional: true, make: buildObjectTypeContent },
-						(value?: T.ObjectTypeContent) => buildObjectType({ ...config, members: value })
+						(value?: Admit<T.ObjectTypeContent>) => buildObjectType({ ...config, members: value })
 					)
 				),
-			closing: (value: NonNullable<ConfigOf<T.ObjectType, T.NamespaceMap>>['closing']) =>
+			closing: (value: Admit<NonNullable<ConfigOf<T.ObjectType>>['closing']>) =>
 				rebuilt(node, handle, () => buildObjectType({ ...config, closing: value }))
 		},
 		opening: () => _opening,
@@ -6706,7 +6701,7 @@ export function buildObjectTypeCurly(config?: T.ObjectType.Curly.Config): T.Obje
 		_members,
 		_closing,
 		$with: {
-			members: (value?: T.ObjectTypeContent) =>
+			members: (value?: Admit<T.ObjectTypeContent>) =>
 				rebuilt(node, handle, () => buildObjectTypeCurly({ ...config, members: value }))
 		},
 		opening: () => _opening,
@@ -6735,7 +6730,7 @@ export function buildObjectTypeFlow(config?: T.ObjectType.Flow.Config): T.Object
 		_members,
 		_closing,
 		$with: {
-			members: (value?: T.ObjectTypeContent) =>
+			members: (value?: Admit<T.ObjectTypeContent>) =>
 				rebuilt(node, handle, () => buildObjectTypeFlow({ ...config, members: value }))
 		},
 		opening: () => _opening,
@@ -6781,7 +6776,7 @@ export function buildCallSignature(config: Partial<T.CallSignature.Config> = {})
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: T.TypeParameters) => buildCallSignature({ ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) => buildCallSignature({ ...config, typeParameters: value })
 					)
 				),
 			parameters: (...args: unknown[]) =>
@@ -6789,10 +6784,10 @@ export function buildCallSignature(config: Partial<T.CallSignature.Config> = {})
 					listSlotWith(
 						args,
 						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
-						(value: T.FormalParameters) => buildCallSignature({ ...config, parameters: value })
+						(value: Admit<T.FormalParameters>) => buildCallSignature({ ...config, parameters: value })
 					)
 				),
-			returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+			returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
 				rebuilt(node, handle, () => buildCallSignature({ ...config, returnType: value }))
 		},
 		typeParameters: () => _type_parameters,
@@ -6846,19 +6841,19 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 		_optional,
 		_type,
 		$with: {
-			accessibilityModifier: (value?: NonNullable<T.PropertySignature.Config>['accessibilityModifier']) =>
+			accessibilityModifier: (value?: Admit<NonNullable<T.PropertySignature.Config>['accessibilityModifier']>) =>
 				rebuilt(node, handle, () => buildPropertySignature({ ...config, accessibilityModifier: value })),
-			static: (value?: NonNullable<T.PropertySignature.Config>['static']) =>
+			static: (value?: Admit<NonNullable<T.PropertySignature.Config>['static']>) =>
 				rebuilt(node, handle, () => buildPropertySignature({ ...config, static: value })),
-			override: (value?: NonNullable<T.PropertySignature.Config>['override']) =>
+			override: (value?: Admit<NonNullable<T.PropertySignature.Config>['override']>) =>
 				rebuilt(node, handle, () => buildPropertySignature({ ...config, override: value })),
-			readonly: (value?: NonNullable<T.PropertySignature.Config>['readonly']) =>
+			readonly: (value?: Admit<NonNullable<T.PropertySignature.Config>['readonly']>) =>
 				rebuilt(node, handle, () => buildPropertySignature({ ...config, readonly: value })),
-			name: (value: NonNullable<T.PropertySignature.Config>['name']) =>
+			name: (value: Admit<NonNullable<T.PropertySignature.Config>['name']>) =>
 				rebuilt(node, handle, () => buildPropertySignature({ ...config, name: value })),
-			optional: (value?: NonNullable<T.PropertySignature.Config>['optional']) =>
+			optional: (value?: Admit<NonNullable<T.PropertySignature.Config>['optional']>) =>
 				rebuilt(node, handle, () => buildPropertySignature({ ...config, optional: value })),
-			type: (value?: T.TypeAnnotation) =>
+			type: (value?: Admit<T.TypeAnnotation>) =>
 				rebuilt(node, handle, () => buildPropertySignature({ ...config, type: value }))
 		},
 		accessibilityModifier: () => _accessibility_modifier,
@@ -6878,19 +6873,17 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 	return node as unknown as T.PropertySignature.Bound;
 }
 
+export function buildTypeParameters(value: Admit<T.TypeParametersElements>): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(
-	value: AdmitBound<T.TypeParametersElements, T.AdmittedNodes>
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<AdmitBound<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>>
-): ReturnType<typeof _buildTypeParameters>;
-export function buildTypeParameters(
-	...elements: NonEmptyArray<AdmitBound<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>>
+	...elements: NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildTypeParameters(args[0] as T.TypeParametersElements);
+		return _buildTypeParameters(args[0] as Parameters<typeof _buildTypeParameters>[0]);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -6898,12 +6891,14 @@ export function buildTypeParameters(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.TypeParametersElements as const);
 	return prebuilt
-		? _buildTypeParameters(args[0] as T.TypeParametersElements)
+		? _buildTypeParameters(args[0] as Parameters<typeof _buildTypeParameters>[0])
 		: _buildTypeParameters(
-				(buildTypeParametersElements as (...a: unknown[]) => unknown)(...args) as T.TypeParametersElements
+				(buildTypeParametersElements as (...a: unknown[]) => unknown)(...args) as Parameters<
+					typeof _buildTypeParameters
+				>[0]
 			);
 }
-function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.AdmittedNodes>): T.TypeParameters.Bound {
+function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypeParameters.Bound {
 	const _elements = rejectBareText(value, 'TypeParameters.elements', 'a built TypeParametersElements');
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
@@ -6924,7 +6919,7 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeParametersElements as const, optional: false, make: buildTypeParametersElements },
-						(value: T.TypeParametersElements) => _buildTypeParameters(value)
+						(value: Admit<T.TypeParametersElements>) => _buildTypeParameters(value)
 					)
 				)
 		},
@@ -6966,13 +6961,14 @@ export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParame
 		_constraint,
 		_value,
 		$with: {
-			const: (value?: NonNullable<T.TypeParameter.Config>['const']) =>
+			const: (value?: Admit<NonNullable<T.TypeParameter.Config>['const']>) =>
 				rebuilt(node, handle, () => buildTypeParameter({ ...config, const: value })),
-			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+			name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildTypeParameter({ ...config, name: value })),
-			constraint: (value?: T.Constraint) =>
+			constraint: (value?: Admit<T.Constraint>) =>
 				rebuilt(node, handle, () => buildTypeParameter({ ...config, constraint: value })),
-			value: (value?: T.DefaultType) => rebuilt(node, handle, () => buildTypeParameter({ ...config, value: value }))
+			value: (value?: Admit<T.DefaultType>) =>
+				rebuilt(node, handle, () => buildTypeParameter({ ...config, value: value }))
 		},
 		const: () => _const,
 		name: () => _name,
@@ -6988,9 +6984,7 @@ export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParame
 	return node as unknown as T.TypeParameter.Bound;
 }
 
-export function buildDefaultType(
-	value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
-): T.DefaultType.Bound {
+export function buildDefaultType(value: Admit<T.Type | T.TypeIdentifier.Types>): T.DefaultType.Bound {
 	const _type = admitAliasContent<NonNullable<T.DefaultType['_type']>>(
 		rejectBareText(kindIdStorage<NonNullable<T.DefaultType['_type']>>(value), 'DefaultType.type', 'a built Type'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -7002,7 +6996,7 @@ export function buildDefaultType(
 		$named: true as const,
 		_type,
 		$with: {
-			type: (value: NonNullable<T.Type | T.TypeIdentifier.Types>) =>
+			type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => buildDefaultType(value))
 		},
 		type: () => _type,
@@ -7034,9 +7028,9 @@ export function buildConstraint(config: T.Constraint.Config): T.Constraint.Bound
 		_content,
 		_type,
 		$with: {
-			content: (value: NonNullable<T.Constraint.Config>['content']) =>
+			content: (value: Admit<NonNullable<T.Constraint.Config>['content']>) =>
 				rebuilt(node, handle, () => buildConstraint({ ...config, content: value })),
-			type: (value: NonNullable<T.Constraint.Config>['type']) =>
+			type: (value: Admit<NonNullable<T.Constraint.Config>['type']>) =>
 				rebuilt(node, handle, () => buildConstraint({ ...config, type: value }))
 		},
 		content: () => _content,
@@ -7076,14 +7070,14 @@ export function buildConstructSignature(config: Partial<T.ConstructSignature.Con
 		_parameters,
 		_type,
 		$with: {
-			abstract: (value?: NonNullable<T.ConstructSignature.Config>['abstract']) =>
+			abstract: (value?: Admit<NonNullable<T.ConstructSignature.Config>['abstract']>) =>
 				rebuilt(node, handle, () => buildConstructSignature({ ...config, abstract: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: T.TypeParameters) => buildConstructSignature({ ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) => buildConstructSignature({ ...config, typeParameters: value })
 					)
 				),
 			parameters: (...args: unknown[]) =>
@@ -7091,10 +7085,10 @@ export function buildConstructSignature(config: Partial<T.ConstructSignature.Con
 					listSlotWith(
 						args,
 						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
-						(value: T.FormalParameters) => buildConstructSignature({ ...config, parameters: value })
+						(value: Admit<T.FormalParameters>) => buildConstructSignature({ ...config, parameters: value })
 					)
 				),
-			type: (value?: T.TypeAnnotation) =>
+			type: (value?: Admit<T.TypeAnnotation>) =>
 				rebuilt(node, handle, () => buildConstructSignature({ ...config, type: value }))
 		},
 		abstract: () => _abstract,
@@ -7111,9 +7105,7 @@ export function buildConstructSignature(config: Partial<T.ConstructSignature.Con
 	return node as unknown as T.ConstructSignature.Bound;
 }
 
-export function buildArrayType(
-	value: AdmitBound<T.PrimaryType | T.TypeIdentifier.Types, T.AdmittedNodes>
-): T.ArrayType.Bound {
+export function buildArrayType(value: Admit<T.PrimaryType | T.TypeIdentifier.Types>): T.ArrayType.Bound {
 	const _type = admitAliasContent<NonNullable<T.ArrayType['_type']>>(
 		rejectBareText(kindIdStorage<NonNullable<T.ArrayType['_type']>>(value), 'ArrayType.type', 'a built PrimaryType'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -7125,7 +7117,7 @@ export function buildArrayType(
 		$named: true as const,
 		_type,
 		$with: {
-			type: (value: NonNullable<T.PrimaryType | T.TypeIdentifier.Types>) =>
+			type: (value: Admit<NonNullable<T.PrimaryType | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => buildArrayType(value))
 		},
 		type: () => _type,
@@ -7140,29 +7132,21 @@ export function buildArrayType(
 }
 
 export function buildTupleType(): T.EmptyTupleType;
+export function buildTupleType(value?: Admit<T.TupleTypeMembers>): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(
-	value?: AdmitBound<T.TupleTypeMembers, T.AdmittedNodes>
-): ReturnType<typeof _buildTupleType>;
-export function buildTupleType(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<
-		AdmitBound<
-			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
-			T.AdmittedNodes
-		>
+		Admit<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types>
 	>
 ): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(
 	...elements: NonEmptyArray<
-		AdmitBound<
-			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
-			T.AdmittedNodes
-		>
+		Admit<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types>
 	>
 ): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildTupleType(args[0] as T.TupleTypeMembers);
+		return _buildTupleType(args[0] as Parameters<typeof _buildTupleType>[0]);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -7170,10 +7154,12 @@ export function buildTupleType(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.TupleTypeMembers as const);
 	return prebuilt
-		? _buildTupleType(args[0] as T.TupleTypeMembers)
-		: _buildTupleType((buildTupleTypeMembers as (...a: unknown[]) => unknown)(...args) as T.TupleTypeMembers);
+		? _buildTupleType(args[0] as Parameters<typeof _buildTupleType>[0])
+		: _buildTupleType(
+				(buildTupleTypeMembers as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTupleType>[0]
+			);
 }
-function _buildTupleType(value?: AdmitBound<T.TupleTypeMembers, T.AdmittedNodes>): T.TupleType.Bound {
+function _buildTupleType(value?: Admit<T.TupleTypeMembers>): T.TupleType.Bound {
 	const _tuple_type_members = rejectBareText(value, 'TupleType.tupleTypeMembers', 'a built TupleTypeMembers');
 	const listView = ownerView(_tuple_type_members, '_item');
 	if (listView.stored === undefined) refuseReadStub('_tuple_type_members');
@@ -7190,7 +7176,7 @@ function _buildTupleType(value?: AdmitBound<T.TupleTypeMembers, T.AdmittedNodes>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TupleTypeMembers as const, optional: true, make: buildTupleTypeMembers },
-						(value?: T.TupleTypeMembers) => _buildTupleType(value)
+						(value?: Admit<T.TupleTypeMembers>) => _buildTupleType(value)
 					)
 				)
 		},
@@ -7215,9 +7201,7 @@ function _buildTupleType(value?: AdmitBound<T.TupleTypeMembers, T.AdmittedNodes>
 	return node as unknown as T.TupleType.Bound;
 }
 
-export function buildReadonlyType(
-	value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
-): T.ReadonlyType.Bound {
+export function buildReadonlyType(value: Admit<T.Type | T.TypeIdentifier.Types>): T.ReadonlyType.Bound {
 	const _type = admitAliasContent<NonNullable<T.ReadonlyType['_type']>>(
 		rejectBareText(kindIdStorage<NonNullable<T.ReadonlyType['_type']>>(value), 'ReadonlyType.type', 'a built Type'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -7229,7 +7213,7 @@ export function buildReadonlyType(
 		$named: true as const,
 		_type,
 		$with: {
-			type: (value: NonNullable<T.Type | T.TypeIdentifier.Types>) =>
+			type: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => buildReadonlyType(value))
 		},
 		type: () => _type,
@@ -7260,9 +7244,9 @@ export function buildUnionType(config: T.UnionType.Config): T.UnionType.Bound {
 		_left,
 		_right,
 		$with: {
-			left: (value?: NonNullable<T.UnionType.Config>['left']) =>
+			left: (value?: Admit<NonNullable<T.UnionType.Config>['left']>) =>
 				rebuilt(node, handle, () => buildUnionType({ ...config, left: value })),
-			right: (value: NonNullable<T.UnionType.Config>['right']) =>
+			right: (value: Admit<NonNullable<T.UnionType.Config>['right']>) =>
 				rebuilt(node, handle, () => buildUnionType({ ...config, right: value }))
 		},
 		left: () => _left,
@@ -7302,9 +7286,9 @@ export function buildIntersectionType(config: T.IntersectionType.Config): T.Inte
 		_left,
 		_right,
 		$with: {
-			left: (value?: NonNullable<T.IntersectionType.Config>['left']) =>
+			left: (value?: Admit<NonNullable<T.IntersectionType.Config>['left']>) =>
 				rebuilt(node, handle, () => buildIntersectionType({ ...config, left: value })),
-			right: (value: NonNullable<T.IntersectionType.Config>['right']) =>
+			right: (value: Admit<NonNullable<T.IntersectionType.Config>['right']>) =>
 				rebuilt(node, handle, () => buildIntersectionType({ ...config, right: value }))
 		},
 		left: () => _left,
@@ -7352,7 +7336,7 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: T.TypeParameters) => buildFunctionType({ ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) => buildFunctionType({ ...config, typeParameters: value })
 					)
 				),
 			parameters: (...args: unknown[]) =>
@@ -7360,10 +7344,10 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 					listSlotWith(
 						args,
 						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
-						(value: T.FormalParameters) => buildFunctionType({ ...config, parameters: value })
+						(value: Admit<T.FormalParameters>) => buildFunctionType({ ...config, parameters: value })
 					)
 				),
-			returnType: (value: NonNullable<T.FunctionType.Config>['returnType']) =>
+			returnType: (value: Admit<NonNullable<T.FunctionType.Config>['returnType']>) =>
 				rebuilt(node, handle, () => buildFunctionType({ ...config, returnType: value }))
 		},
 		typeParameters: () => _type_parameters,
@@ -7380,17 +7364,14 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 }
 
 export function buildExportSpecifiers(
-	...elements: NonEmptyArray<AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>>
+	...elements: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String>>
 ): ReturnType<typeof _buildExportSpecifiers>;
 export function buildExportSpecifiers(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>>
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String>>
 ): ReturnType<typeof _buildExportSpecifiers>;
 export function buildExportSpecifiers(
-	...args: (
-		| { delimiter?: Delimiter.None | Delimiter.Trailing }
-		| AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>
-	)[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.ExportSpecifier | T.Identifier | T.String>)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -7400,12 +7381,12 @@ export function buildExportSpecifiers(
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>
+		Admit<T.ExportSpecifier | T.Identifier | T.String>
 	>;
 	return _buildExportSpecifiers(elements, options);
 }
 function _buildExportSpecifiers(
-	elements: NonEmptyArray<AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>>,
+	elements: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ExportSpecifiers.Bound {
 	_assertNonEmpty(elements, 'export_specifiers.elements');
@@ -7427,7 +7408,7 @@ function _buildExportSpecifiers(
 		_item,
 		_delimiter,
 		$with: {
-			items: (...vs: NonEmptyArray<AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>>) =>
+			items: (...vs: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String>>) =>
 				rebuilt(node, handle, () => buildExportSpecifiers(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildExportSpecifiers({ ...options, delimiter: v }, ...elements))
@@ -7458,14 +7439,14 @@ function _buildExportSpecifiers(
 }
 
 export function buildImportSpecifiers(
-	...elements: NonEmptyArray<AdmitBound<T.ImportSpecifier, T.AdmittedNodes>>
+	...elements: NonEmptyArray<Admit<T.ImportSpecifier>>
 ): ReturnType<typeof _buildImportSpecifiers>;
 export function buildImportSpecifiers(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<AdmitBound<T.ImportSpecifier, T.AdmittedNodes>>
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: NonEmptyArray<Admit<T.ImportSpecifier>>
 ): ReturnType<typeof _buildImportSpecifiers>;
 export function buildImportSpecifiers(
-	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | AdmitBound<T.ImportSpecifier, T.AdmittedNodes>)[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.ImportSpecifier>)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -7474,13 +7455,11 @@ export function buildImportSpecifiers(
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		AdmitBound<T.ImportSpecifier, T.AdmittedNodes>
-	>;
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.ImportSpecifier>>;
 	return _buildImportSpecifiers(elements, options);
 }
 function _buildImportSpecifiers(
-	elements: NonEmptyArray<AdmitBound<T.ImportSpecifier, T.AdmittedNodes>>,
+	elements: NonEmptyArray<Admit<T.ImportSpecifier>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ImportSpecifiers.Bound {
 	_assertNonEmpty(elements, 'import_specifiers.elements');
@@ -7495,7 +7474,7 @@ function _buildImportSpecifiers(
 		_item,
 		_delimiter,
 		$with: {
-			items: (...vs: NonEmptyArray<AdmitBound<T.ImportSpecifier, T.AdmittedNodes>>) =>
+			items: (...vs: NonEmptyArray<Admit<T.ImportSpecifier>>) =>
 				rebuilt(node, handle, () => buildImportSpecifiers(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildImportSpecifiers({ ...options, delimiter: v }, ...elements))
@@ -7521,17 +7500,14 @@ function _buildImportSpecifiers(
 }
 
 export function buildFormalParametersElements(
-	...elements: NonEmptyArray<AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>>
+	...elements: NonEmptyArray<Admit<T.RequiredParameter | T.OptionalParameter>>
 ): ReturnType<typeof _buildFormalParametersElements>;
 export function buildFormalParametersElements(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>>
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: NonEmptyArray<Admit<T.RequiredParameter | T.OptionalParameter>>
 ): ReturnType<typeof _buildFormalParametersElements>;
 export function buildFormalParametersElements(
-	...args: (
-		| { delimiter?: Delimiter.None | Delimiter.Trailing }
-		| AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>
-	)[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.RequiredParameter | T.OptionalParameter>)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -7541,12 +7517,12 @@ export function buildFormalParametersElements(
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>
+		Admit<T.RequiredParameter | T.OptionalParameter>
 	>;
 	return _buildFormalParametersElements(elements, options);
 }
 function _buildFormalParametersElements(
-	elements: NonEmptyArray<AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>>,
+	elements: NonEmptyArray<Admit<T.RequiredParameter | T.OptionalParameter>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.FormalParametersElements.Bound {
 	_assertNonEmpty(elements, 'formal_parameters_elements.elements');
@@ -7561,7 +7537,7 @@ function _buildFormalParametersElements(
 		_item,
 		_delimiter,
 		$with: {
-			items: (...vs: NonEmptyArray<AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>>) =>
+			items: (...vs: NonEmptyArray<Admit<T.RequiredParameter | T.OptionalParameter>>) =>
 				rebuilt(node, handle, () => buildFormalParametersElements(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildFormalParametersElements({ ...options, delimiter: v }, ...elements))
@@ -7587,7 +7563,7 @@ function _buildFormalParametersElements(
 }
 
 export function buildEnumBodyElementName(
-	value: AdmitBound<
+	value: Admit<
 		| (
 				| T.PropertyIdentifier
 				| TSKindId.DeclareKeyword
@@ -7617,8 +7593,7 @@ export function buildEnumBodyElementName(
 				| T.Number
 				| T.ComputedPropertyName
 		  )
-		| T.PropertyIdentifier.Types,
-		T.AdmittedNodes
+		| T.PropertyIdentifier.Types
 	>
 ): T.EnumBodyElementName.Bound {
 	const _name = admitAliasContent<NonNullable<T.EnumBodyElementName['_name']>>(
@@ -7637,37 +7612,39 @@ export function buildEnumBodyElementName(
 		_name,
 		$with: {
 			name: (
-				value: NonNullable<
-					| (
-							| T.PropertyIdentifier
-							| TSKindId.DeclareKeyword
-							| TSKindId.NamespaceKeyword
-							| TSKindId.TypeKeyword
-							| TSKindId.PublicKeyword
-							| TSKindId.PrivateKeyword
-							| TSKindId.ProtectedKeyword
-							| TSKindId.OverrideKeyword
-							| TSKindId.ReadonlyKeyword
-							| TSKindId.ModuleKeyword
-							| TSKindId.AnyKeyword
-							| TSKindId.NumberKeyword
-							| TSKindId.BooleanKeyword
-							| TSKindId.StringKeyword
-							| TSKindId.SymbolKeyword
-							| TSKindId.ExportKeyword
-							| TSKindId.ObjectKeyword
-							| TSKindId.NewKeyword
-							| TSKindId.GetKeyword
-							| TSKindId.SetKeyword
-							| TSKindId.AsyncKeyword
-							| TSKindId.StaticKeyword
-							| TSKindId.LetKeyword
-							| T.PrivatePropertyIdentifier
-							| T.String
-							| T.Number
-							| T.ComputedPropertyName
-					  )
-					| T.PropertyIdentifier.Types
+				value: Admit<
+					NonNullable<
+						| (
+								| T.PropertyIdentifier
+								| TSKindId.DeclareKeyword
+								| TSKindId.NamespaceKeyword
+								| TSKindId.TypeKeyword
+								| TSKindId.PublicKeyword
+								| TSKindId.PrivateKeyword
+								| TSKindId.ProtectedKeyword
+								| TSKindId.OverrideKeyword
+								| TSKindId.ReadonlyKeyword
+								| TSKindId.ModuleKeyword
+								| TSKindId.AnyKeyword
+								| TSKindId.NumberKeyword
+								| TSKindId.BooleanKeyword
+								| TSKindId.StringKeyword
+								| TSKindId.SymbolKeyword
+								| TSKindId.ExportKeyword
+								| TSKindId.ObjectKeyword
+								| TSKindId.NewKeyword
+								| TSKindId.GetKeyword
+								| TSKindId.SetKeyword
+								| TSKindId.AsyncKeyword
+								| TSKindId.StaticKeyword
+								| TSKindId.LetKeyword
+								| T.PrivatePropertyIdentifier
+								| T.String
+								| T.Number
+								| T.ComputedPropertyName
+						  )
+						| T.PropertyIdentifier.Types
+					>
 				>
 			) => rebuilt(node, handle, () => buildEnumBodyElementName(value))
 		},
@@ -7683,14 +7660,14 @@ export function buildEnumBodyElementName(
 }
 
 export function buildEnumBodyElements(
-	...elements: NonEmptyArray<AdmitBound<T.EnumBodyElement, T.AdmittedNodes>>
+	...elements: NonEmptyArray<Admit<T.EnumBodyElement>>
 ): ReturnType<typeof _buildEnumBodyElements>;
 export function buildEnumBodyElements(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<AdmitBound<T.EnumBodyElement, T.AdmittedNodes>>
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: NonEmptyArray<Admit<T.EnumBodyElement>>
 ): ReturnType<typeof _buildEnumBodyElements>;
 export function buildEnumBodyElements(
-	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | AdmitBound<T.EnumBodyElement, T.AdmittedNodes>)[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.EnumBodyElement>)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -7699,13 +7676,11 @@ export function buildEnumBodyElements(
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		AdmitBound<T.EnumBodyElement, T.AdmittedNodes>
-	>;
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.EnumBodyElement>>;
 	return _buildEnumBodyElements(elements, options);
 }
 function _buildEnumBodyElements(
-	elements: NonEmptyArray<AdmitBound<T.EnumBodyElement, T.AdmittedNodes>>,
+	elements: NonEmptyArray<Admit<T.EnumBodyElement>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.EnumBodyElements.Bound {
 	_assertNonEmpty(elements, 'enum_body_elements.elements');
@@ -7720,7 +7695,7 @@ function _buildEnumBodyElements(
 		_item,
 		_delimiter,
 		$with: {
-			items: (...vs: NonEmptyArray<AdmitBound<T.EnumBodyElement, T.AdmittedNodes>>) =>
+			items: (...vs: NonEmptyArray<Admit<T.EnumBodyElement>>) =>
 				rebuilt(node, handle, () => buildEnumBodyElements(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildEnumBodyElements({ ...options, delimiter: v }, ...elements))
@@ -7746,17 +7721,14 @@ function _buildEnumBodyElements(
 }
 
 export function buildTypes(
-	...elements: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>
+	...elements: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildTypes>;
 export function buildTypes(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildTypes>;
 export function buildTypes(
-	...args: (
-		| { delimiter?: Delimiter.None | Delimiter.Trailing }
-		| AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
-	)[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.Type | T.TypeIdentifier.Types>)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -7766,12 +7738,12 @@ export function buildTypes(
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
+		Admit<T.Type | T.TypeIdentifier.Types>
 	>;
 	return _buildTypes(elements, options);
 }
 function _buildTypes(
-	elements: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>,
+	elements: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.Types.Bound {
 	_assertNonEmpty(elements, 'types.elements');
@@ -7788,7 +7760,7 @@ function _buildTypes(
 		_item,
 		_delimiter,
 		$with: {
-			items: (...vs: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>) =>
+			items: (...vs: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>) =>
 				rebuilt(node, handle, () => buildTypes(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildTypes({ ...options, delimiter: v }, ...elements))
@@ -7814,16 +7786,16 @@ function _buildTypes(
 }
 
 export function buildTypeParametersElements(
-	...elements: NonEmptyArray<AdmitBound<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>>
+	...elements: NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildTypeParametersElements>;
 export function buildTypeParametersElements(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<AdmitBound<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>>
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>
 ): ReturnType<typeof _buildTypeParametersElements>;
 export function buildTypeParametersElements(
 	...args: (
 		| { delimiter?: Delimiter.None | Delimiter.Trailing }
-		| AdmitBound<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>
+		| Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>
 	)[]
 ) {
 	const _optsFirst =
@@ -7834,12 +7806,12 @@ export function buildTypeParametersElements(
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		AdmitBound<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>
+		Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>
 	>;
 	return _buildTypeParametersElements(elements, options);
 }
 function _buildTypeParametersElements(
-	elements: NonEmptyArray<AdmitBound<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>>,
+	elements: NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.TypeParametersElements.Bound {
 	_assertNonEmpty(elements, 'type_parameters_elements.elements');
@@ -7861,9 +7833,8 @@ function _buildTypeParametersElements(
 		_item,
 		_delimiter,
 		$with: {
-			items: (
-				...vs: NonEmptyArray<AdmitBound<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>>
-			) => rebuilt(node, handle, () => buildTypeParametersElements(options, ...vs)),
+			items: (...vs: NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>) =>
+				rebuilt(node, handle, () => buildTypeParametersElements(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildTypeParametersElements({ ...options, delimiter: v }, ...elements))
 		},
@@ -7894,28 +7865,19 @@ function _buildTypeParametersElements(
 
 export function buildTupleTypeMembers(
 	...elements: NonEmptyArray<
-		AdmitBound<
-			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
-			T.AdmittedNodes
-		>
+		Admit<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types>
 	>
 ): ReturnType<typeof _buildTupleTypeMembers>;
 export function buildTupleTypeMembers(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<
-		AdmitBound<
-			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
-			T.AdmittedNodes
-		>
+		Admit<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types>
 	>
 ): ReturnType<typeof _buildTupleTypeMembers>;
 export function buildTupleTypeMembers(
 	...args: (
 		| { delimiter?: Delimiter.None | Delimiter.Trailing }
-		| AdmitBound<
-				T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
-				T.AdmittedNodes
-		  >
+		| Admit<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types>
 	)[]
 ) {
 	const _optsFirst =
@@ -7926,19 +7888,13 @@ export function buildTupleTypeMembers(
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		AdmitBound<
-			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
-			T.AdmittedNodes
-		>
+		Admit<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types>
 	>;
 	return _buildTupleTypeMembers(elements, options);
 }
 function _buildTupleTypeMembers(
 	elements: NonEmptyArray<
-		AdmitBound<
-			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
-			T.AdmittedNodes
-		>
+		Admit<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types>
 	>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.TupleTypeMembers.Bound {
@@ -7958,9 +7914,8 @@ function _buildTupleTypeMembers(
 		$with: {
 			items: (
 				...vs: NonEmptyArray<
-					AdmitBound<
-						T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
-						T.AdmittedNodes
+					Admit<
+						T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types
 					>
 				>
 			) => rebuilt(node, handle, () => buildTupleTypeMembers(options, ...vs)),
@@ -7987,9 +7942,7 @@ function _buildTupleTypeMembers(
 	return node as unknown as T.TupleTypeMembers.Bound;
 }
 
-export function buildImportClauseGroup(
-	value: AdmitBound<T.NamespaceImport | T.NamedImports, T.AdmittedNodes>
-): T.ImportClauseGroup.Bound {
+export function buildImportClauseGroup(value: Admit<T.NamespaceImport | T.NamedImports>): T.ImportClauseGroup.Bound {
 	const _content = rejectBareText(value, 'ImportClauseGroup.content', 'a built NamespaceImport / NamedImports');
 	const handle = currentHandle();
 	const node = {
@@ -7998,7 +7951,8 @@ export function buildImportClauseGroup(
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: T.NamespaceImport | T.NamedImports) => rebuilt(node, handle, () => buildImportClauseGroup(value))
+			content: (value: Admit<T.NamespaceImport | T.NamedImports>) =>
+				rebuilt(node, handle, () => buildImportClauseGroup(value))
 		},
 		content: () => _content,
 		$render: () => renderText(handle, node),
@@ -8022,9 +7976,10 @@ export function buildCatchClauseGroup(config: T.CatchClauseGroup.Config): T.Catc
 		_parameter,
 		_type,
 		$with: {
-			parameter: (value: T.Identifier | T.ObjectPattern | T.ArrayPattern) =>
+			parameter: (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
 				rebuilt(node, handle, () => buildCatchClauseGroup({ ...config, parameter: value })),
-			type: (value?: T.TypeAnnotation) => rebuilt(node, handle, () => buildCatchClauseGroup({ ...config, type: value }))
+			type: (value?: Admit<T.TypeAnnotation>) =>
+				rebuilt(node, handle, () => buildCatchClauseGroup({ ...config, type: value }))
 		},
 		parameter: () => _parameter,
 		type: () => _type,
@@ -8039,17 +7994,19 @@ export function buildCatchClauseGroup(config: T.CatchClauseGroup.Config): T.Catc
 }
 
 export function buildAmbientDeclarationGlobal(
-	value: AdmitBound<T.StatementBlock, T.AdmittedNodes>
+	value: Admit<T.StatementBlock>
 ): ReturnType<typeof _buildAmbientDeclarationGlobal>;
 export function buildAmbientDeclarationGlobal(
 	_config?: Partial<T.StatementBlock.Config>
 ): ReturnType<typeof _buildAmbientDeclarationGlobal>;
 export function buildAmbientDeclarationGlobal(...args: unknown[]) {
 	if (args.length === 0) {
-		return _buildAmbientDeclarationGlobal(buildStatementBlock() as T.StatementBlock);
+		return _buildAmbientDeclarationGlobal(
+			buildStatementBlock() as Parameters<typeof _buildAmbientDeclarationGlobal>[0]
+		);
 	}
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildAmbientDeclarationGlobal(args[0] as T.StatementBlock);
+		return _buildAmbientDeclarationGlobal(args[0] as Parameters<typeof _buildAmbientDeclarationGlobal>[0]);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -8057,14 +8014,14 @@ export function buildAmbientDeclarationGlobal(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.StatementBlock as const);
 	return prebuilt
-		? _buildAmbientDeclarationGlobal(args[0] as T.StatementBlock)
+		? _buildAmbientDeclarationGlobal(args[0] as Parameters<typeof _buildAmbientDeclarationGlobal>[0])
 		: _buildAmbientDeclarationGlobal(
-				(buildStatementBlock as (...a: unknown[]) => unknown)(...args) as T.StatementBlock
+				(buildStatementBlock as (...a: unknown[]) => unknown)(...args) as Parameters<
+					typeof _buildAmbientDeclarationGlobal
+				>[0]
 			);
 }
-function _buildAmbientDeclarationGlobal(
-	value: AdmitBound<T.StatementBlock, T.AdmittedNodes>
-): T.AmbientDeclarationGlobal.Bound {
+function _buildAmbientDeclarationGlobal(value: Admit<T.StatementBlock>): T.AmbientDeclarationGlobal.Bound {
 	const _body = rejectBareText(value, 'AmbientDeclarationGlobal.body', 'a built StatementBlock');
 	const handle = currentHandle();
 	const node = {
@@ -8073,7 +8030,7 @@ function _buildAmbientDeclarationGlobal(
 		$named: true as const,
 		_body,
 		$with: {
-			body: (value: T.StatementBlock) => rebuilt(node, handle, () => _buildAmbientDeclarationGlobal(value))
+			body: (value: Admit<T.StatementBlock>) => rebuilt(node, handle, () => _buildAmbientDeclarationGlobal(value))
 		},
 		body: () => _body,
 		$render: () => renderText(handle, node),
@@ -8120,9 +8077,9 @@ export function buildAmbientDeclarationModule(
 		_type,
 		_terminator,
 		$with: {
-			name: (value: T.PropertyIdentifier | T.PropertyIdentifier.Types) =>
+			name: (value: Admit<T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildAmbientDeclarationModule({ ...config, name: value }, options)),
-			type: (value: NonNullable<T.AmbientDeclarationModule.Config>['type']) =>
+			type: (value: Admit<NonNullable<T.AmbientDeclarationModule.Config>['type']>) =>
 				rebuilt(node, handle, () => buildAmbientDeclarationModule({ ...config, type: value }, options)),
 			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
 				rebuilt(node, handle, () => buildAmbientDeclarationModule(config, { ...options, terminator: spelling }))
@@ -8142,31 +8099,29 @@ export function buildAmbientDeclarationModule(
 
 export function buildObjectTypeContent(
 	...elements: NonEmptyArray<
-		AdmitBound<
+		Admit<
 			| T.ExportStatement
 			| T.PropertySignature
 			| T.CallSignature
 			| T.ConstructSignature
 			| T.IndexSignature
-			| T.MethodSignature,
-			T.AdmittedNodes
+			| T.MethodSignature
 		>
 	>
 ): ReturnType<typeof _buildObjectTypeContent>;
 export function buildObjectTypeContent(
-	options: {
+	options: ListOptions<{
 		separator?: TSKindId.Comma | TSKindId.Semi;
 		delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
-	},
+	}>,
 	...elements: NonEmptyArray<
-		AdmitBound<
+		Admit<
 			| T.ExportStatement
 			| T.PropertySignature
 			| T.CallSignature
 			| T.ConstructSignature
 			| T.IndexSignature
-			| T.MethodSignature,
-			T.AdmittedNodes
+			| T.MethodSignature
 		>
 	>
 ): ReturnType<typeof _buildObjectTypeContent>;
@@ -8176,14 +8131,13 @@ export function buildObjectTypeContent(
 				separator?: TSKindId.Comma | TSKindId.Semi;
 				delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 		  }
-		| AdmitBound<
+		| Admit<
 				| T.ExportStatement
 				| T.PropertySignature
 				| T.CallSignature
 				| T.ConstructSignature
 				| T.IndexSignature
-				| T.MethodSignature,
-				T.AdmittedNodes
+				| T.MethodSignature
 		  >
 	)[]
 ) {
@@ -8198,28 +8152,26 @@ export function buildObjectTypeContent(
 		delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 	};
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		AdmitBound<
+		Admit<
 			| T.ExportStatement
 			| T.PropertySignature
 			| T.CallSignature
 			| T.ConstructSignature
 			| T.IndexSignature
-			| T.MethodSignature,
-			T.AdmittedNodes
+			| T.MethodSignature
 		>
 	>;
 	return _buildObjectTypeContent(elements, options);
 }
 function _buildObjectTypeContent(
 	elements: NonEmptyArray<
-		AdmitBound<
+		Admit<
 			| T.ExportStatement
 			| T.PropertySignature
 			| T.CallSignature
 			| T.ConstructSignature
 			| T.IndexSignature
-			| T.MethodSignature,
-			T.AdmittedNodes
+			| T.MethodSignature
 		>
 	>,
 	options: {
@@ -8243,14 +8195,13 @@ function _buildObjectTypeContent(
 		$with: {
 			items: (
 				...vs: NonEmptyArray<
-					AdmitBound<
+					Admit<
 						| T.ExportStatement
 						| T.PropertySignature
 						| T.CallSignature
 						| T.ConstructSignature
 						| T.IndexSignature
-						| T.MethodSignature,
-						T.AdmittedNodes
+						| T.MethodSignature
 					>
 				>
 			) => rebuilt(node, handle, () => buildObjectTypeContent(options, ...vs)),
@@ -8281,7 +8232,7 @@ function _buildObjectTypeContent(
 }
 
 export function buildExportStatementNamespaceExport(
-	value: AdmitBound<T.Identifier, T.AdmittedNodes>,
+	value: Admit<T.Identifier>,
 	options?: T.ExportStatementNamespaceExport.Options
 ): T.ExportStatementNamespaceExport.Bound {
 	const _name = rejectBareText(value, 'ExportStatementNamespaceExport.name', 'buildIdentifier(…)');
@@ -8297,7 +8248,8 @@ export function buildExportStatementNamespaceExport(
 		_name,
 		_terminator,
 		$with: {
-			name: (value: T.Identifier) => rebuilt(node, handle, () => buildExportStatementNamespaceExport(value, options)),
+			name: (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildExportStatementNamespaceExport(value, options)),
 			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
 				rebuilt(node, handle, () => buildExportStatementNamespaceExport(value, { ...options, terminator: spelling }))
 		},
@@ -8341,10 +8293,11 @@ export function buildExportStatementTypeExport(
 					listSlotWith(
 						args,
 						{ kind: TSKindId.ExportClause as const, optional: false, make: buildExportClause },
-						(value: T.ExportClause) => buildExportStatementTypeExport({ ...config, exportClause: value }, options)
+						(value: Admit<T.ExportClause>) =>
+							buildExportStatementTypeExport({ ...config, exportClause: value }, options)
 					)
 				),
-			source: (value?: T.String) =>
+			source: (value?: Admit<T.String>) =>
 				rebuilt(node, handle, () => buildExportStatementTypeExport({ ...config, source: value }, options)),
 			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
 				rebuilt(node, handle, () => buildExportStatementTypeExport(config, { ...options, terminator: spelling }))
@@ -8363,7 +8316,7 @@ export function buildExportStatementTypeExport(
 }
 
 export function buildExportStatementEqualsExport(
-	value: AdmitBound<T.Expression, T.AdmittedNodes>,
+	value: Admit<T.Expression>,
 	options?: T.ExportStatementEqualsExport.Options
 ): T.ExportStatementEqualsExport.Bound {
 	const _expression = rejectBareText(
@@ -8383,7 +8336,7 @@ export function buildExportStatementEqualsExport(
 		_expression,
 		_terminator,
 		$with: {
-			expression: (value: NonNullable<T.Expression>) =>
+			expression: (value: Admit<NonNullable<T.Expression>>) =>
 				rebuilt(node, handle, () => buildExportStatementEqualsExport(value, options)),
 			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
 				rebuilt(node, handle, () => buildExportStatementEqualsExport(value, { ...options, terminator: spelling }))
@@ -8414,7 +8367,7 @@ export function buildCommentLine(input: string, affix: boolean = true): T.Commen
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: string) => rebuilt(node, handle, () => buildCommentLine(value))
+			content: (value: Admit<string>) => rebuilt(node, handle, () => buildCommentLine(value))
 		},
 		content: () => _content,
 		$render: () => renderText(handle, node),
@@ -8441,7 +8394,7 @@ export function buildCommentBlock(input: string, affix: boolean = true): T.Comme
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: string) => rebuilt(node, handle, () => buildCommentBlock(value))
+			content: (value: Admit<string>) => rebuilt(node, handle, () => buildCommentBlock(value))
 		},
 		content: () => _content,
 		$render: () => renderText(handle, node),
@@ -8471,9 +8424,9 @@ export function buildLiteralTypeNegativeNumber(
 		_operator,
 		_argument,
 		$with: {
-			operator: (value: NonNullable<T.LiteralTypeNegativeNumber.Config>['operator']) =>
+			operator: (value: Admit<NonNullable<T.LiteralTypeNegativeNumber.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildLiteralTypeNegativeNumber({ ...config, operator: value })),
-			argument: (value: T.Number) =>
+			argument: (value: Admit<T.Number>) =>
 				rebuilt(node, handle, () => buildLiteralTypeNegativeNumber({ ...config, argument: value }))
 		},
 		operator: () => _operator,
@@ -8489,11 +8442,11 @@ export function buildLiteralTypeNegativeNumber(
 }
 
 export function buildNumberHex<const N extends string | number | bigint>(
-	value: AdmitBound<string | (N & NumericLiteral<N, true>), T.AdmittedNodes>,
+	value: Admit<string | (N & NumericLiteral<N, true>)>,
 	options?: T.NumberHex.Options
 ): T.NumberHex.Bound;
 export function buildNumberHex(
-	value: AdmitBound<string | number | bigint, T.AdmittedNodes>,
+	value: Admit<string | number | bigint>,
 	options?: T.NumberHex.Options
 ): T.NumberHex.Bound {
 	const _prefix = options?.prefix ?? '0x';
@@ -8510,7 +8463,7 @@ export function buildNumberHex(
 		_prefix,
 		_content,
 		$with: {
-			content: (value: string | number | bigint) => rebuilt(node, handle, () => buildNumberHex(value, options)),
+			content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberHex(value, options)),
 			prefix: (spelling: '0x' | '0X') =>
 				rebuilt(node, handle, () => buildNumberHex(value, { ...options, prefix: spelling }))
 		},
@@ -8576,13 +8529,13 @@ export function buildNumberFloatPoint(
 		_sign,
 		_exponent,
 		$with: {
-			integer: (value: string | number | bigint) =>
+			integer: (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, integer: value }, options)),
-			fraction: (value?: string | number | bigint) =>
+			fraction: (value?: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, fraction: value }, options)),
-			sign: (value?: '-' | '+') =>
+			sign: (value?: Admit<'-' | '+'>) =>
 				rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, sign: value }, options)),
-			exponent: (value?: string | number | bigint) =>
+			exponent: (value?: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, exponent: value }, options)),
 			marker: (spelling: 'e' | 'E') =>
 				rebuilt(node, handle, () => buildNumberFloatPoint(config, { ...options, marker: spelling }))
@@ -8642,11 +8595,11 @@ export function buildNumberFloatLeadingPoint(
 		_sign,
 		_exponent,
 		$with: {
-			fraction: (value: string | number | bigint) =>
+			fraction: (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberFloatLeadingPoint({ ...config, fraction: value }, options)),
-			sign: (value?: '-' | '+') =>
+			sign: (value?: Admit<'-' | '+'>) =>
 				rebuilt(node, handle, () => buildNumberFloatLeadingPoint({ ...config, sign: value }, options)),
-			exponent: (value?: string | number | bigint) =>
+			exponent: (value?: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberFloatLeadingPoint({ ...config, exponent: value }, options)),
 			marker: (spelling: 'e' | 'E') =>
 				rebuilt(node, handle, () => buildNumberFloatLeadingPoint(config, { ...options, marker: spelling }))
@@ -8702,11 +8655,11 @@ export function buildNumberFloatScientific(
 		_sign,
 		_exponent,
 		$with: {
-			integer: (value: string | number | bigint) =>
+			integer: (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberFloatScientific({ ...config, integer: value }, options)),
-			sign: (value?: '-' | '+') =>
+			sign: (value?: Admit<'-' | '+'>) =>
 				rebuilt(node, handle, () => buildNumberFloatScientific({ ...config, sign: value }, options)),
-			exponent: (value: string | number | bigint) =>
+			exponent: (value: Admit<string | number | bigint>) =>
 				rebuilt(node, handle, () => buildNumberFloatScientific({ ...config, exponent: value }, options)),
 			marker: (spelling: 'e' | 'E') =>
 				rebuilt(node, handle, () => buildNumberFloatScientific(config, { ...options, marker: spelling }))
@@ -8750,11 +8703,11 @@ export function buildNumberDecimal(text: string | number | bigint): T.NumberDeci
 }
 
 export function buildNumberBinary<const N extends string | number | bigint>(
-	value: AdmitBound<string | (N & NumericLiteral<N, true>), T.AdmittedNodes>,
+	value: Admit<string | (N & NumericLiteral<N, true>)>,
 	options?: T.NumberBinary.Options
 ): T.NumberBinary.Bound;
 export function buildNumberBinary(
-	value: AdmitBound<string | number | bigint, T.AdmittedNodes>,
+	value: Admit<string | number | bigint>,
 	options?: T.NumberBinary.Options
 ): T.NumberBinary.Bound {
 	const _prefix = options?.prefix ?? '0b';
@@ -8771,7 +8724,8 @@ export function buildNumberBinary(
 		_prefix,
 		_content,
 		$with: {
-			content: (value: string | number | bigint) => rebuilt(node, handle, () => buildNumberBinary(value, options)),
+			content: (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildNumberBinary(value, options)),
 			prefix: (spelling: '0b' | '0B') =>
 				rebuilt(node, handle, () => buildNumberBinary(value, { ...options, prefix: spelling }))
 		},
@@ -8788,11 +8742,11 @@ export function buildNumberBinary(
 }
 
 export function buildNumberOctal<const N extends string | number | bigint>(
-	value: AdmitBound<string | (N & NumericLiteral<N, true>), T.AdmittedNodes>,
+	value: Admit<string | (N & NumericLiteral<N, true>)>,
 	options?: T.NumberOctal.Options
 ): T.NumberOctal.Bound;
 export function buildNumberOctal(
-	value: AdmitBound<string | number | bigint, T.AdmittedNodes>,
+	value: Admit<string | number | bigint>,
 	options?: T.NumberOctal.Options
 ): T.NumberOctal.Bound {
 	const _prefix = options?.prefix ?? '0o';
@@ -8809,7 +8763,8 @@ export function buildNumberOctal(
 		_prefix,
 		_content,
 		$with: {
-			content: (value: string | number | bigint) => rebuilt(node, handle, () => buildNumberOctal(value, options)),
+			content: (value: Admit<string | number | bigint>) =>
+				rebuilt(node, handle, () => buildNumberOctal(value, options)),
 			prefix: (spelling: '0o' | '0O') =>
 				rebuilt(node, handle, () => buildNumberOctal(value, { ...options, prefix: spelling }))
 		},
@@ -8842,7 +8797,7 @@ export function buildNumberBigintHex(input: string | number | bigint, affix: boo
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: string | number | bigint) => rebuilt(node, handle, () => buildNumberBigintHex(value))
+			content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberBigintHex(value))
 		},
 		content: () => _content,
 		$render: () => renderText(handle, node),
@@ -8875,7 +8830,7 @@ export function buildNumberBigintBinary(
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: string | number | bigint) => rebuilt(node, handle, () => buildNumberBigintBinary(value))
+			content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberBigintBinary(value))
 		},
 		content: () => _content,
 		$render: () => renderText(handle, node),
@@ -8908,7 +8863,7 @@ export function buildNumberBigintOctal(
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: string | number | bigint) => rebuilt(node, handle, () => buildNumberBigintOctal(value))
+			content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberBigintOctal(value))
 		},
 		content: () => _content,
 		$render: () => renderText(handle, node),
@@ -8941,7 +8896,7 @@ export function buildNumberBigintDecimal(
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: string | number | bigint) => rebuilt(node, handle, () => buildNumberBigintDecimal(value))
+			content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildNumberBigintDecimal(value))
 		},
 		content: () => _content,
 		$render: () => renderText(handle, node),
@@ -8973,9 +8928,9 @@ export function buildBinaryExpressionIn(config: T.BinaryExpressionIn.Config): T.
 		_left,
 		_right,
 		$with: {
-			left: (value: NonNullable<T.BinaryExpressionIn.Config>['left']) =>
+			left: (value: Admit<NonNullable<T.BinaryExpressionIn.Config>['left']>) =>
 				rebuilt(node, handle, () => buildBinaryExpressionIn({ ...config, left: value })),
-			right: (value: NonNullable<T.BinaryExpressionIn.Config>['right']) =>
+			right: (value: Admit<NonNullable<T.BinaryExpressionIn.Config>['right']>) =>
 				rebuilt(node, handle, () => buildBinaryExpressionIn({ ...config, right: value }))
 		},
 		left: () => _left,
@@ -9015,11 +8970,11 @@ export function buildClassBodyMemberMethod(
 		_method_definition,
 		_terminator,
 		$with: {
-			decorators: (...values: T.Decorator[]) =>
+			decorators: (...values: Admit<T.Decorator[]>) =>
 				rebuilt(node, handle, () =>
 					buildClassBodyMemberMethod({ ...config, decorator: restItems('decorators', values) }, options)
 				),
-			methodDefinition: (value: T.MethodDefinition) =>
+			methodDefinition: (value: Admit<T.MethodDefinition>) =>
 				rebuilt(node, handle, () => buildClassBodyMemberMethod({ ...config, methodDefinition: value }, options)),
 			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
 				rebuilt(node, handle, () => buildClassBodyMemberMethod(config, { ...options, terminator: spelling }))
@@ -9058,9 +9013,9 @@ export function buildClassBodyMemberMethodSig(
 		_method_signature,
 		_terminator,
 		$with: {
-			methodSignature: (value: T.MethodSignature) =>
+			methodSignature: (value: Admit<T.MethodSignature>) =>
 				rebuilt(node, handle, () => buildClassBodyMemberMethodSig({ ...config, methodSignature: value })),
-			terminator: (value: NonNullable<T.ClassBodyMemberMethodSig.Config>['terminator']) =>
+			terminator: (value: Admit<NonNullable<T.ClassBodyMemberMethodSig.Config>['terminator']>) =>
 				rebuilt(node, handle, () => buildClassBodyMemberMethodSig({ ...config, terminator: value }))
 		},
 		methodSignature: () => _method_signature,
@@ -9076,10 +9031,7 @@ export function buildClassBodyMemberMethodSig(
 }
 
 export function buildClassBodyMemberDeclaration(
-	value: AdmitBound<
-		T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition,
-		T.AdmittedNodes
-	>,
+	value: Admit<T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition>,
 	options?: T.ClassBodyMemberDeclaration.Options
 ): T.ClassBodyMemberDeclaration.Bound {
 	const _member = rejectBareText(
@@ -9099,8 +9051,9 @@ export function buildClassBodyMemberDeclaration(
 		_member,
 		_terminator,
 		$with: {
-			member: (value: T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition) =>
-				rebuilt(node, handle, () => buildClassBodyMemberDeclaration(value, options)),
+			member: (
+				value: Admit<T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition>
+			) => rebuilt(node, handle, () => buildClassBodyMemberDeclaration(value, options)),
 			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.Comma) =>
 				rebuilt(node, handle, () => buildClassBodyMemberDeclaration(value, { ...options, terminator: spelling }))
 		},
@@ -9182,16 +9135,17 @@ export function buildIndexSignatureColon(config: T.IndexSignatureColon.Config): 
 		_index_type,
 		_type,
 		$with: {
-			sign: (value?: NonNullable<T.IndexSignatureColon.Config>['sign']) =>
+			sign: (value?: Admit<NonNullable<T.IndexSignatureColon.Config>['sign']>) =>
 				rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, sign: value })),
-			readonly: (value?: NonNullable<T.IndexSignatureColon.Config>['readonly']) =>
+			readonly: (value?: Admit<NonNullable<T.IndexSignatureColon.Config>['readonly']>) =>
 				rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, readonly: value })),
-			name: (value: NonNullable<T.IndexSignatureColon.Config>['name']) =>
+			name: (value: Admit<NonNullable<T.IndexSignatureColon.Config>['name']>) =>
 				rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, name: value })),
-			indexType: (value: NonNullable<T.IndexSignatureColon.Config>['indexType']) =>
+			indexType: (value: Admit<NonNullable<T.IndexSignatureColon.Config>['indexType']>) =>
 				rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, indexType: value })),
-			type: (value: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation) =>
-				rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, type: value }))
+			type: (
+				value: Admit<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>
+			) => rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, type: value }))
 		},
 		sign: () => _sign,
 		readonly: () => _readonly,
@@ -9239,14 +9193,15 @@ export function buildIndexSignatureMappedTypeClause(
 		_mapped_type_clause,
 		_type,
 		$with: {
-			sign: (value?: NonNullable<T.IndexSignatureMappedTypeClause.Config>['sign']) =>
+			sign: (value?: Admit<NonNullable<T.IndexSignatureMappedTypeClause.Config>['sign']>) =>
 				rebuilt(node, handle, () => buildIndexSignatureMappedTypeClause({ ...config, sign: value })),
-			readonly: (value?: NonNullable<T.IndexSignatureMappedTypeClause.Config>['readonly']) =>
+			readonly: (value?: Admit<NonNullable<T.IndexSignatureMappedTypeClause.Config>['readonly']>) =>
 				rebuilt(node, handle, () => buildIndexSignatureMappedTypeClause({ ...config, readonly: value })),
-			mappedTypeClause: (value: T.MappedTypeClause) =>
+			mappedTypeClause: (value: Admit<T.MappedTypeClause>) =>
 				rebuilt(node, handle, () => buildIndexSignatureMappedTypeClause({ ...config, mappedTypeClause: value })),
-			type: (value: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation) =>
-				rebuilt(node, handle, () => buildIndexSignatureMappedTypeClause({ ...config, type: value }))
+			type: (
+				value: Admit<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>
+			) => rebuilt(node, handle, () => buildIndexSignatureMappedTypeClause({ ...config, type: value }))
 		},
 		sign: () => _sign,
 		readonly: () => _readonly,
@@ -9279,9 +9234,9 @@ export function buildImportStatementClauseFrom(
 		_import_clause,
 		_source,
 		$with: {
-			importClause: (value: T.ImportClause) =>
+			importClause: (value: Admit<T.ImportClause>) =>
 				rebuilt(node, handle, () => buildImportStatementClauseFrom({ ...config, importClause: value })),
-			source: (value: T.String) =>
+			source: (value: Admit<T.String>) =>
 				rebuilt(node, handle, () => buildImportStatementClauseFrom({ ...config, source: value }))
 		},
 		importClause: () => _import_clause,
@@ -9296,9 +9251,7 @@ export function buildImportStatementClauseFrom(
 	return node as unknown as T.ImportStatementClauseFrom.Bound;
 }
 
-export function buildYieldExpressionDelegate(
-	value: AdmitBound<T.Expression, T.AdmittedNodes>
-): T.YieldExpressionDelegate.Bound {
+export function buildYieldExpressionDelegate(value: Admit<T.Expression>): T.YieldExpressionDelegate.Bound {
 	const _expression = rejectBareText(
 		kindIdStorage<NonNullable<T.YieldExpressionDelegate['_expression']>>(value),
 		'YieldExpressionDelegate.expression',
@@ -9311,7 +9264,8 @@ export function buildYieldExpressionDelegate(
 		$named: true as const,
 		_expression,
 		$with: {
-			expression: (value: NonNullable<T.Expression>) => rebuilt(node, handle, () => buildYieldExpressionDelegate(value))
+			expression: (value: Admit<NonNullable<T.Expression>>) =>
+				rebuilt(node, handle, () => buildYieldExpressionDelegate(value))
 		},
 		expression: () => _expression,
 		$render: () => renderText(handle, node),
@@ -9350,9 +9304,9 @@ export function buildImportSpecifierName(config: T.ImportSpecifierName.Config): 
 		_import_kind,
 		_name,
 		$with: {
-			importKind: (value?: NonNullable<T.ImportSpecifierName.Config>['importKind']) =>
+			importKind: (value?: Admit<NonNullable<T.ImportSpecifierName.Config>['importKind']>) =>
 				rebuilt(node, handle, () => buildImportSpecifierName({ ...config, importKind: value })),
-			name: (value: NonNullable<T.ImportSpecifierName.Config>['name']) =>
+			name: (value: Admit<NonNullable<T.ImportSpecifierName.Config>['name']>) =>
 				rebuilt(node, handle, () => buildImportSpecifierName({ ...config, name: value }))
 		},
 		importKind: () => _import_kind,
@@ -9402,11 +9356,11 @@ export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config): T.Im
 		_name,
 		_alias,
 		$with: {
-			importKind: (value?: NonNullable<T.ImportSpecifierAs.Config>['importKind']) =>
+			importKind: (value?: Admit<NonNullable<T.ImportSpecifierAs.Config>['importKind']>) =>
 				rebuilt(node, handle, () => buildImportSpecifierAs({ ...config, importKind: value })),
-			name: (value: NonNullable<T.ImportSpecifierAs.Config>['name']) =>
+			name: (value: Admit<NonNullable<T.ImportSpecifierAs.Config>['name']>) =>
 				rebuilt(node, handle, () => buildImportSpecifierAs({ ...config, name: value })),
-			alias: (value: NonNullable<T.ImportSpecifierAs.Config>['alias']) =>
+			alias: (value: Admit<NonNullable<T.ImportSpecifierAs.Config>['alias']>) =>
 				rebuilt(node, handle, () => buildImportSpecifierAs({ ...config, alias: value }))
 		},
 		importKind: () => _import_kind,
@@ -9439,9 +9393,9 @@ export function buildParenthesizedExpressionTyped(
 		_expression,
 		_type,
 		$with: {
-			expression: (value: NonNullable<T.ParenthesizedExpressionTyped.Config>['expression']) =>
+			expression: (value: Admit<NonNullable<T.ParenthesizedExpressionTyped.Config>['expression']>) =>
 				rebuilt(node, handle, () => buildParenthesizedExpressionTyped({ ...config, expression: value })),
-			type: (value?: T.TypeAnnotation) =>
+			type: (value?: Admit<T.TypeAnnotation>) =>
 				rebuilt(node, handle, () => buildParenthesizedExpressionTyped({ ...config, type: value }))
 		},
 		expression: () => _expression,
@@ -9457,14 +9411,16 @@ export function buildParenthesizedExpressionTyped(
 }
 
 export function buildParenthesizedExpressionSequence(
-	value: AdmitBound<T.SequenceExpression, T.AdmittedNodes>
+	value: Admit<T.SequenceExpression>
 ): ReturnType<typeof _buildParenthesizedExpressionSequence>;
 export function buildParenthesizedExpressionSequence(
-	...children: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>
+	...children: NonEmptyArray<Admit<T.Expression>>
 ): ReturnType<typeof _buildParenthesizedExpressionSequence>;
 export function buildParenthesizedExpressionSequence(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildParenthesizedExpressionSequence(args[0] as T.SequenceExpression);
+		return _buildParenthesizedExpressionSequence(
+			args[0] as Parameters<typeof _buildParenthesizedExpressionSequence>[0]
+		);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -9472,13 +9428,15 @@ export function buildParenthesizedExpressionSequence(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.SequenceExpression as const);
 	return prebuilt
-		? _buildParenthesizedExpressionSequence(args[0] as T.SequenceExpression)
+		? _buildParenthesizedExpressionSequence(args[0] as Parameters<typeof _buildParenthesizedExpressionSequence>[0])
 		: _buildParenthesizedExpressionSequence(
-				(buildSequenceExpression as (...a: unknown[]) => unknown)(...args) as T.SequenceExpression
+				(buildSequenceExpression as (...a: unknown[]) => unknown)(...args) as Parameters<
+					typeof _buildParenthesizedExpressionSequence
+				>[0]
 			);
 }
 function _buildParenthesizedExpressionSequence(
-	value: AdmitBound<T.SequenceExpression, T.AdmittedNodes>
+	value: Admit<T.SequenceExpression>
 ): T.ParenthesizedExpressionSequence.Bound {
 	const _sequence_expression = rejectBareText(
 		value,
@@ -9492,7 +9450,7 @@ function _buildParenthesizedExpressionSequence(
 		$named: true as const,
 		_sequence_expression,
 		$with: {
-			sequenceExpression: (value: T.SequenceExpression) =>
+			sequenceExpression: (value: Admit<T.SequenceExpression>) =>
 				rebuilt(node, handle, () => _buildParenthesizedExpressionSequence(value))
 		},
 		sequenceExpression: () => _sequence_expression,
@@ -9531,17 +9489,17 @@ export function buildCallExpressionCall(config: T.CallExpressionCall.Config): T.
 		_type_arguments,
 		_arguments,
 		$with: {
-			function: (value: NonNullable<T.CallExpressionCall.Config>['function']) =>
+			function: (value: Admit<NonNullable<T.CallExpressionCall.Config>['function']>) =>
 				rebuilt(node, handle, () => buildCallExpressionCall({ ...config, function: value })),
 			typeArguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-						(value?: T.TypeArguments) => buildCallExpressionCall({ ...config, typeArguments: value })
+						(value?: Admit<T.TypeArguments>) => buildCallExpressionCall({ ...config, typeArguments: value })
 					)
 				),
-			arguments: (value: T.Arguments) =>
+			arguments: (value: Admit<T.Arguments>) =>
 				rebuilt(node, handle, () => buildCallExpressionCall({ ...config, arguments: value }))
 		},
 		function: () => _function,
@@ -9578,9 +9536,9 @@ export function buildCallExpressionTemplateCall(
 		_function,
 		_arguments,
 		$with: {
-			function: (value: NonNullable<T.CallExpressionTemplateCall.Config>['function']) =>
+			function: (value: Admit<NonNullable<T.CallExpressionTemplateCall.Config>['function']>) =>
 				rebuilt(node, handle, () => buildCallExpressionTemplateCall({ ...config, function: value })),
-			arguments: (value: T.TemplateString) =>
+			arguments: (value: Admit<T.TemplateString>) =>
 				rebuilt(node, handle, () => buildCallExpressionTemplateCall({ ...config, arguments: value }))
 		},
 		function: () => _function,
@@ -9620,17 +9578,17 @@ export function buildCallExpressionMember(config: T.CallExpressionMember.Config)
 		_type_arguments,
 		_arguments,
 		$with: {
-			function: (value: NonNullable<T.CallExpressionMember.Config>['function']) =>
+			function: (value: Admit<NonNullable<T.CallExpressionMember.Config>['function']>) =>
 				rebuilt(node, handle, () => buildCallExpressionMember({ ...config, function: value })),
 			typeArguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments },
-						(value?: T.TypeArguments) => buildCallExpressionMember({ ...config, typeArguments: value })
+						(value?: Admit<T.TypeArguments>) => buildCallExpressionMember({ ...config, typeArguments: value })
 					)
 				),
-			arguments: (value: T.Arguments) =>
+			arguments: (value: Admit<T.Arguments>) =>
 				rebuilt(node, handle, () => buildCallExpressionMember({ ...config, arguments: value }))
 		},
 		function: () => _function,
@@ -9647,7 +9605,7 @@ export function buildCallExpressionMember(config: T.CallExpressionMember.Config)
 }
 
 export function buildStringDouble(
-	...children: AdmitBound<(T.UnescapedDoubleStringFragment | T.EscapeSequence)[], T.AdmittedNodes>
+	...children: Admit<(T.UnescapedDoubleStringFragment | T.EscapeSequence)[]>
 ): T.StringDouble.Bound {
 	const _elements = rejectBareText(children, 'StringDouble.elements', 'buildUnescapedDoubleStringFragment(…)');
 	const handle = currentHandle();
@@ -9657,7 +9615,7 @@ export function buildStringDouble(
 		$named: true as const,
 		_elements,
 		$with: {
-			elements: (...vs: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]) =>
+			elements: (...vs: Admit<T.UnescapedDoubleStringFragment | T.EscapeSequence>[]) =>
 				rebuilt(node, handle, () => buildStringDouble(...restItems('elements', vs)))
 		},
 		elements: () => _elements,
@@ -9672,7 +9630,7 @@ export function buildStringDouble(
 }
 
 export function buildStringSingle(
-	...children: AdmitBound<(T.UnescapedSingleStringFragment | T.EscapeSequence)[], T.AdmittedNodes>
+	...children: Admit<(T.UnescapedSingleStringFragment | T.EscapeSequence)[]>
 ): T.StringSingle.Bound {
 	const _elements = rejectBareText(children, 'StringSingle.elements', 'buildUnescapedSingleStringFragment(…)');
 	const handle = currentHandle();
@@ -9682,7 +9640,7 @@ export function buildStringSingle(
 		$named: true as const,
 		_elements,
 		$with: {
-			elements: (...vs: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]) =>
+			elements: (...vs: Admit<T.UnescapedSingleStringFragment | T.EscapeSequence>[]) =>
 				rebuilt(node, handle, () => buildStringSingle(...restItems('elements', vs)))
 		},
 		elements: () => _elements,
@@ -9717,9 +9675,9 @@ export function buildUpdateExpressionPostfix(
 		_argument,
 		_operator,
 		$with: {
-			argument: (value: NonNullable<T.UpdateExpressionPostfix.Config>['argument']) =>
+			argument: (value: Admit<NonNullable<T.UpdateExpressionPostfix.Config>['argument']>) =>
 				rebuilt(node, handle, () => buildUpdateExpressionPostfix({ ...config, argument: value })),
-			operator: (value: NonNullable<T.UpdateExpressionPostfix.Config>['operator']) =>
+			operator: (value: Admit<NonNullable<T.UpdateExpressionPostfix.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildUpdateExpressionPostfix({ ...config, operator: value }))
 		},
 		argument: () => _argument,
@@ -9753,9 +9711,9 @@ export function buildUpdateExpressionPrefix(config: T.UpdateExpressionPrefix.Con
 		_operator,
 		_argument,
 		$with: {
-			operator: (value: NonNullable<T.UpdateExpressionPrefix.Config>['operator']) =>
+			operator: (value: Admit<NonNullable<T.UpdateExpressionPrefix.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildUpdateExpressionPrefix({ ...config, operator: value })),
-			argument: (value: NonNullable<T.UpdateExpressionPrefix.Config>['argument']) =>
+			argument: (value: Admit<NonNullable<T.UpdateExpressionPrefix.Config>['argument']>) =>
 				rebuilt(node, handle, () => buildUpdateExpressionPrefix({ ...config, argument: value }))
 		},
 		operator: () => _operator,
@@ -9771,7 +9729,7 @@ export function buildUpdateExpressionPrefix(config: T.UpdateExpressionPrefix.Con
 }
 
 export function buildArrowFunctionParameter(
-	value: AdmitBound<
+	value: Admit<
 		| TSKindId.DeclareKeyword
 		| TSKindId.NamespaceKeyword
 		| TSKindId.TypeKeyword
@@ -9794,8 +9752,7 @@ export function buildArrowFunctionParameter(
 		| TSKindId.AsyncKeyword
 		| TSKindId.StaticKeyword
 		| TSKindId.LetKeyword
-		| T.Identifier,
-		T.AdmittedNodes
+		| T.Identifier
 	>
 ): T.ArrowFunctionParameter.Bound {
 	const _parameter = rejectKeywordText(
@@ -9839,30 +9796,32 @@ export function buildArrowFunctionParameter(
 		_parameter,
 		$with: {
 			parameter: (
-				value: NonNullable<
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
-					| T.Identifier
+				value: Admit<
+					NonNullable<
+						| TSKindId.DeclareKeyword
+						| TSKindId.NamespaceKeyword
+						| TSKindId.TypeKeyword
+						| TSKindId.PublicKeyword
+						| TSKindId.PrivateKeyword
+						| TSKindId.ProtectedKeyword
+						| TSKindId.OverrideKeyword
+						| TSKindId.ReadonlyKeyword
+						| TSKindId.ModuleKeyword
+						| TSKindId.AnyKeyword
+						| TSKindId.NumberKeyword
+						| TSKindId.BooleanKeyword
+						| TSKindId.StringKeyword
+						| TSKindId.SymbolKeyword
+						| TSKindId.ExportKeyword
+						| TSKindId.ObjectKeyword
+						| TSKindId.NewKeyword
+						| TSKindId.GetKeyword
+						| TSKindId.SetKeyword
+						| TSKindId.AsyncKeyword
+						| TSKindId.StaticKeyword
+						| TSKindId.LetKeyword
+						| T.Identifier
+					>
 				>
 			) => rebuilt(node, handle, () => buildArrowFunctionParameter(value))
 		},
@@ -9898,9 +9857,9 @@ export function buildClassHeritageExtendsClause(
 		_extends_clause,
 		_implements_clause,
 		$with: {
-			extendsClause: (value: T.ExtendsClause) =>
+			extendsClause: (value: Admit<T.ExtendsClause>) =>
 				rebuilt(node, handle, () => buildClassHeritageExtendsClause({ ...config, extendsClause: value })),
-			implementsClause: (value?: T.ImplementsClause) =>
+			implementsClause: (value?: Admit<T.ImplementsClause>) =>
 				rebuilt(node, handle, () => buildClassHeritageExtendsClause({ ...config, implementsClause: value }))
 		},
 		extendsClause: () => _extends_clause,
@@ -9941,9 +9900,9 @@ export function buildImportClauseDefaultImport(
 		_identifier,
 		_import_clause_group,
 		$with: {
-			identifier: (value: NonNullable<T.ImportClauseDefaultImport.Config>['identifier']) =>
+			identifier: (value: Admit<NonNullable<T.ImportClauseDefaultImport.Config>['identifier']>) =>
 				rebuilt(node, handle, () => buildImportClauseDefaultImport({ ...config, identifier: value })),
-			importClauseGroup: (value?: T.ImportClauseGroup) =>
+			importClauseGroup: (value?: Admit<T.ImportClauseGroup>) =>
 				rebuilt(node, handle, () => buildImportClauseDefaultImport({ ...config, importClauseGroup: value }))
 		},
 		identifier: () => _identifier,
@@ -9959,12 +9918,11 @@ export function buildImportClauseDefaultImport(
 }
 
 export function buildExportStatementDefaultFrom(
-	value: AdmitBound<
+	value: Admit<
 		| T.ExportStatementDefaultFromStarFrom
 		| T.ExportStatementDefaultFromNsFrom
 		| T.ExportStatementDefaultFromClauseFrom
-		| T.ExportClause,
-		T.AdmittedNodes
+		| T.ExportClause
 	>,
 	options?: T.ExportStatementDefaultFrom.Options
 ): T.ExportStatementDefaultFrom.Bound {
@@ -9986,11 +9944,12 @@ export function buildExportStatementDefaultFrom(
 		_automatic_semicolon,
 		$with: {
 			content: (
-				value:
+				value: Admit<
 					| T.ExportStatementDefaultFromStarFrom
 					| T.ExportStatementDefaultFromNsFrom
 					| T.ExportStatementDefaultFromClauseFrom
 					| T.ExportClause
+				>
 			) => rebuilt(node, handle, () => buildExportStatementDefaultFrom(value, options)),
 			automaticSemicolon: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
 				rebuilt(node, handle, () =>
@@ -10030,11 +9989,11 @@ export function buildExportStatementDefaultDeclaration(
 		_decorator,
 		_content,
 		$with: {
-			decorators: (...values: T.Decorator[]) =>
+			decorators: (...values: Admit<T.Decorator[]>) =>
 				rebuilt(node, handle, () =>
 					buildExportStatementDefaultDeclaration({ ...config, decorator: restItems('decorators', values) })
 				),
-			content: (value: T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw) =>
+			content: (value: Admit<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>) =>
 				rebuilt(node, handle, () => buildExportStatementDefaultDeclaration({ ...config, content: value }))
 		},
 		decorators: () => _decorator,
@@ -10050,7 +10009,7 @@ export function buildExportStatementDefaultDeclaration(
 }
 
 export function buildExportStatementDefaultFromStarFrom(
-	value: AdmitBound<T.String, T.AdmittedNodes>
+	value: Admit<T.String>
 ): T.ExportStatementDefaultFromStarFrom.Bound {
 	const _source = rejectBareText(value, 'ExportStatementDefaultFromStarFrom.source', 'a built String');
 	const handle = currentHandle();
@@ -10060,7 +10019,7 @@ export function buildExportStatementDefaultFromStarFrom(
 		$named: true as const,
 		_source,
 		$with: {
-			source: (value: T.String) => rebuilt(node, handle, () => buildExportStatementDefaultFromStarFrom(value))
+			source: (value: Admit<T.String>) => rebuilt(node, handle, () => buildExportStatementDefaultFromStarFrom(value))
 		},
 		source: () => _source,
 		$render: () => renderText(handle, node),
@@ -10090,9 +10049,9 @@ export function buildExportStatementDefaultFromNsFrom(
 		_namespace_export,
 		_source,
 		$with: {
-			namespaceExport: (value: T.NamespaceExport) =>
+			namespaceExport: (value: Admit<T.NamespaceExport>) =>
 				rebuilt(node, handle, () => buildExportStatementDefaultFromNsFrom({ ...config, namespaceExport: value })),
-			source: (value: T.String) =>
+			source: (value: Admit<T.String>) =>
 				rebuilt(node, handle, () => buildExportStatementDefaultFromNsFrom({ ...config, source: value }))
 		},
 		namespaceExport: () => _namespace_export,
@@ -10129,10 +10088,11 @@ export function buildExportStatementDefaultFromClauseFrom(
 					listSlotWith(
 						args,
 						{ kind: TSKindId.ExportClause as const, optional: false, make: buildExportClause },
-						(value: T.ExportClause) => buildExportStatementDefaultFromClauseFrom({ ...config, exportClause: value })
+						(value: Admit<T.ExportClause>) =>
+							buildExportStatementDefaultFromClauseFrom({ ...config, exportClause: value })
 					)
 				),
-			source: (value: T.String) =>
+			source: (value: Admit<T.String>) =>
 				rebuilt(node, handle, () => buildExportStatementDefaultFromClauseFrom({ ...config, source: value }))
 		},
 		exportClause: () => _export_clause,
@@ -10148,7 +10108,7 @@ export function buildExportStatementDefaultFromClauseFrom(
 }
 
 export function buildExportStatementDefaultDeclarationDefaultKw(
-	value: AdmitBound<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue, T.AdmittedNodes>
+	value: Admit<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue>
 ): T.ExportStatementDefaultDeclarationDefaultKw.Bound {
 	const _content = rejectBareText(
 		value,
@@ -10162,7 +10122,7 @@ export function buildExportStatementDefaultDeclarationDefaultKw(
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue) =>
+			content: (value: Admit<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue>) =>
 				rebuilt(node, handle, () => buildExportStatementDefaultDeclarationDefaultKw(value))
 		},
 		content: () => _content,
@@ -10177,7 +10137,7 @@ export function buildExportStatementDefaultDeclarationDefaultKw(
 }
 
 export function buildExportStatementDefaultDeclarationDefaultKwValue(
-	value: AdmitBound<T.Expression, T.AdmittedNodes>,
+	value: Admit<T.Expression>,
 	options?: T.ExportStatementDefaultDeclarationDefaultKwValue.Options
 ): T.ExportStatementDefaultDeclarationDefaultKwValue.Bound {
 	const _value = rejectBareText(
@@ -10196,7 +10156,7 @@ export function buildExportStatementDefaultDeclarationDefaultKwValue(
 		_value,
 		_automatic_semicolon,
 		$with: {
-			value: (value: NonNullable<T.Expression>) =>
+			value: (value: Admit<NonNullable<T.Expression>>) =>
 				rebuilt(node, handle, () => buildExportStatementDefaultDeclarationDefaultKwValue(value, options)),
 			automaticSemicolon: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
 				rebuilt(node, handle, () =>
@@ -10234,11 +10194,11 @@ export function buildVariableDeclaratorPlain(
 		_type,
 		_value,
 		$with: {
-			name: (value: T.Identifier | T.ObjectPattern | T.ArrayPattern) =>
+			name: (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
 				rebuilt(node, handle, () => buildVariableDeclaratorPlain({ ...config, name: value })),
-			type: (value?: T.TypeAnnotation) =>
+			type: (value?: Admit<T.TypeAnnotation>) =>
 				rebuilt(node, handle, () => buildVariableDeclaratorPlain({ ...config, type: value })),
-			value: (value?: NonNullable<T.VariableDeclaratorPlain.Config>['value']) =>
+			value: (value?: Admit<NonNullable<T.VariableDeclaratorPlain.Config>['value']>) =>
 				rebuilt(node, handle, () => buildVariableDeclaratorPlain({ ...config, value: value }))
 		},
 		name: () => _name,
@@ -10267,9 +10227,9 @@ export function buildVariableDeclaratorDefinite(
 		_name,
 		_type,
 		$with: {
-			name: (value: T.Identifier) =>
+			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildVariableDeclaratorDefinite({ ...config, name: value })),
-			type: (value: T.TypeAnnotation) =>
+			type: (value: Admit<T.TypeAnnotation>) =>
 				rebuilt(node, handle, () => buildVariableDeclaratorDefinite({ ...config, type: value }))
 		},
 		name: () => _name,
@@ -10309,11 +10269,11 @@ export function buildForHeaderLhs(config: T.ForHeaderLhs.Config): T.ForHeaderLhs
 		_operator,
 		_right,
 		$with: {
-			left: (value: T.LhsExpression | T.ParenthesizedExpression) =>
+			left: (value: Admit<T.LhsExpression | T.ParenthesizedExpression>) =>
 				rebuilt(node, handle, () => buildForHeaderLhs({ ...config, left: value })),
-			operator: (value: NonNullable<T.ForHeaderLhs.Config>['operator']) =>
+			operator: (value: Admit<NonNullable<T.ForHeaderLhs.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildForHeaderLhs({ ...config, operator: value })),
-			right: (value: NonNullable<T.ForHeaderLhs.Config>['right']) =>
+			right: (value: Admit<NonNullable<T.ForHeaderLhs.Config>['right']>) =>
 				rebuilt(node, handle, () => buildForHeaderLhs({ ...config, right: value }))
 		},
 		left: () => _left,
@@ -10356,13 +10316,13 @@ export function buildForHeaderVarKind(config: T.ForHeaderVarKind.Config): T.ForH
 		_operator,
 		_right,
 		$with: {
-			left: (value: T.Identifier | T.ObjectPattern | T.ArrayPattern) =>
+			left: (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
 				rebuilt(node, handle, () => buildForHeaderVarKind({ ...config, left: value })),
-			value: (value?: NonNullable<T.ForHeaderVarKind.Config>['value']) =>
+			value: (value?: Admit<NonNullable<T.ForHeaderVarKind.Config>['value']>) =>
 				rebuilt(node, handle, () => buildForHeaderVarKind({ ...config, value: value })),
-			operator: (value: NonNullable<T.ForHeaderVarKind.Config>['operator']) =>
+			operator: (value: Admit<NonNullable<T.ForHeaderVarKind.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildForHeaderVarKind({ ...config, operator: value })),
-			right: (value: NonNullable<T.ForHeaderVarKind.Config>['right']) =>
+			right: (value: Admit<NonNullable<T.ForHeaderVarKind.Config>['right']>) =>
 				rebuilt(node, handle, () => buildForHeaderVarKind({ ...config, right: value }))
 		},
 		left: () => _left,
@@ -10410,15 +10370,15 @@ export function buildForHeaderLetConstKind(config: T.ForHeaderLetConstKind.Confi
 		_operator,
 		_right,
 		$with: {
-			kind: (value: NonNullable<T.ForHeaderLetConstKind.Config>['kind']) =>
+			kind: (value: Admit<NonNullable<T.ForHeaderLetConstKind.Config>['kind']>) =>
 				rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, kind: value })),
-			left: (value: T.Identifier | T.ObjectPattern | T.ArrayPattern) =>
+			left: (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
 				rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, left: value })),
-			automaticSemicolon: (value?: NonNullable<T.ForHeaderLetConstKind.Config>['automaticSemicolon']) =>
+			automaticSemicolon: (value?: Admit<NonNullable<T.ForHeaderLetConstKind.Config>['automaticSemicolon']>) =>
 				rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, automaticSemicolon: value })),
-			operator: (value: NonNullable<T.ForHeaderLetConstKind.Config>['operator']) =>
+			operator: (value: Admit<NonNullable<T.ForHeaderLetConstKind.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, operator: value })),
-			right: (value: NonNullable<T.ForHeaderLetConstKind.Config>['right']) =>
+			right: (value: Admit<NonNullable<T.ForHeaderLetConstKind.Config>['right']>) =>
 				rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, right: value }))
 		},
 		kind: () => _kind,
@@ -10554,7 +10514,7 @@ export function buildErrorRecovery(text: string): T.ErrorRecovery.Bound {
 }
 
 export function buildStatementIdentifier(
-	value: AdmitBound<
+	value: Admit<
 		| T.Identifier
 		| TSKindId.DeclareKeyword
 		| TSKindId.NamespaceKeyword
@@ -10577,8 +10537,7 @@ export function buildStatementIdentifier(
 		| TSKindId.SetKeyword
 		| TSKindId.AsyncKeyword
 		| TSKindId.StaticKeyword
-		| TSKindId.LetKeyword,
-		T.AdmittedNodes
+		| TSKindId.LetKeyword
 	>
 ): T.StatementIdentifier.Bound {
 	const _content = rejectKeywordText(
@@ -10622,30 +10581,32 @@ export function buildStatementIdentifier(
 		_content,
 		$with: {
 			content: (
-				value: NonNullable<
-					| T.Identifier
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
+				value: Admit<
+					NonNullable<
+						| T.Identifier
+						| TSKindId.DeclareKeyword
+						| TSKindId.NamespaceKeyword
+						| TSKindId.TypeKeyword
+						| TSKindId.PublicKeyword
+						| TSKindId.PrivateKeyword
+						| TSKindId.ProtectedKeyword
+						| TSKindId.OverrideKeyword
+						| TSKindId.ReadonlyKeyword
+						| TSKindId.ModuleKeyword
+						| TSKindId.AnyKeyword
+						| TSKindId.NumberKeyword
+						| TSKindId.BooleanKeyword
+						| TSKindId.StringKeyword
+						| TSKindId.SymbolKeyword
+						| TSKindId.ExportKeyword
+						| TSKindId.ObjectKeyword
+						| TSKindId.NewKeyword
+						| TSKindId.GetKeyword
+						| TSKindId.SetKeyword
+						| TSKindId.AsyncKeyword
+						| TSKindId.StaticKeyword
+						| TSKindId.LetKeyword
+					>
 				>
 			) => rebuilt(node, handle, () => buildStatementIdentifier(value))
 		},
@@ -10661,7 +10622,7 @@ export function buildStatementIdentifier(
 }
 
 export function buildShorthandPropertyIdentifier(
-	value: AdmitBound<
+	value: Admit<
 		| T.Identifier
 		| TSKindId.DeclareKeyword
 		| TSKindId.NamespaceKeyword
@@ -10684,8 +10645,7 @@ export function buildShorthandPropertyIdentifier(
 		| TSKindId.SetKeyword
 		| TSKindId.AsyncKeyword
 		| TSKindId.StaticKeyword
-		| TSKindId.LetKeyword,
-		T.AdmittedNodes
+		| TSKindId.LetKeyword
 	>
 ): T.ShorthandPropertyIdentifier.Bound {
 	const _content = rejectKeywordText(
@@ -10729,30 +10689,32 @@ export function buildShorthandPropertyIdentifier(
 		_content,
 		$with: {
 			content: (
-				value: NonNullable<
-					| T.Identifier
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
+				value: Admit<
+					NonNullable<
+						| T.Identifier
+						| TSKindId.DeclareKeyword
+						| TSKindId.NamespaceKeyword
+						| TSKindId.TypeKeyword
+						| TSKindId.PublicKeyword
+						| TSKindId.PrivateKeyword
+						| TSKindId.ProtectedKeyword
+						| TSKindId.OverrideKeyword
+						| TSKindId.ReadonlyKeyword
+						| TSKindId.ModuleKeyword
+						| TSKindId.AnyKeyword
+						| TSKindId.NumberKeyword
+						| TSKindId.BooleanKeyword
+						| TSKindId.StringKeyword
+						| TSKindId.SymbolKeyword
+						| TSKindId.ExportKeyword
+						| TSKindId.ObjectKeyword
+						| TSKindId.NewKeyword
+						| TSKindId.GetKeyword
+						| TSKindId.SetKeyword
+						| TSKindId.AsyncKeyword
+						| TSKindId.StaticKeyword
+						| TSKindId.LetKeyword
+					>
 				>
 			) => rebuilt(node, handle, () => buildShorthandPropertyIdentifier(value))
 		},
@@ -10768,7 +10730,7 @@ export function buildShorthandPropertyIdentifier(
 }
 
 export function buildShorthandPropertyIdentifierPattern(
-	value: AdmitBound<
+	value: Admit<
 		| T.Identifier
 		| TSKindId.DeclareKeyword
 		| TSKindId.NamespaceKeyword
@@ -10791,8 +10753,7 @@ export function buildShorthandPropertyIdentifierPattern(
 		| TSKindId.SetKeyword
 		| TSKindId.AsyncKeyword
 		| TSKindId.StaticKeyword
-		| TSKindId.LetKeyword,
-		T.AdmittedNodes
+		| TSKindId.LetKeyword
 	>
 ): T.ShorthandPropertyIdentifierPattern.Bound {
 	const _content = rejectKeywordText(
@@ -10836,30 +10797,32 @@ export function buildShorthandPropertyIdentifierPattern(
 		_content,
 		$with: {
 			content: (
-				value: NonNullable<
-					| T.Identifier
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
+				value: Admit<
+					NonNullable<
+						| T.Identifier
+						| TSKindId.DeclareKeyword
+						| TSKindId.NamespaceKeyword
+						| TSKindId.TypeKeyword
+						| TSKindId.PublicKeyword
+						| TSKindId.PrivateKeyword
+						| TSKindId.ProtectedKeyword
+						| TSKindId.OverrideKeyword
+						| TSKindId.ReadonlyKeyword
+						| TSKindId.ModuleKeyword
+						| TSKindId.AnyKeyword
+						| TSKindId.NumberKeyword
+						| TSKindId.BooleanKeyword
+						| TSKindId.StringKeyword
+						| TSKindId.SymbolKeyword
+						| TSKindId.ExportKeyword
+						| TSKindId.ObjectKeyword
+						| TSKindId.NewKeyword
+						| TSKindId.GetKeyword
+						| TSKindId.SetKeyword
+						| TSKindId.AsyncKeyword
+						| TSKindId.StaticKeyword
+						| TSKindId.LetKeyword
+					>
 				>
 			) => rebuilt(node, handle, () => buildShorthandPropertyIdentifierPattern(value))
 		},
@@ -10875,7 +10838,7 @@ export function buildShorthandPropertyIdentifierPattern(
 }
 
 export function buildPropertyIdentifier(
-	value: AdmitBound<
+	value: Admit<
 		| T.Identifier
 		| TSKindId.DeclareKeyword
 		| TSKindId.NamespaceKeyword
@@ -10898,8 +10861,7 @@ export function buildPropertyIdentifier(
 		| TSKindId.SetKeyword
 		| TSKindId.AsyncKeyword
 		| TSKindId.StaticKeyword
-		| TSKindId.LetKeyword,
-		T.AdmittedNodes
+		| TSKindId.LetKeyword
 	>
 ): T.PropertyIdentifier.Bound {
 	const _content = rejectKeywordText(
@@ -10943,30 +10905,32 @@ export function buildPropertyIdentifier(
 		_content,
 		$with: {
 			content: (
-				value: NonNullable<
-					| T.Identifier
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
+				value: Admit<
+					NonNullable<
+						| T.Identifier
+						| TSKindId.DeclareKeyword
+						| TSKindId.NamespaceKeyword
+						| TSKindId.TypeKeyword
+						| TSKindId.PublicKeyword
+						| TSKindId.PrivateKeyword
+						| TSKindId.ProtectedKeyword
+						| TSKindId.OverrideKeyword
+						| TSKindId.ReadonlyKeyword
+						| TSKindId.ModuleKeyword
+						| TSKindId.AnyKeyword
+						| TSKindId.NumberKeyword
+						| TSKindId.BooleanKeyword
+						| TSKindId.StringKeyword
+						| TSKindId.SymbolKeyword
+						| TSKindId.ExportKeyword
+						| TSKindId.ObjectKeyword
+						| TSKindId.NewKeyword
+						| TSKindId.GetKeyword
+						| TSKindId.SetKeyword
+						| TSKindId.AsyncKeyword
+						| TSKindId.StaticKeyword
+						| TSKindId.LetKeyword
+					>
 				>
 			) => rebuilt(node, handle, () => buildPropertyIdentifier(value))
 		},
@@ -10981,7 +10945,7 @@ export function buildPropertyIdentifier(
 	return node as unknown as T.PropertyIdentifier.Bound;
 }
 
-export function buildTypeIdentifier(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T.TypeIdentifier.Bound {
+export function buildTypeIdentifier(value: Admit<T.Identifier>): T.TypeIdentifier.Bound {
 	const _content = rejectBareText(value, 'TypeIdentifier.content', 'buildIdentifier(…)');
 	const handle = currentHandle();
 	const node = {
@@ -10990,7 +10954,7 @@ export function buildTypeIdentifier(value: AdmitBound<T.Identifier, T.AdmittedNo
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: T.Identifier) => rebuilt(node, handle, () => buildTypeIdentifier(value))
+			content: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildTypeIdentifier(value))
 		},
 		content: () => _content,
 		$render: () => renderText(handle, node),
@@ -11003,7 +10967,7 @@ export function buildTypeIdentifier(value: AdmitBound<T.Identifier, T.AdmittedNo
 	return node as unknown as T.TypeIdentifier.Bound;
 }
 
-export function buildInterfaceBody(value: AdmitBound<T.ObjectType, T.AdmittedNodes>): T.InterfaceBody.Bound {
+export function buildInterfaceBody(value: Admit<T.ObjectType>): T.InterfaceBody.Bound {
 	const _content = rejectBareText(value, 'InterfaceBody.content', 'a built ObjectType');
 	const handle = currentHandle();
 	const node = {
@@ -11012,7 +10976,7 @@ export function buildInterfaceBody(value: AdmitBound<T.ObjectType, T.AdmittedNod
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: T.ObjectType) => rebuilt(node, handle, () => buildInterfaceBody(value))
+			content: (value: Admit<T.ObjectType>) => rebuilt(node, handle, () => buildInterfaceBody(value))
 		},
 		content: () => _content,
 		$render: () => renderText(handle, node),

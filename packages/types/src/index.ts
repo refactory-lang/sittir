@@ -5,7 +5,7 @@
 
 import type { CamelCase } from 'type-fest';
 import type { NodeMethods } from './engine-api.ts';
-import type { AdmitBound } from './node-surface.ts';
+import type { Admit } from './node-surface.ts';
 
 // ---------------------------------------------------------------------------
 // Runtime types — re-exported from core-types (zero runtime in this package)
@@ -419,22 +419,19 @@ type WidenLooseFieldValue<
 	Depth extends number[],
 	NsMap,
 	Visited extends (string | number)[]
-> = AdmitBound<
-	K extends keyof LooseHintsOf<T>
+> = K extends keyof LooseHintsOf<T>
 		?
 				| WidenSlotValue<LooseHintsOf<T>[K], Scalars, Strings, Depth, NsMap, Visited>
 				| WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, Depth, NsMap, Visited>
-		: WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, Depth, NsMap, Visited>,
-	NodeLookup<NsMap>
->;
+		: WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, Depth, NsMap, Visited>;
 
 /**
  * Extract the child-slot shape for the Config/Loose bag surface —
  * consumer code writes `config.children`, not `config.$other`. The
  * `$`-prefixed metadata shape is internal UntypedNode.
  */
-type ChildSlotsOf<T, NsMap = {}> = T extends { readonly $other?: infer C }
-	? { readonly children: AdmitBound<AdmitSlotInput<C>, NodeLookup<NsMap>> }
+type ChildSlotsOf<T> = T extends { readonly $other?: infer C }
+	? { readonly children: Admit<AdmitSlotInput<C>> }
 	: {};
 
 /**
@@ -486,10 +483,7 @@ export type ChildOf<T> = T extends { readonly $other?: infer C }
  * here: its loose counterpart is that kind's `Loose`, which is the only
  * projection that reads the from-only (`__looseHints__`) widenings.
  */
-export type LooseValue<V, Scalars = {}, Strings = {}, NsMap = {}> = AdmitBound<
-	WidenChildSlot<V, Scalars, Strings, [], NsMap>,
-	NodeLookup<NsMap>
->;
+export type LooseValue<V, Scalars = {}, Strings = {}, NsMap = {}> = WidenChildSlot<V, Scalars, Strings, [], NsMap>;
 
 /**
  * ConfigOf<T> — factory input shape. CamelCase keys at top level for ergonomics,
@@ -515,7 +509,7 @@ export type LooseValue<V, Scalars = {}, Strings = {}, NsMap = {}> = AdmitBound<
  *    at the top of the Config surface.
  *
  */
-export type ConfigOf<T, NsMap = {}> = T extends unknown
+export type ConfigOf<T> = T extends unknown
 	? Simplify<
 			{
 				[K in keyof FieldsOf<T> as EscapeReservedAccessor<CamelCase<K & string>>]: IsBooleanKeywordSlot<
@@ -525,8 +519,8 @@ export type ConfigOf<T, NsMap = {}> = T extends unknown
 					: IsBitflagSlot<FieldInputType<T, K>> extends true
 						? BitflagSlotEnum<FieldInputType<T, K>> | UndefinedIfOptional<FieldsOf<T>, K>
 						: IsKindEnumSlot<FieldInputType<T, K>> extends true
-							? AdmitBound<FieldInputType<T, K>, NodeLookup<NsMap>> | UndefinedIfOptional<FieldsOf<T>, K>
-							: AdmitBound<AdmitSlotInput<FieldInputType<T, K>>, NodeLookup<NsMap>>;
+							? Admit<FieldInputType<T, K>> | UndefinedIfOptional<FieldsOf<T>, K>
+							: Admit<AdmitSlotInput<FieldInputType<T, K>>>;
 			} &
 				// Child surface: polymorph variants with a single-child slot hoist
 				// the inner child's Config up when the inner has meaningful Config
@@ -539,7 +533,7 @@ export type ConfigOf<T, NsMap = {}> = T extends unknown
 				//   for any variant whose content isn't pre-stamped.
 				//
 				// - Inner carries its OWN `$variant` (inner is itself a UForm or
-				//   polymorph union): `Omit<ConfigOf<C, NsMap>, '$variant'>` first —
+				//   polymorph union): `Omit<ConfigOf<C>, '$variant'>` first —
 				//   the outer form's `$variant` is authoritative, and intersecting
 				//   both collapses to `never` when they don't match. This keeps
 				//   a single discriminator at the outer level while preserving
@@ -553,7 +547,7 @@ export type ConfigOf<T, NsMap = {}> = T extends unknown
 				//   VisibilityModifierPubInPath`) instead of stopping at the
 				//   polymorph boundary. `IsSingleType<C>` gates the hoist to
 				//   single concrete kinds only — polymorph unions fall through to
-				//   `Partial<ChildSlotsOf<T, NsMap>>`, surfacing the union as a
+				//   `Partial<ChildSlotsOf<T>>`, surfacing the union as a
 				//   `children: readonly [VisibilityModifier]` passthrough.
 				//
 				// Everything else (non-polymorph or multi-child) exposes
@@ -563,22 +557,22 @@ export type ConfigOf<T, NsMap = {}> = T extends unknown
 					readonly $other?: readonly [infer C];
 				}
 					? IsSingleType<C> extends true
-						? keyof ConfigOf<C, NsMap> extends never
-							? Partial<ChildSlotsOf<T, NsMap>>
-							: Omit<ConfigOf<C, NsMap>, '$variant'>
-						: Partial<ChildSlotsOf<T, NsMap>>
+						? keyof ConfigOf<C> extends never
+							? Partial<ChildSlotsOf<T>>
+							: Omit<ConfigOf<C>, '$variant'>
+						: Partial<ChildSlotsOf<T>>
 					: T extends {
 								readonly $variant: string;
 								readonly $other?: infer C;
 						  }
 						? NonNullable<C> extends readonly unknown[]
-							? Partial<ChildSlotsOf<T, NsMap>>
+							? Partial<ChildSlotsOf<T>>
 							: IsSingleType<NonNullable<C>> extends true
-								? keyof ConfigOf<NonNullable<C>, NsMap> extends never
-									? Partial<ChildSlotsOf<T, NsMap>>
-									: Omit<ConfigOf<NonNullable<C>, NsMap>, '$variant'>
-								: Partial<ChildSlotsOf<T, NsMap>>
-						: Partial<ChildSlotsOf<T, NsMap>>) &
+								? keyof ConfigOf<NonNullable<C>> extends never
+									? Partial<ChildSlotsOf<T>>
+									: Omit<ConfigOf<NonNullable<C>>, '$variant'>
+								: Partial<ChildSlotsOf<T>>
+						: Partial<ChildSlotsOf<T>>) &
 				// $variant discriminator: carried verbatim on the Config surface
 				// whenever the interface declares one (independent of whether the
 				// child-hoist fires). Forms without their own $other still need
@@ -586,11 +580,6 @@ export type ConfigOf<T, NsMap = {}> = T extends unknown
 				(T extends { readonly $variant: infer V extends string } ? { readonly $variant: V } : {})
 		>
 	: never;
-
-/** @internal — the nodes a namespace map admits where a kind's storage type is asked for: each kind's `Bound` and `Parsed`. */
-export type NodeLookup<NsMap> = {
-	[Id in keyof NsMap]: NsMap[Id][Extract<keyof NsMap[Id], 'Bound' | 'Parsed' | 'Empty'>];
-};
 
 /** @internal — detect BooleanKeyword brand at the slot level, including
  * through array wrappers (degenerate `repeat(single-literal)` slots are
@@ -612,7 +601,7 @@ type BitflagSlotEnum<T> = T extends readonly (infer E)[] ? BitflagEnum<E> : Bitf
 type IsKindEnumSlot<T> = IsKindEnum<T> extends true ? true : T extends readonly (infer E)[] ? IsKindEnum<E> : false;
 
 /** @internal — widen a KindEnum slot back to its string-friendly input surface. */
-type KindEnumSlotInput<T> = T extends readonly (infer E)[] ? readonly (KindEnumText<E> | E)[] : KindEnumText<T> | T;
+type KindEnumSlotInput<T> = T extends readonly (infer E)[] ? readonly (KindEnumText<E> | Admit<E>)[] : KindEnumText<T> | Admit<T>;
 
 /** A tree node with no typed field access — returned by `.children()`. */
 export interface AnyTreeNodeOf {
@@ -726,10 +715,10 @@ export type LooseConfigOf<
 	Visited extends (string | number)[] = []
 > = Simplify<
 	Depth['length'] extends MaxDepth
-		? T
+		? Admit<T>
 		: T extends { readonly $type: infer K extends string }
 			? Contains<Visited, K> extends true
-				? T
+				? Admit<T>
 				: LooseConfigBody<T, Scalars, Strings, Depth, NsMap, [K, ...Visited]>
 			: LooseConfigBody<T, Scalars, Strings, Depth, NsMap, Visited>
 >;
@@ -821,15 +810,15 @@ type TagEachArm<
 	? U extends { readonly $type: infer K extends keyof NsMap }
 		? NsMap[K] extends { readonly Kind: infer Name extends number }
 			? [Name] extends [never]
-				? U
+				? Admit<U>
 				:
 						| ({ $type: Name } & ([LooseProjection<U, NsMap>] extends [never]
 								? LooseConfigOf<U, Scalars, Strings, [...Depth, 0], NsMap, Visited>
 								: LooseProjection<U, NsMap>))
-						| U
-			: U
+						| Admit<U>
+			: Admit<U>
 		: U extends { readonly $type: infer K extends string | number }
-			? ({ $type: K } & LooseConfigOf<U, Scalars, Strings, [...Depth, 0], NsMap, Visited>) | U
+			? ({ $type: K } & LooseConfigOf<U, Scalars, Strings, [...Depth, 0], NsMap, Visited>) | Admit<U>
 			: never
 	: never;
 
@@ -884,13 +873,13 @@ type LooseOrConfigBag<
 	readonly $type: infer K extends string;
 }
 	? Contains<Visited, K> extends true
-		? T
+		? Admit<T>
 		: [LooseProjection<T, NsMap>] extends [never]
-			? LooseConfigOf<T, Scalars, Strings, [...Depth, 0], NsMap, Visited> | T
-			: LooseProjection<T, NsMap> | T
+			? LooseConfigOf<T, Scalars, Strings, [...Depth, 0], NsMap, Visited> | Admit<T>
+			: LooseProjection<T, NsMap> | Admit<T>
 	: [LooseProjection<T, NsMap>] extends [never]
-		? LooseConfigOf<T, Scalars, Strings, [...Depth, 0], NsMap, Visited> | T
-		: LooseProjection<T, NsMap> | T;
+		? LooseConfigOf<T, Scalars, Strings, [...Depth, 0], NsMap, Visited> | Admit<T>
+		: LooseProjection<T, NsMap> | Admit<T>;
 
 type WidenValue<
 	T,
@@ -900,7 +889,7 @@ type WidenValue<
 	NsMap = {},
 	Visited extends (string | number)[] = []
 > = Depth['length'] extends MaxDepth
-	? T
+	? Admit<T>
 	:
 			| WidenBrandMembers<T>
 			| WidenArrayMembers<Extract<T, readonly unknown[]>, Scalars, Strings, Depth, NsMap, Visited>
@@ -947,7 +936,7 @@ type WidenLeafMembers<T, Scalars, Strings> = T extends {
 	readonly $type: infer K extends string | number;
 	readonly $text: string;
 }
-	? T | (K extends keyof Strings ? Strings[K] : string) | (K extends keyof Scalars ? Scalars[K] : never)
+	? Admit<T> | (K extends keyof Strings ? Strings[K] : string) | (K extends keyof Scalars ? Scalars[K] : never)
 	: never;
 
 /** @internal — the structural node members of a slot union: `$type`-bearing
@@ -1134,15 +1123,15 @@ export interface NodeNs<
 	Strings = {},
 	NsMap = {},
 	Bound = T & NodeMethods,
-	Args extends readonly unknown[] = [ConfigOf<T, NsMap>],
-	LooseArgs extends readonly unknown[] = [LooseConfigOf<T, Scalars, Strings, [], NsMap> | AdmitBound<T, NodeLookup<NsMap>>],
+	Args extends readonly unknown[] = [ConfigOf<T>],
+	LooseArgs extends readonly unknown[] = [LooseConfigOf<T, Scalars, Strings, [], NsMap> | Admit<T>],
 	Bare extends string = never,
 	Kind extends number = never,
 	Parsed = Bound,
 	Empty = never
 > {
 	readonly Node: T;
-	readonly Config: ConfigOf<T, NsMap>;
+	readonly Config: ConfigOf<T>;
 	readonly Bound: Bound;
 	readonly Parsed: Parsed;
 	readonly Empty: Empty;
@@ -1187,7 +1176,7 @@ export interface NodeNs<
 	// cannot be the member the walk short-circuits through.
 	readonly Loose:
 		| LooseConfigOf<T, Scalars, Strings, [], NsMap>
-		| AdmitBound<T, NodeLookup<NsMap>>
+		| Admit<T>
 		| BareLoose<T, Bare, Scalars, Strings, [], NsMap, [T['$type']]>;
 	/** The `FieldsOf<T>` key of the slot the coercer accepts bare, or
 	 *  `never` — see the `Bare` type parameter. */
@@ -1299,6 +1288,7 @@ export type {
 	RenderArgument,
 	RenderCall,
 	RenderOptionsCheck,
+	Renderable,
 	Rendered,
 	StrictMembers,
 	StrictSurface,

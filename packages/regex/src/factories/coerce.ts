@@ -4,7 +4,7 @@ import * as F from './raw.js';
 import { spelledInterior } from '@sittir/common/utils';
 import type * as T from '../types-internal.js';
 import { TSKindId, KIND_NAMES } from '../types.js';
-import type { AnyUntypedNode } from '@sittir/types';
+import type { AnyUntypedNode, Admit } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind } from '@sittir/common/utils';
 import { isNode } from '../utils.js';
 
@@ -268,8 +268,8 @@ function _resolveOne<T>(
 	leafKinds: readonly string[],
 	branchKinds: readonly string[],
 	defaultArm?: string
-): T {
-	if (v === undefined || v === null) return v as T;
+): Admit<T> {
+	if (v === undefined || v === null) return v as Admit<T>;
 	const kindId = isNode(v) ? v.$type : typeof v === 'number' && _KIND_ID_STORED.has(v) ? v : undefined;
 	if (typeof kindId === 'number') {
 		const kindName = KIND_NAMES.get(kindId);
@@ -279,11 +279,11 @@ function _resolveOne<T>(
 				branchKinds.includes(kindName) ||
 				(_ENUMS_OF_MEMBER[kindId] ?? []).some((e) => leafKinds.includes(e)))
 		)
-			return v as T;
+			return v as Admit<T>;
 		const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);
 		const arm = arms.length <= 1 ? arms[0] : undefined;
-		if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as T;
-		if (isNode(v)) return v as T;
+		if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as Admit<T>;
+		if (isNode(v)) return v as Admit<T>;
 		if (arms.length > 1) {
 			throw new Error(
 				`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(', ')}]; name the arm explicitly`
@@ -292,11 +292,11 @@ function _resolveOne<T>(
 	}
 	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
 		const scalar = _resolveScalar(v);
-		if (scalar !== undefined) return scalar as T;
+		if (scalar !== undefined) return scalar as Admit<T>;
 	}
 	if (typeof v === 'string') {
 		const leaf = _resolveBareText(v, [...leafKinds, ...branchKinds]);
-		if (leaf !== undefined) return leaf as T;
+		if (leaf !== undefined) return leaf as Admit<T>;
 		if (branchKinds.length === 0 && leafKinds.length === 1) return _resolveOneLeaf<T>(v, leafKinds[0]!);
 		if (branchKinds.length === 0 && leafKinds.length > 1 && leafKinds.every((k) => _AFFIXED_KINDS.has(k))) {
 			throw new Error(
@@ -308,8 +308,8 @@ function _resolveOne<T>(
 		const bk = _KEYWORD_BRANCH_BY_TEXT[v];
 		if (bk !== undefined && branchKinds.includes(bk)) {
 			const build = _KEYWORD_BRANCH_BUILD[bk];
-			if (build !== undefined) return build() as T;
-			if (_isFromKind(bk)) return _resolveByKind(bk, {}) as T;
+			if (build !== undefined) return build() as Admit<T>;
+			if (_isFromKind(bk)) return _resolveByKind(bk, {}) as Admit<T>;
 		}
 	}
 	const tagged = _splitTag(v);
@@ -318,11 +318,11 @@ function _resolveOne<T>(
 			_fromOfTag(tagged.tag, [...leafKinds, ...branchKinds]),
 			tagged.rest
 		) as _LooseFieldInput;
-		return (isNode(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as T;
+		return (isNode(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as Admit<T>;
 	}
 	if (branchKinds.length === 1 && typeof v === 'object' && !Array.isArray(v)) {
 		const bk = branchKinds[0]!;
-		if (_isFromKind(bk)) return _resolveByKind(bk, v) as T;
+		if (_isFromKind(bk)) return _resolveByKind(bk, v) as Admit<T>;
 	}
 	if (!(typeof v === 'object' && !Array.isArray(v))) {
 		const candidates = typeof v === 'string' ? branchKinds.filter((b) => _STRING_CAPABLE_BRANCHES.has(b)) : branchKinds;
@@ -333,9 +333,9 @@ function _resolveOne<T>(
 					? defaultArm
 					: undefined;
 		if (target !== undefined && Array.isArray(v) && target in _wrapKindIds) {
-			return _wrapArray(target, v) as T;
+			return _wrapArray(target, v) as Admit<T>;
 		}
-		if (target !== undefined && _isFromKind(target)) return _resolveByKind(target, v) as T;
+		if (target !== undefined && _isFromKind(target)) return _resolveByKind(target, v) as Admit<T>;
 		if (typeof v === 'string' && candidates.length > 0) {
 			throw new Error(
 				`_resolveOne: a bare string picks no arm among [${branchKinds.join(', ')}]; declare the arm (defaultArm()) or name it explicitly`
@@ -351,7 +351,7 @@ function _resolveOne<T>(
 		const texts = _TEXT_KINDS_BY_RANK.filter((kind) => leafKinds.includes(kind) || branchKinds.includes(kind));
 		if (texts.length > 0) throw new Error(`_resolveOne: ${JSON.stringify(v)} matches none of [${texts.join(', ')}]`);
 	}
-	return v as T;
+	return v as Admit<T>;
 }
 
 function _resolveMany<T>(
@@ -359,7 +359,7 @@ function _resolveMany<T>(
 	leafKinds: readonly string[],
 	branchKinds: readonly string[],
 	defaultArm?: string
-): readonly T[] {
+): readonly Admit<T>[] {
 	if (v === undefined || v === null) return [];
 	const arr: readonly _LooseFieldInput[] = Array.isArray(v) ? v : [v];
 	return arr.map((e) => _resolveOne<T>(e, leafKinds, branchKinds, defaultArm));
@@ -400,20 +400,20 @@ function _listElements(
 	return optionsFirst ? [head, ...resolved] : resolved;
 }
 
-function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
-	if (v === undefined || v === null) return v as T;
-	if (isNode(v)) return v as T;
+function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): Admit<T> {
+	if (v === undefined || v === null) return v as Admit<T>;
+	if (isNode(v)) return v as Admit<T>;
 	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
 		const scalar = _resolveScalar(v);
-		if (scalar !== undefined) return scalar as T;
+		if (scalar !== undefined) return scalar as Admit<T>;
 	}
-	if (typeof v === 'string' && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as T;
+	if (typeof v === 'string' && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as Admit<T>;
 	const tagged = _splitTag(v);
-	if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as T;
+	if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as Admit<T>;
 	if (typeof v === 'object') {
 		throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${JSON.stringify(v)}`);
 	}
-	return v as T;
+	return v as Admit<T>;
 }
 
 const _wrapKindIds: { readonly [kind: string]: number } = {
@@ -496,13 +496,13 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 	}
 }
 
-function _wrapArray<T>(kind: string, arr: readonly unknown[]): T {
+function _wrapArray<T>(kind: string, arr: readonly unknown[]): Admit<T> {
 	const elementKind = _wrapElementKinds[kind];
 	if (_wrapDirectKinds.has(kind) && elementKind !== undefined && elementKind in _wrapKindIds) {
-		if (arr.length === 0 && _wrapOptionalSoleKinds.has(kind)) return _wrapWithChildren(kind, []) as T;
-		return _wrapWithChildren(kind, [_wrapArray(elementKind, arr)]) as T;
+		if (arr.length === 0 && _wrapOptionalSoleKinds.has(kind)) return _wrapWithChildren(kind, []) as Admit<T>;
+		return _wrapWithChildren(kind, [_wrapArray(elementKind, arr)]) as Admit<T>;
 	}
-	return _wrapWithChildren(kind, arr) as T;
+	return _wrapWithChildren(kind, arr) as Admit<T>;
 }
 
 function _resolveOneBranch<T>(
@@ -510,9 +510,9 @@ function _resolveOneBranch<T>(
 	kind: string,
 	altKinds?: readonly (string | number)[],
 	optionalSlot?: boolean
-): T {
-	if (v === undefined || v === null) return v as T;
-	if (optionalSlot === true && Array.isArray(v) && v.length === 0) return undefined as T;
+): Admit<T> {
+	if (v === undefined || v === null) return v as Admit<T>;
+	if (optionalSlot === true && Array.isArray(v) && v.length === 0) return undefined as Admit<T>;
 	const tagged = _splitTag(v);
 	if (tagged !== undefined) {
 		const kn = _fromOfTag(tagged.tag, [kind]);
@@ -522,29 +522,29 @@ function _resolveOneBranch<T>(
 	if (isNode(v)) {
 		const wrapId = _wrapKindIds[kind];
 		if (wrapId !== undefined && v.$type !== wrapId) {
-			if (altKinds !== undefined && altKinds.some((k) => k === v.$type)) return v as T;
-			return _wrapWithChildren(kind, [v]) as T;
+			if (altKinds !== undefined && altKinds.some((k) => k === v.$type)) return v as Admit<T>;
+			return _wrapWithChildren(kind, [v]) as Admit<T>;
 		}
-		return v as T;
+		return v as Admit<T>;
 	}
 	if (Array.isArray(v) && kind in _wrapKindIds) {
-		return _wrapArray(kind, v) as T;
+		return _wrapArray(kind, v) as Admit<T>;
 	}
 	if ((typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') && _isFromKind(kind)) {
-		return _resolveByKind(kind, v) as T;
+		return _resolveByKind(kind, v) as Admit<T>;
 	}
 	if (typeof v === 'object' && !Array.isArray(v)) {
 		const tagged = _splitTag(v);
-		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as T;
-		if (_isFromKind(kind)) return _resolveByKind(kind, v) as T;
+		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as Admit<T>;
+		if (_isFromKind(kind)) return _resolveByKind(kind, v) as Admit<T>;
 	}
 	if (typeof v === 'object') {
 		throw new Error(`_resolveOneBranch: cannot resolve value to branch kind '${kind}': ${JSON.stringify(v)}`);
 	}
-	return v as T;
+	return v as Admit<T>;
 }
 
-function _resolveManyLeaf<T>(v: _LooseFieldInput, kind: string): readonly T[] {
+function _resolveManyLeaf<T>(v: _LooseFieldInput, kind: string): readonly Admit<T>[] {
 	if (v === undefined || v === null) return [];
 	const arr: readonly _LooseFieldInput[] = Array.isArray(v) ? v : [v];
 	return arr.map((e) => _resolveOneLeaf<T>(e, kind));
@@ -554,7 +554,7 @@ function _resolveManyBranch<T>(
 	v: _LooseFieldInput,
 	kind: string,
 	altKinds?: readonly (string | number)[]
-): readonly T[] {
+): readonly Admit<T>[] {
 	if (v === undefined || v === null) return [];
 	const arr: readonly _LooseFieldInput[] = Array.isArray(v) ? v : [v];
 	return arr.map((e) => _resolveOneBranch<T>(e, kind, altKinds));
@@ -638,7 +638,7 @@ const _K12: readonly string[] = [
 const _K13: readonly string[] = ['zero_or_more', 'one_or_more', 'optional'];
 const _K14: readonly string[] = ['count_quantifier'];
 
-export function resolvePattern_content(value: T.Pattern.LooseConfig['content']): T.Pattern['_content'] {
+export function resolvePattern_content(value: T.Pattern.LooseConfig['content']): Admit<T.Pattern['_content']> {
 	return _resolveOne<T.Alternation | T.Term>(value, _K0, _K1);
 }
 
@@ -723,7 +723,7 @@ export function coerceToNonBoundaryAssertion(
 
 export function resolveLookaroundAssertion_content(
 	value: T.LookaroundAssertion.LooseConfig['content']
-): T.LookaroundAssertion['_content'] {
+): Admit<T.LookaroundAssertion['_content']> {
 	return _resolveOne<T.LookaheadAssertion | T.LookbehindAssertion>(value, _K0, _K2);
 }
 
@@ -747,7 +747,7 @@ export function coerceToLookaroundAssertion(
 
 export function resolveLookaheadAssertion_content(
 	value: T.LookaheadAssertion.LooseConfig['content']
-): T.LookaheadAssertion['_content'] {
+): Admit<T.LookaheadAssertion['_content']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'=' | '!'>(value, _K0, _K0)),
 		[['=', TSKindId.Eq] as const, ['!', TSKindId.Bang] as const]
@@ -756,7 +756,7 @@ export function resolveLookaheadAssertion_content(
 
 export function resolveLookaheadAssertion_pattern(
 	value: T.LookaheadAssertion.LooseConfig['pattern']
-): T.LookaheadAssertion['_pattern'] {
+): Admit<T.LookaheadAssertion['_pattern']> {
 	return _resolveOneBranch<T.Pattern>(value, 'pattern');
 }
 
@@ -773,7 +773,7 @@ export function coerceToLookaheadAssertion(
 
 export function resolveLookbehindAssertion_content(
 	value: T.LookbehindAssertion.LooseConfig['content']
-): T.LookbehindAssertion['_content'] {
+): Admit<T.LookbehindAssertion['_content']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'=' | '!'>(value, _K0, _K0)),
 		[['=', TSKindId.Eq] as const, ['!', TSKindId.Bang] as const]
@@ -782,7 +782,7 @@ export function resolveLookbehindAssertion_content(
 
 export function resolveLookbehindAssertion_pattern(
 	value: T.LookbehindAssertion.LooseConfig['pattern']
-): T.LookbehindAssertion['_pattern'] {
+): Admit<T.LookbehindAssertion['_pattern']> {
 	return _resolveOneBranch<T.Pattern>(value, 'pattern');
 }
 
@@ -804,19 +804,19 @@ export function coerceToPatternCharacter(input: T.PatternCharacter.Loose): Retur
 
 export function resolveCharacterClass_negation(
 	value: T.CharacterClass.LooseConfig['negation']
-): T.CharacterClass['_negation'] {
+): Admit<T.CharacterClass['_negation']> {
 	return _resolveBooleanKeyword(value);
 }
 
 export function resolveCharacterClass_leading(
 	value: T.CharacterClass.LooseConfig['leading']
-): T.CharacterClass['_leading'] {
+): Admit<T.CharacterClass['_leading']> {
 	return _resolveBooleanKeyword(value);
 }
 
 export function resolveCharacterClass_classAtoms(
 	value: T.CharacterClass.LooseConfig['classAtoms']
-): T.CharacterClass['_class_atoms'] {
+): Admit<T.CharacterClass['_class_atoms']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
 			_resolveMany<
@@ -836,7 +836,7 @@ export function resolveCharacterClass_classAtoms(
 
 export function resolveCharacterClass_trailing(
 	value: T.CharacterClass.LooseConfig['trailing']
-): T.CharacterClass['_trailing'] {
+): Admit<T.CharacterClass['_trailing']> {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -855,7 +855,7 @@ export function coerceToCharacterClass(input?: T.CharacterClass.Loose): ReturnTy
 
 export function resolvePosixCharacterClass_posixClassName(
 	value: T.PosixCharacterClass.LooseConfig['posixClassName']
-): T.PosixCharacterClass['_posix_class_name'] {
+): Admit<T.PosixCharacterClass['_posix_class_name']> {
 	return _resolveOneLeaf<T.PosixClassName>(value, 'posix_class_name');
 }
 
@@ -883,7 +883,7 @@ export function coerceToPosixClassName(input: T.PosixClassName.Loose): ReturnTyp
 	return F.buildPosixClassName(input as Parameters<typeof F.buildPosixClassName>[0]);
 }
 
-export function resolveClassRange_start(value: T.ClassRange.LooseConfig['start']): T.ClassRange['_start'] {
+export function resolveClassRange_start(value: T.ClassRange.LooseConfig['start']): Admit<T.ClassRange['_start']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
 			_resolveOne<T.ClassCharacter | T.CharacterClassEscape | T.ControlEscape | '-'>(value, _K5, _K6)
@@ -892,7 +892,7 @@ export function resolveClassRange_start(value: T.ClassRange.LooseConfig['start']
 	);
 }
 
-export function resolveClassRange_end(value: T.ClassRange.LooseConfig['end']): T.ClassRange['_end'] {
+export function resolveClassRange_end(value: T.ClassRange.LooseConfig['end']): Admit<T.ClassRange['_end']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
 			_resolveOne<T.ClassCharacter | T.CharacterClassEscape | T.ControlEscape | '-'>(value, _K5, _K6)
@@ -916,7 +916,7 @@ export function coerceToClassCharacter(input: T.ClassCharacter.Loose): ReturnTyp
 
 export function resolveAnonymousCapturingGroup_pattern(
 	value: T.AnonymousCapturingGroup.LooseConfig['pattern']
-): T.AnonymousCapturingGroup['_pattern'] {
+): Admit<T.AnonymousCapturingGroup['_pattern']> {
 	return _resolveOneBranch<T.Pattern>(value, 'pattern');
 }
 
@@ -939,7 +939,7 @@ export function coerceToAnonymousCapturingGroup(
 
 export function resolveNamedCapturingGroup_content(
 	value: T.NamedCapturingGroup.LooseConfig['content']
-): T.NamedCapturingGroup['_content'] {
+): Admit<T.NamedCapturingGroup['_content']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'(?<' | '(?P<'>(value, _K0, _K0)),
 		[['(?<', TSKindId.LparenQmarkLt] as const, ['(?P<', TSKindId.LparenQmarkPLt] as const]
@@ -948,13 +948,13 @@ export function resolveNamedCapturingGroup_content(
 
 export function resolveNamedCapturingGroup_groupName(
 	value: T.NamedCapturingGroup.LooseConfig['groupName']
-): T.NamedCapturingGroup['_group_name'] {
+): Admit<T.NamedCapturingGroup['_group_name']> {
 	return _resolveOneLeaf<T.GroupName>(value, 'group_name');
 }
 
 export function resolveNamedCapturingGroup_pattern(
 	value: T.NamedCapturingGroup.LooseConfig['pattern']
-): T.NamedCapturingGroup['_pattern'] {
+): Admit<T.NamedCapturingGroup['_pattern']> {
 	return _resolveOneBranch<T.Pattern>(value, 'pattern');
 }
 
@@ -976,7 +976,7 @@ export function coerceToNamedCapturingGroup(
 
 export function resolveNonCapturingGroup_pattern(
 	value: T.NonCapturingGroup.LooseConfig['pattern']
-): T.NonCapturingGroup['_pattern'] {
+): Admit<T.NonCapturingGroup['_pattern']> {
 	return _resolveOneBranch<T.Pattern>(value, 'pattern');
 }
 
@@ -1019,11 +1019,13 @@ export function coerceToOptional(input: T.Optional.Loose): ReturnType<typeof F.b
 
 export function resolveCountQuantifier_content(
 	value: T.CountQuantifier.LooseConfig['content']
-): T.CountQuantifier['_content'] {
+): Admit<T.CountQuantifier['_content']> {
 	return _resolveOne<T.CountQuantifierArm | T.DecimalDigits>(value, _K7, _K8);
 }
 
-export function resolveCountQuantifier_lazy(value: T.CountQuantifier.LooseConfig['lazy']): T.CountQuantifier['_lazy'] {
+export function resolveCountQuantifier_lazy(
+	value: T.CountQuantifier.LooseConfig['lazy']
+): Admit<T.CountQuantifier['_lazy']> {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -1038,7 +1040,7 @@ export function coerceToCountQuantifier(input: T.CountQuantifier.Loose): ReturnT
 
 export function resolveBackreferenceEscape_groupName(
 	value: T.BackreferenceEscape.LooseConfig['groupName']
-): T.BackreferenceEscape['_group_name'] {
+): Admit<T.BackreferenceEscape['_group_name']> {
 	return _resolveOneLeaf<T.GroupName>(value, 'group_name');
 }
 
@@ -1063,7 +1065,7 @@ export function coerceToBackreferenceEscape(
 
 export function resolveNamedGroupBackreference_groupName(
 	value: T.NamedGroupBackreference.LooseConfig['groupName']
-): T.NamedGroupBackreference['_group_name'] {
+): Admit<T.NamedGroupBackreference['_group_name']> {
 	return _resolveOneLeaf<T.GroupName>(value, 'group_name');
 }
 
@@ -1093,7 +1095,7 @@ export function coerceToDecimalEscape(input: T.DecimalEscape.Loose): ReturnType<
 
 export function resolveCharacterClassEscape_content(
 	value: T.CharacterClassEscape.LooseConfig['content']
-): T.CharacterClassEscape['_content'] {
+): Admit<T.CharacterClassEscape['_content']> {
 	return _resolveOne<T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>(
 		value,
 		_K9,
@@ -1128,7 +1130,7 @@ export function coerceToUnicodeCharacterEscape(
 
 export function resolveUnicodePropertyValueExpression_unicodePropertyValueExpressionGroup(
 	value: T.UnicodePropertyValueExpression.LooseConfig['unicodePropertyValueExpressionGroup']
-): T.UnicodePropertyValueExpression['_unicode_property_value_expression_group'] {
+): Admit<T.UnicodePropertyValueExpression['_unicode_property_value_expression_group']> {
 	return _resolveOneBranch<T.UnicodePropertyValueExpressionGroup>(
 		value,
 		'unicode_property_value_expression_group',
@@ -1139,7 +1141,7 @@ export function resolveUnicodePropertyValueExpression_unicodePropertyValueExpres
 
 export function resolveUnicodePropertyValueExpression_unicodePropertyValue(
 	value: T.UnicodePropertyValueExpression.LooseConfig['unicodePropertyValue']
-): T.UnicodePropertyValueExpression['_unicode_property_value'] {
+): Admit<T.UnicodePropertyValueExpression['_unicode_property_value']> {
 	return _resolveOneLeaf<T.UnicodePropertyValue>(value, 'unicode_property_value');
 }
 
@@ -1181,7 +1183,7 @@ export function coerceToControlLetterEscape(
 
 export function resolveIdentityEscape_content(
 	value: T.IdentityEscape.LooseConfig['content']
-): T.IdentityEscape['_content'] {
+): Admit<T.IdentityEscape['_content']> {
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
@@ -1213,7 +1215,7 @@ export function coerceToDecimalDigits(input: T.DecimalDigits.Loose): ReturnType<
 	return F.buildDecimalDigits(input as Parameters<typeof F.buildDecimalDigits>[0]);
 }
 
-export function resolveTermGroup_content(value: T.TermGroup.LooseConfig['content']): T.TermGroup['_content'] {
+export function resolveTermGroup_content(value: T.TermGroup.LooseConfig['content']): Admit<T.TermGroup['_content']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
 			_resolveOne<
@@ -1249,7 +1251,9 @@ export function resolveTermGroup_content(value: T.TermGroup.LooseConfig['content
 	);
 }
 
-export function resolveTermGroup_quantifier(value: T.TermGroup.LooseConfig['quantifier']): T.TermGroup['_quantifier'] {
+export function resolveTermGroup_quantifier(
+	value: T.TermGroup.LooseConfig['quantifier']
+): Admit<T.TermGroup['_quantifier']> {
 	return _resolveOne<T.ZeroOrMore | T.OneOrMore | T.Optional | T.CountQuantifier>(value, _K13, _K14);
 }
 
@@ -1263,7 +1267,7 @@ export function coerceToTermGroup(input: T.TermGroup.Loose): ReturnType<typeof F
 
 export function resolveCountQuantifierGroup_decimalDigits(
 	value: T.CountQuantifierGroup.LooseConfig['decimalDigits']
-): T.CountQuantifierGroup['_decimal_digits'] {
+): Admit<T.CountQuantifierGroup['_decimal_digits']> {
 	return _resolveOneLeaf<T.DecimalDigits>(value, 'decimal_digits');
 }
 
@@ -1284,13 +1288,13 @@ export function coerceToCountQuantifierGroup(
 
 export function resolveCountQuantifierArm_decimalDigits(
 	value: T.CountQuantifierArm.LooseConfig['decimalDigits']
-): T.CountQuantifierArm['_decimal_digits'] {
+): Admit<T.CountQuantifierArm['_decimal_digits']> {
 	return _resolveOneLeaf<T.DecimalDigits>(value, 'decimal_digits');
 }
 
 export function resolveCountQuantifierArm_countQuantifierGroup(
 	value: T.CountQuantifierArm.LooseConfig['countQuantifierGroup']
-): T.CountQuantifierArm['_count_quantifier_group'] {
+): Admit<T.CountQuantifierArm['_count_quantifier_group']> {
 	return _resolveOneBranch<T.CountQuantifierGroup>(value, 'count_quantifier_group', undefined, true);
 }
 
@@ -1311,13 +1315,13 @@ export function coerceToCountQuantifierArm(
 
 export function resolveCharacterClassEscapeArm_characterClassEscapeText2(
 	value: T.CharacterClassEscapeArm.LooseConfig['characterClassEscapeText2']
-): T.CharacterClassEscapeArm['_character_class_escape_text2'] {
+): Admit<T.CharacterClassEscapeArm['_character_class_escape_text2']> {
 	return _resolveOneLeaf<T.CharacterClassEscapeText2>(value, 'character_class_escape_text2');
 }
 
 export function resolveCharacterClassEscapeArm_unicodePropertyValueExpression(
 	value: T.CharacterClassEscapeArm.LooseConfig['unicodePropertyValueExpression']
-): T.CharacterClassEscapeArm['_unicode_property_value_expression'] {
+): Admit<T.CharacterClassEscapeArm['_unicode_property_value_expression']> {
 	return _resolveOneBranch<T.UnicodePropertyValueExpression>(value, 'unicode_property_value_expression');
 }
 
@@ -1342,7 +1346,7 @@ export function coerceToCharacterClassEscapeArm(
 
 export function resolveUnicodePropertyValueExpressionGroup_unicodePropertyName(
 	value: T.UnicodePropertyValueExpressionGroup.LooseConfig['unicodePropertyName']
-): T.UnicodePropertyValueExpressionGroup['_unicode_property_name'] {
+): Admit<T.UnicodePropertyValueExpressionGroup['_unicode_property_name']> {
 	return _resolveOneBranch<T.UnicodePropertyName>(value, 'unicode_property_name');
 }
 
@@ -1385,13 +1389,13 @@ export function coerceToNegation(_input?: T.Negation.Loose): typeof F.buildNegat
 
 export function resolveInlineFlagsGroupEnable_enabled(
 	value: T.InlineFlagsGroupEnable.LooseConfig['enabled']
-): T.InlineFlagsGroupEnable['_enabled'] {
+): Admit<T.InlineFlagsGroupEnable['_enabled']> {
 	return _resolveOneLeaf<T.Flags>(value, 'flags');
 }
 
 export function resolveInlineFlagsGroupEnable_pattern(
 	value: T.InlineFlagsGroupEnable.LooseConfig['pattern']
-): T.InlineFlagsGroupEnable['_pattern'] {
+): Admit<T.InlineFlagsGroupEnable['_pattern']> {
 	return _resolveOneBranch<T.Pattern>(value, 'pattern', undefined, true);
 }
 
@@ -1412,19 +1416,19 @@ export function coerceToInlineFlagsGroupEnable(
 
 export function resolveInlineFlagsGroupToggle_enabled(
 	value: T.InlineFlagsGroupToggle.LooseConfig['enabled']
-): T.InlineFlagsGroupToggle['_enabled'] {
+): Admit<T.InlineFlagsGroupToggle['_enabled']> {
 	return _resolveOneLeaf<T.Flags>(value, 'flags');
 }
 
 export function resolveInlineFlagsGroupToggle_disabled(
 	value: T.InlineFlagsGroupToggle.LooseConfig['disabled']
-): T.InlineFlagsGroupToggle['_disabled'] {
+): Admit<T.InlineFlagsGroupToggle['_disabled']> {
 	return _resolveOneLeaf<T.Flags>(value, 'flags');
 }
 
 export function resolveInlineFlagsGroupToggle_pattern(
 	value: T.InlineFlagsGroupToggle.LooseConfig['pattern']
-): T.InlineFlagsGroupToggle['_pattern'] {
+): Admit<T.InlineFlagsGroupToggle['_pattern']> {
 	return _resolveOneBranch<T.Pattern>(value, 'pattern', undefined, true);
 }
 
@@ -1450,13 +1454,13 @@ export function coerceToInlineFlagsGroupToggle(
 
 export function resolveInlineFlagsGroupDisable_disabled(
 	value: T.InlineFlagsGroupDisable.LooseConfig['disabled']
-): T.InlineFlagsGroupDisable['_disabled'] {
+): Admit<T.InlineFlagsGroupDisable['_disabled']> {
 	return _resolveOneLeaf<T.Flags>(value, 'flags');
 }
 
 export function resolveInlineFlagsGroupDisable_pattern(
 	value: T.InlineFlagsGroupDisable.LooseConfig['pattern']
-): T.InlineFlagsGroupDisable['_pattern'] {
+): Admit<T.InlineFlagsGroupDisable['_pattern']> {
 	return _resolveOneBranch<T.Pattern>(value, 'pattern', undefined, true);
 }
 
@@ -1491,7 +1495,7 @@ export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): typeo
 	return F.buildDoubleBlankline;
 }
 
-export function resolveLazy_content(value: T.Lazy.LooseConfig['content'] | undefined): T.Lazy['_content'] {
+export function resolveLazy_content(value: T.Lazy.LooseConfig['content'] | undefined): Admit<T.Lazy['_content']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'?'>(value, _K0, _K0)),
 		[['?', TSKindId.Qmark] as const]
@@ -1519,7 +1523,7 @@ export function coerceToLazy(input?: T.Lazy.Loose): ReturnType<typeof F.buildLaz
 
 export function resolveUnicodePropertyName_content(
 	value: T.UnicodePropertyName.LooseConfig['content']
-): T.UnicodePropertyName['_content'] {
+): Admit<T.UnicodePropertyName['_content']> {
 	return _resolveOneLeaf<T.UnicodePropertyValue>(value, 'unicode_property_value');
 }
 
