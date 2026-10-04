@@ -46,12 +46,12 @@ Not in this design: mutable nodes, edit transactions, `using`/disposal commits, 
 ### 3.2 The query facet
 
 ```ts
-$query: handle && (() => queryOf(handle, node))
+$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined
 ```
 
-- **One closure per node, in the literal.** `$query` sits next to `$engine` in the literal a parsed node is built from. The engine owns the query engine, and the node only forwards to it, as `$engine` does. `queryOf` reaches the engine through the handle the node captured when it was wrapped, and refuses once that engine is disposed. There is no class, prototype, getter or `defineProperty`.
-- **Parsed nodes only.** A built node and a `$with` draft have no `$query`: built types never declare it, and the type a `$with` returns drops it. `engine.query` refuses a built node, a draft, or a copy that lost its tree, and the refusal names `$commit()` and then `$query()` as the route.
-- **The facet is made only when called.** `engine.query(node)` returns it, typed as `ReturnType<N['$query']>`, and `node.$query()` asks the node's engine for it. It is a Proxy with one shared handler. It answers `$children`, `$descendants` and the kind's slots. The slot names are a type surface generated from the slot hints; at run time the handler finds them in a generated table of each kind's slots. Any other string key is refused. `then` and symbol keys read `undefined`, so an async function can return a facet.
+- **One closure per node, in the literal.** `$query` sits next to `$engine` in the literal a parsed node with structure is built from. The engine owns the query engine, and the node only forwards to it, as `$engine` does. `queryOf` reaches the engine through the handle the node captured when it was wrapped, and refuses once that engine is disposed. A `$with` rebuild strips the data's coordinates, so on a draft the member reads `undefined`; it stays in the literal, so every node of a kind keeps one shape. There is no class, prototype, getter or `defineProperty`.
+- **Every parsed node with structure has `$query`.** A parsed leaf is plain, cloneable data with no `$query` member, in types and at run time. A `$with` draft and a built node have no query facet: a draft's `$query` reads `undefined` and the type a `$with` returns drops it, and a built node has none, since built types never declare it. `engine.query` refuses a built node, a draft, or a copy that lost its tree, and the refusal names `$commit()` and then `$query()` as the route; `$commit()` comes with the edit lifecycle (§8.3).
+- **The facet is made only when called.** `engine.query(node)` returns it, typed `FacetOf<N>`: the node's own `$query` result, else `QueryFacet<N, {}>`. `node.$query()` asks the node's engine for it, and `engine.query(leaf)` returns an empty facet: no slots, and empty `$children` and `$descendants`. It is a Proxy with one shared handler. It answers `$children`, `$descendants` and the kind's slots. The slot names are a type surface generated from the slot hints; at run time the handler finds them in a generated table of each kind's slots. Any other string key is refused. `then` and symbol keys read `undefined`, so an async function can return a facet.
 - **A facet slot is a lazy view, not callable.** Its verbs (§4) build and run a plan over the slot's items. A singular slot's view has the same verbs over zero or one item, and a singular slot that holds a list node yields that node. `x.slot()` gives the same items as `[...x.$query().slot]`.
 - **On a union, the facet has only the slots every member shares,** as the `where` recorder does (§7.1).
 
@@ -67,7 +67,7 @@ The ruling estimated each closure at about 64 B and 2 ns, extrapolated from the 
 $edit: handle && (() => handle.current.edit(node))
 ```
 
-`$edit` is a closure in the literal in the same form as `$query`, and the engine makes the edit facet when it is called. A node with no engine has neither member. Which nodes carry `$edit`, parsed nodes only or drafts too, is open. The edit facet comes after the query facet. `fn.$edit().parameters.insert(1, p)` returns a new parent with the slot's items transformed (§8). There is no `$edit().slot(value)` synonym for `$with`.
+`$edit` is a closure in the literal, guarded by the engine handle as `$query` is, and the engine makes the edit facet when it is called. A node with no engine has neither member. Which nodes carry `$edit`, parsed nodes only or drafts too, is open. The edit facet comes after the query facet. `fn.$edit().parameters.insert(1, p)` returns a new parent with the slot's items transformed (§8). There is no `$edit().slot(value)` synonym for `$with`.
 
 ### 3.5 Superseded: slot views as getters on a per-kind class
 
@@ -102,7 +102,7 @@ A view has the read-only verbs of an array, lazily:
 - **Operators** return a view and run nothing: `filter`, `map`, `flatMap`, `slice`, plus `ofType(kind)` (§5.3) and `where(condition)` (§7).
 - **Terminals** run the plan: `find`, `findIndex`, `some`, `every`, `includes`, `reduce`, `forEach`, `at`. A view is also iterable: `for … of` and spread run the plan and pull results as they are needed.
 
-There is no `toArray`, `length`, `first`, `all` or `count`: `x.slot()` and `[...view]` materialize, and `.length` is the array's. No `Query` type is exported. Each view is typed by its element: `filter` with a type guard narrows, `ofType` narrows to the kind, `where` keeps the type, `map` changes it.
+There is no `toArray`, `length`, `first`, `all` or `count`: `x.slot()` and `[...view]` materialize, and `.length` is the array's. No `Query` type is exported. Each view is typed by its element: `filter` with a type guard narrows, `ofType` narrows to the kind, `where` keeps the type, `map` changes it. `slice` and `at` count their bounds as `Array` does (ToIntegerOrInfinity).
 
 `includes(node)` compares occurrences, not values. A parsed node is the occurrence its coordinate names (tree, span and kind, as `node_at_span` resolves them), and a built node is compared by identity. Value equality is deferred with `remove(value)` (§8).
 
@@ -135,11 +135,11 @@ The names carry `$` because grammars use them as slot names: typescript's `jsx_e
 
 ### 5.3 The plan
 
-A view's plan is its source and a list of steps. `ofType` and `where` are declarative, and so is `slice` while nothing opaque precedes it. `filter`, `map` and `flatMap` take JavaScript callbacks and are opaque.
+A view's plan is its source and a list of steps. `ofType`, `where` and `slice` are declarative. `filter`, `map` and `flatMap` take JavaScript callbacks and are opaque.
 
 - **The declarative prefix runs natively.** On `$descendants`, the native walk applies the kind filter, the `where` condition and the slice before any node crosses. On `$children` and slot views the coordinates are already in JavaScript, and a `where` condition is evaluated natively over them in one call.
 - **The first opaque step splits the plan.** Everything from it on runs in JavaScript over hydrated nodes.
-- **`ofType` and `where` may move ahead of an opaque `filter`, never ahead of `map` or `flatMap`.** A filter keeps elements and does not change them, so a kind test or a slot condition gives the same result before or after it. A map changes the element the next step sees. A callback must not depend on how many times it runs.
+- **No declarative step moves past an opaque one.** An opaque callback receives each element's index, so a kind test or a slot condition moved ahead of it would renumber what it sees: `view.filter((_, i) => i === 1).ofType(K)` tests the second element of the view as written. Declarative steps run natively only while no opaque step precedes them.
 
 The native walk returns batches of stubs, each with the coordinate it hydrates at. A batch resumes where the previous one stopped, by the path of child indices to the last node visited, so no batch walks again what an earlier one walked. An item is hydrated (§5.1) when a JavaScript step or a terminal needs the node.
 
@@ -234,7 +234,7 @@ Operations are generated from the same finalized slot model as the accessors and
 
 ### 8.2 Where `$edit` lives
 
-`$edit` is a closure in the node's literal, `$edit: handle && (() => handle.current.edit(node))`, in the same form as `$query` (§3.2), and the engine makes the edit facet when it is called. Which nodes carry it is open (§3.4). The logic of every operation is one function in common, and each facet only names the slot.
+`$edit` is a closure in the node's literal, `$edit: handle && (() => handle.current.edit(node))`, guarded by the engine handle as `$query` is (§3.2), and the engine makes the edit facet when it is called. Which nodes carry it is open (§3.4). The logic of every operation is one function in common, and each facet only names the slot.
 
 ### 8.3 Results are drafts
 
@@ -282,12 +282,12 @@ Under the arena, a stub becomes a row and a batch becomes a range of rows, so th
 1. **Superseded (§3.5): where the getters live.** Every node was to be an instance of a class per kind, with the slot views and `$edit` as getters on its prototype and each view kept per node in a private field the class declares. Rulings 5, 8 and 12 replace it.
 2. **Superseded (§3.5): what `x.slot()` costs.** It was to cost 9–10 ns after the slot's first read (66 ns), against 8 ns for today's method. A facet slot is not callable (ruling 9), and `x.slot()` stays today's method.
 3. **`includes` compares occurrences (§4).** A parsed node is its coordinate and a built node its identity, until value equality is settled with `remove(value)` (§8).
-4. **`where` moves ahead of an opaque `filter` (§5.3), as `ofType` does.** Both are declarative and pure. Neither moves ahead of a `map`.
+4. **Superseded (§5.3): `where` moves ahead of an opaque `filter`, as `ofType` does.** An opaque callback receives an index, so neither moves past one (ruling 14).
 
 Ruled by the maintainer on 2026-10-03:
 
-5. **The query facet is a closure in the literal (§3.2):** `$query: handle && (() => queryOf(handle, node))`, one per node, next to `$engine`. The engine owns the query engine, and the node only forwards to it. There is no class, prototype or getter.
-6. **Parsed nodes only (§3.2).** Built nodes and drafts have no `$query`, and the refusal points to `$commit()`.
+5. **The query facet is a closure in the literal (§3.2),** one per node, next to `$engine`. The engine owns the query engine, and the node only forwards to it. There is no class, prototype or getter.
+6. **Parsed nodes only (§3.2).** Built nodes and drafts have no query facet, and the refusal points to `$commit()`.
 7. **One native evaluator (§7.2).** The JavaScript evaluator is kept only as the test oracle.
 8. **The facet is made only when called (§3.2).** `engine.query(node)` returns a Proxy with one shared handler. Slot names are a type surface from the slot hints. Unknown string keys are refused; `then` and symbols read `undefined`.
 9. **A facet slot is a lazy view, not callable (§3.2).** `node.slot()` gives the same items as `[...node.$query().slot]` (§13). Traversal is `$query().$children` and `$query().$descendants` (§5.2).
@@ -295,15 +295,22 @@ Ruled by the maintainer on 2026-10-03:
 11. **On a union, the facet has only the slots all members share (§3.2).**
 12. **The edit facet is `$edit: handle && (() => handle.current.edit(node))` (§3.4, §8.2), and comes later.** A node with no engine has neither member. Which nodes carry `$edit`, parsed only or drafts too, is not ruled. `engine.edit(path, fn)` is removed; `create` and `write` stay; `engine.commit(...drafts)` commits drafts; `Project.save()` writes (§8.3).
 
+Ruled during the implementation's review:
+
+13. **Every parsed node with structure has `$query` (§3.2).** A parsed leaf is plain, cloneable data with no `$query` member, in types and at run time, and `engine.query(leaf)` returns an empty facet: no slots, and empty `$children` and `$descendants`. `engine.query` is typed `FacetOf<N>`: a node's own `$query` result, else `QueryFacet<N, {}>`. A draft's `$query` reads `undefined`, and a built node has none.
+14. **No declarative step moves past an opaque one (§5.3).** `ofType` and `where` stay behind `filter`, `map` and `flatMap`, whose callbacks receive an index. Declarative steps run natively only while no opaque step precedes them.
+15. **`slice` and `at` count bounds as `Array` does (§4):** ToIntegerOrInfinity.
+
 ## 13. Laws
 
 - **Read:** `x.slot()` and `[...x.$query().slot]` have the same items.
-- **Parsed only:** a built node and a draft have no `$query`, and `engine.query` refuses them.
+- **Structure:** every parsed node with structure has `$query`; a parsed leaf has none, and `engine.query(leaf)` returns an empty facet.
+- **Drafts and built nodes:** a draft's `$query` reads `undefined`, a built node has none, and `engine.query` refuses both.
 - **Replacement:** `node.$with.slot(v).slot()` is `v`, canonicalized.
 - **Add:** `node.$edit().items.add(x).items()` is `node.items()` with `x` appended.
 - **Narrowing:** a terminal of a narrowed view never returns a value outside the narrowed type.
 - **Batching:** a view yields the same items, in the same order, at every batch limit.
-- **Reordering:** moving `ofType` or `where` ahead of an opaque `filter` never changes the items.
+- **Order:** an opaque step's callback sees the elements and indices of the view as written, since no declarative step moves past it.
 - **Pushdown:** a native `where` selects exactly the nodes the same condition selects in JavaScript.
 - **Snapshot:** a view or facet read from `A` keeps working against `A` after an operation returns `B`.
 - **Validity:** every successful `$with` or edit result satisfies the finalized structural contract of direct construction.
@@ -325,16 +332,18 @@ Ruled by the maintainer on 2026-10-03:
 11. The edit facet on a slot holding a hoisted list kind edits the list's items.
 12. Add, insert, remove and move render each gap by §9: source bytes between items adjacent in the source, the seat everywhere else.
 13. Original nodes are unchanged after any edit; views and facets stay bound to the node they were read from.
-14. Every node a read returns is a fast-mode object (`%HasFastProperties`), with `$query` in its literal.
+14. Every node a read returns is a fast-mode object (`%HasFastProperties`), and every node with structure has `$query` in its literal.
 15. A slot may hold a node another engine of the same language parsed, and the result renders.
-16. A built node and a `$with` draft have no `$query`, in their types and at run time, and `engine.query` refuses them, naming `$commit()`.
+16. A built node has no `$query` and a `$with` draft's reads `undefined`; neither type declares it, and `engine.query` refuses both, naming `$commit()` then `$query()`.
 17. The facet refuses an unknown string key, reads `then` and symbol keys as `undefined`, and over a union offers only the shared slots.
+18. A parsed leaf has no `$query`, in its type and at run time, and `engine.query(leaf)` returns an empty facet.
+19. `view.filter((_, i) => i === 1).ofType(K)` tests the second element of the view as written, and `slice` and `at` match `Array` on fractional, `NaN` and negative bounds.
 
 ## 15. Implementation direction
 
-- **Generation:** a parsed node's literal carries `$query: handle && (() => queryOf(handle, node))` next to `$engine`, and a built node's literal does not. `$edit` comes later in the same form; which nodes carry it is open (§3.4). The facet's slot table, the edit facets and the recorder's slot map come from the finalized slot model that already drives the accessors and `$with`. There is no class per kind, prototype or getter.
+- **Generation:** a parsed node's literal carries `$query` (§3.2) next to `$engine` when the node has structure; a leaf's literal and a built node's do not. `$edit` comes later, guarded by the engine handle; which nodes carry it is open (§3.4). The facet's slot table, the edit facets and the recorder's slot map come from the finalized slot model that already drives the accessors and `$with`. There is no class per kind, prototype or getter.
 - **Native:** one walk, `descendants`: a pre-order walk from an address (the node's own handle, a stub's coordinate, or a tree, span and kind) with a kind filter, an optional `where` plan, a resume path, a batch limit and a depth. It never enters an extra, and each batch returns the walk's start as its own handle. `planHolds` evaluates a plan over a list of addresses in one call. The evaluator matches parser terms and keeps no slot knowledge.
-- **JavaScript runtime:** source, plan, terminal and edit primitive are separate pieces in common. The plan splitter moves `ofType` and `where` ahead of opaque filters, sends the declarative prefix to the walk, and pulls geometric batches. The JavaScript `where` evaluator is kept only as the test oracle.
+- **JavaScript runtime:** source, plan, terminal and edit primitive are separate pieces in common. The plan splitter sends the declarative steps before the first opaque one to the walk, runs the rest in JavaScript in order, and pulls geometric batches. The JavaScript `where` evaluator is kept only as the test oracle.
 
 ## 16. Deferred
 
