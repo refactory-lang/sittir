@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
-import rust, { type Block } from '../src/index.ts';
+import rust from '../src/index.ts';
 
 const engine = await createEngine(rust);
 const SOURCE = 'fn a() {}\nfn b() { let x = 1; }\n';
@@ -13,7 +13,7 @@ describe.each([
 		const root = engine.parse(SOURCE, { deep });
 		const first = root.statements()[0]!;
 		if (!engine.is.functionItem(first)) throw new Error('expected a function');
-		const body = first.body() as Block;
+		const body = first.body();
 		if (!engine.isEmptyNode(body)) throw new Error('expected an empty block');
 		body.$trivia.inner(engine.build.lineComment(' inside'));
 		expect(root.$render()).toBe('fn a() {\n    // inside\n}\nfn b() { let x = 1; }\n');

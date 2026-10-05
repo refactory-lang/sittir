@@ -2936,7 +2936,10 @@ export namespace CharacterClassEscapeText2 {
 
 export interface RegexTypeMap extends GrammarTypeMap {
 	readonly namespaces: NamespaceMap;
-	readonly empty: { readonly node: CharacterClass; readonly empty: EmptyCharacterClass };
+	readonly empty:
+		| { readonly node: CharacterClass; readonly empty: EmptyCharacterClass }
+		| { readonly node: CharacterClass.Bound; readonly empty: EmptyCharacterClass }
+		| { readonly node: CharacterClass.Parsed; readonly empty: EmptyCharacterClass.Parsed };
 	readonly trivia: Blankline | DoubleBlankline | Newline;
 }
 
@@ -2946,4 +2949,9 @@ export type InnerTrivia<N> = GrammarInnerTrivia<N, RegexTypeMap['trivia']>;
 
 export interface EmptyCharacterClass extends CharacterClass.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyCharacterClass {
+	export type Parsed = CharacterClass.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyCharacterClass.Parsed> & InnerTrivia<EmptyCharacterClass.Parsed>;
+	};
 }

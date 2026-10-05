@@ -14761,17 +14761,41 @@ export interface PythonTypeMap extends GrammarTypeMap {
 	readonly namespaces: NamespaceMap;
 	readonly empty:
 		| { readonly node: Module; readonly empty: EmptyModule }
+		| { readonly node: Module.Bound; readonly empty: EmptyModule }
+		| { readonly node: Module.Parsed; readonly empty: EmptyModule.Parsed }
 		| { readonly node: Parameters; readonly empty: EmptyParameters }
+		| { readonly node: Parameters.Bound; readonly empty: EmptyParameters }
+		| { readonly node: Parameters.Parsed; readonly empty: EmptyParameters.Parsed }
 		| { readonly node: ArgumentList; readonly empty: EmptyArgumentList }
+		| { readonly node: ArgumentList.Bound; readonly empty: EmptyArgumentList }
+		| { readonly node: ArgumentList.Parsed; readonly empty: EmptyArgumentList.Parsed }
 		| { readonly node: DictPattern; readonly empty: EmptyDictPattern }
+		| { readonly node: DictPattern.Bound; readonly empty: EmptyDictPattern }
+		| { readonly node: DictPattern.Parsed; readonly empty: EmptyDictPattern.Parsed }
 		| { readonly node: TuplePattern; readonly empty: EmptyTuplePattern }
+		| { readonly node: TuplePattern.Bound; readonly empty: EmptyTuplePattern }
+		| { readonly node: TuplePattern.Parsed; readonly empty: EmptyTuplePattern.Parsed }
 		| { readonly node: ListPattern; readonly empty: EmptyListPattern }
+		| { readonly node: ListPattern.Bound; readonly empty: EmptyListPattern }
+		| { readonly node: ListPattern.Parsed; readonly empty: EmptyListPattern.Parsed }
 		| { readonly node: List; readonly empty: EmptyList }
+		| { readonly node: List.Bound; readonly empty: EmptyList }
+		| { readonly node: List.Parsed; readonly empty: EmptyList.Parsed }
 		| { readonly node: Tuple; readonly empty: EmptyTuple }
+		| { readonly node: Tuple.Bound; readonly empty: EmptyTuple }
+		| { readonly node: Tuple.Parsed; readonly empty: EmptyTuple.Parsed }
 		| { readonly node: Dictionary; readonly empty: EmptyDictionary }
+		| { readonly node: Dictionary.Bound; readonly empty: EmptyDictionary }
+		| { readonly node: Dictionary.Parsed; readonly empty: EmptyDictionary.Parsed }
 		| { readonly node: CaseTuplePattern; readonly empty: EmptyCaseTuplePattern }
+		| { readonly node: CaseTuplePattern.Bound; readonly empty: EmptyCaseTuplePattern }
+		| { readonly node: CaseTuplePattern.Parsed; readonly empty: EmptyCaseTuplePattern.Parsed }
 		| { readonly node: CaseListPattern; readonly empty: EmptyCaseListPattern }
-		| { readonly node: MatchBlockBlock; readonly empty: EmptyMatchBlockBlock };
+		| { readonly node: CaseListPattern.Bound; readonly empty: EmptyCaseListPattern }
+		| { readonly node: CaseListPattern.Parsed; readonly empty: EmptyCaseListPattern.Parsed }
+		| { readonly node: MatchBlockBlock; readonly empty: EmptyMatchBlockBlock }
+		| { readonly node: MatchBlockBlock.Bound; readonly empty: EmptyMatchBlockBlock }
+		| { readonly node: MatchBlockBlock.Parsed; readonly empty: EmptyMatchBlockBlock.Parsed };
 	readonly trivia:
 		| Blankline
 		| Comment
@@ -14791,36 +14815,96 @@ export type InnerTrivia<N> = GrammarInnerTrivia<N, PythonTypeMap['trivia']>;
 export interface EmptyModule extends Module.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyModule {
+	export type Parsed = Module.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyModule.Parsed> & InnerTrivia<EmptyModule.Parsed>;
+	};
+}
 export interface EmptyParameters extends Parameters.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyParameters {
+	export type Parsed = Parameters.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyParameters.Parsed> & InnerTrivia<EmptyParameters.Parsed>;
+	};
 }
 export interface EmptyArgumentList extends ArgumentList.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyArgumentList {
+	export type Parsed = ArgumentList.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyArgumentList.Parsed> & InnerTrivia<EmptyArgumentList.Parsed>;
+	};
+}
 export interface EmptyDictPattern extends DictPattern.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyDictPattern {
+	export type Parsed = DictPattern.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyDictPattern.Parsed> & InnerTrivia<EmptyDictPattern.Parsed>;
+	};
 }
 export interface EmptyTuplePattern extends TuplePattern.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyTuplePattern {
+	export type Parsed = TuplePattern.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyTuplePattern.Parsed> & InnerTrivia<EmptyTuplePattern.Parsed>;
+	};
+}
 export interface EmptyListPattern extends ListPattern.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyListPattern {
+	export type Parsed = ListPattern.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyListPattern.Parsed> & InnerTrivia<EmptyListPattern.Parsed>;
+	};
 }
 export interface EmptyList extends List.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyList {
+	export type Parsed = List.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyList.Parsed> & InnerTrivia<EmptyList.Parsed>;
+	};
+}
 export interface EmptyTuple extends Tuple.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyTuple {
+	export type Parsed = Tuple.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyTuple.Parsed> & InnerTrivia<EmptyTuple.Parsed>;
+	};
 }
 export interface EmptyDictionary extends Dictionary.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyDictionary {
+	export type Parsed = Dictionary.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyDictionary.Parsed> & InnerTrivia<EmptyDictionary.Parsed>;
+	};
+}
 export interface EmptyCaseTuplePattern extends CaseTuplePattern.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyCaseTuplePattern {
+	export type Parsed = CaseTuplePattern.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyCaseTuplePattern.Parsed> & InnerTrivia<EmptyCaseTuplePattern.Parsed>;
+	};
 }
 export interface EmptyCaseListPattern extends CaseListPattern.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyCaseListPattern {
+	export type Parsed = CaseListPattern.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyCaseListPattern.Parsed> & InnerTrivia<EmptyCaseListPattern.Parsed>;
+	};
+}
 export interface EmptyMatchBlockBlock extends MatchBlockBlock.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyMatchBlockBlock {
+	export type Parsed = MatchBlockBlock.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyMatchBlockBlock.Parsed> & InnerTrivia<EmptyMatchBlockBlock.Parsed>;
+	};
 }

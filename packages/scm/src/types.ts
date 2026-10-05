@@ -2229,7 +2229,11 @@ export interface ScmTypeMap extends GrammarTypeMap {
 	readonly namespaces: NamespaceMap;
 	readonly empty:
 		| { readonly node: Program; readonly empty: EmptyProgram }
-		| { readonly node: MissingNode; readonly empty: EmptyMissingNode };
+		| { readonly node: Program.Bound; readonly empty: EmptyProgram }
+		| { readonly node: Program.Parsed; readonly empty: EmptyProgram.Parsed }
+		| { readonly node: MissingNode; readonly empty: EmptyMissingNode }
+		| { readonly node: MissingNode.Bound; readonly empty: EmptyMissingNode }
+		| { readonly node: MissingNode.Parsed; readonly empty: EmptyMissingNode.Parsed };
 	readonly trivia: Blankline | Comment | DoubleBlankline | Newline | Space | Tab;
 }
 
@@ -2240,6 +2244,16 @@ export type InnerTrivia<N> = GrammarInnerTrivia<N, ScmTypeMap['trivia']>;
 export interface EmptyProgram extends Program.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyProgram {
+	export type Parsed = Program.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyProgram.Parsed> & InnerTrivia<EmptyProgram.Parsed>;
+	};
+}
 export interface EmptyMissingNode extends MissingNode.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyMissingNode {
+	export type Parsed = MissingNode.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyMissingNode.Parsed> & InnerTrivia<EmptyMissingNode.Parsed>;
+	};
 }

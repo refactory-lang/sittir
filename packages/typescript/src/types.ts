@@ -24585,19 +24585,47 @@ export interface TypescriptTypeMap extends GrammarTypeMap {
 	readonly namespaces: NamespaceMap;
 	readonly empty:
 		| { readonly node: Program; readonly empty: EmptyProgram }
+		| { readonly node: Program.Bound; readonly empty: EmptyProgram }
+		| { readonly node: Program.Parsed; readonly empty: EmptyProgram.Parsed }
 		| { readonly node: ExportClause; readonly empty: EmptyExportClause }
+		| { readonly node: ExportClause.Bound; readonly empty: EmptyExportClause }
+		| { readonly node: ExportClause.Parsed; readonly empty: EmptyExportClause.Parsed }
 		| { readonly node: NamedImports; readonly empty: EmptyNamedImports }
+		| { readonly node: NamedImports.Bound; readonly empty: EmptyNamedImports }
+		| { readonly node: NamedImports.Parsed; readonly empty: EmptyNamedImports.Parsed }
 		| { readonly node: StatementBlock; readonly empty: EmptyStatementBlock }
+		| { readonly node: StatementBlock.Bound; readonly empty: EmptyStatementBlock }
+		| { readonly node: StatementBlock.Parsed; readonly empty: EmptyStatementBlock.Parsed }
 		| { readonly node: SwitchBody; readonly empty: EmptySwitchBody }
+		| { readonly node: SwitchBody.Bound; readonly empty: EmptySwitchBody }
+		| { readonly node: SwitchBody.Parsed; readonly empty: EmptySwitchBody.Parsed }
 		| { readonly node: Object; readonly empty: EmptyObject }
+		| { readonly node: Object.Bound; readonly empty: EmptyObject }
+		| { readonly node: Object.Parsed; readonly empty: EmptyObject.Parsed }
 		| { readonly node: ObjectPattern; readonly empty: EmptyObjectPattern }
+		| { readonly node: ObjectPattern.Bound; readonly empty: EmptyObjectPattern }
+		| { readonly node: ObjectPattern.Parsed; readonly empty: EmptyObjectPattern.Parsed }
 		| { readonly node: Array; readonly empty: EmptyArray }
+		| { readonly node: Array.Bound; readonly empty: EmptyArray }
+		| { readonly node: Array.Parsed; readonly empty: EmptyArray.Parsed }
 		| { readonly node: ArrayPattern; readonly empty: EmptyArrayPattern }
+		| { readonly node: ArrayPattern.Bound; readonly empty: EmptyArrayPattern }
+		| { readonly node: ArrayPattern.Parsed; readonly empty: EmptyArrayPattern.Parsed }
 		| { readonly node: Arguments; readonly empty: EmptyArguments }
+		| { readonly node: Arguments.Bound; readonly empty: EmptyArguments }
+		| { readonly node: Arguments.Parsed; readonly empty: EmptyArguments.Parsed }
 		| { readonly node: ClassBody; readonly empty: EmptyClassBody }
+		| { readonly node: ClassBody.Bound; readonly empty: EmptyClassBody }
+		| { readonly node: ClassBody.Parsed; readonly empty: EmptyClassBody.Parsed }
 		| { readonly node: FormalParameters; readonly empty: EmptyFormalParameters }
+		| { readonly node: FormalParameters.Bound; readonly empty: EmptyFormalParameters }
+		| { readonly node: FormalParameters.Parsed; readonly empty: EmptyFormalParameters.Parsed }
 		| { readonly node: EnumBody; readonly empty: EmptyEnumBody }
-		| { readonly node: TupleType; readonly empty: EmptyTupleType };
+		| { readonly node: EnumBody.Bound; readonly empty: EmptyEnumBody }
+		| { readonly node: EnumBody.Parsed; readonly empty: EmptyEnumBody.Parsed }
+		| { readonly node: TupleType; readonly empty: EmptyTupleType }
+		| { readonly node: TupleType.Bound; readonly empty: EmptyTupleType }
+		| { readonly node: TupleType.Parsed; readonly empty: EmptyTupleType.Parsed };
 	readonly trivia:
 		| Blankline
 		| Comment
@@ -24617,42 +24645,112 @@ export type InnerTrivia<N> = GrammarInnerTrivia<N, TypescriptTypeMap['trivia']>;
 export interface EmptyProgram extends Program.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyProgram {
+	export type Parsed = Program.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyProgram.Parsed> & InnerTrivia<EmptyProgram.Parsed>;
+	};
+}
 export interface EmptyExportClause extends ExportClause.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyExportClause {
+	export type Parsed = ExportClause.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyExportClause.Parsed> & InnerTrivia<EmptyExportClause.Parsed>;
+	};
 }
 export interface EmptyNamedImports extends NamedImports.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyNamedImports {
+	export type Parsed = NamedImports.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyNamedImports.Parsed> & InnerTrivia<EmptyNamedImports.Parsed>;
+	};
+}
 export interface EmptyStatementBlock extends StatementBlock.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyStatementBlock {
+	export type Parsed = StatementBlock.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyStatementBlock.Parsed> & InnerTrivia<EmptyStatementBlock.Parsed>;
+	};
 }
 export interface EmptySwitchBody extends SwitchBody.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptySwitchBody {
+	export type Parsed = SwitchBody.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptySwitchBody.Parsed> & InnerTrivia<EmptySwitchBody.Parsed>;
+	};
+}
 export interface EmptyObject extends Object.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyObject {
+	export type Parsed = Object.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyObject.Parsed> & InnerTrivia<EmptyObject.Parsed>;
+	};
 }
 export interface EmptyObjectPattern extends ObjectPattern.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyObjectPattern {
+	export type Parsed = ObjectPattern.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyObjectPattern.Parsed> & InnerTrivia<EmptyObjectPattern.Parsed>;
+	};
+}
 export interface EmptyArray extends Array.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyArray {
+	export type Parsed = Array.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyArray.Parsed> & InnerTrivia<EmptyArray.Parsed>;
+	};
 }
 export interface EmptyArrayPattern extends ArrayPattern.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyArrayPattern {
+	export type Parsed = ArrayPattern.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyArrayPattern.Parsed> & InnerTrivia<EmptyArrayPattern.Parsed>;
+	};
+}
 export interface EmptyArguments extends Arguments.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyArguments {
+	export type Parsed = Arguments.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyArguments.Parsed> & InnerTrivia<EmptyArguments.Parsed>;
+	};
 }
 export interface EmptyClassBody extends ClassBody.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyClassBody {
+	export type Parsed = ClassBody.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyClassBody.Parsed> & InnerTrivia<EmptyClassBody.Parsed>;
+	};
+}
 export interface EmptyFormalParameters extends FormalParameters.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyFormalParameters {
+	export type Parsed = FormalParameters.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyFormalParameters.Parsed> & InnerTrivia<EmptyFormalParameters.Parsed>;
+	};
 }
 export interface EmptyEnumBody extends EnumBody.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
+export namespace EmptyEnumBody {
+	export type Parsed = EnumBody.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyEnumBody.Parsed> & InnerTrivia<EmptyEnumBody.Parsed>;
+	};
+}
 export interface EmptyTupleType extends TupleType.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyTupleType {
+	export type Parsed = TupleType.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyTupleType.Parsed> & InnerTrivia<EmptyTupleType.Parsed>;
+	};
 }
