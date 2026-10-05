@@ -26,6 +26,9 @@ export interface IsGuards {
 	tokenRepetition<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TokenRepetition };
+	nonSpecialToken<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NonSpecialToken };
 	attributeItem<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributeItem };
@@ -442,6 +445,15 @@ export interface IsGuards {
 	useWildcardGroup<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UseWildcardGroup };
+	typeIdentifier<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeIdentifier };
+	fieldIdentifier<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FieldIdentifier };
+	shorthandFieldIdentifier<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ShorthandFieldIdentifier };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	statement<T extends { readonly $type: string | number } | number>(
 		v: T
@@ -450,14 +462,26 @@ export interface IsGuards {
 		| TSKindId.ExpressionStatement
 		| TSKindId.ConstItem
 		| TSKindId.MacroInvocation
+		| TSKindId.MacroDefinitionParen
+		| TSKindId.MacroDefinitionBracket
+		| TSKindId.MacroDefinitionBrace
 		| TSKindId.EmptyStatement
 		| TSKindId.AttributeItem
 		| TSKindId.InnerAttributeItem
+		| TSKindId.ModItemExternal
+		| TSKindId.ModItemInline
+		| TSKindId.ForeignModItemSemi
+		| TSKindId.ForeignModItemBody
+		| TSKindId.StructItemBrace
+		| TSKindId.StructItemTuple
+		| TSKindId.StructItemUnit
 		| TSKindId.UnionItem
 		| TSKindId.EnumItem
 		| TSKindId.TypeItem
 		| TSKindId.FunctionItem
 		| TSKindId.FunctionSignatureItem
+		| TSKindId.ImplItemBody
+		| TSKindId.ImplItemSemi
 		| TSKindId.TraitItem
 		| TSKindId.AssociatedType
 		| TSKindId.LetDeclaration
@@ -465,58 +489,199 @@ export interface IsGuards {
 		| TSKindId.ExternCrateDeclaration
 		| TSKindId.StaticItem
 	>;
-	declarationStatement<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<
-		T,
-		| TSKindId.ConstItem
-		| TSKindId.MacroInvocation
-		| TSKindId.EmptyStatement
-		| TSKindId.AttributeItem
-		| TSKindId.InnerAttributeItem
-		| TSKindId.UnionItem
-		| TSKindId.EnumItem
-		| TSKindId.TypeItem
-		| TSKindId.FunctionItem
-		| TSKindId.FunctionSignatureItem
-		| TSKindId.TraitItem
-		| TSKindId.AssociatedType
-		| TSKindId.LetDeclaration
-		| TSKindId.UseDeclaration
-		| TSKindId.ExternCrateDeclaration
-		| TSKindId.StaticItem
-	>;
-	macroDefinition<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.MacroDefinitionParen | TSKindId.MacroDefinitionBracket | TSKindId.MacroDefinitionBrace>;
-	tokenTreePattern<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<
-		T,
-		TSKindId.TokenTreePatternParen | TSKindId.TokenTreePatternBracket | TSKindId.TokenTreePatternBrace
-	>;
-	tokenTree<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.TokenTreeParen | TSKindId.TokenTreeBracket | TSKindId.TokenTreeBrace>;
-	modItem<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.ModItemExternal | TSKindId.ModItemInline>;
-	foreignModItem<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.ForeignModItemSemi | TSKindId.ForeignModItemBody>;
-	structItem<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit>;
-	implItem<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.ImplItemBody | TSKindId.ImplItemSemi>;
+	readonly declarationStatement: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<
+			T,
+			| TSKindId.ConstItem
+			| TSKindId.MacroInvocation
+			| TSKindId.MacroDefinitionParen
+			| TSKindId.MacroDefinitionBracket
+			| TSKindId.MacroDefinitionBrace
+			| TSKindId.EmptyStatement
+			| TSKindId.AttributeItem
+			| TSKindId.InnerAttributeItem
+			| TSKindId.ModItemExternal
+			| TSKindId.ModItemInline
+			| TSKindId.ForeignModItemSemi
+			| TSKindId.ForeignModItemBody
+			| TSKindId.StructItemBrace
+			| TSKindId.StructItemTuple
+			| TSKindId.StructItemUnit
+			| TSKindId.UnionItem
+			| TSKindId.EnumItem
+			| TSKindId.TypeItem
+			| TSKindId.FunctionItem
+			| TSKindId.FunctionSignatureItem
+			| TSKindId.ImplItemBody
+			| TSKindId.ImplItemSemi
+			| TSKindId.TraitItem
+			| TSKindId.AssociatedType
+			| TSKindId.LetDeclaration
+			| TSKindId.UseDeclaration
+			| TSKindId.ExternCrateDeclaration
+			| TSKindId.StaticItem
+		>;
+		const<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ConstItem };
+		macroInvocation<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MacroInvocation };
+		macro: IsGuards['macroDefinition'];
+		empty<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EmptyStatement };
+		attribute<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributeItem };
+		innerAttribute<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.InnerAttributeItem };
+		mod: IsGuards['modItem'];
+		foreignMod: IsGuards['foreignModItem'];
+		struct: IsGuards['structItem'];
+		union<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UnionItem };
+		enum<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EnumItem };
+		type<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeItem };
+		function<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FunctionItem };
+		functionSignature<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FunctionSignatureItem };
+		impl: IsGuards['implItem'];
+		trait<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TraitItem };
+		associated<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AssociatedType };
+		let<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LetDeclaration };
+		use<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UseDeclaration };
+		externCrate<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExternCrateDeclaration };
+		static<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StaticItem };
+	};
+	readonly macroDefinition: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<
+			T,
+			TSKindId.MacroDefinitionParen | TSKindId.MacroDefinitionBracket | TSKindId.MacroDefinitionBrace
+		>;
+		paren<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MacroDefinitionParen };
+		bracket<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MacroDefinitionBracket };
+		brace<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MacroDefinitionBrace };
+	};
+	readonly tokenTreePattern: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<
+			T,
+			TSKindId.TokenTreePatternParen | TSKindId.TokenTreePatternBracket | TSKindId.TokenTreePatternBrace
+		>;
+		paren<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TokenTreePatternParen };
+		bracket<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TokenTreePatternBracket };
+		brace<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TokenTreePatternBrace };
+	};
+	readonly tokenTree: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.TokenTreeParen | TSKindId.TokenTreeBracket | TSKindId.TokenTreeBrace>;
+		paren<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TokenTreeParen };
+		bracket<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TokenTreeBracket };
+		brace<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TokenTreeBrace };
+	};
+	readonly modItem: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.ModItemExternal | TSKindId.ModItemInline>;
+		external<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ModItemExternal };
+		inline<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ModItemInline };
+	};
+	readonly foreignModItem: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.ForeignModItemSemi | TSKindId.ForeignModItemBody>;
+		semi<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForeignModItemSemi };
+		body<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForeignModItemBody };
+	};
+	readonly structItem: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit>;
+		brace<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StructItemBrace };
+		tuple<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StructItemTuple };
+		unit<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StructItemUnit };
+	};
+	readonly implItem: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.ImplItemBody | TSKindId.ImplItemSemi>;
+		body<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImplItemBody };
+		semi<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImplItemSemi };
+	};
 	type<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
+		| TSKindId.TypeIdentifier
 		| TSKindId.AbstractType
 		| TSKindId.ReferenceType
 		| TSKindId.Metavariable
+		| TSKindId.PointerTypeConst
+		| TSKindId.PointerTypeMut
 		| TSKindId.GenericType
 		| TSKindId.ScopedTypeIdentifier
 		| TSKindId.TupleType
@@ -528,15 +693,29 @@ export interface IsGuards {
 		| TSKindId.DynamicType
 		| TSKindId.BoundedType
 		| TSKindId.RemovedTraitBound
+		| TSKindId.PrimitiveType
 	>;
-	pointerType<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.PointerTypeConst | TSKindId.PointerTypeMut>;
+	readonly pointerType: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.PointerTypeConst | TSKindId.PointerTypeMut>;
+		const<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PointerTypeConst };
+		mut<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PointerTypeMut };
+	};
 	expression<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
+		| TSKindId.Identifier
 		| TSKindId.UnaryExpression
+		| TSKindId.ReferenceExpressionRawConst
+		| TSKindId.ReferenceExpressionRawMut
+		| TSKindId.ReferenceExpressionMut
+		| TSKindId.ReferenceExpressionBare
 		| TSKindId.TryExpression
 		| TSKindId.BinaryExpression
 		| TSKindId.AssignmentExpression
@@ -545,7 +724,20 @@ export interface IsGuards {
 		| TSKindId.CallExpression
 		| TSKindId.ReturnExpression
 		| TSKindId.YieldExpression
-		| TSKindId.Identifier
+		| TSKindId.StringLiteral
+		| TSKindId.RawStringLiteral
+		| TSKindId.CharLiteralEscapedSimple
+		| TSKindId.CharLiteralEscapedUnicodeFixed
+		| TSKindId.CharLiteralEscapedUnicodeBraced
+		| TSKindId.CharLiteralEscapedHex
+		| TSKindId.CharLiteralPlain
+		| TSKindId.CharLiteralEmpty
+		| TSKindId.BooleanLiteral
+		| TSKindId.IntegerLiteralDecimal
+		| TSKindId.IntegerLiteralHex
+		| TSKindId.IntegerLiteralBinary
+		| TSKindId.IntegerLiteralOctal
+		| TSKindId.FloatLiteral
 		| TSKindId.U8Keyword
 		| TSKindId.I8Keyword
 		| TSKindId.U16Keyword
@@ -571,6 +763,8 @@ export interface IsGuards {
 		| TSKindId.GenericFunction
 		| TSKindId.AwaitExpression
 		| TSKindId.FieldExpression
+		| TSKindId.ArrayExpressionSemi
+		| TSKindId.ArrayExpressionList
 		| TSKindId.TupleExpression
 		| TSKindId.MacroInvocation
 		| TSKindId.UnitExpression
@@ -578,6 +772,8 @@ export interface IsGuards {
 		| TSKindId.ContinueExpression
 		| TSKindId.IndexExpression
 		| TSKindId.Metavariable
+		| TSKindId.ClosureExpressionBlock
+		| TSKindId.ClosureExpressionExpr
 		| TSKindId.ParenthesizedExpression
 		| TSKindId.StructExpression
 		| TSKindId.UnsafeBlock
@@ -591,41 +787,124 @@ export interface IsGuards {
 		| TSKindId.LoopExpression
 		| TSKindId.ForExpression
 		| TSKindId.ConstBlock
-	>;
-	delimTokenTree<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.DelimTokenTreeParen | TSKindId.DelimTokenTreeBracket | TSKindId.DelimTokenTreeBrace>;
-	rangeExpression<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<
-		T,
 		| TSKindId.RangeExpressionBinary
 		| TSKindId.RangeExpressionPostfix
 		| TSKindId.RangeExpressionPrefix
 		| TSKindId.RangeExpressionBare
 	>;
-	referenceExpression<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<
-		T,
-		| TSKindId.ReferenceExpressionRawConst
-		| TSKindId.ReferenceExpressionRawMut
-		| TSKindId.ReferenceExpressionMut
-		| TSKindId.ReferenceExpressionBare
-	>;
-	arrayExpression<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.ArrayExpressionSemi | TSKindId.ArrayExpressionList>;
-	matchArm<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.MatchArmWithComma | TSKindId.MatchArmBlockEnding>;
-	closureExpression<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.ClosureExpressionBlock | TSKindId.ClosureExpressionExpr>;
+	readonly delimTokenTree: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.DelimTokenTreeParen | TSKindId.DelimTokenTreeBracket | TSKindId.DelimTokenTreeBrace>;
+		paren<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DelimTokenTreeParen };
+		bracket<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DelimTokenTreeBracket };
+		brace<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DelimTokenTreeBrace };
+	};
+	readonly rangeExpression: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<
+			T,
+			| TSKindId.RangeExpressionBinary
+			| TSKindId.RangeExpressionPostfix
+			| TSKindId.RangeExpressionPrefix
+			| TSKindId.RangeExpressionBare
+		>;
+		binary<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionBinary };
+		postfix<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionPostfix };
+		prefix<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionPrefix };
+		bare<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionBare };
+	};
+	readonly referenceExpression: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<
+			T,
+			| TSKindId.ReferenceExpressionRawConst
+			| TSKindId.ReferenceExpressionRawMut
+			| TSKindId.ReferenceExpressionMut
+			| TSKindId.ReferenceExpressionBare
+		>;
+		rawConst<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ReferenceExpressionRawConst };
+		rawMut<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ReferenceExpressionRawMut };
+		mut<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ReferenceExpressionMut };
+		bare<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ReferenceExpressionBare };
+	};
+	readonly arrayExpression: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.ArrayExpressionSemi | TSKindId.ArrayExpressionList>;
+		semi<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ArrayExpressionSemi };
+		list<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ArrayExpressionList };
+	};
+	readonly matchArm: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.MatchArmWithComma | TSKindId.MatchArmBlockEnding>;
+		withComma<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchArmWithComma };
+		blockEnding<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchArmBlockEnding };
+	};
+	readonly closureExpression: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.ClosureExpressionBlock | TSKindId.ClosureExpressionExpr>;
+		block<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ClosureExpressionBlock };
+		expr<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ClosureExpressionExpr };
+	};
 	pattern<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
+		| TSKindId.Identifier
+		| TSKindId.StringLiteral
+		| TSKindId.RawStringLiteral
+		| TSKindId.CharLiteralEscapedSimple
+		| TSKindId.CharLiteralEscapedUnicodeFixed
+		| TSKindId.CharLiteralEscapedUnicodeBraced
+		| TSKindId.CharLiteralEscapedHex
+		| TSKindId.CharLiteralPlain
+		| TSKindId.CharLiteralEmpty
+		| TSKindId.BooleanLiteral
+		| TSKindId.IntegerLiteralDecimal
+		| TSKindId.IntegerLiteralHex
+		| TSKindId.IntegerLiteralBinary
+		| TSKindId.IntegerLiteralOctal
+		| TSKindId.FloatLiteral
+		| TSKindId.NegativeLiteral
 		| TSKindId.U8Keyword
 		| TSKindId.I8Keyword
 		| TSKindId.U16Keyword
@@ -643,7 +922,6 @@ export interface IsGuards {
 		| TSKindId.BoolKeyword
 		| TSKindId.StrKeyword
 		| TSKindId.CharKeyword
-		| TSKindId.Identifier
 		| TSKindId.ScopedIdentifier
 		| TSKindId.GenericPattern
 		| TSKindId.TuplePattern
@@ -658,23 +936,65 @@ export interface IsGuards {
 		| TSKindId.ReferencePattern
 		| TSKindId.RemainingFieldPattern
 		| TSKindId.MutPattern
+		| TSKindId.RangePatternWithLeft
+		| TSKindId.RangePatternPrefix
+		| TSKindId.OrPatternBinary
+		| TSKindId.OrPatternPrefix
 		| TSKindId.ConstBlock
 		| TSKindId.MacroInvocation
+		| TSKindId.WildcardPattern
 	>;
-	fieldPattern<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.FieldPatternShorthand | TSKindId.FieldPatternNamed>;
-	rangePattern<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.RangePatternWithLeft | TSKindId.RangePatternPrefix>;
-	orPattern<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.OrPatternBinary | TSKindId.OrPatternPrefix>;
+	readonly fieldPattern: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.FieldPatternShorthand | TSKindId.FieldPatternNamed>;
+		shorthand<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FieldPatternShorthand };
+		named<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FieldPatternNamed };
+	};
+	readonly rangePattern: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.RangePatternWithLeft | TSKindId.RangePatternPrefix>;
+		withLeft<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternWithLeft };
+		prefix<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternPrefix };
+	};
+	readonly orPattern: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.OrPatternBinary | TSKindId.OrPatternPrefix>;
+		binary<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.OrPatternBinary };
+		prefix<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.OrPatternPrefix };
+	};
 	literal<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
-		TSKindId.StringLiteral | TSKindId.RawStringLiteral | TSKindId.BooleanLiteral | TSKindId.FloatLiteral
+		| TSKindId.StringLiteral
+		| TSKindId.RawStringLiteral
+		| TSKindId.CharLiteralEscapedSimple
+		| TSKindId.CharLiteralEscapedUnicodeFixed
+		| TSKindId.CharLiteralEscapedUnicodeBraced
+		| TSKindId.CharLiteralEscapedHex
+		| TSKindId.CharLiteralPlain
+		| TSKindId.CharLiteralEmpty
+		| TSKindId.BooleanLiteral
+		| TSKindId.IntegerLiteralDecimal
+		| TSKindId.IntegerLiteralHex
+		| TSKindId.IntegerLiteralBinary
+		| TSKindId.IntegerLiteralOctal
+		| TSKindId.FloatLiteral
 	>;
 	literalPattern<T extends { readonly $type: string | number } | number>(
 		v: T
@@ -682,34 +1002,97 @@ export interface IsGuards {
 		T,
 		| TSKindId.StringLiteral
 		| TSKindId.RawStringLiteral
+		| TSKindId.CharLiteralEscapedSimple
+		| TSKindId.CharLiteralEscapedUnicodeFixed
+		| TSKindId.CharLiteralEscapedUnicodeBraced
+		| TSKindId.CharLiteralEscapedHex
+		| TSKindId.CharLiteralPlain
+		| TSKindId.CharLiteralEmpty
 		| TSKindId.BooleanLiteral
-		| TSKindId.FloatLiteral
-		| TSKindId.NegativeLiteral
-	>;
-	integerLiteral<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<
-		T,
 		| TSKindId.IntegerLiteralDecimal
 		| TSKindId.IntegerLiteralHex
 		| TSKindId.IntegerLiteralBinary
 		| TSKindId.IntegerLiteralOctal
+		| TSKindId.FloatLiteral
+		| TSKindId.NegativeLiteral
 	>;
-	charLiteral<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.CharLiteralPlain | TSKindId.CharLiteralEmpty>;
-	escapeSequence<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<
-		T,
-		| TSKindId.EscapeSequenceSimple
-		| TSKindId.EscapeSequenceUnicodeFixed
-		| TSKindId.EscapeSequenceUnicodeBraced
-		| TSKindId.EscapeSequenceHex
-	>;
-	comment<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.LineComment | TSKindId.BlockComment>;
+	readonly integerLiteral: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<
+			T,
+			| TSKindId.IntegerLiteralDecimal
+			| TSKindId.IntegerLiteralHex
+			| TSKindId.IntegerLiteralBinary
+			| TSKindId.IntegerLiteralOctal
+		>;
+		decimal<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerLiteralDecimal };
+		hex<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerLiteralHex };
+		binary<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerLiteralBinary };
+		octal<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerLiteralOctal };
+	};
+	readonly charLiteral: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<
+			T,
+			| TSKindId.CharLiteralEscapedSimple
+			| TSKindId.CharLiteralEscapedUnicodeFixed
+			| TSKindId.CharLiteralEscapedUnicodeBraced
+			| TSKindId.CharLiteralEscapedHex
+			| TSKindId.CharLiteralPlain
+			| TSKindId.CharLiteralEmpty
+		>;
+		escaped: IsGuards['charLiteralEscaped'];
+		plain<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharLiteralPlain };
+		empty<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharLiteralEmpty };
+	};
+	readonly escapeSequence: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<
+			T,
+			| TSKindId.EscapeSequenceSimple
+			| TSKindId.EscapeSequenceUnicodeFixed
+			| TSKindId.EscapeSequenceUnicodeBraced
+			| TSKindId.EscapeSequenceHex
+		>;
+		simple<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceSimple };
+		unicodeFixed<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceUnicodeFixed };
+		unicodeBraced<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceUnicodeBraced };
+		hex<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceHex };
+	};
+	readonly comment: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.LineComment | TSKindId.BlockComment>;
+		lineComment<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineComment };
+		blockComment<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BlockComment };
+	};
 	whitespace<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is NarrowTo<
@@ -723,15 +1106,29 @@ export interface IsGuards {
 		| TSKindId.Indent
 		| TSKindId.Dedent
 	>;
-	charLiteralEscaped<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<
-		T,
-		| TSKindId.CharLiteralEscapedSimple
-		| TSKindId.CharLiteralEscapedUnicodeFixed
-		| TSKindId.CharLiteralEscapedUnicodeBraced
-		| TSKindId.CharLiteralEscapedHex
-	>;
+	readonly charLiteralEscaped: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<
+			T,
+			| TSKindId.CharLiteralEscapedSimple
+			| TSKindId.CharLiteralEscapedUnicodeFixed
+			| TSKindId.CharLiteralEscapedUnicodeBraced
+			| TSKindId.CharLiteralEscapedHex
+		>;
+		simple<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharLiteralEscapedSimple };
+		unicodeFixed<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharLiteralEscapedUnicodeFixed };
+		unicodeBraced<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharLiteralEscapedUnicodeBraced };
+		hex<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharLiteralEscapedHex };
+	};
 }
 
 // Runtime: kind guards compare numeric TSKindId only.
@@ -741,12 +1138,17 @@ function _g(id: number): (v: { readonly $type: number } | number) => boolean {
 function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number) => boolean {
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
+function _vg<G extends object>(guard: G, variants: object): G {
+	return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));
+}
 
 const _supertype_statement_ids = new Set<number>([
-	179, 205, 259, 178, 190, 191, 197, 198, 207, 208, 209, 214, 215, 223, 224, 204, 206
+	179, 205, 259, 416, 417, 418, 178, 190, 191, 384, 385, 395, 396, 423, 424, 425, 197, 198, 207, 208, 209, 377, 378,
+	214, 215, 223, 224, 204, 206
 ]);
 const _supertype_declarationStatement_ids = new Set<number>([
-	205, 259, 178, 190, 191, 197, 198, 207, 208, 209, 214, 215, 223, 224, 204, 206
+	205, 259, 416, 417, 418, 178, 190, 191, 384, 385, 395, 396, 423, 424, 425, 197, 198, 207, 208, 209, 377, 378, 214,
+	215, 223, 224, 204, 206
 ]);
 const _supertype_macroDefinition_ids = new Set<number>([416, 417, 418]);
 const _supertype_tokenTreePattern_ids = new Set<number>([405, 406, 407]);
@@ -755,12 +1157,15 @@ const _supertype_modItem_ids = new Set<number>([384, 385]);
 const _supertype_foreignModItem_ids = new Set<number>([395, 396]);
 const _supertype_structItem_ids = new Set<number>([423, 424, 425]);
 const _supertype_implItem_ids = new Set<number>([377, 378]);
-const _supertype_type_ids = new Set<number>([255, 252, 128, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218]);
+const _supertype_type_ids = new Set<number>([
+	468, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 341
+]);
 const _supertype_pointerType_ids = new Set<number>([388, 389]);
 const _supertype_expression_ids = new Set<number>([
-	267, 268, 270, 271, 272, 273, 276, 274, 275, 1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74,
-	51, 32, 52, 125, 263, 245, 307, 308, 280, 259, 281, 304, 305, 306, 128, 279, 282, 309, 310, 311, 312, 313, 287, 292,
-	297, 298, 299, 300
+	1, 267, 371, 372, 373, 374, 268, 270, 271, 272, 273, 276, 274, 275, 332, 333, 147, 148, 149, 150, 145, 146, 336, 141,
+	142, 143, 144, 162, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 51, 32, 52, 125, 263, 245,
+	307, 308, 366, 367, 280, 259, 281, 304, 305, 306, 128, 369, 370, 279, 282, 309, 310, 311, 312, 313, 287, 292, 297,
+	298, 299, 300, 390, 391, 392, 393
 ]);
 const _supertype_delimTokenTree_ids = new Set<number>([411, 412, 413]);
 const _supertype_rangeExpression_ids = new Set<number>([390, 391, 392, 393]);
@@ -769,20 +1174,151 @@ const _supertype_arrayExpression_ids = new Set<number>([366, 367]);
 const _supertype_matchArm_ids = new Set<number>([397, 398]);
 const _supertype_closureExpression_ids = new Set<number>([369, 370]);
 const _supertype_pattern_ids = new Set<number>([
-	58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 1, 263, 315, 316, 318, 319, 51, 32, 52, 324, 317,
-	325, 326, 321, 322, 300, 259
+	1, 332, 333, 147, 148, 149, 150, 145, 146, 336, 141, 142, 143, 144, 162, 330, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67,
+	68, 69, 70, 71, 72, 73, 74, 263, 315, 316, 318, 319, 51, 32, 52, 324, 317, 325, 326, 321, 322, 422, 419, 386, 387,
+	300, 259, 426
 ]);
 const _supertype_fieldPattern_ids = new Set<number>([414, 415]);
 const _supertype_rangePattern_ids = new Set<number>([422, 419]);
 const _supertype_orPattern_ids = new Set<number>([386, 387]);
-const _supertype_literal_ids = new Set<number>([332, 333, 336, 162]);
-const _supertype_literalPattern_ids = new Set<number>([332, 333, 336, 162, 330]);
+const _supertype_literal_ids = new Set<number>([332, 333, 147, 148, 149, 150, 145, 146, 336, 141, 142, 143, 144, 162]);
+const _supertype_literalPattern_ids = new Set<number>([
+	332, 333, 147, 148, 149, 150, 145, 146, 336, 141, 142, 143, 144, 162, 330
+]);
 const _supertype_integerLiteral_ids = new Set<number>([141, 142, 143, 144]);
-const _supertype_charLiteral_ids = new Set<number>([145, 146]);
+const _supertype_charLiteral_ids = new Set<number>([147, 148, 149, 150, 145, 146]);
 const _supertype_escapeSequence_ids = new Set<number>([151, 152, 153, 154]);
 const _supertype_comment_ids = new Set<number>([337, 340]);
 const _supertype_whitespace_ids = new Set<number>([168, 169, 170, 171, 172, 173, 174, 175]);
 const _supertype_charLiteralEscaped_ids = new Set<number>([147, 148, 149, 150]);
+
+const _supertype_macroDefinition_guard = _vg(_sg(_supertype_macroDefinition_ids), {
+	paren: _g(TSKindId.MacroDefinitionParen),
+	bracket: _g(TSKindId.MacroDefinitionBracket),
+	brace: _g(TSKindId.MacroDefinitionBrace)
+});
+const _supertype_tokenTreePattern_guard = _vg(_sg(_supertype_tokenTreePattern_ids), {
+	paren: _g(TSKindId.TokenTreePatternParen),
+	bracket: _g(TSKindId.TokenTreePatternBracket),
+	brace: _g(TSKindId.TokenTreePatternBrace)
+});
+const _supertype_tokenTree_guard = _vg(_sg(_supertype_tokenTree_ids), {
+	paren: _g(TSKindId.TokenTreeParen),
+	bracket: _g(TSKindId.TokenTreeBracket),
+	brace: _g(TSKindId.TokenTreeBrace)
+});
+const _supertype_modItem_guard = _vg(_sg(_supertype_modItem_ids), {
+	external: _g(TSKindId.ModItemExternal),
+	inline: _g(TSKindId.ModItemInline)
+});
+const _supertype_foreignModItem_guard = _vg(_sg(_supertype_foreignModItem_ids), {
+	semi: _g(TSKindId.ForeignModItemSemi),
+	body: _g(TSKindId.ForeignModItemBody)
+});
+const _supertype_structItem_guard = _vg(_sg(_supertype_structItem_ids), {
+	brace: _g(TSKindId.StructItemBrace),
+	tuple: _g(TSKindId.StructItemTuple),
+	unit: _g(TSKindId.StructItemUnit)
+});
+const _supertype_implItem_guard = _vg(_sg(_supertype_implItem_ids), {
+	body: _g(TSKindId.ImplItemBody),
+	semi: _g(TSKindId.ImplItemSemi)
+});
+const _supertype_pointerType_guard = _vg(_sg(_supertype_pointerType_ids), {
+	const: _g(TSKindId.PointerTypeConst),
+	mut: _g(TSKindId.PointerTypeMut)
+});
+const _supertype_delimTokenTree_guard = _vg(_sg(_supertype_delimTokenTree_ids), {
+	paren: _g(TSKindId.DelimTokenTreeParen),
+	bracket: _g(TSKindId.DelimTokenTreeBracket),
+	brace: _g(TSKindId.DelimTokenTreeBrace)
+});
+const _supertype_rangeExpression_guard = _vg(_sg(_supertype_rangeExpression_ids), {
+	binary: _g(TSKindId.RangeExpressionBinary),
+	postfix: _g(TSKindId.RangeExpressionPostfix),
+	prefix: _g(TSKindId.RangeExpressionPrefix),
+	bare: _g(TSKindId.RangeExpressionBare)
+});
+const _supertype_referenceExpression_guard = _vg(_sg(_supertype_referenceExpression_ids), {
+	rawConst: _g(TSKindId.ReferenceExpressionRawConst),
+	rawMut: _g(TSKindId.ReferenceExpressionRawMut),
+	mut: _g(TSKindId.ReferenceExpressionMut),
+	bare: _g(TSKindId.ReferenceExpressionBare)
+});
+const _supertype_arrayExpression_guard = _vg(_sg(_supertype_arrayExpression_ids), {
+	semi: _g(TSKindId.ArrayExpressionSemi),
+	list: _g(TSKindId.ArrayExpressionList)
+});
+const _supertype_matchArm_guard = _vg(_sg(_supertype_matchArm_ids), {
+	withComma: _g(TSKindId.MatchArmWithComma),
+	blockEnding: _g(TSKindId.MatchArmBlockEnding)
+});
+const _supertype_closureExpression_guard = _vg(_sg(_supertype_closureExpression_ids), {
+	block: _g(TSKindId.ClosureExpressionBlock),
+	expr: _g(TSKindId.ClosureExpressionExpr)
+});
+const _supertype_fieldPattern_guard = _vg(_sg(_supertype_fieldPattern_ids), {
+	shorthand: _g(TSKindId.FieldPatternShorthand),
+	named: _g(TSKindId.FieldPatternNamed)
+});
+const _supertype_rangePattern_guard = _vg(_sg(_supertype_rangePattern_ids), {
+	withLeft: _g(TSKindId.RangePatternWithLeft),
+	prefix: _g(TSKindId.RangePatternPrefix)
+});
+const _supertype_orPattern_guard = _vg(_sg(_supertype_orPattern_ids), {
+	binary: _g(TSKindId.OrPatternBinary),
+	prefix: _g(TSKindId.OrPatternPrefix)
+});
+const _supertype_integerLiteral_guard = _vg(_sg(_supertype_integerLiteral_ids), {
+	decimal: _g(TSKindId.IntegerLiteralDecimal),
+	hex: _g(TSKindId.IntegerLiteralHex),
+	binary: _g(TSKindId.IntegerLiteralBinary),
+	octal: _g(TSKindId.IntegerLiteralOctal)
+});
+const _supertype_escapeSequence_guard = _vg(_sg(_supertype_escapeSequence_ids), {
+	simple: _g(TSKindId.EscapeSequenceSimple),
+	unicodeFixed: _g(TSKindId.EscapeSequenceUnicodeFixed),
+	unicodeBraced: _g(TSKindId.EscapeSequenceUnicodeBraced),
+	hex: _g(TSKindId.EscapeSequenceHex)
+});
+const _supertype_comment_guard = _vg(_sg(_supertype_comment_ids), {
+	lineComment: _g(TSKindId.LineComment),
+	blockComment: _g(TSKindId.BlockComment)
+});
+const _supertype_charLiteralEscaped_guard = _vg(_sg(_supertype_charLiteralEscaped_ids), {
+	simple: _g(TSKindId.CharLiteralEscapedSimple),
+	unicodeFixed: _g(TSKindId.CharLiteralEscapedUnicodeFixed),
+	unicodeBraced: _g(TSKindId.CharLiteralEscapedUnicodeBraced),
+	hex: _g(TSKindId.CharLiteralEscapedHex)
+});
+const _supertype_declarationStatement_guard = _vg(_sg(_supertype_declarationStatement_ids), {
+	const: _g(TSKindId.ConstItem),
+	macroInvocation: _g(TSKindId.MacroInvocation),
+	macro: _supertype_macroDefinition_guard,
+	empty: _g(TSKindId.EmptyStatement),
+	attribute: _g(TSKindId.AttributeItem),
+	innerAttribute: _g(TSKindId.InnerAttributeItem),
+	mod: _supertype_modItem_guard,
+	foreignMod: _supertype_foreignModItem_guard,
+	struct: _supertype_structItem_guard,
+	union: _g(TSKindId.UnionItem),
+	enum: _g(TSKindId.EnumItem),
+	type: _g(TSKindId.TypeItem),
+	function: _g(TSKindId.FunctionItem),
+	functionSignature: _g(TSKindId.FunctionSignatureItem),
+	impl: _supertype_implItem_guard,
+	trait: _g(TSKindId.TraitItem),
+	associated: _g(TSKindId.AssociatedType),
+	let: _g(TSKindId.LetDeclaration),
+	use: _g(TSKindId.UseDeclaration),
+	externCrate: _g(TSKindId.ExternCrateDeclaration),
+	static: _g(TSKindId.StaticItem)
+});
+const _supertype_charLiteral_guard = _vg(_sg(_supertype_charLiteral_ids), {
+	escaped: _supertype_charLiteralEscaped_guard,
+	plain: _g(TSKindId.CharLiteralPlain),
+	empty: _g(TSKindId.CharLiteralEmpty)
+});
 
 export const is = Object.freeze({
 	sourceFile: _g(TSKindId.SourceFile),
@@ -791,6 +1327,7 @@ export const is = Object.freeze({
 	tokenBindingPattern: _g(TSKindId.TokenBindingPattern),
 	tokenRepetitionPattern: _g(TSKindId.TokenRepetitionPattern),
 	tokenRepetition: _g(TSKindId.TokenRepetition),
+	nonSpecialToken: _g(TSKindId.NonSpecialToken),
 	attributeItem: _g(TSKindId.AttributeItem),
 	innerAttributeItem: _g(TSKindId.InnerAttributeItem),
 	attribute: _g(TSKindId.Attribute),
@@ -929,35 +1466,38 @@ export const is = Object.freeze({
 	patterns: _g(TSKindId.Patterns),
 	structPatternElements: _g(TSKindId.StructPatternElements),
 	useWildcardGroup: _g(TSKindId.UseWildcardGroup),
+	typeIdentifier: _g(TSKindId.TypeIdentifier),
+	fieldIdentifier: _g(TSKindId.FieldIdentifier),
+	shorthandFieldIdentifier: _g(TSKindId.ShorthandFieldIdentifier),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	statement: _sg(_supertype_statement_ids),
-	declarationStatement: _sg(_supertype_declarationStatement_ids),
-	macroDefinition: _sg(_supertype_macroDefinition_ids),
-	tokenTreePattern: _sg(_supertype_tokenTreePattern_ids),
-	tokenTree: _sg(_supertype_tokenTree_ids),
-	modItem: _sg(_supertype_modItem_ids),
-	foreignModItem: _sg(_supertype_foreignModItem_ids),
-	structItem: _sg(_supertype_structItem_ids),
-	implItem: _sg(_supertype_implItem_ids),
+	declarationStatement: _supertype_declarationStatement_guard,
+	macroDefinition: _supertype_macroDefinition_guard,
+	tokenTreePattern: _supertype_tokenTreePattern_guard,
+	tokenTree: _supertype_tokenTree_guard,
+	modItem: _supertype_modItem_guard,
+	foreignModItem: _supertype_foreignModItem_guard,
+	structItem: _supertype_structItem_guard,
+	implItem: _supertype_implItem_guard,
 	type: _sg(_supertype_type_ids),
-	pointerType: _sg(_supertype_pointerType_ids),
+	pointerType: _supertype_pointerType_guard,
 	expression: _sg(_supertype_expression_ids),
-	delimTokenTree: _sg(_supertype_delimTokenTree_ids),
-	rangeExpression: _sg(_supertype_rangeExpression_ids),
-	referenceExpression: _sg(_supertype_referenceExpression_ids),
-	arrayExpression: _sg(_supertype_arrayExpression_ids),
-	matchArm: _sg(_supertype_matchArm_ids),
-	closureExpression: _sg(_supertype_closureExpression_ids),
+	delimTokenTree: _supertype_delimTokenTree_guard,
+	rangeExpression: _supertype_rangeExpression_guard,
+	referenceExpression: _supertype_referenceExpression_guard,
+	arrayExpression: _supertype_arrayExpression_guard,
+	matchArm: _supertype_matchArm_guard,
+	closureExpression: _supertype_closureExpression_guard,
 	pattern: _sg(_supertype_pattern_ids),
-	fieldPattern: _sg(_supertype_fieldPattern_ids),
-	rangePattern: _sg(_supertype_rangePattern_ids),
-	orPattern: _sg(_supertype_orPattern_ids),
+	fieldPattern: _supertype_fieldPattern_guard,
+	rangePattern: _supertype_rangePattern_guard,
+	orPattern: _supertype_orPattern_guard,
 	literal: _sg(_supertype_literal_ids),
 	literalPattern: _sg(_supertype_literalPattern_ids),
-	integerLiteral: _sg(_supertype_integerLiteral_ids),
-	charLiteral: _sg(_supertype_charLiteral_ids),
-	escapeSequence: _sg(_supertype_escapeSequence_ids),
-	comment: _sg(_supertype_comment_ids),
+	integerLiteral: _supertype_integerLiteral_guard,
+	charLiteral: _supertype_charLiteral_guard,
+	escapeSequence: _supertype_escapeSequence_guard,
+	comment: _supertype_comment_guard,
 	whitespace: _sg(_supertype_whitespace_ids),
-	charLiteralEscaped: _sg(_supertype_charLiteralEscaped_ids)
+	charLiteralEscaped: _supertype_charLiteralEscaped_guard
 }) as unknown as IsGuards;

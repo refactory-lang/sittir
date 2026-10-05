@@ -9033,6 +9033,14 @@ route those literals by kind ids the parser never issues there.
 
 Per-package `vitest.config.ts`: test include/env plus `resolve.alias` from `sourceAliases()`, which maps every workspace package's `exports` entry to its `src/` file — package-scoped test runs resolve to source, never to a stale `dist/` build. `passWithNoTests` is emitted only for a grammar that is not stable (`isStableGrammar`), so a freshly bootstrapped grammar with no tests yet runs clean while a stable package fails if its tests go missing.
 
+### `packages/codegen/src/emitters/is.ts::kindPredicate`
+
+The signature of a guard that narrows to one kind: it takes a node or a bare kind id, and narrows the node arms to the kind. Per-kind guards and node variant guards share it.
+
+### `packages/codegen/src/emitters/is.ts::supertypePredicate`
+
+The signature of a guard that narrows to a set of kinds by id, bare ids included. Supertype guards and leaf variant guards share it.
+
 ### `packages/codegen/src/emitters/is.ts::module`
 
 ```text
@@ -9056,6 +9064,10 @@ Per-package `vitest.config.ts`: test include/env plus `resolve.alias` from `sour
 ```
 
 `is` is frozen and is a check on the kind id alone, with no language check: the package-level table has no engine. `engine.is` is the same table composed with the engine's language check.
+
+A supertype whose arms are all variants (the parents `flattenedVariantParents` lists, the same ones that give `ir.<parent>.<variant>`) has a guard per variant on its own guard: `is.suite(v)` tests every form, `is.suite.block(v)` one. A variant guard narrows like a per-kind guard; a leaf variant is tested by id like a supertype guard, and a variant that is itself a variant parent is that parent's guard. Variant ids resolve through the whole catalog, as the build surface's do, so a leaf alias with no node of its own still has its id.
+
+A supertype guard tests every kind the supertype reaches, through nested supertypes too (`expandToConcreteParseKinds`, the parse kinds of the stamped closure), so `is.integer` accepts a plain decimal although the decimal forms sit under a nested `integer_decimal`. Each parse kind resolves to its entry the way a kind discriminant does (`findKindEntry`), so an arm that aliases a hidden rule to a visible name keeps the hidden rule's id.
 
 ### `packages/codegen/src/emitters/shared.ts::module`
 

@@ -20,6 +20,12 @@ export interface IsGuards {
 	lookaroundAssertion<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LookaroundAssertion };
+	lookaheadAssertion<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LookaheadAssertion };
+	lookbehindAssertion<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LookbehindAssertion };
 	characterClass<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharacterClass };
@@ -59,13 +65,30 @@ export interface IsGuards {
 	termGroup<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TermGroup };
-	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	inlineFlagsGroup<T extends { readonly $type: string | number } | number>(
+	lazy<T extends { readonly $type: number } | number>(
 		v: T
-	): v is NarrowTo<
-		T,
-		TSKindId.InlineFlagsGroupEnable | TSKindId.InlineFlagsGroupToggle | TSKindId.InlineFlagsGroupDisable
-	>;
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Lazy };
+	unicodePropertyName<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UnicodePropertyName };
+	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
+	readonly inlineFlagsGroup: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<
+			T,
+			TSKindId.InlineFlagsGroupEnable | TSKindId.InlineFlagsGroupToggle | TSKindId.InlineFlagsGroupDisable
+		>;
+		enable<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.InlineFlagsGroupEnable };
+		toggle<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.InlineFlagsGroupToggle };
+		disable<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.InlineFlagsGroupDisable };
+	};
 	whitespace<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.Tight | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline>;
@@ -78,15 +101,26 @@ function _g(id: number): (v: { readonly $type: number } | number) => boolean {
 function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number) => boolean {
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
+function _vg<G extends object>(guard: G, variants: object): G {
+	return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));
+}
 
 const _supertype_inlineFlagsGroup_ids = new Set<number>([83, 84, 85]);
 const _supertype_whitespace_ids = new Set<number>([47, 48, 49, 50]);
+
+const _supertype_inlineFlagsGroup_guard = _vg(_sg(_supertype_inlineFlagsGroup_ids), {
+	enable: _g(TSKindId.InlineFlagsGroupEnable),
+	toggle: _g(TSKindId.InlineFlagsGroupToggle),
+	disable: _g(TSKindId.InlineFlagsGroupDisable)
+});
 
 export const is = Object.freeze({
 	pattern: _g(TSKindId.Pattern),
 	alternation: _g(TSKindId.Alternation),
 	term: _g(TSKindId.Term),
 	lookaroundAssertion: _g(TSKindId.LookaroundAssertion),
+	lookaheadAssertion: _g(TSKindId.LookaheadAssertion),
+	lookbehindAssertion: _g(TSKindId.LookbehindAssertion),
 	characterClass: _g(TSKindId.CharacterClass),
 	posixCharacterClass: _g(TSKindId.PosixCharacterClass),
 	classRange: _g(TSKindId.ClassRange),
@@ -100,7 +134,9 @@ export const is = Object.freeze({
 	unicodePropertyValueExpression: _g(TSKindId.UnicodePropertyValueExpression),
 	identityEscape: _g(TSKindId.IdentityEscape),
 	termGroup: _g(TSKindId.TermGroup),
+	lazy: _g(TSKindId.Lazy),
+	unicodePropertyName: _g(TSKindId.UnicodePropertyName),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
-	inlineFlagsGroup: _sg(_supertype_inlineFlagsGroup_ids),
+	inlineFlagsGroup: _supertype_inlineFlagsGroup_guard,
 	whitespace: _sg(_supertype_whitespace_ids)
 }) as unknown as IsGuards;

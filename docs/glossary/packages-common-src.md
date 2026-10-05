@@ -18,7 +18,11 @@ The error a file verb (`read`, `create`, `edit`, `write`) raises while file chan
 
 ### `packages/common/src/create-engine.ts::languageGuards`
 
-Composes every function on a language's `is` table with the engine's language check: the guard runs only for a value whose stamped engine is of the engine's language (the check the node guards use), and the extra arguments of a guard such as `kind` pass through. A node of another grammar whose kind id the guard would accept is rejected, a value with no stamp is rejected, and a node of a disposed engine is accepted, since only the stamped language is read. It is one composition over the table, so a per-kind guard, a supertype guard and `kind` are all covered without each carrying the check; the result is frozen and keeps the table's type.
+Composes every function on a language's `is` table with the engine's language check: the guard runs only for a value whose stamped engine is of the engine's language (the check the node guards use), and the extra arguments of a guard such as `kind` pass through. A node of another grammar whose kind id the guard would accept is rejected, a value with no stamp is rejected, and a node of a disposed engine is accepted, since only the stamped language is read. It is one composition over the table, so a per-kind guard, a supertype guard, its variant guards and `kind` are all covered without each carrying the check; the result is frozen and keeps the table's type.
+
+### `packages/common/src/create-engine.ts::languageGuard`
+
+One guard composed with the language check. A guard with members (a supertype guard carrying its variants' guards, `is.suite.block`) keeps them: each member is composed in turn through `languageGuards` and defined on the composed function, so `engine.is.suite.block` checks the language as `engine.is.suite` does. Members are defined rather than assigned, because a variant may be called `name` or `length`, which a function already owns.
 
 ### `packages/common/src/create-engine.ts::assembleEngine`
 
@@ -56,7 +60,7 @@ Whether two engine identities are of one language: the same descriptor object, t
 
 ### `packages/common/src/engine-scope.ts::engineOf`
 
-The engine a value's `$engine()` returns, or `undefined` for a value with no engine: not an object, or one that has not been stamped.
+The engine a value belongs to: what its `$engine()` returns, or for a value with no stamp, the engine that read the tree it holds (a parsed leaf is plain data with no `$engine`, but it holds its tree's token, and `bindTree` recorded that tree's engine). `undefined` for a value with neither: not an object, a built node outside an engine, or a copy that lost its token. Every engine check reads it, the `is` guards' language check, `query` and `render`, so a parsed leaf passes and is refused exactly as a stamped node of its language is.
 
 ### `packages/common/src/engine-scope.ts::bindTree`
 

@@ -26,6 +26,9 @@ export interface IsGuards {
 	importFromStatement<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportFromStatement };
+	importList<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportList };
 	aliasedImport<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AliasedImport };
@@ -65,6 +68,9 @@ export interface IsGuards {
 	matchStatement<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchStatement };
+	matchBlock<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchBlock };
 	caseClause<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CaseClause };
@@ -149,12 +155,18 @@ export interface IsGuards {
 	SimplePattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SimplePattern };
+	caseAsPattern<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CaseAsPattern };
 	unionPattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UnionPattern };
 	dictPattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DictPattern };
+	keyValuePattern<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.KeyValuePattern };
 	keywordPattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.KeywordPattern };
@@ -167,6 +179,12 @@ export interface IsGuards {
 	complexPattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ComplexPattern };
+	parametersElements<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ParametersElements };
+	patterns<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Patterns };
 	tuplePattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TuplePattern };
@@ -284,6 +302,9 @@ export interface IsGuards {
 	parenthesizedExpression<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ParenthesizedExpression };
+	collectionElements<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CollectionElements };
 	forInClause<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForInClause };
@@ -344,6 +365,9 @@ export interface IsGuards {
 	dictionaryElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DictionaryElements };
+	tupleElements<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TupleElements };
 	exceptClauseExceptionAs<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExceptClauseExceptionAs };
@@ -353,12 +377,21 @@ export interface IsGuards {
 	caseListPattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CaseListPattern };
+	printArguments<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintArguments };
+	printChevronArguments<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintChevronArguments };
 	printStatementChevron<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatementChevron };
 	printStatementPlain<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatementPlain };
+	parenthesizedImportList<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ParenthesizedImportList };
 	comprehensionClauses<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ComprehensionClauses };
@@ -368,6 +401,15 @@ export interface IsGuards {
 	withClauseBare<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WithClauseBare };
+	names<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Names };
+	asPatternTarget<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AsPatternTarget };
+	formatExpression<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormatExpression };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	statement<T extends { readonly $type: string | number } | number>(
 		v: T
@@ -384,61 +426,188 @@ export interface IsGuards {
 		| TSKindId.DecoratedDefinition
 		| TSKindId.MatchStatement
 	>;
-	simpleStatement<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<
-		T,
-		| TSKindId.FutureImportStatement
-		| TSKindId.ImportStatement
-		| TSKindId.ImportFromStatement
-		| TSKindId.PrintStatement
-		| TSKindId.AssertStatement
-		| TSKindId.ExpressionStatement
-		| TSKindId.ReturnStatement
-		| TSKindId.DeleteStatement
-		| TSKindId.RaiseStatement
-		| TSKindId.PassStatement
-		| TSKindId.BreakStatement
-		| TSKindId.ContinueStatement
-		| TSKindId.GlobalStatement
-		| TSKindId.NonlocalStatement
-		| TSKindId.ExecStatement
-		| TSKindId.TypeAliasStatement
-	>;
-	compoundStatement<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<
-		T,
-		| TSKindId.IfStatement
-		| TSKindId.ForStatement
-		| TSKindId.WhileStatement
-		| TSKindId.TryStatement
-		| TSKindId.WithStatement
-		| TSKindId.FunctionDefinition
-		| TSKindId.ClassDefinition
-		| TSKindId.DecoratedDefinition
-		| TSKindId.MatchStatement
-	>;
-	withClause<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.WithClauseBare | TSKindId.WithClauseParen>;
-	suite<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.SuiteInline | TSKindId.SuiteBlock | TSKindId.SuiteEmpty>;
-	parameter<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<
-		T,
-		| TSKindId.Identifier
-		| TSKindId.TypedParameter
-		| TSKindId.DefaultParameter
-		| TSKindId.TypedDefaultParameter
-		| TSKindId.ListSplatPattern
-		| TSKindId.TuplePattern
-		| TSKindId.KeywordSeparator
-		| TSKindId.PositionalSeparator
-		| TSKindId.DictionarySplatPattern
-	>;
+	readonly simpleStatement: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<
+			T,
+			| TSKindId.FutureImportStatement
+			| TSKindId.ImportStatement
+			| TSKindId.ImportFromStatement
+			| TSKindId.PrintStatement
+			| TSKindId.AssertStatement
+			| TSKindId.ExpressionStatement
+			| TSKindId.ReturnStatement
+			| TSKindId.DeleteStatement
+			| TSKindId.RaiseStatement
+			| TSKindId.PassStatement
+			| TSKindId.BreakStatement
+			| TSKindId.ContinueStatement
+			| TSKindId.GlobalStatement
+			| TSKindId.NonlocalStatement
+			| TSKindId.ExecStatement
+			| TSKindId.TypeAliasStatement
+		>;
+		futureImport<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FutureImportStatement };
+		import<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportStatement };
+		importFrom<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportFromStatement };
+		print<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatement };
+		assert<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AssertStatement };
+		expression<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExpressionStatement };
+		return<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ReturnStatement };
+		delete<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DeleteStatement };
+		raise<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RaiseStatement };
+		pass<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PassStatement };
+		break<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BreakStatement };
+		continue<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ContinueStatement };
+		global<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.GlobalStatement };
+		nonlocal<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NonlocalStatement };
+		exec<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExecStatement };
+		typeAlias<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeAliasStatement };
+	};
+	readonly compoundStatement: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<
+			T,
+			| TSKindId.IfStatement
+			| TSKindId.ForStatement
+			| TSKindId.WhileStatement
+			| TSKindId.TryStatement
+			| TSKindId.WithStatement
+			| TSKindId.FunctionDefinition
+			| TSKindId.ClassDefinition
+			| TSKindId.DecoratedDefinition
+			| TSKindId.MatchStatement
+		>;
+		if<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IfStatement };
+		for<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForStatement };
+		while<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WhileStatement };
+		try<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TryStatement };
+		with<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WithStatement };
+		function<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FunctionDefinition };
+		class<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ClassDefinition };
+		decorated<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DecoratedDefinition };
+		match<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchStatement };
+	};
+	readonly withClause: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.WithClauseBare | TSKindId.WithClauseParen>;
+		bare<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WithClauseBare };
+		paren<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WithClauseParen };
+	};
+	readonly suite: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.SuiteInline | TSKindId.SuiteBlock | TSKindId.SuiteEmpty>;
+		inline<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SuiteInline };
+		block<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SuiteBlock };
+		empty<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SuiteEmpty };
+	};
+	readonly parameter: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<
+			T,
+			| TSKindId.Identifier
+			| TSKindId.TypedParameter
+			| TSKindId.DefaultParameter
+			| TSKindId.TypedDefaultParameter
+			| TSKindId.ListSplatPattern
+			| TSKindId.TuplePattern
+			| TSKindId.KeywordSeparator
+			| TSKindId.PositionalSeparator
+			| TSKindId.DictionarySplatPattern
+		>;
+		identifier<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Identifier };
+		typed<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypedParameter };
+		default<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DefaultParameter };
+		typedDefault<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypedDefaultParameter };
+		listSplat<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ListSplatPattern };
+		tuple<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TuplePattern };
+		keywordSeparator<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.KeywordSeparator };
+		positionalSeparator<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PositionalSeparator };
+		dictionarySplat<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DictionarySplatPattern };
+	};
 	pattern<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is NarrowTo<
@@ -464,17 +633,9 @@ export interface IsGuards {
 		| TSKindId.NotOperator
 		| TSKindId.BooleanOperator
 		| TSKindId.Lambda
-		| TSKindId.ConditionalExpression
-		| TSKindId.NamedExpression
-		| TSKindId.AsPattern
-	>;
-	primaryExpression<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<
-		T,
+		| TSKindId.Identifier
 		| TSKindId.Await
 		| TSKindId.BinaryOperator
-		| TSKindId.Identifier
 		| TSKindId.PrintKeyword
 		| TSKindId.ExecKeyword
 		| TSKindId.AsyncKeyword
@@ -483,6 +644,61 @@ export interface IsGuards {
 		| TSKindId.MatchKeyword
 		| TSKindId.String
 		| TSKindId.ConcatenatedString
+		| TSKindId.IntegerHex
+		| TSKindId.IntegerOctal
+		| TSKindId.IntegerBinary
+		| TSKindId.IntegerDecimalLong
+		| TSKindId.IntegerDecimalImaginary
+		| TSKindId.IntegerDecimalPlain
+		| TSKindId.FloatPoint
+		| TSKindId.FloatLeadingPoint
+		| TSKindId.FloatScientific
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.None
+		| TSKindId.UnaryOperator
+		| TSKindId.Attribute
+		| TSKindId.Subscript
+		| TSKindId.Call
+		| TSKindId.List
+		| TSKindId.ListComprehension
+		| TSKindId.Dictionary
+		| TSKindId.DictionaryComprehension
+		| TSKindId.Set
+		| TSKindId.SetComprehension
+		| TSKindId.Tuple
+		| TSKindId.ParenthesizedExpression
+		| TSKindId.GeneratorExpression
+		| TSKindId.Ellipsis
+		| TSKindId.ListSplatPattern
+		| TSKindId.ConditionalExpression
+		| TSKindId.NamedExpression
+		| TSKindId.AsPattern
+	>;
+	primaryExpression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.Identifier
+		| TSKindId.Await
+		| TSKindId.BinaryOperator
+		| TSKindId.PrintKeyword
+		| TSKindId.ExecKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.MatchKeyword
+		| TSKindId.String
+		| TSKindId.ConcatenatedString
+		| TSKindId.IntegerHex
+		| TSKindId.IntegerOctal
+		| TSKindId.IntegerBinary
+		| TSKindId.IntegerDecimalLong
+		| TSKindId.IntegerDecimalImaginary
+		| TSKindId.IntegerDecimalPlain
+		| TSKindId.FloatPoint
+		| TSKindId.FloatLeadingPoint
+		| TSKindId.FloatScientific
 		| TSKindId.True
 		| TSKindId.False
 		| TSKindId.None
@@ -502,39 +718,123 @@ export interface IsGuards {
 		| TSKindId.Ellipsis
 		| TSKindId.ListSplatPattern
 	>;
-	assignment<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.AssignmentEq | TSKindId.AssignmentType | TSKindId.AssignmentTyped>;
-	escapeSequence<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<
-		T,
-		| TSKindId.EscapeSequenceUnicodeFixed
-		| TSKindId.EscapeSequenceUnicodeWide
-		| TSKindId.EscapeSequenceHex
-		| TSKindId.EscapeSequenceOctal
-		| TSKindId.EscapeSequenceLineBreak
-		| TSKindId.EscapeSequenceSimple
-		| TSKindId.EscapeSequenceNamed
-	>;
-	integer<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.IntegerHex | TSKindId.IntegerOctal | TSKindId.IntegerBinary>;
-	float<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.FloatPoint | TSKindId.FloatLeadingPoint | TSKindId.FloatScientific>;
-	lineContinuation<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.LineContinuationNewline | TSKindId.LineContinuationNul>;
+	readonly assignment: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.AssignmentEq | TSKindId.AssignmentType | TSKindId.AssignmentTyped>;
+		eq<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AssignmentEq };
+		type<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AssignmentType };
+		typed<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AssignmentTyped };
+	};
+	readonly escapeSequence: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<
+			T,
+			| TSKindId.EscapeSequenceUnicodeFixed
+			| TSKindId.EscapeSequenceUnicodeWide
+			| TSKindId.EscapeSequenceHex
+			| TSKindId.EscapeSequenceOctal
+			| TSKindId.EscapeSequenceLineBreak
+			| TSKindId.EscapeSequenceSimple
+			| TSKindId.EscapeSequenceNamed
+		>;
+		unicodeFixed<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceUnicodeFixed };
+		unicodeWide<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceUnicodeWide };
+		hex<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceHex };
+		octal<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceOctal };
+		lineBreak<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceLineBreak };
+		simple<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceSimple };
+		named<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceNamed };
+	};
+	readonly integer: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<
+			T,
+			| TSKindId.IntegerHex
+			| TSKindId.IntegerOctal
+			| TSKindId.IntegerBinary
+			| TSKindId.IntegerDecimalLong
+			| TSKindId.IntegerDecimalImaginary
+			| TSKindId.IntegerDecimalPlain
+		>;
+		hex<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerHex };
+		octal<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerOctal };
+		binary<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerBinary };
+		decimal: IsGuards['integerDecimal'];
+	};
+	readonly float: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.FloatPoint | TSKindId.FloatLeadingPoint | TSKindId.FloatScientific>;
+		point<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FloatPoint };
+		leadingPoint<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FloatLeadingPoint };
+		scientific<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FloatScientific };
+	};
+	readonly lineContinuation: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.LineContinuationNewline | TSKindId.LineContinuationNul>;
+		newline<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineContinuationNewline };
+		nul<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineContinuationNul };
+	};
 	whitespace<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
 		TSKindId.Tight | TSKindId.Space | TSKindId.Tab | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline
 	>;
-	integerDecimal<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.IntegerDecimalLong | TSKindId.IntegerDecimalImaginary | TSKindId.IntegerDecimalPlain>;
+	readonly integerDecimal: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.IntegerDecimalLong | TSKindId.IntegerDecimalImaginary | TSKindId.IntegerDecimalPlain>;
+		long<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerDecimalLong };
+		imaginary<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerDecimalImaginary };
+		plain<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerDecimalPlain };
+	};
 }
 
 // Runtime: kind guards compare numeric TSKindId only.
@@ -543,6 +843,9 @@ function _g(id: number): (v: { readonly $type: number } | number) => boolean {
 }
 function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number) => boolean {
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
+}
+function _vg<G extends object>(guard: G, variants: object): G {
+	return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));
 }
 
 const _supertype_statement_ids = new Set<number>([129, 150, 156, 157, 158, 161, 164, 173, 177, 153]);
@@ -554,18 +857,105 @@ const _supertype_withClause_ids = new Set<number>([289, 290]);
 const _supertype_suite_ids = new Set<number>([293, 294, 295]);
 const _supertype_parameter_ids = new Set<number>([1, 224, 198, 199, 200, 196, 258, 257, 201]);
 const _supertype_pattern_ids = new Set<number>([1, 67, 38, 68, 69, 39, 22, 221, 220, 200, 196, 197]);
-const _supertype_expression_ids = new Set<number>([212, 206, 207, 213, 245, 142, 202]);
+const _supertype_expression_ids = new Set<number>([
+	212, 206, 207, 213, 1, 256, 208, 67, 38, 68, 69, 39, 22, 247, 246, 90, 91, 92, 93, 94, 95, 96, 97, 98, 70, 71, 72,
+	209, 220, 221, 223, 232, 237, 235, 238, 233, 239, 234, 241, 240, 64, 200, 245, 142, 202
+]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	256, 208, 1, 67, 38, 68, 69, 39, 22, 247, 246, 70, 71, 72, 209, 220, 221, 223, 232, 237, 235, 238, 233, 239, 234, 241,
-	240, 64, 200
+	1, 256, 208, 67, 38, 68, 69, 39, 22, 247, 246, 90, 91, 92, 93, 94, 95, 96, 97, 98, 70, 71, 72, 209, 220, 221, 223,
+	232, 237, 235, 238, 233, 239, 234, 241, 240, 64, 200
 ]);
 const _supertype_assignment_ids = new Set<number>([285, 286, 287]);
 const _supertype_escapeSequence_ids = new Set<number>([99, 100, 101, 102, 103, 104, 105]);
-const _supertype_integer_ids = new Set<number>([90, 91, 92]);
+const _supertype_integer_ids = new Set<number>([90, 91, 92, 93, 94, 95]);
 const _supertype_float_ids = new Set<number>([96, 97, 98]);
 const _supertype_lineContinuation_ids = new Set<number>([106, 107]);
 const _supertype_whitespace_ids = new Set<number>([122, 123, 124, 115, 125, 126]);
 const _supertype_integerDecimal_ids = new Set<number>([93, 94, 95]);
+
+const _supertype_simpleStatement_guard = _vg(_sg(_supertype_simpleStatement_ids), {
+	futureImport: _g(TSKindId.FutureImportStatement),
+	import: _g(TSKindId.ImportStatement),
+	importFrom: _g(TSKindId.ImportFromStatement),
+	print: _g(TSKindId.PrintStatement),
+	assert: _g(TSKindId.AssertStatement),
+	expression: _g(TSKindId.ExpressionStatement),
+	return: _g(TSKindId.ReturnStatement),
+	delete: _g(TSKindId.DeleteStatement),
+	raise: _g(TSKindId.RaiseStatement),
+	pass: _g(TSKindId.PassStatement),
+	break: _g(TSKindId.BreakStatement),
+	continue: _g(TSKindId.ContinueStatement),
+	global: _g(TSKindId.GlobalStatement),
+	nonlocal: _g(TSKindId.NonlocalStatement),
+	exec: _g(TSKindId.ExecStatement),
+	typeAlias: _g(TSKindId.TypeAliasStatement)
+});
+const _supertype_compoundStatement_guard = _vg(_sg(_supertype_compoundStatement_ids), {
+	if: _g(TSKindId.IfStatement),
+	for: _g(TSKindId.ForStatement),
+	while: _g(TSKindId.WhileStatement),
+	try: _g(TSKindId.TryStatement),
+	with: _g(TSKindId.WithStatement),
+	function: _g(TSKindId.FunctionDefinition),
+	class: _g(TSKindId.ClassDefinition),
+	decorated: _g(TSKindId.DecoratedDefinition),
+	match: _g(TSKindId.MatchStatement)
+});
+const _supertype_withClause_guard = _vg(_sg(_supertype_withClause_ids), {
+	bare: _g(TSKindId.WithClauseBare),
+	paren: _g(TSKindId.WithClauseParen)
+});
+const _supertype_suite_guard = _vg(_sg(_supertype_suite_ids), {
+	inline: _g(TSKindId.SuiteInline),
+	block: _g(TSKindId.SuiteBlock),
+	empty: _g(TSKindId.SuiteEmpty)
+});
+const _supertype_parameter_guard = _vg(_sg(_supertype_parameter_ids), {
+	identifier: _g(TSKindId.Identifier),
+	typed: _g(TSKindId.TypedParameter),
+	default: _g(TSKindId.DefaultParameter),
+	typedDefault: _g(TSKindId.TypedDefaultParameter),
+	listSplat: _g(TSKindId.ListSplatPattern),
+	tuple: _g(TSKindId.TuplePattern),
+	keywordSeparator: _g(TSKindId.KeywordSeparator),
+	positionalSeparator: _g(TSKindId.PositionalSeparator),
+	dictionarySplat: _g(TSKindId.DictionarySplatPattern)
+});
+const _supertype_assignment_guard = _vg(_sg(_supertype_assignment_ids), {
+	eq: _g(TSKindId.AssignmentEq),
+	type: _g(TSKindId.AssignmentType),
+	typed: _g(TSKindId.AssignmentTyped)
+});
+const _supertype_escapeSequence_guard = _vg(_sg(_supertype_escapeSequence_ids), {
+	unicodeFixed: _g(TSKindId.EscapeSequenceUnicodeFixed),
+	unicodeWide: _g(TSKindId.EscapeSequenceUnicodeWide),
+	hex: _g(TSKindId.EscapeSequenceHex),
+	octal: _g(TSKindId.EscapeSequenceOctal),
+	lineBreak: _g(TSKindId.EscapeSequenceLineBreak),
+	simple: _g(TSKindId.EscapeSequenceSimple),
+	named: _g(TSKindId.EscapeSequenceNamed)
+});
+const _supertype_float_guard = _vg(_sg(_supertype_float_ids), {
+	point: _g(TSKindId.FloatPoint),
+	leadingPoint: _g(TSKindId.FloatLeadingPoint),
+	scientific: _g(TSKindId.FloatScientific)
+});
+const _supertype_lineContinuation_guard = _vg(_sg(_supertype_lineContinuation_ids), {
+	newline: _g(TSKindId.LineContinuationNewline),
+	nul: _g(TSKindId.LineContinuationNul)
+});
+const _supertype_integerDecimal_guard = _vg(_sg(_supertype_integerDecimal_ids), {
+	long: _g(TSKindId.IntegerDecimalLong),
+	imaginary: _g(TSKindId.IntegerDecimalImaginary),
+	plain: _g(TSKindId.IntegerDecimalPlain)
+});
+const _supertype_integer_guard = _vg(_sg(_supertype_integer_ids), {
+	hex: _g(TSKindId.IntegerHex),
+	octal: _g(TSKindId.IntegerOctal),
+	binary: _g(TSKindId.IntegerBinary),
+	decimal: _supertype_integerDecimal_guard
+});
 
 export const is = Object.freeze({
 	module: _g(TSKindId.Module),
@@ -574,6 +964,7 @@ export const is = Object.freeze({
 	relativeImport: _g(TSKindId.RelativeImport),
 	futureImportStatement: _g(TSKindId.FutureImportStatement),
 	importFromStatement: _g(TSKindId.ImportFromStatement),
+	importList: _g(TSKindId.ImportList),
 	aliasedImport: _g(TSKindId.AliasedImport),
 	printStatement: _g(TSKindId.PrintStatement),
 	chevron: _g(TSKindId.Chevron),
@@ -587,6 +978,7 @@ export const is = Object.freeze({
 	elifClause: _g(TSKindId.ElifClause),
 	elseClause: _g(TSKindId.ElseClause),
 	matchStatement: _g(TSKindId.MatchStatement),
+	matchBlock: _g(TSKindId.MatchBlock),
 	caseClause: _g(TSKindId.CaseClause),
 	forStatement: _g(TSKindId.ForStatement),
 	whileStatement: _g(TSKindId.WhileStatement),
@@ -615,12 +1007,16 @@ export const is = Object.freeze({
 	dottedName: _g(TSKindId.DottedName),
 	casePattern: _g(TSKindId.CasePattern),
 	SimplePattern: _g(TSKindId.SimplePattern),
+	caseAsPattern: _g(TSKindId.CaseAsPattern),
 	unionPattern: _g(TSKindId.UnionPattern),
 	dictPattern: _g(TSKindId.DictPattern),
+	keyValuePattern: _g(TSKindId.KeyValuePattern),
 	keywordPattern: _g(TSKindId.KeywordPattern),
 	splatPattern: _g(TSKindId.SplatPattern),
 	classPattern: _g(TSKindId.ClassPattern),
 	complexPattern: _g(TSKindId.ComplexPattern),
+	parametersElements: _g(TSKindId.ParametersElements),
+	patterns: _g(TSKindId.Patterns),
 	tuplePattern: _g(TSKindId.TuplePattern),
 	listPattern: _g(TSKindId.ListPattern),
 	defaultParameter: _g(TSKindId.DefaultParameter),
@@ -660,6 +1056,7 @@ export const is = Object.freeze({
 	setComprehension: _g(TSKindId.SetComprehension),
 	generatorExpression: _g(TSKindId.GeneratorExpression),
 	parenthesizedExpression: _g(TSKindId.ParenthesizedExpression),
+	collectionElements: _g(TSKindId.CollectionElements),
 	forInClause: _g(TSKindId.ForInClause),
 	ifClause: _g(TSKindId.IfClause),
 	conditionalExpression: _g(TSKindId.ConditionalExpression),
@@ -680,29 +1077,36 @@ export const is = Object.freeze({
 	dictPatternElements: _g(TSKindId.DictPatternElements),
 	subscripts: _g(TSKindId.Subscripts),
 	dictionaryElements: _g(TSKindId.DictionaryElements),
+	tupleElements: _g(TSKindId.TupleElements),
 	exceptClauseExceptionAs: _g(TSKindId.ExceptClauseExceptionAs),
 	caseTuplePattern: _g(TSKindId.CaseTuplePattern),
 	caseListPattern: _g(TSKindId.CaseListPattern),
+	printArguments: _g(TSKindId.PrintArguments),
+	printChevronArguments: _g(TSKindId.PrintChevronArguments),
 	printStatementChevron: _g(TSKindId.PrintStatementChevron),
 	printStatementPlain: _g(TSKindId.PrintStatementPlain),
+	parenthesizedImportList: _g(TSKindId.ParenthesizedImportList),
 	comprehensionClauses: _g(TSKindId.ComprehensionClauses),
 	expressionStatementTuple: _g(TSKindId.ExpressionStatementTuple),
 	withClauseBare: _g(TSKindId.WithClauseBare),
+	names: _g(TSKindId.Names),
+	asPatternTarget: _g(TSKindId.AsPatternTarget),
+	formatExpression: _g(TSKindId.FormatExpression),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	statement: _sg(_supertype_statement_ids),
-	simpleStatement: _sg(_supertype_simpleStatement_ids),
-	compoundStatement: _sg(_supertype_compoundStatement_ids),
-	withClause: _sg(_supertype_withClause_ids),
-	suite: _sg(_supertype_suite_ids),
-	parameter: _sg(_supertype_parameter_ids),
+	simpleStatement: _supertype_simpleStatement_guard,
+	compoundStatement: _supertype_compoundStatement_guard,
+	withClause: _supertype_withClause_guard,
+	suite: _supertype_suite_guard,
+	parameter: _supertype_parameter_guard,
 	pattern: _sg(_supertype_pattern_ids),
 	expression: _sg(_supertype_expression_ids),
 	primaryExpression: _sg(_supertype_primaryExpression_ids),
-	assignment: _sg(_supertype_assignment_ids),
-	escapeSequence: _sg(_supertype_escapeSequence_ids),
-	integer: _sg(_supertype_integer_ids),
-	float: _sg(_supertype_float_ids),
-	lineContinuation: _sg(_supertype_lineContinuation_ids),
+	assignment: _supertype_assignment_guard,
+	escapeSequence: _supertype_escapeSequence_guard,
+	integer: _supertype_integer_guard,
+	float: _supertype_float_guard,
+	lineContinuation: _supertype_lineContinuation_guard,
 	whitespace: _sg(_supertype_whitespace_ids),
-	integerDecimal: _sg(_supertype_integerDecimal_ids)
+	integerDecimal: _supertype_integerDecimal_guard
 }) as unknown as IsGuards;
