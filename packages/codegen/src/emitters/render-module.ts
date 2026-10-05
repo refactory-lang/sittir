@@ -1387,6 +1387,11 @@ function boxedInEnum(
 	return false;
 }
 
+function wirePropertyRead(key: string, rustType?: string): string {
+	const turbofish = rustType === undefined ? '' : `::<${rustType}>`;
+	return `::sittir_core::boundary::property${turbofish}(env, napi_val, c${rustStringLiteral(key)})?`;
+}
+
 function emitTransportEnumFromNapiValueBody(
 	enumName: string,
 	kindIdArms: readonly string[],
@@ -1401,18 +1406,17 @@ function emitTransportEnumFromNapiValueBody(
 	lines.push(`                }`);
 	lines.push(`            }`);
 	lines.push(`            ::napi::ValueType::Object => {`);
-	lines.push(`                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
-	lines.push(`                let kind_id: u16 = obj.get("$type")?.ok_or_else(||`);
+	lines.push(`                let kind_id: u16 = ${wirePropertyRead('$type')}.ok_or_else(||`);
 	lines.push(
 		`                    ::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)})`
 	);
 	lines.push(`                )?;`);
-	if (textArms.length > 0) lines.push(`                let text: Option<String> = obj.get("$text")?;`);
+	if (textArms.length > 0) lines.push(`                let text: Option<String> = ${wirePropertyRead('$text')};`);
 	lines.push(`                match kind_id {`);
 	if (admitsVerbatim) {
 		lines.push(`                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {`);
 		lines.push(
-			`                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason(${JSON.stringify(`ERROR node without $text in ${enumName}`)}))?,`
+			`                        text: ${wirePropertyRead('$text')}.ok_or_else(|| ::napi::Error::from_reason(${JSON.stringify(`ERROR node without $text in ${enumName}`)}))?,`
 		);
 		lines.push(`                    })),`);
 	}
@@ -2481,10 +2485,8 @@ function renderAnyTransportWithNapiFromValue(
 	lines.push('    ) -> ::napi::Result<Self> {');
 	lines.push('        let kind_id = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {');
 	lines.push('            Some(kind_id)');
-	lines.push('        } else if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {');
-	lines.push('            obj.get::<u16>("$type")?');
 	lines.push('        } else {');
-	lines.push('            None');
+	lines.push(`            ${wirePropertyRead('$type', 'u16')}`);
 	lines.push('        };');
 	lines.push('        if let Some(kind_id) = kind_id {');
 	lines.push('            return match kind_id {');
@@ -3533,12 +3535,11 @@ function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: s
 		lines.push(`            }`);
 	}
 	lines.push(`            _ => {`);
-	lines.push(`                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
-	lines.push(`                layout = obj.get(${JSON.stringify(LAYOUT_FIELD.jsName)})?;`);
+	lines.push(`                layout = ${wirePropertyRead(LAYOUT_FIELD.jsName)};`);
 	lines.push(
 		defaultTextLiteral !== undefined
-			? `                obj.get("$text")?.unwrap_or_else(|| ${rustStringLiteral(defaultTextLiteral)}.to_string())`
-			: `                obj.get("$text")?.unwrap_or_default()`
+			? `                ${wirePropertyRead('$text')}.unwrap_or_else(|| ${rustStringLiteral(defaultTextLiteral)}.to_string())`
+			: `                ${wirePropertyRead('$text')}.unwrap_or_default()`
 	);
 	lines.push(`            }`);
 	lines.push(`        };`);
@@ -3556,13 +3557,12 @@ function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: s
 	lines.push(`        env: ::napi::sys::napi_env,`);
 	lines.push(`        napi_val: ::napi::sys::napi_value,`);
 	lines.push(`    ) -> ::napi::Result<Self> {`);
-	lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
 	lines.push(
 		defaultTextLiteral !== undefined
-			? `        let text: String = obj.get("$text")?.unwrap_or_else(|| ${rustStringLiteral(defaultTextLiteral)}.to_string());`
-			: '        let text: String = obj.get("$text")?.unwrap_or_default();'
+			? `        let text: String = ${wirePropertyRead('$text')}.unwrap_or_else(|| ${rustStringLiteral(defaultTextLiteral)}.to_string());`
+			: `        let text: String = ${wirePropertyRead('$text')}.unwrap_or_default();`
 	);
-	lines.push(`        let layout = obj.get(${JSON.stringify(LAYOUT_FIELD.jsName)})?;`);
+	lines.push(`        let layout = ${wirePropertyRead(LAYOUT_FIELD.jsName)};`);
 	lines.push(`        Ok(Self {`);
 	lines.push(`            layout,`);
 	lines.push(`            text,`);
@@ -4099,13 +4099,12 @@ function renderEnumType(node: AssembledEnum, kindEntries: readonly KindEnumEntry
 	lines.push(`                }`);
 	lines.push(`            }`);
 	lines.push(`            ::napi::ValueType::Object => {`);
-	lines.push(`                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
-	lines.push(`                if let Some(kind_id) = obj.get::<u16>("$type")? {`);
+	lines.push(`                if let Some(kind_id) = ${wirePropertyRead('$type', 'u16')} {`);
 	lines.push(`                    match kind_id {`);
 	kindIdMatchArms(`                        `);
 	lines.push(`                    }`);
 	lines.push(`                }`);
-	lines.push(`                if let Some(text) = obj.get::<String>("$text")? {`);
+	lines.push(`                if let Some(text) = ${wirePropertyRead('$text', 'String')} {`);
 	lines.push(`                    match text.as_str() {`);
 	textMatchArms(`                        `);
 	lines.push(`                    }`);
@@ -4113,7 +4112,7 @@ function renderEnumType(node: AssembledEnum, kindEntries: readonly KindEnumEntry
 	for (const v of values) {
 		const variant = literalToVariantName(v);
 		lines.push(
-			`                if obj.get::<::napi::bindgen_prelude::Object>(${JSON.stringify(`_${v}`)})?.is_some() { return Ok(Self::${variant}); }`
+			`                if ${wirePropertyRead(`_${v}`, '::napi::bindgen_prelude::Object')}.is_some() { return Ok(Self::${variant}); }`
 		);
 	}
 	lines.push(`            }`);

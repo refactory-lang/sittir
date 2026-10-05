@@ -3545,6 +3545,17 @@ literal, a unit arm per fixed-literal kind, and `Verbatim`. Shared by both
  */
 ```
 
+### `packages/codegen/src/emitters/render-module.ts::wirePropertyRead`
+
+The expression a hand-emitted `FromNapiValue` reads one property of its
+wire object with: `sittir_core::boundary::property` on `napi_val`, the key
+as a C-string literal, `?` applied, so it yields `Option<T>` (`None` when
+the property is undefined). napi resolves a static key to V8's interned
+string, as it does for a derived napi object's fields, where
+`Object::get(&str)` creates a new key string on every read; every
+transport decoder reads its keys this way. `rustType` adds a turbofish
+where the expression's use does not fix the type.
+
 ### `packages/codegen/src/emitters/render-module.ts::emitTransportEnumFromNapiValueBody`
 
 The `from_napi_value` body shared by supertype, per-slot and trivia

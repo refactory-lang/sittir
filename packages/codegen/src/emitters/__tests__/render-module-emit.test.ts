@@ -288,7 +288,7 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 		// failure path (JSON.stringify on Object inputs).
 		const src = await getTypescriptTransportRs();
 		expect(src).toContain('::napi::ValueType::String => String::from_napi_value(env, napi_val)?,');
-		expect(src).toContain('obj.get("$text")?.unwrap_or_default()');
+		expect(src).toContain('::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()');
 	});
 
 	it('a presence slot holding a keyword kind crosses as a boolean and renders the kind', async () => {

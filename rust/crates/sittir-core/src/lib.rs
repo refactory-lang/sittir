@@ -4,8 +4,8 @@
 //!
 //! - [`types`]    — primitive `UntypedNode` + wire-boundary serde attributes.
 //! - [`read_untyped_node`] — `tree_sitter::Tree` → `UntypedNode` traversal.
-//! - [`boundary`] — (reserved) cross-FFI shape helpers; serde attrs live
-//!   alongside the structs in `types`.
+//! - [`boundary`] — cross-FFI shape helpers: a wire object's properties,
+//!   read by static keys; serde attrs live alongside the structs in `types`.
 //! - [`view`]     — the render-time views (`View`, `ListView`) the generated
 //!   kind templates interpolate.
 

@@ -371,10 +371,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
     ) -> ::napi::Result<Self> {
         let kind_id = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
             Some(kind_id)
-        } else if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
-            obj.get::<u16>("$type")?
         } else {
-            None
+            ::sittir_core::boundary::property::<u16>(env, napi_val, c"$type")?
         };
         if let Some(kind_id) = kind_id {
             return match kind_id {
@@ -747,13 +745,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaTransport {
                 }
             }
             ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
                     ::napi::Error::from_reason("$type property missing in TriviaTransport")
                 )?;
                 match kind_id {
                     id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
-                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in TriviaTransport"))?,
+                        text: ::sittir_core::boundary::property(env, napi_val, c"$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in TriviaTransport"))?,
                     })),
                     48 => Ok(Self::Newline),
                     49 => Ok(Self::Blankline),
@@ -859,8 +856,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternContentTransportSlot {
                 }
             }
             ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
                     ::napi::Error::from_reason("$type property missing in PatternContentTransportSlot")
                 )?;
                 match kind_id {
@@ -976,8 +972,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LookaroundAssertionContentTransp
                 }
             }
             ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
                     ::napi::Error::from_reason("$type property missing in LookaroundAssertionContentTransportSlot")
                 )?;
                 match kind_id {
@@ -1077,8 +1072,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LookaheadAssertionContentTranspo
                 }
             }
             ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
                     ::napi::Error::from_reason("$type property missing in LookaheadAssertionContentTransportSlot")
                 )?;
                 match kind_id {
@@ -1186,8 +1180,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LookbehindAssertionContentTransp
                 }
             }
             ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
                     ::napi::Error::from_reason("$type property missing in LookbehindAssertionContentTransportSlot")
                 )?;
                 match kind_id {
@@ -1365,13 +1358,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassClassAtomsTranspor
                 }
             }
             ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
                     ::napi::Error::from_reason("$type property missing in CharacterClassClassAtomsTransportSlot")
                 )?;
                 match kind_id {
                     id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
-                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in CharacterClassClassAtomsTransportSlot"))?,
+                        text: ::sittir_core::boundary::property(env, napi_val, c"$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in CharacterClassClassAtomsTransportSlot"))?,
                     })),
                     19 => Ok(Self::BslashDash),
                     20 => Ok(Self::ClassCharacter(
@@ -1531,13 +1523,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassRangeStartTransportSlot {
                 }
             }
             ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
                     ::napi::Error::from_reason("$type property missing in ClassRangeStartTransportSlot")
                 )?;
                 match kind_id {
                     id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
-                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in ClassRangeStartTransportSlot"))?,
+                        text: ::sittir_core::boundary::property(env, napi_val, c"$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in ClassRangeStartTransportSlot"))?,
                     })),
                     14 => Ok(Self::Dash),
                     20 => Ok(Self::ClassCharacter(
@@ -1649,8 +1640,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamedCapturingGroupContentTransp
                 }
             }
             ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
                     ::napi::Error::from_reason("$type property missing in NamedCapturingGroupContentTransportSlot")
                 )?;
                 match kind_id {
@@ -1777,13 +1767,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for CountQuantifierContentTransportS
                 }
             }
             ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
                     ::napi::Error::from_reason("$type property missing in CountQuantifierContentTransportSlot")
                 )?;
                 match kind_id {
                     id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
-                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in CountQuantifierContentTransportSlot"))?,
+                        text: ::sittir_core::boundary::property(env, napi_val, c"$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in CountQuantifierContentTransportSlot"))?,
                     })),
                     79 => Ok(Self::CountQuantifierArm(
                         CountQuantifierArmTransport::from_napi_value(env, napi_val)?
@@ -1912,13 +1901,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassEscapeContentTrans
                 }
             }
             ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
                     ::napi::Error::from_reason("$type property missing in CharacterClassEscapeContentTransportSlot")
                 )?;
                 match kind_id {
                     id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
-                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in CharacterClassEscapeContentTransportSlot"))?,
+                        text: ::sittir_core::boundary::property(env, napi_val, c"$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in CharacterClassEscapeContentTransportSlot"))?,
                     })),
                     41 => Ok(Self::CharacterClassEscapeText1(
                         CharacterClassEscapeText1Transport::from_napi_value(env, napi_val)?
@@ -2059,13 +2047,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for TermGroupQuantifierTransportSlot
                 }
             }
             ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
                     ::napi::Error::from_reason("$type property missing in TermGroupQuantifierTransportSlot")
                 )?;
                 match kind_id {
                     id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
-                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in TermGroupQuantifierTransportSlot"))?,
+                        text: ::sittir_core::boundary::property(env, napi_val, c"$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in TermGroupQuantifierTransportSlot"))?,
                     })),
                     67 => Ok(Self::ZeroOrMore(
                         ZeroOrMoreTransport::from_napi_value(env, napi_val)?
@@ -2347,13 +2334,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for TermGroupContentTransportSlot {
                 }
             }
             ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
                     ::napi::Error::from_reason("$type property missing in TermGroupContentTransportSlot")
                 )?;
                 match kind_id {
                     id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
-                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in TermGroupContentTransportSlot"))?,
+                        text: ::sittir_core::boundary::property(env, napi_val, c"$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in TermGroupContentTransportSlot"))?,
                     })),
                     54 => Ok(Self::StartAssertion),
                     4 => Ok(Self::EndAssertion),
@@ -2547,8 +2533,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LazyContentTransportSlot {
                 }
             }
             ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||
                     ::napi::Error::from_reason("$type property missing in LazyContentTransportSlot")
                 )?;
                 match kind_id {
@@ -3394,9 +3379,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternCharacterTransport {
                 )));
             }
             _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                layout = obj.get("$_layout")?;
-                obj.get("$text")?.unwrap_or_default()
+                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
+                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
@@ -3412,9 +3396,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternCharacterTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let layout = obj.get("$_layout")?;
+        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
+        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
         Ok(Self {
             layout,
             text,
@@ -3644,9 +3627,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PosixClassNameTransport {
                 )));
             }
             _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                layout = obj.get("$_layout")?;
-                obj.get("$text")?.unwrap_or_default()
+                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
+                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
@@ -3662,9 +3644,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PosixClassNameTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let layout = obj.get("$_layout")?;
+        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
+        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
         Ok(Self {
             layout,
             text,
@@ -3824,9 +3805,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassCharacterTransport {
                 )));
             }
             _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                layout = obj.get("$_layout")?;
-                obj.get("$text")?.unwrap_or_default()
+                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
+                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
@@ -3842,9 +3822,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassCharacterTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let layout = obj.get("$_layout")?;
+        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
+        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
         Ok(Self {
             layout,
             text,
@@ -4135,9 +4114,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for FlagsTransport {
                 )));
             }
             _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                layout = obj.get("$_layout")?;
-                obj.get("$text")?.unwrap_or_default()
+                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
+                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
@@ -4153,9 +4131,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for FlagsTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let layout = obj.get("$_layout")?;
+        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
+        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
         Ok(Self {
             layout,
             text,
@@ -4248,9 +4225,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ZeroOrMoreTransport {
                 )));
             }
             _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                layout = obj.get("$_layout")?;
-                obj.get("$text")?.unwrap_or_default()
+                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
+                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
@@ -4266,9 +4242,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ZeroOrMoreTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let layout = obj.get("$_layout")?;
+        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
+        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
         Ok(Self {
             layout,
             text,
@@ -4361,9 +4336,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for OneOrMoreTransport {
                 )));
             }
             _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                layout = obj.get("$_layout")?;
-                obj.get("$text")?.unwrap_or_default()
+                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
+                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
@@ -4379,9 +4353,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for OneOrMoreTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let layout = obj.get("$_layout")?;
+        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
+        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
         Ok(Self {
             layout,
             text,
@@ -4474,9 +4447,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalTransport {
                 )));
             }
             _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                layout = obj.get("$_layout")?;
-                obj.get("$text")?.unwrap_or_default()
+                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
+                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
@@ -4492,9 +4464,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let layout = obj.get("$_layout")?;
+        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
+        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
         Ok(Self {
             layout,
             text,
@@ -4782,9 +4753,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecimalEscapeTransport {
                 )));
             }
             _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                layout = obj.get("$_layout")?;
-                obj.get("$text")?.unwrap_or_default()
+                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
+                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
@@ -4800,9 +4770,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecimalEscapeTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let layout = obj.get("$_layout")?;
+        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
+        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
         Ok(Self {
             layout,
             text,
@@ -4956,9 +4925,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnicodeCharacterEscapeTransport 
                 )));
             }
             _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                layout = obj.get("$_layout")?;
-                obj.get("$text")?.unwrap_or_default()
+                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
+                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
@@ -4974,9 +4942,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnicodeCharacterEscapeTransport 
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let layout = obj.get("$_layout")?;
+        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
+        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
         Ok(Self {
             layout,
             text,
@@ -5136,9 +5103,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnicodePropertyValueTransport {
                 )));
             }
             _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                layout = obj.get("$_layout")?;
-                obj.get("$text")?.unwrap_or_default()
+                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
+                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
@@ -5154,9 +5120,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnicodePropertyValueTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let layout = obj.get("$_layout")?;
+        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
+        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
         Ok(Self {
             layout,
             text,
@@ -5249,9 +5214,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ControlEscapeTransport {
                 )));
             }
             _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                layout = obj.get("$_layout")?;
-                obj.get("$text")?.unwrap_or_default()
+                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
+                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
@@ -5267,9 +5231,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ControlEscapeTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let layout = obj.get("$_layout")?;
+        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
+        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
         Ok(Self {
             layout,
             text,
@@ -5362,9 +5325,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ControlLetterEscapeTransport {
                 )));
             }
             _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                layout = obj.get("$_layout")?;
-                obj.get("$text")?.unwrap_or_default()
+                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
+                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
@@ -5380,9 +5342,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ControlLetterEscapeTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let layout = obj.get("$_layout")?;
+        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
+        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
         Ok(Self {
             layout,
             text,
@@ -5536,9 +5497,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for GroupNameTransport {
                 )));
             }
             _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                layout = obj.get("$_layout")?;
-                obj.get("$text")?.unwrap_or_default()
+                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
+                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
@@ -5554,9 +5514,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for GroupNameTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let layout = obj.get("$_layout")?;
+        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
+        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
         Ok(Self {
             layout,
             text,
@@ -5649,9 +5608,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecimalDigitsTransport {
                 )));
             }
             _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                layout = obj.get("$_layout")?;
-                obj.get("$text")?.unwrap_or_default()
+                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
+                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
@@ -5667,9 +5625,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecimalDigitsTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let layout = obj.get("$_layout")?;
+        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
+        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
         Ok(Self {
             layout,
             text,
@@ -6091,9 +6048,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassEscapeText1Transpo
                 )));
             }
             _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                layout = obj.get("$_layout")?;
-                obj.get("$text")?.unwrap_or_default()
+                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
+                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
@@ -6109,9 +6065,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassEscapeText1Transpo
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let layout = obj.get("$_layout")?;
+        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
+        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
         Ok(Self {
             layout,
             text,
@@ -6204,9 +6159,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassEscapeText2Transpo
                 )));
             }
             _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                layout = obj.get("$_layout")?;
-                obj.get("$text")?.unwrap_or_default()
+                layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
+                ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default()
             }
         };
         Ok(Self {
@@ -6222,9 +6176,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassEscapeText2Transpo
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let layout = obj.get("$_layout")?;
+        let text: String = ::sittir_core::boundary::property(env, napi_val, c"$text")?.unwrap_or_default();
+        let layout = ::sittir_core::boundary::property(env, napi_val, c"$_layout")?;
         Ok(Self {
             layout,
             text,

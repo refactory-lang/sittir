@@ -142,13 +142,15 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNap
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        Ok(Self {
-            trivia: obj.get("trivia")?,
-            edges: None,
-            gap: obj.get("gap")?,
-            flank: obj.get("flank")?,
-        })
+        use crate::boundary::property;
+        unsafe {
+            Ok(Self {
+                trivia: property(env, napi_val, c"trivia")?,
+                edges: None,
+                gap: property(env, napi_val, c"gap")?,
+                flank: property(env, napi_val, c"flank")?,
+            })
+        }
     }
 }
 

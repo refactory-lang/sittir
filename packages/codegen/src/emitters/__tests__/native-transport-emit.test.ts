@@ -406,7 +406,7 @@ describe('native transport emission', () => {
 		const semiId = kindIdOf(generatedIdTables, 'semi');
 
 		expect(emitted.transportRs.contents).toContain('pub enum AnyTransport');
-		expect(emitted.transportRs.contents).toContain('obj.get::<u16>("$type")?');
+		expect(emitted.transportRs.contents).toContain('::sittir_core::boundary::property::<u16>(env, napi_val, c"$type")?');
 		expect(emitted.transportRs.contents).toContain('CallExpression(CallExpressionTransport),');
 		expect(emitted.transportRs.contents).toContain('pub struct CallExpressionTransport');
 		expect(emitted.transportRs.contents).toContain('pub callee: ::sittir_core::SlotValue<ExpressionTransport>,');
@@ -627,7 +627,7 @@ describe('native transport emission', () => {
 		// "unknown kind id" error for anything unrecognized — same intent as
 		// the old `if X.is_ok() || Y.is_ok()` idiom, current code shape.
 		expect(emitted).toContain('::napi::ValueType::Object => {');
-		expect(emitted).toContain('let kind_id: u16 = obj.get("$type")?.ok_or_else(||');
+		expect(emitted).toContain('let kind_id: u16 = ::sittir_core::boundary::property(env, napi_val, c"$type")?.ok_or_else(||');
 		expect(emitted).toContain('"unknown kind id {other} in ObjectLikeContentTransportSlot"');
 	});
 
