@@ -1,5 +1,6 @@
 import type { AnyUntypedNode, ByteSpan, ErrorNode, LineGap, LineGapAddress, LineGaps, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
+import { markChangedInPlace } from './tree-token.ts';
 import { carryRead, carrySource, detachCoordinate, holdsSlots, isRead, isStorageKey, sourceOf, type DerivedSides } from './transport-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
@@ -171,6 +172,7 @@ function carryEdit(from: object, to: object): void {
 }
 
 function markWritten(node: object, side: TriviaSideName): void {
+	markChangedInPlace(node);
 	const sides = writtenSides.get(node) ?? new Set<TriviaSideName>();
 	sides.add(side);
 	writtenSides.set(node, sides);

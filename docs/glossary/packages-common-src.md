@@ -70,6 +70,18 @@ Records the engine handle that read a tree, so the wrap layer can find it from t
 
 Records the tree handle a parse made under the tree's token, so anything holding the token reaches the handle (`treeOf`). A weak entry: the handle lives exactly as long as the token, which every node of the tree holds.
 
+### `packages/common/src/tree-token.ts::markChangedInPlace`
+
+Records that a node was changed where it stands rather than rebuilt: a trivia writer stored a comment on it, or detached its coordinate. The node and the tree it holds are both recorded, since its ancestors still hold their coordinates and only the tree can say they may no longer match their bytes. The two in-place writers call it: `markWritten` and `detachCoordinate`.
+
+### `packages/common/src/tree-token.ts::changedInPlace`
+
+Whether this node was changed in place (`markChangedInPlace`).
+
+### `packages/common/src/tree-token.ts::holdsUnchangedParse`
+
+Whether a node holds a tree a parse registered (`registerTree`) and nothing in that tree was changed in place. For such a node holding its coordinate proves nothing below it was rebuilt, so the fold needs no walk. Data whose token no parse registered (hand-assembled data) answers no.
+
 ### `packages/common/src/tree-token.ts::treeOf`
 
 The tree handle of the parse a node was read from, through the token the node holds; `undefined` for a node that holds no tree (a built node, a draft, a copy that lost its token).
@@ -331,7 +343,7 @@ The tree a node's handle names, whichever of `$handle` (its own), `$parentHandle
 
 ### `packages/common/src/transport-data.ts::canFold`
 
-Whether a node crosses to the render as its coordinate (its span and the tree that span slices) in place of its storage: it names its tree, carries no trivia outside its span, and nothing below it was rebuilt. Read depth plays no part: an untouched node renders its source bytes however it was read. That holds because every node a read hands back names its tree: the read's root by its own handle, a stub by its parent's, and a child the read expanded by the tree's tag. An edit detaches the coordinate of the node it rebuilds, so each untouched child below it is then the node that folds, and it must be able to name the tree itself. Below the node that folds a span is the whole requirement, since its bytes carry everything under it. The trivia it is judged by is the trivia it crosses with (`TriviaOf`), so a read node that owns a line-break run outside its span does not fold. A node that cannot fold (it was rebuilt, or it owns leading or trailing trivia) crosses as its stored slots, which the generated wrap keeps in model shape at every level (`storeExpanded`).
+Whether a node crosses to the render as its coordinate (its span and the tree that span slices) in place of its storage: it names its tree, carries no trivia outside its span, and nothing below it was rebuilt. Read depth plays no part: an untouched node renders its source bytes however it was read. Nor does it cost anything: on a tree a parse registered (`holdsUnchangedParse`) a node that still holds its coordinate has nothing rebuilt below it, because every rebuild goes through `markEdited`, which detaches the coordinate of the node it rebuilds, and `$with` rebuilds each ancestor up to the edit. So the check is local, however much of the tree was expanded. The walk below (`isUntouchedBelow`) runs only for data no parse registered (hand-assembled test and tool data) and for a tree changed in place, where a trivia writer has changed a node without rebuilding its ancestors; there a node changed in place (`changedInPlace`) keeps every ancestor from folding, so a comment written on a nested node renders. That holds because every node a read hands back names its tree: the read's root by its own handle, a stub by its parent's, and a child the read expanded by the tree's tag. An edit detaches the coordinate of the node it rebuilds, so each untouched child below it is then the node that folds, and it must be able to name the tree itself. Below the node that folds a span is the whole requirement, since its bytes carry everything under it. The trivia it is judged by is the trivia it crosses with (`TriviaOf`), so a read node that owns a line-break run outside its span does not fold. A node that cannot fold (it was rebuilt, or it owns leading or trailing trivia) crosses as its stored slots, which the generated wrap keeps in model shape at every level (`storeExpanded`).
 
 ### `packages/common/src/transport-data.ts::TriviaView`
 
