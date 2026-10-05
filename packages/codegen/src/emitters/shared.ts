@@ -342,12 +342,12 @@ export function classifyPrimitiveField(
 ): PrimitiveFieldStorage | undefined {
 	if (isMultiple(field)) return undefined;
 	if (field.values.length === 0) return undefined;
-	if (!field.values.every((v) => isTerminalValue(v) || isPatternValue(v))) return undefined;
 	const info = resolveFieldStorageInfo(field, nodeMap);
 	if (info.kind === 'boolean') {
 		const text = info.texts[0];
 		return text !== undefined ? { kind: 'boolean', text } : undefined;
 	}
+	if (!field.values.every((v) => isTerminalValue(v) || isPatternValue(v))) return undefined;
 	if (info.kind === 'verbatim') return { kind: 'verbatim' };
 	if (info.kind === 'kindEnum' && info.enumKinds.every((k) => nodeMap.nodes.get(k)?.hidden === false)) {
 		return { kind: 'verbatim' };

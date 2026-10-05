@@ -178,7 +178,7 @@ export interface CharacterClassTransport {
   _leading?: boolean
   _class_atoms?: Array<SlotValue<CharacterClassClassAtomsTransportSlot>>
   _trailing?: boolean
-  _negation?: SlotValue<NegationTransport>
+  _negation?: boolean
 }
 
 export interface ClassRangeTransport {

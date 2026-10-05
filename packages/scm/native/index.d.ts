@@ -204,7 +204,7 @@ export interface GroupingGroupTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _group_expression: SlotValue<GroupExpressionArmLeftTransportSlot>
-  _anchor?: SlotValue<AnchorTransport>
+  _anchor?: boolean
 }
 
 export interface GroupingTransport {
@@ -278,7 +278,7 @@ export interface NamedNodeGroupAnchoredLastTransport {
   '$_flank'?: SourceFlank
   _named_node_expressions?: Array<SlotValue<NamedNodeExpressionArmLeftTransportSlot>>
   _last: SlotValue<Box<NamedNodeExpressionArmLeftTransportSlot>>
-  _anchor?: SlotValue<AnchorTransport>
+  _anchor?: boolean
   _named_node_expressions_separator_space?: number
 }
 
@@ -288,7 +288,7 @@ export interface NamedNodeGroupChildrenTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _named_node_expressions: Array<SlotValue<NamedNodeExpressionArmLeftTransportSlot>>
-  _anchor?: SlotValue<AnchorTransport>
+  _anchor?: boolean
   _named_node_expressions_separator_space?: number
 }
 

@@ -804,7 +804,7 @@ export interface FieldPatternNamedTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _ref?: boolean
-  _mutable?: SlotValue<MutableSpecifierTransport>
+  _mutable?: boolean
   _name: SlotValue<FieldIdentifierTransport>
   _pattern: SlotValue<PatternTransport>
 }
@@ -815,7 +815,7 @@ export interface FieldPatternShorthandTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _ref?: boolean
-  _mutable?: SlotValue<MutableSpecifierTransport>
+  _mutable?: boolean
   _name: SlotValue<ShorthandFieldIdentifierTransport>
 }
 
@@ -991,7 +991,7 @@ export interface ImplItemBodyTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _unsafe?: SlotValue<ImplItemUnsafeMarkerTransport>
+  _unsafe?: boolean
   _type_parameters?: SlotValue<TypeParametersTransport>
   _trait_clause?: SlotValue<ImplItemBodyTraitClauseTransportSlot>
   _type: SlotValue<TypeTransport>
@@ -1020,7 +1020,7 @@ export interface ImplItemSemiTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _unsafe?: SlotValue<ImplItemUnsafeMarkerTransport>
+  _unsafe?: boolean
   _type_parameters?: SlotValue<TypeParametersTransport>
   _trait_clause?: SlotValue<ImplItemBodyTraitClauseTransportSlot>
   _type: SlotValue<TypeTransport>
@@ -1125,7 +1125,7 @@ export interface LetDeclarationTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _mutable?: SlotValue<MutableSpecifierTransport>
+  _mutable?: boolean
   _pattern: SlotValue<PatternTransport>
   _type?: SlotValue<TypeTransport>
   _value?: SlotValue<ExpressionTransport>
@@ -1425,7 +1425,7 @@ export interface ParameterTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _mutable?: SlotValue<MutableSpecifierTransport>
+  _mutable?: boolean
   _name: SlotValue<ParameterNameTransportSlot>
   _type: SlotValue<TypeTransport>
 }
@@ -1582,7 +1582,7 @@ export interface ReferencePatternTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _mutable?: SlotValue<MutableSpecifierTransport>
+  _mutable?: boolean
   _pattern: SlotValue<Box<PatternTransport>>
 }
 
@@ -1592,7 +1592,7 @@ export interface ReferenceTypeTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _lifetime?: SlotValue<LifetimeTransport>
-  _mutable?: SlotValue<MutableSpecifierTransport>
+  _mutable?: boolean
   _type: SlotValue<Box<TypeTransport>>
 }
 
@@ -1663,7 +1663,7 @@ export interface SelfParameterTransport {
   '$_flank'?: SourceFlank
   _reference?: boolean
   _lifetime?: SlotValue<LifetimeTransport>
-  _mutable?: SlotValue<MutableSpecifierTransport>
+  _mutable?: boolean
 }
 
 export interface ShebangTransport {
@@ -1717,7 +1717,7 @@ export interface StaticItemTransport {
   '$_flank'?: SourceFlank
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _ref?: boolean
-  _mutable?: SlotValue<MutableSpecifierTransport>
+  _mutable?: boolean
   _name: SlotValue<IdentifierTransport>
   _type: SlotValue<TypeTransport>
   _value?: SlotValue<ExpressionTransport>
@@ -2180,7 +2180,7 @@ export interface VariadicParameterTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _mutable?: SlotValue<MutableSpecifierTransport>
+  _mutable?: boolean
   _pattern?: SlotValue<PatternTransport>
 }
 

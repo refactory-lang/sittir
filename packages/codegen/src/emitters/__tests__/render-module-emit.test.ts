@@ -280,28 +280,37 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 		expect(fnBody).not.toContain('render_block');
 	});
 
-	it('leaf transport napi impls accept strings, structured objects, and boolean-presence leaves', async () => {
+	it('leaf transport napi impls accept strings and structured objects', async () => {
 		// napi typeof-dispatch transport fix: leaf FromNapiValue impls now
 		// branch on `transport_value_type(env, napi_val)?` up front instead of
-		// speculatively trying `String::from_napi_value`/`bool::from_napi_value`
-		// and catching failures — calling `String::from_napi_value` on a
-		// non-string input had a bad failure path (JSON.stringify on Object
-		// inputs). Same accept surface (string / object $text / boolean
-		// presence), different, safer dispatch shape.
+		// speculatively trying `String::from_napi_value` and catching failures —
+		// calling `String::from_napi_value` on a non-string input had a bad
+		// failure path (JSON.stringify on Object inputs).
 		const src = await getTypescriptTransportRs();
 		expect(src).toContain('::napi::ValueType::String => String::from_napi_value(env, napi_val)?,');
 		expect(src).toContain('obj.get("$text")?.unwrap_or_default()');
-		expect(src).toContain('::napi::ValueType::Boolean => {');
-		expect(src).toContain('if !bool::from_napi_value(env, napi_val)? {');
-		expect(src).toContain('received false; omit the field instead of sending false');
 	});
 
-	it('leaf token transport napi impls recover literal text from numeric kind ids', async () => {
+	it('a presence slot holding a keyword kind crosses as a boolean and renders the kind', async () => {
+		const src = await getRustTemplatesRs();
+		expect(extractStructBody(src, 'ReferenceTypeTransport')).toContain('pub mutable: Option<bool>,');
+		expect(extractFnBody(src, 'render_reference_type')).toContain(
+			'let mutable = View::new(::sittir_core::view::Presence::new(node.mutable, MutableSpecifierTransport::MutableSpecifier), "{}");'
+		);
+		expect(src).not.toContain('::napi::ValueType::Boolean');
+	});
+
+	it('a fixed-text kind decodes its numeric kind id into its unit, which writes the kind text', async () => {
 		const src = await getTypescriptTransportRs();
-		// Raw kind_id (Number) input is matched directly via the same
-		// transport_value_type dispatch, not a speculative u16 try-parse.
-		expect(src).toContain('::napi::ValueType::Number => "+".to_string(),');
-		expect(src).toContain('obj.get("$text")?.unwrap_or_else(|| "+".to_string())');
+		const from = src.indexOf('impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {');
+		expect(from).toBeGreaterThan(-1);
+		const decoder = src.slice(from, src.indexOf('\n}\n', from));
+		expect(decoder).toContain('match u16::from_napi_value(env, napi_val)? {');
+		expect(decoder).toMatch(/^ {12}\d+ => Ok\(Self::Plus\),$/m);
+		expect(decoder).not.toContain('ValueType');
+		expect(src).toMatch(
+			/fn render_plus\(w: &mut dyn ::sittir_core::render::RenderSink\) -> ::sittir_core::render::RenderResult \{\n    w\.text\("\+"\)\?;/
+		);
 	});
 });
 
@@ -397,12 +406,12 @@ describe('render options on transports', () => {
 	it('a literal arm of a per-slot child enum writes its owner-kind seam sites around the literal from the resolved options', async () => {
 		const src = await getTypescriptTransportRs();
 		const enumSrc = src.slice(src.indexOf('pub enum LexicalDeclarationTerminatorTransportSlot {'));
-		expect(enumSrc.slice(0, enumSrc.indexOf('\n}\n'))).toMatch(/Literal3_73_65_6d_69,/);
+		expect(enumSrc.slice(0, enumSrc.indexOf('\n}\n'))).toMatch(/^    Semi,$/m);
 		const render = src.slice(
 			src.indexOf('impl ::sittir_core::render::Render for LexicalDeclarationTerminatorTransportSlot {')
 		);
 		expect(render.slice(0, render.indexOf('\n}\n'))).toMatch(
-			/Literal3_73_65_6d_69 => \{\s*w\.site_at\(options::SITE_LEXICAL_DECLARATION_SEMI_BEFORE\);\s*let written = w\.text\(";"\);/
+			/Semi => \{\s*w\.site_at\(options::SITE_LEXICAL_DECLARATION_SEMI_BEFORE\);\s*let written = render_semi\(w\);/
 		);
 	});
 
@@ -448,7 +457,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		)?.id;
 		expect(tokenId).toBeDefined();
 		expect(_rustKindEntries?.some((entry) => entry.kind === '_reserved_identifier')).toBe(false);
-		expect(body).toContain(`${tokenId} => Ok(Self::DefaultKeyword(`);
+		expect(body).toContain(`${tokenId} => Ok(Self::DefaultKeyword),`);
 	});
 
 	it('gives each source-adjacent list gap its source class before the list site and the seats fill it', async () => {

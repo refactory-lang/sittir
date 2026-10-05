@@ -146,7 +146,7 @@ export interface AbstractMethodSignatureTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
-  _override?: SlotValue<OverrideModifierTransport>
+  _override?: boolean
   _accessor_kind?: SlotValue<MethodDefinitionAccessorKindTransportSlot>
   _name: SlotValue<MethodDefinitionNameTransportSlot>
   _optional?: boolean
@@ -1339,7 +1339,7 @@ export interface MethodDefinitionTransport {
   '$_flank'?: SourceFlank
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
   _static?: boolean
-  _override?: SlotValue<OverrideModifierTransport>
+  _override?: boolean
   _readonly?: boolean
   _async?: boolean
   _accessor_kind?: SlotValue<MethodDefinitionAccessorKindTransportSlot>
@@ -1358,7 +1358,7 @@ export interface MethodSignatureTransport {
   '$_flank'?: SourceFlank
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
   _static?: boolean
-  _override?: SlotValue<OverrideModifierTransport>
+  _override?: boolean
   _readonly?: boolean
   _async?: boolean
   _accessor_kind?: SlotValue<MethodDefinitionAccessorKindTransportSlot>
@@ -1604,7 +1604,7 @@ export interface OptionalParameterTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _decorator?: Array<SlotValue<DecoratorTransport>>
-  _override?: SlotValue<OverrideModifierTransport>
+  _override?: boolean
   _readonly?: boolean
   _pattern: SlotValue<RequiredParameterPatternTransportSlot>
   _type?: SlotValue<TypeAnnotationTransport>
@@ -1706,7 +1706,7 @@ export interface PropertySignatureTransport {
   '$_flank'?: SourceFlank
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
   _static?: boolean
-  _override?: SlotValue<OverrideModifierTransport>
+  _override?: boolean
   _readonly?: boolean
   _name: SlotValue<MethodDefinitionNameTransportSlot>
   _optional?: boolean
@@ -1722,7 +1722,7 @@ export interface PublicFieldDefinitionTransport {
   _declare?: boolean
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
   _static?: boolean
-  _override?: SlotValue<OverrideModifierTransport>
+  _override?: boolean
   _readonly?: boolean
   _abstract?: boolean
   _accessor?: boolean
@@ -1756,7 +1756,7 @@ export interface RequiredParameterTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _decorator?: Array<SlotValue<DecoratorTransport>>
-  _override?: SlotValue<OverrideModifierTransport>
+  _override?: boolean
   _readonly?: boolean
   _pattern: SlotValue<RequiredParameterPatternTransportSlot>
   _type?: SlotValue<TypeAnnotationTransport>
@@ -1873,7 +1873,7 @@ export interface SubscriptExpressionTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _object: SlotValue<Box<SubscriptExpressionObjectTransportSlot>>
-  _optional_chain?: SlotValue<OptionalChainTransport>
+  _optional_chain?: boolean
   _index: SlotValue<Box<ExpressionStatementExpressionTransportSlot>>
 }
 
@@ -2146,7 +2146,7 @@ export interface TypeQuerySubscriptExpressionTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _object: SlotValue<Box<TypeQueryMemberExpressionObjectTransportSlot>>
-  _optional_chain?: SlotValue<OptionalChainMarkerTransport>
+  _optional_chain?: boolean
   _index: SlotValue<TypeQuerySubscriptExpressionIndexTransportSlot>
 }
 

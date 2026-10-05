@@ -1,6 +1,12 @@
 import type { KindParserMetadata, NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
-import { findEntryForKindName, findEntryForLiteralText, modelKindOfEntry, symbolNameIsNotable } from '../dsl/symbol-table.ts';
+import {
+	findEntryForKindName,
+	findEntryForLiteralText,
+	kindKeyOfText,
+	modelKindOfEntry,
+	symbolNameIsNotable
+} from '../dsl/symbol-table.ts';
 import { compareOrdinal } from './shared.ts';
 import { kindTypeName } from '../compiler/model/casing.ts';
 
@@ -26,7 +32,7 @@ export function kindIdMemberName(nodeMap: NodeMap, kind: string): string {
 	const typeName = nodeMap.nodes.get(kind)?.typeName;
 	if (typeName) return typeName;
 	const prefix = kind.match(/^_+/)?.[0] ?? '';
-	return `${prefix}${kindTypeName(kind)}`;
+	return `${prefix}${kindTypeName(kindKeyOfText(kind))}`;
 }
 
 export function collectCatalogKinds(generatedIdTables: GeneratedIdTables): readonly string[] {

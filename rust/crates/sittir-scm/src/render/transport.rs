@@ -46,43 +46,35 @@ pub enum AnyTransport {
     NamedNodeExpressionArm(NamedNodeExpressionArmTransport),
     GroupingGroup(GroupingGroupTransport),
     StringContentText(StringContentTextTransport),
-    Anchor(AnchorTransport),
     NamedNodePlain(NamedNodePlainTransport),
     NamedNodeSupertyped(NamedNodeSupertypedTransport),
     NamedNodeGroupChildren(NamedNodeGroupChildrenTransport),
     NamedNodeGroupAnchoredLast(NamedNodeGroupAnchoredLastTransport),
-    Tight(TightTransport),
-    Space(SpaceTransport),
-    Tab(TabTransport),
-    Newline(NewlineTransport),
-    Blankline(BlanklineTransport),
-    DoubleBlankline(DoubleBlanklineTransport),
-    Indent(IndentTransport),
-    Dedent(DedentTransport),
-    Star(StarTransport),
-    Plus(PlusTransport),
-    Qmark(QmarkTransport),
-    At(AtTransport),
-    Dquote(DquoteTransport),
-    Lbrack(LbrackTransport),
-    Rbrack(RbrackTransport),
-    Lparen(LparenTransport),
-    Rparen(RparenTransport),
-    MissingKeyword(MissingKeywordTransport),
-    Underscore(UnderscoreTransport),
-    Colon(ColonTransport),
-    Bang(BangTransport),
-    Pound(PoundTransport),
-    Dot(DotTransport),
-    Slash(SlashTransport),
-    Literal0_75_6e_64_65_72_73_63_6f_72_65,
-    Literal1_70_6f_75_6e_64,
-    Literal2_64_6f_74,
-    Literal3_71_6d_61_72_6b,
-    Literal4_62_61_6e_67,
-    Literal5_73_74_61_72,
-    Literal6_70_6c_75_73,
-    Literal7_61_6e_63_68_6f_72,
+    Anchor,
+    Tight,
+    Space,
+    Tab,
+    Newline,
+    Blankline,
+    DoubleBlankline,
+    Indent,
+    Dedent,
+    Star,
+    Plus,
+    Qmark,
+    At,
+    Dquote,
+    Lbrack,
+    Rbrack,
+    Lparen,
+    Rparen,
+    MissingKeyword,
+    Underscore,
+    Colon,
+    Bang,
+    Pound,
+    Dot,
+    Slash,
     Verbatim(VerbatimTransport),
 }
 
@@ -113,43 +105,35 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::NamedNodeExpressionArm(t) => t.prepare(ctx),
             AnyTransport::GroupingGroup(t) => t.prepare(ctx),
             AnyTransport::StringContentText(t) => t.prepare(ctx),
-            AnyTransport::Anchor(t) => t.prepare(ctx),
             AnyTransport::NamedNodePlain(t) => t.prepare(ctx),
             AnyTransport::NamedNodeSupertyped(t) => t.prepare(ctx),
             AnyTransport::NamedNodeGroupChildren(t) => t.prepare(ctx),
             AnyTransport::NamedNodeGroupAnchoredLast(t) => t.prepare(ctx),
-            AnyTransport::Tight(t) => t.prepare(ctx),
-            AnyTransport::Space(t) => t.prepare(ctx),
-            AnyTransport::Tab(t) => t.prepare(ctx),
-            AnyTransport::Newline(t) => t.prepare(ctx),
-            AnyTransport::Blankline(t) => t.prepare(ctx),
-            AnyTransport::DoubleBlankline(t) => t.prepare(ctx),
-            AnyTransport::Indent(t) => t.prepare(ctx),
-            AnyTransport::Dedent(t) => t.prepare(ctx),
-            AnyTransport::Star(t) => t.prepare(ctx),
-            AnyTransport::Plus(t) => t.prepare(ctx),
-            AnyTransport::Qmark(t) => t.prepare(ctx),
-            AnyTransport::At(t) => t.prepare(ctx),
-            AnyTransport::Dquote(t) => t.prepare(ctx),
-            AnyTransport::Lbrack(t) => t.prepare(ctx),
-            AnyTransport::Rbrack(t) => t.prepare(ctx),
-            AnyTransport::Lparen(t) => t.prepare(ctx),
-            AnyTransport::Rparen(t) => t.prepare(ctx),
-            AnyTransport::MissingKeyword(t) => t.prepare(ctx),
-            AnyTransport::Underscore(t) => t.prepare(ctx),
-            AnyTransport::Colon(t) => t.prepare(ctx),
-            AnyTransport::Bang(t) => t.prepare(ctx),
-            AnyTransport::Pound(t) => t.prepare(ctx),
-            AnyTransport::Dot(t) => t.prepare(ctx),
-            AnyTransport::Slash(t) => t.prepare(ctx),
-            AnyTransport::Literal0_75_6e_64_65_72_73_63_6f_72_65 => Ok(()),
-            AnyTransport::Literal1_70_6f_75_6e_64 => Ok(()),
-            AnyTransport::Literal2_64_6f_74 => Ok(()),
-            AnyTransport::Literal3_71_6d_61_72_6b => Ok(()),
-            AnyTransport::Literal4_62_61_6e_67 => Ok(()),
-            AnyTransport::Literal5_73_74_61_72 => Ok(()),
-            AnyTransport::Literal6_70_6c_75_73 => Ok(()),
-            AnyTransport::Literal7_61_6e_63_68_6f_72 => Ok(()),
+            AnyTransport::Anchor => Ok(()),
+            AnyTransport::Tight => Ok(()),
+            AnyTransport::Space => Ok(()),
+            AnyTransport::Tab => Ok(()),
+            AnyTransport::Newline => Ok(()),
+            AnyTransport::Blankline => Ok(()),
+            AnyTransport::DoubleBlankline => Ok(()),
+            AnyTransport::Indent => Ok(()),
+            AnyTransport::Dedent => Ok(()),
+            AnyTransport::Star => Ok(()),
+            AnyTransport::Plus => Ok(()),
+            AnyTransport::Qmark => Ok(()),
+            AnyTransport::At => Ok(()),
+            AnyTransport::Dquote => Ok(()),
+            AnyTransport::Lbrack => Ok(()),
+            AnyTransport::Rbrack => Ok(()),
+            AnyTransport::Lparen => Ok(()),
+            AnyTransport::Rparen => Ok(()),
+            AnyTransport::MissingKeyword => Ok(()),
+            AnyTransport::Underscore => Ok(()),
+            AnyTransport::Colon => Ok(()),
+            AnyTransport::Bang => Ok(()),
+            AnyTransport::Pound => Ok(()),
+            AnyTransport::Dot => Ok(()),
+            AnyTransport::Slash => Ok(()),
             AnyTransport::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -179,43 +163,35 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::NamedNodeExpressionArm(t) => t.source_gap(),
             AnyTransport::GroupingGroup(t) => t.source_gap(),
             AnyTransport::StringContentText(t) => t.source_gap(),
-            AnyTransport::Anchor(t) => t.source_gap(),
             AnyTransport::NamedNodePlain(t) => t.source_gap(),
             AnyTransport::NamedNodeSupertyped(t) => t.source_gap(),
             AnyTransport::NamedNodeGroupChildren(t) => t.source_gap(),
             AnyTransport::NamedNodeGroupAnchoredLast(t) => t.source_gap(),
-            AnyTransport::Tight(t) => t.source_gap(),
-            AnyTransport::Space(t) => t.source_gap(),
-            AnyTransport::Tab(t) => t.source_gap(),
-            AnyTransport::Newline(t) => t.source_gap(),
-            AnyTransport::Blankline(t) => t.source_gap(),
-            AnyTransport::DoubleBlankline(t) => t.source_gap(),
-            AnyTransport::Indent(t) => t.source_gap(),
-            AnyTransport::Dedent(t) => t.source_gap(),
-            AnyTransport::Star(t) => t.source_gap(),
-            AnyTransport::Plus(t) => t.source_gap(),
-            AnyTransport::Qmark(t) => t.source_gap(),
-            AnyTransport::At(t) => t.source_gap(),
-            AnyTransport::Dquote(t) => t.source_gap(),
-            AnyTransport::Lbrack(t) => t.source_gap(),
-            AnyTransport::Rbrack(t) => t.source_gap(),
-            AnyTransport::Lparen(t) => t.source_gap(),
-            AnyTransport::Rparen(t) => t.source_gap(),
-            AnyTransport::MissingKeyword(t) => t.source_gap(),
-            AnyTransport::Underscore(t) => t.source_gap(),
-            AnyTransport::Colon(t) => t.source_gap(),
-            AnyTransport::Bang(t) => t.source_gap(),
-            AnyTransport::Pound(t) => t.source_gap(),
-            AnyTransport::Dot(t) => t.source_gap(),
-            AnyTransport::Slash(t) => t.source_gap(),
-            AnyTransport::Literal0_75_6e_64_65_72_73_63_6f_72_65 => None,
-            AnyTransport::Literal1_70_6f_75_6e_64 => None,
-            AnyTransport::Literal2_64_6f_74 => None,
-            AnyTransport::Literal3_71_6d_61_72_6b => None,
-            AnyTransport::Literal4_62_61_6e_67 => None,
-            AnyTransport::Literal5_73_74_61_72 => None,
-            AnyTransport::Literal6_70_6c_75_73 => None,
-            AnyTransport::Literal7_61_6e_63_68_6f_72 => None,
+            AnyTransport::Anchor => None,
+            AnyTransport::Tight => None,
+            AnyTransport::Space => None,
+            AnyTransport::Tab => None,
+            AnyTransport::Newline => None,
+            AnyTransport::Blankline => None,
+            AnyTransport::DoubleBlankline => None,
+            AnyTransport::Indent => None,
+            AnyTransport::Dedent => None,
+            AnyTransport::Star => None,
+            AnyTransport::Plus => None,
+            AnyTransport::Qmark => None,
+            AnyTransport::At => None,
+            AnyTransport::Dquote => None,
+            AnyTransport::Lbrack => None,
+            AnyTransport::Rbrack => None,
+            AnyTransport::Lparen => None,
+            AnyTransport::Rparen => None,
+            AnyTransport::MissingKeyword => None,
+            AnyTransport::Underscore => None,
+            AnyTransport::Colon => None,
+            AnyTransport::Bang => None,
+            AnyTransport::Pound => None,
+            AnyTransport::Dot => None,
+            AnyTransport::Slash => None,
             AnyTransport::Verbatim(t) => t.source_gap(),
         }
     }
@@ -245,43 +221,35 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::NamedNodeExpressionArm(t) => t.gap_edges(),
             AnyTransport::GroupingGroup(t) => t.gap_edges(),
             AnyTransport::StringContentText(t) => t.gap_edges(),
-            AnyTransport::Anchor(t) => t.gap_edges(),
             AnyTransport::NamedNodePlain(t) => t.gap_edges(),
             AnyTransport::NamedNodeSupertyped(t) => t.gap_edges(),
             AnyTransport::NamedNodeGroupChildren(t) => t.gap_edges(),
             AnyTransport::NamedNodeGroupAnchoredLast(t) => t.gap_edges(),
-            AnyTransport::Tight(t) => t.gap_edges(),
-            AnyTransport::Space(t) => t.gap_edges(),
-            AnyTransport::Tab(t) => t.gap_edges(),
-            AnyTransport::Newline(t) => t.gap_edges(),
-            AnyTransport::Blankline(t) => t.gap_edges(),
-            AnyTransport::DoubleBlankline(t) => t.gap_edges(),
-            AnyTransport::Indent(t) => t.gap_edges(),
-            AnyTransport::Dedent(t) => t.gap_edges(),
-            AnyTransport::Star(t) => t.gap_edges(),
-            AnyTransport::Plus(t) => t.gap_edges(),
-            AnyTransport::Qmark(t) => t.gap_edges(),
-            AnyTransport::At(t) => t.gap_edges(),
-            AnyTransport::Dquote(t) => t.gap_edges(),
-            AnyTransport::Lbrack(t) => t.gap_edges(),
-            AnyTransport::Rbrack(t) => t.gap_edges(),
-            AnyTransport::Lparen(t) => t.gap_edges(),
-            AnyTransport::Rparen(t) => t.gap_edges(),
-            AnyTransport::MissingKeyword(t) => t.gap_edges(),
-            AnyTransport::Underscore(t) => t.gap_edges(),
-            AnyTransport::Colon(t) => t.gap_edges(),
-            AnyTransport::Bang(t) => t.gap_edges(),
-            AnyTransport::Pound(t) => t.gap_edges(),
-            AnyTransport::Dot(t) => t.gap_edges(),
-            AnyTransport::Slash(t) => t.gap_edges(),
-            AnyTransport::Literal0_75_6e_64_65_72_73_63_6f_72_65 => None,
-            AnyTransport::Literal1_70_6f_75_6e_64 => None,
-            AnyTransport::Literal2_64_6f_74 => None,
-            AnyTransport::Literal3_71_6d_61_72_6b => None,
-            AnyTransport::Literal4_62_61_6e_67 => None,
-            AnyTransport::Literal5_73_74_61_72 => None,
-            AnyTransport::Literal6_70_6c_75_73 => None,
-            AnyTransport::Literal7_61_6e_63_68_6f_72 => None,
+            AnyTransport::Anchor => None,
+            AnyTransport::Tight => None,
+            AnyTransport::Space => None,
+            AnyTransport::Tab => None,
+            AnyTransport::Newline => None,
+            AnyTransport::Blankline => None,
+            AnyTransport::DoubleBlankline => None,
+            AnyTransport::Indent => None,
+            AnyTransport::Dedent => None,
+            AnyTransport::Star => None,
+            AnyTransport::Plus => None,
+            AnyTransport::Qmark => None,
+            AnyTransport::At => None,
+            AnyTransport::Dquote => None,
+            AnyTransport::Lbrack => None,
+            AnyTransport::Rbrack => None,
+            AnyTransport::Lparen => None,
+            AnyTransport::Rparen => None,
+            AnyTransport::MissingKeyword => None,
+            AnyTransport::Underscore => None,
+            AnyTransport::Colon => None,
+            AnyTransport::Bang => None,
+            AnyTransport::Pound => None,
+            AnyTransport::Dot => None,
+            AnyTransport::Slash => None,
             AnyTransport::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -398,10 +366,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 22 => Ok(AnyTransport::StringContentText(
                     StringContentTextTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: anchor (ANCHOR)
-                58 => Ok(AnyTransport::Anchor(
-                    AnchorTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: named_node_plain (NAMED_NODE_PLAIN)
                 59 => Ok(AnyTransport::NamedNodePlain(
                     NamedNodePlainTransport::from_napi_value(env, napi_val)?
@@ -418,102 +382,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 62 => Ok(AnyTransport::NamedNodeGroupAnchoredLast(
                     NamedNodeGroupAnchoredLastTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _tight (_TIGHT)
-                24 => Ok(AnyTransport::Tight(
-                    TightTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _space (_SPACE)
-                25 => Ok(AnyTransport::Space(
-                    SpaceTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _tab (_TAB)
-                26 => Ok(AnyTransport::Tab(
-                    TabTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _newline (_NEWLINE)
-                27 => Ok(AnyTransport::Newline(
-                    NewlineTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _blankline (_BLANKLINE)
-                28 => Ok(AnyTransport::Blankline(
-                    BlanklineTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _double_blankline (_DOUBLE_BLANKLINE)
-                29 => Ok(AnyTransport::DoubleBlankline(
-                    DoubleBlanklineTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _indent (_INDENT)
-                30 => Ok(AnyTransport::Indent(
-                    IndentTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _dedent (_DEDENT)
-                31 => Ok(AnyTransport::Dedent(
-                    DedentTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: star (STAR)
-                2 => Ok(AnyTransport::Star(
-                    StarTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: plus (PLUS)
-                3 => Ok(AnyTransport::Plus(
-                    PlusTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: qmark (QMARK)
-                4 => Ok(AnyTransport::Qmark(
-                    QmarkTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: at (AT)
-                8 => Ok(AnyTransport::At(
-                    AtTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: dquote (DQUOTE)
-                9 => Ok(AnyTransport::Dquote(
-                    DquoteTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: lbrack (LBRACK)
-                12 => Ok(AnyTransport::Lbrack(
-                    LbrackTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: rbrack (RBRACK)
-                13 => Ok(AnyTransport::Rbrack(
-                    RbrackTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: lparen (LPAREN)
-                14 => Ok(AnyTransport::Lparen(
-                    LparenTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: rparen (RPAREN)
-                15 => Ok(AnyTransport::Rparen(
-                    RparenTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: MISSING_keyword (MISSING_KEYWORD)
-                16 => Ok(AnyTransport::MissingKeyword(
-                    MissingKeywordTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: underscore (UNDERSCORE)
-                7 => Ok(AnyTransport::Underscore(
-                    UnderscoreTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: colon (COLON)
-                17 => Ok(AnyTransport::Colon(
-                    ColonTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: bang (BANG)
-                18 => Ok(AnyTransport::Bang(
-                    BangTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: pound (POUND)
-                19 => Ok(AnyTransport::Pound(
-                    PoundTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: dot (DOT)
-                20 => Ok(AnyTransport::Dot(
-                    DotTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: slash (SLASH)
-                23 => Ok(AnyTransport::Slash(
-                    SlashTransport::from_napi_value(env, napi_val)?
-                )),
+                // kind: anchor
+                58 => Ok(AnyTransport::Anchor),
+                // kind: _tight
+                24 => Ok(AnyTransport::Tight),
+                // kind: _space
+                25 => Ok(AnyTransport::Space),
+                // kind: _tab
+                26 => Ok(AnyTransport::Tab),
+                // kind: _newline
+                27 => Ok(AnyTransport::Newline),
+                // kind: _blankline
+                28 => Ok(AnyTransport::Blankline),
+                // kind: _double_blankline
+                29 => Ok(AnyTransport::DoubleBlankline),
+                // kind: _indent
+                30 => Ok(AnyTransport::Indent),
+                // kind: _dedent
+                31 => Ok(AnyTransport::Dedent),
+                // kind: star
+                2 => Ok(AnyTransport::Star),
+                // kind: plus
+                3 => Ok(AnyTransport::Plus),
+                // kind: qmark
+                4 => Ok(AnyTransport::Qmark),
+                // kind: at
+                8 => Ok(AnyTransport::At),
+                // kind: dquote
+                9 => Ok(AnyTransport::Dquote),
+                // kind: lbrack
+                12 => Ok(AnyTransport::Lbrack),
+                // kind: rbrack
+                13 => Ok(AnyTransport::Rbrack),
+                // kind: lparen
+                14 => Ok(AnyTransport::Lparen),
+                // kind: rparen
+                15 => Ok(AnyTransport::Rparen),
+                // kind: MISSING_keyword
+                16 => Ok(AnyTransport::MissingKeyword),
+                // kind: underscore
+                7 => Ok(AnyTransport::Underscore),
+                // kind: colon
+                17 => Ok(AnyTransport::Colon),
+                // kind: bang
+                18 => Ok(AnyTransport::Bang),
+                // kind: pound
+                19 => Ok(AnyTransport::Pound),
+                // kind: dot
+                20 => Ok(AnyTransport::Dot),
+                // kind: slash
+                23 => Ok(AnyTransport::Slash),
                 other => Err(::napi::Error::from_reason(format!(
                     "unknown kind id {other} in AnyTransport"
                 ))),
@@ -558,11 +476,11 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AnyTransport> {
 #[derive(Debug, Clone)]
 pub enum TriviaTransport {
     Comment(CommentTransport),
-    Space(SpaceTransport),
-    Tab(TabTransport),
-    Newline(NewlineTransport),
-    Blankline(BlanklineTransport),
-    DoubleBlankline(DoubleBlanklineTransport),
+    Space,
+    Tab,
+    Newline,
+    Blankline,
+    DoubleBlankline,
     Verbatim(VerbatimTransport),
     Text(::sittir_core::trivia::TriviaText),
 }
@@ -571,11 +489,11 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
             TriviaTransport::Comment(t) => t.prepare(ctx),
-            TriviaTransport::Space(t) => t.prepare(ctx),
-            TriviaTransport::Tab(t) => t.prepare(ctx),
-            TriviaTransport::Newline(t) => t.prepare(ctx),
-            TriviaTransport::Blankline(t) => t.prepare(ctx),
-            TriviaTransport::DoubleBlankline(t) => t.prepare(ctx),
+            TriviaTransport::Space => Ok(()),
+            TriviaTransport::Tab => Ok(()),
+            TriviaTransport::Newline => Ok(()),
+            TriviaTransport::Blankline => Ok(()),
+            TriviaTransport::DoubleBlankline => Ok(()),
             TriviaTransport::Verbatim(t) => t.prepare(ctx),
             TriviaTransport::Text(t) => t.prepare(ctx),
         }
@@ -583,11 +501,11 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
             TriviaTransport::Comment(t) => t.source_gap(),
-            TriviaTransport::Space(t) => t.source_gap(),
-            TriviaTransport::Tab(t) => t.source_gap(),
-            TriviaTransport::Newline(t) => t.source_gap(),
-            TriviaTransport::Blankline(t) => t.source_gap(),
-            TriviaTransport::DoubleBlankline(t) => t.source_gap(),
+            TriviaTransport::Space => None,
+            TriviaTransport::Tab => None,
+            TriviaTransport::Newline => None,
+            TriviaTransport::Blankline => None,
+            TriviaTransport::DoubleBlankline => None,
             TriviaTransport::Verbatim(t) => t.source_gap(),
             TriviaTransport::Text(t) => t.source_gap(),
         }
@@ -595,11 +513,11 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             TriviaTransport::Comment(t) => t.gap_edges(),
-            TriviaTransport::Space(t) => t.gap_edges(),
-            TriviaTransport::Tab(t) => t.gap_edges(),
-            TriviaTransport::Newline(t) => t.gap_edges(),
-            TriviaTransport::Blankline(t) => t.gap_edges(),
-            TriviaTransport::DoubleBlankline(t) => t.gap_edges(),
+            TriviaTransport::Space => None,
+            TriviaTransport::Tab => None,
+            TriviaTransport::Newline => None,
+            TriviaTransport::Blankline => None,
+            TriviaTransport::DoubleBlankline => None,
             TriviaTransport::Verbatim(t) => t.gap_edges(),
             TriviaTransport::Text(t) => t.gap_edges(),
         }
@@ -610,11 +528,11 @@ impl ::sittir_core::render::Render for TriviaTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             TriviaTransport::Comment(t) => t.render(w),
-            TriviaTransport::Space(t) => t.render(w),
-            TriviaTransport::Tab(t) => t.render(w),
-            TriviaTransport::Newline(t) => t.render(w),
-            TriviaTransport::Blankline(t) => t.render(w),
-            TriviaTransport::DoubleBlankline(t) => t.render(w),
+            TriviaTransport::Space => render_space(w),
+            TriviaTransport::Tab => render_tab(w),
+            TriviaTransport::Newline => render_newline(w),
+            TriviaTransport::Blankline => render_blankline(w),
+            TriviaTransport::DoubleBlankline => render_double_blankline(w),
             TriviaTransport::Verbatim(t) => t.render(w),
             TriviaTransport::Text(t) => t.render(w),
         }
@@ -624,11 +542,11 @@ impl ::sittir_core::render::Render for TriviaTransport {
 impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {
     fn seam_text(&self) -> Option<&str> {
         match self {
-            TriviaTransport::Space(t) => Some(&t.text),
-            TriviaTransport::Tab(t) => Some(&t.text),
-            TriviaTransport::Newline(t) => Some(&t.text),
-            TriviaTransport::Blankline(t) => Some(&t.text),
-            TriviaTransport::DoubleBlankline(t) => Some(&t.text),
+            TriviaTransport::Space => Some(" "),
+            TriviaTransport::Tab => Some("\t"),
+            TriviaTransport::Newline => Some("\n"),
+            TriviaTransport::Blankline => Some("\n\n"),
+            TriviaTransport::DoubleBlankline => Some("\n\n\n"),
             _ => None,
         }
     }
@@ -644,11 +562,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaTransport {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     11 => Ok(Self::Comment(CommentTransport::from_napi_value(env, napi_val)?)),
-                    25 => Ok(Self::Space(SpaceTransport::from_napi_value(env, napi_val)?)),
-                    26 => Ok(Self::Tab(TabTransport::from_napi_value(env, napi_val)?)),
-                    27 => Ok(Self::Newline(NewlineTransport::from_napi_value(env, napi_val)?)),
-                    28 => Ok(Self::Blankline(BlanklineTransport::from_napi_value(env, napi_val)?)),
-                    29 => Ok(Self::DoubleBlankline(DoubleBlanklineTransport::from_napi_value(env, napi_val)?)),
+                    25 => Ok(Self::Space),
+                    26 => Ok(Self::Tab),
+                    27 => Ok(Self::Newline),
+                    28 => Ok(Self::Blankline),
+                    29 => Ok(Self::DoubleBlankline),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TriviaTransport",
                     ))),
@@ -666,11 +584,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaTransport {
                     })),
                     11 if text.is_some() => Ok(Self::Text(::sittir_core::trivia::TriviaText { kind: ::sittir_core::types::KindId(11), text: text.unwrap_or_default() })),
                     11 => Ok(Self::Comment(CommentTransport::from_napi_value(env, napi_val)?)),
-                    25 => Ok(Self::Space(SpaceTransport::from_napi_value(env, napi_val)?)),
-                    26 => Ok(Self::Tab(TabTransport::from_napi_value(env, napi_val)?)),
-                    27 => Ok(Self::Newline(NewlineTransport::from_napi_value(env, napi_val)?)),
-                    28 => Ok(Self::Blankline(BlanklineTransport::from_napi_value(env, napi_val)?)),
-                    29 => Ok(Self::DoubleBlankline(DoubleBlanklineTransport::from_napi_value(env, napi_val)?)),
+                    25 => Ok(Self::Space),
+                    26 => Ok(Self::Tab),
+                    27 => Ok(Self::Newline),
+                    28 => Ok(Self::Blankline),
+                    29 => Ok(Self::DoubleBlankline),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TriviaTransport",
                     ))),
@@ -1744,26 +1662,26 @@ impl ::sittir_core::render::Render for MissingNodeNameTransportSlot {
 #[derive(Debug, Clone)]
 pub enum AnonymousNodeNameTransportSlot {
     String(StringTransport),
-    Literal0_75_6e_64_65_72_73_63_6f_72_65,
+    Underscore,
 }
 
 impl ::sittir_core::prepare::Prepare for AnonymousNodeNameTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
             AnonymousNodeNameTransportSlot::String(t) => t.prepare(ctx),
-            AnonymousNodeNameTransportSlot::Literal0_75_6e_64_65_72_73_63_6f_72_65 => Ok(()),
+            AnonymousNodeNameTransportSlot::Underscore => Ok(()),
         }
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
             AnonymousNodeNameTransportSlot::String(t) => t.source_gap(),
-            AnonymousNodeNameTransportSlot::Literal0_75_6e_64_65_72_73_63_6f_72_65 => None,
+            AnonymousNodeNameTransportSlot::Underscore => None,
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             AnonymousNodeNameTransportSlot::String(t) => t.gap_edges(),
-            AnonymousNodeNameTransportSlot::Literal0_75_6e_64_65_72_73_63_6f_72_65 => None,
+            AnonymousNodeNameTransportSlot::Underscore => None,
         }
     }
 }
@@ -1772,7 +1690,7 @@ impl ::sittir_core::view::KindOf for AnonymousNodeNameTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::String(inner) => inner.kind_in(kinds),
-            Self::Literal0_75_6e_64_65_72_73_63_6f_72_65 => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
+            Self::Underscore => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -1786,7 +1704,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonymousNodeNameTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    7 => Ok(Self::Literal0_75_6e_64_65_72_73_63_6f_72_65),
+                    7 => Ok(Self::Underscore),
                     39 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
@@ -1801,7 +1719,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonymousNodeNameTransportSlot {
                     ::napi::Error::from_reason("$type property missing in AnonymousNodeNameTransportSlot")
                 )?;
                 match kind_id {
-                    7 => Ok(Self::Literal0_75_6e_64_65_72_73_63_6f_72_65),
+                    7 => Ok(Self::Underscore),
                     39 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
@@ -1849,8 +1767,8 @@ impl ::sittir_core::render::Render for AnonymousNodeNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             AnonymousNodeNameTransportSlot::String(inner) => inner.render(w),
-            AnonymousNodeNameTransportSlot::Literal0_75_6e_64_65_72_73_63_6f_72_65 => {
-                let written = w.text("_");
+            AnonymousNodeNameTransportSlot::Underscore => {
+                let written = render_underscore(w);
                 written?;
                 w.site_at(options::SITE_ANONYMOUS_NODE_UNDERSCORE_AFTER);
                 Ok(())
@@ -1861,15 +1779,15 @@ impl ::sittir_core::render::Render for AnonymousNodeNameTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum PredicatePrefixTransportSlot {
-    Literal1_70_6f_75_6e_64,
-    Literal2_64_6f_74,
+    Pound,
+    Dot,
 }
 
 impl ::sittir_core::prepare::Prepare for PredicatePrefixTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            PredicatePrefixTransportSlot::Literal1_70_6f_75_6e_64 => Ok(()),
-            PredicatePrefixTransportSlot::Literal2_64_6f_74 => Ok(()),
+            PredicatePrefixTransportSlot::Pound => Ok(()),
+            PredicatePrefixTransportSlot::Dot => Ok(()),
         }
     }
 }
@@ -1877,8 +1795,8 @@ impl ::sittir_core::prepare::Prepare for PredicatePrefixTransportSlot {
 impl ::sittir_core::view::KindOf for PredicatePrefixTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal1_70_6f_75_6e_64 => [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k)),
-            Self::Literal2_64_6f_74 => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
+            Self::Pound => [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k)),
+            Self::Dot => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -1892,8 +1810,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PredicatePrefixTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    19 => Ok(Self::Literal1_70_6f_75_6e_64),
-                    20 => Ok(Self::Literal2_64_6f_74),
+                    19 => Ok(Self::Pound),
+                    20 => Ok(Self::Dot),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PredicatePrefixTransportSlot",
                     ))),
@@ -1905,8 +1823,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PredicatePrefixTransportSlot {
                     ::napi::Error::from_reason("$type property missing in PredicatePrefixTransportSlot")
                 )?;
                 match kind_id {
-                    19 => Ok(Self::Literal1_70_6f_75_6e_64),
-                    20 => Ok(Self::Literal2_64_6f_74),
+                    19 => Ok(Self::Pound),
+                    20 => Ok(Self::Dot),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PredicatePrefixTransportSlot",
                     ))),
@@ -1950,8 +1868,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PredicatePrefixTransportSlot> 
 impl ::sittir_core::render::Render for PredicatePrefixTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            PredicatePrefixTransportSlot::Literal1_70_6f_75_6e_64 => w.text("#"),
-            PredicatePrefixTransportSlot::Literal2_64_6f_74 => w.text("."),
+            PredicatePrefixTransportSlot::Pound => render_pound(w),
+            PredicatePrefixTransportSlot::Dot => render_dot(w),
         }
     }
 }
@@ -2373,7 +2291,7 @@ impl ::sittir_core::render::Render for NamedNodeExpressionArmLeftTransportSlot {
 #[derive(Debug, Clone)]
 pub enum NamedNodePlainNameTransportSlot {
     Identifier(IdentifierTransport),
-    Literal0_75_6e_64_65_72_73_63_6f_72_65,
+    Underscore,
     Verbatim(VerbatimTransport),
 }
 
@@ -2381,21 +2299,21 @@ impl ::sittir_core::prepare::Prepare for NamedNodePlainNameTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
             NamedNodePlainNameTransportSlot::Identifier(t) => t.prepare(ctx),
-            NamedNodePlainNameTransportSlot::Literal0_75_6e_64_65_72_73_63_6f_72_65 => Ok(()),
+            NamedNodePlainNameTransportSlot::Underscore => Ok(()),
             NamedNodePlainNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
             NamedNodePlainNameTransportSlot::Identifier(t) => t.source_gap(),
-            NamedNodePlainNameTransportSlot::Literal0_75_6e_64_65_72_73_63_6f_72_65 => None,
+            NamedNodePlainNameTransportSlot::Underscore => None,
             NamedNodePlainNameTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             NamedNodePlainNameTransportSlot::Identifier(t) => t.gap_edges(),
-            NamedNodePlainNameTransportSlot::Literal0_75_6e_64_65_72_73_63_6f_72_65 => None,
+            NamedNodePlainNameTransportSlot::Underscore => None,
             NamedNodePlainNameTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -2405,7 +2323,7 @@ impl ::sittir_core::view::KindOf for NamedNodePlainNameTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::Literal0_75_6e_64_65_72_73_63_6f_72_65 => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
+            Self::Underscore => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(5)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -2420,7 +2338,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamedNodePlainNameTransportSlot 
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    7 => Ok(Self::Literal0_75_6e_64_65_72_73_63_6f_72_65),
+                    7 => Ok(Self::Underscore),
                     5 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -2438,7 +2356,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamedNodePlainNameTransportSlot 
                     id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
                         text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in NamedNodePlainNameTransportSlot"))?,
                     })),
-                    7 => Ok(Self::Literal0_75_6e_64_65_72_73_63_6f_72_65),
+                    7 => Ok(Self::Underscore),
                     5 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -2487,9 +2405,9 @@ impl ::sittir_core::render::Render for NamedNodePlainNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             NamedNodePlainNameTransportSlot::Identifier(inner) => inner.render(w),
-            NamedNodePlainNameTransportSlot::Literal0_75_6e_64_65_72_73_63_6f_72_65 => {
+            NamedNodePlainNameTransportSlot::Underscore => {
                 w.site_at(options::SITE_NAMED_NODE_PLAIN_UNDERSCORE_BEFORE);
-                let written = w.text("_");
+                let written = render_underscore(w);
                 written?;
                 w.site_at(options::SITE_NAMED_NODE_PLAIN_UNDERSCORE_AFTER);
                 Ok(())
@@ -4411,7 +4329,7 @@ pub struct GroupingGroupTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_group_expression"))]
     pub group_expression: ::sittir_core::SlotValue<GroupExpressionArmLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anchor"))]
-    pub anchor: Option<::sittir_core::SlotValue<AnchorTransport>>,
+    pub anchor: Option<bool>,
 }
 
 impl ::sittir_core::view::KindOf for GroupingGroupTransport {
@@ -4599,13 +4517,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StringContentTextTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct AnchorTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+#[derive(Debug, Clone, Copy)]
+pub enum AnchorTransport {
+    Anchor,
 }
 
 impl ::sittir_core::view::KindOf for AnchorTransport {
@@ -4614,121 +4528,34 @@ impl ::sittir_core::view::KindOf for AnchorTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for AnchorTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(58) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for AnchorTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(58)), w.text(&self.text))
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for AnchorTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for AnchorTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => ".".to_string(),
-            ::napi::ValueType::Boolean => {
-                if !bool::from_napi_value(env, napi_val)? {
-                    return Err(::napi::Error::from_reason("AnchorTransport received false; omit the field instead of sending false"));
-                }
-                ".".to_string()
-            }
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_else(|| ".".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnchorTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => {
-                let text = String::from_napi_value(env, napi_val)?;
-                return Ok(Self {
-                    transport_trivia_data: None,
-                    edges: None,
-                    source_gap: None,
-                    source_flank: None,
-                    text,
-                });
-            }
-            ::napi::ValueType::Boolean => {
-                if !bool::from_napi_value(env, napi_val)? {
-                    return Err(::napi::Error::from_reason("AnchorTransport received false; omit the field instead of sending false"));
-                }
-                return Ok(Self {
-                    transport_trivia_data: None,
-                    edges: None,
-                    source_gap: None,
-                    source_flank: None,
-                    text: ".".to_string(),
-                });
-            }
-            _ => {}
+        match u16::from_napi_value(env, napi_val)? {
+            58 => Ok(Self::Anchor),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind AnchorTransport takes",
+            ))),
         }
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| ".".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for AnchorTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("AnchorTransport is receive-only"))
     }
 }
 
@@ -4749,6 +4576,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AnchorTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         AnchorTransport::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::render::Render for AnchorTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_anchor(w)
     }
 }
 
@@ -4931,7 +4764,7 @@ pub struct NamedNodeGroupChildrenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_named_node_expressions"))]
     pub named_node_expressions: Vec<::sittir_core::SlotValue<NamedNodeExpressionArmLeftTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anchor"))]
-    pub anchor: Option<::sittir_core::SlotValue<AnchorTransport>>,
+    pub anchor: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_named_node_expressions_separator_space"))]
     pub named_node_expressions_separator_space: Option<u16>,
 }
@@ -5011,7 +4844,7 @@ pub struct NamedNodeGroupAnchoredLastTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_last"))]
     pub last: ::sittir_core::SlotValue<Box<NamedNodeExpressionArmLeftTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anchor"))]
-    pub anchor: Option<::sittir_core::SlotValue<AnchorTransport>>,
+    pub anchor: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_named_node_expressions_separator_space"))]
     pub named_node_expressions_separator_space: Option<u16>,
 }
@@ -5076,13 +4909,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeGroupAnchoredLastTran
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct TightTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+#[derive(Debug, Clone, Copy)]
+pub enum TightTransport {
+    Tight,
 }
 
 impl ::sittir_core::view::KindOf for TightTransport {
@@ -5091,97 +4920,34 @@ impl ::sittir_core::view::KindOf for TightTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for TightTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(24) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for TightTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(24)), { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for TightTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for TightTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => {
-                let id = u32::from_napi_value(env, napi_val)?;
-                return Err(::napi::Error::from_reason(format!(
-                    "kind id {} ({:?}) has no fixed text: TightTransport renders from a node, not a kind id",
-                    id,
-                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
-                )));
-            }
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for TightTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            24 => Ok(Self::Tight),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind TightTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for TightTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("TightTransport is receive-only"))
     }
 }
 
@@ -5205,13 +4971,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TightTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct SpaceTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for TightTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_tight(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum SpaceTransport {
+    Space,
 }
 
 impl ::sittir_core::view::KindOf for SpaceTransport {
@@ -5220,90 +4988,34 @@ impl ::sittir_core::view::KindOf for SpaceTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for SpaceTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(25) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for SpaceTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(25)), { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for SpaceTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for SpaceTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => " ".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_else(|| " ".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for SpaceTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| " ".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            25 => Ok(Self::Space),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind SpaceTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for SpaceTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("SpaceTransport is receive-only"))
     }
 }
 
@@ -5327,13 +5039,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SpaceTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct TabTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for SpaceTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_space(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum TabTransport {
+    Tab,
 }
 
 impl ::sittir_core::view::KindOf for TabTransport {
@@ -5342,90 +5056,34 @@ impl ::sittir_core::view::KindOf for TabTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for TabTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(26) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for TabTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(26)), { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for TabTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for TabTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => "\t".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_else(|| "\t".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for TabTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "\t".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            26 => Ok(Self::Tab),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind TabTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for TabTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("TabTransport is receive-only"))
     }
 }
 
@@ -5449,13 +5107,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TabTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct NewlineTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for TabTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_tab(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum NewlineTransport {
+    Newline,
 }
 
 impl ::sittir_core::view::KindOf for NewlineTransport {
@@ -5464,90 +5124,34 @@ impl ::sittir_core::view::KindOf for NewlineTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for NewlineTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(27) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for NewlineTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(27)), { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for NewlineTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for NewlineTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => "\n".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_else(|| "\n".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for NewlineTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "\n".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            27 => Ok(Self::Newline),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind NewlineTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for NewlineTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("NewlineTransport is receive-only"))
     }
 }
 
@@ -5571,13 +5175,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NewlineTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct BlanklineTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for NewlineTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_newline(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum BlanklineTransport {
+    Blankline,
 }
 
 impl ::sittir_core::view::KindOf for BlanklineTransport {
@@ -5586,90 +5192,34 @@ impl ::sittir_core::view::KindOf for BlanklineTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for BlanklineTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(28) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for BlanklineTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(28)), { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for BlanklineTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for BlanklineTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => "\n\n".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_else(|| "\n\n".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for BlanklineTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "\n\n".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            28 => Ok(Self::Blankline),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind BlanklineTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for BlanklineTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("BlanklineTransport is receive-only"))
     }
 }
 
@@ -5693,13 +5243,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BlanklineTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct DoubleBlanklineTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for BlanklineTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_blankline(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum DoubleBlanklineTransport {
+    DoubleBlankline,
 }
 
 impl ::sittir_core::view::KindOf for DoubleBlanklineTransport {
@@ -5708,90 +5260,34 @@ impl ::sittir_core::view::KindOf for DoubleBlanklineTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for DoubleBlanklineTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(29) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for DoubleBlanklineTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(29)), { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for DoubleBlanklineTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for DoubleBlanklineTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => "\n\n\n".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_else(|| "\n\n\n".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for DoubleBlanklineTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "\n\n\n".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            29 => Ok(Self::DoubleBlankline),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind DoubleBlanklineTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for DoubleBlanklineTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("DoubleBlanklineTransport is receive-only"))
     }
 }
 
@@ -5815,13 +5311,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DoubleBlanklineTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct IndentTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for DoubleBlanklineTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_double_blankline(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum IndentTransport {
+    Indent,
 }
 
 impl ::sittir_core::view::KindOf for IndentTransport {
@@ -5830,97 +5328,34 @@ impl ::sittir_core::view::KindOf for IndentTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for IndentTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(30) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for IndentTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(30)), { w.indent(); w.seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) })
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for IndentTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => {
-                let id = u32::from_napi_value(env, napi_val)?;
-                return Err(::napi::Error::from_reason(format!(
-                    "kind id {} ({:?}) has no fixed text: IndentTransport renders from a node, not a kind id",
-                    id,
-                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
-                )));
-            }
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            30 => Ok(Self::Indent),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind IndentTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for IndentTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("IndentTransport is receive-only"))
     }
 }
 
@@ -5944,13 +5379,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IndentTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct DedentTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for IndentTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_indent(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum DedentTransport {
+    Dedent,
 }
 
 impl ::sittir_core::view::KindOf for DedentTransport {
@@ -5959,97 +5396,34 @@ impl ::sittir_core::view::KindOf for DedentTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for DedentTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(31) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for DedentTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(31)), { w.dedent("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) })
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for DedentTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => {
-                let id = u32::from_napi_value(env, napi_val)?;
-                return Err(::napi::Error::from_reason(format!(
-                    "kind id {} ({:?}) has no fixed text: DedentTransport renders from a node, not a kind id",
-                    id,
-                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
-                )));
-            }
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            31 => Ok(Self::Dedent),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind DedentTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for DedentTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("DedentTransport is receive-only"))
     }
 }
 
@@ -6073,13 +5447,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DedentTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct StarTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for DedentTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_dedent(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum StarTransport {
+    Star,
 }
 
 impl ::sittir_core::view::KindOf for StarTransport {
@@ -6088,90 +5464,34 @@ impl ::sittir_core::view::KindOf for StarTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for StarTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(2) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for StarTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(2)), w.text(&self.text))
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for StarTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => "*".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_else(|| "*".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "*".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            2 => Ok(Self::Star),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind StarTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for StarTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("StarTransport is receive-only"))
     }
 }
 
@@ -6195,13 +5515,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StarTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct PlusTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for StarTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_star(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum PlusTransport {
+    Plus,
 }
 
 impl ::sittir_core::view::KindOf for PlusTransport {
@@ -6210,90 +5532,34 @@ impl ::sittir_core::view::KindOf for PlusTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for PlusTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(3) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for PlusTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(3)), w.text(&self.text))
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for PlusTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => "+".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_else(|| "+".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "+".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            3 => Ok(Self::Plus),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind PlusTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for PlusTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("PlusTransport is receive-only"))
     }
 }
 
@@ -6317,13 +5583,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PlusTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct QmarkTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for PlusTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_plus(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum QmarkTransport {
+    Qmark,
 }
 
 impl ::sittir_core::view::KindOf for QmarkTransport {
@@ -6332,90 +5600,34 @@ impl ::sittir_core::view::KindOf for QmarkTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for QmarkTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(4) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for QmarkTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(4)), w.text(&self.text))
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for QmarkTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for QmarkTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => "?".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_else(|| "?".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for QmarkTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "?".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            4 => Ok(Self::Qmark),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind QmarkTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for QmarkTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("QmarkTransport is receive-only"))
     }
 }
 
@@ -6439,13 +5651,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<QmarkTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct AtTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for QmarkTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_qmark(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum AtTransport {
+    At,
 }
 
 impl ::sittir_core::view::KindOf for AtTransport {
@@ -6454,90 +5668,34 @@ impl ::sittir_core::view::KindOf for AtTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for AtTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(8) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for AtTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(8)), w.text(&self.text))
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for AtTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => "@".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_else(|| "@".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "@".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            8 => Ok(Self::At),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind AtTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for AtTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("AtTransport is receive-only"))
     }
 }
 
@@ -6561,13 +5719,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AtTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct DquoteTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for AtTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_at(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum DquoteTransport {
+    Dquote,
 }
 
 impl ::sittir_core::view::KindOf for DquoteTransport {
@@ -6576,90 +5736,34 @@ impl ::sittir_core::view::KindOf for DquoteTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for DquoteTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(9) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for DquoteTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(9)), w.text(&self.text))
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for DquoteTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for DquoteTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => "\"".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_else(|| "\"".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for DquoteTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "\"".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            9 => Ok(Self::Dquote),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind DquoteTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for DquoteTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("DquoteTransport is receive-only"))
     }
 }
 
@@ -6683,13 +5787,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DquoteTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct LbrackTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for DquoteTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_dquote(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum LbrackTransport {
+    Lbrack,
 }
 
 impl ::sittir_core::view::KindOf for LbrackTransport {
@@ -6698,90 +5804,34 @@ impl ::sittir_core::view::KindOf for LbrackTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for LbrackTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(12) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for LbrackTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(12)), w.text(&self.text))
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for LbrackTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for LbrackTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => "[".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_else(|| "[".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for LbrackTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "[".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            12 => Ok(Self::Lbrack),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind LbrackTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for LbrackTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("LbrackTransport is receive-only"))
     }
 }
 
@@ -6805,13 +5855,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LbrackTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct RbrackTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for LbrackTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_lbrack(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum RbrackTransport {
+    Rbrack,
 }
 
 impl ::sittir_core::view::KindOf for RbrackTransport {
@@ -6820,90 +5872,34 @@ impl ::sittir_core::view::KindOf for RbrackTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for RbrackTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(13) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for RbrackTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(13)), w.text(&self.text))
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for RbrackTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for RbrackTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => "]".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_else(|| "]".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for RbrackTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "]".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            13 => Ok(Self::Rbrack),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind RbrackTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for RbrackTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("RbrackTransport is receive-only"))
     }
 }
 
@@ -6927,13 +5923,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RbrackTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct LparenTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for RbrackTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_rbrack(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum LparenTransport {
+    Lparen,
 }
 
 impl ::sittir_core::view::KindOf for LparenTransport {
@@ -6942,90 +5940,34 @@ impl ::sittir_core::view::KindOf for LparenTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for LparenTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(14) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for LparenTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(14)), w.text(&self.text))
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for LparenTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for LparenTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => "(".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_else(|| "(".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for LparenTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "(".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            14 => Ok(Self::Lparen),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind LparenTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for LparenTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("LparenTransport is receive-only"))
     }
 }
 
@@ -7049,13 +5991,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LparenTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct RparenTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for LparenTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_lparen(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum RparenTransport {
+    Rparen,
 }
 
 impl ::sittir_core::view::KindOf for RparenTransport {
@@ -7064,90 +6008,34 @@ impl ::sittir_core::view::KindOf for RparenTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for RparenTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(15) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for RparenTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(15)), w.text(&self.text))
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for RparenTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for RparenTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => ")".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_else(|| ")".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for RparenTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| ")".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            15 => Ok(Self::Rparen),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind RparenTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for RparenTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("RparenTransport is receive-only"))
     }
 }
 
@@ -7171,13 +6059,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RparenTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct MissingKeywordTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for RparenTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_rparen(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum MissingKeywordTransport {
+    MissingKeyword,
 }
 
 impl ::sittir_core::view::KindOf for MissingKeywordTransport {
@@ -7186,90 +6076,34 @@ impl ::sittir_core::view::KindOf for MissingKeywordTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for MissingKeywordTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(16) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for MissingKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(16)), w.text(&self.text))
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for MissingKeywordTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for MissingKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => "MISSING".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_else(|| "MISSING".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for MissingKeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "MISSING".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            16 => Ok(Self::MissingKeyword),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind MissingKeywordTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for MissingKeywordTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("MissingKeywordTransport is receive-only"))
     }
 }
 
@@ -7293,13 +6127,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MissingKeywordTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct UnderscoreTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for MissingKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_missing_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum UnderscoreTransport {
+    Underscore,
 }
 
 impl ::sittir_core::view::KindOf for UnderscoreTransport {
@@ -7308,90 +6144,34 @@ impl ::sittir_core::view::KindOf for UnderscoreTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for UnderscoreTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(7) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for UnderscoreTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(7)), w.text(&self.text))
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for UnderscoreTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for UnderscoreTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => "_".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_else(|| "_".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for UnderscoreTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "_".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            7 => Ok(Self::Underscore),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind UnderscoreTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for UnderscoreTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("UnderscoreTransport is receive-only"))
     }
 }
 
@@ -7415,13 +6195,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UnderscoreTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct ColonTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for UnderscoreTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_underscore(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum ColonTransport {
+    Colon,
 }
 
 impl ::sittir_core::view::KindOf for ColonTransport {
@@ -7430,90 +6212,34 @@ impl ::sittir_core::view::KindOf for ColonTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for ColonTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(17) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for ColonTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(17)), w.text(&self.text))
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for ColonTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => ":".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_else(|| ":".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| ":".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            17 => Ok(Self::Colon),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind ColonTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for ColonTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("ColonTransport is receive-only"))
     }
 }
 
@@ -7537,13 +6263,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ColonTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct BangTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for ColonTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_colon(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum BangTransport {
+    Bang,
 }
 
 impl ::sittir_core::view::KindOf for BangTransport {
@@ -7552,90 +6280,34 @@ impl ::sittir_core::view::KindOf for BangTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for BangTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(18) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for BangTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(18)), w.text(&self.text))
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for BangTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for BangTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => "!".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_else(|| "!".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for BangTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "!".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            18 => Ok(Self::Bang),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind BangTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for BangTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("BangTransport is receive-only"))
     }
 }
 
@@ -7659,13 +6331,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BangTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct PoundTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for BangTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_bang(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum PoundTransport {
+    Pound,
 }
 
 impl ::sittir_core::view::KindOf for PoundTransport {
@@ -7674,90 +6348,34 @@ impl ::sittir_core::view::KindOf for PoundTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for PoundTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(19) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for PoundTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(19)), w.text(&self.text))
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for PoundTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for PoundTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => "#".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_else(|| "#".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for PoundTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "#".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            19 => Ok(Self::Pound),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind PoundTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for PoundTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("PoundTransport is receive-only"))
     }
 }
 
@@ -7781,13 +6399,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PoundTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct DotTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for PoundTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_pound(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum DotTransport {
+    Dot,
 }
 
 impl ::sittir_core::view::KindOf for DotTransport {
@@ -7796,90 +6416,34 @@ impl ::sittir_core::view::KindOf for DotTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for DotTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(20) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for DotTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(20)), w.text(&self.text))
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for DotTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => ".".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_else(|| ".".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| ".".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            20 => Ok(Self::Dot),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind DotTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for DotTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("DotTransport is receive-only"))
     }
 }
 
@@ -7903,13 +6467,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DotTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct SlashTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub source_gap: Option<::sittir_core::slot::SourceGap>,
-    pub source_flank: Option<::sittir_core::slot::SourceFlank>,
-    pub text: String,
+impl ::sittir_core::render::Render for DotTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_dot(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum SlashTransport {
+    Slash,
 }
 
 impl ::sittir_core::view::KindOf for SlashTransport {
@@ -7918,90 +6484,34 @@ impl ::sittir_core::view::KindOf for SlashTransport {
     }
 }
 
-impl ::sittir_core::options::Edged for SlashTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(23) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for SlashTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(23)), w.text(&self.text))
-    }
-}
-
 impl ::sittir_core::prepare::Prepare for SlashTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.transport_trivia_data.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.source_gap.as_ref()
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.edges.get_or_insert_with(Default::default))
-    }
 }
 
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+#[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let mut __transport_trivia_data: Option<TransportTrivia> = None;
-        let mut __source_gap: Option<::sittir_core::slot::SourceGap> = None;
-        let mut __source_flank: Option<::sittir_core::slot::SourceFlank> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            ::napi::ValueType::Number => "/".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __transport_trivia_data = obj.get("$_trivia")?;
-                __source_gap = obj.get("$_gap")?;
-                __source_flank = obj.get("$_flank")?;
-                obj.get("$text")?.unwrap_or_else(|| "/".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __transport_trivia_data,
-            edges: None,
-            source_gap: __source_gap,
-            source_flank: __source_flank,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "/".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        let source_gap = obj.get("$_gap")?;
-        let source_flank = obj.get("$_flank")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            source_gap,
-            source_flank,
-            text,
-        })
+        match u16::from_napi_value(env, napi_val)? {
+            23 => Ok(Self::Slash),
+            other => Err(::napi::Error::from_reason(format!(
+                "kind id {other} is not a kind SlashTransport takes",
+            ))),
+        }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for SlashTransport {
     unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
+        _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+        Err(::napi::Error::from_reason("SlashTransport is receive-only"))
     }
 }
 
@@ -8022,6 +6532,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SlashTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         SlashTransport::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::render::Render for SlashTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_slash(w)
     }
 }
 
@@ -8582,7 +7098,7 @@ fn render_named_node_expression_arm(node: &NamedNodeExpressionArmTransport, w: &
 }
 
 fn render_grouping_group(node: &GroupingGroupTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let anchor = View::new(&node.anchor, "{}");
+    let anchor = View::new(::sittir_core::view::Presence::new(node.anchor, AnchorTransport::Anchor), "{}");
     let group_expression = &node.group_expression;
     w.edge(::sittir_core::types::KindId(56), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     group_expression.render(w)?;
@@ -8596,10 +7112,6 @@ fn render_grouping_group(node: &GroupingGroupTransport, w: &mut dyn ::sittir_cor
 
 fn render_string_content_text(t: &StringContentTextTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.adjacent();
-    w.text(&t.text)
-}
-
-fn render_anchor(t: &AnchorTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -8664,7 +7176,7 @@ fn render_named_node_supertyped(node: &NamedNodeSupertypedTransport, w: &mut dyn
 }
 
 fn render_named_node_group_children(node: &NamedNodeGroupChildrenTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let anchor = View::new(&node.anchor, "{}");
+    let anchor = View::new(::sittir_core::view::Presence::new(node.anchor, AnchorTransport::Anchor), "{}");
     let named_node_expressions = ListView {
         items: &node.named_node_expressions,
         template: "{}",
@@ -8687,7 +7199,7 @@ fn render_named_node_group_children(node: &NamedNodeGroupChildrenTransport, w: &
 }
 
 fn render_named_node_group_anchored_last(node: &NamedNodeGroupAnchoredLastTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let anchor = View::new(&node.anchor, "{}");
+    let anchor = View::new(::sittir_core::view::Presence::new(node.anchor, AnchorTransport::Anchor), "{}");
     let last = &node.last;
     let named_node_expressions = ListView {
         items: node.named_node_expressions.as_deref().unwrap_or(&[]),
@@ -8713,100 +7225,172 @@ fn render_named_node_group_anchored_last(node: &NamedNodeGroupAnchoredLastTransp
     Ok(())
 }
 
-fn render_tight(t: &TightTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
+fn render_anchor(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.seat_trailing()?;
+    w.text(".")?;
+    w.end_line_after(::sittir_core::types::KindId(58));
+    w.seat_trailing()?;
+    Ok(())
 }
 
-fn render_space(t: &SpaceTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
+fn render_tight(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.seat_trailing()?;
+    { w.token_seam(""); Ok::<(), ::sittir_core::render::RenderError>(()) }?;
+    w.end_line_after(::sittir_core::types::KindId(24));
+    w.seat_trailing()?;
+    Ok(())
 }
 
-fn render_tab(t: &TabTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
+fn render_space(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.seat_trailing()?;
+    { w.token_seam(" "); Ok::<(), ::sittir_core::render::RenderError>(()) }?;
+    w.end_line_after(::sittir_core::types::KindId(25));
+    w.seat_trailing()?;
+    Ok(())
 }
 
-fn render_newline(t: &NewlineTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
+fn render_tab(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.seat_trailing()?;
+    { w.token_seam("\t"); Ok::<(), ::sittir_core::render::RenderError>(()) }?;
+    w.end_line_after(::sittir_core::types::KindId(26));
+    w.seat_trailing()?;
+    Ok(())
 }
 
-fn render_blankline(t: &BlanklineTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
+fn render_newline(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.seat_trailing()?;
+    { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) }?;
+    w.end_line_after(::sittir_core::types::KindId(27));
+    w.seat_trailing()?;
+    Ok(())
 }
 
-fn render_double_blankline(t: &DoubleBlanklineTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
+fn render_blankline(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.seat_trailing()?;
+    { w.token_seam("\n\n"); Ok::<(), ::sittir_core::render::RenderError>(()) }?;
+    w.end_line_after(::sittir_core::types::KindId(28));
+    w.seat_trailing()?;
+    Ok(())
 }
 
-fn render_indent(t: &IndentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    { w.indent(); w.seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) }
+fn render_double_blankline(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.seat_trailing()?;
+    { w.token_seam("\n\n\n"); Ok::<(), ::sittir_core::render::RenderError>(()) }?;
+    w.end_line_after(::sittir_core::types::KindId(29));
+    w.seat_trailing()?;
+    Ok(())
 }
 
-fn render_dedent(t: &DedentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    { w.dedent("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) }
+fn render_indent(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.seat_trailing()?;
+    { w.indent(); w.seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) }?;
+    w.end_line_after(::sittir_core::types::KindId(30));
+    w.seat_trailing()?;
+    Ok(())
 }
 
-fn render_star(t: &StarTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_dedent(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.seat_trailing()?;
+    { w.dedent("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) }?;
+    w.end_line_after(::sittir_core::types::KindId(31));
+    w.seat_trailing()?;
+    Ok(())
 }
 
-fn render_plus(t: &PlusTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_star(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text("*")?;
+    w.end_line_after(::sittir_core::types::KindId(2));
+    Ok(())
 }
 
-fn render_qmark(t: &QmarkTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_plus(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text("+")?;
+    w.end_line_after(::sittir_core::types::KindId(3));
+    Ok(())
 }
 
-fn render_at(t: &AtTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_qmark(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text("?")?;
+    w.end_line_after(::sittir_core::types::KindId(4));
+    Ok(())
 }
 
-fn render_dquote(t: &DquoteTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_at(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text("@")?;
+    w.end_line_after(::sittir_core::types::KindId(8));
+    Ok(())
 }
 
-fn render_lbrack(t: &LbrackTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_dquote(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text("\"")?;
+    w.end_line_after(::sittir_core::types::KindId(9));
+    Ok(())
 }
 
-fn render_rbrack(t: &RbrackTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_lbrack(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text("[")?;
+    w.end_line_after(::sittir_core::types::KindId(12));
+    Ok(())
 }
 
-fn render_lparen(t: &LparenTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_rbrack(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text("]")?;
+    w.end_line_after(::sittir_core::types::KindId(13));
+    Ok(())
 }
 
-fn render_rparen(t: &RparenTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_lparen(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text("(")?;
+    w.end_line_after(::sittir_core::types::KindId(14));
+    Ok(())
 }
 
-fn render_missing_keyword(t: &MissingKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_rparen(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(")")?;
+    w.end_line_after(::sittir_core::types::KindId(15));
+    Ok(())
 }
 
-fn render_underscore(t: &UnderscoreTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_missing_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text("MISSING")?;
+    w.end_line_after(::sittir_core::types::KindId(16));
+    Ok(())
 }
 
-fn render_colon(t: &ColonTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_underscore(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text("_")?;
+    w.end_line_after(::sittir_core::types::KindId(7));
+    Ok(())
 }
 
-fn render_bang(t: &BangTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_colon(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(":")?;
+    w.end_line_after(::sittir_core::types::KindId(17));
+    Ok(())
 }
 
-fn render_pound(t: &PoundTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_bang(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text("!")?;
+    w.end_line_after(::sittir_core::types::KindId(18));
+    Ok(())
 }
 
-fn render_dot(t: &DotTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_pound(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text("#")?;
+    w.end_line_after(::sittir_core::types::KindId(19));
+    Ok(())
 }
 
-fn render_slash(t: &SlashTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_dot(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(".")?;
+    w.end_line_after(::sittir_core::types::KindId(20));
+    Ok(())
+}
+
+fn render_slash(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text("/")?;
+    w.end_line_after(::sittir_core::types::KindId(23));
+    Ok(())
 }
 
 fn render_definition(t: &DefinitionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -8888,35 +7472,35 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::NamedNodeExpressionArm(inner) => inner.kind_in(kinds),
             Self::GroupingGroup(inner) => inner.kind_in(kinds),
             Self::StringContentText(inner) => inner.kind_in(kinds),
-            Self::Anchor(inner) => inner.kind_in(kinds),
             Self::NamedNodePlain(inner) => inner.kind_in(kinds),
             Self::NamedNodeSupertyped(inner) => inner.kind_in(kinds),
             Self::NamedNodeGroupChildren(inner) => inner.kind_in(kinds),
             Self::NamedNodeGroupAnchoredLast(inner) => inner.kind_in(kinds),
-            Self::Tight(inner) => inner.kind_in(kinds),
-            Self::Space(inner) => inner.kind_in(kinds),
-            Self::Tab(inner) => inner.kind_in(kinds),
-            Self::Newline(inner) => inner.kind_in(kinds),
-            Self::Blankline(inner) => inner.kind_in(kinds),
-            Self::DoubleBlankline(inner) => inner.kind_in(kinds),
-            Self::Indent(inner) => inner.kind_in(kinds),
-            Self::Dedent(inner) => inner.kind_in(kinds),
-            Self::Star(inner) => inner.kind_in(kinds),
-            Self::Plus(inner) => inner.kind_in(kinds),
-            Self::Qmark(inner) => inner.kind_in(kinds),
-            Self::At(inner) => inner.kind_in(kinds),
-            Self::Dquote(inner) => inner.kind_in(kinds),
-            Self::Lbrack(inner) => inner.kind_in(kinds),
-            Self::Rbrack(inner) => inner.kind_in(kinds),
-            Self::Lparen(inner) => inner.kind_in(kinds),
-            Self::Rparen(inner) => inner.kind_in(kinds),
-            Self::MissingKeyword(inner) => inner.kind_in(kinds),
-            Self::Underscore(inner) => inner.kind_in(kinds),
-            Self::Colon(inner) => inner.kind_in(kinds),
-            Self::Bang(inner) => inner.kind_in(kinds),
-            Self::Pound(inner) => inner.kind_in(kinds),
-            Self::Dot(inner) => inner.kind_in(kinds),
-            Self::Slash(inner) => inner.kind_in(kinds),
+            Self::Anchor => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
+            Self::Tight => [::sittir_core::types::KindId(24)].iter().any(|k| kinds.contains(k)),
+            Self::Space => [::sittir_core::types::KindId(25)].iter().any(|k| kinds.contains(k)),
+            Self::Tab => [::sittir_core::types::KindId(26)].iter().any(|k| kinds.contains(k)),
+            Self::Newline => [::sittir_core::types::KindId(27)].iter().any(|k| kinds.contains(k)),
+            Self::Blankline => [::sittir_core::types::KindId(28)].iter().any(|k| kinds.contains(k)),
+            Self::DoubleBlankline => [::sittir_core::types::KindId(29)].iter().any(|k| kinds.contains(k)),
+            Self::Indent => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
+            Self::Dedent => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
+            Self::Star => [::sittir_core::types::KindId(2)].iter().any(|k| kinds.contains(k)),
+            Self::Plus => [::sittir_core::types::KindId(3)].iter().any(|k| kinds.contains(k)),
+            Self::Qmark => [::sittir_core::types::KindId(4)].iter().any(|k| kinds.contains(k)),
+            Self::At => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
+            Self::Dquote => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
+            Self::Lbrack => [::sittir_core::types::KindId(12)].iter().any(|k| kinds.contains(k)),
+            Self::Rbrack => [::sittir_core::types::KindId(13)].iter().any(|k| kinds.contains(k)),
+            Self::Lparen => [::sittir_core::types::KindId(14)].iter().any(|k| kinds.contains(k)),
+            Self::Rparen => [::sittir_core::types::KindId(15)].iter().any(|k| kinds.contains(k)),
+            Self::MissingKeyword => [::sittir_core::types::KindId(16)].iter().any(|k| kinds.contains(k)),
+            Self::Underscore => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
+            Self::Colon => [::sittir_core::types::KindId(17)].iter().any(|k| kinds.contains(k)),
+            Self::Bang => [::sittir_core::types::KindId(18)].iter().any(|k| kinds.contains(k)),
+            Self::Pound => [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k)),
+            Self::Dot => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
+            Self::Slash => [::sittir_core::types::KindId(23)].iter().any(|k| kinds.contains(k)),
             _ => false,
         }
     }
@@ -8949,43 +7533,35 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::NamedNodeExpressionArm(t) => t.render(w),
             AnyTransport::GroupingGroup(t) => t.render(w),
             AnyTransport::StringContentText(t) => t.render(w),
-            AnyTransport::Anchor(t) => t.render(w),
             AnyTransport::NamedNodePlain(t) => t.render(w),
             AnyTransport::NamedNodeSupertyped(t) => t.render(w),
             AnyTransport::NamedNodeGroupChildren(t) => t.render(w),
             AnyTransport::NamedNodeGroupAnchoredLast(t) => t.render(w),
-            AnyTransport::Tight(t) => t.render(w),
-            AnyTransport::Space(t) => t.render(w),
-            AnyTransport::Tab(t) => t.render(w),
-            AnyTransport::Newline(t) => t.render(w),
-            AnyTransport::Blankline(t) => t.render(w),
-            AnyTransport::DoubleBlankline(t) => t.render(w),
-            AnyTransport::Indent(t) => t.render(w),
-            AnyTransport::Dedent(t) => t.render(w),
-            AnyTransport::Star(t) => t.render(w),
-            AnyTransport::Plus(t) => t.render(w),
-            AnyTransport::Qmark(t) => t.render(w),
-            AnyTransport::At(t) => t.render(w),
-            AnyTransport::Dquote(t) => t.render(w),
-            AnyTransport::Lbrack(t) => t.render(w),
-            AnyTransport::Rbrack(t) => t.render(w),
-            AnyTransport::Lparen(t) => t.render(w),
-            AnyTransport::Rparen(t) => t.render(w),
-            AnyTransport::MissingKeyword(t) => t.render(w),
-            AnyTransport::Underscore(t) => t.render(w),
-            AnyTransport::Colon(t) => t.render(w),
-            AnyTransport::Bang(t) => t.render(w),
-            AnyTransport::Pound(t) => t.render(w),
-            AnyTransport::Dot(t) => t.render(w),
-            AnyTransport::Slash(t) => t.render(w),
-            AnyTransport::Literal0_75_6e_64_65_72_73_63_6f_72_65 => w.text("_"),
-            AnyTransport::Literal1_70_6f_75_6e_64 => w.text("#"),
-            AnyTransport::Literal2_64_6f_74 => w.text("."),
-            AnyTransport::Literal3_71_6d_61_72_6b => w.text("?"),
-            AnyTransport::Literal4_62_61_6e_67 => w.text("!"),
-            AnyTransport::Literal5_73_74_61_72 => w.text("*"),
-            AnyTransport::Literal6_70_6c_75_73 => w.text("+"),
-            AnyTransport::Literal7_61_6e_63_68_6f_72 => w.text("."),
+            AnyTransport::Anchor => render_anchor(w),
+            AnyTransport::Tight => render_tight(w),
+            AnyTransport::Space => render_space(w),
+            AnyTransport::Tab => render_tab(w),
+            AnyTransport::Newline => render_newline(w),
+            AnyTransport::Blankline => render_blankline(w),
+            AnyTransport::DoubleBlankline => render_double_blankline(w),
+            AnyTransport::Indent => render_indent(w),
+            AnyTransport::Dedent => render_dedent(w),
+            AnyTransport::Star => render_star(w),
+            AnyTransport::Plus => render_plus(w),
+            AnyTransport::Qmark => render_qmark(w),
+            AnyTransport::At => render_at(w),
+            AnyTransport::Dquote => render_dquote(w),
+            AnyTransport::Lbrack => render_lbrack(w),
+            AnyTransport::Rbrack => render_rbrack(w),
+            AnyTransport::Lparen => render_lparen(w),
+            AnyTransport::Rparen => render_rparen(w),
+            AnyTransport::MissingKeyword => render_missing_keyword(w),
+            AnyTransport::Underscore => render_underscore(w),
+            AnyTransport::Colon => render_colon(w),
+            AnyTransport::Bang => render_bang(w),
+            AnyTransport::Pound => render_pound(w),
+            AnyTransport::Dot => render_dot(w),
+            AnyTransport::Slash => render_slash(w),
             AnyTransport::Verbatim(t) => t.render(w),
         }
     }

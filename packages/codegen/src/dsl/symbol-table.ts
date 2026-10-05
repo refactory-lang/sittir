@@ -337,7 +337,7 @@ function deriveSymbolRuntimeName(symbolTextFacts: ReadonlyMap<string, SymbolText
 			if (keywordTextOf(cName, symbolTextFacts) !== undefined) return `${spelled}${KEYWORD_KEY_SUFFIX}`;
 			const text = symbolTextFacts.get(cName)?.literalText;
 			if (text !== undefined && cName === `anon_sym_${text}`) return text.length <= 1 ? 'underscore' : `underscore${text.length}`;
-			if (text !== undefined && spelled === sanitizeCIdentifier(text)) return sanitizeCIdentifier(text, (word) => word.toLowerCase());
+			if (text !== undefined && spelled === sanitizeCIdentifier(text)) return kindKeyOfText(text);
 			return spelled.toLowerCase();
 		}
 		if (cName.startsWith('aux_sym_')) return cName.slice('aux_sym_'.length);
@@ -988,6 +988,10 @@ const C_CONTROL_CHARACTER_NAMES = [
 	'NULL', 'SOH', 'STX', 'ETX', 'EOT', 'ENQ', 'ACK', 'BEL', 'BS', 'TAB', 'LF', 'VTAB', 'FF', 'CR', 'SO', 'SI',
 	'DLE', 'DC1', 'DC2', 'DC3', 'DC4', 'NAK', 'SYN', 'ETB', 'CAN', 'EM', 'SUB', 'ESC', 'FS', 'GS', 'RS', 'US'
 ] as const;
+
+export function kindKeyOfText(text: string): string {
+	return sanitizeCIdentifier(text, (word) => word.toLowerCase());
+}
 
 function sanitizeCIdentifier(name: string, spellReplacement: (word: string) => string = (word) => word): string {
 	let identifier = '';
