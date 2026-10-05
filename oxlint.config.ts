@@ -45,6 +45,8 @@ export default defineConfig({
 	ignorePatterns: [
 		'scratch/**',
 		'scratchpad/**',
+		// Probes committed with their design: a record, not project source.
+		'docs/superpowers/probes/**',
 		'**/tests/nodes.test.ts',
 		'**/.sittir/**',
 		'specs/**',
