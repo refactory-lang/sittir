@@ -10,7 +10,7 @@
 > **Status:** The compile-checked current examples live under
 > [`examples/`](../examples/) and currently cover:
 > `01-construct-nodes.ts`, `02-render-round-trip.ts`,
-> `07-read-source.ts`, and `09-type-guards.ts`.
+> `07-read-source.ts`, `09-type-guards.ts`, and `23-read-query-with.ts`.
 >
 > The biggest **pending** surfaces called out below are:
 >
@@ -415,6 +415,72 @@ fn.name(); // hydrateChild: lazy hydrate if needed
 fn.body(); // hydrateChild: returns Block
 fn.body().statements(); // statements array
 ```
+
+### Query a parsed tree
+
+`$query()` on a parsed node returns its query facet: `$children` (one level
+down), `$descendants` (every level, in source order), and one view per slot,
+holding what that slot's accessor returns. A view is lazy and takes the
+read-only array verbs (`filter`, `map`, `find`, `some`, `slice`, `at`, …) plus
+`ofType(kind)` and `where(condition)`. `ofType` and `where` run in the native
+walk, so only the nodes that pass them are hydrated, and a terminal such as
+`find` stops the walk at its answer. A condition names slots of the kind and
+tests their text with `eq` or `match`, combined with `and`, `or` and `not`.
+`engine.query(node)` returns the same facet for any node; a leaf's facet has
+no slots and empty traversals.
+
+```ts
+import { createEngine } from '@sittir/common';
+import python from '@sittir/python';
+
+const engine = await createEngine(python);
+const root = engine.parse(source);
+
+// Calls whose callee is `open`, at any depth.
+const opens = [...root.$query().$descendants.ofType(engine.kinds.Call).where((call) => call.function.eq('open'))];
+
+// Names of private, non-dunder functions.
+const helpers = root
+	.$query()
+	.$descendants.ofType(engine.kinds.FunctionDefinition)
+	.where((fn) => fn.name.match(/^_/).and(fn.name.match(/^__/).not()))
+	.map((fn) => fn.name());
+```
+
+In Python, a statement that is only `print(x)` parses as the Python 2 print
+statement (`PrintStatement`), not a `Call`; inside an expression it is a call.
+
+### Edit a parsed node with `$with`
+
+`$with.<slot>(value)` returns a copy of a parsed node with one slot replaced;
+every child the edit did not touch renders the bytes it was read from. An
+edited child goes back into its parent through the parent's `$with`.
+
+```ts
+const fn = root
+	.$query()
+	.$descendants.ofType(engine.kinds.FunctionDefinition)
+	.where((candidate) => candidate.name.eq('_next'))
+	.find();
+const renamed = fn?.$with.name(engine.build.identifier('_advance'));
+
+const file = root.$with.statements(
+	...root
+		.statements()
+		.map((statement) =>
+			engine.is.functionDefinition(statement) && engine.render(statement.name()).toString() === 'load'
+				? statement.$with.name(engine.build.identifier('read_file'))
+				: statement
+		)
+);
+```
+
+A node a view yields is a separate object from the one an accessor returns
+for the same place in the source, so `===` cannot match them; a view's
+`includes` compares places in the source instead.
+
+The runnable versions, with an outline read through the accessors, are in
+[`examples/23-read-query-with.ts`](../examples/23-read-query-with.ts).
 
 ## 8. Find nodes by pattern
 

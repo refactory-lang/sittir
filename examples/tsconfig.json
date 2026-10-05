@@ -25,7 +25,8 @@
 		"./16-dogfooding.ts",
 		"./17-dogfood-rust-strict.ts",
 		"./18-dogfood-typescript-strict.ts",
-		"./19-dogfood-python-strict.ts"
+		"./19-dogfood-python-strict.ts",
+		"./23-read-query-with.ts"
 	],
 	"exclude": []
 }

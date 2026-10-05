@@ -8,6 +8,24 @@ const EXAMPLES = fileURLToPath(new URL('../../examples/', import.meta.url));
 
 const RUST_SOURCE = 'fn main() {}\n';
 
+const PYTHON_SOURCE = [
+	'def load(path, *, strict=False):',
+	'    return _parse(open(path))',
+	'',
+	'',
+	'class Reader:',
+	'    def __init__(self, source):',
+	'        self.source = source',
+	'',
+	'    def _next(self):',
+	'        return self.source',
+	'',
+	'',
+	'def _parse(text):',
+	'    return text',
+	''
+].join('\n');
+
 const SAMPLE_INPUTS: Readonly<Record<string, (scratch: string) => readonly unknown[]>> = {
 	'02-render-round-trip:renderUntouched': () => [RUST_SOURCE],
 	'02-render-round-trip:roundTrip': () => [RUST_SOURCE],
@@ -17,7 +35,14 @@ const SAMPLE_INPUTS: Readonly<Record<string, (scratch: string) => readonly unkno
 	'12-cross-language-migration:interfaceToPythonDataclass': () => ['interface User { name: string; age: number }\n'],
 	'14-format-preserving-transform:renameProcess': () => ['fn process( x:i32 ) {\n\tx\n}\n'],
 	'15-generate-file:saveCacheModule': (scratch) => [join(scratch, 'cache.rs')],
-	'16-dogfooding:emitIsModule': () => [{ kinds: ['identifier', 'call_expression'] }]
+	'16-dogfooding:emitIsModule': () => [{ kinds: ['identifier', 'call_expression'] }],
+	'23-read-query-with:outline': () => [PYTHON_SOURCE],
+	'23-read-query-with:callsTo': () => [PYTHON_SOURCE, 'open'],
+	'23-read-query-with:privateHelpers': () => [PYTHON_SOURCE],
+	'23-read-query-with:methodsOf': () => [PYTHON_SOURCE, 'Reader'],
+	'23-read-query-with:parameterTexts': () => [PYTHON_SOURCE, 'load'],
+	'23-read-query-with:renameFunction': () => [PYTHON_SOURCE, '_next', '_advance'],
+	'23-read-query-with:renameInFile': () => [PYTHON_SOURCE, 'load', 'read_file']
 };
 
 function compileCheckedModules(): string[] {
@@ -72,6 +97,21 @@ describe('the compile-checked examples run', () => {
 	it('renders the first example to the source it constructs', async () => {
 		const { explicitMainFunction } = await import('../../examples/01-construct-nodes.ts');
 		expect(explicitMainFunction().source).toBe('pub fn main() {}');
+	});
+
+	it('reads, queries and edits the python sample as the query example describes', async () => {
+		const example = await import('../../examples/23-read-query-with.ts');
+		expect(example.outline(PYTHON_SOURCE)).toEqual(['def load', 'class Reader', '  def __init__', '  def _next', 'def _parse']);
+		expect(example.callsTo(PYTHON_SOURCE, 'open').map((call) => call.$render())).toEqual(['open(path)']);
+		expect(example.privateHelpers(PYTHON_SOURCE)).toEqual(['_next', '_parse']);
+		expect(example.methodsOf(PYTHON_SOURCE, 'Reader')).toEqual(['__init__', '_next']);
+		expect(example.parameterTexts(PYTHON_SOURCE, 'load')).toEqual(['path', '*', 'strict=False']);
+		expect(example.renameFunction(PYTHON_SOURCE, '_next', '_advance')?.$render()).toBe(
+			'def _advance(self):\n        return self.source'
+		);
+		expect(example.renameInFile(PYTHON_SOURCE, 'load', 'read_file').$render()).toBe(
+			PYTHON_SOURCE.replace('def load(', 'def read_file(')
+		);
 	});
 
 	it('cleans up', () => {

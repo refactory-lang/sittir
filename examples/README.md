@@ -37,5 +37,6 @@ that takes an argument needs a sample input in that test.
 | `17-dogfood-rust-strict.ts` | Dogfooding — rebuild the `dogfood-rust.rs` fixture through `.strict` alone |
 | `18-dogfood-typescript-strict.ts` | Dogfooding — rebuild `common/src/format.ts` through `.strict` alone |
 | `19-dogfood-python-strict.ts` | Dogfooding — rebuild `tools/scripts/probe-sweep.py` through `.strict` alone |
+| `23-read-query-with.ts` | Read, query and edit a parsed file: slot accessors, `$query()` views with `where`, and `$with` |
 | `<n>-dogfood-<g>.generated.ts`, `<n>-dogfood-<g>-loose.generated.ts` | Dogfooding — the strict and loose rebuilds `pnpm run gen:examples` prints from each target; never hand-edited |
 | `20-keyword-openers-<g>*.generated.ts`, `21-list-seat-configs-rust*.generated.ts`, `22-trivia-<g>*.generated.ts` | Emitter fixtures (`packages/tools/tests/emit/__fixtures__`) rebuilt by `pnpm run gen:examples`, each on the strict and the loose surface (`-loose`); never hand-edited |
