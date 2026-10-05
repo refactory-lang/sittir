@@ -80,12 +80,21 @@ export interface EmitAllResult {
 	rootTreeTypeName?: string;
 }
 
-type RenderModuleEmission = { tag: 'emit'; validGrammar: GrammarName } | { tag: 'skip' };
+type RenderModuleEmission =
+	| { tag: 'emit'; validGrammar: GrammarName; generatedIdTables: GeneratedIdTables }
+	| { tag: 'skip' };
 
-function classifyRenderModuleEmission(grammar: string, emitRenderModule: boolean | undefined): RenderModuleEmission {
+function classifyRenderModuleEmission(
+	grammar: string,
+	emitRenderModule: boolean | undefined,
+	generatedIdTables: GeneratedIdTables | undefined
+): RenderModuleEmission {
 	if (emitRenderModule !== true) return { tag: 'skip' };
 	if (!isGrammar(grammar)) return { tag: 'skip' };
-	return { tag: 'emit', validGrammar: grammar };
+	if (generatedIdTables === undefined) {
+		throw new Error(`render module: ${grammar} has no parser kind ids; generate the parser before emitting the render module`);
+	}
+	return { tag: 'emit', validGrammar: grammar, generatedIdTables };
 }
 
 export function emitAll(config: EmitAllConfig): EmitAllResult {
@@ -104,7 +113,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		visibleExternals,
 		diagnostics
 	} = config;
-	const renderModuleEmission = classifyRenderModuleEmission(grammar, emitRenderModule);
+	const renderModuleEmission = classifyRenderModuleEmission(grammar, emitRenderModule, generatedIdTables);
 	const kindEntries = generatedIdTables
 		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
 		: undefined;
@@ -159,7 +168,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 			? new RenderModuleEmitter({
 					grammar: renderModuleEmission.validGrammar,
 					nodeMap,
-					generatedIdTables,
+					generatedIdTables: renderModuleEmission.generatedIdTables,
 					renderRules,
 					options: optionsBlock,
 					visibleExternals,

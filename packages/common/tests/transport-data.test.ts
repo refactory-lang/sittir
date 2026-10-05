@@ -128,7 +128,7 @@ describe('toTransportData', () => {
 		};
 		const own = project(withOwnTrivia as never) as unknown as Record<string, unknown>;
 		expect(treeHandleOf(own)).toBeUndefined();
-		expect(own.$_trivia).toBeDefined();
+		expect((own.$_layout as { trivia?: unknown } | undefined)?.trivia).toBeDefined();
 
 		// A child's comments lie inside the parent's span: the parent's bytes
 		// carry them, so a deep read of a commented file still folds like a
@@ -172,7 +172,7 @@ describe('toTransportData', () => {
 		expect(treeHandleOf(out)).toBeUndefined();
 		expect(out.$childIndex).toBeUndefined();
 		expect(out.$text).toBe('2');
-		expect(out.$_trivia).toBeDefined();
+		expect((out.$_layout as { trivia?: unknown } | undefined)?.trivia).toBeDefined();
 	});
 
 	it('leaves a kind id or a boolean in a slot inert', () => {
@@ -343,13 +343,18 @@ describe('line-gap whitespace at the render root', () => {
 
 	it('leaves out the whitespace at the root edges and keeps what sits between its comment and the root', () => {
 		const node = { $type: 5, $source: 0, $named: true, $text: 'b', $_trivia: { leading: [9, comment, 8], trailing: [8] } };
-		expect(toTransportData(node as never, STORED_TRIVIA)).toEqual({ $type: 5, $source: 0, $named: true, $text: 'b', $_trivia: { leading: [comment, 8] } });
+		expect(toTransportData(node as never, STORED_TRIVIA)).toEqual({ $type: 5, $source: 0, $named: true, $text: 'b', $_layout: { trivia: { leading: [comment, 8] } } });
 	});
 
 	it('keeps every entry below the root', () => {
 		const child = { $type: 5, $source: 0, $named: true, $text: 'b', $_trivia: { leading: [9], trailing: [8] } };
 		const root = { $type: 6, $source: 0, $named: true, _body: child, $_trivia: { leading: [9] } };
-		expect(toTransportData(root as never, STORED_TRIVIA)).toEqual({ $type: 6, $source: 0, $named: true, _body: child });
+		expect(toTransportData(root as never, STORED_TRIVIA)).toEqual({
+			$type: 6,
+			$source: 0,
+			$named: true,
+			_body: { $type: 5, $source: 0, $named: true, $text: 'b', $_layout: { trivia: { leading: [9], trailing: [8] } } }
+		});
 	});
 });
 
@@ -421,8 +426,8 @@ describe('sourceGapOf', () => {
 		};
 		const list = (first: Record<string, unknown>) => ({ ...owner, _item: [first, { $type: ATTRIBUTED, $source: 2, _content: b }] });
 		const contentTrivia = (first: Record<string, unknown>) => {
-			const crossed = toTransportData(list(first) as never, run) as unknown as { _item: { _content: { $_trivia?: unknown } }[] };
-			return crossed._item[1]!._content.$_trivia;
+			const crossed = toTransportData(list(first) as never, run) as unknown as { _item: { _content: { $_layout?: { trivia?: unknown } } }[] };
+			return crossed._item[1]!._content.$_layout?.trivia;
 		};
 		expect(contentTrivia(a)).toEqual({ leading: [blank] });
 		expect(contentTrivia(other)).toBeUndefined();
