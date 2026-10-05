@@ -1203,299 +1203,368 @@ export interface ProgramNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	Program.Bound,
-	Program.BuildArgs,
-	Program.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	never,
 	TSKindId.Program,
 	Program.Parsed,
 	EmptyProgram
-> {}
+> {
+	readonly BuildArgs: Program.BuildArgs;
+	readonly LooseArgs: Program.LooseArgs;
+}
 export interface EscapeSequenceNs extends NodeNs<
 	EscapeSequence,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	EscapeSequence.Bound,
-	EscapeSequence.BuildArgs,
-	EscapeSequence.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	'content',
 	TSKindId.EscapeSequence,
 	EscapeSequence.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: EscapeSequence.BuildArgs;
+	readonly LooseArgs: EscapeSequence.LooseArgs;
+}
 export interface CaptureNs extends NodeNs<
 	Capture,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Capture.Bound,
-	Capture.BuildArgs,
-	Capture.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	'name',
 	TSKindId.Capture,
 	Capture.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Capture.BuildArgs;
+	readonly LooseArgs: Capture.LooseArgs;
+}
 export interface StringNs extends NodeNs<
 	String,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	String.Bound,
-	String.BuildArgs,
-	String.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	'string_content',
 	TSKindId.String,
 	String.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: String.BuildArgs;
+	readonly LooseArgs: String.LooseArgs;
+}
 export interface ImmediateStringNs extends NodeNs<
 	ImmediateString,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ImmediateString.Bound,
-	ImmediateString.BuildArgs,
-	ImmediateString.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	'string_content',
 	TSKindId.ImmediateString,
 	ImmediateString.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ImmediateString.BuildArgs;
+	readonly LooseArgs: ImmediateString.LooseArgs;
+}
 export interface StringContentNs extends NodeNs<
 	StringContent,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	StringContent.Bound,
-	StringContent.BuildArgs,
-	StringContent.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	never,
 	TSKindId.StringContent,
 	StringContent.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: StringContent.BuildArgs;
+	readonly LooseArgs: StringContent.LooseArgs;
+}
 export interface ParametersNs extends NodeNs<
 	Parameters,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Parameters.Bound,
-	Parameters.BuildArgs,
-	Parameters.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	never,
 	TSKindId.Parameters,
 	Parameters.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Parameters.BuildArgs;
+	readonly LooseArgs: Parameters.LooseArgs;
+}
 export interface CommentNs extends NodeNs<
 	Comment,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Comment.Bound,
-	Comment.BuildArgs,
-	Comment.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	'content',
 	TSKindId.Comment,
 	Comment.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Comment.BuildArgs;
+	readonly LooseArgs: Comment.LooseArgs;
+}
 export interface ListNs extends NodeNs<
 	List,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	List.Bound,
-	List.BuildArgs,
-	List.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	never,
 	TSKindId.List,
 	List.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: List.BuildArgs;
+	readonly LooseArgs: List.LooseArgs;
+}
 export interface GroupingNs extends NodeNs<
 	Grouping,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Grouping.Bound,
-	Grouping.BuildArgs,
-	Grouping.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	never,
 	TSKindId.Grouping,
 	Grouping.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Grouping.BuildArgs;
+	readonly LooseArgs: Grouping.LooseArgs;
+}
 export interface MissingNodeNs extends NodeNs<
 	MissingNode,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	MissingNode.Bound,
-	MissingNode.BuildArgs,
-	MissingNode.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	never,
 	TSKindId.MissingNode,
 	MissingNode.Parsed,
 	EmptyMissingNode
-> {}
+> {
+	readonly BuildArgs: MissingNode.BuildArgs;
+	readonly LooseArgs: MissingNode.LooseArgs;
+}
 export interface AnonymousNodeNs extends NodeNs<
 	AnonymousNode,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	AnonymousNode.Bound,
-	AnonymousNode.BuildArgs,
-	AnonymousNode.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	never,
 	TSKindId.AnonymousNode,
 	AnonymousNode.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: AnonymousNode.BuildArgs;
+	readonly LooseArgs: AnonymousNode.LooseArgs;
+}
 export interface FieldDefinitionNs extends NodeNs<
 	FieldDefinition,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	FieldDefinition.Bound,
-	FieldDefinition.BuildArgs,
-	FieldDefinition.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	never,
 	TSKindId.FieldDefinition,
 	FieldDefinition.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: FieldDefinition.BuildArgs;
+	readonly LooseArgs: FieldDefinition.LooseArgs;
+}
 export interface NegatedFieldNs extends NodeNs<
 	NegatedField,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	NegatedField.Bound,
-	NegatedField.BuildArgs,
-	NegatedField.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	'identifier',
 	TSKindId.NegatedField,
 	NegatedField.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: NegatedField.BuildArgs;
+	readonly LooseArgs: NegatedField.LooseArgs;
+}
 export interface PredicateNs extends NodeNs<
 	Predicate,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Predicate.Bound,
-	Predicate.BuildArgs,
-	Predicate.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	never,
 	TSKindId.Predicate,
 	Predicate.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: Predicate.BuildArgs;
+	readonly LooseArgs: Predicate.LooseArgs;
+}
 export interface ListElementQuantifierNs extends NodeNs<
 	ListElementQuantifier,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	ListElementQuantifier.Bound,
-	ListElementQuantifier.BuildArgs,
-	ListElementQuantifier.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	'quantifier',
 	TSKindId.ListElementQuantifier,
 	ListElementQuantifier.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: ListElementQuantifier.BuildArgs;
+	readonly LooseArgs: ListElementQuantifier.LooseArgs;
+}
 export interface GroupExpressionArmNs extends NodeNs<
 	GroupExpressionArm,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	GroupExpressionArm.Bound,
-	GroupExpressionArm.BuildArgs,
-	GroupExpressionArm.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	never,
 	TSKindId.GroupExpressionArm,
 	GroupExpressionArm.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: GroupExpressionArm.BuildArgs;
+	readonly LooseArgs: GroupExpressionArm.LooseArgs;
+}
 export interface NamedNodeExpressionArmNs extends NodeNs<
 	NamedNodeExpressionArm,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	NamedNodeExpressionArm.Bound,
-	NamedNodeExpressionArm.BuildArgs,
-	NamedNodeExpressionArm.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	never,
 	TSKindId.NamedNodeExpressionArm,
 	NamedNodeExpressionArm.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: NamedNodeExpressionArm.BuildArgs;
+	readonly LooseArgs: NamedNodeExpressionArm.LooseArgs;
+}
 export interface GroupingGroupNs extends NodeNs<
 	GroupingGroup,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	GroupingGroup.Bound,
-	GroupingGroup.BuildArgs,
-	GroupingGroup.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	never,
 	TSKindId.GroupingGroup,
 	GroupingGroup.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: GroupingGroup.BuildArgs;
+	readonly LooseArgs: GroupingGroup.LooseArgs;
+}
 export interface NamedNodePlainNs extends NodeNs<
 	NamedNodePlain,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	NamedNodePlain.Bound,
-	NamedNodePlain.BuildArgs,
-	NamedNodePlain.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	never,
 	TSKindId.NamedNodePlain,
 	NamedNodePlain.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: NamedNodePlain.BuildArgs;
+	readonly LooseArgs: NamedNodePlain.LooseArgs;
+}
 export interface NamedNodeSupertypedNs extends NodeNs<
 	NamedNodeSupertyped,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	NamedNodeSupertyped.Bound,
-	NamedNodeSupertyped.BuildArgs,
-	NamedNodeSupertyped.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	never,
 	TSKindId.NamedNodeSupertyped,
 	NamedNodeSupertyped.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: NamedNodeSupertyped.BuildArgs;
+	readonly LooseArgs: NamedNodeSupertyped.LooseArgs;
+}
 export interface NamedNodeGroupChildrenNs extends NodeNs<
 	NamedNodeGroupChildren,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	NamedNodeGroupChildren.Bound,
-	NamedNodeGroupChildren.BuildArgs,
-	NamedNodeGroupChildren.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	never,
 	TSKindId.NamedNodeGroupChildren,
 	NamedNodeGroupChildren.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: NamedNodeGroupChildren.BuildArgs;
+	readonly LooseArgs: NamedNodeGroupChildren.LooseArgs;
+}
 export interface NamedNodeGroupAnchoredLastNs extends NodeNs<
 	NamedNodeGroupAnchoredLast,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	NamedNodeGroupAnchoredLast.Bound,
-	NamedNodeGroupAnchoredLast.BuildArgs,
-	NamedNodeGroupAnchoredLast.LooseArgs,
+	readonly unknown[],
+	readonly unknown[],
 	never,
 	TSKindId.NamedNodeGroupAnchoredLast,
 	NamedNodeGroupAnchoredLast.Parsed,
 	never
-> {}
+> {
+	readonly BuildArgs: NamedNodeGroupAnchoredLast.BuildArgs;
+	readonly LooseArgs: NamedNodeGroupAnchoredLast.LooseArgs;
+}
 export interface AnchorNs extends KeywordNs<TSKindId.Anchor, '.', TSKindId.Anchor> {}
 export interface TightNs extends KeywordNs<TSKindId.Tight, '', TSKindId.Tight> {}
 export interface SpaceNs extends KeywordNs<TSKindId.Space, ' ', TSKindId.Space> {}

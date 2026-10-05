@@ -7,7 +7,7 @@ import { describe, it } from 'vitest';
 import { buildProgram } from '../src/factories/raw.ts';
 import type { TSKindId } from '../src/index.ts';
 import type {
-	ClassDeclaration,
+	AbstractClassDeclaration,
 	Program,
 	FormalParametersElements,
 	ConfigFor,
@@ -28,16 +28,16 @@ type Equals<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B 
 function expectTrue<_T extends true>(): void {}
 
 describe('typescript NamespaceMap access-path convergence', () => {
-	it('ClassDeclaration three-path convergence', () => {
-		expectTrue<Equals<ClassDeclaration.Config, ConfigFor<TSKindId.ClassDeclaration>>>();
-		expectTrue<Equals<ConfigFor<TSKindId.ClassDeclaration>, NamespaceMap[TSKindId.ClassDeclaration]['Config']>>();
-		expectTrue<Equals<ClassDeclaration.Config, NamespaceMap[TSKindId.ClassDeclaration]['Config']>>();
+	it('AbstractClassDeclaration three-path convergence', () => {
+		expectTrue<Equals<AbstractClassDeclaration.Config, ConfigFor<TSKindId.AbstractClassDeclaration>>>();
+		expectTrue<Equals<ConfigFor<TSKindId.AbstractClassDeclaration>, NamespaceMap[TSKindId.AbstractClassDeclaration]['Config']>>();
+		expectTrue<Equals<AbstractClassDeclaration.Config, NamespaceMap[TSKindId.AbstractClassDeclaration]['Config']>>();
 	});
 
 	it('Fluent / Loose / Kind each converge', () => {
-		expectTrue<Equals<ClassDeclaration.Bound, BoundFor<TSKindId.ClassDeclaration>>>();
-		expectTrue<Equals<ClassDeclaration.Loose, LooseFor<TSKindId.ClassDeclaration>>>();
-		expectTrue<Equals<ClassDeclaration.Kind, TSKindId.ClassDeclaration>>();
+		expectTrue<Equals<AbstractClassDeclaration.Bound, BoundFor<TSKindId.AbstractClassDeclaration>>>();
+		expectTrue<Equals<AbstractClassDeclaration.Loose, LooseFor<TSKindId.AbstractClassDeclaration>>>();
+		expectTrue<Equals<AbstractClassDeclaration.Kind, TSKindId.AbstractClassDeclaration>>();
 	});
 
 	it('Program (root kind) converges', () => {
@@ -57,10 +57,10 @@ describe('typescript NamespaceMap access-path convergence', () => {
 	it("BuildArgs is the builder's own parameter list, and Config is its first element", () => {
 		// ARITY comes from the factory, CONTENT from the interface: the alias
 		// element REFERENCES `Config`, so the dependency runs one way only.
-		expectTrue<Equals<ClassDeclaration.Config, ClassDeclaration.BuildArgs[0]>>();
-		expectTrue<Equals<ClassDeclaration.BuildArgs, ClassDeclaration.BuildArgs>>();
-		expectTrue<Equals<ClassDeclaration.LooseArgs, ClassDeclaration.LooseArgs>>();
-		expectTrue<Equals<ClassDeclaration.Loose, ClassDeclaration.LooseArgs[0]>>();
+		expectTrue<Equals<AbstractClassDeclaration.Config, AbstractClassDeclaration.BuildArgs[0]>>();
+		expectTrue<Equals<AbstractClassDeclaration.BuildArgs, AbstractClassDeclaration.BuildArgs>>();
+		expectTrue<Equals<AbstractClassDeclaration.LooseArgs, AbstractClassDeclaration.LooseArgs>>();
+		expectTrue<Equals<AbstractClassDeclaration.Loose, AbstractClassDeclaration.LooseArgs[0]>>();
 	});
 
 	it('BuildArgs is NOT Parameters<typeof build...> on an overloaded kind', () => {
@@ -96,14 +96,14 @@ describe('typescript NamespaceMap access-path convergence', () => {
 
 	it('BuildArgs stays a MUTABLE tuple whose element is Config', () => {
 		// Comparability across kinds depends on the tuple being mutable.
-		expectTrue<Equals<ClassDeclaration.BuildArgs, [ClassDeclaration.Config]>>();
+		expectTrue<Equals<AbstractClassDeclaration.BuildArgs, [AbstractClassDeclaration.Config]>>();
 	});
 
 	it('Loose decomposes into LooseConfig plus the node passthrough, admitted by kind', () => {
 		// `LooseConfig` is the config arm named at the source rather than
 		// recovered downstream as `Exclude<Loose, T>`. The passthrough arm is a
 		// built node of the kind, never the storage shape.
-		expectTrue<Equals<ClassDeclaration.Loose, ClassDeclaration.LooseConfig | Admit<ClassDeclaration>>>();
-		expectTrue<Equals<ClassDeclaration.LooseConfig, LooseConfigFor<TSKindId.ClassDeclaration>>>();
+		expectTrue<Equals<AbstractClassDeclaration.Loose, AbstractClassDeclaration.LooseConfig | Admit<AbstractClassDeclaration>>>();
+		expectTrue<Equals<AbstractClassDeclaration.LooseConfig, LooseConfigFor<TSKindId.AbstractClassDeclaration>>>();
 	});
 });

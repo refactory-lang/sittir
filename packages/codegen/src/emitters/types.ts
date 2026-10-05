@@ -906,13 +906,16 @@ function emitNamespaceInterfaceLine(
 		'  LeafStringMap,',
 		'  NamespaceMap,',
 		`  ${typeName}.Bound,`,
-		`  ${typeName}.BuildArgs,`,
-		`  ${typeName}.LooseArgs,`,
+		'  readonly unknown[],',
+		'  readonly unknown[],',
 		`  ${coercer?.bare ?? 'never'},`,
 		`  ${coercer?.kind ?? 'never'},`,
 		`  ${typeName}.Parsed,`,
 		`  ${emptyTypeName ?? 'never'}`,
-		'> {}'
+		'> {',
+		`  readonly BuildArgs: ${typeName}.BuildArgs;`,
+		`  readonly LooseArgs: ${typeName}.LooseArgs;`,
+		'}'
 	);
 }
 

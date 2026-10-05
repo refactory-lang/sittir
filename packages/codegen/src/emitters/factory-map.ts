@@ -1,5 +1,7 @@
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledNode } from '../compiler/model/node-map.ts';
+import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
+import type { KindEnumEntry } from './kind-discriminant.ts';
+import { armIdOf } from './render-options-rs.ts';
 import { deriveSlotCardinality, resolveSlotAliasPairs } from '../compiler/model/node-map.ts';
 import {
 	classifyFactoryShape,
@@ -22,6 +24,7 @@ export interface FactorySlotMeta {
 	readonly multiple: boolean;
 	readonly nonEmpty: boolean;
 	readonly registered?: boolean;
+	readonly optionDefault?: number | string;
 }
 
 export interface FactoryMapData {
@@ -33,7 +36,7 @@ export interface FactoryMapData {
 	readonly polymorphVariants: PolymorphVariantMap;
 }
 
-export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
+export function buildFactoryMap(nodeMap: NodeMap, kindEntries?: readonly KindEnumEntry[]): FactoryMapData {
 	const aliasSet = collectAliasSourceKinds(nodeMap);
 
 	const factoryShapes: Record<string, FactoryShape> = {};
@@ -67,7 +70,12 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 		const slots: Record<string, FactorySlotMeta> = {};
 		const registered = new Set(registeredSlots(node));
 		for (const field of node.slots) {
-			slots[field.name] = createFactorySlotMeta(false, 1, deriveSlotCardinality(field), registered.has(field));
+			slots[field.name] = createFactorySlotMeta(
+				false,
+				1,
+				deriveSlotCardinality(field),
+				registered.has(field) ? { registered: true, ...optionDefaultOf(field, kindEntries, `${kind}.${field.name}`) } : {}
+			);
 		}
 		if (Object.keys(slots).length > 0) factorySlots[kind] = slots;
 	}
@@ -109,12 +117,19 @@ function createFactorySlotMeta(
 	unnamed: boolean,
 	slotCount: number,
 	cardinality: ReturnType<typeof deriveSlotCardinality>,
-	registered = false
+	registration: Pick<FactorySlotMeta, 'registered' | 'optionDefault'> = {}
 ): FactorySlotMeta {
-	return {
-		unnamed,
-		slotCount,
-		...cardinality,
-		...(registered ? { registered: true } : {})
-	};
+	return { unnamed, slotCount, ...cardinality, ...registration };
+}
+
+function optionDefaultOf(
+	slot: AssembledNonterminal,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	at: string
+): Pick<FactorySlotMeta, 'optionDefault'> {
+	const value = slot.optionDefaultArm;
+	if (value === undefined) return {};
+	if (slot.registeredOption === 'spelling') return { optionDefault: value };
+	if (kindEntries === undefined) return {};
+	return { optionDefault: armIdOf(kindEntries, { value, kind: slot.optionDefaultKind }, at) };
 }

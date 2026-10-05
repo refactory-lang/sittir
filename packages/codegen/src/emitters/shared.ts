@@ -1,3 +1,4 @@
+import { BLANK_KIND_ID } from '../compiler/model/site-preferences.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { kindTypeName } from '../compiler/model/casing.ts';
 import { SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
@@ -283,7 +284,7 @@ function resolveEntryLiteral(entry: NodeOrTerminal, nodeMap: NodeMap): string | 
 }
 
 export function keywordPresenceKind(field: AssembledNonterminal, nodeMap: NodeMap): 'boolean' | 'bitflag' | null {
-	if (field.values.length === 0) return null;
+	if (field.values.length === 0 || field.registeredOption === 'choice') return null;
 
 	if (field.values.length === 1) {
 		const v = field.values[0]!;
@@ -948,6 +949,14 @@ export function registeredSlots(node: {
 	if (node.configSlots === undefined) return node.slots.filter((slot) => slot.registeredOption !== undefined);
 	const config = new Set(node.configSlots);
 	return node.slots.filter((slot) => !config.has(slot));
+}
+
+export function blankFromRead(blank: boolean, expr: string): string {
+	return blank ? `(${expr} ?? ${BLANK_KIND_ID})` : expr;
+}
+
+export function blankFromInput(blank: boolean, expr: string): string {
+	return blank ? `(${expr} === null ? ${BLANK_KIND_ID} : ${expr})` : expr;
 }
 
 export interface LeadingOptions {

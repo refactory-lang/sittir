@@ -1150,6 +1150,12 @@ export interface NodeNs<
 	// the LAST overload, and both real overload families put a non-canonical
 	// form there — a forwarded wrapper ends with its forwarded-target form,
 	// a separated list with its options-leading form.
+	//
+	// Generated namespaces redeclare `BuildArgs` and `LooseArgs` as members
+	// rather than passing them as type arguments: a type argument resolves
+	// with the base type, and a row whose elements reach back to its own
+	// kind (a statement block holding statements, a wrapper forwarding to
+	// it) would need that base while it is being resolved.
 	readonly BuildArgs: Args;
 	/** `BuildArgs` with the same arity and the same labels, each parameter
 	 *  widened to what a COERCING caller may pass: a config parameter to

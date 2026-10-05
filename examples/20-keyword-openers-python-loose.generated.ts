@@ -8,9 +8,9 @@ export function rebuildKeywordOpenersPythonLoose() {
 		name: "f",
 		parameters: ["a", py.build.defaultParameter({
 			name: "b",
-			value: py.build.tuple(["1", "2"]),
+			value: py.build.tuple("1", "2"),
 		})],
-		body: py.build.block(py.build.simpleStatementsElements(py.build.assignment.eq({
+		body: py.build.suite.block(py.build.simpleStatements(py.build.assignment.eq({
 			left: "x",
 			right: py.build.binaryOperator({
 				left: py.build.parenthesizedExpression(py.build.binaryOperator({
@@ -23,26 +23,26 @@ export function rebuildKeywordOpenersPythonLoose() {
 			}),
 		})), py.build.ifStatement({
 			condition: py.build.parenthesizedExpression("x"),
-			consequence: py.build.block(py.build.simpleStatementsElements(py.build.returnStatement(py.build.parenthesizedExpression("x")))),
+			consequence: py.build.suite.block(py.build.simpleStatements(py.build.returnStatement(py.build.parenthesizedExpression("x")))),
 		}), py.build.whileStatement({
 			condition: py.build.parenthesizedExpression("x"),
-			body: py.build.block(py.build.simpleStatementsElements(py.build.assignment.eq({
+			body: py.build.suite.block(py.build.simpleStatements(py.build.assignment.eq({
 				left: "x",
 				right: py.build.list("1"),
 			}))),
 		}), py.build.forStatement({
 			left: "i",
 			right: py.build.parenthesizedExpression("a"),
-			body: py.build.block(py.build.simpleStatementsElements(py.build.passStatement)),
-		}), py.build.simpleStatementsElements(py.build.assertStatement(py.build.parenthesizedExpression("x"))), py.build.simpleStatementsElements(py.build.deleteStatement(py.build.parenthesizedExpression("x"))), py.build.simpleStatementsElements(py.build.assignment.eq({
+			body: py.build.suite.block(py.build.simpleStatements(py.build.passStatement)),
+		}), py.build.simpleStatements(py.build.assertStatement(py.build.parenthesizedExpression("x"))), py.build.simpleStatements(py.build.deleteStatement(py.build.parenthesizedExpression("x"))), py.build.simpleStatements(py.build.assignment.eq({
 			left: "g",
 			right: py.build.lambda({
 				body: py.build.parenthesizedExpression("x"),
 			}),
-		})), py.build.simpleStatementsElements(py.build.assignment.eq({
+		})), py.build.simpleStatements(py.build.assignment.eq({
 			left: "y",
 			right: py.build.notOperator(py.build.parenthesizedExpression("x")),
-		})), py.build.simpleStatementsElements(py.build.assignment.eq({
+		})), py.build.simpleStatements(py.build.assignment.eq({
 			left: "z",
 			right: py.build.booleanOperator({
 				left: py.build.booleanOperator({
@@ -53,9 +53,9 @@ export function rebuildKeywordOpenersPythonLoose() {
 				operator: py.kinds.OrKeyword,
 				right: py.build.list("1"),
 			}),
-		})), py.build.simpleStatementsElements(py.build.expressionStatement(py.build.yield(py.build.parenthesizedExpression("x")))), py.build.simpleStatementsElements(py.build.raiseStatement({
+		})), py.build.simpleStatements(py.build.expressionStatement(py.build.yield(py.build.parenthesizedExpression("x")))), py.build.simpleStatements(py.build.raiseStatement({
 			expressions: py.build.parenthesizedExpression("E"),
-		})), py.build.simpleStatementsElements(py.build.assignment.eq({
+		})), py.build.simpleStatements(py.build.assignment.eq({
 			left: "w",
 			right: py.build.listComprehension({
 				body: "i",
@@ -64,15 +64,15 @@ export function rebuildKeywordOpenersPythonLoose() {
 					right: [py.build.parenthesizedExpression("a")],
 				}), py.build.parenthesizedExpression("i")],
 			}),
-		})), py.build.simpleStatementsElements(py.build.assignment.eq({
+		})), py.build.simpleStatements(py.build.assignment.eq({
 			left: "v",
 			right: py.build.subscript({
 				value: "a",
 				subscripts: [py.build.parenthesizedExpression("1")],
 			}),
-		})), py.build.simpleStatementsElements(py.build.assignment.eq({
+		})), py.build.simpleStatements(py.build.assignment.eq({
 			left: "u",
-			right: py.build.dictionary([py.build.pair({
+			right: py.build.dictionary(py.build.pair({
 				key: py.build.string({
 					stringStart: "\"",
 					content: [py.build.stringContent("k")],
@@ -86,8 +86,8 @@ export function rebuildKeywordOpenersPythonLoose() {
 					stringEnd: "\"",
 				}),
 				value: py.build.list("2"),
-			})]),
-		})), py.build.simpleStatementsElements(py.build.assignment.eq({
+			})),
+		})), py.build.simpleStatements(py.build.assignment.eq({
 			left: "s",
 			right: py.build.string({
 				stringStart: "f\"",
@@ -96,6 +96,6 @@ export function rebuildKeywordOpenersPythonLoose() {
 				})],
 				stringEnd: "\"",
 			}),
-		})), py.build.simpleStatementsElements(py.build.returnStatement(py.build.tuple(["a", "b"])))),
+		})), py.build.simpleStatements(py.build.returnStatement(py.build.tuple("a", "b")))),
 	}));
 }

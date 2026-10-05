@@ -632,15 +632,24 @@ export function buildLexicalDeclaration(
 }
 
 export function buildStatementBlock(): T.EmptyStatementBlock;
-export function buildStatementBlock(config?: Partial<T.StatementBlock.Config>): T.StatementBlock.Bound;
-export function buildStatementBlock(config: Partial<T.StatementBlock.Config> = {}): T.StatementBlock.Bound {
-	const _statements = rejectBareText(
-		kindIdStorage<NonNullable<T.StatementBlock['_statements']>>(config.statements ?? []),
-		'StatementBlock.statements',
-		'a built Statement'
-	);
-	const _automatic_semicolon = coerceBooleanKeywordStorage(
-		rejectBareText(config.automaticSemicolon, 'StatementBlock.automaticSemicolon', 'a boolean')
+export function buildStatementBlock(...children: Admit<T.Statement[]>): T.StatementBlock.Bound;
+export function buildStatementBlock(
+	options: ListOptions<T.StatementBlock.Options>,
+	...children: Admit<T.Statement[]>
+): T.StatementBlock.Bound;
+export function buildStatementBlock(...args: unknown[]): T.StatementBlock.Bound {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['terminator'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as T.StatementBlock.Options;
+	const children = (_optsFirst ? args.slice(1) : args) as unknown as Admit<T.Statement[]>;
+	const _statements = rejectBareText(children, 'StatementBlock.statements', 'a built Statement');
+	const _terminator = coerceKindEnumStorage<NonNullable<T.StatementBlock['_terminator']>>(
+		options?.terminator === null ? 0 : options?.terminator,
+		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const handle = currentHandle();
 	const node = {
@@ -648,15 +657,15 @@ export function buildStatementBlock(config: Partial<T.StatementBlock.Config> = {
 		$source: 2 as const,
 		$named: true as const,
 		_statements,
-		_automatic_semicolon,
+		_terminator,
 		$with: {
-			statements: (...values: Admit<NonNullable<NonNullable<T.StatementBlock.Config>['statements']>[number][]>) =>
-				rebuilt(node, handle, () => buildStatementBlock({ ...config, statements: restItems('statements', values) })),
-			automaticSemicolon: (value?: Admit<NonNullable<T.StatementBlock.Config>['automaticSemicolon']>) =>
-				rebuilt(node, handle, () => buildStatementBlock({ ...config, automaticSemicolon: value }))
+			statements: (...vs: Admit<T.Statement>[]) =>
+				rebuilt(node, handle, () => buildStatementBlock(options, ...restItems('statements', vs))),
+			terminator: (spelling: TSKindId.AutomaticSemicolon | null) =>
+				rebuilt(node, handle, () => buildStatementBlock({ ...options, terminator: spelling }, ...children))
 		},
 		statements: () => _statements,
-		automaticSemicolon: () => _automatic_semicolon,
+		terminator: () => _terminator,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -893,10 +902,10 @@ export function buildDoStatement(config: T.DoStatement.Config, options?: T.DoSta
 		'a built Statement'
 	);
 	const _condition = rejectBareText(config.condition, 'DoStatement.condition', 'a built ParenthesizedExpression');
-	const _terminator = coerceKindEnumStorage<NonNullable<T.DoStatement['_terminator']>>(options?.terminator, [
-		['\n', TSKindId.AutomaticSemicolon] as const,
-		[';', TSKindId.Semi] as const
-	]);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.DoStatement['_terminator']>>(
+		options?.terminator === null ? 0 : options?.terminator,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DoStatement as const,
@@ -910,7 +919,7 @@ export function buildDoStatement(config: T.DoStatement.Config, options?: T.DoSta
 				rebuilt(node, handle, () => buildDoStatement({ ...config, body: value }, options)),
 			condition: (value: Admit<T.ParenthesizedExpression>) =>
 				rebuilt(node, handle, () => buildDoStatement({ ...config, condition: value }, options)),
-			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | null) =>
 				rebuilt(node, handle, () => buildDoStatement(config, { ...options, terminator: spelling }))
 		},
 		body: () => _body,
@@ -1492,7 +1501,11 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 }
 
 export function buildFinallyClause(value: Admit<T.StatementBlock>): ReturnType<typeof _buildFinallyClause>;
-export function buildFinallyClause(_config?: Partial<T.StatementBlock.Config>): ReturnType<typeof _buildFinallyClause>;
+export function buildFinallyClause(
+	options: ListOptions<T.StatementBlock.Options>,
+	...children: Admit<T.Statement[]>
+): ReturnType<typeof _buildFinallyClause>;
+export function buildFinallyClause(...children: Admit<T.Statement[]>): ReturnType<typeof _buildFinallyClause>;
 export function buildFinallyClause(...args: unknown[]) {
 	if (args.length === 0) {
 		return _buildFinallyClause(buildStatementBlock() as Parameters<typeof _buildFinallyClause>[0]);
@@ -2040,7 +2053,10 @@ export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound 
 	return node as unknown as T.Class.Bound;
 }
 
-export function buildClassDeclaration(config: T.ClassDeclaration.Config): T.ClassDeclaration.Bound {
+export function buildClassDeclaration(
+	config: T.ClassDeclaration.Config,
+	options?: T.ClassDeclaration.Options
+): T.ClassDeclaration.Bound {
 	const _decorator = rejectBareText(config.decorator ?? [], 'ClassDeclaration.decorator', 'a built Decorator');
 	const _name = admitAliasContent<NonNullable<T.ClassDeclaration['_name']>>(
 		rejectBareText(config.name, 'ClassDeclaration.name', 'a built TypeIdentifier'),
@@ -2057,8 +2073,9 @@ export function buildClassDeclaration(config: T.ClassDeclaration.Config): T.Clas
 		'ClassDeclaration.body',
 		'a built ClassBody'
 	);
-	const _automatic_semicolon = coerceBooleanKeywordStorage(
-		rejectBareText(config.automaticSemicolon, 'ClassDeclaration.automaticSemicolon', 'a boolean')
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassDeclaration['_terminator']>>(
+		options?.terminator === null ? 0 : options?.terminator,
+		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const handle = currentHandle();
 	const node = {
@@ -2070,33 +2087,35 @@ export function buildClassDeclaration(config: T.ClassDeclaration.Config): T.Clas
 		_type_parameters,
 		_heritage,
 		_body,
-		_automatic_semicolon,
+		_terminator,
 		$with: {
 			decorators: (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () => buildClassDeclaration({ ...config, decorator: restItems('decorators', values) })),
+				rebuilt(node, handle, () =>
+					buildClassDeclaration({ ...config, decorator: restItems('decorators', values) }, options)
+				),
 			name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildClassDeclaration({ ...config, name: value })),
+				rebuilt(node, handle, () => buildClassDeclaration({ ...config, name: value }, options)),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildClassDeclaration({ ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) => buildClassDeclaration({ ...config, typeParameters: value }, options)
 					)
 				),
 			heritage: (value?: Admit<T.ClassHeritage>) =>
-				rebuilt(node, handle, () => buildClassDeclaration({ ...config, heritage: value })),
+				rebuilt(node, handle, () => buildClassDeclaration({ ...config, heritage: value }, options)),
 			body: (value: Admit<T.ClassBody>) =>
-				rebuilt(node, handle, () => buildClassDeclaration({ ...config, body: value })),
-			automaticSemicolon: (value?: Admit<NonNullable<T.ClassDeclaration.Config>['automaticSemicolon']>) =>
-				rebuilt(node, handle, () => buildClassDeclaration({ ...config, automaticSemicolon: value }))
+				rebuilt(node, handle, () => buildClassDeclaration({ ...config, body: value }, options)),
+			terminator: (spelling: TSKindId.AutomaticSemicolon | null) =>
+				rebuilt(node, handle, () => buildClassDeclaration(config, { ...options, terminator: spelling }))
 		},
 		decorators: () => _decorator,
 		name: () => _name,
 		typeParameters: () => _type_parameters,
 		heritage: () => _heritage,
 		body: () => _body,
-		automaticSemicolon: () => _automatic_semicolon,
+		terminator: () => _terminator,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2212,7 +2231,10 @@ export function buildFunctionExpression(config: Partial<T.FunctionExpression.Con
 	return node as unknown as T.FunctionExpression.Bound;
 }
 
-export function buildFunctionDeclaration(config: T.FunctionDeclaration.Config): T.FunctionDeclaration.Bound {
+export function buildFunctionDeclaration(
+	config: T.FunctionDeclaration.Config,
+	options?: T.FunctionDeclaration.Options
+): T.FunctionDeclaration.Bound {
 	const _async = coerceBooleanKeywordStorage(rejectBareText(config.async, 'FunctionDeclaration.async', 'a boolean'));
 	const _name = rejectBareText(config.name, 'FunctionDeclaration.name', 'buildIdentifier(…)');
 	const _type_parameters = rejectBareText(
@@ -2235,8 +2257,9 @@ export function buildFunctionDeclaration(config: T.FunctionDeclaration.Config): 
 		'FunctionDeclaration.body',
 		'a built StatementBlock'
 	);
-	const _automatic_semicolon = coerceBooleanKeywordStorage(
-		rejectBareText(config.automaticSemicolon, 'FunctionDeclaration.automaticSemicolon', 'a boolean')
+	const _terminator = coerceKindEnumStorage<NonNullable<T.FunctionDeclaration['_terminator']>>(
+		options?.terminator === null ? 0 : options?.terminator,
+		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const handle = currentHandle();
 	const node = {
@@ -2249,18 +2272,18 @@ export function buildFunctionDeclaration(config: T.FunctionDeclaration.Config): 
 		_parameters,
 		_return_type,
 		_body,
-		_automatic_semicolon,
+		_terminator,
 		$with: {
 			async: (value?: Admit<NonNullable<T.FunctionDeclaration.Config>['async']>) =>
-				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, async: value })),
+				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, async: value }, options)),
 			name: (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, name: value })),
+				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, name: value }, options)),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildFunctionDeclaration({ ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) => buildFunctionDeclaration({ ...config, typeParameters: value }, options)
 					)
 				),
 			parameters: (...args: unknown[]) =>
@@ -2268,15 +2291,15 @@ export function buildFunctionDeclaration(config: T.FunctionDeclaration.Config): 
 					listSlotWith(
 						args,
 						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
-						(value: Admit<T.FormalParameters>) => buildFunctionDeclaration({ ...config, parameters: value })
+						(value: Admit<T.FormalParameters>) => buildFunctionDeclaration({ ...config, parameters: value }, options)
 					)
 				),
 			returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, returnType: value })),
+				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, returnType: value }, options)),
 			body: (value: Admit<T.StatementBlock>) =>
-				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, body: value })),
-			automaticSemicolon: (value?: Admit<NonNullable<T.FunctionDeclaration.Config>['automaticSemicolon']>) =>
-				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, automaticSemicolon: value }))
+				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, body: value }, options)),
+			terminator: (spelling: TSKindId.AutomaticSemicolon | null) =>
+				rebuilt(node, handle, () => buildFunctionDeclaration(config, { ...options, terminator: spelling }))
 		},
 		async: () => _async,
 		name: () => _name,
@@ -2284,7 +2307,7 @@ export function buildFunctionDeclaration(config: T.FunctionDeclaration.Config): 
 		parameters: () => _parameters,
 		returnType: () => _return_type,
 		body: () => _body,
-		automaticSemicolon: () => _automatic_semicolon,
+		terminator: () => _terminator,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2372,7 +2395,8 @@ export function buildGeneratorFunction(config: Partial<T.GeneratorFunction.Confi
 }
 
 export function buildGeneratorFunctionDeclaration(
-	config: T.GeneratorFunctionDeclaration.Config
+	config: T.GeneratorFunctionDeclaration.Config,
+	options?: T.GeneratorFunctionDeclaration.Options
 ): T.GeneratorFunctionDeclaration.Bound {
 	const _async = coerceBooleanKeywordStorage(
 		rejectBareText(config.async, 'GeneratorFunctionDeclaration.async', 'a boolean')
@@ -2398,8 +2422,9 @@ export function buildGeneratorFunctionDeclaration(
 		'GeneratorFunctionDeclaration.body',
 		'a built StatementBlock'
 	);
-	const _automatic_semicolon = coerceBooleanKeywordStorage(
-		rejectBareText(config.automaticSemicolon, 'GeneratorFunctionDeclaration.automaticSemicolon', 'a boolean')
+	const _terminator = coerceKindEnumStorage<NonNullable<T.GeneratorFunctionDeclaration['_terminator']>>(
+		options?.terminator === null ? 0 : options?.terminator,
+		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const handle = currentHandle();
 	const node = {
@@ -2412,18 +2437,19 @@ export function buildGeneratorFunctionDeclaration(
 		_parameters,
 		_return_type,
 		_body,
-		_automatic_semicolon,
+		_terminator,
 		$with: {
 			async: (value?: Admit<NonNullable<T.GeneratorFunctionDeclaration.Config>['async']>) =>
-				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, async: value })),
+				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, async: value }, options)),
 			name: (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, name: value })),
+				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, name: value }, options)),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildGeneratorFunctionDeclaration({ ...config, typeParameters: value })
+						(value?: Admit<T.TypeParameters>) =>
+							buildGeneratorFunctionDeclaration({ ...config, typeParameters: value }, options)
 					)
 				),
 			parameters: (...args: unknown[]) =>
@@ -2431,15 +2457,16 @@ export function buildGeneratorFunctionDeclaration(
 					listSlotWith(
 						args,
 						{ kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters },
-						(value: Admit<T.FormalParameters>) => buildGeneratorFunctionDeclaration({ ...config, parameters: value })
+						(value: Admit<T.FormalParameters>) =>
+							buildGeneratorFunctionDeclaration({ ...config, parameters: value }, options)
 					)
 				),
 			returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, returnType: value })),
+				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, returnType: value }, options)),
 			body: (value: Admit<T.StatementBlock>) =>
-				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, body: value })),
-			automaticSemicolon: (value?: Admit<NonNullable<T.GeneratorFunctionDeclaration.Config>['automaticSemicolon']>) =>
-				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, automaticSemicolon: value }))
+				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, body: value }, options)),
+			terminator: (spelling: TSKindId.AutomaticSemicolon | null) =>
+				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration(config, { ...options, terminator: spelling }))
 		},
 		async: () => _async,
 		name: () => _name,
@@ -2447,7 +2474,7 @@ export function buildGeneratorFunctionDeclaration(
 		parameters: () => _parameters,
 		returnType: () => _return_type,
 		body: () => _body,
-		automaticSemicolon: () => _automatic_semicolon,
+		terminator: () => _terminator,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3576,29 +3603,53 @@ function _buildFormalParameters(value?: Admit<T.FormalParametersElements>): T.Fo
 	return node as unknown as T.FormalParameters.Bound;
 }
 
-export function buildClassStaticBlock(config: Partial<T.ClassStaticBlock.Config> = {}): T.ClassStaticBlock.Bound {
-	const _automatic_semicolon = coerceBooleanKeywordStorage(
-		rejectBareText(config.automaticSemicolon, 'ClassStaticBlock.automaticSemicolon', 'a boolean')
+export function buildClassStaticBlock(
+	value: Admit<T.StatementBlock>,
+	options?: T.ClassStaticBlock.Options
+): ReturnType<typeof _buildClassStaticBlock>;
+export function buildClassStaticBlock(...args: unknown[]) {
+	if (args.length === 0 || args[0] === undefined) {
+		return _buildClassStaticBlock(
+			buildStatementBlock() as Parameters<typeof _buildClassStaticBlock>[0],
+			args[0] as never
+		);
+	}
+	if (args[0] === undefined) {
+		return _buildClassStaticBlock(args[0] as unknown as Parameters<typeof _buildClassStaticBlock>[0], args[1] as never);
+	}
+	const prebuilt =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.StatementBlock as const);
+	return prebuilt
+		? _buildClassStaticBlock(args[0] as Parameters<typeof _buildClassStaticBlock>[0], args[1] as never)
+		: _buildClassStaticBlock(
+				(buildStatementBlock as (...a: unknown[]) => unknown)(args[0]) as Parameters<typeof _buildClassStaticBlock>[0],
+				args[1] as never
+			);
+}
+function _buildClassStaticBlock(
+	value: Admit<T.StatementBlock>,
+	options?: T.ClassStaticBlock.Options
+): T.ClassStaticBlock.Bound {
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassStaticBlock['_terminator']>>(
+		options?.terminator === null ? 0 : options?.terminator,
+		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
-	const _body = rejectBareText(
-		orDefault(config.body, () => buildStatementBlock()),
-		'ClassStaticBlock.body',
-		'a built StatementBlock'
-	);
+	const _body = rejectBareText(value, 'ClassStaticBlock.body', 'a built StatementBlock');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ClassStaticBlock as const,
 		$source: 2 as const,
 		$named: true as const,
-		_automatic_semicolon,
+		_terminator,
 		_body,
 		$with: {
-			automaticSemicolon: (value?: Admit<NonNullable<T.ClassStaticBlock.Config>['automaticSemicolon']>) =>
-				rebuilt(node, handle, () => buildClassStaticBlock({ ...config, automaticSemicolon: value })),
-			body: (value: Admit<T.StatementBlock>) =>
-				rebuilt(node, handle, () => buildClassStaticBlock({ ...config, body: value }))
+			body: (value: Admit<T.StatementBlock>) => rebuilt(node, handle, () => _buildClassStaticBlock(value, options)),
+			terminator: (spelling: TSKindId.AutomaticSemicolon | null) =>
+				rebuilt(node, handle, () => _buildClassStaticBlock(value, { ...options, terminator: spelling }))
 		},
-		automaticSemicolon: () => _automatic_semicolon,
+		terminator: () => _terminator,
 		body: () => _body,
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -8004,7 +8055,11 @@ export function buildAmbientDeclarationGlobal(
 	value: Admit<T.StatementBlock>
 ): ReturnType<typeof _buildAmbientDeclarationGlobal>;
 export function buildAmbientDeclarationGlobal(
-	_config?: Partial<T.StatementBlock.Config>
+	options: ListOptions<T.StatementBlock.Options>,
+	...children: Admit<T.Statement[]>
+): ReturnType<typeof _buildAmbientDeclarationGlobal>;
+export function buildAmbientDeclarationGlobal(
+	...children: Admit<T.Statement[]>
 ): ReturnType<typeof _buildAmbientDeclarationGlobal>;
 export function buildAmbientDeclarationGlobal(...args: unknown[]) {
 	if (args.length === 0) {
@@ -8072,7 +8127,7 @@ export function buildAmbientDeclarationModule(
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _terminator = coerceKindEnumStorage<NonNullable<T.AmbientDeclarationModule['_terminator']>>(
-		options?.terminator,
+		options?.terminator === null ? 0 : options?.terminator,
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 	const handle = currentHandle();
@@ -8088,7 +8143,7 @@ export function buildAmbientDeclarationModule(
 				rebuilt(node, handle, () => buildAmbientDeclarationModule({ ...config, name: value }, options)),
 			type: (value: Admit<NonNullable<T.AmbientDeclarationModule.Config>['type']>) =>
 				rebuilt(node, handle, () => buildAmbientDeclarationModule({ ...config, type: value }, options)),
-			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | null) =>
 				rebuilt(node, handle, () => buildAmbientDeclarationModule(config, { ...options, terminator: spelling }))
 		},
 		name: () => _name,
@@ -8964,10 +9019,10 @@ export function buildClassBodyMemberMethod(
 		'ClassBodyMemberMethod.methodDefinition',
 		'a built MethodDefinition'
 	);
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMemberMethod['_terminator']>>(options?.terminator, [
-		['\n', TSKindId.AutomaticSemicolon] as const,
-		[';', TSKindId.Semi] as const
-	]);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMemberMethod['_terminator']>>(
+		options?.terminator === null ? 0 : options?.terminator,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ClassBodyMemberMethod as const,
@@ -8983,7 +9038,7 @@ export function buildClassBodyMemberMethod(
 				),
 			methodDefinition: (value: Admit<T.MethodDefinition>) =>
 				rebuilt(node, handle, () => buildClassBodyMemberMethod({ ...config, methodDefinition: value }, options)),
-			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | null) =>
 				rebuilt(node, handle, () => buildClassBodyMemberMethod(config, { ...options, terminator: spelling }))
 		},
 		decorators: () => _decorator,
@@ -10346,15 +10401,19 @@ export function buildForHeaderVarKind(config: T.ForHeaderVarKind.Config): T.ForH
 	return node as unknown as T.ForHeaderVarKind.Bound;
 }
 
-export function buildForHeaderLetConstKind(config: T.ForHeaderLetConstKind.Config): T.ForHeaderLetConstKind.Bound {
+export function buildForHeaderLetConstKind(
+	config: T.ForHeaderLetConstKind.Config,
+	options?: T.ForHeaderLetConstKind.Options
+): T.ForHeaderLetConstKind.Bound {
 	const _kind = rejectBareText(
 		kindIdStorage<NonNullable<T.ForHeaderLetConstKind['_kind']>>(config.kind),
 		'ForHeaderLetConstKind.kind',
 		'a kind id'
 	);
 	const _left = rejectBareText(config.left, 'ForHeaderLetConstKind.left', 'buildIdentifier(…)');
-	const _automatic_semicolon = coerceBooleanKeywordStorage(
-		rejectBareText(config.automaticSemicolon, 'ForHeaderLetConstKind.automaticSemicolon', 'a boolean')
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderLetConstKind['_terminator']>>(
+		options?.terminator === null ? 0 : options?.terminator,
+		[['\n', TSKindId.AutomaticSemicolon] as const]
 	);
 	const _operator = rejectBareText(
 		kindIdStorage<NonNullable<T.ForHeaderLetConstKind['_operator']>>(config.operator),
@@ -10373,24 +10432,24 @@ export function buildForHeaderLetConstKind(config: T.ForHeaderLetConstKind.Confi
 		$named: true as const,
 		_kind,
 		_left,
-		_automatic_semicolon,
+		_terminator,
 		_operator,
 		_right,
 		$with: {
 			kind: (value: Admit<NonNullable<T.ForHeaderLetConstKind.Config>['kind']>) =>
-				rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, kind: value })),
+				rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, kind: value }, options)),
 			left: (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
-				rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, left: value })),
-			automaticSemicolon: (value?: Admit<NonNullable<T.ForHeaderLetConstKind.Config>['automaticSemicolon']>) =>
-				rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, automaticSemicolon: value })),
+				rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, left: value }, options)),
 			operator: (value: Admit<NonNullable<T.ForHeaderLetConstKind.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, operator: value })),
+				rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, operator: value }, options)),
 			right: (value: Admit<NonNullable<T.ForHeaderLetConstKind.Config>['right']>) =>
-				rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, right: value }))
+				rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, right: value }, options)),
+			terminator: (spelling: TSKindId.AutomaticSemicolon | null) =>
+				rebuilt(node, handle, () => buildForHeaderLetConstKind(config, { ...options, terminator: spelling }))
 		},
 		kind: () => _kind,
 		left: () => _left,
-		automaticSemicolon: () => _automatic_semicolon,
+		terminator: () => _terminator,
 		operator: () => _operator,
 		right: () => _right,
 		$render: () => renderText(handle, node),

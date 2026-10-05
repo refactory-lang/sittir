@@ -23,7 +23,7 @@ describe('a hoisted group seated on its parent', () => {
 			left: ts.build.identifier('item'),
 			operator: ts.kinds.OfKeyword,
 			right: ts.build.identifier('items'),
-			body: ts.build.statementBlock.strict({ automaticSemicolon: true })
+			body: ts.build.statementBlock.strict({ terminator: ts.kinds.AutomaticSemicolon })
 		});
 		expect(built.$render()).toBe('for (const item of items) {}\n');
 	});
@@ -34,7 +34,7 @@ describe('a hoisted group seated on its parent', () => {
 				content: { kind: ts.kinds.ConstKeyword, left: ts.build.identifier('item') },
 				operator: ts.kinds.OfKeyword,
 				right: ts.build.identifier('items'),
-				body: ts.build.statementBlock.strict({ automaticSemicolon: true })
+				body: ts.build.statementBlock.strict({ terminator: ts.kinds.AutomaticSemicolon })
 			});
 		expect(refused).toBeDefined();
 	});

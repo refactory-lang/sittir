@@ -86,7 +86,7 @@ import {
 	type DelimiterSite
 } from './render-options-rs.ts';
 import { displayNameOf, displayedKinds } from '../compiler/model/display-name.ts';
-import { collectSitePreferences, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
+import { BLANK_KIND_ID, collectSitePreferences, hasBlankArm, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
 import { readOptionsBlock, type OptionsConfig } from '../dsl/wire/options-block.ts';
 import { addressTablesFor, EMPTY_ADDRESSES, type AddressTables } from './options.ts';
 import {
@@ -1397,7 +1397,7 @@ function anyTransportPrepareArms(
 }
 
 function isPrepareFilled(slot: AssembledNonterminal): boolean {
-	return slot.registeredOption === 'choice' && isRequired(slot) && !isMultiple(slot);
+	return slot.registeredOption === 'choice' && !isMultiple(slot);
 }
 
 function isTransportRequired(slot: AssembledNonterminal): boolean {
@@ -2056,7 +2056,7 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 				...(component.enumKind === undefined ? {} : { enumKind: component.enumKind })
 			});
 		}
-		const hasMixedContent = slotKinds.length > 0 && literals.length > 0;
+		const hasMixedContent = (slotKinds.length > 0 && literals.length > 0) || hasBlankArm(field);
 		const cls = hasMixedContent ? ({ tag: 'heterogeneous' } as const) : classifySlotForEmit(slotKinds, nodeMap);
 		if (cls.tag !== 'heterogeneous') return;
 		if (!hasAnyConcreteChildKind(slotKinds, nodeMap) && literals.length === 0) return;
@@ -2186,7 +2186,7 @@ function prepareFilledSlotOf(entry: PerSlotChildEnum, nodeMap: NodeMap): Assembl
 	return slot !== undefined && isPrepareFilled(slot) ? slot : undefined;
 }
 
-function fromKindIdImpl(enumName: string, entry: PerSlotChildEnum, literalIds: LiteralKindIds): string[] {
+function fromKindIdImpl(enumName: string, entry: PerSlotChildEnum, literalIds: LiteralKindIds, blank: boolean): string[] {
 	if (entry.kinds.length > 0 || !literalIds.allResolved) {
 		throw new Error(
 			`render-module: ${entry.ownerKind}.${entry.fieldName} is a registered choice option filled at prepare, but ${enumName} has an arm no kind id can build`
@@ -2197,6 +2197,7 @@ function fromKindIdImpl(enumName: string, entry: PerSlotChildEnum, literalIds: L
 		'    pub fn from_kind_id(id: u16) -> Option<Self> {',
 		'        match id {',
 		...literalIds.ids.map(({ id, variant }) => `            ${id} => Some(Self::${variant}),`),
+		...(blank ? [`            ${BLANK_KIND_ID} => Some(Self::${BLANK_VARIANT}),`] : []),
 		'            _ => None,',
 		'        }',
 		'    }',
@@ -2223,6 +2224,8 @@ function emitPerSlotChildEnum(
 
 	const isBoxed = (variantKind: string, variantNode: AssembledNode): boolean =>
 		boxedInEnum(variantKind, ownerKind, variantNode, nodeMap);
+	const modelSlot = nodeMap.nodes.get(ownerKind)?.slots.find((candidate) => candidate.name === entry.fieldName);
+	const blank = modelSlot !== undefined && hasBlankArm(modelSlot);
 
 	lines.push(`#[derive(Debug, Clone)]`);
 	lines.push(`pub enum ${enumName} {`);
@@ -2239,6 +2242,7 @@ function emitPerSlotChildEnum(
 			literalVariants.push(variant);
 		}
 	}
+	if (blank) lines.push(`    ${BLANK_VARIANT},`);
 	if (admitsVerbatim) lines.push(`    Verbatim(VerbatimTransport),`);
 	lines.push(`}`);
 	lines.push(``);
@@ -2246,6 +2250,7 @@ function emitPerSlotChildEnum(
 		...prepareEnumImpl(enumName, [
 			...validKinds.map(({ node }) => ({ variant: rustTypeIdent(node.typeName), payload: true })),
 			...literalVariants.map((variant) => ({ variant, payload: false })),
+			...(blank ? [{ variant: BLANK_VARIANT, payload: false }] : []),
 			...(admitsVerbatim ? [{ variant: 'Verbatim', payload: true }] : [])
 		])
 	);
@@ -2259,7 +2264,8 @@ function emitPerSlotChildEnum(
 					if (variant === undefined) return [];
 					const id = resolveLiteralKindId(literal, kindEntries, kindIdByKind);
 					return [{ variant, payload: false, ids: id === undefined ? [] : [id] }];
-				})
+				}),
+				...(blank ? [{ variant: BLANK_VARIANT, payload: false, ids: [] }] : [])
 			],
 			admitsVerbatim
 				? validKinds
@@ -2271,13 +2277,17 @@ function emitPerSlotChildEnum(
 	);
 
 	const literalIds = literalKindIdsOf(entry, kindIdByKind, literalVariantByKey, kindEntries);
-	if (prepareFilledSlotOf(entry, nodeMap) !== undefined) lines.push(...fromKindIdImpl(enumName, entry, literalIds));
+	if (prepareFilledSlotOf(entry, nodeMap) !== undefined) lines.push(...fromKindIdImpl(enumName, entry, literalIds, blank));
 	if (kindIdByKind !== undefined) {
 		const kindIdArms: string[] = [];
 		const emittedIds = new Set<number>();
 		for (const { id, variant } of literalIds.ids) {
 			emittedIds.add(id);
 			kindIdArms.push(`                ${id} => Ok(Self::${variant}),`);
+		}
+		if (blank) {
+			emittedIds.add(BLANK_KIND_ID);
+			kindIdArms.push(`                ${BLANK_KIND_ID} => Ok(Self::${BLANK_VARIANT}),`);
 		}
 		for (const { kind, node, concreteName } of kindIdStoredFirst(validKinds, (v) => v.node)) {
 			const variant = rustTypeIdent(node.typeName);
@@ -2380,28 +2390,6 @@ function emitPerSlotChildEnum(
 
 	lines.push(...renderBoxedEnumNapiImpls(enumName));
 
-	const bridgeFnName = `${rustSnakeIdent(entry.typeName)}_${rustSnakeIdent(entry.fieldName)}_transport_slot_to_any`;
-	lines.push(`fn ${bridgeFnName}(t: ${enumName}) -> AnyTransport {`);
-	lines.push(`    match t {`);
-	for (const { kind, node } of validKinds) {
-		const variant = rustTypeIdent(node.typeName);
-		if (isBoxed(kind, node)) {
-			lines.push(`        ${enumName}::${variant}(inner) => AnyTransport::${variant}(*inner),`);
-		} else {
-			lines.push(`        ${enumName}::${variant}(inner) => AnyTransport::${variant}(inner),`);
-		}
-	}
-	for (const literal of entry.literals) {
-		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
-		if (variant !== undefined) {
-			lines.push(`        ${enumName}::${variant} => AnyTransport::${variant},`);
-		}
-	}
-	if (admitsVerbatim) lines.push(`        ${enumName}::Verbatim(inner) => AnyTransport::Verbatim(inner),`);
-	lines.push(`    }`);
-	lines.push(`}`);
-	lines.push(``);
-
 	lines.push(`impl ::sittir_core::render::Render for ${enumName} {`);
 	lines.push(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
@@ -2425,6 +2413,7 @@ function emitPerSlotChildEnum(
 			else lines.push(...literalSeamedArm(enumName, variant, literalWriteArm(literal.text, immediate), seams));
 		}
 	}
+	if (blank) lines.push(`            ${enumName}::${BLANK_VARIANT} => Ok(()),`);
 	if (admitsVerbatim) lines.push(`            ${verbatimRenderArm(enumName, entry.verbatimImmediate)}`);
 	lines.push(`        }`);
 	lines.push(`    }`);
@@ -2692,6 +2681,7 @@ function leafBooleanPresenceLiteral(node: AssembledNode, nodeMap: NodeMap): stri
 }
 
 const PREPARE_MOD = '::sittir_core::prepare';
+const BLANK_VARIANT = 'Blank';
 const PREPARE_SIG = `fn prepare(&mut self, ctx: &${PREPARE_MOD}::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {`;
 
 function prepareEnumImpl(
@@ -3534,7 +3524,7 @@ function renderTransportField(
 			rustTransportSlotType(
 				kindsOf(field),
 				nodeMap,
-				{ required, multiple: isMultiple(field), optionalElement: hasOptionalElements(field), adjacent },
+				{ required, multiple: isMultiple(field), optionalElement: hasOptionalElements(field), adjacent, blank: hasBlankArm(field) },
 				parentKind,
 				typeName,
 				field.name,
@@ -3552,14 +3542,14 @@ function slotCarrier(inner: string, adjacent: boolean): string {
 function rustTransportSlotType(
 	slotKinds: readonly string[],
 	nodeMap: NodeMap,
-	cardinality: { required: boolean; multiple: boolean; optionalElement?: boolean; adjacent: boolean },
+	cardinality: { required: boolean; multiple: boolean; optionalElement?: boolean; adjacent: boolean; blank?: boolean },
 	parentKind: string,
 	typeName: string,
 	fieldName: string,
 	literalTexts: readonly string[] = []
 ): string {
 	const { required, multiple, optionalElement, adjacent } = cardinality;
-	const hasMixedContent = slotKinds.length > 0 && literalTexts.length > 0;
+	const hasMixedContent = (slotKinds.length > 0 && literalTexts.length > 0) || cardinality.blank === true;
 	const cls = hasMixedContent ? ({ tag: 'heterogeneous' } as const) : classifySlotForEmit(slotKinds, nodeMap);
 
 	const scc = nodeMap.scc;

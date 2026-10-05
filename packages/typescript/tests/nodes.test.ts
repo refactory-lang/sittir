@@ -437,12 +437,12 @@ describe('lexical_declaration', () => {
 
 describe('statement_block', () => {
 	it('factory produces correct type', () => {
-		const node = ir.statementBlock({});
+		const node = ir.statementBlock();
 		expect(node.$type).toBe(TSKindId.StatementBlock);
 		expect(node.$source).toBe(2);
 	});
 	it('render does not throw on minimal config', () => {
-		const node = ir.statementBlock({});
+		const node = ir.statementBlock();
 		expect(() => node.$render!()).not.toThrow();
 	});
 });
@@ -928,7 +928,7 @@ describe('finally_clause', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_automatic_semicolon: true as never
+			_terminator: TSKindId.AutomaticSemicolon as never
 		} as any);
 		expect(node.$type).toBe(TSKindId.FinallyClause);
 		expect(node.$source).toBe(2);
@@ -939,7 +939,7 @@ describe('finally_clause', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_automatic_semicolon: true as never
+			_terminator: TSKindId.AutomaticSemicolon as never
 		} as any);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -2049,15 +2049,23 @@ describe('formal_parameters', () => {
 describe('class_static_block', () => {
 	it('factory produces correct type', () => {
 		const node = ir.classStaticBlock({
-			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any
-		});
+			$type: TSKindId.StatementBlock,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_terminator: TSKindId.AutomaticSemicolon as never
+		} as any);
 		expect(node.$type).toBe(TSKindId.ClassStaticBlock);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.classStaticBlock({
-			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any
-		});
+			$type: TSKindId.StatementBlock,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_terminator: TSKindId.AutomaticSemicolon as never
+		} as any);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
 	});
@@ -4475,7 +4483,7 @@ describe('ambient_declaration_global', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_automatic_semicolon: true as never
+			_terminator: TSKindId.AutomaticSemicolon as never
 		} as any);
 		expect(node.$type).toBe(TSKindId.AmbientDeclarationGlobal);
 		expect(node.$source).toBe(2);
@@ -4486,7 +4494,7 @@ describe('ambient_declaration_global', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_automatic_semicolon: true as never
+			_terminator: TSKindId.AutomaticSemicolon as never
 		} as any);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);

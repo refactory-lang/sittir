@@ -46,6 +46,13 @@ The per-slot tables (`slotKinds`, `slotRequired`, `slotMultiple`, `slotDefaults`
 config key, `snakeToCamel` of its name: the key a printed config names it with. A pluralized repeated slot's accessor
 (`attributeItems`) is not that key (`attributeItem` is), so keying by the accessor left every such slot unloosened.
 
+### `packages/tools/src/emit/factory-source.ts::printValue`
+
+Prints one argument value as source: a printed node as its own source plus
+trivia, a string as a literal, a kind id as its `kinds` member, and the blank
+kind id (`blankKindId`, codegen's `BLANK_KIND_ID`) as `null`, the builder's
+spelling of the blank arm. Arrays and plain objects print element by element.
+
 ### `packages/tools/src/emit/factory-source.ts::PrintedFacts`
 
 What a printed node was made from, kept beside its source so the slot it
@@ -107,6 +114,8 @@ node carrying trivia keeps its call, since only a call takes `$trivia`.
 #### one element
 
 A list envelope with default options prints as its bare element when it holds exactly one element that prints as a call or text, and as the array otherwise. An element that prints as an object or an array keeps the array, since an object at a list slot is one element's config and an array is the elements. Each element is first hoisted out of its seat config (`hoistSeatElement`) and then loosened at the list's element kinds (`looseListElement`), so `[{ expression: ir.identifier("x") }]` prints as `"x"`.
+
+A list it spells as bare items keeps its `elements` facts and its items as arguments, so an owner that forwards to the list prints those items as its own arguments in the loose spelling too, as the strict spelling does.
 
 ### `packages/tools/src/emit/factory-source.ts::leafKindsForText`
 

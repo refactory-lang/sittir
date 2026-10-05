@@ -111,7 +111,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	208: [
 		['statements', { fields: ['statements'], kinds: [] }],
-		['automaticSemicolon', { fields: ['automatic_semicolon'], kinds: [] }]
+		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
 	209: [['body', { fields: ['body'], kinds: [] }]],
 	210: [
@@ -214,7 +214,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['heritage', { fields: ['heritage'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }],
-		['automaticSemicolon', { fields: ['automatic_semicolon'], kinds: [] }]
+		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
 	244: [['content', { fields: [], kinds: ['class_heritage_extends_clause', 'implements_clause'] }]],
 	245: [
@@ -232,7 +232,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['parameters', { fields: ['parameters'], kinds: [] }],
 		['returnType', { fields: ['return_type'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }],
-		['automaticSemicolon', { fields: [], kinds: ['automatic_semicolon'] }]
+		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
 	247: [
 		['async', { fields: ['async'], kinds: [] }],
@@ -249,7 +249,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['parameters', { fields: ['parameters'], kinds: [] }],
 		['returnType', { fields: ['return_type'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }],
-		['automaticSemicolon', { fields: [], kinds: ['automatic_semicolon'] }]
+		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
 	249: [
 		['async', { fields: ['async'], kinds: [] }],
@@ -358,7 +358,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	280: [['members', { fields: ['members'], kinds: [] }]],
 	281: [['elements', { fields: ['elements'], kinds: [] }]],
 	282: [
-		['automaticSemicolon', { fields: [], kinds: ['automatic_semicolon'] }],
+		['terminator', { fields: ['terminator'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],
 	284: [
@@ -1138,7 +1138,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	434: [
 		['kind', { fields: ['kind'], kinds: [] }],
 		['left', { fields: ['left'], kinds: [] }],
-		['automaticSemicolon', { fields: [], kinds: ['automatic_semicolon'] }],
+		['terminator', { fields: ['terminator'], kinds: [] }],
 		['operator', { fields: ['operator'], kinds: [] }],
 		['right', { fields: ['right'], kinds: [] }]
 	],

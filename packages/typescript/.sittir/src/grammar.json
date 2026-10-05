@@ -999,7 +999,7 @@
           },
           {
             "type": "FIELD",
-            "name": "automatic_semicolon",
+            "name": "terminator",
             "content": {
               "type": "CHOICE",
               "members": [
@@ -4765,7 +4765,7 @@
           },
           {
             "type": "FIELD",
-            "name": "automatic_semicolon",
+            "name": "terminator",
             "content": {
               "type": "CHOICE",
               "members": [
@@ -4927,21 +4927,28 @@
             }
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_automatic_semicolon"
+            "type": "FIELD",
+            "name": "terminator",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_automatic_semicolon"
+                  },
+                  "named": true,
+                  "value": "automatic_semicolon"
                 },
-                "named": true,
-                "value": "automatic_semicolon"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           }
         ]
       }
@@ -5064,21 +5071,28 @@
             }
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_automatic_semicolon"
+            "type": "FIELD",
+            "name": "terminator",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_automatic_semicolon"
+                  },
+                  "named": true,
+                  "value": "automatic_semicolon"
                 },
-                "named": true,
-                "value": "automatic_semicolon"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           }
         ]
       }
@@ -8161,21 +8175,28 @@
           "value": "static"
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_automatic_semicolon"
+          "type": "FIELD",
+          "name": "terminator",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_automatic_semicolon"
+                },
+                "named": true,
+                "value": "automatic_semicolon"
               },
-              "named": true,
-              "value": "automatic_semicolon"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "FIELD",
@@ -16813,26 +16834,30 @@
               }
             },
             {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "ALIAS",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_automatic_semicolon"
+              "type": "FIELD",
+              "name": "terminator",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_automatic_semicolon"
+                    },
+                    "named": true,
+                    "value": "automatic_semicolon"
                   },
-                  "named": true,
-                  "value": "automatic_semicolon"
-                },
-                {
-                  "type": "BLANK"
-                }
-              ]
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              },
+              "metadata": {
+                "fieldSource": "override"
+              }
             }
-          ],
-          "annotations": {
-            "hoisted": true
-          }
+          ]
         },
         {
           "type": "FIELD",

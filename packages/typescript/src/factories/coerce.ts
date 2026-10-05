@@ -670,6 +670,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	]),
 	decorator: new Set([1, 278, 279, 296]),
 	formal_parameters: new Set([320, 321, 379]),
+	class_static_block: new Set([208]),
 	rest_pattern: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 236, 239, 240, 242, 245, 247, 249, 254, 255,
@@ -1025,6 +1026,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	named_imports: TSKindId.NamedImports,
 	expression_statement: TSKindId.ExpressionStatement,
 	variable_declaration: TSKindId.VariableDeclaration,
+	statement_block: TSKindId.StatementBlock,
 	else_clause: TSKindId.ElseClause,
 	break_statement: TSKindId.BreakStatement,
 	continue_statement: TSKindId.ContinueStatement,
@@ -1050,6 +1052,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	decorator: TSKindId.Decorator,
 	class_body: TSKindId.ClassBody,
 	formal_parameters: TSKindId.FormalParameters,
+	class_static_block: TSKindId.ClassStaticBlock,
 	rest_pattern: TSKindId.RestPattern,
 	computed_property_name: TSKindId.ComputedPropertyName,
 	non_null_expression: TSKindId.NonNullExpression,
@@ -1117,6 +1120,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	namespace_import: 'identifier',
 	named_imports: 'import_specifiers',
 	variable_declaration: 'variable_declarator',
+	statement_block: 'statement',
 	else_clause: 'statement',
 	break_statement: 'statement_identifier',
 	continue_statement: 'statement_identifier',
@@ -1127,6 +1131,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	sequence_expression: 'expression',
 	class_body: '_class_body_member',
 	formal_parameters: 'formal_parameters_elements',
+	class_static_block: 'statement_block',
 	computed_property_name: 'expression',
 	non_null_expression: 'expression',
 	extends_clause: 'extends_clause_single',
@@ -1192,6 +1197,7 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'template_substitution',
 	'decorator',
 	'formal_parameters',
+	'class_static_block',
 	'rest_pattern',
 	'computed_property_name',
 	'non_null_expression',
@@ -1268,6 +1274,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildExpressionStatement(children[0] as Parameters<typeof F.buildExpressionStatement>[0]);
 		case 'variable_declaration':
 			return (coerceToVariableDeclaration as (...args: unknown[]) => unknown)(...children);
+		case 'statement_block':
+			return (coerceToStatementBlock as (...args: unknown[]) => unknown)(...children);
 		case 'else_clause':
 			return F.buildElseClause(children[0] as Parameters<typeof F.buildElseClause>[0]);
 		case 'break_statement':
@@ -1318,6 +1326,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (coerceToClassBody as (...args: unknown[]) => unknown)(...children);
 		case 'formal_parameters':
 			return F.buildFormalParameters(children[0] as Parameters<typeof F.buildFormalParameters>[0]);
+		case 'class_static_block':
+			return F.buildClassStaticBlock(children[0] as Parameters<typeof F.buildClassStaticBlock>[0]);
 		case 'rest_pattern':
 			return F.buildRestPattern(children[0] as Parameters<typeof F.buildRestPattern>[0]);
 		case 'computed_property_name':
@@ -2970,30 +2980,31 @@ export function coerceToLexicalDeclaration(
 	);
 }
 
-export function resolveStatementBlock_statements(
-	value: T.StatementBlock.LooseConfig['statements']
-): Admit<T.StatementBlock['_statements']> {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveMany<T.Statement>(value, _K0, _K1)),
-		[]
-	);
-}
-
-export function resolveStatementBlock_automaticSemicolon(
-	value: T.StatementBlock.LooseConfig['automaticSemicolon']
-): Admit<T.StatementBlock['_automatic_semicolon']> {
-	return _resolveBooleanKeyword(value);
-}
-
 export function coerceToStatementBlock(): T.EmptyStatementBlock;
-export function coerceToStatementBlock(input?: T.StatementBlock.Loose): ReturnType<typeof F.buildStatementBlock>;
-export function coerceToStatementBlock(input?: T.StatementBlock.Loose): ReturnType<typeof F.buildStatementBlock> {
-	if (!_isLooseConfig<T.StatementBlock.LooseConfig | undefined>(input))
-		return input as unknown as ReturnType<typeof F.buildStatementBlock>;
-	return F.buildStatementBlock({
-		statements: resolveStatementBlock_statements(input?.statements),
-		automaticSemicolon: resolveStatementBlock_automaticSemicolon(input?.automaticSemicolon)
-	});
+export function coerceToStatementBlock(...input: T.StatementBlock.LooseArgs): ReturnType<typeof F.buildStatementBlock>;
+export function coerceToStatementBlock(...input: T.StatementBlock.LooseArgs): ReturnType<typeof F.buildStatementBlock> {
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['terminator'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as T.StatementBlock.Options;
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	const _elems: readonly unknown[] = (() => {
+		if (_rest.length !== 1) return _rest;
+		const head: unknown = _rest[0];
+		if (typeof head !== 'object' || head === null || isNode(head) || !('statements' in head)) return _rest;
+		const v = (head as Record<string, unknown>)['statements'];
+		return Array.isArray(v) ? v : [v];
+	})();
+	return (F.buildStatementBlock as (...args: unknown[]) => ReturnType<typeof F.buildStatementBlock>)(
+		options,
+		...(coerceMixedEnumStorage(
+			_resolveKindEnum(_elems, () => _resolveMany<T.Statement | '\n'>(_elems, _K0, _K1)),
+			[]
+		) as readonly unknown[])
+	);
 }
 
 export function resolveElseClause_body(value: T.ElseClause.LooseConfig['body']): Admit<T.ElseClause['_body']> {
@@ -3641,7 +3652,12 @@ export function resolveFinallyClause_body(
 	return _resolveOneBranch<T.StatementBlock>(value, 'statement_block');
 }
 
-export function coerceToFinallyClause(input?: T.FinallyClause.Loose): ReturnType<typeof F.buildFinallyClause> {
+export function coerceToFinallyClause(...input: T.StatementBlock.LooseArgs): ReturnType<typeof F.buildFinallyClause>;
+export function coerceToFinallyClause(input?: T.FinallyClause.Loose): ReturnType<typeof F.buildFinallyClause>;
+export function coerceToFinallyClause(...args: unknown[]): ReturnType<typeof F.buildFinallyClause> {
+	if (args.length > 1)
+		return F.buildFinallyClause(coerceToStatementBlock(...(args as Parameters<typeof coerceToStatementBlock>)));
+	const input = args[0] as T.FinallyClause.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.FinallyClause))
 		return input as unknown as ReturnType<typeof F.buildFinallyClause>;
 	return F.buildFinallyClause(
@@ -4324,23 +4340,22 @@ export function resolveClassDeclaration_body(
 	return _resolveOneBranch<T.ClassBody>(value, 'class_body');
 }
 
-export function resolveClassDeclaration_automaticSemicolon(
-	value: T.ClassDeclaration.LooseConfig['automaticSemicolon']
-): Admit<T.ClassDeclaration['_automatic_semicolon']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function coerceToClassDeclaration(input: T.ClassDeclaration.Loose): ReturnType<typeof F.buildClassDeclaration> {
+export function coerceToClassDeclaration(
+	input: T.ClassDeclaration.Loose,
+	options?: T.ClassDeclaration.Options
+): ReturnType<typeof F.buildClassDeclaration> {
 	if (!_isLooseConfig<T.ClassDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildClassDeclaration>;
-	return F.buildClassDeclaration({
-		decorator: resolveClassDeclaration_decorators(input.decorator),
-		name: _requireField('class_declaration', 'name', resolveClassDeclaration_name(input.name)),
-		typeParameters: resolveClassDeclaration_typeParameters(input.typeParameters),
-		heritage: resolveClassDeclaration_heritage(input.heritage),
-		body: resolveClassDeclaration_body(input.body) ?? F.buildClassBody(),
-		automaticSemicolon: resolveClassDeclaration_automaticSemicolon(input.automaticSemicolon)
-	});
+	return F.buildClassDeclaration(
+		{
+			decorator: resolveClassDeclaration_decorators(input.decorator),
+			name: _requireField('class_declaration', 'name', resolveClassDeclaration_name(input.name)),
+			typeParameters: resolveClassDeclaration_typeParameters(input.typeParameters),
+			heritage: resolveClassDeclaration_heritage(input.heritage),
+			body: resolveClassDeclaration_body(input.body) ?? F.buildClassBody()
+		},
+		options
+	);
 }
 
 export function resolveClassHeritage_content(
@@ -4451,26 +4466,23 @@ export function resolveFunctionDeclaration_body(
 	return _resolveOneBranch<T.StatementBlock>(value, 'statement_block');
 }
 
-export function resolveFunctionDeclaration_automaticSemicolon(
-	value: T.FunctionDeclaration.LooseConfig['automaticSemicolon']
-): Admit<T.FunctionDeclaration['_automatic_semicolon']> {
-	return _resolveBooleanKeyword(value);
-}
-
 export function coerceToFunctionDeclaration(
-	input: T.FunctionDeclaration.Loose
+	input: T.FunctionDeclaration.Loose,
+	options?: T.FunctionDeclaration.Options
 ): ReturnType<typeof F.buildFunctionDeclaration> {
 	if (!_isLooseConfig<T.FunctionDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFunctionDeclaration>;
-	return F.buildFunctionDeclaration({
-		async: resolveFunctionDeclaration_async(input.async),
-		name: _requireField('function_declaration', 'name', resolveFunctionDeclaration_name(input.name)),
-		typeParameters: resolveFunctionDeclaration_typeParameters(input.typeParameters),
-		parameters: resolveFunctionDeclaration_parameters(input.parameters) ?? F.buildFormalParameters(),
-		returnType: resolveFunctionDeclaration_returnType(input.returnType),
-		body: resolveFunctionDeclaration_body(input.body) ?? F.buildStatementBlock(),
-		automaticSemicolon: resolveFunctionDeclaration_automaticSemicolon(input.automaticSemicolon)
-	});
+	return F.buildFunctionDeclaration(
+		{
+			async: resolveFunctionDeclaration_async(input.async),
+			name: _requireField('function_declaration', 'name', resolveFunctionDeclaration_name(input.name)),
+			typeParameters: resolveFunctionDeclaration_typeParameters(input.typeParameters),
+			parameters: resolveFunctionDeclaration_parameters(input.parameters) ?? F.buildFormalParameters(),
+			returnType: resolveFunctionDeclaration_returnType(input.returnType),
+			body: resolveFunctionDeclaration_body(input.body) ?? F.buildStatementBlock()
+		},
+		options
+	);
 }
 
 export function resolveGeneratorFunction_async(
@@ -4560,26 +4572,27 @@ export function resolveGeneratorFunctionDeclaration_body(
 	return _resolveOneBranch<T.StatementBlock>(value, 'statement_block');
 }
 
-export function resolveGeneratorFunctionDeclaration_automaticSemicolon(
-	value: T.GeneratorFunctionDeclaration.LooseConfig['automaticSemicolon']
-): Admit<T.GeneratorFunctionDeclaration['_automatic_semicolon']> {
-	return _resolveBooleanKeyword(value);
-}
-
 export function coerceToGeneratorFunctionDeclaration(
-	input: T.GeneratorFunctionDeclaration.Loose
+	input: T.GeneratorFunctionDeclaration.Loose,
+	options?: T.GeneratorFunctionDeclaration.Options
 ): ReturnType<typeof F.buildGeneratorFunctionDeclaration> {
 	if (!_isLooseConfig<T.GeneratorFunctionDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildGeneratorFunctionDeclaration>;
-	return F.buildGeneratorFunctionDeclaration({
-		async: resolveGeneratorFunctionDeclaration_async(input.async),
-		name: _requireField('generator_function_declaration', 'name', resolveGeneratorFunctionDeclaration_name(input.name)),
-		typeParameters: resolveGeneratorFunctionDeclaration_typeParameters(input.typeParameters),
-		parameters: resolveGeneratorFunctionDeclaration_parameters(input.parameters) ?? F.buildFormalParameters(),
-		returnType: resolveGeneratorFunctionDeclaration_returnType(input.returnType),
-		body: resolveGeneratorFunctionDeclaration_body(input.body) ?? F.buildStatementBlock(),
-		automaticSemicolon: resolveGeneratorFunctionDeclaration_automaticSemicolon(input.automaticSemicolon)
-	});
+	return F.buildGeneratorFunctionDeclaration(
+		{
+			async: resolveGeneratorFunctionDeclaration_async(input.async),
+			name: _requireField(
+				'generator_function_declaration',
+				'name',
+				resolveGeneratorFunctionDeclaration_name(input.name)
+			),
+			typeParameters: resolveGeneratorFunctionDeclaration_typeParameters(input.typeParameters),
+			parameters: resolveGeneratorFunctionDeclaration_parameters(input.parameters) ?? F.buildFormalParameters(),
+			returnType: resolveGeneratorFunctionDeclaration_returnType(input.returnType),
+			body: resolveGeneratorFunctionDeclaration_body(input.body) ?? F.buildStatementBlock()
+		},
+		options
+	);
 }
 
 export function resolveArrowFunction_async(
@@ -5735,25 +5748,25 @@ export function coerceToFormalParameters(...args: unknown[]): ReturnType<typeof 
 	);
 }
 
-export function resolveClassStaticBlock_automaticSemicolon(
-	value: T.ClassStaticBlock.LooseConfig['automaticSemicolon']
-): Admit<T.ClassStaticBlock['_automatic_semicolon']> {
-	return _resolveBooleanKeyword(value);
-}
-
 export function resolveClassStaticBlock_body(
 	value: T.ClassStaticBlock.LooseConfig['body'] | undefined
 ): Admit<T.ClassStaticBlock['_body']> {
 	return _resolveOneBranch<T.StatementBlock>(value, 'statement_block');
 }
 
-export function coerceToClassStaticBlock(input?: T.ClassStaticBlock.Loose): ReturnType<typeof F.buildClassStaticBlock> {
-	if (!_isLooseConfig<T.ClassStaticBlock.LooseConfig | undefined>(input))
+export function coerceToClassStaticBlock(
+	input?: T.ClassStaticBlock.Loose,
+	options?: T.ClassStaticBlock.Options
+): ReturnType<typeof F.buildClassStaticBlock> {
+	if (input !== undefined && isNodeOfKind(input, TSKindId.ClassStaticBlock))
 		return input as unknown as ReturnType<typeof F.buildClassStaticBlock>;
-	return F.buildClassStaticBlock({
-		automaticSemicolon: resolveClassStaticBlock_automaticSemicolon(input?.automaticSemicolon),
-		body: resolveClassStaticBlock_body(input?.body) ?? F.buildStatementBlock()
-	});
+	return F.buildClassStaticBlock(
+		_resolveOneBranch<T.StatementBlock>(
+			configFieldOr(input, 'body', () => input),
+			'statement_block'
+		) ?? F.buildStatementBlock(),
+		options
+	);
 }
 
 export function resolveRestPattern_lhsExpression(
@@ -10032,8 +10045,19 @@ export function resolveAmbientDeclarationGlobal_body(
 }
 
 export function coerceToAmbientDeclarationGlobal(
+	...input: T.StatementBlock.LooseArgs
+): ReturnType<typeof F.buildAmbientDeclarationGlobal>;
+export function coerceToAmbientDeclarationGlobal(
 	input?: T.AmbientDeclarationGlobal.Loose
+): ReturnType<typeof F.buildAmbientDeclarationGlobal>;
+export function coerceToAmbientDeclarationGlobal(
+	...args: unknown[]
 ): ReturnType<typeof F.buildAmbientDeclarationGlobal> {
+	if (args.length > 1)
+		return F.buildAmbientDeclarationGlobal(
+			coerceToStatementBlock(...(args as Parameters<typeof coerceToStatementBlock>))
+		);
+	const input = args[0] as T.AmbientDeclarationGlobal.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.AmbientDeclarationGlobal))
 		return input as unknown as ReturnType<typeof F.buildAmbientDeclarationGlobal>;
 	return F.buildAmbientDeclarationGlobal(
@@ -12059,12 +12083,6 @@ export function resolveForHeaderLetConstKind_left(
 	return _resolveOne<T.Identifier | T.ObjectPattern | T.ArrayPattern>(value, _K3, _super_destructuring_pattern);
 }
 
-export function resolveForHeaderLetConstKind_automaticSemicolon(
-	value: T.ForHeaderLetConstKind.LooseConfig['automaticSemicolon']
-): Admit<T.ForHeaderLetConstKind['_automatic_semicolon']> {
-	return _resolveBooleanKeyword(value);
-}
-
 export function resolveForHeaderLetConstKind_operator(
 	value: T.ForHeaderLetConstKind.LooseConfig['operator']
 ): Admit<T.ForHeaderLetConstKind['_operator']> {
@@ -12084,21 +12102,24 @@ export function resolveForHeaderLetConstKind_right(
 }
 
 export function coerceToForHeaderLetConstKind(
-	input: T.ForHeaderLetConstKind.Loose
+	input: T.ForHeaderLetConstKind.Loose,
+	options?: T.ForHeaderLetConstKind.Options
 ): ReturnType<typeof F.buildForHeaderLetConstKind> {
 	if (!_isLooseConfig<T.ForHeaderLetConstKind.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildForHeaderLetConstKind>;
-	return F.buildForHeaderLetConstKind({
-		kind: _requireField('for_header_let_const_kind', 'kind', resolveForHeaderLetConstKind_kind(input.kind)),
-		left: _requireField('for_header_let_const_kind', 'left', resolveForHeaderLetConstKind_left(input.left)),
-		automaticSemicolon: resolveForHeaderLetConstKind_automaticSemicolon(input.automaticSemicolon),
-		operator: _requireField(
-			'for_header_let_const_kind',
-			'operator',
-			resolveForHeaderLetConstKind_operator(input.operator)
-		),
-		right: _requireField('for_header_let_const_kind', 'right', resolveForHeaderLetConstKind_right(input.right))
-	});
+	return F.buildForHeaderLetConstKind(
+		{
+			kind: _requireField('for_header_let_const_kind', 'kind', resolveForHeaderLetConstKind_kind(input.kind)),
+			left: _requireField('for_header_let_const_kind', 'left', resolveForHeaderLetConstKind_left(input.left)),
+			operator: _requireField(
+				'for_header_let_const_kind',
+				'operator',
+				resolveForHeaderLetConstKind_operator(input.operator)
+			),
+			right: _requireField('for_header_let_const_kind', 'right', resolveForHeaderLetConstKind_right(input.right))
+		},
+		options
+	);
 }
 
 export function coerceToHtmlComment(input: T.HtmlComment.Loose): ReturnType<typeof F.buildHtmlComment> {
