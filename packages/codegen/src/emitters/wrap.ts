@@ -331,11 +331,8 @@ function dataAccessExpr(dataExpr: string, storageKey: string): string {
 }
 
 function resolveSlotAccessorBody(slot: SlotModel, valueType: string): string {
-	if (slot.arity === 'many') {
-		const arrayElemType = valueType.includes(' | ') ? `(${valueType})` : valueType;
-		return `return hydrateChildren<${valueType}>(this.${slot.storageKey} as readonly ${arrayElemType}[] | undefined, tree)`;
-	}
-	return `return hydrateChild<${valueType}>(this.${slot.storageKey}, tree)`;
+	const key = JSON.stringify(slot.storageKey);
+	return slot.arity === 'many' ? `return hydrateSlots<${valueType}>(this, ${key}, tree)` : `return hydrateSlot<${valueType}>(this, ${key}, tree)`;
 }
 
 function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
@@ -732,7 +729,7 @@ function emitFieldCarryingWrap(
 	const view = plan.viewPlan !== undefined && owner !== undefined ? ownerViewParts(plan.viewPlan, owner.storage, owner.accessor, 'wrap') : undefined;
 	const groups = groupSeatParts(plan, (slot) => {
 		const { stored, group } = plan.groups.find(({ hint }) => hint.slot === slot)!.hint;
-		return `() => hydrateChild<T.${group} | undefined>(${stored}, tree)`;
+		return `() => hydrateSlot<T.${group} | undefined>(node, ${JSON.stringify(stored)}, tree)`;
 	});
 	const spelled = spelledGroupSlots(plan);
 	const hoist = {
@@ -1330,11 +1327,31 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  : D;'
 					]
 				: ['export type ParsedOfData<D> = D;']),
+			'const _hydrated = new WeakSet<object>();',
 			'export function hydrateChild<T>(entry: T | ParsedOfData<T>, tree: TreeHandle): ParsedOfData<T> {',
+			'  if (typeof entry === "object" && entry !== null && _hydrated.has(entry)) return entry as ParsedOfData<T>;',
 			'  const resolved = hydrateSelf(entry, tree);',
 			'  const e = resolved as unknown as _UntypedNode;',
-			'  if (resolved === entry && typeof e?.$type === "number" && !isTypedNode(e)) return wrapNode(e, tree) as unknown as ParsedOfData<T>;',
-			'  return resolved as unknown as ParsedOfData<T>;',
+			'  const child = resolved === entry && typeof e?.$type === "number" && !isTypedNode(e) ? wrapNode(e, tree) : resolved;',
+			'  if (typeof child === "object" && child !== null) _hydrated.add(child);',
+			'  return child as unknown as ParsedOfData<T>;',
+			'}',
+			'function hydrateSlot<T>(node: object, key: string, tree: TreeHandle): ParsedOfData<T> {',
+			'  const slots = node as Record<string, unknown>;',
+			'  const child = hydrateChild(slots[key] as T, tree);',
+			'  if (child !== slots[key]) slots[key] = child;',
+			'  return child;',
+			'}',
+			'const _noChildren: readonly never[] = Object.freeze([]);',
+			'function hydrateSlots<T>(node: object, key: string, tree: TreeHandle): readonly ParsedOfData<T>[] {',
+			'  const slots = node as Record<string, unknown>;',
+			'  const stored = slots[key];',
+			'  if (!Array.isArray(stored)) return stored == null ? _noChildren : [hydrateChild(stored as T, tree)];',
+			'  if (_hydrated.has(stored)) return stored as readonly ParsedOfData<T>[];',
+			'  const children = Object.freeze(stored.map((entry) => hydrateChild(entry as T, tree)));',
+			'  _hydrated.add(children);',
+			'  slots[key] = children;',
+			'  return children;',
 			'}',
 			'// Store a slot value in model shape: a child a read already expanded',
 			'// is typed here, with its parent, so storage has one shape at every',
