@@ -1,6 +1,5 @@
 import { createEngine } from '@sittir/common';
 import python from '@sittir/python';
-import { nodeText } from './helpers.ts';
 
 const engine = await createEngine(python);
 const { kinds } = engine;
@@ -9,21 +8,21 @@ const { kinds } = engine;
  * Read: each accessor returns a wrapped child, read lazily one level at a
  * time. Lists the top-level functions and classes, and each class's methods.
  * A class body is one of several suite forms, so reading into it narrows the
- * form first.
+ * form first with the variant's guard.
  */
 export function outline(source: string) {
 	return engine
 		.parse(source)
 		.statements()
 		.flatMap((statement) => {
-			if (engine.is.functionDefinition(statement)) return [`def ${nodeText(statement.name())}`];
+			if (engine.is.functionDefinition(statement)) return [`def ${statement.name().$text}`];
 			if (!engine.is.classDefinition(statement)) return [];
 			const body = statement.body();
-			const members = body.$type === kinds.SuiteBlock ? body.block().statements() : [];
+			const members = engine.is.suite.block(body) ? body.block().statements() : [];
 			const methods = members.flatMap((member) =>
-				engine.is.functionDefinition(member) ? [`  def ${nodeText(member.name())}`] : []
+				engine.is.functionDefinition(member) ? [`  def ${member.name().$text}`] : []
 			);
-			return [`class ${nodeText(statement.name())}`, ...methods];
+			return [`class ${statement.name().$text}`, ...methods];
 		});
 }
 
@@ -54,7 +53,7 @@ export function privateHelpers(source: string) {
 			.$query()
 			.$descendants.ofType(kinds.FunctionDefinition)
 			.where((fn) => fn.name.match(/^_/).and(fn.name.match(/^__/).not()))
-			.map((fn) => nodeText(fn.name()))
+			.map((fn) => fn.name().$text)
 	);
 }
 
@@ -75,7 +74,7 @@ export function methodsOf(source: string, className: string) {
 		cls
 			.$query()
 			.$descendants.ofType(kinds.FunctionDefinition)
-			.map((fn) => nodeText(fn.name()))
+			.map((fn) => fn.name().$text)
 	);
 }
 
@@ -120,7 +119,7 @@ export function renameInFile(source: string, from: string, to: string) {
 	const statements = root
 		.statements()
 		.map((statement) =>
-			engine.is.functionDefinition(statement) && nodeText(statement.name()) === from
+			engine.is.functionDefinition(statement) && statement.name().$text === from
 				? statement.$with.name(engine.build.identifier(to))
 				: statement
 		);

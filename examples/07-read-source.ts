@@ -1,6 +1,5 @@
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
-import { nodeText } from './helpers.ts';
 
 const engine = await createEngine(rust);
 
@@ -14,7 +13,7 @@ export function readFirstFunction(source: string) {
 	if (first === undefined || !engine.is.functionItem(first)) return undefined;
 
 	return {
-		name: nodeText(first.name()),
+		name: engine.render(first.name()).toString(),
 		body: first.body(),
 		statements: first.body().statements(),
 	};

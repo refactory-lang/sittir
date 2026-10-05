@@ -1,25 +1,5 @@
-import type { TreeHandle } from '@sittir/common/utils';
 import type { NodeTrivia } from '@sittir/types';
 import { readFileSync } from 'node:fs';
-export type { TreeHandle };
-
-export function nodeText(value: unknown): string {
-	if (typeof value === 'string') return value;
-	if (typeof value === 'number' || typeof value === 'boolean') return String(value);
-	if (value && typeof value === 'object' && '$text' in value) {
-		const text = (value as { $text?: unknown }).$text;
-		return typeof text === 'string' ? text : '';
-	}
-	return '';
-}
-
-export function renderText(value: unknown): string {
-	if (value && typeof value === 'object' && '$render' in value) {
-		const render = (value as { $render?: unknown }).$render;
-		if (typeof render === 'function') return render.call(value) as string;
-	}
-	return nodeText(value);
-}
 
 /**
  * The kind tree of a wrapped node — `$type` plus each `_<slot>` storage

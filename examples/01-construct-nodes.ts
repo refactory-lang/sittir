@@ -1,6 +1,5 @@
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
-import { nodeText } from './helpers.ts';
 
 const engine = await createEngine(rust);
 
@@ -13,7 +12,7 @@ export function explicitMainFunction() {
 	});
 
 	return {
-		name: nodeText(fn.name()),
+		name: fn.name().$render(),
 		body: fn.body(),
 		source: fn.$render(),
 	};
