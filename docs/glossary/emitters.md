@@ -2687,10 +2687,6 @@ assemble mints a node for it.
 	   `_Literal`, `_primitive_type` → `_PrimitiveType`. */
 ```
 
-
-A kind with no node and no word characters of its own (a punctuation text in
-a model built without parser metadata) is keyed first, as tree-sitter keys
-the token (`kindKeyOfText`: `;` → `Semi`), so its member is an identifier.
 ### `packages/codegen/src/emitters/kind-discriminant.ts::collectCatalogKinds`
 
 ```text
@@ -3011,24 +3007,6 @@ module-level `_ROUTES_<Kind>` table and the third argument its wrap passes to
  */
 ```
 
-### `packages/codegen/src/emitters/render-module-runner.ts::runRenderModuleEmitter`
-
-```text
-/**
- * Drive the class-based emitter contract for render-module emission.
- * Mirrors the loop that emitAll() runs, but narrowed to TemplateEmitter
- * and RenderModuleEmitter. Use this in scripts and tests instead of
- * calling emitRenderModuleBundle directly.
- */
-```
-
-#### body
-
-```text
-// 'list' shares 'branch's emission — see
-// isSlotBearingCompound's doc comment (shared.ts, emitters).
-```
-
 ### `packages/codegen/src/emitters/render-module.ts::build
 
 Surface`
@@ -3292,8 +3270,7 @@ carry no per-slot separator stamp.
  * today; see `emitSeparatedListWrap`'s doc comment, wrap.ts).
  *
  * Returns `undefined` (caller falls back to the plain literal `fallbackSeparator`)
- * when `kindIdByKind` is unavailable (no parser.c-derived numeric dispatch) or
- * none of the candidates resolve to a known id — codegen must still emit a
+ * when none of the candidates resolve to a known id — codegen must still emit a
  * syntactically valid expression in that case.
  */
 ```
@@ -3366,8 +3343,9 @@ Emits the render module for a grammar: `transport.rs` (the transport
 types, their `Display` impls and the per-kind render functions), the
 options module, the hash files and `mod.rs`. Takes the emitted bodies —
 the per-kind bodies are what the render functions and the validators'
-sidecar are both read from — the assembled node map, and the optional
-numeric kind-id tables.
+sidecar are both read from — the assembled node map, and the parser's
+kind-id tables. The tables are required: every transport decodes by kind id,
+so the parser is generated before the render module is emitted.
 
 
 #### body
@@ -3412,7 +3390,8 @@ numeric kind-id tables.
 ### `packages/codegen/src/emitters/render-module.ts::commonRustUseImports`
 
 The `use` block at the top of `transport.rs`: the views (`View`,
-`ListView`, `NO_ITEMS`) and the transport support types. `fmt::Write` is
+`ListView`, `NO_ITEMS`), the transport support types and, under the
+`napi-bindings` feature, the `napi` attribute macro. `fmt::Write` is
 deliberately not imported; the kind bodies write through `Formatter`'s
 inherent `write_fmt`, and the render root spells the trait call in full.
 
@@ -3451,15 +3430,6 @@ as variants.
  * named-rule name, the #129 class), while the TS side emits the stamped
  * anon ids on the wire (`kindEnumTextMapExpr`) — dispatch arms must accept
  * the same ids the sender bakes.
- */
-```
-
-### `packages/codegen/src/emitters/render-module.ts::renderAnyTransportWithStringTag`
-
-```text
-/**
- * Emit `AnyTransport` with the string-tagged `#[serde(tag = "$type")]` derive.
- * Fallback path when `generatedIdTables` is unavailable (no parser.c).
  */
 ```
 
@@ -3512,12 +3482,8 @@ literal, a unit arm per fixed-literal kind, and `Verbatim`. Shared by both
  * contains `ExpressionTransport` fields). Leaf/keyword/token/enum subtypes
  * are small (text only) and inlined without `Box`.
  *
- * When `kindEntries` is absent (no parser.c), emit a stub enum with a
- * string-tagged fallback so fields referencing the enum type still compile.
- *
  * @param supertypeNode - the assembled supertype node
- * @param kindIdByKind  - Map<kind, u16 id> from `buildKindIdByKind(kindEntries)`;
- *   `undefined` when parser.c is unavailable (fallback path)
+ * @param kindIdByKind  - Map<kind, u16 id> from `buildKindIdByKind(kindEntries)`
  * @param nodeMap       - for typeName + modelType lookups
  */
 ```
@@ -3987,7 +3953,7 @@ A choice's unit arms as kind id → variant pairs, first occurrence per id:
 each stored literal's resolved id (`resolveLiteralKindId`), then each
 fixed-text kind's ids accepted at this slot (the same `acceptedIdsOf` the
 payload arms use, which also checks the ids are routable). Two units sharing
-an id are one pair, not a failure. Empty without parser kind ids.
+an id are one pair, not a failure.
 
 ### `packages/codegen/src/emitters/render-module.ts::prepareFilledSlotOf`
 
@@ -4217,12 +4183,12 @@ The grammar's fixed-literal kinds, keyed by kind (`collectFixedLiterals`).
 
 Every fixed-literal kind of the grammar, collected once: each projection
 node `isFixedTextLeaf` marks, then each transport literal with a kind id
-whose kind has no node, named by `kindIdMemberName`. A kind's accepted ids
-add the ids its values are stored under (`TransportProjection.wireIds`).
-With parser tables, a literal with no kind id gets no variant, since nothing
-could decode it into one; without them every literal is registered, decoded
-by its kind name (the string-tagged `AnyTransport`). A literal whose kind
-has a node that is not fixed text (regex `lazy`) belongs to that node.
+whose kind has no node, named by the member of the kind entry that id
+belongs to. A kind's accepted ids add the ids its values are stored under
+(`TransportProjection.wireIds`). A literal with no kind id gets no variant,
+since nothing could decode it into one; a literal whose id no kind entry
+has is a codegen error. A literal whose kind has a node that is not fixed
+text (regex `lazy`) belongs to that node.
 
 ### `packages/codegen/src/emitters/render-module.ts::fixedLiteralOf`
 
@@ -4521,18 +4487,16 @@ sides use. An arm missing either side is left out.
  * with a closed, statically-known variant set.
  * Emits for multi-member enums:
  * - `#[derive(Debug, Clone, Copy)] pub enum XxxEnum { ... }`
- * - `impl FromNapiValue` — reads a plain `u16` KindId (no heap allocation)
- *   and dispatches to the correct variant via a match on numeric IDs.
- *   Falls back to `$text: String` matching when `kindEntries` is absent.
+ * - `impl FromNapiValue` — matches a member's `u16` KindId, bare or as the
+ *   object's `$type`, then its text: a string, the object's `$text`, or a
+ *   `_<text>` key.
  * - `impl Render` — writes the static literal text per variant; a variant
  *   whose arm has a seam pair (`armSeamPairsOf`) writes its before site, the
  *   text, then its after site, each read from the resolved options with
  *   `w.site_at`, so an enum arm needs no per-node carrier for its seams
  *
  * @param node - the AssembledEnum node
- * @param hasNapi - whether napi-bindings feature is present (from generatedIdTables)
- * @param kindEntries - catalog entries for KindId lookup; when present, emits
- *   numeric `u16` dispatch in `FromNapiValue` instead of `$text: String` matching
+ * @param kindEntries - the kind catalog the arms' seam pairs resolve against
  */
 ```
 
@@ -4567,12 +4531,6 @@ sides use. An arm missing either side is left out.
 // construction-time literal-chain resolution
 // (anon-scoped first so a same-spelled named rule
 // can't shadow, #129).
-```
-
-#### body
-
-```text
-// Fallback: kindEntries unavailable (parser.c not found) — read $text string.
 ```
 
 #### body
@@ -8013,12 +7971,6 @@ restates the default from one that must be spelled.
 	 *  `fieldName` should be narrowed to the literal `literal`". */
 ```
 
-### `packages/codegen/src/emitters/render-module-runner.ts::jinjaTemplates`
-
-```text
-/** Pre-computed jinja templates. When omitted, a fresh TemplateEmitter drives the loop. */
-```
-
 ### `packages/codegen/src/emitters/render-module.ts::RustRenderModuleEmit`
 
 ```text
@@ -11070,6 +11022,10 @@ Only the factory, wrap, template and render-module emitters take the
 			   `emitSeparatedListFrom`'s doc comment (from.ts). */
 ```
 
+### `packages/codegen/src/emitters/emit.ts::classifyRenderModuleEmission`
+
+Whether `emitAll` emits the render module: only when asked to, for a grammar sittir knows, and with the parser's kind-id tables. A request without the tables is an error naming the grammar, not a skipped module: every transport decodes by kind id, so the parser is generated first, as `gen` and the bootstrap do.
+
 ### `packages/codegen/src/emitters/engine.ts::EmitEngineConfig`
 
 ```text
@@ -11328,18 +11284,6 @@ repeated here: `KIND_NAMES` and `TSKindId` in `types.ts` are their one source.
 
 ```text
 // Prefix a leading digit so the name is a valid identifier.
-```
-
-### `packages/codegen/src/emitters/render-module-runner.ts::module`
-
-```text
-/**
- * render-module-runner.ts — thin adapter that drives the class-based
- * RenderModuleEmitter contract for scripts and focused unit tests.
- *
- * Using this adapter instead of calling emitRenderModuleBundle directly
- * ensures scripts and tests exercise the same emitter contract as emitAll().
- */
 ```
 
 ### `packages/codegen/src/emitters/kind-id-rust.ts::module`
@@ -14030,9 +13974,9 @@ Every per-kind wrap function stores its node-valued slots through `storeExpanded
 #### body
 
 ```text
-// Build kind entries for numeric dispatch when parser.c metadata is available.
-// Source from the catalog superset (children-only kinds + anon tokens) so the
-// AnyTransport dispatch matches the TS-side TSKindId / kindIdFromName universe.
+// Build kind entries for numeric dispatch from the catalog superset
+// (children-only kinds + anon tokens) so the AnyTransport dispatch matches
+// the TS-side TSKindId / kindIdFromName universe.
 ```
 
 #### body
@@ -14196,12 +14140,6 @@ on payload members only.
 // `parseNames.get(subKind)` also accepts the parse name's id — the
 // alias occurrence's own runtime symbol (`alias_sym_*`), the id
 // tree-sitter actually emits at that arm's position.
-```
-
-#### body
-
-```text
-// Fallback: no kindEntries — emit an always-error FromNapiValue stub.
 ```
 
 #### body
@@ -14462,8 +14400,8 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
 #### body
 
 ```text
-// Branch/envelope/polymorph/list/enum use #[napi(object)] for derived
-// FromNapiValue. Leaf/keyword/token transport structs opt out of
+// Branch/envelope/polymorph/list use #[napi(object)] for derived
+// FromNapiValue. Leaf (pattern) transport structs opt out of
 // #[napi(object)] and instead get manual cfg-gated FromNapiValue impls
 // below — so JS can send a plain string in release mode (no debug-transport)
 // and the full metadata object in debug mode.
@@ -14575,7 +14513,7 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
 #### body
 
 ```text
-// Leaf/keyword/token structs have manual cfg-gated FromNapiValue impls
+// Leaf (pattern) structs have manual cfg-gated FromNapiValue impls
 // (below). The napi field attributes are not emitted because there is no
 // #[napi(object)] on the struct to act as the consuming proc-macro.
 ```
@@ -14595,7 +14533,7 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
 #### body
 
 ```text
-// For leaf/keyword/token structs: emit manual cfg-gated napi impls.
+// For a leaf (pattern) struct: emit manual cfg-gated napi impls.
 // These replace the #[napi(object)]-derived FromNapiValue so that:
 //   - release (not debug-transport): JS sends a plain string → read as String
 //   - debug  (    debug-transport): JS sends full metadata object → read fields
@@ -14979,8 +14917,8 @@ one, so a `SlotValue` of any generated type satisfies `KindTest`.
 
 The Rust slice literal a kind-gated arm tests against: the arm's kind names
 expanded through `concreteKindsOf` (a supertype to its members) and mapped to
-ids. A name with no id table or no id at all is an error, since a gate that
-can never fire would silently drop the literal.
+ids. A name with no id is an error, since a gate that can never fire would
+silently drop the literal.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::elementsShape`
 
@@ -16122,8 +16060,7 @@ before and after edge, either absent when the kind owns no seam on that side.
 ```text
 /**
  * The render-options plan, address tables and kind catalog for one grammar,
- * or `EMPTY_PLANNED_OPTIONS` when there is no kind catalog or no spaced
- * render rules. Uses `inputs.kindEntries`/`inputs.sites`/`inputs.addresses`
+ * or `EMPTY_PLANNED_OPTIONS` when there are no spaced render rules. Uses `inputs.kindEntries`/`inputs.sites`/`inputs.addresses`
  * as-is when the caller supplied them (`emit.ts`, via `addressTablesFor`);
  * otherwise collects/derives each the same way `emitOptions` does, through
  * the same `addressTablesFor` helper — there is one derivation, never two

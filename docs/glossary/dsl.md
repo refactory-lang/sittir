@@ -6887,14 +6887,6 @@ The words tree-sitter spells punctuation with in a C symbol name.
 
 The words tree-sitter spells control characters (below U+0020) with in a C symbol name.
 
-### `packages/codegen/src/dsl/symbol-table.ts::kindKeyOfText`
-
-A punctuation token's kind key from its literal text: `sanitizeCIdentifier`
-with the substituted words lower-cased (`;` → `semi`, `+=` → `plus_eq`), the
-key `deriveSymbolRuntimeName` gives the token's catalog row. A text with no
-catalog row (a model built without parser metadata) is named by the same key
-(`kindIdMemberName`).
-
 ### `packages/codegen/src/dsl/symbol-table.ts::sanitizeCIdentifier`
 
 Tree-sitter's C symbol name for a symbol name: word characters stay, punctuation and control characters become their words (`SPACE` only for a lone space) joined with `_`, and anything else becomes `uXXXX` per UTF-16 unit. `spellReplacement` spells each substituted word: as written for the C name, lower-cased for a punctuation token's kind key (`deriveSymbolRuntimeName`), so both come from the one table.

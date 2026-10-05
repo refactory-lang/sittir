@@ -10,17 +10,24 @@ import {
 	AssembledPattern,
 	AssembledSupertype
 } from '../../compiler/model/node-map.ts';
-import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
+import { collectGeneratedKindEntries } from '../../dsl/symbol-table.ts';
+import type { GeneratedIdTables, GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import type { AssembledNode } from '../../compiler/model/node-map.ts';
 import type { ChoiceRule, SeqRule } from '../../types/rule.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import { emitRenderModule } from '../render-module.ts';
-import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { flatten } from '../../compiler/flatten.ts';
 
 const nodeMapWith = makeNodeMapWith;
 
-function makeMinimalNodeMap(): NodeMap {
+const MINIMAL_TOKENS = { semi: ';', plus: '+', minus: '-' };
+
+const kindIdOf = (tables: GeneratedIdTables, kind: string): number | undefined =>
+	collectGeneratedKindEntries(tables).find((entry) => entry.kind === kind)?.id;
+
+function makeMinimalNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
+	const opts = { kindEntries };
 	const callRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
@@ -54,23 +61,27 @@ function makeMinimalNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('call_expression', new AssembledBranch('call_expression', flatten(callRule), flatten(callRule)));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set('kw_fn', new AssembledKeyword('kw_fn', { type: STRING, value: 'fn' }));
-	nodes.set('self', new AssembledKeyword('self', { type: STRING, value: 'self' }));
+	nodes.set('call_expression', new AssembledBranch('call_expression', flatten(callRule), flatten(callRule), opts));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, opts));
+	nodes.set('kw_fn', new AssembledKeyword('kw_fn', { type: STRING, value: 'fn' }, opts));
+	nodes.set('self', new AssembledKeyword('self', { type: STRING, value: 'self' }, opts));
 	nodes.set(
 		'operator',
-		new AssembledEnum('operator', {
-			type: CHOICE,
-			members: [
-				{ type: STRING, value: '+' },
-				{ type: STRING, value: '-' }
-			]
-		})
+		new AssembledEnum(
+			'operator',
+			{
+				type: CHOICE,
+				members: [
+					{ type: STRING, value: '+' },
+					{ type: STRING, value: '-' }
+				]
+			},
+			opts
+		)
 	);
 	nodes.set(
 		'_expression',
-		new AssembledSupertype('_expression', expressionRule, [{ name: 'identifier' }, { name: 'call_expression' }])
+		new AssembledSupertype('_expression', expressionRule, [{ name: 'identifier' }, { name: 'call_expression' }], opts)
 	);
 	return nodeMapWith(nodes);
 }
@@ -385,18 +396,21 @@ function makeSupertypeBackedChildEnumNodeMap(): NodeMap {
 
 describe('native transport emission', () => {
 	it('emits transport-oriented Rust render support', () => {
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeMinimalNodeMap, MINIMAL_TOKENS);
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ call_expression: slot('callee') }),
-			makeMinimalNodeMap()
+			nodeMap,
+			generatedIdTables
 		);
+		const semiId = kindIdOf(generatedIdTables, 'semi');
 
 		expect(emitted.transportRs.contents).toContain('pub enum AnyTransport');
-		expect(emitted.transportRs.contents).toContain('#[serde(tag = "$type")]');
+		expect(emitted.transportRs.contents).toContain('obj.get::<u16>("$type")?');
 		expect(emitted.transportRs.contents).toContain('CallExpression(CallExpressionTransport),');
 		expect(emitted.transportRs.contents).toContain('pub struct CallExpressionTransport');
 		expect(emitted.transportRs.contents).toContain('pub callee: ::sittir_core::SlotValue<ExpressionTransport>,');
-		expect(emitted.transportRs.contents).toMatch(/#\[serde\(rename = ";"\)\]\n {4}Semi,/);
+		expect(emitted.transportRs.contents).toContain(`${semiId} => Ok(AnyTransport::Semi),`);
 		expect(emitted.transportRs.contents).not.toContain('pub struct LiteralTransport');
 		// `from_transport` (2026-04-29 renderable-native-views plan, Task 4) was
 		// the interim bridge name; it was since renamed to the two functions
@@ -426,10 +440,12 @@ describe('native transport emission', () => {
 	// (`_identifier`/`identifier`) instead of the generic `$children`/`children`
 	// key. The remaining cases below update field names accordingly.
 	it('emits optional children as Option<T> transport', () => {
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeOptionalChildrenNodeMap);
 		const rust = emitRenderModule(
 			'rust',
 			emittedTemplates({ optional_parent: EMPTY }),
-			makeOptionalChildrenNodeMap()
+			nodeMap,
+			generatedIdTables
 		).transportRs.contents;
 
 		expect(rust).toContain(
@@ -440,10 +456,12 @@ describe('native transport emission', () => {
 	});
 
 	it('emits required singular children as bare transport values', () => {
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeRequiredChildrenNodeMap);
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ child_parent: EMPTY }),
-			makeRequiredChildrenNodeMap()
+			nodeMap,
+			generatedIdTables
 		);
 		const start = emitted.transportRs.contents.indexOf('pub struct ChildParentTransport');
 		const end = emitted.transportRs.contents.indexOf('}', start);
@@ -469,10 +487,12 @@ describe('native transport emission', () => {
 		// `heterogeneous`, which expands to concrete kinds in a per-slot enum
 		// (also renamed Child→Content, see kind-named-slots note above)
 		// instead of collapsing to the supertype type directly.
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeSupertypeAndSubtypeChildrenNodeMap);
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ supertype_alias_parent: EMPTY }),
-			makeSupertypeAndSubtypeChildrenNodeMap()
+			nodeMap,
+			generatedIdTables
 		);
 		const start = emitted.transportRs.contents.indexOf('pub struct SupertypeAliasParentTransport');
 		const end = emitted.transportRs.contents.indexOf('}', start);
@@ -487,10 +507,12 @@ describe('native transport emission', () => {
 	});
 
 	it('emits repeated children as Vec transport instead of OneOrMany', () => {
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeRepeatedChildrenNodeMap);
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ repeated_parent: EMPTY }),
-			makeRepeatedChildrenNodeMap()
+			nodeMap,
+			generatedIdTables
 		);
 		const start = emitted.transportRs.contents.indexOf('pub struct RepeatedParentTransport');
 		const end = emitted.transportRs.contents.indexOf('}', start);
@@ -508,10 +530,12 @@ describe('native transport emission', () => {
 		// special case that drops the Option wrapper. This matches the sibling
 		// "emits optional repeated named fields as Option<Vec<T>> transport"
 		// case below (same wrap() call, same result shape).
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeOptionalRepeatedChildrenNodeMap);
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ optional_repeated_parent: EMPTY }),
-			makeOptionalRepeatedChildrenNodeMap()
+			nodeMap,
+			generatedIdTables
 		);
 		const start = emitted.transportRs.contents.indexOf('pub struct OptionalRepeatedParentTransport');
 		const end = emitted.transportRs.contents.indexOf('}', start);
@@ -637,10 +661,12 @@ describe('native transport emission', () => {
 	});
 
 	it('emits repeated named fields as Vec transport instead of OneOrMany', () => {
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeRepeatedFieldNodeMap);
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ repeated_field_parent: slot('items') }),
-			makeRepeatedFieldNodeMap()
+			nodeMap,
+			generatedIdTables
 		);
 		const start = emitted.transportRs.contents.indexOf('pub struct RepeatedFieldParentTransport');
 		const end = emitted.transportRs.contents.indexOf('}', start);
@@ -653,10 +679,12 @@ describe('native transport emission', () => {
 	});
 
 	it('emits optional repeated named fields as Option<Vec<T>> transport', () => {
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeOptionalRepeatedFieldNodeMap);
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ optional_repeated_field_parent: slot('items') }),
-			makeOptionalRepeatedFieldNodeMap()
+			nodeMap,
+			generatedIdTables
 		);
 		const start = emitted.transportRs.contents.indexOf('pub struct OptionalRepeatedFieldParentTransport');
 		const end = emitted.transportRs.contents.indexOf('}', start);
@@ -669,10 +697,12 @@ describe('native transport emission', () => {
 	});
 
 	it('flattens reserved nested supertypes in Rust transport enums', () => {
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeReservedNestedSupertypeNodeMap);
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ parent_expression: slot('value') }),
-			makeReservedNestedSupertypeNodeMap()
+			nodeMap,
+			generatedIdTables
 		);
 
 		expect(emitted.transportRs.contents).toContain('pub enum ExpressionTransport');
@@ -682,15 +712,19 @@ describe('native transport emission', () => {
 		expect(emitted.transportRs.contents).not.toContain('literal_transport_to_any');
 	});
 
-	it('emits keyword-safe Rust transport identifiers with serde kind renames', () => {
+	it('emits keyword-safe Rust transport identifiers decoded by kind id', () => {
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeMinimalNodeMap, MINIMAL_TOKENS);
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ self: slot('text') }),
-			makeMinimalNodeMap()
+			nodeMap,
+			generatedIdTables
 		);
+		const selfId = kindIdOf(generatedIdTables, 'self');
 
-		expect(emitted.transportRs.contents).toContain('#[serde(rename = "self")]\n    Self_,');
+		expect(emitted.transportRs.contents).toContain(`${selfId} => Ok(AnyTransport::Self_),`);
 		expect(emitted.transportRs.contents).toContain('pub enum Self_Transport {\n    Self_,\n}');
+		expect(emitted.transportRs.contents).toContain(`${selfId} => Ok(Self::Self_),`);
 		expect(emitted.transportRs.contents).not.toContain('\n    Self,');
 	});
 });
