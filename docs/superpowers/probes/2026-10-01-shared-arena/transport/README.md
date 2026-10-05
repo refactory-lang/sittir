@@ -14,11 +14,15 @@ the same input bytes and adds the probe. Release native build, Apple M4 Pro, Nod
 | `measure-boundary.mts` | `../2026-10-01/measure-boundary.mts` adapted to the current loader (`packages/<lang>/native/index.cjs`, module-level `disposeTree`) and `toTransportData(node, view)`: raw read, engine read and wrap, retained heap, untouched render. Its projection time uses `STORED_TRIVIA`, a lower bound: the engine's own trivia view also asks native for line gaps. Its heap line holds the root only, so it counts whatever a commit keeps reachable from it; compare commits with `measure-heap.mts`. |
 | `measure-heap.mts` | Retained heap of fixed populations, runnable unchanged at either commit (it finds either loader and either `disposeTree`): the read data alone, a whole-tree parse untouched, walked with the root held, walked with every wrapped node kept, and a one-level parse walked with every wrapped node kept. Median of five after a warm-up, double gc. A whole-tree read passes `{ deep: true, depth: Infinity }`, so the script runs before and after `depth` replaces `deep`. The spec's verification of members on first access reads its untouched whole-tree row. |
 | `function-item-heap.mts` | Today's heap per rust `function_item` read one level, split: the engine tree's read, the same read wrapped by `wrapNode`, what `ofType` yields; then the native reads made while wrapping (none) and the wrappers the node reaches, by kind. |
-| `measure-rebuilt.mts` | `../2026-10-01/measure-rebuilt.mts` adapted the same way: rebuilt renders over the parity render fixtures, JS projection against the native call, per slot value. |
+| `measure-rebuilt.mts` | `../2026-10-01/measure-rebuilt.mts` adapted the same way: rebuilt renders over the parity render fixtures, JS projection against the native call, per slot value. It runs unchanged at either commit: it finds either loader, and a one-argument `toTransportData` ignores the view it is passed. |
+| `measure-layout.mts` | `measure-rebuilt.mts`'s two stages for one checkout, over populations that hold a layout change to like for like. The parity fixtures store the wire after projection, so each commit renders its own captured wire for the same cases (every render is checked against its expected output). Beside it: the same inputs with every layout key removed, the same JSON at every commit (its hash is printed to check); those inputs with an empty `$_layout` on every node, timed in alternation with them, which isolates what decoding a present layout costs; and the base checkout's inputs projected at this commit, whose trivia sits at the storage key every commit reads (re-projecting a commit's own fixtures copies a stored `$_layout` through untouched). One JSON line. |
+| `layout-rounds.sh`, `layout-report.py` | Rounds of `measure-layout.mts` (and `measure-rebuilt.mts` before it, with `REBUILT=1`) over several checkouts, the order rotating each round; the checkout tagged `base` supplies the base-form inputs. The report gives each checkout's medians and its empty-layout decode cost per node, and against `base` the native call's per-round paired difference: over the fixtures' own wire, over the stripped inputs, and per layout-bearing node. |
 | `loop-native.mts` | `../2026-10-01/loop-deep-read.mts` adapted: loops one native call so macOS `sample` can attribute it (`deep-read` or `render-fixtures`). |
 | `top-of-stack.py` | Summarizes a `sample` file's "Sort by top of stack" section by library, idle waits left out. |
 | `symbolize.py` | Attributes busy samples inside the stripped `.node` to functions, through the unstripped cargo dylib's `nm -n` table (same code layout). |
 | `transport-census.py` | Counts a `transport.rs`'s transport structs, slot fields and enums, and the share of lines in napi `FromNapiValue`/`ToNapiValue` impls and in render functions. |
+| `transport-types-census.py` | The spec's phase 0 census of a `transport.rs`'s choices (enums): how many each family holds (per-slot `*TransportSlot`, supertype `*Transport`, enum-kind `*Enum`), the distinct variant sets and distinct generated bodies (names normalized) they come to, how many nothing but their own items reference, the unit (fixed-literal) variants and one-literal choices, and the slot fields typed `AnyTransport`. |
+| `slot-storage-dump.mts`, `slot-storage-census.py` | The dump writes every slot's stamped storage facts as JSON lines (the storage class `slot.storageInfo.kind`, the primitive classification, each value's storage); the census joins them with each field's Rust type in a `transport.rs` and counts the slots per storage class and type, showing how many encodings one storage class gets. |
 | `generated-tables-census.py` | Counts every generated table the spec's Appendix B classifies, per grammar, in the checkout it is given (or the current directory): wrap projection against member lines, the route and set tables, `consts.ts` and `utils.ts` tables, `kind_ids.rs`'s constants and read tables, option sites, the node model, fixtures and the JS-only surface. Uses `transport-census.py` for `transport.rs`. |
 | `proto/slot-derive/` | The probe's proc macro: `#[transport(kind = "…", wire = "words\|napi\|json\|all")]` on a struct whose fields carry `#[slot(field = "…")]`, `#[slot(kinds = […], tokens = […])]` or `#[trivia]`. Expands mechanically into the struct with a `kind_id` (`$type`) and storage keys `_<field>`, a one-level `TreeCursor` reader (tree → transport, children with structure as coordinates, leaves inline, anonymous tokens as kind ids), the arena record writer and reader, and the napi object and serde forms the `wire` names. |
 | `proto/probe/` | A napi addon declaring rust `function_item` (eight slots, as `FunctionItemTransport` holds them) and `function_modifiers` through the macro. It compiles sittir's generated rust parser directly from the checkout. `Probe` reads them in batch and one node per call, in each wire form, decodes each form back (the render direction), and times the native read alone. `rt.rs` is the runtime the expansion calls: `Slot`, `Coord`, `Leaf`, route resolution, the child reader, the arena encoding. |
@@ -38,11 +42,15 @@ pnpm exec tsx --expose-gc $T/function-item-heap.mts $T/inputs/engine.rs         
 
 # heap, like for like: the same script, run from a checkout at each commit with its natives built
 for co in <checkout at 69b821c18> <checkout at 106475358>; do (cd $co && SITTIR_ROOT=$PWD pnpm exec tsx --expose-gc $OLDPWD/$T/measure-heap.mts rust $OLDPWD/$T/inputs/engine.rs); done
+# a layout change, like for like: checkouts at the commits compared, natives built, one tagged base
+REBUILT=1 $T/layout-rounds.sh 6 out base=<checkout> head=<checkout> && python3 $T/layout-report.py out
 pnpm exec tsx $T/loop-native.mts rust $T/inputs/engine.rs render-fixtures 14 &      # or deep-read
 sample <node pid> 6 1 -file out.txt && python3 $T/top-of-stack.py out.txt sittir-rust
 nm -n target/aarch64-apple-darwin/release/libsittir_rust.dylib > syms.txt && python3 $T/symbolize.py out.txt syms.txt sittir-rust | c++filt
 python3 $T/transport-census.py rust/crates/sittir-{rust,typescript,python,scm,regex}/src/render/transport.rs
 python3 $T/generated-tables-census.py                                              # spec Appendix B
+python3 $T/transport-types-census.py rust/crates/sittir-{rust,typescript,python}/src/render/transport.rs   # spec phase 0
+pnpm exec tsx $T/slot-storage-dump.mts rust > slots-rust.jsonl && python3 $T/slot-storage-census.py slots-rust.jsonl rust/crates/sittir-rust/src/render/transport.rs
 
 cp Cargo.lock $T/proto/                                                           # the checkout's lock; not committed here
 (cd $T/proto && CARGO_TARGET_DIR=$PWD/target cargo build --release --offline -p transport-probe)
@@ -195,3 +203,34 @@ ids, and reads leaves inline.
 | `#[transport]`, + napi object | 10.6 |
 | `#[transport]`, + serde | 6.6 |
 | `#[transport]`, all three wires | 13.9 |
+
+### Phase 0: one layout field, and decoders reading by static keys
+
+Measured on 2026-10-05 with `layout-rounds.sh`: release natives, six rounds rotating the checkouts
+in one sitting, medians. Rebuilt render, JS projection + native call per slot value, at
+`69b821c18`, the phase 0 branch base `ccb370d67` and its head `0575d6069`:
+
+| grammar | `69b821c18` | `ccb370d67` | `0575d6069` |
+| --- | --- | --- | --- |
+| rust | 268 + 340 | 325 + 486 | 320 + 348 |
+| typescript | 254 + 372 | 302 + 542 | 300 + 398 |
+| python | 264 + 364 | 314 + 512 | 308 + 368 |
+
+Each commit renders its own fixtures; `69b821c18`'s are slightly different populations (26 402 /
+27 845 / 19 145 slot values against 26 363 / 27 873 / 19 086). The native call's growth since
+`69b821c18` came from two per-node costs, each measured against `ccb370d67`:
+
+| | rust | typescript | python |
+| --- | --- | --- | --- |
+| one `$_layout` field for four always-read properties (`7e9f0b4d1`): native call, paired per round | −85 | −101 | −79 |
+| … over the inputs with layout keys stripped (the same JSON at both commits) | −101 | −110 | −112 |
+| a present layout's decode per node, keys through `Object::get(&str)` (`7e9f0b4d1`) | 150 | 155 | 161 |
+| … the same three keys static | 110 | 115 | 120 |
+| every decoder's keys static (`0575d6069`): native call, paired per round | −141 | −147 | −152 |
+| … over the stripped inputs | −141 | −151 | −153 |
+
+A present layout's decode is the empty-layout population (an empty `$_layout` on every node, passes
+alternated with none); at `ccb370d67`, which reads no `$_layout`, it costs 1–3 ns. The JS projection
+is unchanged by either commit: the base's fixtures projected at `0575d6069` and at `ccb370d67` take
+317 / 298 / 306 and 312 / 302 / 307 ns per slot value. Against `69b821c18`, the native call is within
+1–7 % and the projection 17–19 % above.

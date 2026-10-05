@@ -1,19 +1,24 @@
 /**
  * Rebuilt-tree render: where the time goes between the JS projection and the native call.
- * Same fixtures and stages as ../2026-10-01/measure-rebuilt.mts (master 69b821c18), adapted to the
- * current loader path and `toTransportData(node, view)`.
+ * Same fixtures and stages as ../2026-10-01/measure-rebuilt.mts (master 69b821c18), runnable
+ * unchanged at either commit: it finds either loader, and passes `STORED_TRIVIA` where
+ * `toTransportData` takes a view (the older one-argument form ignores it).
  *
  *   SITTIR_ROOT=<checkout> pnpm exec tsx <this file> <grammar>
  */
 import { createRequire } from 'node:module';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { performance } from 'node:perf_hooks';
 
 const REPO = process.env.SITTIR_ROOT ?? process.cwd();
 const [grammar = 'rust'] = process.argv.slice(2);
 process.env.NODE_ENV ??= 'production';
 const req = createRequire(import.meta.url);
-const native = req(`${REPO}/packages/${grammar}/native/index.cjs`);
+const loader = [`${REPO}/packages/${grammar}/native/index.cjs`, `${REPO}/rust/crates/sittir-${grammar}/index.js`].find((path) =>
+	existsSync(path)
+);
+if (loader === undefined) throw new Error(`no native loader for ${grammar} in ${REPO}`);
+const native = req(loader);
 const raw = new native.SittirEngine();
 const { toTransportData: toTransportDataWith, STORED_TRIVIA } = await import(`${REPO}/packages/common/src/transport-data.ts`);
 const toTransportData = (node: unknown) => toTransportDataWith(node, STORED_TRIVIA);
