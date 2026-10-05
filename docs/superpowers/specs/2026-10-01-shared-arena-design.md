@@ -301,6 +301,12 @@ one node per call reads 0.2–0.7 µs slower, and a node over a record holds abo
 land as their own step after the typed reader (ruling 6), and only with the object wire's numbers
 re-taken in the engine beside theirs.
 
+**Gate on the record step.** Its plan lands only if records match or beat napi objects on read
+time, one node per call and every match in one call, and on retained heap per node, as well as
+beating them on render decode. The 1.9 KB a node holds over a record looks like the view's
+overhead, the `$with` and `$trivia` closures a view makes over its record, and the record step
+attacks that first.
+
 ### What the JavaScript wrap keeps
 
 A wrap function attaches members and nothing else: the accessors (each reads its slot and hydrates
@@ -522,7 +528,7 @@ raised (11).
    kind's minimum depth (a list owner brings its items) is a fact codegen stamps and the reader
    applies. The depth decides only where coordinates start, never the struct or its attributes
    (§ Laziness).
-3. **The wire is arena records** (§ The wire).
+3. **The wire is arena records,** landing only past the gate on the record step (§ The wire).
 4. **A parsed node's storage is a reference to its record** (§ What the JavaScript wrap keeps,
    § Render).
 5. **A built node's storage is fields on the object, encoded at render** (§ What the JavaScript wrap
@@ -537,7 +543,8 @@ raised (11).
       other designs). This settles a detached node's coordinate.
    3. **The record wire**, laid out once against both forms: records in both directions, parsed
       nodes over their records with no fold walk, built nodes encoded at render, and the napi impls
-      gone. It lands with the object wire's numbers re-taken beside its own.
+      gone. It lands with the object wire's numbers re-taken beside its own, and only past the
+      gate on the record step (§ The wire).
 
    Relative coordinates come after the typed reader so that they are designed against rows, not
    the handles the reader removes, and before the record wire so that the record layout, which

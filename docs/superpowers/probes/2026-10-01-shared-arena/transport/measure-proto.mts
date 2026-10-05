@@ -209,7 +209,10 @@ const mismatch = (() => {
 })();
 if (mismatch !== undefined) throw new Error(`the three forms do not carry the same transport: ${mismatch}`);
 console.log(`forms agree: every slot, the trivia and the members of all ${N} nodes; arena ${w.words.length * 4} B words + ${w.text.length} B text`);
-console.log(`refusal with the body route removed: ${p.refusalWithoutBody()}`);
+const refusal = p.refusalWithoutBody() as string;
+if (!/^function_item \(kind \d+\) has no route for its child block \(kind \d+\) at row \d+$/.test(refusal))
+	throw new Error(`with the body route removed, the read must refuse function_item's block; got: ${refusal}`);
+console.log(`refusal with the body route removed: ${refusal}`);
 
 // --- 1. native only ------------------------------------------------------------------------
 const [readNs, walkNs] = p.nativeNs(200) as number[];
