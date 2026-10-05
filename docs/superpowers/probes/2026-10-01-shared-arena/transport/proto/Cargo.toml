@@ -1,0 +1,7 @@
+# Probe workspace for the transport refresh of the shared-arena design. Not sittir code.
+[workspace]
+resolver = "2"
+members = ["slot-derive", "probe", "synthetic"]
+
+[profile.release]
+strip = "none"

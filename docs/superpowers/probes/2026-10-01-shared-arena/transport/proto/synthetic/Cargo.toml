@@ -1,0 +1,15 @@
+# Compile-cost probe: rust-sized sets of transport structs under three expansions.
+# `python3 ../gen_synthetic.py <plain|napi|transport>` writes src/kinds.rs.
+[package]
+name = "synthetic"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+slot-derive = { path = "../slot-derive" }
+napi = { version = "3", default-features = false, features = ["napi4"] }
+napi-derive = "3"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tree-sitter = "0.26"

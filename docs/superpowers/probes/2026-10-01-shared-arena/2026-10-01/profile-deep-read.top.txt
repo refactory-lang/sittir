@@ -1,0 +1,56 @@
+Sort by top of stack, same collapsed (when >= 5):
+        __psynch_cvwait  (in libsystem_kernel.dylib)        37504
+        kevent  (in libsystem_kernel.dylib)        9376
+        semaphore_wait_trap  (in libsystem_kernel.dylib)        4688
+        ts_node_child_iterator_next  (in sittir-rust.darwin-arm64.node)        2477
+        ts_node_child_with_descendant  (in sittir-rust.darwin-arm64.node)        752
+        ts_tree_cursor_child_iterator_next  (in sittir-rust.darwin-arm64.node)        148
+        _platform_memmove  (in libsystem_platform.dylib)        70
+        _RNvXs1_NtCsgpc2g2nZY5Y_10serde_json3serQINtB5_10SerializerQINtNtCs26gtQGs340n_5alloc3vec3VechEENtNtCsfiCLw1DBezE_10serde_core3ser10Serializer13serialize_strCs2QEcL8JiiaO_11sittir_rust.llvm.9389147060715331111  (in sittir-rust.darwin-arm64.node)        68
+        v8::internal::Utf8DecoderBase<v8::internal::Utf8Decoder>::Decode<unsigned short>(unsigned short*, v8::base::Vector<unsigned char const>)  (in libnode.147.dylib)        67
+        ts_tree_cursor_goto_sibling_internal  (in sittir-rust.darwin-arm64.node)        65
+        ts_node__next_sibling  (in sittir-rust.darwin-arm64.node)        64
+        v8::internal::Utf8DecoderBase<v8::internal::Utf8Decoder>::Utf8DecoderBase(v8::base::Vector<unsigned char const>)  (in libnode.147.dylib)        61
+        ts_node__prev_sibling  (in sittir-rust.darwin-arm64.node)        54
+        _xzm_malloc_tc  (in libsystem_malloc.dylib)        52
+        ts_tree_cursor_goto_first_child_internal  (in sittir-rust.darwin-arm64.node)        47
+        ts_node__child  (in sittir-rust.darwin-arm64.node)        46
+        _xzm_free_tc  (in libsystem_malloc.dylib)        39
+        _RNvNtCsdeqEbBOoDS5_11sittir_core17read_untyped_node10read_slots  (in sittir-rust.darwin-arm64.node)        37
+        ts_node_field_name_for_child  (in sittir-rust.darwin-arm64.node)        35
+        _RNvNtNtCsedRpiqSkYaQ_4core3str8converts9from_utf8  (in sittir-rust.darwin-arm64.node)        31
+        ts_node_is_named  (in sittir-rust.darwin-arm64.node)        31
+        _RINvXs3_NtCsdeqEbBOoDS5_11sittir_core5typesNtB6_11UntypedNodeNtNtCsfiCLw1DBezE_10serde_core3ser9Serialize9serializeQINtNtCsgpc2g2nZY5Y_10serde_json3ser10SerializerQINtNtCs26gtQGs340n_5alloc3vec3VechEEECs2QEcL8JiiaO_11sittir_rust  (in sittir-rust.darwin-arm64.node)        27
+        _RNvNtCsdeqEbBOoDS5_11sittir_core17read_untyped_node11node_trivia  (in sittir-rust.darwin-arm64.node)        22
+        ts_node_parent  (in sittir-rust.darwin-arm64.node)        21
+        ts_tree_cursor_current_node  (in sittir-rust.darwin-arm64.node)        20
+        _RNvNtCsdeqEbBOoDS5_11sittir_core17read_untyped_node8is_owner  (in sittir-rust.darwin-arm64.node)        15
+        _RNvXs3_NtNtCsedRpiqSkYaQ_4core4hash3sipINtB5_6HasherNtB5_11Sip13RoundsENtB7_6Hasher5writeCsdeqEbBOoDS5_11sittir_core  (in sittir-rust.darwin-arm64.node)        14
+        __xzm_xzone_free_to_freelist_chunk  (in libsystem_malloc.dylib)        14
+        _free  (in libsystem_malloc.dylib)        14
+        _RNvNtCsdeqEbBOoDS5_11sittir_core17read_untyped_node17assign_named_slot  (in sittir-rust.darwin-arm64.node)        13
+        _malloc_zone_malloc  (in libsystem_malloc.dylib)        13
+        _RINvNtCsedRpiqSkYaQ_4core3ptr9drop_glueNtNtCsdeqEbBOoDS5_11sittir_core5types11UntypedNodeECs2QEcL8JiiaO_11sittir_rust.llvm.4575860124224435545  (in sittir-rust.darwin-arm64.node)        12
+        _RINvYNtNtNtCskP2HG43Jt7g_3std4hash6random11RandomStateNtNtCsedRpiqSkYaQ_4core4hash11BuildHasher8hash_oneRNtNtCs26gtQGs340n_5alloc6string6StringECsdeqEbBOoDS5_11sittir_core  (in sittir-rust.darwin-arm64.node)        12
+        _RNvXss_CsbFciOMIRISA_4itoatNtB5_8Unsigned3fmt  (in sittir-rust.darwin-arm64.node)        11
+        ts_node_grammar_symbol  (in sittir-rust.darwin-arm64.node)        11
+        ts_tree_cursor_current_field_id  (in sittir-rust.darwin-arm64.node)        11
+        DYLD-STUB$$memcpy  (in sittir-rust.darwin-arm64.node)        10
+        _RNvXst_CsbFciOMIRISA_4itoamNtB5_8Unsigned3fmt  (in sittir-rust.darwin-arm64.node)        10
+        _xzm_xzone_malloc_tiny  (in libsystem_malloc.dylib)        10
+        ts_node_is_error  (in sittir-rust.darwin-arm64.node)        10
+        ts_node_is_extra  (in sittir-rust.darwin-arm64.node)        10
+        _RNvNtNtCs2QEcL8JiiaO_11sittir_rust6render8kind_ids13stores_scalar  (in sittir-rust.darwin-arm64.node)        9
+        _platform_strlen  (in libsystem_platform.dylib)        9
+        _RNvCsgGzfl3MsF7H_7___rustc11___rdl_alloc  (in sittir-rust.darwin-arm64.node)        8
+        _RNvNtNtCs2QEcL8JiiaO_11sittir_rust6render8kind_ids9wire_slot  (in sittir-rust.darwin-arm64.node)        8
+        ts_node_type  (in sittir-rust.darwin-arm64.node)        8
+        _RNvMsi_Cs6gjkDP7Oj39_11tree_sitterNtB5_4Node10grammar_id  (in sittir-rust.darwin-arm64.node)        7
+        _RNvMsi_Cs6gjkDP7Oj39_11tree_sitterNtB5_4Node12prev_sibling  (in sittir-rust.darwin-arm64.node)        7
+        xzm_malloc_zone_size  (in libsystem_malloc.dylib)        7
+        _RNvMsi_Cs6gjkDP7Oj39_11tree_sitterNtB5_4Node12next_sibling  (in sittir-rust.darwin-arm64.node)        6
+        _RNvNtCsedRpiqSkYaQ_4core3fmt5write  (in sittir-rust.darwin-arm64.node)        6
+        DYLD-STUB$$malloc  (in sittir-rust.darwin-arm64.node)        5
+        _RINvYINtNtCsgpc2g2nZY5Y_10serde_json3ser8CompoundQINtNtCs26gtQGs340n_5alloc3vec3VechENtB6_16CompactFormatterENtNtCsfiCLw1DBezE_10serde_core3ser12SerializeMap15serialize_entryNtNtBR_6string6StringNtNtCsdeqEbBOoDS5_11sittir_core5types10FieldValueECs2QEcL8JiiaO_11sittir_rust  (in sittir-rust.darwin-arm64.node)        5
+        ts_tree_cursor_reset  (in sittir-rust.darwin-arm64.node)        5
+

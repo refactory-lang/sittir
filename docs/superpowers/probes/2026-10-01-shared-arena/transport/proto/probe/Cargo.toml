@@ -1,0 +1,21 @@
+[package]
+name = "transport-probe"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+slot-derive = { path = "../slot-derive" }
+napi = { version = "3", default-features = false, features = ["napi4"] }
+napi-derive = "3"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tree-sitter = "0.26"
+tree-sitter-language = "0.1.7"
+
+[build-dependencies]
+napi-build = "2"
+cc = "1"
