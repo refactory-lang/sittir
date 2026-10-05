@@ -187,7 +187,7 @@ export interface ClassRangeTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _start: SlotValue<ClassRangeStartTransportSlot>
-  _end: SlotValue<ClassRangeEndTransportSlot>
+  _end: SlotValue<ClassRangeStartTransportSlot>
 }
 
 export interface CountQuantifierArmTransport {

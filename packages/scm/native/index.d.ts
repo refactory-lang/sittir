@@ -195,7 +195,7 @@ export interface GroupExpressionArmTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _left: SlotValue<Box<GroupExpressionArmLeftTransportSlot>>
-  _right: SlotValue<Box<GroupExpressionArmRightTransportSlot>>
+  _right: SlotValue<Box<GroupExpressionArmLeftTransportSlot>>
 }
 
 export interface GroupingGroupTransport {
@@ -203,7 +203,7 @@ export interface GroupingGroupTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _group_expression: SlotValue<GroupingGroupGroupExpressionTransportSlot>
+  _group_expression: SlotValue<GroupExpressionArmLeftTransportSlot>
   _anchor?: SlotValue<AnchorTransport>
 }
 
@@ -268,7 +268,7 @@ export interface NamedNodeExpressionArmTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _left: SlotValue<Box<NamedNodeExpressionArmLeftTransportSlot>>
-  _right: SlotValue<Box<NamedNodeExpressionArmRightTransportSlot>>
+  _right: SlotValue<Box<NamedNodeExpressionArmLeftTransportSlot>>
 }
 
 export interface NamedNodeGroupAnchoredLastTransport {
@@ -276,8 +276,8 @@ export interface NamedNodeGroupAnchoredLastTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _named_node_expressions?: Array<SlotValue<NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot>>
-  _last: SlotValue<Box<NamedNodeGroupAnchoredLastLastTransportSlot>>
+  _named_node_expressions?: Array<SlotValue<NamedNodeExpressionArmLeftTransportSlot>>
+  _last: SlotValue<Box<NamedNodeExpressionArmLeftTransportSlot>>
   _anchor?: SlotValue<AnchorTransport>
   _named_node_expressions_separator_space?: number
 }
@@ -287,7 +287,7 @@ export interface NamedNodeGroupChildrenTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _named_node_expressions: Array<SlotValue<NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot>>
+  _named_node_expressions: Array<SlotValue<NamedNodeExpressionArmLeftTransportSlot>>
   _anchor?: SlotValue<AnchorTransport>
   _named_node_expressions_separator_space?: number
 }

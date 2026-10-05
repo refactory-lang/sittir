@@ -3695,11 +3695,12 @@ is bounded by the supertype's subtype count, not the grammar.
 
 ### `packages/codegen/src/emitters/render-module.ts::collectPerSlotChildEnums`
 
-The per-slot choices to emit: one for each slot, named or unnamed, whose
+The per-slot choices: one for each slot, named or unnamed, whose
 `transportSlotShapeOf` is `union`, named `<TypeName><FieldName>TransportSlot`
 by `perSlotEnumName`. Nothing else registers a choice, so every choice
 emitted is a field's type. A choice's variants are the slot's
 `fieldTypeComponents`: its node kinds and its literals.
+`shareIdenticalChoices` then emits each distinct choice once.
 
 #### body
 
@@ -3749,6 +3750,36 @@ emitted is a field's type. A choice's variants are the slot's
 
 A slot with a blank arm always gets a per-slot enum, to hold its `Blank` variant: `transportSlotShapeOf` classifies it as a choice.
 
+### `packages/codegen/src/emitters/render-module.ts::ChoiceNames`
+
+The name of the choice each union-shaped slot is typed by, keyed by
+`choiceKey(typeName, fieldName)`: the one place field types, option fills
+and seat targets look a slot's choice up.
+
+### `packages/codegen/src/emitters/render-module.ts::SharedChoices`
+
+The choices `shareIdenticalChoices` emits, each with its generated lines,
+and the `ChoiceNames` every slot's field resolves through.
+
+### `packages/codegen/src/emitters/render-module.ts::choiceKey`
+
+The key a slot's choice is filed under: its owner's type name and its field
+name.
+
+### `packages/codegen/src/emitters/render-module.ts::shareIdenticalChoices`
+
+Emits each distinct choice once. Every slot's choice is generated under its
+own name; two slots whose generated choices are identical once their own
+names are set aside — the same variants, ids, aliases, seams and prepare
+fill — share the first one's declaration and name, in node order. A choice
+whose arms write its owner's seam sites differs from another owner's and
+stays its own.
+
+### `packages/codegen/src/emitters/render-module.ts::choiceNameOf`
+
+The choice a union-shaped slot's field is typed by. A slot with no collected
+choice is a codegen error, never a Rust type that names nothing.
+
 ### `packages/codegen/src/emitters/render-module.ts::literalArmSeamSites`
 
 The seam sites of the owner kind that a per-slot enum's literal arm carries,
@@ -3774,8 +3805,7 @@ did when the enum was its own arm.
  * wraps the concrete transport struct (boxed for non-leaf kinds). When a
  * member is pattern-modeled the enum also admits `Verbatim(VerbatimTransport)`
  * — a bare string in that slot is text with no kind of its own — with a
- * prepare arm, a render arm, a bridge arm to `AnyTransport::Verbatim`, and
- * the string shape in its `from_napi_value`.
+ * prepare arm, a render arm and the string shape in its `from_napi_value`.
  *
  * Mirrors `emitSupertypeTransportEnum` but is derived from the specific child
  * kinds in a slot rather than grammar supertype membership.
@@ -3800,16 +3830,6 @@ did when the enum was its own arm.
 // is the parent node that hosts the slot; a variant is boxed iff it and
 // the owner share an SCC in the singular-reference graph. Leaf-like
 // variants always stay inline (see `boxedInEnum`).
-```
-
-#### body
-
-```text
-// Spec 024 cleanup-§E1: named-slot enums are load-bearing alongside unnamed
-// `$children` enums — `rustTransportSlotType` returns the per-slot enum name
-// for any heterogeneous slot with at least one concrete child kind. No
-// `#[allow(dead_code)]` needed; both the enum and its `_transport_slot_to_any`
-// bridge fn are referenced (struct field type + bridge expression).
 ```
 
 #### body
@@ -3870,17 +3890,6 @@ did when the enum was its own arm.
 
 ```text
 // Box<EnumName> napi-trait impls. See note on `renderBoxedEnumNapiImpls`.
-```
-
-#### body
-
-```text
-// Bridge helper: converts per-slot enum → AnyTransport for the UntypedNode bridge
-// (used by the typed render dispatch). AnyTransport is a sized enum — no Box
-// needed. Both named-slot and unnamed `$children` bridge fns are load-bearing
-// after that change (named field type became the per-slot enum, so the bridge MUST
-// convert via this fn instead of derefing a `Box<AnyTransport>`). Every per-slot
-// enum has a corresponding bridge fn keyed by typeName + slot name.
 ```
 
 #### body
@@ -4232,8 +4241,8 @@ The Rust type of a transport slot's field, printed from the slot's
 `transportSlotShapeOf` and its cardinality (`required`, `multiple`,
 `optionalElement`, `adjacent`): presence is `Option<bool>`, text `String`
 (or `Option<String>`), and every other shape is its type in the `SlotValue`
-carrier — the kind's transport, the supertype's enum, the slot's own choice
-(`perSlotEnumName(typeName, slot.name)`), or `AnyTransport` — wrapped as
+carrier — the kind's transport, the supertype's enum, the slot's choice
+as `choiceNameOf` names it, or `AnyTransport` — wrapped as
 `T`, `Option<T>`, `Vec<T>` or `Option<Vec<T>>`. A singular slot whose
 reachable kinds share an SCC with `parentKind` boxes its value.
 
@@ -16107,8 +16116,8 @@ is trailing.
 ### `packages/codegen/src/emitters/render-module.ts::optionDefaultFills`
 
 The `prepare` lines that fill a node's prepare-filled slots (`isPrepareFilled`)
-when the transport arrived without them: the slot's per-slot enum is built
-with `from_kind_id` from `ctx.options.spacing[<site>].arm`, the arm the option
+when the transport arrived without them: the slot's choice, as `choiceNameOf`
+names it, is built with `from_kind_id` from `ctx.options.spacing[<site>].arm`, the arm the option
 chain resolved for the slot's choice site (per-tree, engine, then the
 grammar's declared default). The site is the one choice site in the render
 plan for this kind and slot, with no side and no seat. A slot with no such

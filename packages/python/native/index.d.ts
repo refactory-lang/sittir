@@ -187,8 +187,8 @@ export interface AssignmentEqTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _left: SlotValue<AssignmentEqLeftTransportSlot>
-  _right: SlotValue<Box<AssignmentEqRightTransportSlot>>
+  _left: SlotValue<ForStatementLeftTransportSlot>
+  _right: SlotValue<Box<AugmentedAssignmentRightTransportSlot>>
 }
 
 export interface AssignmentTypedTransport {
@@ -196,9 +196,9 @@ export interface AssignmentTypedTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _left: SlotValue<AssignmentTypedLeftTransportSlot>
+  _left: SlotValue<ForStatementLeftTransportSlot>
   _type: SlotValue<TypeTransport>
-  _right: SlotValue<Box<AssignmentTypedRightTransportSlot>>
+  _right: SlotValue<Box<AugmentedAssignmentRightTransportSlot>>
 }
 
 export interface AssignmentTypeTransport {
@@ -206,7 +206,7 @@ export interface AssignmentTypeTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _left: SlotValue<AssignmentTypeLeftTransportSlot>
+  _left: SlotValue<ForStatementLeftTransportSlot>
   _type: SlotValue<TypeTransport>
 }
 
@@ -224,7 +224,7 @@ export interface AugmentedAssignmentTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _left: SlotValue<AugmentedAssignmentLeftTransportSlot>
+  _left: SlotValue<ForStatementLeftTransportSlot>
   _operator: SlotValue<AugmentedAssignmentOperatorTransportSlot>
   _right: SlotValue<Box<AugmentedAssignmentRightTransportSlot>>
 }
@@ -403,7 +403,7 @@ export interface ComplexPatternTransport {
   _sign?: boolean
   _real: SlotValue<ComplexPatternRealTransportSlot>
   _operator: SlotValue<ComplexPatternOperatorTransportSlot>
-  _imaginary: SlotValue<ComplexPatternImaginaryTransportSlot>
+  _imaginary: SlotValue<ComplexPatternRealTransportSlot>
 }
 
 export interface ComprehensionClausesTransport {
@@ -475,7 +475,7 @@ export interface DeleteStatementTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _expressions: SlotValue<DeleteStatementExpressionsTransportSlot>
+  _expressions: SlotValue<ReturnStatementExpressionsTransportSlot>
 }
 
 export interface DictionaryComprehensionTransport {
@@ -503,7 +503,7 @@ export interface DictionarySplatPatternTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _target: SlotValue<DictionarySplatPatternTargetTransportSlot>
+  _target: SlotValue<ListSplatPatternTargetTransportSlot>
 }
 
 export interface DictionarySplatTransport {
@@ -770,8 +770,8 @@ export interface ForInClauseTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _async?: boolean
-  _left: SlotValue<ForInClauseLeftTransportSlot>
-  _right: Array<SlotValue<ForInClauseRightTransportSlot>>
+  _left: SlotValue<ForStatementLeftTransportSlot>
+  _right: Array<SlotValue<LambdaWithinForInClauseBodyTransportSlot>>
   _comma?: boolean
   _right_separator_space_before?: number
   _right_separator_space_after?: number
@@ -800,7 +800,7 @@ export interface ForStatementTransport {
   '$_flank'?: SourceFlank
   _async?: boolean
   _left: SlotValue<ForStatementLeftTransportSlot>
-  _right: SlotValue<ForStatementRightTransportSlot>
+  _right: SlotValue<ReturnStatementExpressionsTransportSlot>
   _body: SlotValue<SuiteTransport>
   _alternative?: SlotValue<ElseClauseTransport>
 }
@@ -944,7 +944,7 @@ export interface KeyValuePatternTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _key: SlotValue<KeyValuePatternKeyTransportSlot>
+  _key: SlotValue<SimplePatternContentTransportSlot>
   _value: SlotValue<CasePatternTransport>
 }
 
@@ -953,7 +953,7 @@ export interface KeywordArgumentTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _name: SlotValue<KeywordArgumentNameTransportSlot>
+  _name: SlotValue<NamedExpressionNameTransportSlot>
   _value: SlotValue<ExpressionTransport>
 }
 
@@ -963,7 +963,7 @@ export interface KeywordPatternTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _name: SlotValue<IdentifierTransport>
-  _value: SlotValue<KeywordPatternValueTransportSlot>
+  _value: SlotValue<SimplePatternContentTransportSlot>
 }
 
 export interface LambdaParametersTransport {
@@ -1265,7 +1265,7 @@ export interface RaiseStatementTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _cause?: SlotValue<ExpressionTransport>
-  _expressions?: SlotValue<RaiseStatementExpressionsTransportSlot>
+  _expressions?: SlotValue<ReturnStatementExpressionsTransportSlot>
 }
 
 export interface RelativeImportTransport {
@@ -1308,7 +1308,7 @@ export interface SimplePatternNegativeTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _sign?: boolean
-  _value: SlotValue<SimplePatternNegativeValueTransportSlot>
+  _value: SlotValue<ComplexPatternRealTransportSlot>
 }
 
 export interface SimplePatternTransport {
@@ -1370,7 +1370,7 @@ export interface SplatTypeTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _operator: SlotValue<SplatTypeOperatorTransportSlot>
+  _operator: SlotValue<SplatPatternOperatorTransportSlot>
   _name: SlotValue<IdentifierTransport>
 }
 
@@ -1464,7 +1464,7 @@ export interface TupleElementsTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _item: Array<SlotValue<TupleElementsItemTransportSlot>>
+  _item: Array<SlotValue<CollectionElementsItemTransportSlot>>
   _delimiter?: number
   _item_separator_space_before?: number
   _item_separator_space_after?: number
@@ -1555,7 +1555,7 @@ export interface UnionPatternTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _patterns: Array<SlotValue<UnionPatternPatternsTransportSlot>>
+  _patterns: Array<SlotValue<SimplePatternContentTransportSlot>>
   _patterns_separator_space_before?: number
   _patterns_separator_space_after?: number
 }

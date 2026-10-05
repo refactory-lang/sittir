@@ -367,7 +367,7 @@ export interface BoundedTypeTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _left: SlotValue<Box<BoundedTypeLeftTransportSlot>>
-  _right: SlotValue<Box<BoundedTypeRightTransportSlot>>
+  _right: SlotValue<Box<BoundedTypeLeftTransportSlot>>
 }
 
 export interface BracketedTypeTransport {
@@ -546,7 +546,7 @@ export interface DelimTokenTreeBraceTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _delim_tokens?: Array<SlotValue<DelimTokenTreeBraceDelimTokensTransportSlot>>
+  _delim_tokens?: Array<SlotValue<DelimTokenTreeParenDelimTokensTransportSlot>>
   _delim_tokens_separator_space?: number
 }
 
@@ -555,7 +555,7 @@ export interface DelimTokenTreeBracketTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _delim_tokens?: Array<SlotValue<DelimTokenTreeBracketDelimTokensTransportSlot>>
+  _delim_tokens?: Array<SlotValue<DelimTokenTreeParenDelimTokensTransportSlot>>
   _delim_tokens_separator_space?: number
 }
 
@@ -757,7 +757,7 @@ export interface FieldExpressionTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _value: SlotValue<Box<ExpressionTransport>>
-  _field: SlotValue<FieldExpressionFieldTransportSlot>
+  _field: SlotValue<FieldInitializerFieldTransportSlot>
 }
 
 export interface FieldIdentifierTransport {
@@ -888,7 +888,7 @@ export interface FunctionSignatureItemTransport {
   '$_flank'?: SourceFlank
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _function_modifiers?: SlotValue<FunctionModifiersTransport>
-  _name: SlotValue<FunctionSignatureItemNameTransportSlot>
+  _name: SlotValue<FunctionItemNameTransportSlot>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<ParametersTransport>
   _return_type?: SlotValue<TypeTransport>
@@ -908,7 +908,7 @@ export interface FunctionTypeTraitFormTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _trait: SlotValue<Box<FunctionTypeTraitFormTraitTransportSlot>>
+  _trait: SlotValue<Box<StructPatternTypeTransportSlot>>
 }
 
 export interface FunctionTypeTransport {
@@ -1004,7 +1004,7 @@ export interface ImplItemNegativeClauseTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _trait: SlotValue<ImplItemNegativeClauseTraitTransportSlot>
+  _trait: SlotValue<ImplItemPositiveClauseTraitTransportSlot>
 }
 
 export interface ImplItemPositiveClauseTransport {
@@ -1022,7 +1022,7 @@ export interface ImplItemSemiTransport {
   '$_flank'?: SourceFlank
   _unsafe?: SlotValue<ImplItemUnsafeMarkerTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
-  _trait_clause?: SlotValue<ImplItemSemiTraitClauseTransportSlot>
+  _trait_clause?: SlotValue<ImplItemBodyTraitClauseTransportSlot>
   _type: SlotValue<TypeTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
 }
@@ -1205,7 +1205,7 @@ export interface MacroDefinitionBraceTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _name: SlotValue<MacroDefinitionBraceNameTransportSlot>
+  _name: SlotValue<MacroDefinitionParenNameTransportSlot>
   _macro_rules?: SlotValue<MacroRulesTransport>
 }
 
@@ -1214,7 +1214,7 @@ export interface MacroDefinitionBracketTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _name: SlotValue<MacroDefinitionBracketNameTransportSlot>
+  _name: SlotValue<MacroDefinitionParenNameTransportSlot>
   _macro_rules?: SlotValue<MacroRulesTransport>
 }
 
@@ -1261,7 +1261,7 @@ export interface MatchArmBlockEndingTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _attributes?: Array<SlotValue<MatchArmBlockEndingAttributesTransportSlot>>
+  _attributes?: Array<SlotValue<LastMatchArmAttributesTransportSlot>>
   _pattern: SlotValue<MatchPatternTransport>
   _value: SlotValue<MatchArmBlockEndingValueTransportSlot>
   _attributes_separator_space?: number
@@ -1272,7 +1272,7 @@ export interface MatchArmWithCommaTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _attributes?: Array<SlotValue<MatchArmWithCommaAttributesTransportSlot>>
+  _attributes?: Array<SlotValue<LastMatchArmAttributesTransportSlot>>
   _pattern: SlotValue<MatchPatternTransport>
   _value: SlotValue<ExpressionTransport>
   _attributes_separator_space?: number
@@ -1311,7 +1311,7 @@ export interface MatchPatternTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _pattern: SlotValue<Box<PatternTransport>>
-  _condition?: SlotValue<Box<MatchPatternConditionTransportSlot>>
+  _condition?: SlotValue<Box<IfExpressionConditionTransportSlot>>
 }
 
 export interface MetavariableTransport {
@@ -1522,7 +1522,7 @@ export interface RangePatternWithLeftTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _left: SlotValue<Box<RangePatternWithLeftLeftTransportSlot>>
+  _left: SlotValue<Box<RangePatternPrefixRightTransportSlot>>
   _content: SlotValue<Box<RangePatternWithLeftContentTransportSlot>>
 }
 
@@ -1531,7 +1531,7 @@ export interface RangePatternWithLeftWithRightTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _right: SlotValue<Box<RangePatternWithLeftWithRightRightTransportSlot>>
+  _right: SlotValue<Box<RangePatternPrefixRightTransportSlot>>
   _content: SlotValue<RangePatternWithLeftWithRightContentTransportSlot>
 }
 
@@ -1652,7 +1652,7 @@ export interface ScopedUseListTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _path?: SlotValue<ScopedUseListPathTransportSlot>
+  _path?: SlotValue<AttributePathTransportSlot>
   _list: SlotValue<UseListTransport>
 }
 
@@ -1822,7 +1822,7 @@ export interface TokenRepetitionTransport {
   '$_flank'?: SourceFlank
   _tokens?: Array<SlotValue<TokenRepetitionTokensTransportSlot>>
   _separator?: SlotValue<TokenRepetitionPatternTextTransport>
-  _operator: SlotValue<TokenRepetitionOperatorTransportSlot>
+  _operator: SlotValue<TokenRepetitionPatternOperatorTransportSlot>
   _tokens_separator_space?: number
 }
 
@@ -1831,7 +1831,7 @@ export interface TokenTreeBraceTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _tokens?: Array<SlotValue<TokenTreeBraceTokensTransportSlot>>
+  _tokens?: Array<SlotValue<TokenRepetitionTokensTransportSlot>>
   _tokens_separator_space?: number
 }
 
@@ -1840,7 +1840,7 @@ export interface TokenTreeBracketTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _tokens?: Array<SlotValue<TokenTreeBracketTokensTransportSlot>>
+  _tokens?: Array<SlotValue<TokenRepetitionTokensTransportSlot>>
   _tokens_separator_space?: number
 }
 
@@ -1849,7 +1849,7 @@ export interface TokenTreeParenTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _tokens?: Array<SlotValue<TokenTreeParenTokensTransportSlot>>
+  _tokens?: Array<SlotValue<TokenRepetitionTokensTransportSlot>>
   _tokens_separator_space?: number
 }
 
@@ -1858,7 +1858,7 @@ export interface TokenTreePatternBraceTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _token_patterns?: Array<SlotValue<TokenTreePatternBraceTokenPatternsTransportSlot>>
+  _token_patterns?: Array<SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>
   _token_patterns_separator_space?: number
 }
 
@@ -1867,7 +1867,7 @@ export interface TokenTreePatternBracketTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _token_patterns?: Array<SlotValue<TokenTreePatternBracketTokenPatternsTransportSlot>>
+  _token_patterns?: Array<SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>
   _token_patterns_separator_space?: number
 }
 
@@ -1876,7 +1876,7 @@ export interface TokenTreePatternParenTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _token_patterns?: Array<SlotValue<TokenTreePatternParenTokenPatternsTransportSlot>>
+  _token_patterns?: Array<SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>
   _token_patterns_separator_space?: number
 }
 
@@ -2108,7 +2108,7 @@ export interface UseAsClauseTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _path: SlotValue<UseAsClausePathTransportSlot>
+  _path: SlotValue<AttributePathTransportSlot>
   _alias: SlotValue<IdentifierTransport>
 }
 
@@ -2136,7 +2136,7 @@ export interface UseClausesTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _item: Array<SlotValue<UseClausesItemTransportSlot>>
+  _item: Array<SlotValue<UseDeclarationArgumentTransportSlot>>
   _delimiter?: number
   _item_separator_space_before?: number
   _item_separator_space_after?: number
@@ -2164,7 +2164,7 @@ export interface UseWildcardGroupTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _path?: SlotValue<UseWildcardGroupPathTransportSlot>
+  _path?: SlotValue<AttributePathTransportSlot>
 }
 
 export interface UseWildcardTransport {
@@ -2189,7 +2189,7 @@ export interface VisibilityModifierPubScopeInPathTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _path: SlotValue<VisibilityModifierPubScopeInPathPathTransportSlot>
+  _path: SlotValue<AttributePathTransportSlot>
 }
 
 export interface VisibilityModifierPubScopeTransport {
@@ -2250,7 +2250,7 @@ export interface WhileExpressionTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _label?: SlotValue<LabelTransport>
-  _condition: SlotValue<Box<WhileExpressionConditionTransportSlot>>
+  _condition: SlotValue<Box<IfExpressionConditionTransportSlot>>
   _body: SlotValue<Box<BlockTransport>>
 }
 

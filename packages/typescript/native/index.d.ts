@@ -147,12 +147,12 @@ export interface AbstractMethodSignatureTransport {
   '$_flank'?: SourceFlank
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
   _override?: SlotValue<OverrideModifierTransport>
-  _accessor_kind?: SlotValue<AbstractMethodSignatureAccessorKindTransportSlot>
-  _name: SlotValue<AbstractMethodSignatureNameTransportSlot>
+  _accessor_kind?: SlotValue<MethodDefinitionAccessorKindTransportSlot>
+  _name: SlotValue<MethodDefinitionNameTransportSlot>
   _optional?: boolean
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
-  _return_type?: SlotValue<AbstractMethodSignatureReturnTypeTransportSlot>
+  _return_type?: SlotValue<FunctionExpressionReturnTypeTransportSlot>
 }
 
 export interface AddingTypeAnnotationTransport {
@@ -194,7 +194,7 @@ export interface ArgumentsTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _elements?: Array<SlotValue<ArgumentsElementsTransportSlot> | undefined | null>
+  _elements?: Array<SlotValue<ArrayElementsTransportSlot> | undefined | null>
   _elements_separator_space_before?: number
   _elements_separator_space_after?: number
 }
@@ -232,7 +232,7 @@ export interface ArrowFunctionParameterTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _parameter: SlotValue<ArrowFunctionParameterParameterTransportSlot>
+  _parameter: SlotValue<IndexSignatureColonNameTransportSlot>
 }
 
 export interface ArrowFunctionTransport {
@@ -341,7 +341,7 @@ export interface CallExpressionCallTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _function: SlotValue<Box<CallExpressionCallFunctionTransportSlot>>
+  _function: SlotValue<Box<MemberExpressionObjectTransportSlot>>
   _type_arguments?: SlotValue<TypeArgumentsTransport>
   _arguments: SlotValue<ArgumentsTransport>
 }
@@ -372,7 +372,7 @@ export interface CallSignatureTransport {
   '$_flank'?: SourceFlank
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
-  _return_type?: SlotValue<CallSignatureReturnTypeTransportSlot>
+  _return_type?: SlotValue<FunctionExpressionReturnTypeTransportSlot>
 }
 
 export interface CatchClauseGroupTransport {
@@ -441,7 +441,7 @@ export interface ClassDeclarationTransport {
   _type_parameters?: SlotValue<TypeParametersTransport>
   _heritage?: SlotValue<ClassHeritageTransport>
   _body: SlotValue<ClassBodyTransport>
-  _terminator?: SlotValue<ClassDeclarationTerminatorTransportSlot>
+  _terminator?: SlotValue<StatementBlockTerminatorTransportSlot>
   _decorator_separator_space?: number
 }
 
@@ -467,7 +467,7 @@ export interface ClassStaticBlockTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _terminator?: SlotValue<ClassStaticBlockTerminatorTransportSlot>
+  _terminator?: SlotValue<StatementBlockTerminatorTransportSlot>
   _body: SlotValue<StatementBlockTransport>
 }
 
@@ -572,7 +572,7 @@ export interface DecoratorCallExpressionTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _function: SlotValue<DecoratorCallExpressionFunctionTransportSlot>
+  _function: SlotValue<DecoratorMemberExpressionObjectTransportSlot>
   _type_arguments?: SlotValue<TypeArgumentsTransport>
   _arguments: SlotValue<ArgumentsTransport>
 }
@@ -652,7 +652,7 @@ export interface EnumAssignmentTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _name: SlotValue<EnumAssignmentNameTransportSlot>
+  _name: SlotValue<MethodDefinitionNameTransportSlot>
   _value: SlotValue<ExpressionTransport>
 }
 
@@ -661,7 +661,7 @@ export interface EnumBodyElementNameTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _name: SlotValue<EnumBodyElementNameNameTransportSlot>
+  _name: SlotValue<MethodDefinitionNameTransportSlot>
 }
 
 export interface EnumBodyElementsTransport {
@@ -726,8 +726,8 @@ export interface ExportSpecifierTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _export_kind?: SlotValue<ExportSpecifierExportKindTransportSlot>
-  _name: SlotValue<ExportSpecifierNameTransportSlot>
-  _alias?: SlotValue<ExportSpecifierAliasTransportSlot>
+  _name: SlotValue<NamespaceExportModuleExportNameTransportSlot>
+  _alias?: SlotValue<NamespaceExportModuleExportNameTransportSlot>
 }
 
 export interface ExportStatementDefaultDeclarationDefaultKwTransport {
@@ -879,11 +879,11 @@ export interface ForHeaderLetConstKindTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _kind: SlotValue<ForHeaderLetConstKindKindTransportSlot>
-  _left: SlotValue<ForHeaderLetConstKindLeftTransportSlot>
-  _terminator?: SlotValue<ForHeaderLetConstKindTerminatorTransportSlot>
-  _operator: SlotValue<ForHeaderLetConstKindOperatorTransportSlot>
-  _right: SlotValue<ForHeaderLetConstKindRightTransportSlot>
+  _kind: SlotValue<LexicalDeclarationKindTransportSlot>
+  _left: SlotValue<CatchClauseGroupParameterTransportSlot>
+  _terminator?: SlotValue<StatementBlockTerminatorTransportSlot>
+  _operator: SlotValue<ForHeaderLhsOperatorTransportSlot>
+  _right: SlotValue<ExpressionStatementExpressionTransportSlot>
 }
 
 export interface ForHeaderLhsTransport {
@@ -893,7 +893,7 @@ export interface ForHeaderLhsTransport {
   '$_flank'?: SourceFlank
   _left: SlotValue<ForHeaderLhsLeftTransportSlot>
   _operator: SlotValue<ForHeaderLhsOperatorTransportSlot>
-  _right: SlotValue<ForHeaderLhsRightTransportSlot>
+  _right: SlotValue<ExpressionStatementExpressionTransportSlot>
 }
 
 export interface ForHeaderVarKindTransport {
@@ -901,10 +901,10 @@ export interface ForHeaderVarKindTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _left: SlotValue<ForHeaderVarKindLeftTransportSlot>
+  _left: SlotValue<CatchClauseGroupParameterTransportSlot>
   _value?: SlotValue<ExpressionTransport>
-  _operator: SlotValue<ForHeaderVarKindOperatorTransportSlot>
-  _right: SlotValue<ForHeaderVarKindRightTransportSlot>
+  _operator: SlotValue<ForHeaderLhsOperatorTransportSlot>
+  _right: SlotValue<ExpressionStatementExpressionTransportSlot>
 }
 
 export interface ForInStatementTransport {
@@ -943,7 +943,7 @@ export interface ForStatementTransport {
   '$_flank'?: SourceFlank
   _initializer: SlotValue<ForStatementInitializerTransportSlot>
   _condition: SlotValue<ForStatementConditionTransportSlot>
-  _increment?: SlotValue<ForStatementIncrementTransportSlot>
+  _increment?: SlotValue<ExpressionStatementExpressionTransportSlot>
   _body: SlotValue<Box<StatementTransport>>
 }
 
@@ -956,9 +956,9 @@ export interface FunctionDeclarationTransport {
   _name: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
-  _return_type?: SlotValue<FunctionDeclarationReturnTypeTransportSlot>
+  _return_type?: SlotValue<FunctionExpressionReturnTypeTransportSlot>
   _body: SlotValue<StatementBlockTransport>
-  _terminator?: SlotValue<FunctionDeclarationTerminatorTransportSlot>
+  _terminator?: SlotValue<StatementBlockTerminatorTransportSlot>
 }
 
 export interface FunctionExpressionTransport {
@@ -983,7 +983,7 @@ export interface FunctionSignatureTransport {
   _name: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
-  _return_type?: SlotValue<FunctionSignatureReturnTypeTransportSlot>
+  _return_type?: SlotValue<FunctionExpressionReturnTypeTransportSlot>
   _terminator?: SlotValue<FunctionSignatureTerminatorTransportSlot>
 }
 
@@ -1006,9 +1006,9 @@ export interface GeneratorFunctionDeclarationTransport {
   _name: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
-  _return_type?: SlotValue<GeneratorFunctionDeclarationReturnTypeTransportSlot>
+  _return_type?: SlotValue<FunctionExpressionReturnTypeTransportSlot>
   _body: SlotValue<StatementBlockTransport>
-  _terminator?: SlotValue<GeneratorFunctionDeclarationTerminatorTransportSlot>
+  _terminator?: SlotValue<StatementBlockTerminatorTransportSlot>
 }
 
 export interface GeneratorFunctionTransport {
@@ -1020,7 +1020,7 @@ export interface GeneratorFunctionTransport {
   _name?: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
-  _return_type?: SlotValue<GeneratorFunctionReturnTypeTransportSlot>
+  _return_type?: SlotValue<FunctionExpressionReturnTypeTransportSlot>
   _body: SlotValue<StatementBlockTransport>
 }
 
@@ -1067,7 +1067,7 @@ export interface ImportAliasTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _name: SlotValue<IdentifierTransport>
-  _value: SlotValue<ImportAliasValueTransportSlot>
+  _value: SlotValue<NestedIdentifierObjectTransportSlot>
   _terminator?: SlotValue<ImportAliasTerminatorTransportSlot>
 }
 
@@ -1169,7 +1169,7 @@ export interface IndexSignatureColonTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _sign?: SlotValue<IndexSignatureColonSignTransportSlot>
+  _sign?: SlotValue<LiteralTypeNegativeNumberOperatorTransportSlot>
   _readonly?: boolean
   _name: SlotValue<IndexSignatureColonNameTransportSlot>
   _index_type: SlotValue<TypeTransport>
@@ -1181,9 +1181,9 @@ export interface IndexSignatureMappedTypeClauseTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _sign?: SlotValue<IndexSignatureMappedTypeClauseSignTransportSlot>
+  _sign?: SlotValue<LiteralTypeNegativeNumberOperatorTransportSlot>
   _readonly?: boolean
-  _type: SlotValue<IndexSignatureMappedTypeClauseTypeTransportSlot>
+  _type: SlotValue<IndexSignatureColonTypeTransportSlot>
   _mapped_type_clause: SlotValue<MappedTypeClauseTransport>
 }
 
@@ -1237,7 +1237,7 @@ export interface InternalModuleTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _name: SlotValue<InternalModuleNameTransportSlot>
+  _name: SlotValue<ModuleNameTransportSlot>
   _body?: SlotValue<StatementBlockTransport>
 }
 
@@ -1347,7 +1347,7 @@ export interface MethodDefinitionTransport {
   _optional?: boolean
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
-  _return_type?: SlotValue<MethodDefinitionReturnTypeTransportSlot>
+  _return_type?: SlotValue<FunctionExpressionReturnTypeTransportSlot>
   _body: SlotValue<StatementBlockTransport>
 }
 
@@ -1361,12 +1361,12 @@ export interface MethodSignatureTransport {
   _override?: SlotValue<OverrideModifierTransport>
   _readonly?: boolean
   _async?: boolean
-  _accessor_kind?: SlotValue<MethodSignatureAccessorKindTransportSlot>
-  _name: SlotValue<MethodSignatureNameTransportSlot>
+  _accessor_kind?: SlotValue<MethodDefinitionAccessorKindTransportSlot>
+  _name: SlotValue<MethodDefinitionNameTransportSlot>
   _optional?: boolean
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
-  _return_type?: SlotValue<MethodSignatureReturnTypeTransportSlot>
+  _return_type?: SlotValue<FunctionExpressionReturnTypeTransportSlot>
 }
 
 export interface ModuleTransport {
@@ -1416,7 +1416,7 @@ export interface NestedTypeIdentifierTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _module: SlotValue<NestedTypeIdentifierModuleTransportSlot>
+  _module: SlotValue<NestedIdentifierObjectTransportSlot>
   _name: SlotValue<TypeIdentifierTransport>
 }
 
@@ -1606,7 +1606,7 @@ export interface OptionalParameterTransport {
   _decorator?: Array<SlotValue<DecoratorTransport>>
   _override?: SlotValue<OverrideModifierTransport>
   _readonly?: boolean
-  _pattern: SlotValue<OptionalParameterPatternTransportSlot>
+  _pattern: SlotValue<RequiredParameterPatternTransportSlot>
   _type?: SlotValue<TypeAnnotationTransport>
   _value?: SlotValue<ExpressionTransport>
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
@@ -1635,8 +1635,8 @@ export interface PairPatternTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _key: SlotValue<PairPatternKeyTransportSlot>
-  _value: SlotValue<PairPatternValueTransportSlot>
+  _key: SlotValue<MethodDefinitionNameTransportSlot>
+  _value: SlotValue<ArrayPatternElementsTransportSlot>
 }
 
 export interface PairTransport {
@@ -1644,7 +1644,7 @@ export interface PairTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _key: SlotValue<PairKeyTransportSlot>
+  _key: SlotValue<MethodDefinitionNameTransportSlot>
   _value: SlotValue<ExpressionTransport>
 }
 
@@ -1696,7 +1696,7 @@ export interface PropertyIdentifierTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _content: SlotValue<PropertyIdentifierContentTransportSlot>
+  _content: SlotValue<IndexSignatureColonNameTransportSlot>
 }
 
 export interface PropertySignatureTransport {
@@ -1708,7 +1708,7 @@ export interface PropertySignatureTransport {
   _static?: boolean
   _override?: SlotValue<OverrideModifierTransport>
   _readonly?: boolean
-  _name: SlotValue<PropertySignatureNameTransportSlot>
+  _name: SlotValue<MethodDefinitionNameTransportSlot>
   _optional?: boolean
   _type?: SlotValue<TypeAnnotationTransport>
 }
@@ -1726,7 +1726,7 @@ export interface PublicFieldDefinitionTransport {
   _readonly?: boolean
   _abstract?: boolean
   _accessor?: boolean
-  _name: SlotValue<PublicFieldDefinitionNameTransportSlot>
+  _name: SlotValue<MethodDefinitionNameTransportSlot>
   _optionality?: SlotValue<PublicFieldDefinitionOptionalityTransportSlot>
   _type?: SlotValue<TypeAnnotationTransport>
   _value?: SlotValue<ExpressionTransport>
@@ -1770,7 +1770,7 @@ export interface RestPatternTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _lhs_expression: SlotValue<RestPatternLhsExpressionTransportSlot>
+  _lhs_expression: SlotValue<LhsExpressionContentTransportSlot>
 }
 
 export interface RestTypeTransport {
@@ -1786,7 +1786,7 @@ export interface ReturnStatementTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _expression?: SlotValue<ReturnStatementExpressionTransportSlot>
+  _expression?: SlotValue<ExpressionStatementExpressionTransportSlot>
   _terminator?: SlotValue<ReturnStatementTerminatorTransportSlot>
 }
 
@@ -1814,7 +1814,7 @@ export interface ShorthandPropertyIdentifierPatternTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _content: SlotValue<ShorthandPropertyIdentifierPatternContentTransportSlot>
+  _content: SlotValue<IndexSignatureColonNameTransportSlot>
 }
 
 export interface ShorthandPropertyIdentifierTransport {
@@ -1822,7 +1822,7 @@ export interface ShorthandPropertyIdentifierTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _content: SlotValue<ShorthandPropertyIdentifierContentTransportSlot>
+  _content: SlotValue<IndexSignatureColonNameTransportSlot>
 }
 
 export interface SpreadElementTransport {
@@ -1848,7 +1848,7 @@ export interface StatementIdentifierTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _content: SlotValue<StatementIdentifierContentTransportSlot>
+  _content: SlotValue<IndexSignatureColonNameTransportSlot>
 }
 
 export interface StringDoubleTransport {
@@ -1874,7 +1874,7 @@ export interface SubscriptExpressionTransport {
   '$_flank'?: SourceFlank
   _object: SlotValue<Box<SubscriptExpressionObjectTransportSlot>>
   _optional_chain?: SlotValue<OptionalChainTransport>
-  _index: SlotValue<Box<SubscriptExpressionIndexTransportSlot>>
+  _index: SlotValue<Box<ExpressionStatementExpressionTransportSlot>>
 }
 
 export interface SwitchBodyTransport {
@@ -1891,7 +1891,7 @@ export interface SwitchCaseTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _value: SlotValue<SwitchCaseValueTransportSlot>
+  _value: SlotValue<ExpressionStatementExpressionTransportSlot>
   _body?: Array<SlotValue<StatementTransport>>
   _body_separator_space?: number
 }
@@ -1935,7 +1935,7 @@ export interface TemplateSubstitutionTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _expression: SlotValue<TemplateSubstitutionExpressionTransportSlot>
+  _expression: SlotValue<ExpressionStatementExpressionTransportSlot>
 }
 
 export interface TemplateTypeTransport {
@@ -1961,7 +1961,7 @@ export interface ThrowStatementTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _expression: SlotValue<ThrowStatementExpressionTransportSlot>
+  _expression: SlotValue<ExpressionStatementExpressionTransportSlot>
   _terminator?: SlotValue<ThrowStatementTerminatorTransportSlot>
 }
 
@@ -2117,7 +2117,7 @@ export interface TypeQueryInstantiationExpressionTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _function: SlotValue<TypeQueryInstantiationExpressionFunctionTransportSlot>
+  _function: SlotValue<TypeQueryCallExpressionFunctionTransportSlot>
   _type_arguments: SlotValue<TypeArgumentsTransport>
 }
 
@@ -2127,7 +2127,7 @@ export interface TypeQueryMemberExpressionInTypeAnnotationTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _object: SlotValue<Box<TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot>>
-  _property: SlotValue<TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot>
+  _property: SlotValue<MemberExpressionPropertyTransportSlot>
 }
 
 export interface TypeQueryMemberExpressionTransport {
@@ -2136,7 +2136,7 @@ export interface TypeQueryMemberExpressionTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _object: SlotValue<Box<TypeQueryMemberExpressionObjectTransportSlot>>
-  _property: SlotValue<TypeQueryMemberExpressionPropertyTransportSlot>
+  _property: SlotValue<MemberExpressionPropertyTransportSlot>
   _content: SlotValue<TypeQueryMemberExpressionContentTransportSlot>
 }
 
@@ -2145,7 +2145,7 @@ export interface TypeQuerySubscriptExpressionTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _object: SlotValue<Box<TypeQuerySubscriptExpressionObjectTransportSlot>>
+  _object: SlotValue<Box<TypeQueryMemberExpressionObjectTransportSlot>>
   _optional_chain?: SlotValue<OptionalChainMarkerTransport>
   _index: SlotValue<TypeQuerySubscriptExpressionIndexTransportSlot>
 }
@@ -2201,7 +2201,7 @@ export interface UpdateExpressionPrefixTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _operator: SlotValue<UpdateExpressionPrefixOperatorTransportSlot>
+  _operator: SlotValue<UpdateExpressionPostfixOperatorTransportSlot>
   _argument: SlotValue<Box<ExpressionTransport>>
 }
 
@@ -2230,7 +2230,7 @@ export interface VariableDeclaratorPlainTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _name: SlotValue<VariableDeclaratorPlainNameTransportSlot>
+  _name: SlotValue<CatchClauseGroupParameterTransportSlot>
   _type?: SlotValue<TypeAnnotationTransport>
   _value?: SlotValue<ExpressionTransport>
 }

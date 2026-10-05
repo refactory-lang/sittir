@@ -1173,10 +1173,18 @@ function renderTransportSupport(
 			(literal, index) => [`${literal.kind}\0${literal.text}`, rustLiteralTransportVariantName(literal, index)] as const
 		)
 	);
-	const perSlotEnumLines: string[] = perSlotEnums.flatMap((entry) =>
+	const choices = shareIdenticalChoices(perSlotEnums, (entry) =>
 		emitPerSlotChildEnum(entry, kidByKind, nodeMap, literalVariantByKey, kindEntries, plan)
 	);
-	const seatTargetLines = renderSeatTargets(nodes, nodeMap, plan, kindEntries, usedSupertypeNames, perSlotEnums);
+	const perSlotEnumLines: string[] = choices.emitted.flatMap(({ lines }) => lines);
+	const seatTargetLines = renderSeatTargets(
+		nodes,
+		nodeMap,
+		plan,
+		kindEntries,
+		usedSupertypeNames,
+		choices.emitted.map(({ entry }) => entry)
+	);
 
 	return pruneUnreferencedBridges(
 		[
@@ -1189,7 +1197,7 @@ function renderTransportSupport(
 			...(supertypeEnumLines.length > 0 ? [...supertypeEnumLines, ''] : []),
 			...(perSlotEnumLines.length > 0 ? [...perSlotEnumLines, ''] : []),
 			...nodes.flatMap((node) =>
-				renderTransportStruct(node, nodeMap, generatedIdTables !== undefined, kindEntries, plan)
+				renderTransportStruct(node, nodeMap, choices.names, generatedIdTables !== undefined, kindEntries, plan)
 			),
 			...seatTargetLines,
 			'',
@@ -2071,6 +2079,46 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 		}
 	}
 	return entries;
+}
+
+type ChoiceNames = ReadonlyMap<string, string>;
+
+interface SharedChoices {
+	readonly emitted: readonly { readonly entry: PerSlotChildEnum; readonly lines: readonly string[] }[];
+	readonly names: ChoiceNames;
+}
+
+function choiceKey(typeName: string, fieldName: string): string {
+	return `${typeName}\0${fieldName}`;
+}
+
+function shareIdenticalChoices(
+	entries: readonly PerSlotChildEnum[],
+	render: (entry: PerSlotChildEnum) => readonly string[]
+): SharedChoices {
+	const emitted: { entry: PerSlotChildEnum; lines: readonly string[] }[] = [];
+	const nameByBody = new Map<string, string>();
+	const names = new Map<string, string>();
+	for (const entry of entries) {
+		const name = perSlotEnumName(entry.typeName, entry.fieldName);
+		const lines = render(entry);
+		const body = lines.join('\n').replace(new RegExp(`\\b${name}\\b`, 'g'), '\0');
+		const shared = nameByBody.get(body);
+		if (shared === undefined) {
+			nameByBody.set(body, name);
+			emitted.push({ entry, lines });
+		}
+		names.set(choiceKey(entry.typeName, entry.fieldName), shared ?? name);
+	}
+	return { emitted, names };
+}
+
+function choiceNameOf(choices: ChoiceNames, typeName: string, fieldName: string): string {
+	const name = choices.get(choiceKey(typeName, fieldName));
+	if (name === undefined) {
+		throw new Error(`render-module: ${typeName}.${fieldName} is typed by its own choice, but none was collected for it`);
+	}
+	return name;
 }
 
 function resolveLiteralKindId(
@@ -3039,7 +3087,7 @@ function seatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): str
 	}
 	return lines;
 }
-function optionDefaultFills(plan: RenderPlan, node: AssembledNode): string[] {
+function optionDefaultFills(plan: RenderPlan, node: AssembledNode, choices: ChoiceNames): string[] {
 	const kind = node.display.name;
 	return renderSlotModelOf(node)
 		.named.filter(isPrepareFilled)
@@ -3057,7 +3105,7 @@ function optionDefaultFills(plan: RenderPlan, node: AssembledNode): string[] {
 				);
 			}
 			const ident = rustFieldIdent(slot.storageName);
-			const build = `${perSlotEnumName(node.typeName, slot.name)}::from_kind_id(ctx.options.spacing[options::${site.constName}].arm)`;
+			const build = `${choiceNameOf(choices, node.typeName, slot.name)}::from_kind_id(ctx.options.spacing[options::${site.constName}].arm)`;
 			return `        if self.${ident}.is_none() { self.${ident} = ${build}.map(::sittir_core::SlotValue::Transport); }`;
 		});
 }
@@ -3090,6 +3138,7 @@ function prepareStructImpl(
 	plan: RenderPlan,
 	isCompound: boolean,
 	nodeMap: NodeMap,
+	choices: ChoiceNames,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string[] {
 	const body: string[] = ['        self.transport_trivia_data.prepare(ctx)?;'];
@@ -3124,7 +3173,7 @@ function prepareStructImpl(
 		const sep = node instanceof AssembledList ? separatorSiteOf(plan, node) : undefined;
 		if (sep !== undefined)
 			body.push(`        self.separator_kind.get_or_insert(ctx.options.spacing[options::${sep.constName}].arm);`);
-		body.push(...optionDefaultFills(plan, node));
+		body.push(...optionDefaultFills(plan, node, choices));
 		for (const f of fillFields) body.push(`        self.${f}.prepare(ctx)?;`);
 	}
 	return [
@@ -3197,6 +3246,7 @@ function kindOfImplLines(
 function renderTransportStruct(
 	node: AssembledNode,
 	nodeMap: NodeMap,
+	choices: ChoiceNames,
 	hasNapi: boolean = false,
 	kindEntries?: readonly KindEnumEntry[],
 	plan: RenderPlan = EMPTY_PLAN
@@ -3205,7 +3255,7 @@ function renderTransportStruct(
 		return renderEnumType(node, hasNapi, kindEntries, plan);
 	}
 	const slotModel = renderSlotModelOf(node);
-	return renderTransportDataStruct(rustTransportStructName(node), node, slotModel, nodeMap, plan, kindEntries);
+	return renderTransportDataStruct(rustTransportStructName(node), node, slotModel, nodeMap, choices, plan, kindEntries);
 }
 
 function renderTransportDataStruct(
@@ -3213,6 +3263,7 @@ function renderTransportDataStruct(
 	node: AssembledNode,
 	slotModel: RenderSlotModel,
 	nodeMap: NodeMap,
+	choices: ChoiceNames,
 	plan: RenderPlan = EMPTY_PLAN,
 	kindEntries?: readonly KindEnumEntry[]
 ): string[] {
@@ -3233,7 +3284,7 @@ function renderTransportDataStruct(
 	if (isCompoundNode) {
 		lines.push(...renderTransportMetadataFields());
 		for (const field of [...slotModel.named, ...slotModel.unnamed]) {
-			lines.push(...renderTransportField(field, node.kind, node.typeName, nodeMap));
+			lines.push(...renderTransportField(field, node.kind, node.typeName, nodeMap, choices));
 			fillFields.push(rustFieldIdent(field.storageName));
 		}
 		{
@@ -3254,7 +3305,7 @@ function renderTransportDataStruct(
 				for (const innerSlot of helperSlots) {
 					if (innerSlot.isUnnamed) continue;
 					if (emittedStorageNames.has(innerSlot.storageName)) continue;
-					lines.push(...renderTransportField(innerSlot, helperNode.kind, helperNode.typeName, nodeMap, true));
+					lines.push(...renderTransportField(innerSlot, helperNode.kind, helperNode.typeName, nodeMap, choices, true));
 					emittedStorageNames.add(innerSlot.storageName);
 					fillFields.push(rustFieldIdent(innerSlot.storageName));
 				}
@@ -3305,7 +3356,7 @@ function renderTransportDataStruct(
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
-	lines.push(...prepareStructImpl(structName, node, fillFields, plan, isCompoundNode, nodeMap, kindEntries));
+	lines.push(...prepareStructImpl(structName, node, fillFields, plan, isCompoundNode, nodeMap, choices, kindEntries));
 	if (isLeafNode) {
 		lines.push(
 			...renderLeafTransportNapiImpls(
@@ -3488,6 +3539,7 @@ function renderTransportField(
 	parentKind: string,
 	typeName: string,
 	nodeMap: NodeMap,
+	choices: ChoiceNames,
 	forceOptional = false
 ): string[] {
 	const lines: string[] = [];
@@ -3499,6 +3551,7 @@ function renderTransportField(
 		`    pub ${rustName}: ${rustTransportSlotType(
 			field,
 			nodeMap,
+			choices,
 			{ required, multiple: isMultiple(field), optionalElement: hasOptionalElements(field), adjacent },
 			parentKind,
 			typeName
@@ -3568,6 +3621,7 @@ function slotCarrier(inner: string, adjacent: boolean): string {
 function rustTransportSlotType(
 	slot: AssembledNonterminal,
 	nodeMap: NodeMap,
+	choices: ChoiceNames,
 	cardinality: { required: boolean; multiple: boolean; optionalElement?: boolean; adjacent: boolean },
 	parentKind: string,
 	typeName: string
@@ -3608,7 +3662,7 @@ function rustTransportSlotType(
 		case 'supertype':
 			return wrap(`${rustTypeIdent(shape.supertypeName)}Transport`);
 		case 'union':
-			return wrap(perSlotEnumName(typeName, slot.name));
+			return wrap(choiceNameOf(choices, typeName, slot.name));
 		case 'any':
 			return wrap(multiple ? 'AnyTransport' : 'Box<AnyTransport>');
 		default:
