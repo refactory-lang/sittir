@@ -154,6 +154,10 @@ pub enum FunctionModifiersModifierTransportSlot {
   presence slot holds (`presence = kind::…`), the record's word offsets, a list's separator, a
   flank, a group seat, a kind's minimum depth, its layout tokens and its inner gaps. The macro
   computes none of them.
+- **An unfielded child has exactly one slot.** In a kind's declaration, no two slots without a
+  field admit the same kind, so the slot whose type admits an unfielded child's kind is one slot.
+  Codegen checks this as it emits the declaration: two such slots are a codegen diagnostic naming
+  the kind, both slots and the kind they share. The reader never picks between slots at run time.
 - **A kind's minimum read depth** is on its `#[transport]`: `min_depth = 2` on a list owner, whose
   items arrive with it. Codegen derives it from the model, once per kind. A leaf the reader spells
   or projects (`spelled`, `interior`) is read inline at any depth and needs none.
@@ -168,11 +172,11 @@ From one declaration, three things:
 
 - **The reader:** `ReadTransport::read(cursor, source, tree, depth) -> Self`. It walks the node's
   children once with a `TreeCursor` (first child, next sibling), never by index. Each child goes to
-  the slot its field names, or, with no field, the slot whose type admits its kind, and is stored as
-  that type's variant for its kind: a fixed literal as its kind id, a node as its transport, and the
-  keyword a presence slot names as `true`. Extras,
-  and `ERROR` nodes as today, are trivia, assigned by the placement rule; a `MISSING` node routes as
-  its kind. Layout tokens are skipped.
+  the slot its field names, or, with no field, the one slot whose type admits its kind, and is
+  stored as that type's variant for its kind: a fixed literal as its kind id, a node as its
+  transport, and the keyword a presence slot names as `true`. Extras, and `ERROR` nodes as today,
+  are trivia, assigned by the placement rule; a `MISSING` node routes as its kind. Layout tokens
+  are skipped.
 - **Refusal of a child no route takes** (ruling 7). A model gap is a diagnostic, not data: the read
   fails with the node's kind, the child's kind and its row, and nothing is stored for the node.
   Parse errors are not model gaps: the parse reports `ERROR` and `MISSING` regions in `$errors`
@@ -420,7 +424,9 @@ members in the builder's literal — changed all three, and the maintainer ruled
 6. **Identity.** Two reads of one node give the same row; a coordinate naming a tree the engine does
    not hold is refused with the tree named.
 7. **Unrouted children.** No corpus read in the five grammars refuses a child; a read against a
-   model with one route removed is refused, naming the kind, the child and its row.
+   model with one route removed is refused, naming the kind, the child and its row. A model in
+   which two unfielded slots of one kind admit the same kind fails codegen with the diagnostic,
+   and no grammar's model does.
 8. **Trivia ownership.** The trivia-placement report gives every corpus extra the owner and position
    it gives today.
 9. **No grammar in `sittir-core`.** No grammar fact appears in `sittir-core`; every one reaches
