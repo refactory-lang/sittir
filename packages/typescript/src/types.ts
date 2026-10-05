@@ -19068,11 +19068,23 @@ export namespace VariableDeclaration {
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.VariableDeclaration>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.VariableDeclaration>, 'terminator'>;
-	export type BuildArgs = [
-		config: OmitEach<ConfigOf<T.VariableDeclaration>, 'terminator'>,
-		options?: T.VariableDeclaration.Options
-	];
-	export type LooseArgs = [config: T.VariableDeclaration.Loose, options?: T.VariableDeclaration.Options];
+	export type BuildArgs =
+		| [...children: NonEmptyArray<Admit<T.VariableDeclarator>>]
+		| [options: ListOptions<T.VariableDeclaration.Options>, ...children: NonEmptyArray<Admit<T.VariableDeclarator>>];
+	export type LooseArgs =
+		| [
+				...children: (
+					| Admit<T.VariableDeclaration>
+					| LooseValue<T.VariableDeclarator, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ]
+		| [
+				options: ListOptions<T.VariableDeclaration.Options>,
+				...children: (
+					| Admit<T.VariableDeclaration>
+					| LooseValue<T.VariableDeclarator, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ];
 	export type Kind = TSKindId.VariableDeclaration;
 }
 export namespace LexicalDeclaration {

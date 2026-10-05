@@ -28254,7 +28254,7 @@
           ]
         }
       ],
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "declarators"
       ]

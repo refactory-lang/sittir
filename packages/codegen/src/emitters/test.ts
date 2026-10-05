@@ -38,7 +38,7 @@ import {
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import { refersTo, writesText, type Body } from './render-body.ts';
 import { valueStorageExpr, kindEnumTextExpr } from './factories.ts';
-import { classifyFactoryEmission, registeredSlots } from './shared.ts';
+import { classifyFactoryEmission, leadingOptionsOf, registeredSlots } from './shared.ts';
 import { seatsConfigChild, subFactoriesOf, type SubFactory } from './overlays/sub-factories.ts';
 import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
 import { flattenedVariantParents, variantRoutePaths } from './overlays/module.ts';
@@ -298,7 +298,9 @@ function childrenCallArgs(
 	const registeredRequired = registeredSlots(node).filter(isRequired);
 	if (registeredRequired.length === 0) return value;
 	const optionsParts = registeredRequired.map((f) => `${f.configKey}: ${strictOptionDummy(f, nodeMap, kindEntries)}`);
-	return `${value === '' ? 'undefined' : value}, { ${optionsParts.join(', ')} }`;
+	const options = `{ ${optionsParts.join(', ')} }`;
+	if (leadingOptionsOf(node, nodeMap) !== undefined) return value === '' ? options : `${options}, ${value}`;
+	return `${value === '' ? 'undefined' : value}, ${options}`;
 }
 
 function childrenCallValueArg(

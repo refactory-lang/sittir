@@ -1129,6 +1129,14 @@ A kind with an empty form gets the zero-argument overload returning `T.Empty<Typ
 (`declaredSeparatorDefault`), so a built node always carries its token,
 as it always carries its delimiter.
 
+### `packages/codegen/src/emitters/factories.ts::withLeadingOptions`
+
+A parameter list with the options parameter put first, typed `ListOptions<options>` so a node is never taken as the options. List builders and spread builders with registered slots share it.
+
+### `packages/codegen/src/emitters/factories.ts::leadingOptionsSplit`
+
+The lines that split a leading options object off a rest argument list: the first argument is the options when it is a plain object with no `$type` and only the permitted keys, and the rest are the items. A list builder, a spread builder with registered slots and the `from()` coercer of the latter emit it, each over its own argument list.
+
 ### `packages/codegen/src/emitters/shared.ts::pruneUnusedImports`
 
 The one mechanism for "import only what the body uses" in every generated TypeScript module. An emitter writes its preamble naming every candidate import, then passes its finished lines and the candidate local names here. The body is every line that is not an `import`; a named import specifier (`X`, or `X as Y` tested by its local name `Y`) whose name has no `\b` use in the body is removed, and an import line left with no specifiers is dropped whole. A namespace import (`import * as X`) is dropped whole when `X` is unused. Keying on the imported name, not on the import's path or line text, keeps it correct wherever the import sits: the `Delimiter` import in the raw factories, the coerce module and wrap; the `@sittir/types` names in the factories, the coerce module and the types module; wrap's `projectInterior` / `TokenInterior` / `TOKEN_INTERIORS`, keyword-storage coercers and `FR` namespace. An emitter keeps a usage flag only where the flag gates a helper it writes, never to choose imports. A grammar that never uses a name (scm and regex have no separated lists and no keyword-presence slots) gets no import of it, so its generated package lints clean.
@@ -1654,6 +1662,8 @@ A separated list's rest parameter is its `LooseArgs` row, which `listBuiltTypeSu
 
 A kind with an empty form gets the zero-argument overload returning `T.Empty<TypeName>` ahead of the rest-parameter signature (`withEmptyOverload`).
 
+With leading options (`leadingOptionsOf`), the coercer first splits a leading options object off `input` (`leadingOptionsSplit`) and resolves the rest. Rebuilding from a node of its own kind, it starts from the registered values that node holds (its storage keys) and lets a passed options object override them, so a coerced node keeps its spelling.
+
 ### `packages/codegen/src/emitters/from.ts::emitRepeatedChildrenFrom`
 
 ```text
@@ -1691,6 +1701,8 @@ A kind with an empty form gets the zero-argument overload returning `T.Empty<Typ
 // literals (e.g. ",") the factory doesn't accept directly as a spread
 // element. Route through unknown.
 ```
+
+A builder with leading options is called through an untyped view with the options first; `Parameters<typeof build>` names only the last overload, which there is the options-led one.
 
 ### `packages/codegen/src/emitters/from.ts::emitSingularChildrenFrom`
 
@@ -5553,7 +5565,7 @@ slot, the escaped suffix; `"{}"` when the slot has no flanks.
 
 ### `packages/codegen/src/emitters/shared.ts::registeredSlots`
 
-The slots of a node that take their value from the trailing options argument instead of the config: the node's slots minus its `configSlots`. It inherits the model's inert-registration rule, so a compound whose every slot is registered keeps them all as config slots and has no registered slots here. Every consumer that asks whether a slot is registered (the factory surface, `from()`, the test emitter, `classifyFactoryShape`'s spread check and the exported `FactorySlotMeta.registered`) reads it from this one function, never from the raw `registeredOption` stamp. A node with no `configSlots` falls back to the stamp.
+The slots of a node that take their value from the options argument instead of the config: the node's slots minus its `configSlots`. The options argument trails a direct value or a config and leads spread children (`leadingOptionsOf`). It inherits the model's inert-registration rule, so a compound whose every slot is registered keeps them all as config slots and has no registered slots here. Every consumer that asks whether a slot is registered (the factory surface, `from()`, the test emitter, `leadingOptionsOf` and the exported `FactorySlotMeta.registered`) reads it from this one function, never from the raw `registeredOption` stamp. A node with no `configSlots` falls back to the stamp.
 
 ### `packages/codegen/src/emitters/shared.ts::classifyFactoryShape`
 
@@ -5575,6 +5587,27 @@ slot is `spread` like any other (rust's token trees, typescript's string
 forms, python's `_except_clause_list` and `_match_block_block`). The seat the
 overlay derives from that shape is the kind's own builder passed through
 the parent's.
+
+Registered slots do not enter the shape either: a sole repeated slot is
+`spread` whether or not the node has registered slots. Since a rest
+parameter must come last, those slots' options argument leads the children
+(`leadingOptionsOf`), as a list's options do, so there is one rule for where
+options go: after a direct value or a config, before spread items.
+
+### `packages/codegen/src/emitters/shared.ts::LeadingOptions`
+
+The options argument a spread builder takes before its children: the
+emitted options type, the config keys a leading object may carry (the
+`_optsFirst` test admits an object only when every key is one of them), and
+the storage keys those slots are held under on a built node, in the same
+order.
+
+### `packages/codegen/src/emitters/shared.ts::leadingOptionsOf`
+
+The leading options of a `spread` builder whose node has registered slots;
+undefined for any other node. The factory surface, the `from()` coercer, the
+test emitter and the argument rows all read it here, so whether a builder
+takes leading options is one fact.
 
 ### `packages/codegen/src/emitters/bundle-hash.ts::computeBundleHash`
 
@@ -11547,6 +11580,8 @@ It also answers the parameter's arity: 1, or none (unbounded) for a rest paramet
 
 The direct-value parameter is optional when its slot is optional or holds fixed text (`holdsFixedText`). A fixed-text slot then stores `defaultedValueExpr(value)`, so `buildLazy()` fills `?` itself.
 
+A node with registered slots takes an options argument. It trails a direct value or a config (`options?: T.<Kind>.Options`). On a spread surface it leads instead (`leadingOptions`): the builder is emitted as two overloads, `(...children)` and `(options, ...children)`, over an implementation that splits the arguments with `leadingOptionsSplit`, and its setters pass the options on.
+
 #### body
 
 ```text
@@ -11657,6 +11692,8 @@ Reads a `RowParam` off a kind's factory surface: the row types as `paramsToTuple
 
 The construction surface of a field-carrying kind, from its factory surface: the `$with` setters, and the `BuildArgs` / `LooseArgs` tuples from the surface's row parameters. The `BuildArgs` of a kind whose strict builder forwards to its child's constructor is the union of that builder's overloads (`forwardedConstruction`): the child itself, the child's config, the child's content, or the child's elements, each typed by the child's strict types. An own-text leaf (`ownTextLeaf`) has one row for both, `ownTextArgs`, and takes at most two arguments. A kind with a `listSpreadTarget` unions its tuples with the target's own (`… | T.<Target>.BuildArgs`), by name, so the spread form is the list's derivation rather than a copy; its `maxArgs` is then unbounded.
 
+A spread kind with leading options has two rows, the children alone and the options followed by the children. Its loose rest row admits a node of its own kind as `Admit<T.<Kind>>` rather than `T.<Kind>.Loose`: that kind's `Loose` omits its registered keys, and an omission computed inside the rest row would make the namespace's base type circular.
+
 ### `packages/codegen/src/emitters/factories.ts::constructorSurface`
 
 ```text
@@ -11719,6 +11756,8 @@ resolves to the last declared overload, so the elements-only form is declared
 last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
 `SITTIR_DEBUG`, and a `repeat1` list takes no spread of a possibly-empty array
 (`T[]` is not `NonEmptyArray<T>`).
+
+A compound target whose builder takes leading options declares both forms as `paramsOverloads`, the options-led one first, so a forwarding builder offers the same pair.
 
 ### `packages/codegen/src/emitters/factories.ts::BuiltTypeSurface`
 
@@ -12216,6 +12255,8 @@ The owner's own kind is the path handed to `resolveConcreteKind`, so a slot that
 // so a minimal-config render call would throw. Thread a dummy through
 // the trailing options argument the direct-shaped factory now takes.
 ```
+
+Required registered slots get an options object, placed where the builder takes it: before the children on a builder with leading options, after the value otherwise.
 
 ### `packages/codegen/src/emitters/test.ts::pushRenderTest`
 

@@ -894,10 +894,7 @@ export const ambientDeclaration = Object.freeze({
 		key: 'ambientDeclaration.lexical',
 		max: 2
 	}),
-	variable: bundle(ambientDeclaration$variable$strict, ambientDeclaration$variable$coerce, {
-		key: 'ambientDeclaration.variable',
-		max: 2
-	}),
+	variable: bundle(ambientDeclaration$variable$strict, ambientDeclaration$variable$coerce),
 	functionSignature: bundle(ambientDeclaration$functionSignature$strict, ambientDeclaration$functionSignature$coerce, {
 		key: 'ambientDeclaration.functionSignature',
 		max: 2
@@ -2342,8 +2339,7 @@ const exportStatementDefaultDeclarationDefaultKw: {
 	),
 	variable: bundle(
 		exportStatementDefaultDeclarationDefaultKw$variable$strict,
-		exportStatementDefaultDeclarationDefaultKw$variable$coerce,
-		{ key: 'exportStatementDefaultDeclarationDefaultKw.variable', max: 2 }
+		exportStatementDefaultDeclarationDefaultKw$variable$coerce
 	),
 	functionSignature: bundle(
 		exportStatementDefaultDeclarationDefaultKw$functionSignature$strict,
@@ -2413,8 +2409,7 @@ const exportStatementDefaultDeclarationDefaultKw: {
 		),
 		variable: bundle(
 			exportStatementDefaultDeclarationDefaultKw$ambient$variable$strict,
-			exportStatementDefaultDeclarationDefaultKw$ambient$variable$coerce,
-			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.variable', max: 2 }
+			exportStatementDefaultDeclarationDefaultKw$ambient$variable$coerce
 		),
 		functionSignature: bundle(
 			exportStatementDefaultDeclarationDefaultKw$ambient$functionSignature$strict,
@@ -2575,14 +2570,9 @@ const exportStatementDefaultDeclaration$lexical$coerce = exportStatementDefaultD
 );
 const exportStatementDefaultDeclaration$variable =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'declarators' || key === 'terminator') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
 const exportStatementDefaultDeclaration$variable$strict = exportStatementDefaultDeclaration$variable(
 	F.buildExportStatementDefaultDeclaration,
@@ -3528,13 +3518,15 @@ const exportStatementDefaultDeclaration: {
 	};
 	variable: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildVariableDeclaration>[0],
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildVariableDeclaration>;
+			},
 			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToVariableDeclaration>[0],
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToVariableDeclaration>;
+			},
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 	};

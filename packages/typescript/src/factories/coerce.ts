@@ -1024,6 +1024,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	namespace_import: TSKindId.NamespaceImport,
 	named_imports: TSKindId.NamedImports,
 	expression_statement: TSKindId.ExpressionStatement,
+	variable_declaration: TSKindId.VariableDeclaration,
 	else_clause: TSKindId.ElseClause,
 	break_statement: TSKindId.BreakStatement,
 	continue_statement: TSKindId.ContinueStatement,
@@ -1115,6 +1116,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	export_clause: 'export_specifiers',
 	namespace_import: 'identifier',
 	named_imports: 'import_specifiers',
+	variable_declaration: 'variable_declarator',
 	else_clause: 'statement',
 	break_statement: 'statement_identifier',
 	continue_statement: 'statement_identifier',
@@ -1264,6 +1266,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildNamedImports(children[0] as Parameters<typeof F.buildNamedImports>[0]);
 		case 'expression_statement':
 			return F.buildExpressionStatement(children[0] as Parameters<typeof F.buildExpressionStatement>[0]);
+		case 'variable_declaration':
+			return (coerceToVariableDeclaration as (...args: unknown[]) => unknown)(...children);
 		case 'else_clause':
 			return F.buildElseClause(children[0] as Parameters<typeof F.buildElseClause>[0]);
 		case 'break_statement':
@@ -2887,33 +2891,42 @@ export function coerceToExpressionStatement(
 	);
 }
 
-export function resolveVariableDeclaration_declarators(
-	value: T.VariableDeclaration.LooseConfig['declarators']
-): Admit<T.VariableDeclaration['_declarators']> {
-	const resolved: readonly Admit<T.VariableDeclaration['_declarators'][number]>[] = _resolveMany<T.VariableDeclarator>(
-		value,
-		_K2,
-		_super_variable_declarator
-	);
-	_assertNonEmpty(resolved, 'variable_declaration.declarators');
-	return resolved;
-}
-
 export function coerceToVariableDeclaration(
-	input: T.VariableDeclaration.Loose,
-	options?: T.VariableDeclaration.Options
+	...input: T.VariableDeclaration.LooseArgs
 ): ReturnType<typeof F.buildVariableDeclaration> {
-	if (!_isLooseConfig<T.VariableDeclaration.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildVariableDeclaration>;
-	return F.buildVariableDeclaration(
-		{
-			declarators: _requireField(
-				'variable_declaration',
-				'declarators',
-				resolveVariableDeclaration_declarators(input.declarators)
-			)
-		},
-		options
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['terminator'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as T.VariableDeclaration.Options;
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.VariableDeclaration)) {
+		const data = _rest[0];
+		const stored = (data as unknown as { _declarators?: unknown })._declarators;
+		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		const held = data as unknown as Record<string, unknown>;
+		const kept = { terminator: held['_terminator'], ...options };
+		return (F.buildVariableDeclaration as (...args: unknown[]) => ReturnType<typeof F.buildVariableDeclaration>)(
+			kept,
+			...(_resolveMany<T.VariableDeclarator | '\n' | ';'>(
+				children,
+				_K2,
+				_super_variable_declarator
+			) as readonly unknown[])
+		);
+	}
+	const _elems: readonly unknown[] = (() => {
+		if (_rest.length !== 1) return _rest;
+		const head: unknown = _rest[0];
+		if (typeof head !== 'object' || head === null || isNode(head) || !('declarators' in head)) return _rest;
+		const v = (head as Record<string, unknown>)['declarators'];
+		return Array.isArray(v) ? v : [v];
+	})();
+	return (F.buildVariableDeclaration as (...args: unknown[]) => ReturnType<typeof F.buildVariableDeclaration>)(
+		options,
+		...(_resolveMany<T.VariableDeclarator | '\n' | ';'>(_elems, _K2, _super_variable_declarator) as readonly unknown[])
 	);
 }
 

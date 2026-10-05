@@ -33,10 +33,7 @@ export const expressionStatement = bundle(F.buildExpressionStatement, C.coerceTo
 	key: 'expressionStatement',
 	max: 2
 });
-export const variableDeclaration = bundle(F.buildVariableDeclaration, C.coerceToVariableDeclaration, {
-	key: 'variableDeclaration',
-	max: 2
-});
+export const variableDeclaration = bundle(F.buildVariableDeclaration, C.coerceToVariableDeclaration);
 export const lexicalDeclaration = bundle(F.buildLexicalDeclaration, C.coerceToLexicalDeclaration, {
 	key: 'lexicalDeclaration',
 	max: 2

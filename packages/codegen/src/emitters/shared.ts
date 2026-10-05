@@ -950,6 +950,20 @@ export function registeredSlots(node: {
 	return node.slots.filter((slot) => !config.has(slot));
 }
 
+export interface LeadingOptions {
+	readonly type: string;
+	readonly keys: readonly string[];
+	readonly storageKeys: readonly string[];
+}
+
+export function leadingOptionsOf(node: AssembledNode, nodeMap: NodeMap): LeadingOptions | undefined {
+	if (!(node instanceof AbstractAssembledCompound) || classifyFactoryShape(node, nodeMap) !== 'spread') return undefined;
+	const registered = registeredSlots(node);
+	return registered.length === 0
+		? undefined
+		: { type: `T.${node.typeName}.Options`, keys: registered.map((slot) => slot.configKey), storageKeys: registered.map((slot) => slot.storageKey) };
+}
+
 export function classifyFactoryShape(
 	node: AssembledNode,
 	nodeMap: NodeMap,
@@ -962,19 +976,9 @@ export function classifyFactoryShape(
 	if (node instanceof AbstractAssembledCompound) {
 		const slot = node.soleSlot;
 		if (slot !== undefined) {
-			if (isMultiple(slot)) {
-				// A rest parameter must be last in a JS/TS signature, so a node
-				// with a registered slot (which takes a trailing options
-				// argument) can never expose the bare spread-children surface —
-				// every consumer of this shape (factory surface, from()/coerce
-				// emission, wrap, test generation) needs to agree on that, so
-				// the fallback to 'config' lives here rather than being
-				// special-cased downstream.
-				if (registeredSlots(node).length === 0) return 'spread';
-			} else {
-				if (!resolveDirectFactorySlot(node, nodeMap)) return 'config';
-				return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
-			}
+			if (isMultiple(slot)) return 'spread';
+			if (!resolveDirectFactorySlot(node, nodeMap)) return 'config';
+			return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
 		}
 		return 'config';
 	}

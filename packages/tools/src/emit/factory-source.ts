@@ -647,9 +647,12 @@ export function printingFactoryMap(
 					return new Printed(id, `${call}(${argSource})`, kind, argSource, { inner: placed.strict, ownsList: ownedList !== undefined });
 				}
 				case 'spread': {
-					const items = args.map((a) => wrapDirectArg(kind, a, ctx));
-					const argSource = items.map((a) => printValue(a, ctx, 0)).join(', ');
-					return new Printed(id, `${call}(${argSource})`, kind, argSource, { elements: { items } });
+					const [first, ...rest] = args;
+					const options = isPlainObject(first) && !('$type' in first) ? first : undefined;
+					const items = (options === undefined ? args : rest).map((a) => wrapDirectArg(kind, a, ctx));
+					const head = options === undefined ? [] : [printValue(options, ctx, 0)];
+					const argSource = [...head, ...items.map((a) => printValue(a, ctx, 0))].join(', ');
+					return new Printed(id, `${call}(${argSource})`, kind, argSource, { elements: { options, items } });
 				}
 				case 'elements': {
 					const [first, ...rest] = args;

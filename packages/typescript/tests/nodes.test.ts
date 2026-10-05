@@ -352,40 +352,45 @@ describe('expression_statement', () => {
 
 describe('variable_declaration', () => {
 	it('factory produces correct type', () => {
-		const node = ir.variableDeclaration(
-			{
-				declarators: [
-					{
-						$type: TSKindId.VariableDeclaratorPlain,
-						$text: 'test',
-						$source: 2,
-						$named: true,
-						_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-					} as any
-				]
-			},
-			{ terminator: TSKindId.AutomaticSemicolon }
-		);
+		const node = ir.variableDeclaration({ terminator: TSKindId.AutomaticSemicolon }, {
+			$type: TSKindId.VariableDeclaratorPlain,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			_type: {
+				$type: TSKindId.TypeAnnotation,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_type: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
+			} as any,
+			_value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		} as any);
 		expect(node.$type).toBe(TSKindId.VariableDeclaration);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.variableDeclaration(
-			{
-				declarators: [
-					{
-						$type: TSKindId.VariableDeclaratorPlain,
-						$text: 'test',
-						$source: 2,
-						$named: true,
-						_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-					} as any
-				]
-			},
-			{ terminator: TSKindId.AutomaticSemicolon }
-		);
+		const node = ir.variableDeclaration({ terminator: TSKindId.AutomaticSemicolon }, {
+			$type: TSKindId.VariableDeclaratorPlain,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			_type: {
+				$type: TSKindId.TypeAnnotation,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_type: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
+			} as any,
+			_value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		} as any);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
+		expect(rendered).toContain('this');
+		expect(rendered).toContain('undefined');
 	});
 });
 
@@ -2657,20 +2662,13 @@ describe('ambient_declaration sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('variable builds the parent', () => {
-		const node = ir.ambientDeclaration.variable(
-			{
-				declarators: [
-					{
-						$type: TSKindId.VariableDeclaratorPlain,
-						$text: 'test',
-						$source: 2,
-						$named: true,
-						_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-					} as any
-				]
-			},
-			{ terminator: TSKindId.AutomaticSemicolon }
-		);
+		const node = ir.ambientDeclaration.variable({
+			$type: TSKindId.VariableDeclaratorPlain,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		} as any);
 		expect(node.$type).toBe(TSKindId.AmbientDeclaration);
 		expect((node as any).content()?.$type).toBe(TSKindId.VariableDeclaration);
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -5169,7 +5167,7 @@ describe('export_statement_default_declaration sub-factories', () => {
 	});
 	it('variable builds the parent', () => {
 		const node = ir.exportStatement.default.declaration.variable.coerce({
-			declarators: [
+			content: [
 				{
 					$type: TSKindId.VariableDeclaratorPlain,
 					$text: 'test',
@@ -5388,17 +5386,12 @@ describe('export_statement_default_declaration sub-factories', () => {
 		const node = ir.exportStatement.default.declaration.ambient.variable.coerce({
 			content: [
 				{
-					declarators: [
-						{
-							$type: TSKindId.VariableDeclaratorPlain,
-							$text: 'test',
-							$source: 2,
-							$named: true,
-							_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-						} as any
-					]
-				},
-				{ terminator: TSKindId.AutomaticSemicolon }
+					$type: TSKindId.VariableDeclaratorPlain,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+				} as any
 			]
 		});
 		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
@@ -5622,17 +5615,12 @@ describe('export_statement_default_declaration sub-factories', () => {
 		const node = ir.exportStatement.default.declaration.defaultKw.variable.coerce({
 			content: [
 				{
-					declarators: [
-						{
-							$type: TSKindId.VariableDeclaratorPlain,
-							$text: 'test',
-							$source: 2,
-							$named: true,
-							_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-						} as any
-					]
-				},
-				{ terminator: TSKindId.AutomaticSemicolon }
+					$type: TSKindId.VariableDeclaratorPlain,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+				} as any
 			]
 		});
 		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);
@@ -5864,17 +5852,12 @@ describe('export_statement_default_declaration sub-factories', () => {
 		const node = ir.exportStatement.default.declaration.defaultKw.ambient.variable.coerce({
 			content: [
 				{
-					declarators: [
-						{
-							$type: TSKindId.VariableDeclaratorPlain,
-							$text: 'test',
-							$source: 2,
-							$named: true,
-							_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-						} as any
-					]
-				},
-				{ terminator: TSKindId.AutomaticSemicolon }
+					$type: TSKindId.VariableDeclaratorPlain,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+				} as any
 			]
 		});
 		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);

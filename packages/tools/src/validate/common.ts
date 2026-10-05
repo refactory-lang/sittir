@@ -1550,12 +1550,10 @@ function factoryArgs(
 		const value = isFlattened(base) ? base : directFactoryValue(kind, base, opts.factorySlots, opts.factoryFields);
 		return registered === undefined ? [value] : [value, registered];
 	}
-	const elements = getChildFactoryArgs(kind, config, opts.factorySlots, opts.factoryFields);
-	if (shape === 'elements') {
-		const options = separatedListFactoryOptions(referenceData);
-		return options !== undefined ? [options, ...elements] : elements;
-	}
-	return elements;
+	const { base, registered } = splitRegisteredSlots(kind, config, opts.factorySlots);
+	const elements = getChildFactoryArgs(kind, base, opts.factorySlots, opts.factoryFields);
+	const options = shape === 'elements' ? separatedListFactoryOptions(referenceData) : registered;
+	return options !== undefined ? [options, ...elements] : elements;
 }
 
 function walkMount(entry: IrEntry, mount: string): IrEntry | undefined {

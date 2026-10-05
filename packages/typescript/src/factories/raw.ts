@@ -536,14 +536,23 @@ export function buildExpressionStatement(
 }
 
 export function buildVariableDeclaration(
-	config: T.VariableDeclaration.Config,
-	options?: T.VariableDeclaration.Options
-): T.VariableDeclaration.Bound {
-	const _declarators = rejectBareText(
-		config.declarators,
-		'VariableDeclaration.declarators',
-		'a built VariableDeclarator'
-	);
+	...children: NonEmptyArray<Admit<T.VariableDeclarator>>
+): T.VariableDeclaration.Bound;
+export function buildVariableDeclaration(
+	options: ListOptions<T.VariableDeclaration.Options>,
+	...children: NonEmptyArray<Admit<T.VariableDeclarator>>
+): T.VariableDeclaration.Bound;
+export function buildVariableDeclaration(...args: unknown[]): T.VariableDeclaration.Bound {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['terminator'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as T.VariableDeclaration.Options;
+	const children = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.VariableDeclarator>>;
+	_assertNonEmpty(children, 'variable_declaration.children');
+	const _declarators = rejectBareText(children, 'VariableDeclaration.declarators', 'a built VariableDeclarator');
 	const _terminator = coerceKindEnumStorage<NonNullable<T.VariableDeclaration['_terminator']>>(options?.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
@@ -556,12 +565,10 @@ export function buildVariableDeclaration(
 		_declarators,
 		_terminator,
 		$with: {
-			declarators: (...values: Admit<NonEmptyArray<T.VariableDeclarator>>) =>
-				rebuilt(node, handle, () =>
-					buildVariableDeclaration({ ...config, declarators: restItems('declarators', values) }, options)
-				),
+			declarators: (...vs: NonEmptyArray<Admit<T.VariableDeclarator>>) =>
+				rebuilt(node, handle, () => buildVariableDeclaration(options, ...restItems('declarators', vs))),
 			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-				rebuilt(node, handle, () => buildVariableDeclaration(config, { ...options, terminator: spelling }))
+				rebuilt(node, handle, () => buildVariableDeclaration({ ...options, terminator: spelling }, ...children))
 		},
 		declarators: () => _declarators,
 		terminator: () => _terminator,

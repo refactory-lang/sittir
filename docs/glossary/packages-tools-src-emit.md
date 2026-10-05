@@ -480,6 +480,8 @@ A `constant`-shaped kind, a keyword or punctuation kind with a build entry, prin
 // only read args[0] until now, silently dropping it.
 ```
 
+A spread builder given a leading options object (a plain object, never a printed node) prints it first, then its items.
+
 ### `packages/tools/src/emit/factory-source.ts::printingIrSurface`
 
 ```text

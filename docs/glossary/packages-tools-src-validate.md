@@ -1483,6 +1483,8 @@ The config of a group element carries its seat kind as a mark that is not a key 
 // never coexist with a same-named config key, so that's the signal.
 ```
 
+A spread or list builder takes its options first: a list's come from the read node's separator and delimiter, a spread builder's from its registered slots, split off the config before the elements are read.
+
 ### `packages/tools/src/validate/common.ts::walkMount`
 
 ```text

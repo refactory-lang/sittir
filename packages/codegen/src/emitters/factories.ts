@@ -84,7 +84,9 @@ import {
 	listRestParamType,
 	resolvesLooseInput,
 	looseElementType,
-	pruneUnusedImports
+	pruneUnusedImports,
+	leadingOptionsOf,
+	type LeadingOptions
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
@@ -762,7 +764,10 @@ function fieldCarryingBuiltTypeSurface(
 		spreadTarget === null ? '' : ` | T.${nodeMap.nodes.get(spreadTarget)!.typeName}.${member}`;
 	let setters: SlotSetter[];
 	if (spreadFacts) {
-		setters = [{ name: spreadFacts.slot.propertyName, input: elementsTypeOf(spreadFacts.nonEmpty, surface.elementType!), optional: false, rest: true }];
+		setters = [
+			{ name: spreadFacts.slot.propertyName, input: elementsTypeOf(spreadFacts.nonEmpty, surface.elementType!), optional: false, rest: true },
+			...registeredSlots(node).map((f) => slotSetter(f, `T.${node.typeName}.Options`, nodeMap, kindEntries))
+		];
 	} else if (singleField) {
 		const setterType = setterElemType(singleField, surface.directParamType!, surface.directParamType!, nodeMap, true);
 		setters = [
@@ -782,6 +787,10 @@ function fieldCarryingBuiltTypeSurface(
 		const args = ownTextArgs(ownText, ownTextContentType(ownText));
 		return { mainType: `T.${node.typeName}`, members: [], setters, buildArgs: args, looseArgs: args, maxArgs: 2 };
 	}
+	const rowsOf = (params: string): string =>
+		surface.leadingOptions === undefined
+			? paramsToTuple(params)
+			: `${paramsToTuple(params)} | ${paramsToTuple(withLeadingOptions(surface.leadingOptions.type, params))}`;
 	return {
 		...(spreadTarget === null && !surface.param.rest ? { row: rowParamOf(node, surface, nodeMap, kindEntries) } : {}),
 		mainType: `T.${node.typeName}`,
@@ -789,9 +798,9 @@ function fieldCarryingBuiltTypeSurface(
 		setters,
 		buildArgs:
 			spreadTarget === null
-				? (forwardedConstruction(node, surface, nodeMap, kindEntries)?.rows.join(' | ') ?? paramsToTuple(surface.rowParams))
-				: `${paramsToTuple(surface.rowParams)}${spreadArgs('BuildArgs')}`,
-		looseArgs: `${paramsToTuple(surface.rowLooseParams)}${spreadArgs('LooseArgs')}`,
+				? (forwardedConstruction(node, surface, nodeMap, kindEntries)?.rows.join(' | ') ?? rowsOf(surface.rowParams))
+				: `${rowsOf(surface.rowParams)}${spreadArgs('BuildArgs')}`,
+		looseArgs: `${rowsOf(surface.rowLooseParams)}${spreadArgs('LooseArgs')}`,
 		maxArgs: spreadTarget === null ? surface.arity : undefined
 	};
 }
@@ -951,6 +960,7 @@ interface FactorySurface {
 	readonly configType?: string;
 	readonly opt: '' | '?';
 	readonly spellingType?: string;
+	readonly leadingOptions?: LeadingOptions;
 }
 
 export function declarationParams(params: string): string {
@@ -1042,6 +1052,8 @@ function resolveFactorySurface(
 	const surface = resolveConfigFactorySurface(node, nodeMap, kindEntries);
 	const spellingType = spellingTypeOf(node, nodeMap, kindEntries);
 	if (spellingType === undefined) return surface;
+	const leadingOptions = leadingOptionsOf(node, nodeMap);
+	if (leadingOptions !== undefined) return { ...surface, spellingType, leadingOptions };
 	const trailing = `options?: T.${node.typeName}.Options`;
 	return {
 		...surface,
@@ -1067,7 +1079,8 @@ function resolveConfigFactorySurface(
 	if (spreadFacts) {
 		const elementType = constructionChildElementType({ children: [spreadFacts.slot] }, nodeMap, kindEntries);
 		if (spreadFacts.multiple) {
-			const rowLooseElement = [`T.${node.typeName}.Loose`, ...new Set([elementType, coercedChildElementType(spreadFacts.slot, nodeMap)].map(looseValueOf))].join(' | ');
+			const self = leadingOptionsOf(node, nodeMap) === undefined ? `T.${node.typeName}.Loose` : `Admit<T.${node.typeName}>`;
+			const rowLooseElement = [self, ...new Set([elementType, coercedChildElementType(spreadFacts.slot, nodeMap)].map(looseValueOf))].join(' | ');
 			const { nonEmpty } = spreadFacts;
 			const param: FactoryParam = {
 				label: 'children',
@@ -1281,10 +1294,7 @@ export function constructorSurface(
 				? { params: `...elements: ${list.elementsType}`, args: '...elements' }
 				: {
 						params: `...elements: ${list.elementsType}`,
-						paramsOverloads: [
-							`options: ${listOptionsParam(list.optionsType)}, ...elements: ${list.elementsType}`,
-							`...elements: ${list.elementsType}`
-						],
+						paramsOverloads: [withLeadingOptions(list.optionsType, `...elements: ${list.elementsType}`), `...elements: ${list.elementsType}`],
 						args: '...args'
 					};
 		}
@@ -1298,6 +1308,9 @@ export function constructorSurface(
 			const relax = (text: string): string => (optionalized ? text.replace(/^(\w+): /, '$1?: ') : text);
 			return {
 				params: relax(surface.params),
+				...(surface.leadingOptions === undefined
+					? {}
+					: { paramsOverloads: [withLeadingOptions(surface.leadingOptions.type, surface.params), surface.params] }),
 				looseParams: relax(surface.looseParams),
 				args: surface.args,
 				argOptional: optionalized
@@ -1333,7 +1346,11 @@ function emitFieldCarryingFactory(
 
 	const builtName = `T.${node.typeName}.Bound`;
 	const configType = surface.configType ?? `T.${node.typeName}.Config`;
-	const signature = `${exportKw}function ${fn}(${surface.params}): ${builtName} {`;
+	const leadingOptions = surface.leadingOptions;
+	const signature =
+		leadingOptions === undefined
+			? `${exportKw}function ${fn}(${surface.params}): ${builtName} {`
+			: `${exportKw}function ${fn}(...args: unknown[]): ${builtName} {`;
 	let valueSourceFor: (f: AssembledNonterminal) => string;
 	let slotsToEmit: readonly AssembledNonterminal[] = slots;
 	const registered = registeredSlots(node);
@@ -1349,11 +1366,15 @@ function emitFieldCarryingFactory(
 	let setters: SetterEntry[];
 
 	if (spreadFacts) {
-		slotsToEmit = [spreadFacts.slot];
+		slotsToEmit = slots.filter((f) => f === spreadFacts.slot || registeredSet.has(f));
 		const elementType = surface.elementType!;
 		const setter = spreadFacts.slot.propertyName;
+		const optionsFirst = leadingOptions === undefined ? '' : 'options, ';
 		valueSourceFor = (f) => (f === spreadFacts.slot ? admittedSlotInput(f, 'children', nodeMap, kindEntries, node.typeName) : '');
-		setters = [{ name: setter, params: `...vs: ${elementsTypeOf(spreadFacts.nonEmpty, admitNodes(elementType))}`, body: `${fn}(...restItems(${JSON.stringify(setter)}, vs))` }];
+		setters = [
+			{ name: setter, params: `...vs: ${elementsTypeOf(spreadFacts.nonEmpty, admitNodes(elementType))}`, body: `${fn}(${optionsFirst}...restItems(${JSON.stringify(setter)}, vs))` },
+			...spellingWith((patch) => `${fn}(${patch}, ...children)`)
+		];
 	} else if (singleField) {
 		const elemType = surface.directParamType!;
 		valueSourceFor = (f) =>
@@ -1402,6 +1423,9 @@ function emitFieldCarryingFactory(
 					`${exportKw}function ${fn}(input: ${ownTextContentType(ownText)}, affix: boolean = true): ${builtName} {`,
 					`  const value = affix ? input : unaffixed(String(input), ${JSON.stringify(ownText.open)}, ${JSON.stringify(ownText.close)}, ${JSON.stringify(node.kind)});`
 				];
+	if (leadingOptions !== undefined) {
+		lines.push(...leadingOptionsSplit(leadingOptions, 'children', surface.param.strictType));
+	}
 	if (spreadFacts?.multiple && spreadFacts.nonEmpty) {
 		lines.push(`  _assertNonEmpty(children, '${node.kind}.children');`);
 	}
@@ -1506,6 +1530,15 @@ function emitFieldCarryingFactory(
 		return renameUnusedConfigParam(lines);
 	}
 	if (ownText !== undefined) return lines.join('\n');
+	if (leadingOptions !== undefined) {
+		return renameUnusedConfigParam(
+			withEmptyOverload(nodeMap, node.kind, `${exportKw}function ${fn}`, [
+				`${exportKw}function ${fn}(${declarationParams(surface.params)}): ${builtName};`,
+				`${exportKw}function ${fn}(${declarationParams(withLeadingOptions(leadingOptions.type, surface.params))}): ${builtName};`,
+				...lines
+			])
+		);
+	}
 	const numericSignature =
 		surface.numericParams === undefined
 			? undefined
@@ -2161,6 +2194,19 @@ export function declaredDelimiterDefault(node: AssembledList): string {
 	return node.resolvedDelimiterArm ?? 'Delimiter.None';
 }
 
+export function withLeadingOptions(optionsType: string, params: string): string {
+	return `options: ${listOptionsParam(optionsType)}, ${params}`;
+}
+
+export function leadingOptionsSplit(options: LeadingOptions, restName: string, restType: string, source = 'args'): string[] {
+	return [
+		`  const _optsFirst = typeof ${source}[0] === 'object' && ${source}[0] !== null && !Array.isArray(${source}[0]) && !('$type' in (${source}[0] as object)) && ` +
+			`Object.keys(${source}[0] as object).every((k) => ${JSON.stringify(options.keys)}.includes(k));`,
+		`  const options = (_optsFirst ? (${source}[0] as unknown) : {}) as ${options.type};`,
+		`  const ${restName} = (_optsFirst ? ${source}.slice(1) : ${source}) as unknown as ${restType};`
+	];
+}
+
 function emitSeparatedListFactory(
 	node: AssembledList,
 	nodeMap: NodeMap,
@@ -2183,17 +2229,9 @@ function emitSeparatedListFactory(
 	const listBuiltName = `T.${node.typeName}.Bound`;
 	if (hasOptions) {
 		if (!surface.separatorRequired) lines.push(`export function ${fn}(...elements: ${elementsType}): ReturnType<typeof _${fn}>;`);
-		lines.push(
-			`export function ${fn}(options: ${listOptionsParam(optionsType)}, ...elements: ${elementsType}): ReturnType<typeof _${fn}>;`
-		);
+		lines.push(`export function ${fn}(${withLeadingOptions(optionsType, `...elements: ${elementsType}`)}): ReturnType<typeof _${fn}>;`);
 		lines.push(`export function ${fn}(...args: (${optionsType} | ${elemTypeForArray})[]) {`);
-		const permittedKeys = listOptionKeys(surface);
-		lines.push(
-			`  const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !Array.isArray(args[0]) && !('$type' in (args[0] as object)) && ` +
-				`Object.keys(args[0] as object).every((k) => ${JSON.stringify(permittedKeys)}.includes(k));`
-		);
-		lines.push(`  const options = (_optsFirst ? (args[0] as unknown) : {}) as ${optionsType};`);
-		lines.push(`  const elements = (_optsFirst ? args.slice(1) : args) as unknown as ${elementsType};`);
+		lines.push(...leadingOptionsSplit({ type: optionsType, keys: listOptionKeys(surface), storageKeys: [] }, 'elements', elementsType));
 		lines.push(`  return _${fn}(elements, options);`);
 		lines.push('}');
 		lines.push(`function _${fn}(elements: ${elementsType}, options: ${optionsType}): ${listBuiltName} {`);
