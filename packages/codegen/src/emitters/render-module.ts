@@ -55,7 +55,6 @@ import {
 	slotLiteralValues,
 	isSlotBearingCompound,
 	classifyPrimitiveField,
-	type PrimitiveFieldStorage,
 	literalMergePairs,
 	fieldTypeComponents,
 	slotSeparatorTexts,
@@ -716,14 +715,7 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
 	} else {
 		for (const slot of allSlots) {
 			const slotIdent = rustFieldIdent(slot.storageName);
-			const slotKinds = kindsOf(slot);
-			const slotLits = slotLiteralValues(slot);
-			const hasMixedContent = slotKinds.length > 0 && slotLits.length > 0;
-			const baseCls = hasMixedContent ? ({ tag: 'heterogeneous' } as const) : classifySlotForEmit(slotKinds, nodeMap);
-			const slotCls: SlotClass =
-				baseCls.tag === 'heterogeneous'
-					? { tag: 'heterogeneous', useBox: !hasAnyConcreteChildKind(slotKinds, nodeMap) }
-					: baseCls;
+			const slotCls = slotClassOfShape(transportSlotShapeOf(slot, nodeMap));
 			const writeChild = buildSlotWriteCall(slotCls, 'child');
 			if (isMultiple(slot)) {
 				if (isTransportRequired(slot)) {
@@ -839,12 +831,9 @@ function buildTypedTemplateBody(
 	const lines: string[] = [];
 	const sepLiteral = JSON.stringify(separator);
 
-	const primitiveByName = new Map<string, PrimitiveFieldStorage>();
+	const shapeByName = new Map<string, TransportSlotShape>();
 	if (nodeMap !== undefined && slotModel !== undefined) {
-		for (const f of [...slotModel.named, ...slotModel.unnamed]) {
-			const cls = classifyPrimitiveField(f, nodeMap);
-			if (cls !== undefined) primitiveByName.set(f.name, cls);
-		}
+		for (const f of [...slotModel.named, ...slotModel.unnamed]) shapeByName.set(f.name, transportSlotShapeOf(f, nodeMap));
 	}
 
 	const bound = new Set<string>();
@@ -859,13 +848,13 @@ function buildTypedTemplateBody(
 		const ident = rustFieldIdent(f.name);
 		const flanks = struct.flanks.get(f.name);
 		const template = rustStringLiteral(templateOf(flanks));
-		const primitive = primitiveByName.get(f.name);
-		if (primitive?.kind === 'boolean') {
-			const keyword = `${flanks?.prefix ?? ''}${primitive.text}${flanks?.suffix ?? ''}`;
+		const shape = shapeByName.get(f.name);
+		if (shape?.tag === 'presence') {
+			const keyword = `${flanks?.prefix ?? ''}${shape.text}${flanks?.suffix ?? ''}`;
 			bind(ident, `View::new(&node.${rIdent}, ${rustStringLiteral(escapeBraces(keyword))})`);
 			continue;
 		}
-		if (primitive?.kind === 'verbatim') {
+		if (shape?.tag === 'text') {
 			if (f.required) bind(ident, `&node.${rIdent}`);
 			else bind(ident, `View::new(&node.${rIdent}, ${template})`);
 			continue;
@@ -1310,8 +1299,8 @@ function collectUsedSupertypeNames(nodes: readonly AssembledNode[], nodeMap: Nod
 
 	const collectFromSlots = (slots: readonly AssembledNonterminal[]): void => {
 		for (const slot of slots) {
-			const cls = classifySlotForEmit(kindsOf(slot), nodeMap);
-			if (cls.tag === 'supertype') used.add(cls.supertypeName);
+			const shape = transportSlotShapeOf(slot, nodeMap);
+			if (shape.tag === 'supertype') used.add(shape.supertypeName);
 		}
 	};
 
@@ -2035,6 +2024,7 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 	}
 
 	const consider = (typeName: string, ownerKind: string, field: AssembledNonterminal): void => {
+		if (transportSlotShapeOf(field, nodeMap).tag !== 'union') return;
 		const slotKinds: string[] = [];
 		const literalSet = new Set<string>();
 		const literals: TransportLiteral[] = [];
@@ -2056,10 +2046,6 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 				...(component.enumKind === undefined ? {} : { enumKind: component.enumKind })
 			});
 		}
-		const hasMixedContent = (slotKinds.length > 0 && literals.length > 0) || hasBlankArm(field);
-		const cls = hasMixedContent ? ({ tag: 'heterogeneous' } as const) : classifySlotForEmit(slotKinds, nodeMap);
-		if (cls.tag !== 'heterogeneous') return;
-		if (!hasAnyConcreteChildKind(slotKinds, nodeMap) && literals.length === 0) return;
 		const enumName = perSlotEnumName(typeName, field.name);
 		if (seen.has(enumName)) return;
 		if (reservedTransportNames.has(enumName)) return;
@@ -3508,31 +3494,68 @@ function renderTransportField(
 	const rustName = rustFieldIdent(field.storageName);
 	lines.push(`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(`_${field.storageName}`)}))]`);
 	const required = forceOptional ? false : isTransportRequired(field);
-	const primitive = classifyPrimitiveField(field, nodeMap);
 	const adjacent = slotVerbatimIsImmediate(field, nodeMap);
-	const primitiveType =
-		primitive?.kind === 'boolean'
-			? 'Option<bool>'
-			: primitive?.kind === 'verbatim'
-				? required
-					? 'String'
-					: 'Option<String>'
-				: undefined;
 	lines.push(
-		`    pub ${rustName}: ${
-			primitiveType ??
-			rustTransportSlotType(
-				kindsOf(field),
-				nodeMap,
-				{ required, multiple: isMultiple(field), optionalElement: hasOptionalElements(field), adjacent, blank: hasBlankArm(field) },
-				parentKind,
-				typeName,
-				field.name,
-				slotLiteralValues(field)
-			)
-		},`
+		`    pub ${rustName}: ${rustTransportSlotType(
+			field,
+			nodeMap,
+			{ required, multiple: isMultiple(field), optionalElement: hasOptionalElements(field), adjacent },
+			parentKind,
+			typeName
+		)},`
 	);
 	return lines;
+}
+
+type TransportSlotShape =
+	| { readonly tag: 'presence'; readonly text: string }
+	| { readonly tag: 'text' }
+	| { readonly tag: 'kind'; readonly kind: string; readonly typeName: string; readonly transport: string }
+	| { readonly tag: 'supertype'; readonly supertypeName: string }
+	| { readonly tag: 'union' }
+	| { readonly tag: 'any' };
+
+function transportSlotShapeOf(slot: AssembledNonterminal, nodeMap: NodeMap): TransportSlotShape {
+	const primitive = classifyPrimitiveField(slot, nodeMap);
+	if (primitive !== undefined) {
+		return primitive.kind === 'boolean' ? { tag: 'presence', text: primitive.text } : { tag: 'text' };
+	}
+	const kinds = kindsOf(slot);
+	const cls =
+		(kinds.length > 0 && slotLiteralValues(slot).length > 0) || hasBlankArm(slot)
+			? ({ tag: 'heterogeneous' } as const)
+			: classifySlotForEmit(kinds, nodeMap);
+	switch (cls.tag) {
+		case 'concrete': {
+			const transport = concreteTransportTypeName(cls.kind, nodeMap);
+			return transport === null
+				? { tag: 'any' }
+				: { tag: 'kind', kind: cls.kind, typeName: cls.typeName, transport };
+		}
+		case 'supertype':
+			return { tag: 'supertype', supertypeName: cls.supertypeName };
+		case 'heterogeneous':
+			return hasAnyConcreteChildKind(kinds, nodeMap) ? { tag: 'union' } : { tag: 'any' };
+		default:
+			return assertNever(cls);
+	}
+}
+
+function slotClassOfShape(shape: TransportSlotShape): SlotClass {
+	switch (shape.tag) {
+		case 'kind':
+			return { tag: 'concrete', kind: shape.kind, typeName: shape.typeName };
+		case 'supertype':
+			return { tag: 'supertype', supertypeName: shape.supertypeName };
+		case 'union':
+			return { tag: 'heterogeneous', useBox: false };
+		case 'any':
+		case 'presence':
+		case 'text':
+			return { tag: 'heterogeneous', useBox: true };
+		default:
+			return assertNever(shape);
+	}
 }
 
 function slotCarrier(inner: string, adjacent: boolean): string {
@@ -3540,28 +3563,27 @@ function slotCarrier(inner: string, adjacent: boolean): string {
 }
 
 function rustTransportSlotType(
-	slotKinds: readonly string[],
+	slot: AssembledNonterminal,
 	nodeMap: NodeMap,
-	cardinality: { required: boolean; multiple: boolean; optionalElement?: boolean; adjacent: boolean; blank?: boolean },
+	cardinality: { required: boolean; multiple: boolean; optionalElement?: boolean; adjacent: boolean },
 	parentKind: string,
-	typeName: string,
-	fieldName: string,
-	literalTexts: readonly string[] = []
+	typeName: string
 ): string {
 	const { required, multiple, optionalElement, adjacent } = cardinality;
-	const hasMixedContent = (slotKinds.length > 0 && literalTexts.length > 0) || cardinality.blank === true;
-	const cls = hasMixedContent ? ({ tag: 'heterogeneous' } as const) : classifySlotForEmit(slotKinds, nodeMap);
+	const shape = transportSlotShapeOf(slot, nodeMap);
+	if (shape.tag === 'presence') return 'Option<bool>';
+	if (shape.tag === 'text') return required ? 'String' : 'Option<String>';
 
 	const scc = nodeMap.scc;
 	let reachableKinds: readonly string[] = [];
 	if (!multiple && scc !== undefined) {
-		if (cls.tag === 'concrete') {
-			reachableKinds = [cls.kind];
-		} else if (cls.tag === 'supertype') {
-			const supertypeKind = findSupertypeKindByTypeName(cls.supertypeName, nodeMap);
-			reachableKinds = supertypeKind !== undefined ? [supertypeKind] : slotKinds;
+		if (shape.tag === 'kind') {
+			reachableKinds = [shape.kind];
+		} else if (shape.tag === 'supertype') {
+			const supertypeKind = findSupertypeKindByTypeName(shape.supertypeName, nodeMap);
+			reachableKinds = supertypeKind !== undefined ? [supertypeKind] : kindsOf(slot);
 		} else {
-			reachableKinds = slotKinds;
+			reachableKinds = kindsOf(slot);
 		}
 	}
 	const createsBackEdge = scc !== undefined && reachableKinds.some((k) => scc.sameSCC(parentKind, k));
@@ -3577,23 +3599,17 @@ function rustTransportSlotType(
 		return required ? sized : `Option<${sized}>`;
 	};
 
-	switch (cls.tag) {
-		case 'concrete': {
-			const base = concreteTransportTypeName(cls.kind, nodeMap);
-			if (base !== null) return wrap(base);
+	switch (shape.tag) {
+		case 'kind':
+			return wrap(shape.transport);
+		case 'supertype':
+			return wrap(`${rustTypeIdent(shape.supertypeName)}Transport`);
+		case 'union':
+			return wrap(perSlotEnumName(typeName, slot.name));
+		case 'any':
 			return wrap(multiple ? 'AnyTransport' : 'Box<AnyTransport>');
-		}
-		case 'supertype': {
-			return wrap(`${rustTypeIdent(cls.supertypeName)}Transport`);
-		}
-		case 'heterogeneous': {
-			if (!hasAnyConcreteChildKind(slotKinds, nodeMap)) {
-				return wrap(multiple ? 'AnyTransport' : 'Box<AnyTransport>');
-			}
-			return wrap(perSlotEnumName(typeName, fieldName));
-		}
 		default:
-			return assertNever(cls);
+			return assertNever(shape);
 	}
 }
 

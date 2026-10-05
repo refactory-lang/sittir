@@ -3191,8 +3191,9 @@ writer exists.
 ### `packages/codegen/src/emitters/render-module.ts::renderTypedBranchFallbackFn`
 
 The render function for a compound kind that has no body: each slot is
-written in declaration order through `buildSlotWriteCall`, or, when there
-are no slots, the transport's captured text.
+written in declaration order through `buildSlotWriteCall`, with the class
+`slotClassOfShape` gives the slot's shape, or, when there are no slots, the
+transport's captured text.
 
 ### `packages/codegen/src/emitters/render-module.ts::literalWrite`
 
@@ -3321,10 +3322,10 @@ template, `templateOf(struct.flanks.get(name))`:
 - optional slot backed by a hoisted helper: `View::new(<lookup>, …)` where
   the lookup is the direct field or the helper's inner field, as an
   `Option<&SlotValue>`;
-- boolean primitive: `View::new(&node.x, "<keyword>")`, the keyword being the
-  primitive's text with the slot's flanks around it and no placeholder, so
-  it is written whole when the flag is set;
-- verbatim text: a plain reference when required, a view when optional;
+- presence (the slot's `transportSlotShapeOf`): `View::new(&node.x, "<keyword>")`,
+  the keyword being the presence's text with the slot's flanks around it and
+  no placeholder, so it is written whole when the flag is set;
+- text: a plain reference when required, a view when optional;
 - list: a `ListView` literal with `items` borrowed from the transport
   (`&node.x`, or the deref'd slice of an optional list, or `NO_ITEMS` when
   the transport has no field), the template, the separator token or the
@@ -3413,16 +3414,9 @@ inherent `write_fmt`, and the render root spells the trait call in full.
 
 ### `packages/codegen/src/emitters/render-module.ts::collectUsedSupertypeNames`
 
-```text
-/**
- * Collect the set of supertype `typeName`s that are actually used as
- * field or children slot types across all assembled nodes. Only these
- * supertypes need per-supertype transport enum emission.
- *
- * @param nodes - assembled nodes (transport projection)
- * @param nodeMap - for classification
- */
-```
+The supertypes whose transport enums are emitted: each one a slot's
+`transportSlotShapeOf` names, closed over the supertypes those enums hold
+as variants.
 
 #### body
 
@@ -3701,25 +3695,11 @@ is bounded by the supertype's subtype count, not the grammar.
 
 ### `packages/codegen/src/emitters/render-module.ts::collectPerSlotChildEnums`
 
-```text
-/**
- * Collect all nodes whose `structuralChildren` classify as `heterogeneous`
- * (multiple distinct kinds, no grammar supertype covering them) — these need
- * a `{TypeName}ChildTransportSlot` per-slot enum emitted before the struct.
- *
- * Polymorph forms are also covered: each form that has heterogeneous children
- * contributes its own entry (keyed by `formTypeName` so the enum name is
- * distinct from the parent struct).
- *
- * Per cleanup-rules §E1, named heterogeneous fields ALSO get per-slot enums
- * (`{TypeName}{FieldName}TransportSlot`). Under option (c) of the task, the
- * enum is emitted alongside the existing `Box<AnyTransport>` field type so
- * the enum is available for future use without changing field types yet.
- *
- * @param nodes   - assembled nodes from the transport projection
- * @param nodeMap - for classification
- */
-```
+The per-slot choices to emit: one for each slot, named or unnamed, whose
+`transportSlotShapeOf` is `union`, named `<TypeName><FieldName>TransportSlot`
+by `perSlotEnumName`. Nothing else registers a choice, so every choice
+emitted is a field's type. A choice's variants are the slot's
+`fieldTypeComponents`: its node kinds and its literals.
 
 #### body
 
@@ -3764,17 +3744,10 @@ is bounded by the supertype's subtype count, not the grammar.
 #### body
 
 ```text
-// Mixed-content override: a slot with named kinds AND anonymous literal
-// content is heterogeneous regardless of classifier.
-```
-
-#### body
-
-```text
 // Symmetric — named and unnamed slots both flow through `consider`.
 ```
 
-A slot with a blank arm always gets a per-slot enum, to hold its `Blank` variant.
+A slot with a blank arm always gets a per-slot enum, to hold its `Blank` variant: `transportSlotShapeOf` classifies it as a choice.
 
 ### `packages/codegen/src/emitters/render-module.ts::literalArmSeamSites`
 
@@ -4221,43 +4194,45 @@ proc-macro to consume them; `FromNapiValue` is emitted manually below the
 struct definition (`renderLeafTransportNapiImpls`), reading the JS
 property names with the `$`-prefixed keys explicitly.
 
+### `packages/codegen/src/emitters/render-module.ts::TransportSlotShape`
+
+What a transport slot's field holds, decided once per slot by
+`transportSlotShapeOf`: a keyword's `presence` (with its text), bare
+`text`, one `kind`'s transport, a `supertype`'s enum, the slot's own
+`union` (its per-slot choice), or `any` (`AnyTransport`).
+
+### `packages/codegen/src/emitters/render-module.ts::transportSlotShapeOf`
+
+The one classification of a transport slot. Every transport emitter that
+asks what a slot holds reads it: the field's Rust type
+(`rustTransportSlotType`), the choices emitted (`collectPerSlotChildEnums`
+registers a slot's choice exactly when its shape is `union`, so every
+emitted choice is some field's type), the supertype enums emitted
+(`collectUsedSupertypeNames`), the template locals
+(`buildTypedTemplateBody`) and the fallback render's write calls
+(`renderTypedBranchFallbackFn`, through `slotClassOfShape`).
+
+A slot `classifyPrimitiveField` types as a primitive is `presence` or
+`text`. Any other slot is classified by its node kinds (`kindsOf`), with a
+slot that holds both kinds and anonymous literals, or that has a blank arm
+(`hasBlankArm`), forced to a choice.
+
+### `packages/codegen/src/emitters/render-module.ts::slotClassOfShape`
+
+The write-call class (`buildSlotWriteCall`) of a slot's shape: a kind is
+`concrete`, a supertype `supertype`, and every other shape `heterogeneous`,
+written through its own `Render`.
+
 ### `packages/codegen/src/emitters/render-module.ts::rustTransportSlotType`
 
-```text
-/**
- * Unified emitter for the Rust type of a transport slot.
- *
- * Per cleanup-rules §E1 ("no special treatment for unnamed vs named slots"),
- * every slot (named or kind-derived) emits the same per-slot typed enum
- * shape — `{TypeName}{FieldName}TransportSlot` for heterogeneous slots.
- *
- *   - `concrete`      → `T` / `Vec<T>` / `Option<T>` / `Option<Vec<T>>`
- *   - `supertype`     → `T` / `Vec<T>` / `Option<T>` / `Option<Vec<T>>`
- *   - `heterogeneous` → per-slot enum (or `Box<AnyTransport>` fallback when
- *     no concrete child kind exists)
- *
- * @param slotKinds   - Named child kinds for this slot (terminals excluded; see
- *   `kindsOf`).
- * @param nodeMap     - For classification + concrete transport name lookup.
- * @param cardinality - Slot cardinality (required / multiple).
- * @param typeName    - Parent node's PascalCase typeName (per-slot enum name
- *   prefix).
- * @param fieldName   - The slot's name (per-slot enum name suffix source).
- * @param literalTexts - Anonymous literal terminal values appearing in this
- *   slot. A slot with BOTH named kinds AND literal terminals is forced
- *   heterogeneous (mixed-content override).
- */
-```
-
-#### body
-
-```text
-// Mixed-content override: a field with named kinds AND anonymous literal
-// content is heterogeneous regardless of classifier (e.g. `function_modifiers.modifier`
-// which accepts `extern_modifier` OR bare keywords like `async`/`const`/`unsafe`).
-// `kindsOf()` intentionally skips TerminalValue entries, so without this
-// check the slot would be misclassified as `concrete`.
-```
+The Rust type of a transport slot's field, printed from the slot's
+`transportSlotShapeOf` and its cardinality (`required`, `multiple`,
+`optionalElement`, `adjacent`): presence is `Option<bool>`, text `String`
+(or `Option<String>`), and every other shape is its type in the `SlotValue`
+carrier — the kind's transport, the supertype's enum, the slot's own choice
+(`perSlotEnumName(typeName, slot.name)`), or `AnyTransport` — wrapped as
+`T`, `Option<T>`, `Vec<T>` or `Option<Vec<T>>`. A singular slot whose
+reachable kinds share an SCC with `parentKind` boxes its value.
 
 #### body
 
@@ -4314,7 +4289,7 @@ property names with the `$`-prefixed keys explicitly.
 // this slot. Fall back to AnyTransport.
 ```
 
-A slot with a blank arm is always typed by its per-slot enum, even when its one token would otherwise give it that token's transport type, because the field must hold the blank.
+A slot with a blank arm is always typed by its per-slot enum (`transportSlotShapeOf` classifies it as a choice), even when its one token would otherwise give it that token's transport type, because the field must hold the blank.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderBoxedEnumNapiImpls`
 
@@ -14571,30 +14546,10 @@ optional.
 // and unnamed slots (cleanup-rules §E1).
 ```
 
-#### body
-
-```text
-// `'boolean'`/`'verbatim'`-classified fields (see `classifyPrimitiveField`
-// docstring) bypass `rustTransportSlotType` entirely and get a primitive
-// Rust type instead — wrap sends a presence bool or bare text for these,
-// never the kind_id/object shape `rustTransportSlotType`'s per-slot-enum
-// / `AnyTransport` machinery expects.
-```
-
-```text
-// `Option<bool>`, NOT bare `bool`: wrap OMITS the wire key entirely
-```
-
-#### body
-
-```text
-// when absent/false (confirmed via `tool probe-kind`) rather than
-// sending an explicit `false`. `#[napi(object)]` derive requires a
-// non-Option field's key to always be present, so a bare `bool`
-// throws "Missing field" on every absent instance — the common
-// case for an optional keyword modifier. Render-side glue treats
-// `None` the same as `Some(false)` (`unwrap_or(false)`).
-```
+The field's type is `rustTransportSlotType` of the slot's
+`transportSlotShapeOf`. A presence field is `Option<bool>`, not `bool`: the
+wrap omits the key when the keyword is absent rather than sending `false`,
+and the view treats `None` as not present.
 
 ### `packages/codegen/src/emitters/render-module.ts::slotCarrier`
 
