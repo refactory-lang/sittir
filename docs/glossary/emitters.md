@@ -7056,19 +7056,21 @@ The bare slot of a coercer row is the direct slot, or the content slot of a lexe
 
 The row ends with the kind's `.Parsed` and its empty form (`never` when the kind cannot be empty), which is what lets the namespace-map lookup admit an empty form where a kind is asked for.
 
-A kind with a construction surface declares its `BuildArgs` and `LooseArgs` as members of the namespace interface, and passes `readonly unknown[]` for those two type arguments. A type argument is resolved together with the base type, and a row whose elements reach back to the kind (a statement block's statements include statement blocks; a wrapper forwards to the block's rows) would need that base while it is still being resolved. A member is resolved only when it is read.
+A kind with a construction surface narrows `BuildArgs` and `LooseArgs` (typed `readonly unknown[]` on the base) as members of its namespace interface's body. A type argument is resolved together with the base type, and a row whose elements reach back to the kind (a statement block's statements include statement blocks; a wrapper forwards to the block's rows) would need that base while it is still being resolved. A member is resolved only when it is read.
 
 ```text
 /**
- * Emit one `export interface <TypeName>Ns extends NodeNs<…> {}` row.
+ * Emit one `export interface <TypeName>Ns extends NodeNs<…>` row: an empty
+ * body for a kind with no factory, else a body declaring the kind's
+ * `BuildArgs` and `LooseArgs` members.
  *
  * @remarks
  * Threads `NamespaceMap` through `NodeNs` so that `Loose` can short-circuit
  * multi-branch union recursions to `NamespaceMap[K]['Loose']` lookups
  * instead of re-projecting per arm. When the kind has a factory, the row
- * also carries the kind's {@link BuiltTypeSurface} — the built type, the
- * build-args tuple and the loose-args tuple — inline as the trailing
- * `NodeNs` arguments: this file is where `<Kind>.Bound` is DEFINED, and
+ * also carries the kind's {@link BuiltTypeSurface}: the built type, its
+ * parsed form and its empty form as trailing `NodeNs` arguments, and the
+ * build-args and loose-args tuples as members: this file is where `<Kind>.Bound` is DEFINED, and
  * `raw.ts` only annotates its builders with that name. The surface text is
  * written against `T.`, which is why `types.ts` imports itself as `T`
  * (type-only): the same text serves both files without a rewrite.
@@ -7077,7 +7079,7 @@ A kind with a construction surface declares its `BuildArgs` and `LooseArgs` as m
  * @param typeName - The `TypeName` portion of the interface name.
  * @param surface - The construction surface, or `undefined` for a kind with
  *   no factory (the row then has no `Built` / args members beyond the
- *   `NodeNs` defaults).
+ *   `NodeNs` base's `readonly unknown[]`).
  * @param coercer - The row's trailing `Bare` / `Kind` arguments from
  *   {@link coercerRowArgs}, or `undefined` when the kind has no from()
  *   coercer (the row then ends at `LooseArgs`). A coercer with no surface is
@@ -9717,7 +9719,8 @@ The types module of `emitTypesModules`, for callers that need only the public su
 // NamespaceMap — single source of truth for the per-kind type family.
 //
 // For every structural kind with a data interface, emit:
-//   1. interface <TypeName>Ns extends NodeNs<<TypeName>, LeafScalarMap, LeafStringMap> {}
+//   1. interface <TypeName>Ns extends NodeNs<<TypeName>, LeafScalarMap, LeafStringMap, NamespaceMap, …>,
+//      with a body declaring `BuildArgs` / `LooseArgs` when the kind has a builder
 //   2. an entry in NamespaceMap keyed by the kind string
 //   3. namespace sugar: `export namespace <TypeName> { Config; Fluent; Loose; Kind; }`
 //      — declaration-merges with the data interface so consumers can

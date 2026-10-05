@@ -1083,8 +1083,9 @@ type BareArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends
  * NodeNs<T, Scalars, Strings> — the full type family for a concrete node
  * interface `T`, derived once via the existing transforms.
  *
- * Generated grammar packages emit a one-line `<Kind>Ns extends NodeNs<Kind,
- * <Grammar>Scalars, <Grammar>Strings> {}` per kind, plus one `NamespaceMap`
+ * Generated grammar packages emit a `<Kind>Ns extends NodeNs<Kind,
+ * <Grammar>Scalars, <Grammar>Strings, …>` row per kind (its body narrows
+ * `BuildArgs` / `LooseArgs` when the kind has a builder), plus one `NamespaceMap`
  * that indexes those namespace interfaces by kind string. All the member
  * projections (`Node`, `Config`, `Bound`, `Loose`, `Kind`, …) become
  * available as `NamespaceMap[K][...]`, `ConfigFor<K>`-style generic accessors,
@@ -1124,8 +1125,6 @@ export interface NodeNs<
 	Strings = {},
 	NsMap = {},
 	Bound = T & NodeMethods,
-	Args extends readonly unknown[] = [ConfigOf<T>],
-	LooseArgs extends readonly unknown[] = [LooseConfigOf<T, Scalars, Strings, [], NsMap> | Admit<T>],
 	Bare extends string = never,
 	Kind extends number = never,
 	Parsed = Bound,
@@ -1151,17 +1150,18 @@ export interface NodeNs<
 	// form there — a forwarded wrapper ends with its forwarded-target form,
 	// a separated list with its options-leading form.
 	//
-	// Generated namespaces redeclare `BuildArgs` and `LooseArgs` as members
-	// rather than passing them as type arguments: a type argument resolves
-	// with the base type, and a row whose elements reach back to its own
-	// kind (a statement block holding statements, a wrapper forwarding to
-	// it) would need that base while it is being resolved.
-	readonly BuildArgs: Args;
+	// The base types `BuildArgs` and `LooseArgs` as any parameter list, and
+	// a generated namespace with a builder narrows both as members of its
+	// own body. They are never type arguments: a type argument resolves with
+	// the base type, and a row whose elements reach back to its own kind (a
+	// statement block holding statements, a wrapper forwarding to it) would
+	// need that base while it is being resolved.
+	readonly BuildArgs: readonly unknown[];
 	/** `BuildArgs` with the same arity and the same labels, each parameter
 	 *  widened to what a COERCING caller may pass: a config parameter to
 	 *  that kind's `Loose`, a node-valued one through `LooseValue`. A leaf's
 	 *  parameter is already its raw text, so there the two coincide. */
-	readonly LooseArgs: LooseArgs;
+	readonly LooseArgs: readonly unknown[];
 	// Spec 009 Layer 1: `Loose` threads NsMap so WidenValue can short-circuit
 	// multi-branch recursions to `NsMap[K]['Loose']` instead of re-projecting
 	// `LooseConfigOf<U>` per arm.
