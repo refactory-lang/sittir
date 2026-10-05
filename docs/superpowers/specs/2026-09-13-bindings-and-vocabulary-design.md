@@ -9,15 +9,16 @@ sittir has two construction surfaces. The low-level surface is shaped by each gr
 | layer | what it is | source of truth | made by |
 | --- | --- | --- | --- |
 | **low-level API** | one builder per grammar kind, with exact kinds and kind ids; a strict form that coerces nothing and a loose form that coerces each slot's input by the slot | `grammar.sittir.ts` and the tree-sitter grammar | generated |
-| **vocabulary** | the portable API: semantic kinds shared across languages, members by role, the structures that satisfy them (§8) and the views a read returns (§9) | `packages/types/src/vocabulary/` | authored |
+| **vocabulary** | the portable API: semantic kinds shared across languages, members by role, the structures that satisfy them (§8) and the nodes a portable read returns (§9) | `packages/types/src/vocabulary/` | authored |
 | **features and terms** | which vocabulary kinds and members a language has, and what it calls them (§4) | `packages/types/src/vocabulary/features.ts` and one composition per language | authored |
 | **bindings** | which grammar node is which vocabulary kind, which slot is which member | `packages/<grammar>/bindings.scm` | authored |
 | **the map** | the bindings resolved against the grammar's slot model: for each vocabulary kind the factories that build it, and for each member the slot it lands in; for each grammar kind the vocabulary kind it is | generated with the grammar package (§5) | generated |
 
+- **Each surface is an engine.** `createEngine(lang)` gives the low-level surface and `createEngine(lang, { api: 'portable' })` the portable one, through the reserved `ApiSurface` option. The portable engine's `build` builds structures (§8), its `parse` reads portable nodes (§9), and its `render` renders them directly. A node moves to another engine only through one verb on the target engine (§9).
 - **The vocabulary is a designed API, not a derived one.** Its interfaces are written by hand, under the rules of §3. The bindings never generate them. The inventory checks the map against them (§10), so a binding that names a member the vocabulary lacks, or a vocabulary member no binding of a composed language reaches, is a diagnostic.
 - **The portable surface builds through the low-level loose surface.** A structure's member is routed by the map to a slot, and the value is handed to that slot's loose coercer. Coercion therefore has one table: the loose contract (`docs/factory-surface-issues.md`, "The contract: loose = strict + six coercions"). The portable layer adds no coercion of its own beyond what §8 lists.
-- **A binding is bidirectional.** A constructive pattern, one that fixes every node it would emit, serves reading (a view, §9) and building (`from()`). Only a predicate outside the invertible subset (§7) is read-only, and the inventory names it.
-- **Coverage of the portable surface** is measured by a validator lane that reads a corpus file, views every node, builds each view back through the portable API, renders and re-parses (§10).
+- **A binding is bidirectional.** A constructive pattern, one that fixes every node it would emit, serves reading (§9) and building (§8). Only a predicate outside the invertible subset (§7) is read-only, and the inventory names it.
+- **Coverage of the portable surface** is measured by a validator lane that parses a corpus file with the portable engine, builds every node again from its members, renders and re-parses (§10).
 
 ## 2. `bindings.scm`
 
@@ -101,7 +102,7 @@ A node carries one claim. Rust's `if` is claimed as `statement.if`; that it sits
   - neither: sibling kinds (`class` and `struct`, `match` and `switch`, `with` and `scope`);
   - a wrapper or a keyword: a member or a transparent container (`decorator`, `attributes`, a type annotation), or a kind of its own where the wrapper's element is only a supertype (`declaration.ambient`, `statement.labeled`).
   A rust trait has everything a typescript interface has, once typescript's index and call signatures are left out as members of `structural-conformance`, which rust does not compose; it adds default method bodies and associated items. So it is `declaration.interface.trait`, and a Swift protocol is `declaration.interface.protocol`. That keeps the distinction SCIP keeps between interface, trait and protocol, while cross-language reading sees each of them as an interface.
-- **Refinement routes are sugar.** `d.method('__init__', …)` builds the same tree as `d.method.dunder('init', …)`, and both read back as `declaration.method.dunder`, because classification is by match, never by construction route. A view reports the most specific kind.
+- **Refinement routes are sugar.** `d.method('__init__', …)` builds the same tree as `d.method.dunder('init', …)`, and both read back as `declaration.method.dunder`, because classification is by match, never by construction route. A read reports the most specific kind.
 
 ### 3.4 How the interfaces are written
 
@@ -111,7 +112,7 @@ A node carries one claim. Rust's `if` is claimed as `statement.if`; that it sits
 - **Each namespace exports `Any<G>`,** the union of every kind beneath it, the prefix itself included when it is a kind.
 - **`GrammarContext` is the typemap:** one key per top-level namespace, `unknown` in the constraint. `BaseContext` projects each key to `V.<Namespace>.Any<BaseContext>`, the permissive closure. A language's context is generated with its map (§5).
 - **Interfaces are narrow at the top and expand toward the leaves.** A level carries the members every kind beneath it carries, required only where required in all of them; a leaf carries its full shape; a refinement extends its parent and adds or pins. `Declaration<G>` holds little beyond its discriminant, `Declaration.Function<G>` holds a function's full shape, `Function.Generator<G>` adds `generator: true`. A shared member admits the union of what the kinds beneath admit, so a leaf narrows it; `T | T[]` where the kinds beneath disagree on multiplicity.
-- **Every interface carries `kind`,** the dotted path as a string literal: a leaf's own path, a level's the union of every path beneath it. It is the discriminant that makes `Declaration.Any<G>` usable as "any declaration", and it is the same `kind` a structure and a view carry (§8, §9). A grammar field spelled `kind` (typescript's `let` / `const` keyword) takes a converged name, never the discriminant's.
+- **Every interface carries `kind`,** the dotted path as a string literal: a leaf's own path, a level's the union of every path beneath it. It is the discriminant that makes `Declaration.Any<G>` usable as "any declaration", and it is the same `kind` a structure and a portable node carry (§8, §9). A grammar field spelled `kind` (typescript's `let` / `const` keyword) takes a converged name, never the discriminant's.
 - **A refinement extends its parent with `kind` narrowed to its own path:** `extends SubKindOf<Parent<G>>`, where `SubKindOf` (in `context.ts`) replaces the parent's `kind` with the template `` `${parent}.${string}` `` and the refinement declares its literal. The checker then reports a refinement that widens a shared member as an incorrect `extends`. `SubKindOf` is applied to interfaces only, never to a union, so its `Omit` cannot collapse one.
 - **Hoisted names are declared.** A leaf may be given an alias at its namespace's root (`Declaration.Trait<G>` for `Declaration.Interface.Trait<G>`, and the builder `declaration.trait(...)`), written as an alias in the vocabulary. The path form always exists. An alias that would collide with another kind's name is an authoring error the checker reports, so adding a kind never removes an alias.
 
@@ -133,7 +134,7 @@ Nothing in the vocabulary is language-specific; it is feature-specific. A langua
 
 - **A feature declares its parameters; a language binds the terms.** Every kind and member a feature introduces is a parameter of that feature, defaulting to the canonical vocabulary name. A composition binds terms to parameters: Swift composes `type-aliases` with `type_alias` bound to `typealias`, rust binds it to `type`, and typescript leaves the default; rust composes `modules` with `module` bound to `mod`.
 - **A term reaches the portable API everywhere a name shows:** the type alias (`Swift.Declaration.Typealias`), the builder (`typealias(...)`), the documentation, and the accepted spelling of `kind` when a structure is written in that language's context.
-- **The canonical path stays the identity.** A view of a Swift `typealias` has the `kind` `declaration.type_alias`, and it builds through rust's `from()` as a `type` item, because the two languages share the feature. A term is an alias in both directions, never a second kind.
+- **The canonical path stays the identity.** A Swift `typealias` read by the portable engine has the `kind` `declaration.type_alias`, and rust's portable engine builds it as a `type` item, because the two languages share the feature. A term is an alias in both directions, never a second kind.
 - **Terms and qualifiers are different tools.** A qualifier is a refinement, a different kind under the semantic one: `expression.call.macro`. A term is the same kind under a language's name. Which one applies is §3.3's placement test.
 - **Consequence.** The base API and each language's API are the same interfaces under two naming layers, and the only thing maintained per language is its composition.
 
@@ -220,8 +221,9 @@ For one grammar:
 
 ### 5.4 Who reads it
 
-- **`from(value)`** finds the build entries for the value's `kind`, routes each member to its slot and calls the low-level loose builder (§8).
-- **A view** takes its node's read entries in order, tests each entry's literals and predicates on the node, and reads each member along its route when the member is called (§9).
+- **The portable engine's `build`** finds the build entries for a structure's `kind`, routes each member to its slot and calls the low-level loose builder (§8).
+- **A portable node** takes its low-level node's read entries in order, tests each entry's literals and predicates on that node, and reads each member along its route when the member is called (§9).
+- **The attach verb** reads a node coming to the portable surface through its read entries, and rebuilds a built node through the build entries of the surface it goes to (§9).
 - **The highlighting projection** reads the token classes.
 
 ## 6. Convergence rules
@@ -260,9 +262,9 @@ A `#match?` predicate whose regex is anchored at both ends and made of literal r
 
 ## 8. The structure API
 
-A **structure** is a plain object satisfying a vocabulary interface, discriminated by `kind`. It is the vocabulary instantiated over a **structure context**, where each namespace's set is the union of structure types rather than node types and leaves are text; a language's structure is the same over that language's context. Structures are serializable and carry no language. A structure is only build input: a read returns a view (§9), never a structure.
+A **structure** is a plain object satisfying a vocabulary interface, discriminated by `kind`. It is the vocabulary instantiated over a **structure context**, where each namespace's set is the union of structure types rather than node types and leaves are text; a language's structure is the same over that language's context. Structures are serializable and carry no language. A structure is only build input: a read returns a portable node (§9), never a structure.
 
-- **`from(value)`** builds through the map from a structure or a view (§9): the value's kind selects a build entry, each member is routed to its slot, and the low-level loose builder coerces the value as its slot's contract says. A view's members are read by calling them. It accepts the loose form: the canonical shape with each member widened to what its slot's loose coercion accepts, derived by one mapped utility, never authored.
+- **The portable engine's `build` builds structures,** typed per kind from the vocabulary: a structure's `kind` selects its interface and its build entry, each member is routed to its slot, and the low-level loose builder coerces the value as its slot's contract says. It accepts the loose form: the canonical shape with each member widened to what its slot's loose coercion accepts, derived by one mapped utility, never authored. A node already on another engine comes over through the attach verb (§9), not through `build`.
 - **What the portable layer adds to coercion** is only what the low-level contract cannot know:
   - an object's `kind` may be omitted exactly where the slot admits one vocabulary kind;
   - `kind` may be spelled with the language's term (§4.2);
@@ -274,15 +276,16 @@ A **structure** is a plain object satisfying a vocabulary interface, discriminat
 
 ## 9. Reading
 
-A read is a **live view**: an object over a parsed node that reads it as its vocabulary kind through the map. Nothing reads a node out as a plain structure; a structure is only build input (§8).
+A portable engine's `parse` reads **portable nodes**: each node is read as its vocabulary kind through the map. Nothing reads a node out as a plain structure; a structure is only build input (§8).
 
-- **A view is an object literal over its node,** made the way the low-level builders make nodes. `kind` and `$core` are its data. Every member of its kind's interface, inherited members included, is a closure that is always present, so a member is a call (`fn.name()`), as a low-level reader is. Optionality is the member's return type (`body(): … | undefined`), and a member the grammar gives no route returns `undefined`, as a low-level reader does for an absent slot. A data member would be evaluated when the view is made, so everything that reads the tree is a closure.
-- **The interfaces stay property-shaped;** they are what `from()` takes (§8). A kind's view type is derived from its interface the way a grammar kind's `X.Parsed` is derived from its data interface: one mapped type turns each member into a closure and resolves member types through a flat per-grammar table keyed by `kind`.
-- **`$core` is the view's low-level node:** the supported way down to the grammar's own API, for grammar-specific members and for whatever the vocabulary does not map. The portable surface is a complete scaffolding over the grammar's typed surface, and high→low always works, through `$core` and `from()`.
-- **Low→high runs only where the node decides it.** A node is read on its own only when every claim of its kind is decided by the node itself: its kind, its field literals, its own text. The generator emits those kinds as a type map, and the read entry (§11) accepts only them. A kind with a claim that depends on where it sits is reached through its parent's view, whose member passes the enclosing kinds down. Rust's `function_item` is a method inside an `impl` (`declaration.method`, or `declaration.method.static` without a receiver) and a `declaration.function` elsewhere, so it is read through its parent.
-- **The type maps from low-level kinds to views live with the low-level definitions:** the language's context, each kind's view type and the kinds read on their own are emitted into the grammar package's types module, beside `ParsedByKindId` and `BoundByKindId`.
+- **A portable node is an object literal,** made the way the low-level builders make nodes. `kind` is its data. Every member of its kind's interface, inherited members included, is a closure that is always present, so a member is a call (`fn.name()`), as a low-level reader is. Optionality is the member's return type (`body(): … | undefined`), and a member the grammar gives no route returns `undefined`, as a low-level reader does for an absent slot. A data member would be evaluated when the node is made, so everything that reads the tree is a closure.
+- **The interfaces stay property-shaped;** they are what `build` takes (§8). A kind's portable node type is derived from its interface the way a grammar kind's `X.Parsed` is derived from its data interface: one mapped type turns each member into a closure and resolves member types through a flat per-grammar table keyed by `kind`.
+- **A portable node has no way down.** It exposes no low-level node, and nothing crosses implicitly. A node moves to another engine through one verb on the target engine, the attach verb (its name is open, §11). A parsed node is re-wrapped from its tree row, since trees are one table per language, with no reparse. A built node is rebuilt with the target surface's builders through the map.
+- **Low→high crossing runs only where the node decides it.** A low-level node crosses to the portable surface on its own only when every claim of its kind is decided by the node itself: its kind, its field literals, its own text. The generator emits those kinds as a type map, and the attach verb accepts only them. A kind with a claim that depends on where it sits is reached through its parent's portable node, whose member passes the enclosing kinds down. Rust's `function_item` is a method inside an `impl` (`declaration.method`, or `declaration.method.static` without a receiver) and a `declaration.function` elsewhere, so it is reached through its parent.
+- **No identity is promised.** A portable node follows the rule every node follows: two reads give two objects, and equality is a comparison.
+- **The type maps from low-level kinds to portable nodes live with the low-level definitions:** the language's context, each kind's portable node type and the kinds that cross on their own are emitted into the grammar package's types module, beside `ParsedByKindId` and `BoundByKindId`.
 
-A view reads on the node's own typed surface: the node's kind selects its read entries, an entry's literals and predicates are tested on the node and its captured children, the first entry that holds gives the view its `kind`, and a member reads along its route when it is called. No query runs over the tree at read time, and the native layer knows nothing about roles. A malformed file reads as far as its nodes do: an error node has no read entry, and its parent's members that route through it are absent.
+A portable node reads through the grammar's typed surface: its low-level node's kind selects its read entries, an entry's literals and predicates are tested on that node and its captured children, the first entry that holds gives the portable node its `kind`, and a member reads along its route when it is called. No query runs over the tree at read time, and the native layer knows nothing about roles. A malformed file reads as far as its nodes do: an error node has no read entry, and its parent's members that route through it are absent.
 
 ## 10. Verification
 
@@ -292,16 +295,18 @@ A view reads on the node's own typed surface: the node's kind selects its read e
 4. **The map type-checks** against the low-level API (§5.2), and the inventory's checks of the map against the vocabulary pass.
 5. **Inclusion is a DAG:** there are no cycles.
 6. **Unmapped only falls.**
-7. **View round trip:** read, view, `from()`, render, parse-equal, over the corpus, as the validator lane that measures the portable surface's coverage.
+7. **Portable round trip:** parse with the portable engine, build every node again from its members, render, parse-equal, over the corpus, as the validator lane that measures the portable surface's coverage.
 8. **Template regexes:** a dunder built from a stem re-parses to the claim; a bare hole is rejected.
 9. **Cross-language errors:** `Python.Declaration.Interface` handed to python fails at compile time because python composes no `interfaces` feature, and a rust `whereClause` handed to python fails because python's bindings claim no where-clause kind (python does compose `bounded-quantification`; a composed feature reaches a member only through a claim behind it); a `Base.Declaration.Function` consumer compiles unchanged against every language's context.
 10. **Feature closure:** a member's feature set is a subset of the union of its kind's feature sets; a claim outside the language's composition and a composed feature with no claim behind it are both inventory diagnostics.
-11. **Terms are aliases:** a Swift `typealias` read as `declaration.type_alias` builds in rust as a `type` item and reads back with the same path; a term never changes a view's `kind`.
+11. **Terms are aliases:** a Swift `typealias` read as `declaration.type_alias` builds in rust as a `type` item and reads back with the same path; a term never changes a node's `kind`.
 12. **Consumer-seat checks,** compile-time, in `packages/types/tests/vocabulary-consumers.test-d.ts`: an ordinary function, method, call and binary satisfy their interfaces; a getter pins `'get'`, `Add` pins `'+'`, an increment cannot omit its operand; a rust `whereClause` on a python function and a rust function without a body are the negative cases.
 13. **Type-check time:** the whole workspace's type-check, before and after a change to the vocabulary, the projections or the map's types, with the same command, does not regress beyond noise.
+14. **Crossing:** a parsed node attached to its language's other engine is re-wrapped from its tree row with no reparse and renders the same text; a built node attached to the other surface is rebuilt through the map and renders the same text; attaching a low-level node of a kind that does not cross on its own is a type error.
 
 ## 11. Open questions
 
-- **One word, two mechanisms.** "Bindings" names `bindings.scm` and also the `_bindings` key of each grammar's `options` block, which groups option addresses under a user-facing key. One of them should be renamed before the portable API ships; the read-side consumer surface (`roles.as/is/find`) is named by the same decision, and so is the read entry of §9, whose place (an engine method, a node member, or a module per grammar package) is open with it.
-- **Trivia and provenance through `from()`.** A view reaches its node's coordinates through `$core`, but `from()` builds from members alone, and a structure has no coordinates. `doc` survives as a member; free trivia needs a `trivia` member or is declared lost.
+- **One word, two mechanisms.** "Bindings" names `bindings.scm` and also the `_bindings` key of each grammar's `options` block, which groups option addresses under a user-facing key. One of them should be renamed before the portable API ships; the read-side consumer surface (`roles.as/is/find`) is named by the same decision.
+- **The attach verb's name.** One verb on the target engine moves a node from another engine (§9); `adopt` is a placeholder.
+- **Trivia and provenance through `build`.** A parsed node that crosses keeps its tree row, and with it its coordinates, but `build` builds from members alone, and a structure has no coordinates. `doc` survives as a member; free trivia needs a `trivia` member or is declared lost.
 - **A user's own bindings.** Whether a user's bindings file compiles to a map composed after the package's, by the seed's per-kind override rule, and whether that happens at generation or at load.
