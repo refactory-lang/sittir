@@ -9,6 +9,7 @@ import {
 	isStub,
 	isTypedNode,
 	holdsSlots,
+	adoptChild,
 	markEdited as $edited,
 	carryTree,
 	carryRead,
@@ -287,15 +288,17 @@ function hydrateSlot<T>(node: object, key: string, tree: TreeHandle): ParsedOfDa
 	const slots = node as Record<string, unknown>;
 	const child = hydrateChild(slots[key] as T, tree);
 	if (child !== slots[key]) slots[key] = child;
+	adoptChild(node, child);
 	return child;
 }
 const _noChildren: readonly never[] = Object.freeze([]);
 function hydrateSlots<T>(node: object, key: string, tree: TreeHandle): readonly ParsedOfData<T>[] {
 	const slots = node as Record<string, unknown>;
 	const stored = slots[key];
-	if (!Array.isArray(stored)) return stored == null ? _noChildren : [hydrateChild(stored as T, tree)];
+	if (!Array.isArray(stored)) return stored == null ? _noChildren : [hydrateSlot<T>(node, key, tree)];
 	if (_hydrated.has(stored)) return stored as readonly ParsedOfData<T>[];
 	const children = Object.freeze(stored.map((entry) => hydrateChild(entry as T, tree)));
+	for (const child of children) adoptChild(node, child);
 	_hydrated.add(children);
 	slots[key] = children;
 	return children;

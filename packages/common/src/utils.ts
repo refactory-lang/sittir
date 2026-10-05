@@ -1,6 +1,5 @@
 import type { AnyUntypedNode, ByteSpan, ErrorNode, LineGap, LineGapAddress, LineGaps, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { markChangedInPlace } from './tree-token.ts';
 import { carryRead, carrySource, detachCoordinate, holdsSlots, isRead, isStorageKey, sourceOf, type DerivedSides } from './transport-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
@@ -121,6 +120,7 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 	const store = (trivia: NodeTrivia, side: TriviaSideName): AnyUntypedNode => {
 		markWritten(node, side);
 		setTriviaData(node, trivia);
+		detachAncestors(node);
 		return node;
 	};
 	const innerAt = (gap: string, items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => {
@@ -171,8 +171,21 @@ function carryEdit(from: object, to: object): void {
 	if (written !== undefined) writtenSides.set(to, new Set(written));
 }
 
+const parents = new WeakMap<object, object>();
+
+/** Record that a wrapped node's accessor handed out `child` from one of its slots. */
+export function adoptChild(parent: object, child: unknown): void {
+	if (typeof child === 'object' && child !== null) parents.set(child, parent);
+}
+
+function detachAncestors(node: object): void {
+	for (let parent = parents.get(node); parent !== undefined; parent = parents.get(parent)) {
+		carrySource(parent, parent);
+		detachCoordinate(parent);
+	}
+}
+
 function markWritten(node: object, side: TriviaSideName): void {
-	markChangedInPlace(node);
 	const sides = writtenSides.get(node) ?? new Set<TriviaSideName>();
 	sides.add(side);
 	writtenSides.set(node, sides);

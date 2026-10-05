@@ -48,22 +48,9 @@ export function carryTree<T extends object>(from: object, to: T): T {
 }
 
 const trees = new WeakMap<TreeToken, TreeHandle>();
-const changedNodes = new WeakSet<object>();
-const changedTrees = new WeakSet<TreeToken>();
-
-export function markChangedInPlace(node: object): void {
-	changedNodes.add(node);
+export function holdsParse(node: object): boolean {
 	const token = treeTokenOf(node);
-	if (token !== undefined) changedTrees.add(token);
-}
-
-export function changedInPlace(node: object): boolean {
-	return changedNodes.has(node);
-}
-
-export function holdsUnchangedParse(node: object): boolean {
-	const token = treeTokenOf(node);
-	return token !== undefined && trees.has(token) && !changedTrees.has(token);
+	return token !== undefined && trees.has(token);
 }
 
 export function registerTree(token: TreeToken, tree: TreeHandle): void {

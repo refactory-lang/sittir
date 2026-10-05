@@ -1,5 +1,5 @@
 import type { AnyUntypedNode } from '@sittir/types';
-import { assertHoldsTree, changedInPlace, holdsUnchangedParse, holdTreeOn, markChangedInPlace, releaseTreeOn, treeTokenOf, type TreeToken } from './tree-token.ts';
+import { assertHoldsTree, holdsParse, holdTreeOn, releaseTreeOn, treeTokenOf, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -127,7 +127,7 @@ function isUntouchedBelow(value: unknown): boolean {
 	if (Array.isArray(value)) return value.every(isUntouchedBelow);
 	if (value === undefined || value === null || typeof value !== 'object') return true;
 	const record = value as Record<string, unknown>;
-	if (!isRecord(record.$span) || changedInPlace(record)) return false;
+	if (!isRecord(record.$span)) return false;
 	for (const key of Object.keys(record)) {
 		if (isStorageKey(key) && !isUntouchedBelow(record[key])) return false;
 	}
@@ -141,14 +141,13 @@ function isUntouchedBelow(value: unknown): boolean {
  * read hands back names its tree (its own handle, its parent's, or the
  * tree's tag on a child the read expanded), because an edit detaches the
  * coordinate of the node it rebuilds and each untouched child below then
- * folds on its own. On a tree a parse registered that nothing has changed
- * in place, holding the coordinate is the proof, so nothing below is
- * walked; any other data is walked.
+ * folds on its own. On a tree a parse registered, holding the coordinate is
+ * the proof, so nothing below is walked; any other data is walked.
  */
 function canFold(record: Record<string, unknown>, trivia: unknown): boolean {
 	if (treeHandleOf(record) === undefined || !isRecord(record.$span)) return false;
 	if (hasOutsideTrivia(trivia)) return false;
-	return holdsUnchangedParse(record) || isUntouchedBelow(record);
+	return holdsParse(record) || isUntouchedBelow(record);
 }
 
 /**
@@ -246,7 +245,6 @@ export function carrySource(from: object, to: object): void {
  * already covers the gap the new entries sit in.
  */
 export function detachCoordinate(data: object): void {
-	markChangedInPlace(data);
 	for (const key of COORDINATE_KEYS) delete (data as Record<string, unknown>)[key];
 	releaseTreeOn(data);
 }
