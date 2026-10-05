@@ -1165,6 +1165,224 @@ impl ::sittir_core::render::Render for LookaroundAssertionContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum LookaheadAssertionContentTransportSlot {
+    Literal0_65_71,
+    Literal1_62_61_6e_67,
+}
+
+impl ::sittir_core::prepare::Prepare for LookaheadAssertionContentTransportSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            LookaheadAssertionContentTransportSlot::Literal0_65_71 => Ok(()),
+            LookaheadAssertionContentTransportSlot::Literal1_62_61_6e_67 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for LookaheadAssertionContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal0_65_71 => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
+            Self::Literal1_62_61_6e_67 => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for LookaheadAssertionContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    8 => Ok(Self::Literal0_65_71),
+                    9 => Ok(Self::Literal1_62_61_6e_67),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in LookaheadAssertionContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in LookaheadAssertionContentTransportSlot")
+                )?;
+                match kind_id {
+                    8 => Ok(Self::Literal0_65_71),
+                    9 => Ok(Self::Literal1_62_61_6e_67),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in LookaheadAssertionContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("LookaheadAssertionContentTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for LookaheadAssertionContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("LookaheadAssertionContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<LookaheadAssertionContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        LookaheadAssertionContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<LookaheadAssertionContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        LookaheadAssertionContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::render::Render for LookaheadAssertionContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            LookaheadAssertionContentTransportSlot::Literal0_65_71 => {
+                w.site_at(options::SITE_LOOKAHEAD_ASSERTION_EQ_BEFORE);
+                let written = w.text("=");
+                written?;
+                w.site_at(options::SITE_LOOKAHEAD_ASSERTION_EQ_AFTER);
+                Ok(())
+            }
+            LookaheadAssertionContentTransportSlot::Literal1_62_61_6e_67 => {
+                w.site_at(options::SITE_LOOKAHEAD_ASSERTION_BANG_BEFORE);
+                let written = w.text("!");
+                written?;
+                w.site_at(options::SITE_LOOKAHEAD_ASSERTION_BANG_AFTER);
+                Ok(())
+            }
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum LookbehindAssertionContentTransportSlot {
+    Literal0_65_71,
+    Literal1_62_61_6e_67,
+}
+
+impl ::sittir_core::prepare::Prepare for LookbehindAssertionContentTransportSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            LookbehindAssertionContentTransportSlot::Literal0_65_71 => Ok(()),
+            LookbehindAssertionContentTransportSlot::Literal1_62_61_6e_67 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for LookbehindAssertionContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal0_65_71 => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
+            Self::Literal1_62_61_6e_67 => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for LookbehindAssertionContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    8 => Ok(Self::Literal0_65_71),
+                    9 => Ok(Self::Literal1_62_61_6e_67),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in LookbehindAssertionContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in LookbehindAssertionContentTransportSlot")
+                )?;
+                match kind_id {
+                    8 => Ok(Self::Literal0_65_71),
+                    9 => Ok(Self::Literal1_62_61_6e_67),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in LookbehindAssertionContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("LookbehindAssertionContentTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for LookbehindAssertionContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("LookbehindAssertionContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<LookbehindAssertionContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        LookbehindAssertionContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<LookbehindAssertionContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        LookbehindAssertionContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::render::Render for LookbehindAssertionContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            LookbehindAssertionContentTransportSlot::Literal0_65_71 => {
+                w.site_at(options::SITE_LOOKBEHIND_ASSERTION_EQ_BEFORE);
+                let written = w.text("=");
+                written?;
+                w.site_at(options::SITE_LOOKBEHIND_ASSERTION_EQ_AFTER);
+                Ok(())
+            }
+            LookbehindAssertionContentTransportSlot::Literal1_62_61_6e_67 => {
+                w.site_at(options::SITE_LOOKBEHIND_ASSERTION_BANG_BEFORE);
+                let written = w.text("!");
+                written?;
+                w.site_at(options::SITE_LOOKBEHIND_ASSERTION_BANG_AFTER);
+                Ok(())
+            }
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum CharacterClassClassAtomsTransportSlot {
     ClassCharacter(ClassCharacterTransport),
     CharacterClassEscape(CharacterClassEscapeTransport),
@@ -1667,6 +1885,113 @@ impl ::sittir_core::render::Render for ClassRangeEndTransportSlot {
                 Ok(())
             }
             ClassRangeEndTransportSlot::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum NamedCapturingGroupContentTransportSlot {
+    Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_5f_6c_74,
+    Literal6_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_50_5f_6c_74,
+}
+
+impl ::sittir_core::prepare::Prepare for NamedCapturingGroupContentTransportSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            NamedCapturingGroupContentTransportSlot::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_5f_6c_74 => Ok(()),
+            NamedCapturingGroupContentTransportSlot::Literal6_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_50_5f_6c_74 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for NamedCapturingGroupContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_5f_6c_74 => [::sittir_core::types::KindId(11)].iter().any(|k| kinds.contains(k)),
+            Self::Literal6_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_50_5f_6c_74 => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for NamedCapturingGroupContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    11 => Ok(Self::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_5f_6c_74),
+                    22 => Ok(Self::Literal6_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_50_5f_6c_74),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in NamedCapturingGroupContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in NamedCapturingGroupContentTransportSlot")
+                )?;
+                match kind_id {
+                    11 => Ok(Self::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_5f_6c_74),
+                    22 => Ok(Self::Literal6_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_50_5f_6c_74),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in NamedCapturingGroupContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("NamedCapturingGroupContentTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for NamedCapturingGroupContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("NamedCapturingGroupContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<NamedCapturingGroupContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        NamedCapturingGroupContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedCapturingGroupContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        NamedCapturingGroupContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::render::Render for NamedCapturingGroupContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            NamedCapturingGroupContentTransportSlot::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_5f_6c_74 => {
+                let written = w.text("(?<");
+                written?;
+                w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_AFTER);
+                Ok(())
+            }
+            NamedCapturingGroupContentTransportSlot::Literal6_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_50_5f_6c_74 => {
+                let written = w.text("(?P<");
+                written?;
+                w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_AFTER);
+                Ok(())
+            }
         }
     }
 }
@@ -2462,6 +2787,97 @@ impl ::sittir_core::render::Render for TermGroupContentTransportSlot {
                 Ok(())
             }
             TermGroupContentTransportSlot::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum LazyContentTransportSlot {
+    Literal13_71_6d_61_72_6b,
+}
+
+impl ::sittir_core::prepare::Prepare for LazyContentTransportSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            LazyContentTransportSlot::Literal13_71_6d_61_72_6b => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for LazyContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal13_71_6d_61_72_6b => [::sittir_core::types::KindId(26)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for LazyContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    26 => Ok(Self::Literal13_71_6d_61_72_6b),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in LazyContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in LazyContentTransportSlot")
+                )?;
+                match kind_id {
+                    26 => Ok(Self::Literal13_71_6d_61_72_6b),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in LazyContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("LazyContentTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for LazyContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("LazyContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<LazyContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        LazyContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<LazyContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        LazyContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::render::Render for LazyContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            LazyContentTransportSlot::Literal13_71_6d_61_72_6b => w.text("?"),
         }
     }
 }
@@ -3376,7 +3792,7 @@ pub struct LookaheadAssertionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
     pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ::sittir_core::SlotValue<Box<AnyTransport>>,
+    pub content: ::sittir_core::SlotValue<LookaheadAssertionContentTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: ::sittir_core::SlotValue<PatternTransport>,
 }
@@ -3449,7 +3865,7 @@ pub struct LookbehindAssertionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
     pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ::sittir_core::SlotValue<Box<AnyTransport>>,
+    pub content: ::sittir_core::SlotValue<LookbehindAssertionContentTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: ::sittir_core::SlotValue<PatternTransport>,
 }
@@ -4205,7 +4621,7 @@ pub struct NamedCapturingGroupTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: ::sittir_core::SlotValue<PatternTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ::sittir_core::SlotValue<Box<AnyTransport>>,
+    pub content: ::sittir_core::SlotValue<NamedCapturingGroupContentTransportSlot>,
 }
 
 impl ::sittir_core::view::KindOf for NamedCapturingGroupTransport {
@@ -7673,7 +8089,7 @@ pub struct LazyTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
     pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ::sittir_core::SlotValue<Box<AnyTransport>>,
+    pub content: ::sittir_core::SlotValue<LazyContentTransportSlot>,
 }
 
 impl ::sittir_core::view::KindOf for LazyTransport {

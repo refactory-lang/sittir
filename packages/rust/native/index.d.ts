@@ -322,7 +322,7 @@ export interface BinaryExpressionTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _left: SlotValue<Box<ExpressionTransport>>
-  _operator: SlotValue<Box<AnyTransport>>
+  _operator: SlotValue<BinaryExpressionOperatorTransportSlot>
   _right: SlotValue<Box<ExpressionTransport>>
 }
 
@@ -491,7 +491,7 @@ export interface CompoundAssignmentExprTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _left: SlotValue<Box<ExpressionTransport>>
-  _operator: SlotValue<Box<AnyTransport>>
+  _operator: SlotValue<CompoundAssignmentExprOperatorTransportSlot>
   _right: SlotValue<Box<ExpressionTransport>>
 }
 
@@ -1488,7 +1488,7 @@ export interface RangeExpressionBinaryTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _start: SlotValue<Box<ExpressionTransport>>
-  _operator: SlotValue<Box<AnyTransport>>
+  _operator: SlotValue<RangeExpressionBinaryOperatorTransportSlot>
   _end: SlotValue<Box<ExpressionTransport>>
 }
 
@@ -1514,7 +1514,7 @@ export interface RangePatternPrefixTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _right: SlotValue<Box<RangePatternPrefixRightTransportSlot>>
-  _content: SlotValue<Box<AnyTransport>>
+  _content: SlotValue<RangePatternPrefixContentTransportSlot>
 }
 
 export interface RangePatternWithLeftTransport {
@@ -1532,7 +1532,7 @@ export interface RangePatternWithLeftWithRightTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _right: SlotValue<Box<RangePatternWithLeftWithRightRightTransportSlot>>
-  _content: SlotValue<Box<AnyTransport>>
+  _content: SlotValue<RangePatternWithLeftWithRightContentTransportSlot>
 }
 
 export interface RawStringLiteralTransport {
@@ -1811,7 +1811,7 @@ export interface TokenRepetitionPatternTransport {
   '$_flank'?: SourceFlank
   _token_patterns?: Array<SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>
   _separator?: SlotValue<TokenRepetitionPatternTextTransport>
-  _operator: SlotValue<Box<AnyTransport>>
+  _operator: SlotValue<TokenRepetitionPatternOperatorTransportSlot>
   _token_patterns_separator_space?: number
 }
 
@@ -1822,7 +1822,7 @@ export interface TokenRepetitionTransport {
   '$_flank'?: SourceFlank
   _tokens?: Array<SlotValue<TokenRepetitionTokensTransportSlot>>
   _separator?: SlotValue<TokenRepetitionPatternTextTransport>
-  _operator: SlotValue<Box<AnyTransport>>
+  _operator: SlotValue<TokenRepetitionOperatorTransportSlot>
   _tokens_separator_space?: number
 }
 
@@ -2079,7 +2079,7 @@ export interface UnaryExpressionTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _operator: SlotValue<Box<AnyTransport>>
+  _operator: SlotValue<UnaryExpressionOperatorTransportSlot>
   _operand: SlotValue<Box<ExpressionTransport>>
 }
 

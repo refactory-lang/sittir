@@ -225,7 +225,7 @@ export interface AugmentedAssignmentTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _left: SlotValue<AugmentedAssignmentLeftTransportSlot>
-  _operator: SlotValue<Box<AnyTransport>>
+  _operator: SlotValue<AugmentedAssignmentOperatorTransportSlot>
   _right: SlotValue<Box<AugmentedAssignmentRightTransportSlot>>
 }
 
@@ -243,7 +243,7 @@ export interface BinaryOperatorTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _left: SlotValue<Box<PrimaryExpressionTransport>>
-  _operator: SlotValue<Box<AnyTransport>>
+  _operator: SlotValue<BinaryOperatorOperatorTransportSlot>
   _right: SlotValue<Box<PrimaryExpressionTransport>>
 }
 
@@ -262,7 +262,7 @@ export interface BooleanOperatorTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _left: SlotValue<Box<ExpressionTransport>>
-  _operator: SlotValue<Box<AnyTransport>>
+  _operator: SlotValue<BooleanOperatorOperatorTransportSlot>
   _right: SlotValue<Box<ExpressionTransport>>
 }
 
@@ -381,7 +381,7 @@ export interface ComparisonOperatorComparatorTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _operators: SlotValue<Box<AnyTransport>>
+  _operators: SlotValue<ComparisonOperatorComparatorOperatorsTransportSlot>
   _primary_expression: SlotValue<PrimaryExpressionTransport>
 }
 
@@ -402,7 +402,7 @@ export interface ComplexPatternTransport {
   '$_flank'?: SourceFlank
   _sign?: boolean
   _real: SlotValue<ComplexPatternRealTransportSlot>
-  _operator: SlotValue<Box<AnyTransport>>
+  _operator: SlotValue<ComplexPatternOperatorTransportSlot>
   _imaginary: SlotValue<ComplexPatternImaginaryTransportSlot>
 }
 
@@ -1361,7 +1361,7 @@ export interface SplatPatternTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _operator: SlotValue<Box<AnyTransport>>
+  _operator: SlotValue<SplatPatternOperatorTransportSlot>
   _name: SlotValue<SplatPatternNameTransportSlot>
 }
 
@@ -1370,7 +1370,7 @@ export interface SplatTypeTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _operator: SlotValue<Box<AnyTransport>>
+  _operator: SlotValue<SplatTypeOperatorTransportSlot>
   _name: SlotValue<IdentifierTransport>
 }
 
@@ -1546,7 +1546,7 @@ export interface UnaryOperatorTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _operator: SlotValue<Box<AnyTransport>>
+  _operator: SlotValue<UnaryOperatorOperatorTransportSlot>
   _argument: SlotValue<Box<PrimaryExpressionTransport>>
 }
 

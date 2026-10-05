@@ -276,7 +276,7 @@ export interface LazyTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _content: SlotValue<Box<AnyTransport>>
+  _content: SlotValue<LazyContentTransportSlot>
 }
 
 /**
@@ -291,7 +291,7 @@ export interface LookaheadAssertionTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _content: SlotValue<Box<AnyTransport>>
+  _content: SlotValue<LookaheadAssertionContentTransportSlot>
   _pattern: SlotValue<PatternTransport>
 }
 
@@ -308,7 +308,7 @@ export interface LookbehindAssertionTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _content: SlotValue<Box<AnyTransport>>
+  _content: SlotValue<LookbehindAssertionContentTransportSlot>
   _pattern: SlotValue<PatternTransport>
 }
 
@@ -319,7 +319,7 @@ export interface NamedCapturingGroupTransport {
   '$_flank'?: SourceFlank
   _group_name: SlotValue<GroupNameTransport>
   _pattern: SlotValue<PatternTransport>
-  _content: SlotValue<Box<AnyTransport>>
+  _content: SlotValue<NamedCapturingGroupContentTransportSlot>
 }
 
 export interface NamedGroupBackreferenceTransport {

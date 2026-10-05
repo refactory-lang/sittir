@@ -1860,6 +1860,103 @@ impl ::sittir_core::render::Render for AnonymousNodeNameTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum PredicatePrefixTransportSlot {
+    Literal1_70_6f_75_6e_64,
+    Literal2_64_6f_74,
+}
+
+impl ::sittir_core::prepare::Prepare for PredicatePrefixTransportSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            PredicatePrefixTransportSlot::Literal1_70_6f_75_6e_64 => Ok(()),
+            PredicatePrefixTransportSlot::Literal2_64_6f_74 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for PredicatePrefixTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal1_70_6f_75_6e_64 => [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k)),
+            Self::Literal2_64_6f_74 => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for PredicatePrefixTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    19 => Ok(Self::Literal1_70_6f_75_6e_64),
+                    20 => Ok(Self::Literal2_64_6f_74),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PredicatePrefixTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in PredicatePrefixTransportSlot")
+                )?;
+                match kind_id {
+                    19 => Ok(Self::Literal1_70_6f_75_6e_64),
+                    20 => Ok(Self::Literal2_64_6f_74),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PredicatePrefixTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("PredicatePrefixTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PredicatePrefixTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("PredicatePrefixTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PredicatePrefixTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        PredicatePrefixTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PredicatePrefixTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        PredicatePrefixTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::render::Render for PredicatePrefixTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            PredicatePrefixTransportSlot::Literal1_70_6f_75_6e_64 => w.text("#"),
+            PredicatePrefixTransportSlot::Literal2_64_6f_74 => w.text("."),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum GroupExpressionArmLeftTransportSlot {
     NamedNodePlain(NamedNodePlainTransport),
     NamedNodeSupertyped(NamedNodeSupertypedTransport),
@@ -5186,7 +5283,7 @@ pub struct PredicateTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
     pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_prefix"))]
-    pub prefix: ::sittir_core::SlotValue<Box<AnyTransport>>,
+    pub prefix: ::sittir_core::SlotValue<PredicatePrefixTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<ImmediateIdentifierTransport, true>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]

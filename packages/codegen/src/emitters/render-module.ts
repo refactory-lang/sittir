@@ -3535,7 +3535,10 @@ function transportSlotShapeOf(slot: AssembledNonterminal, nodeMap: NodeMap): Tra
 		case 'supertype':
 			return { tag: 'supertype', supertypeName: cls.supertypeName };
 		case 'heterogeneous':
-			return hasAnyConcreteChildKind(kinds, nodeMap) ? { tag: 'union' } : { tag: 'any' };
+			return hasAnyConcreteChildKind(kinds, nodeMap) ||
+				fieldTypeComponents(slot, nodeMap).some((component) => component.kind === 'literal')
+				? { tag: 'union' }
+				: { tag: 'any' };
 		default:
 			return assertNever(cls);
 	}

@@ -12299,6 +12299,103 @@ impl ::sittir_core::render::Render for KeywordPatternValueTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum SplatPatternOperatorTransportSlot {
+    Literal7_73_74_61_72,
+    Literal12_73_74_61_72_5f_73_74_61_72,
+}
+
+impl ::sittir_core::prepare::Prepare for SplatPatternOperatorTransportSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            SplatPatternOperatorTransportSlot::Literal7_73_74_61_72 => Ok(()),
+            SplatPatternOperatorTransportSlot::Literal12_73_74_61_72_5f_73_74_61_72 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for SplatPatternOperatorTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal7_73_74_61_72 => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
+            Self::Literal12_73_74_61_72_5f_73_74_61_72 => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternOperatorTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    8 => Ok(Self::Literal7_73_74_61_72),
+                    35 => Ok(Self::Literal12_73_74_61_72_5f_73_74_61_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in SplatPatternOperatorTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in SplatPatternOperatorTransportSlot")
+                )?;
+                match kind_id {
+                    8 => Ok(Self::Literal7_73_74_61_72),
+                    35 => Ok(Self::Literal12_73_74_61_72_5f_73_74_61_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in SplatPatternOperatorTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("SplatPatternOperatorTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SplatPatternOperatorTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("SplatPatternOperatorTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SplatPatternOperatorTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        SplatPatternOperatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SplatPatternOperatorTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        SplatPatternOperatorTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::render::Render for SplatPatternOperatorTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            SplatPatternOperatorTransportSlot::Literal7_73_74_61_72 => w.text("*"),
+            SplatPatternOperatorTransportSlot::Literal12_73_74_61_72_5f_73_74_61_72 => w.text("**"),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum SplatPatternNameTransportSlot {
     Identifier(IdentifierTransport),
     Literal13_75_6e_64_65_72_73_63_6f_72_65,
@@ -12669,6 +12766,103 @@ impl ::sittir_core::render::Render for ComplexPatternRealTransportSlot {
             ComplexPatternRealTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
             ComplexPatternRealTransportSlot::FloatScientific(inner) => inner.render(w),
             ComplexPatternRealTransportSlot::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ComplexPatternOperatorTransportSlot {
+    Literal15_70_6c_75_73,
+    Literal14_64_61_73_68,
+}
+
+impl ::sittir_core::prepare::Prepare for ComplexPatternOperatorTransportSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            ComplexPatternOperatorTransportSlot::Literal15_70_6c_75_73 => Ok(()),
+            ComplexPatternOperatorTransportSlot::Literal14_64_61_73_68 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ComplexPatternOperatorTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal15_70_6c_75_73 => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
+            Self::Literal14_64_61_73_68 => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternOperatorTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    49 => Ok(Self::Literal15_70_6c_75_73),
+                    50 => Ok(Self::Literal14_64_61_73_68),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ComplexPatternOperatorTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ComplexPatternOperatorTransportSlot")
+                )?;
+                match kind_id {
+                    49 => Ok(Self::Literal15_70_6c_75_73),
+                    50 => Ok(Self::Literal14_64_61_73_68),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ComplexPatternOperatorTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ComplexPatternOperatorTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ComplexPatternOperatorTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ComplexPatternOperatorTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ComplexPatternOperatorTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ComplexPatternOperatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ComplexPatternOperatorTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ComplexPatternOperatorTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::render::Render for ComplexPatternOperatorTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            ComplexPatternOperatorTransportSlot::Literal15_70_6c_75_73 => w.text("+"),
+            ComplexPatternOperatorTransportSlot::Literal14_64_61_73_68 => w.text("-"),
         }
     }
 }
@@ -13417,6 +13611,369 @@ impl ::sittir_core::render::Render for DictionarySplatPatternTargetTransportSlot
             DictionarySplatPatternTargetTransportSlot::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64 => w.text("type"),
             DictionarySplatPatternTargetTransportSlot::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64 => w.text("match"),
             DictionarySplatPatternTargetTransportSlot::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum BooleanOperatorOperatorTransportSlot {
+    Literal16_61_6e_64_5f_6b_65_79_77_6f_72_64,
+    Literal17_6f_72_5f_6b_65_79_77_6f_72_64,
+}
+
+impl ::sittir_core::prepare::Prepare for BooleanOperatorOperatorTransportSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            BooleanOperatorOperatorTransportSlot::Literal16_61_6e_64_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            BooleanOperatorOperatorTransportSlot::Literal17_6f_72_5f_6b_65_79_77_6f_72_64 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for BooleanOperatorOperatorTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal16_61_6e_64_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
+            Self::Literal17_6f_72_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for BooleanOperatorOperatorTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    52 => Ok(Self::Literal16_61_6e_64_5f_6b_65_79_77_6f_72_64),
+                    53 => Ok(Self::Literal17_6f_72_5f_6b_65_79_77_6f_72_64),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in BooleanOperatorOperatorTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in BooleanOperatorOperatorTransportSlot")
+                )?;
+                match kind_id {
+                    52 => Ok(Self::Literal16_61_6e_64_5f_6b_65_79_77_6f_72_64),
+                    53 => Ok(Self::Literal17_6f_72_5f_6b_65_79_77_6f_72_64),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in BooleanOperatorOperatorTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("BooleanOperatorOperatorTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for BooleanOperatorOperatorTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("BooleanOperatorOperatorTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<BooleanOperatorOperatorTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        BooleanOperatorOperatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<BooleanOperatorOperatorTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        BooleanOperatorOperatorTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::render::Render for BooleanOperatorOperatorTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            BooleanOperatorOperatorTransportSlot::Literal16_61_6e_64_5f_6b_65_79_77_6f_72_64 => w.text("and"),
+            BooleanOperatorOperatorTransportSlot::Literal17_6f_72_5f_6b_65_79_77_6f_72_64 => w.text("or"),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum BinaryOperatorOperatorTransportSlot {
+    Literal15_70_6c_75_73,
+    Literal14_64_61_73_68,
+    Literal7_73_74_61_72,
+    Literal18_61_74,
+    Literal19_73_6c_61_73_68,
+    Literal20_70_65_72_63_65_6e_74,
+    Literal21_73_6c_61_73_68_5f_73_6c_61_73_68,
+    Literal12_73_74_61_72_5f_73_74_61_72,
+    Literal22_70_69_70_65,
+    Literal23_61_6d_70,
+    Literal24_63_61_72_65_74,
+    Literal25_6c_74_5f_6c_74,
+    Literal26_67_74_5f_67_74,
+}
+
+impl ::sittir_core::prepare::Prepare for BinaryOperatorOperatorTransportSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            BinaryOperatorOperatorTransportSlot::Literal15_70_6c_75_73 => Ok(()),
+            BinaryOperatorOperatorTransportSlot::Literal14_64_61_73_68 => Ok(()),
+            BinaryOperatorOperatorTransportSlot::Literal7_73_74_61_72 => Ok(()),
+            BinaryOperatorOperatorTransportSlot::Literal18_61_74 => Ok(()),
+            BinaryOperatorOperatorTransportSlot::Literal19_73_6c_61_73_68 => Ok(()),
+            BinaryOperatorOperatorTransportSlot::Literal20_70_65_72_63_65_6e_74 => Ok(()),
+            BinaryOperatorOperatorTransportSlot::Literal21_73_6c_61_73_68_5f_73_6c_61_73_68 => Ok(()),
+            BinaryOperatorOperatorTransportSlot::Literal12_73_74_61_72_5f_73_74_61_72 => Ok(()),
+            BinaryOperatorOperatorTransportSlot::Literal22_70_69_70_65 => Ok(()),
+            BinaryOperatorOperatorTransportSlot::Literal23_61_6d_70 => Ok(()),
+            BinaryOperatorOperatorTransportSlot::Literal24_63_61_72_65_74 => Ok(()),
+            BinaryOperatorOperatorTransportSlot::Literal25_6c_74_5f_6c_74 => Ok(()),
+            BinaryOperatorOperatorTransportSlot::Literal26_67_74_5f_67_74 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for BinaryOperatorOperatorTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal15_70_6c_75_73 => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
+            Self::Literal14_64_61_73_68 => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
+            Self::Literal7_73_74_61_72 => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
+            Self::Literal18_61_74 => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
+            Self::Literal19_73_6c_61_73_68 => [::sittir_core::types::KindId(54)].iter().any(|k| kinds.contains(k)),
+            Self::Literal20_70_65_72_63_65_6e_74 => [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k)),
+            Self::Literal21_73_6c_61_73_68_5f_73_6c_61_73_68 => [::sittir_core::types::KindId(56)].iter().any(|k| kinds.contains(k)),
+            Self::Literal12_73_74_61_72_5f_73_74_61_72 => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
+            Self::Literal22_70_69_70_65 => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
+            Self::Literal23_61_6d_70 => [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k)),
+            Self::Literal24_63_61_72_65_74 => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
+            Self::Literal25_6c_74_5f_6c_74 => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
+            Self::Literal26_67_74_5f_67_74 => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for BinaryOperatorOperatorTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    49 => Ok(Self::Literal15_70_6c_75_73),
+                    50 => Ok(Self::Literal14_64_61_73_68),
+                    8 => Ok(Self::Literal7_73_74_61_72),
+                    44 => Ok(Self::Literal18_61_74),
+                    54 => Ok(Self::Literal19_73_6c_61_73_68),
+                    55 => Ok(Self::Literal20_70_65_72_63_65_6e_74),
+                    56 => Ok(Self::Literal21_73_6c_61_73_68_5f_73_6c_61_73_68),
+                    35 => Ok(Self::Literal12_73_74_61_72_5f_73_74_61_72),
+                    45 => Ok(Self::Literal22_70_69_70_65),
+                    57 => Ok(Self::Literal23_61_6d_70),
+                    58 => Ok(Self::Literal24_63_61_72_65_74),
+                    59 => Ok(Self::Literal25_6c_74_5f_6c_74),
+                    9 => Ok(Self::Literal26_67_74_5f_67_74),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in BinaryOperatorOperatorTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in BinaryOperatorOperatorTransportSlot")
+                )?;
+                match kind_id {
+                    49 => Ok(Self::Literal15_70_6c_75_73),
+                    50 => Ok(Self::Literal14_64_61_73_68),
+                    8 => Ok(Self::Literal7_73_74_61_72),
+                    44 => Ok(Self::Literal18_61_74),
+                    54 => Ok(Self::Literal19_73_6c_61_73_68),
+                    55 => Ok(Self::Literal20_70_65_72_63_65_6e_74),
+                    56 => Ok(Self::Literal21_73_6c_61_73_68_5f_73_6c_61_73_68),
+                    35 => Ok(Self::Literal12_73_74_61_72_5f_73_74_61_72),
+                    45 => Ok(Self::Literal22_70_69_70_65),
+                    57 => Ok(Self::Literal23_61_6d_70),
+                    58 => Ok(Self::Literal24_63_61_72_65_74),
+                    59 => Ok(Self::Literal25_6c_74_5f_6c_74),
+                    9 => Ok(Self::Literal26_67_74_5f_67_74),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in BinaryOperatorOperatorTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("BinaryOperatorOperatorTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for BinaryOperatorOperatorTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("BinaryOperatorOperatorTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<BinaryOperatorOperatorTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        BinaryOperatorOperatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<BinaryOperatorOperatorTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        BinaryOperatorOperatorTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::render::Render for BinaryOperatorOperatorTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            BinaryOperatorOperatorTransportSlot::Literal15_70_6c_75_73 => w.text("+"),
+            BinaryOperatorOperatorTransportSlot::Literal14_64_61_73_68 => w.text("-"),
+            BinaryOperatorOperatorTransportSlot::Literal7_73_74_61_72 => w.text("*"),
+            BinaryOperatorOperatorTransportSlot::Literal18_61_74 => w.text("@"),
+            BinaryOperatorOperatorTransportSlot::Literal19_73_6c_61_73_68 => w.text("/"),
+            BinaryOperatorOperatorTransportSlot::Literal20_70_65_72_63_65_6e_74 => w.text("%"),
+            BinaryOperatorOperatorTransportSlot::Literal21_73_6c_61_73_68_5f_73_6c_61_73_68 => w.text("//"),
+            BinaryOperatorOperatorTransportSlot::Literal12_73_74_61_72_5f_73_74_61_72 => w.text("**"),
+            BinaryOperatorOperatorTransportSlot::Literal22_70_69_70_65 => w.text("|"),
+            BinaryOperatorOperatorTransportSlot::Literal23_61_6d_70 => w.text("&"),
+            BinaryOperatorOperatorTransportSlot::Literal24_63_61_72_65_74 => w.text("^"),
+            BinaryOperatorOperatorTransportSlot::Literal25_6c_74_5f_6c_74 => w.text("<<"),
+            BinaryOperatorOperatorTransportSlot::Literal26_67_74_5f_67_74 => w.text(">>"),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum UnaryOperatorOperatorTransportSlot {
+    Literal15_70_6c_75_73,
+    Literal14_64_61_73_68,
+    Literal27_74_69_6c_64_65,
+}
+
+impl ::sittir_core::prepare::Prepare for UnaryOperatorOperatorTransportSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            UnaryOperatorOperatorTransportSlot::Literal15_70_6c_75_73 => Ok(()),
+            UnaryOperatorOperatorTransportSlot::Literal14_64_61_73_68 => Ok(()),
+            UnaryOperatorOperatorTransportSlot::Literal27_74_69_6c_64_65 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for UnaryOperatorOperatorTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal15_70_6c_75_73 => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
+            Self::Literal14_64_61_73_68 => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
+            Self::Literal27_74_69_6c_64_65 => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for UnaryOperatorOperatorTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    49 => Ok(Self::Literal15_70_6c_75_73),
+                    50 => Ok(Self::Literal14_64_61_73_68),
+                    60 => Ok(Self::Literal27_74_69_6c_64_65),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in UnaryOperatorOperatorTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in UnaryOperatorOperatorTransportSlot")
+                )?;
+                match kind_id {
+                    49 => Ok(Self::Literal15_70_6c_75_73),
+                    50 => Ok(Self::Literal14_64_61_73_68),
+                    60 => Ok(Self::Literal27_74_69_6c_64_65),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in UnaryOperatorOperatorTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("UnaryOperatorOperatorTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for UnaryOperatorOperatorTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("UnaryOperatorOperatorTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<UnaryOperatorOperatorTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        UnaryOperatorOperatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<UnaryOperatorOperatorTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        UnaryOperatorOperatorTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::render::Render for UnaryOperatorOperatorTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            UnaryOperatorOperatorTransportSlot::Literal15_70_6c_75_73 => w.text("+"),
+            UnaryOperatorOperatorTransportSlot::Literal14_64_61_73_68 => w.text("-"),
+            UnaryOperatorOperatorTransportSlot::Literal27_74_69_6c_64_65 => w.text("~"),
         }
     }
 }
@@ -14331,6 +14888,169 @@ impl ::sittir_core::render::Render for AugmentedAssignmentLeftTransportSlot {
             AugmentedAssignmentLeftTransportSlot::ListPattern(inner) => inner.render(w),
             AugmentedAssignmentLeftTransportSlot::PatternList(inner) => inner.render(w),
             AugmentedAssignmentLeftTransportSlot::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum AugmentedAssignmentOperatorTransportSlot {
+    Literal28_70_6c_75_73_5f_65_71,
+    Literal29_64_61_73_68_5f_65_71,
+    Literal30_73_74_61_72_5f_65_71,
+    Literal31_73_6c_61_73_68_5f_65_71,
+    Literal32_61_74_5f_65_71,
+    Literal33_73_6c_61_73_68_5f_73_6c_61_73_68_5f_65_71,
+    Literal34_70_65_72_63_65_6e_74_5f_65_71,
+    Literal35_73_74_61_72_5f_73_74_61_72_5f_65_71,
+    Literal36_67_74_5f_67_74_5f_65_71,
+    Literal37_6c_74_5f_6c_74_5f_65_71,
+    Literal38_61_6d_70_5f_65_71,
+    Literal39_63_61_72_65_74_5f_65_71,
+    Literal40_70_69_70_65_5f_65_71,
+}
+
+impl ::sittir_core::prepare::Prepare for AugmentedAssignmentOperatorTransportSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            AugmentedAssignmentOperatorTransportSlot::Literal28_70_6c_75_73_5f_65_71 => Ok(()),
+            AugmentedAssignmentOperatorTransportSlot::Literal29_64_61_73_68_5f_65_71 => Ok(()),
+            AugmentedAssignmentOperatorTransportSlot::Literal30_73_74_61_72_5f_65_71 => Ok(()),
+            AugmentedAssignmentOperatorTransportSlot::Literal31_73_6c_61_73_68_5f_65_71 => Ok(()),
+            AugmentedAssignmentOperatorTransportSlot::Literal32_61_74_5f_65_71 => Ok(()),
+            AugmentedAssignmentOperatorTransportSlot::Literal33_73_6c_61_73_68_5f_73_6c_61_73_68_5f_65_71 => Ok(()),
+            AugmentedAssignmentOperatorTransportSlot::Literal34_70_65_72_63_65_6e_74_5f_65_71 => Ok(()),
+            AugmentedAssignmentOperatorTransportSlot::Literal35_73_74_61_72_5f_73_74_61_72_5f_65_71 => Ok(()),
+            AugmentedAssignmentOperatorTransportSlot::Literal36_67_74_5f_67_74_5f_65_71 => Ok(()),
+            AugmentedAssignmentOperatorTransportSlot::Literal37_6c_74_5f_6c_74_5f_65_71 => Ok(()),
+            AugmentedAssignmentOperatorTransportSlot::Literal38_61_6d_70_5f_65_71 => Ok(()),
+            AugmentedAssignmentOperatorTransportSlot::Literal39_63_61_72_65_74_5f_65_71 => Ok(()),
+            AugmentedAssignmentOperatorTransportSlot::Literal40_70_69_70_65_5f_65_71 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for AugmentedAssignmentOperatorTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal28_70_6c_75_73_5f_65_71 => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
+            Self::Literal29_64_61_73_68_5f_65_71 => [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k)),
+            Self::Literal30_73_74_61_72_5f_65_71 => [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k)),
+            Self::Literal31_73_6c_61_73_68_5f_65_71 => [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k)),
+            Self::Literal32_61_74_5f_65_71 => [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k)),
+            Self::Literal33_73_6c_61_73_68_5f_73_6c_61_73_68_5f_65_71 => [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k)),
+            Self::Literal34_70_65_72_63_65_6e_74_5f_65_71 => [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k)),
+            Self::Literal35_73_74_61_72_5f_73_74_61_72_5f_65_71 => [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k)),
+            Self::Literal36_67_74_5f_67_74_5f_65_71 => [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k)),
+            Self::Literal37_6c_74_5f_6c_74_5f_65_71 => [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k)),
+            Self::Literal38_61_6d_70_5f_65_71 => [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k)),
+            Self::Literal39_63_61_72_65_74_5f_65_71 => [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k)),
+            Self::Literal40_70_69_70_65_5f_65_71 => [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentOperatorTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    76 => Ok(Self::Literal28_70_6c_75_73_5f_65_71),
+                    77 => Ok(Self::Literal29_64_61_73_68_5f_65_71),
+                    78 => Ok(Self::Literal30_73_74_61_72_5f_65_71),
+                    79 => Ok(Self::Literal31_73_6c_61_73_68_5f_65_71),
+                    80 => Ok(Self::Literal32_61_74_5f_65_71),
+                    81 => Ok(Self::Literal33_73_6c_61_73_68_5f_73_6c_61_73_68_5f_65_71),
+                    82 => Ok(Self::Literal34_70_65_72_63_65_6e_74_5f_65_71),
+                    83 => Ok(Self::Literal35_73_74_61_72_5f_73_74_61_72_5f_65_71),
+                    84 => Ok(Self::Literal36_67_74_5f_67_74_5f_65_71),
+                    85 => Ok(Self::Literal37_6c_74_5f_6c_74_5f_65_71),
+                    86 => Ok(Self::Literal38_61_6d_70_5f_65_71),
+                    87 => Ok(Self::Literal39_63_61_72_65_74_5f_65_71),
+                    88 => Ok(Self::Literal40_70_69_70_65_5f_65_71),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in AugmentedAssignmentOperatorTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in AugmentedAssignmentOperatorTransportSlot")
+                )?;
+                match kind_id {
+                    76 => Ok(Self::Literal28_70_6c_75_73_5f_65_71),
+                    77 => Ok(Self::Literal29_64_61_73_68_5f_65_71),
+                    78 => Ok(Self::Literal30_73_74_61_72_5f_65_71),
+                    79 => Ok(Self::Literal31_73_6c_61_73_68_5f_65_71),
+                    80 => Ok(Self::Literal32_61_74_5f_65_71),
+                    81 => Ok(Self::Literal33_73_6c_61_73_68_5f_73_6c_61_73_68_5f_65_71),
+                    82 => Ok(Self::Literal34_70_65_72_63_65_6e_74_5f_65_71),
+                    83 => Ok(Self::Literal35_73_74_61_72_5f_73_74_61_72_5f_65_71),
+                    84 => Ok(Self::Literal36_67_74_5f_67_74_5f_65_71),
+                    85 => Ok(Self::Literal37_6c_74_5f_6c_74_5f_65_71),
+                    86 => Ok(Self::Literal38_61_6d_70_5f_65_71),
+                    87 => Ok(Self::Literal39_63_61_72_65_74_5f_65_71),
+                    88 => Ok(Self::Literal40_70_69_70_65_5f_65_71),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in AugmentedAssignmentOperatorTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("AugmentedAssignmentOperatorTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AugmentedAssignmentOperatorTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("AugmentedAssignmentOperatorTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AugmentedAssignmentOperatorTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        AugmentedAssignmentOperatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AugmentedAssignmentOperatorTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        AugmentedAssignmentOperatorTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::render::Render for AugmentedAssignmentOperatorTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            AugmentedAssignmentOperatorTransportSlot::Literal28_70_6c_75_73_5f_65_71 => w.text("+="),
+            AugmentedAssignmentOperatorTransportSlot::Literal29_64_61_73_68_5f_65_71 => w.text("-="),
+            AugmentedAssignmentOperatorTransportSlot::Literal30_73_74_61_72_5f_65_71 => w.text("*="),
+            AugmentedAssignmentOperatorTransportSlot::Literal31_73_6c_61_73_68_5f_65_71 => w.text("/="),
+            AugmentedAssignmentOperatorTransportSlot::Literal32_61_74_5f_65_71 => w.text("@="),
+            AugmentedAssignmentOperatorTransportSlot::Literal33_73_6c_61_73_68_5f_73_6c_61_73_68_5f_65_71 => w.text("//="),
+            AugmentedAssignmentOperatorTransportSlot::Literal34_70_65_72_63_65_6e_74_5f_65_71 => w.text("%="),
+            AugmentedAssignmentOperatorTransportSlot::Literal35_73_74_61_72_5f_73_74_61_72_5f_65_71 => w.text("**="),
+            AugmentedAssignmentOperatorTransportSlot::Literal36_67_74_5f_67_74_5f_65_71 => w.text(">>="),
+            AugmentedAssignmentOperatorTransportSlot::Literal37_6c_74_5f_6c_74_5f_65_71 => w.text("<<="),
+            AugmentedAssignmentOperatorTransportSlot::Literal38_61_6d_70_5f_65_71 => w.text("&="),
+            AugmentedAssignmentOperatorTransportSlot::Literal39_63_61_72_65_74_5f_65_71 => w.text("^="),
+            AugmentedAssignmentOperatorTransportSlot::Literal40_70_69_70_65_5f_65_71 => w.text("|="),
         }
     }
 }
@@ -16720,6 +17440,103 @@ impl ::sittir_core::render::Render for TypeContentTransportSlot {
             TypeContentTransportSlot::ConstrainedType(inner) => inner.render(w),
             TypeContentTransportSlot::MemberType(inner) => inner.render(w),
             TypeContentTransportSlot::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum SplatTypeOperatorTransportSlot {
+    Literal7_73_74_61_72,
+    Literal12_73_74_61_72_5f_73_74_61_72,
+}
+
+impl ::sittir_core::prepare::Prepare for SplatTypeOperatorTransportSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            SplatTypeOperatorTransportSlot::Literal7_73_74_61_72 => Ok(()),
+            SplatTypeOperatorTransportSlot::Literal12_73_74_61_72_5f_73_74_61_72 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for SplatTypeOperatorTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal7_73_74_61_72 => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
+            Self::Literal12_73_74_61_72_5f_73_74_61_72 => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for SplatTypeOperatorTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    8 => Ok(Self::Literal7_73_74_61_72),
+                    35 => Ok(Self::Literal12_73_74_61_72_5f_73_74_61_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in SplatTypeOperatorTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in SplatTypeOperatorTransportSlot")
+                )?;
+                match kind_id {
+                    8 => Ok(Self::Literal7_73_74_61_72),
+                    35 => Ok(Self::Literal12_73_74_61_72_5f_73_74_61_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in SplatTypeOperatorTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("SplatTypeOperatorTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SplatTypeOperatorTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("SplatTypeOperatorTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SplatTypeOperatorTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        SplatTypeOperatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SplatTypeOperatorTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        SplatTypeOperatorTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::render::Render for SplatTypeOperatorTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            SplatTypeOperatorTransportSlot::Literal7_73_74_61_72 => w.text("*"),
+            SplatTypeOperatorTransportSlot::Literal12_73_74_61_72_5f_73_74_61_72 => w.text("**"),
         }
     }
 }
@@ -25483,6 +26300,157 @@ impl ::sittir_core::render::Render for AssignmentTypedRightTransportSlot {
     }
 }
 
+#[derive(Debug, Clone)]
+pub enum ComparisonOperatorComparatorOperatorsTransportSlot {
+    Literal51_6c_74,
+    Literal52_6c_74_5f_65_71,
+    Literal53_65_71_5f_65_71,
+    Literal54_62_61_6e_67_5f_65_71,
+    Literal55_67_74_5f_65_71,
+    Literal56_67_74,
+    Literal57_6c_74_5f_67_74,
+    Literal58_69_6e_5f_6b_65_79_77_6f_72_64,
+    Literal59_5f_6e_6f_74_5f_69_6e,
+    Literal60_69_73_5f_6b_65_79_77_6f_72_64,
+    Literal61_5f_69_73_5f_6e_6f_74,
+}
+
+impl ::sittir_core::prepare::Prepare for ComparisonOperatorComparatorOperatorsTransportSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal51_6c_74 => Ok(()),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal52_6c_74_5f_65_71 => Ok(()),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal53_65_71_5f_65_71 => Ok(()),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal54_62_61_6e_67_5f_65_71 => Ok(()),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal55_67_74_5f_65_71 => Ok(()),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal56_67_74 => Ok(()),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal57_6c_74_5f_67_74 => Ok(()),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal58_69_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal59_5f_6e_6f_74_5f_69_6e => Ok(()),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal60_69_73_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal61_5f_69_73_5f_6e_6f_74 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ComparisonOperatorComparatorOperatorsTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal51_6c_74 => [::sittir_core::types::KindId(108)].iter().any(|k| kinds.contains(k)),
+            Self::Literal52_6c_74_5f_65_71 => [::sittir_core::types::KindId(109)].iter().any(|k| kinds.contains(k)),
+            Self::Literal53_65_71_5f_65_71 => [::sittir_core::types::KindId(110)].iter().any(|k| kinds.contains(k)),
+            Self::Literal54_62_61_6e_67_5f_65_71 => [::sittir_core::types::KindId(111)].iter().any(|k| kinds.contains(k)),
+            Self::Literal55_67_74_5f_65_71 => [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k)),
+            Self::Literal56_67_74 => [::sittir_core::types::KindId(113)].iter().any(|k| kinds.contains(k)),
+            Self::Literal57_6c_74_5f_67_74 => [::sittir_core::types::KindId(114)].iter().any(|k| kinds.contains(k)),
+            Self::Literal58_69_6e_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(25)].iter().any(|k| kinds.contains(k)),
+            Self::Literal59_5f_6e_6f_74_5f_69_6e => [::sittir_core::types::KindId(210)].iter().any(|k| kinds.contains(k)),
+            Self::Literal60_69_73_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
+            Self::Literal61_5f_69_73_5f_6e_6f_74 => [::sittir_core::types::KindId(211)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ComparisonOperatorComparatorOperatorsTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    108 => Ok(Self::Literal51_6c_74),
+                    109 => Ok(Self::Literal52_6c_74_5f_65_71),
+                    110 => Ok(Self::Literal53_65_71_5f_65_71),
+                    111 => Ok(Self::Literal54_62_61_6e_67_5f_65_71),
+                    112 => Ok(Self::Literal55_67_74_5f_65_71),
+                    113 => Ok(Self::Literal56_67_74),
+                    114 => Ok(Self::Literal57_6c_74_5f_67_74),
+                    25 => Ok(Self::Literal58_69_6e_5f_6b_65_79_77_6f_72_64),
+                    210 => Ok(Self::Literal59_5f_6e_6f_74_5f_69_6e),
+                    61 => Ok(Self::Literal60_69_73_5f_6b_65_79_77_6f_72_64),
+                    211 => Ok(Self::Literal61_5f_69_73_5f_6e_6f_74),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ComparisonOperatorComparatorOperatorsTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ComparisonOperatorComparatorOperatorsTransportSlot")
+                )?;
+                match kind_id {
+                    108 => Ok(Self::Literal51_6c_74),
+                    109 => Ok(Self::Literal52_6c_74_5f_65_71),
+                    110 => Ok(Self::Literal53_65_71_5f_65_71),
+                    111 => Ok(Self::Literal54_62_61_6e_67_5f_65_71),
+                    112 => Ok(Self::Literal55_67_74_5f_65_71),
+                    113 => Ok(Self::Literal56_67_74),
+                    114 => Ok(Self::Literal57_6c_74_5f_67_74),
+                    25 => Ok(Self::Literal58_69_6e_5f_6b_65_79_77_6f_72_64),
+                    210 => Ok(Self::Literal59_5f_6e_6f_74_5f_69_6e),
+                    61 => Ok(Self::Literal60_69_73_5f_6b_65_79_77_6f_72_64),
+                    211 => Ok(Self::Literal61_5f_69_73_5f_6e_6f_74),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ComparisonOperatorComparatorOperatorsTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ComparisonOperatorComparatorOperatorsTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ComparisonOperatorComparatorOperatorsTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ComparisonOperatorComparatorOperatorsTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ComparisonOperatorComparatorOperatorsTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ComparisonOperatorComparatorOperatorsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ComparisonOperatorComparatorOperatorsTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ComparisonOperatorComparatorOperatorsTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::render::Render for ComparisonOperatorComparatorOperatorsTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal51_6c_74 => w.text("<"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal52_6c_74_5f_65_71 => w.text("<="),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal53_65_71_5f_65_71 => w.text("=="),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal54_62_61_6e_67_5f_65_71 => w.text("!="),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal55_67_74_5f_65_71 => w.text(">="),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal56_67_74 => w.text(">"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal57_6c_74_5f_67_74 => w.text("<>"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal58_69_6e_5f_6b_65_79_77_6f_72_64 => w.text("in"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal59_5f_6e_6f_74_5f_69_6e => w.text("not in"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal60_69_73_5f_6b_65_79_77_6f_72_64 => w.text("is"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal61_5f_69_73_5f_6e_6f_74 => w.text("is not"),
+        }
+    }
+}
+
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
@@ -30072,7 +31040,7 @@ pub struct SplatPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
     pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
-    pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
+    pub operator: ::sittir_core::SlotValue<SplatPatternOperatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<SplatPatternNameTransportSlot>,
 }
@@ -30222,7 +31190,7 @@ pub struct ComplexPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_real"))]
     pub real: ::sittir_core::SlotValue<ComplexPatternRealTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
-    pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
+    pub operator: ::sittir_core::SlotValue<ComplexPatternOperatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_imaginary"))]
     pub imaginary: ::sittir_core::SlotValue<ComplexPatternImaginaryTransportSlot>,
 }
@@ -31029,7 +31997,7 @@ pub struct BooleanOperatorTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
-    pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
+    pub operator: ::sittir_core::SlotValue<BooleanOperatorOperatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
@@ -31105,7 +32073,7 @@ pub struct BinaryOperatorTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
-    pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
+    pub operator: ::sittir_core::SlotValue<BinaryOperatorOperatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
 }
@@ -31179,7 +32147,7 @@ pub struct UnaryOperatorTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
     pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
-    pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
+    pub operator: ::sittir_core::SlotValue<UnaryOperatorOperatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
     pub argument: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
 }
@@ -31478,7 +32446,7 @@ pub struct AugmentedAssignmentTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<AugmentedAssignmentLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
-    pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
+    pub operator: ::sittir_core::SlotValue<AugmentedAssignmentOperatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: ::sittir_core::SlotValue<Box<AugmentedAssignmentRightTransportSlot>>,
 }
@@ -32258,7 +33226,7 @@ pub struct SplatTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
     pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
-    pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
+    pub operator: ::sittir_core::SlotValue<SplatTypeOperatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
 }
@@ -39626,7 +40594,7 @@ pub struct ComparisonOperatorComparatorTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_flank"))]
     pub source_flank: Option<::sittir_core::slot::SourceFlank>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operators"))]
-    pub operators: ::sittir_core::SlotValue<Box<AnyTransport>>,
+    pub operators: ::sittir_core::SlotValue<ComparisonOperatorComparatorOperatorsTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_primary_expression"))]
     pub primary_expression: ::sittir_core::SlotValue<PrimaryExpressionTransport>,
 }

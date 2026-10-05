@@ -147,7 +147,7 @@ export interface AbstractMethodSignatureTransport {
   '$_flank'?: SourceFlank
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
   _override?: SlotValue<OverrideModifierTransport>
-  _accessor_kind?: SlotValue<Box<AnyTransport>>
+  _accessor_kind?: SlotValue<AbstractMethodSignatureAccessorKindTransportSlot>
   _name: SlotValue<AbstractMethodSignatureNameTransportSlot>
   _optional?: boolean
   _type_parameters?: SlotValue<TypeParametersTransport>
@@ -295,7 +295,7 @@ export interface AugmentedAssignmentExpressionTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _left: SlotValue<Box<AugmentedAssignmentExpressionLeftTransportSlot>>
-  _operator: SlotValue<Box<AnyTransport>>
+  _operator: SlotValue<AugmentedAssignmentExpressionOperatorTransportSlot>
   _right: SlotValue<Box<ExpressionTransport>>
 }
 
@@ -322,7 +322,7 @@ export interface BinaryExpressionTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _left?: SlotValue<Box<ExpressionTransport>>
-  _operator?: SlotValue<Box<AnyTransport>>
+  _operator?: SlotValue<BinaryExpressionOperatorTransportSlot>
   _right?: SlotValue<Box<ExpressionTransport>>
   _binary_expression_in?: SlotValue<Box<BinaryExpressionInTransport>>
 }
@@ -525,7 +525,7 @@ export interface ConstraintTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _type: SlotValue<TypeTransport>
-  _content: SlotValue<Box<AnyTransport>>
+  _content: SlotValue<ConstraintContentTransportSlot>
 }
 
 export interface ConstructorTypeTransport {
@@ -725,7 +725,7 @@ export interface ExportSpecifierTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _export_kind?: SlotValue<Box<AnyTransport>>
+  _export_kind?: SlotValue<ExportSpecifierExportKindTransportSlot>
   _name: SlotValue<ExportSpecifierNameTransportSlot>
   _alias?: SlotValue<ExportSpecifierAliasTransportSlot>
 }
@@ -879,10 +879,10 @@ export interface ForHeaderLetConstKindTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _kind: SlotValue<Box<AnyTransport>>
+  _kind: SlotValue<ForHeaderLetConstKindKindTransportSlot>
   _left: SlotValue<ForHeaderLetConstKindLeftTransportSlot>
   _terminator?: SlotValue<ForHeaderLetConstKindTerminatorTransportSlot>
-  _operator: SlotValue<Box<AnyTransport>>
+  _operator: SlotValue<ForHeaderLetConstKindOperatorTransportSlot>
   _right: SlotValue<ForHeaderLetConstKindRightTransportSlot>
 }
 
@@ -892,7 +892,7 @@ export interface ForHeaderLhsTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _left: SlotValue<ForHeaderLhsLeftTransportSlot>
-  _operator: SlotValue<Box<AnyTransport>>
+  _operator: SlotValue<ForHeaderLhsOperatorTransportSlot>
   _right: SlotValue<ForHeaderLhsRightTransportSlot>
 }
 
@@ -903,7 +903,7 @@ export interface ForHeaderVarKindTransport {
   '$_flank'?: SourceFlank
   _left: SlotValue<ForHeaderVarKindLeftTransportSlot>
   _value?: SlotValue<ExpressionTransport>
-  _operator: SlotValue<Box<AnyTransport>>
+  _operator: SlotValue<ForHeaderVarKindOperatorTransportSlot>
   _right: SlotValue<ForHeaderVarKindRightTransportSlot>
 }
 
@@ -1076,7 +1076,7 @@ export interface ImportAttributeTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _attribute_kind: SlotValue<Box<AnyTransport>>
+  _attribute_kind: SlotValue<ImportAttributeAttributeKindTransportSlot>
   _object: SlotValue<ObjectTransport>
 }
 
@@ -1119,7 +1119,7 @@ export interface ImportSpecifierAsTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _import_kind?: SlotValue<Box<AnyTransport>>
+  _import_kind?: SlotValue<ImportSpecifierAsImportKindTransportSlot>
   _name: SlotValue<ImportSpecifierAsNameTransportSlot>
   _alias: SlotValue<ImportSpecifierAsAliasTransportSlot>
 }
@@ -1129,7 +1129,7 @@ export interface ImportSpecifierNameTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _import_kind?: SlotValue<Box<AnyTransport>>
+  _import_kind?: SlotValue<ImportSpecifierNameImportKindTransportSlot>
   _name: SlotValue<ImportSpecifierNameNameTransportSlot>
 }
 
@@ -1158,7 +1158,7 @@ export interface ImportStatementTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _import_clause?: SlotValue<Box<AnyTransport>>
+  _import_clause?: SlotValue<ImportStatementImportClauseTransportSlot>
   _from_clause: SlotValue<ImportStatementFromClauseTransportSlot>
   _import_attribute?: SlotValue<ImportAttributeTransport>
   _terminator?: SlotValue<ImportStatementTerminatorTransportSlot>
@@ -1169,7 +1169,7 @@ export interface IndexSignatureColonTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _sign?: SlotValue<Box<AnyTransport>>
+  _sign?: SlotValue<IndexSignatureColonSignTransportSlot>
   _readonly?: boolean
   _name: SlotValue<IndexSignatureColonNameTransportSlot>
   _index_type: SlotValue<TypeTransport>
@@ -1181,7 +1181,7 @@ export interface IndexSignatureMappedTypeClauseTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _sign?: SlotValue<Box<AnyTransport>>
+  _sign?: SlotValue<IndexSignatureMappedTypeClauseSignTransportSlot>
   _readonly?: boolean
   _type: SlotValue<IndexSignatureMappedTypeClauseTypeTransportSlot>
   _mapped_type_clause: SlotValue<MappedTypeClauseTransport>
@@ -1264,7 +1264,7 @@ export interface LexicalDeclarationTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _kind: SlotValue<Box<AnyTransport>>
+  _kind: SlotValue<LexicalDeclarationKindTransportSlot>
   _declarators: Array<SlotValue<VariableDeclaratorTransport>>
   _terminator?: SlotValue<LexicalDeclarationTerminatorTransportSlot>
   _declarators_separator_space_before?: number
@@ -1284,7 +1284,7 @@ export interface LiteralTypeNegativeNumberTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _operator: SlotValue<Box<AnyTransport>>
+  _operator: SlotValue<LiteralTypeNegativeNumberOperatorTransportSlot>
   _argument: SlotValue<NumberTransport>
 }
 
@@ -1342,7 +1342,7 @@ export interface MethodDefinitionTransport {
   _override?: SlotValue<OverrideModifierTransport>
   _readonly?: boolean
   _async?: boolean
-  _accessor_kind?: SlotValue<Box<AnyTransport>>
+  _accessor_kind?: SlotValue<MethodDefinitionAccessorKindTransportSlot>
   _name: SlotValue<MethodDefinitionNameTransportSlot>
   _optional?: boolean
   _type_parameters?: SlotValue<TypeParametersTransport>
@@ -1361,7 +1361,7 @@ export interface MethodSignatureTransport {
   _override?: SlotValue<OverrideModifierTransport>
   _readonly?: boolean
   _async?: boolean
-  _accessor_kind?: SlotValue<Box<AnyTransport>>
+  _accessor_kind?: SlotValue<MethodSignatureAccessorKindTransportSlot>
   _name: SlotValue<MethodSignatureNameTransportSlot>
   _optional?: boolean
   _type_parameters?: SlotValue<TypeParametersTransport>
@@ -1577,9 +1577,9 @@ export interface ObjectTypeTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _opening: SlotValue<Box<AnyTransport>>
+  _opening: SlotValue<ObjectTypeOpeningTransportSlot>
   _members?: SlotValue<ObjectTypeContentTransport>
-  _closing: SlotValue<Box<AnyTransport>>
+  _closing: SlotValue<ObjectTypeClosingTransportSlot>
 }
 
 export interface OmittingTypeAnnotationTransport {
@@ -1727,7 +1727,7 @@ export interface PublicFieldDefinitionTransport {
   _abstract?: boolean
   _accessor?: boolean
   _name: SlotValue<PublicFieldDefinitionNameTransportSlot>
-  _optionality?: SlotValue<Box<AnyTransport>>
+  _optionality?: SlotValue<PublicFieldDefinitionOptionalityTransportSlot>
   _type?: SlotValue<TypeAnnotationTransport>
   _value?: SlotValue<ExpressionTransport>
   _decorator_separator_space?: number
@@ -2137,7 +2137,7 @@ export interface TypeQueryMemberExpressionTransport {
   '$_flank'?: SourceFlank
   _object: SlotValue<Box<TypeQueryMemberExpressionObjectTransportSlot>>
   _property: SlotValue<TypeQueryMemberExpressionPropertyTransportSlot>
-  _content: SlotValue<Box<AnyTransport>>
+  _content: SlotValue<TypeQueryMemberExpressionContentTransportSlot>
 }
 
 export interface TypeQuerySubscriptExpressionTransport {
@@ -2174,7 +2174,7 @@ export interface UnaryExpressionTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _operator: SlotValue<Box<AnyTransport>>
+  _operator: SlotValue<UnaryExpressionOperatorTransportSlot>
   _argument: SlotValue<Box<ExpressionTransport>>
 }
 
@@ -2193,7 +2193,7 @@ export interface UpdateExpressionPostfixTransport {
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
   _argument: SlotValue<Box<ExpressionTransport>>
-  _operator: SlotValue<Box<AnyTransport>>
+  _operator: SlotValue<UpdateExpressionPostfixOperatorTransportSlot>
 }
 
 export interface UpdateExpressionPrefixTransport {
@@ -2201,7 +2201,7 @@ export interface UpdateExpressionPrefixTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _operator: SlotValue<Box<AnyTransport>>
+  _operator: SlotValue<UpdateExpressionPrefixOperatorTransportSlot>
   _argument: SlotValue<Box<ExpressionTransport>>
 }
 

@@ -337,7 +337,7 @@ export interface PredicateTransport {
   '$_edges'?: Edges
   '$_gap'?: SourceGap
   '$_flank'?: SourceFlank
-  _prefix: SlotValue<Box<AnyTransport>>
+  _prefix: SlotValue<PredicatePrefixTransportSlot>
   _name: SlotValue<ImmediateIdentifierTransport, true>
   _type: SlotValue<PredicateTypeEnum, true>
   _parameters?: SlotValue<ParametersTransport>

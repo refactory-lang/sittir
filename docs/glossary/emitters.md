@@ -4215,7 +4215,10 @@ emitted choice is some field's type), the supertype enums emitted
 A slot `classifyPrimitiveField` types as a primitive is `presence` or
 `text`. Any other slot is classified by its node kinds (`kindsOf`), with a
 slot that holds both kinds and anonymous literals, or that has a blank arm
-(`hasBlankArm`), forced to a choice.
+(`hasBlankArm`), forced to a choice. A slot no kind or supertype covers is
+its own choice when it holds a concrete kind or a literal
+(`fieldTypeComponents`), so a slot that stores only token kind ids gets the
+choice of those tokens; `any` is left for a slot that holds neither.
 
 ### `packages/codegen/src/emitters/render-module.ts::slotClassOfShape`
 

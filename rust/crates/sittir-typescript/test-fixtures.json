@@ -165025,7 +165025,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "type HandlerFunction<T :Element> = void\n"
+    "expectedOutput": "type HandlerFunction<T : Element> = void\n"
   },
   {
     "kind": "roundtrip",
@@ -165033,9 +165033,9 @@
     "sourceIn": "\ntype HandlerFunction<T: Element> = void\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "type HandlerFunction<T :Element> = void\n",
+    "expectedSourceOut": "type HandlerFunction<T : Element> = void\n",
     "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (type_identifier))))) value: (predefined_type) terminator: (automatic_semicolon)))",
-    "wrappedText": "type HandlerFunction<T :Element> = void\n",
+    "wrappedText": "type HandlerFunction<T : Element> = void\n",
     "wrappedOffset": 0
   },
   {
@@ -165188,7 +165188,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "type HandlerFunction<T :Element> = void\n"
+    "expectedOutput": "type HandlerFunction<T : Element> = void\n"
   },
   {
     "kind": "roundtrip",
@@ -165196,9 +165196,9 @@
     "sourceIn": "type HandlerFunction<T: Element> = void",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type HandlerFunction<T :Element> = void\n",
+    "expectedSourceOut": "type HandlerFunction<T : Element> = void\n",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (type_identifier))))) value: (predefined_type) terminator: (automatic_semicolon))",
-    "wrappedText": "type HandlerFunction<T :Element> = void\n",
+    "wrappedText": "type HandlerFunction<T : Element> = void\n",
     "wrappedOffset": 0
   },
   {
@@ -165399,7 +165399,7 @@
         }
       ]
     },
-    "expectedOutput": "<T :Element>"
+    "expectedOutput": "<T : Element>"
   },
   {
     "kind": "roundtrip",
@@ -165407,9 +165407,9 @@
     "sourceIn": "<T: Element>",
     "pattern": "type_parameters",
     "edits": [],
-    "expectedSourceOut": "<T :Element>",
+    "expectedSourceOut": "<T : Element>",
     "expectedReparseTree": "(type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (type_identifier)))))",
-    "wrappedText": "function _f<T :Element>() {}",
+    "wrappedText": "function _f<T : Element>() {}",
     "wrappedOffset": 11
   },
   {
