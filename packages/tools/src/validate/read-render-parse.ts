@@ -403,9 +403,9 @@ export function flankWindow(
  * its empty slots, and a storage-less trivia entry becomes its text with the
  * kind the reader stamped on it, `{ $type, $text }`, plus `$sameLine` and
  * `$tokensBetween` when it shares its owner's row. The layout evidence a list
- * keeps from its source travels as text: each kept list gap as its bytes
- * (`$_gap: { $text }`), and kept flanks as a window of the source
- * (`$_flank: { $text, $span }`, `flankWindow`).
+ * keeps from its source travels as text, in the node's `$_layout`: each kept
+ * list gap as its bytes (`gap: { $text }`), and kept flanks as a window of the
+ * source (`flank: { $text, $span }`, `flankWindow`).
  */
 export function selfContainedRenderInput(
 	data: unknown,

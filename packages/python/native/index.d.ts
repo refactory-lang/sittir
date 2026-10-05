@@ -118,8 +118,8 @@ export declare class SittirEngine {
    * `treeId` names the parse whose detected format applies. It is
    * optional because factory-built nodes belong to no tree.
    */
-  render(transport: RenderRoot, treeId?: number | undefined | null, options?: Options | undefined | null): string
-  renderToFile(transport: RenderRoot, path: string, treeId?: number | undefined | null, options?: Options | undefined | null): void
+  render(transport: object, treeId?: number | undefined | null, options?: object | undefined | null): string
+  renderToFile(transport: object, path: string, treeId?: number | undefined | null, options?: object | undefined | null): void
   /**
    * Free this engine's own state. The trees it parsed stay in the
    * addon's table: they belong to whoever still names them.
@@ -440,7 +440,7 @@ export interface EngineOptions {
    * carrying its own options resolves again, per call, over the
    * engine's table — the engine's own table never changes.
    */
-  options?: Options
+  options?: object
 }
 
 export interface EscapeSequenceHexTransport {
