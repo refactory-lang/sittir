@@ -154,6 +154,14 @@ pub enum FunctionModifiersModifierTransportSlot {
   presence slot holds (`presence = kind::…`), the record's word offsets, a list's separator, a
   flank, a group seat, a kind's minimum depth, its layout tokens and its inner gaps. The macro
   computes none of them.
+- **A kind constant names the grammar id unless it is marked `display`.** The parser gives a node
+  two ids: its grammar id (`grammar_id()`, the rule that parsed it) and its display id
+  (`kind_id()`, the alias target at its site). Transports, routing, choice variants and presence
+  keywords key on the grammar id, so a kind an attribute names is the grammar id, unmarked. The
+  `display` flag marks the display id, as in `#[kind(kind::FIELD_IDENTIFIER, display)]`. It is
+  used only where the identity is the alias: an alias envelope's site, and the query plans that the
+  bindings rows and `is.*` compile to. The macro picks the accessor from the flag, so the reader
+  never decides at run time. A display union stays a name: a display id has no transport.
 - **An unfielded child has exactly one slot.** In a kind's declaration, no two slots without a
   field admit the same kind, so the slot whose type admits an unfielded child's kind is one slot.
   Codegen checks this as it emits the declaration: two such slots are a codegen diagnostic naming
@@ -195,10 +203,9 @@ A read goes to a depth: `depth: number` replaces `ParseOptions.deep` (ruling 2).
 one level; `Infinity` reads everything. Within the depth, a child with structure is read into its
 transport in the same call; past it, the child is a coordinate. A leaf (a named node with no
 children), a fixed literal, stored as its kind id, and a presence flag are stored inline at any
-depth. A kind's
-`min_depth` deepens the read of that node, so a list owner's items arrive with it. The depth
-decides only where coordinates start: the struct and its attributes are the same at every depth,
-and a slot holds `SlotValue::Transport` or `SlotValue::Coord` by that alone.
+depth. A kind's `min_depth` deepens the read of that node, so a list owner's items arrive with
+it. The depth decides only where coordinates start: the struct and its attributes are the same at
+every depth, and a slot holds `SlotValue::Transport` or `SlotValue::Coord` by that alone.
 
 - **An unread child is a coordinate:** its tree, its row, its span and its kind (ruling 1). This is
   `SlotValue::Coord` with a row in place of the handle. The render side already accepts it.
@@ -235,7 +242,7 @@ Each is derived once, in codegen; a fact a type states is not repeated in an att
 | **`$other`** | the reader puts anonymous unfielded children there; the wrap reclaims terminals with `readTerminalFromOther` and spellings with `_spellingTokens` | routed to the slot whose type admits the token; a layout token is skipped; any other child is refused (ruling 7) |
 | **Text leaves** | the reader's `read_leaf` captures `$text`; the wrap's `_isReadTextLeaf` and the `_spelled…` helpers tile anonymous tokens into a leaf's text | `#[transport(text)]`, or `#[transport(spelled)]` for a leaf spelled by its tokens |
 | **Token interiors** | the wrap's `_projectLexed` with `projectInterior` and `TOKEN_INTERIORS` (`emitters/consts.ts`) | `#[transport(interior = …)]` |
-| **Alias envelopes** | the reader stamps `$displayType`; the wrap's `_aliasEnvelope` with `_ALIAS_ENVELOPES` and `_HIDDEN_KINDS` re-wraps | `#[transport(envelope, content = …)]` on the envelope kind |
+| **Alias envelopes** | the reader stamps `$displayType`; the wrap's `_aliasEnvelope` with `_ALIAS_ENVELOPES` and `_HIDDEN_KINDS` re-wraps | `#[transport(envelope, content = …)]` on the envelope kind, whose kind is its display id (`display`) |
 | **Transparent supertypes** | the wrap's `SUPERTYPE_MEMBERS`, `_filterWrapChildrenByKind`, `_firstKindKeyedWrapChild` | the slot's type: the supertype's choice, whose variants list its members once |
 | **Delimiters and layout** | the wrap's `dropWireDelimiters`, `_hasSeparatorFlank` and `listOption` | `layout` on the kind; `separator` and `flank` on the slot |
 | **List owners** | `_LIST_OWNER_KINDS`, `listItems`, `ownerView`, `storedElements` | `#[transport(list, item = …)]` |
@@ -668,7 +675,7 @@ pub struct BinaryExpressionTransport {
 | `store = flags` | none: no grammar has a bitflag field today | `coerceBitflagStorage`, no call sites |
 | `interior = …` | `integer_literal_decimal`: `content` and `suffix` | `TOKEN_INTERIORS` (40 kinds), read by `_projectLexed` (15 sites) |
 | `text` | `identifier` | `read_leaf`'s `$text`, and `_isReadTextLeaf` |
-| `envelope, content = …` | `field_identifier`, `shorthand_field_identifier` and `type_identifier` over `identifier` | `_ALIAS_ENVELOPES` = {465, 467, 468}, and `_aliasEnvelope` |
+| `envelope, content = …`, with `display` | `field_identifier`, `shorthand_field_identifier` and `type_identifier` over `identifier` | `_ALIAS_ENVELOPES` = {465, 467, 468}, and `_aliasEnvelope` |
 | `separator`, `flank` | `closure_parameters` | `dropWireDelimiters` (3 sites in rust) |
 | `group` | `match_arm_with_comma.pattern`, a pattern and its guard | `seatWith`, called from `$with`, which stays a member; the read needs only the slot's `group` |
 
